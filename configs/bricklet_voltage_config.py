@@ -493,11 +493,12 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
-                     description='Measured voltage',
-                     read_only=True,
-                     pattern='%.2f %unit%',
-                     min_=0,
-                     max_=50)
+                    update_style='Callback Period',
+                    description='Measured voltage',
+                    read_only=True,
+                    pattern='%.2f %unit%',
+                    min_=0,
+                    max_=50)
     ],
     'actions': ['Get Voltage', 'Get Analog Value']
 }

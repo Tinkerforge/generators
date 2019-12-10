@@ -381,25 +381,32 @@ com['openhab'] = {
     'channels': channels,
     'channel_types': [
         oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
-                     description='The logic level that is currently set on the pin.',
-                     read_only=False,
-                     params=[{
-                        'name': 'LED Config',
-                        'type': 'integer',
-                        'options': [('Off', 0),
-                                    ('On', 1),
-                                    ('Show Heartbeat', 2),
-                                    ('Show Channel Status', 3)],
-                        'limitToOptions': 'true',
-                        'default': 3,
+                    update_style=None,
+                    description='The logic level that is currently set on the pin.',
+                    read_only=False,
+                    params=[{
+                    'packet': 'Set Channel LED Config',
+                    'element': 'Config',
 
-                        'label': 'LED Configuration',
-                        'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to \\\"Channel Status\\\". In this mode the LED is on if the channel is high and off otherwise.',
-                    }]),
+                    'name': 'LED Config',
+                    'type': 'integer',
+                    'options': [('Off', 0),
+                                ('On', 1),
+                                ('Show Heartbeat', 2),
+                                ('Show Channel Status', 3)],
+                    'limitToOptions': 'true',
+                    'default': 3,
+
+                    'label': 'LED Configuration',
+                    'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to \\\"Channel Status\\\". In this mode the LED is on if the channel is high and off otherwise.',
+                }]),
         {
             'id': 'Monoflop',
             'item_type': 'String',
             'params': [{
+                'packet': 'Set Monoflop',
+                'element': 'Time',
+
                 'name': 'Monoflop Duration',
                 'type': 'integer',
                 'default': 1000,
@@ -411,6 +418,9 @@ com['openhab'] = {
                 'description': 'The time (in ms) that the pin should hold the configured value.',
             },
             {
+                'packet': 'Set Monoflop',
+                'element': 'Value',
+
                 'name': 'Monoflop Value',
                 'type': 'boolean',
                 'default': 'true',

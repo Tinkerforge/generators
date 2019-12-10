@@ -375,7 +375,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_channel('CO2 Concentration', 'Concentration', 'SmartHomeUnits.PARTS_PER_MILLION'),
+        oh_generic_channel('CO2 Concentration', 'CO2 Concentration', 'SmartHomeUnits.PARTS_PER_MILLION'),
         oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
         oh_generic_channel('Humidity', 'Humidity', 'SmartHomeUnits.PERCENT', divisor=100.0),
         {
@@ -398,19 +398,23 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Concentration', 'Number:Dimensionless', 'CO2 Concentration',
+        oh_generic_channel_type('CO2 Concentration', 'Number:Dimensionless', 'CO2 Concentration',
+                    update_style='Callback Configuration',
                     description='The measured CO2 concentration.',
                     read_only=True,
                     pattern='%d %unit%'),
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                    update_style='Callback Configuration',
                     description='The measured temperature.',
                     read_only=True,
                     pattern='%.2f %unit%'),
         oh_generic_channel_type('Humidity', 'Number:Dimensionless', 'Humidity',
+                    update_style='Callback Configuration',
                     description='The measured humidity.',
                     read_only=True,
                     pattern='%.2f %unit%'),
         oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
+                    update_style=None,
                     description='The CO2 concentration (among other things) depends on the ambient air pressure. To increase the accuracy of the CO2 Bricklet 2.0 you can set the current air pressure. You use the Barometer Bricklet 2.0 or the Air Quality Bricklet to get the current air pressure. The expected unit of the ambient air pressure value is bar. By default air pressure compensation is disabled. Once you set a value it will be used for compensation. You can turn the compensation off again by setting the value to 0. It is sufficient to update the value every few minutes.',
                     pattern='%.3f %unit%')
     ],

@@ -385,9 +385,10 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Count', 'Number:Dimensionless', 'Count',
-                     description='The current count of the encoder. The encoder has 24 steps per rotation. Turning the encoder to the left decrements the counter, so a negative count is possible.',
-                     read_only=True,
-                     pattern='%d'),
+                    update_style='Callback Period',
+                    description='The current count of the encoder. The encoder has 24 steps per rotation. Turning the encoder to the left decrements the counter, so a negative count is possible.',
+                    read_only=True,
+                    pattern='%d'),
         {
             'id': 'Reset Counter',
             'item_type': 'String',

@@ -704,7 +704,7 @@ com['openhab'] = {
             'label': 'Low Pass Filter Corner Frequency',
             'description': 'The low pass filter roll off corner frequency can be half or a ninth of the output data rate.'
         },
-        update_interval('Acceleration', 'the acceleration')],
+        update_interval('Set Acceleration Callback Configuration', 'Period', 'Acceleration', 'the acceleration')],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': """this.setConfiguration(cfg.dataRate, cfg.fullScaleRange);
     this.setFilterConfiguration(cfg.iirFilter ? 0 : 1, cfg.lowPassFilter);
@@ -730,9 +730,10 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
-                     description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.',
-                     read_only=True,
-                     pattern='%.4f %unit%')
+                    update_style=None,
+                    description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.',
+                    read_only=True,
+                    pattern='%.4f %unit%')
     ],
     'actions': ['Get Acceleration', 'Get Configuration', 'Get Info LED Config', 'Get Filter Configuration']
 }

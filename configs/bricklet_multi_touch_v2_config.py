@@ -369,12 +369,16 @@ def electrode_channel(idx):
 
 def electrode_config(idx):
     return {
+            'packet': 'Set Electrode Config',
+            'element': 'Enabled Electrodes',
+            'element_index': idx,
+
             'name': 'Electrode {} Enabled'.format(idx),
             'type': 'boolean',
             'default': 'true',
 
             'label': 'Electrode {} Enabled'.format(idx),
-            'description': "True enables the electrode, false disables the electrode. A disabled electrode will always return false as its state. If you don't need all electrodes you can disable the electrodes that are not needed. Disabling electrodes will also reduce power consumption.",
+            'description': "True enables the electrode, false disables the electrode. If you don't need all electrodes you can disable the electrodes that are not needed. Disabling electrodes will also reduce power consumption.",
         }
 
 com['openhab'] = {
@@ -393,24 +397,23 @@ com['openhab'] = {
             'label': 'Sensitivity',
             'description': 'The sensitivity of the electrodes. An electrode with a high sensitivity will register a touch earlier then an electrode with a low sensitivity.<br/><br/>If you build a big electrode you might need to decrease the sensitivity, since the area that can be charged will get bigger. If you want to be able to activate an electrode from further away you need to increase the sensitivity.'
         }, {
+            'packet': 'Set Electrode Config',
+            'element': 'Enabled Electrodes',
+            'element_index': 12,
+
             'name': 'Proximity Enabled',
             'type': 'boolean',
             'default': 'true',
 
             'label': 'Proximity Enabled',
             'description': "True enables the proximity feature, false disables it. It is recommended that you disable the proximity feature if not needed. This will reduce the amount of traffic that is produced.",
-        }, {
-            'name': 'Update Interval',
-            'type': 'integer',
-            'unit': 'ms',
-            'label': 'Update Interval',
-            'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
-            'default': 1000,
-            'groupName': 'update_intervals'
-        }
+        },
+        update_interval('Set Touch State Callback Configuration', 'Period', 'Electrode', 'the electrode and proximity state')
     ] + [electrode_config(i) for i in range(0, 12)],
-    'init_code': """this.setElectrodeSensitivity(cfg.sensitivity.shortValue());this.recalibrate();
-this.setTouchStateCallbackConfiguration(cfg.updateInterval, true);""",
+    'init_code': """this.setElectrodeSensitivity(cfg.sensitivity.shortValue());
+        this.recalibrate();
+        this.setElectrodeConfig(new boolean[]{{{}, cfg.proximityEnabled}});
+        this.setTouchStateCallbackConfiguration(cfg.electrodeUpdateInterval, true);""".format(', '.join(['cfg.electrode{}Enabled'.format(i) for i in range(0, 12)])),
     'channels': [electrode_channel(i) for i in range(0, 12)] + [
         {
             'predicate': 'cfg.proximityEnabled',

@@ -308,9 +308,11 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Left LED', 'Switch', 'Left LED',
-                     description='Controlls the left LED.'),
+                    update_style=None,
+                    description='Controls the left LED.'),
         oh_generic_channel_type('Right LED', 'Switch', 'Right LED',
-                     description='Controlls the right LED.'),
+                    update_style=None,
+                    description='Controls the right LED.'),
     ],
     'actions': ['Get LED State', 'Get Button State']
 }

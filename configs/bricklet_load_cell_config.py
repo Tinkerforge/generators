@@ -572,10 +572,11 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Weight', 'Number:Mass', 'Weight',
-                     description='The currently measured weight',
-                     read_only=True,
-                     pattern='%d %unit%',
-                     min_=0),
+                    update_style='Callback Period',
+                    description='The currently measured weight',
+                    read_only=True,
+                    pattern='%d %unit%',
+                    min_=0),
         {
             'id': 'Tare',
             'item_type': 'String',
@@ -584,7 +585,8 @@ com['openhab'] = {
             'command_options': [('Tare', 'TARE')]
         },
         oh_generic_channel_type('LED', 'Switch', 'LED',
-                     description='Activates/Deactivates the LED.'),
+                    update_style=None,
+                    description='Activates/Deactivates the LED.'),
     ],
     'actions': ['Get Weight', 'Tare', 'Get Moving Average', 'Get Configuration', 'Is LED On']
 }

@@ -396,19 +396,21 @@ def monoflop_channel(channel):
         }]
     }
 
-relay_channel_type = oh_generic_channel_type('Relay', 'Switch', 'NOT USED',
-                     description='NOT USED')
-
 com['openhab'] = {
     'imports': oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [relay_channel(i) for i in range(0, 4)] + [monoflop_channel(i) for i in range(0, 4)],
     'channel_types': [
-        relay_channel_type,
+        oh_generic_channel_type('Relay', 'Switch', 'NOT USED',
+                    update_style=None,
+                    description='NOT USED'),
         {
             'id': 'Monoflop',
             'item_type': 'String',
             'params': [{
+                'packet': 'Set Monoflop',
+                'element': 'Time',
+
                 'name': 'Monoflop Duration',
                 'type': 'integer',
                 'default': 1000,
@@ -420,6 +422,9 @@ com['openhab'] = {
                 'description': 'The time (in ms) that the relay should hold the configured value.',
             },
             {
+                'packet': 'Set Monoflop',
+                'element': 'Value Mask',
+
                 'name': 'Monoflop Value',
                 'type': 'boolean',
                 'default': 'true',

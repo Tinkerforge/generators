@@ -140,13 +140,15 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
-                     description='Measured temperature',
-                     read_only=True,
-                     pattern='%.1f %unit%',
-                     min_=-45,
-                     max_=130),
+                    update_style='Callback Configuration',
+                    description='Measured temperature',
+                    read_only=True,
+                    pattern='%.1f %unit%',
+                    min_=-45,
+                    max_=130),
         oh_generic_channel_type('Heater', 'Switch', 'Heater',
-                     description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),
+                    update_style=None,
+                    description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),
     ],
     'actions': ['Get Temperature', 'Get Heater Configuration']
 }

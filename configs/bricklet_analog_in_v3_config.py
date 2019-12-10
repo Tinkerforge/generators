@@ -231,11 +231,12 @@ com['openhab'] = {
     'init_code': """this.setOversampling(cfg.oversampling);""",
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
-                     description='Measured voltage',
-                     read_only=True,
-                     pattern='%.2f %unit%',
-                     min_=0,
-                     max_=42)
+                    update_style='Callback Configuration',
+                    description='Measured voltage',
+                    read_only=True,
+                    pattern='%.2f %unit%',
+                    min_=0,
+                    max_=42)
     ],
     'actions': ['Get Voltage', 'Get Oversampling', 'Get Calibration']
 }

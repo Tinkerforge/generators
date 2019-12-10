@@ -302,10 +302,11 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Indicator', 'Number:Dimensionless', 'NOT USED',
-                     description='Sets one of the blue backlight LEDs of the fresnel lens. A value of 0 turns the LED off and a value of 255 turns the LED to full brightness.',
-                     pattern='%d',
-                     min_=0,
-                     max_=255)
+                    update_style=None,
+                    description='Sets one of the blue backlight LEDs of the fresnel lens. A value of 0 turns the LED off and a value of 255 turns the LED to full brightness.',
+                    pattern='%d',
+                    min_=0,
+                    max_=255)
     ],
     'actions': ['Get Motion Detected', 'Get Sensitivity', 'Get Indicator']
 }

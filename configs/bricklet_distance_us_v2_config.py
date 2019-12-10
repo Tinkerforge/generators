@@ -211,11 +211,12 @@ this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
     ],
     'channel_types': [
         oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
-                     description='The current distance measured by the sensor.',
-                     read_only=True,
-                     pattern='%.3f %unit%',
-                     min_=0.3,
-                     max_=5)
+                    update_style='Callback Configuration',
+                    description='The current distance measured by the sensor.',
+                    read_only=True,
+                    pattern='%.3f %unit%',
+                    min_=0.3,
+                    max_=5)
     ],
     'actions': ['Get Distance', 'Get Update Rate', 'Get Distance LED Config']
 }

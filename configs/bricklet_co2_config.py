@@ -291,10 +291,11 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('CO2 Concentration', 'Concentration', 'SmartHomeUnits.PARTS_PER_MILLION')
+        oh_generic_old_style_channel('CO2 Concentration', 'CO2 Concentration', 'SmartHomeUnits.PARTS_PER_MILLION')
     ],
     'channel_types': [
-        oh_generic_channel_type('Concentration', 'Number:Dimensionless', 'CO2 Concentration',
+        oh_generic_channel_type('CO2 Concentration', 'Number:Dimensionless', 'CO2 Concentration',
+                    update_style='Callback Period',
                     description='The measured CO2 concentration.',
                     read_only=True,
                     pattern='%d %unit%',

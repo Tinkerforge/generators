@@ -387,6 +387,9 @@ this.setChannelLEDStatusConfig({0}, channelCfg.ledStatusMinimum, channelCfg.ledS
 
 def led_status_config():
     return [{
+            'packet': 'Set Channel LED Config',
+            'element': 'Config',
+
             'name': 'LED Config',
             'type': 'integer',
             'options': [('Off', 0),
@@ -400,6 +403,9 @@ def led_status_config():
             'description': led_channel_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
         {
+            'packet': 'Set Channel LED Status Config',
+            'element': 'Config',
+
             'name': 'LED Status Mode',
             'type': 'integer',
             'options': [('Threshold', 0),
@@ -411,6 +417,9 @@ def led_status_config():
             'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
         {
+            'packet': 'Set Channel LED Status Config',
+            'element': 'Min',
+
             'name': 'LED Status Minimum',
             'type': 'integer',
             'min': '-35',
@@ -422,6 +431,9 @@ def led_status_config():
             'description': 'See LED Status Mode for further explaination.',
         },
         {
+            'packet': 'Set Channel LED Status Config',
+            'element': 'Max',
+
             'name': 'LED Status Maximum',
             'type': 'integer',
             'min': '-35',
@@ -466,12 +478,13 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'NOT USED',
-                     description='Measured voltage between -35 and 35 V',
-                     read_only=True,
-                     pattern='%.3f %unit%',
-                     min_=-35,
-                     max_=35,
-                     params=led_status_config())
+                    update_style='Callback Configuration',
+                    description='Measured voltage between -35 and 35 V',
+                    read_only=True,
+                    pattern='%.3f %unit%',
+                    min_=-35,
+                    max_=35,
+                    params=led_status_config())
     ],
     'actions': ['Get Voltage', 'Get Channel LED Config', 'Get Channel LED Status Config', 'Get Sample Rate', 'Get Calibration', 'Get ADC Values']
 }

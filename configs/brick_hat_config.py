@@ -295,6 +295,7 @@ com['openhab'] = {
         'description': 'Configures the sleep mode.',
         'advanced': 'true'
     }],
+    'params': [update_interval('Set Voltages Callback Configuration', 'Period', 'Voltages', 'the voltages')],
     'channels': [{
             'id': 'Sleep',
             'type': 'Sleep',
@@ -329,7 +330,7 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>(voltageUSB{divisor}, {unit})',
                 'filter': 'true'}],
 
-            'init_code':"""this.setVoltagesCallbackConfiguration(channelCfg.updateInterval, true);""",
+            'init_code':"""this.setVoltagesCallbackConfiguration(cfg.voltagesUpdateInterval, true);""",
             'dispose_code': """this.setVoltagesCallbackConfiguration(0, true);""",
 
             'java_unit': 'SmartHomeUnits.VOLT',
@@ -355,19 +356,25 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('USB Voltage', 'Number:ElectricPotential', 'USB Voltage',
-                     description='The USB supply voltage.<br/><br/>There are three possible combinations:<ul><li>Only USB connected: The USB supply voltage will be fed back to the DC input connector. You will read the USB voltage and a slightly lower voltage on the DC input.</li><li>Only DC input connected: The DC voltage will not be fed back to the USB connector. You will read the DC input voltage and the USB voltage will be 0.</li><li>USB and DC input connected: You will read both voltages. In this case the USB supply will be without load, but it will work as backup if you disconnect the DC input (or if the DC input voltage falls below the USB voltage).</li></ul>',
-                     read_only=True,
-                     pattern='%.3f %unit%'),
+                    update_style=None,
+                    description='The USB supply voltage.<br/><br/>There are three possible combinations:<ul><li>Only USB connected: The USB supply voltage will be fed back to the DC input connector. You will read the USB voltage and a slightly lower voltage on the DC input.</li><li>Only DC input connected: The DC voltage will not be fed back to the USB connector. You will read the DC input voltage and the USB voltage will be 0.</li><li>USB and DC input connected: You will read both voltages. In this case the USB supply will be without load, but it will work as backup if you disconnect the DC input (or if the DC input voltage falls below the USB voltage).</li></ul>',
+                    read_only=True,
+                    pattern='%.3f %unit%'),
         oh_generic_channel_type('DC Voltage', 'Number:ElectricPotential', 'DC Voltage',
-                     description='The DC supply voltage.<br/><br/>There are three possible combinations:<ul><li>Only USB connected: The USB supply voltage will be fed back to the DC input connector. You will read the USB voltage and a slightly lower voltage on the DC input.</li><li>Only DC input connected: The DC voltage will not be fed back to the USB connector. You will read the DC input voltage and the USB voltage will be 0.</li><li>USB and DC input connected: You will read both voltages. In this case the USB supply will be without load, but it will work as backup if you disconnect the DC input (or if the DC input voltage falls below the USB voltage).</li></ul>',
-                     read_only=True,
-                     pattern='%.3f %unit%'),
+                    update_style=None,
+                    description='The DC supply voltage.<br/><br/>There are three possible combinations:<ul><li>Only USB connected: The USB supply voltage will be fed back to the DC input connector. You will read the USB voltage and a slightly lower voltage on the DC input.</li><li>Only DC input connected: The DC voltage will not be fed back to the USB connector. You will read the DC input voltage and the USB voltage will be 0.</li><li>USB and DC input connected: You will read both voltages. In this case the USB supply will be without load, but it will work as backup if you disconnect the DC input (or if the DC input voltage falls below the USB voltage).</li></ul>',
+                    read_only=True,
+                    pattern='%.3f %unit%'),
         oh_generic_channel_type('Power Bricklets', 'Switch', 'Power Bricklets',
-                     description='Enable/disable to turn the power supply of the connected Bricklets on/off.'),
+                    update_style=None,
+                    description='Enable/disable to turn the power supply of the connected Bricklets on/off.'),
         {
             'id': 'Sleep',
             'item_type': 'String',
             'params': [{
+                    'packet': 'Set Sleep Mode',
+                    'element': 'Power Off Delay',
+
                     'name': 'Power Off Delay',
                     'type': 'integer',
                     'default': 60,
@@ -376,6 +383,9 @@ com['openhab'] = {
                     'description': 'Time in seconds before the RPi/Bricklets are powered off.',
                     'groupName': 'sleep'
                 }, {
+                    'packet': 'Set Sleep Mode',
+                    'element': 'Power Off Duration',
+
                     'name': 'Power Off Duration',
                     'type': 'integer',
                     'default': 10,
@@ -384,6 +394,9 @@ com['openhab'] = {
                     'description': 'Duration in seconds that the RPi/Bricklets stay powered off.',
                     'groupName': 'sleep'
                 }, {
+                    'packet': 'Set Sleep Mode',
+                    'element': 'Raspberry Pi Off',
+
                     'name': 'Raspberry Pi Off',
                     'type': 'boolean',
                     'default': 'false',
@@ -392,6 +405,9 @@ com['openhab'] = {
                     'description': 'Raspberry Pi is powered off if enabled.',
                     'groupName': 'sleep'
                 }, {
+                    'packet': 'Set Sleep Mode',
+                    'element': 'Bricklets Off',
+
                     'name': 'Bricklets Off',
                     'type': 'boolean',
                     'default': 'true',
@@ -400,6 +416,9 @@ com['openhab'] = {
                     'description': 'Bricklets are powered off if enabled.',
                     'groupName': 'sleep'
                 }, {
+                    'packet': 'Set Sleep Mode',
+                    'element': 'Enable Sleep Indicator',
+
                     'name': 'Sleep Indicator',
                     'type': 'boolean',
                     'default': 'true',

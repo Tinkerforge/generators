@@ -675,7 +675,7 @@ def input_channel(idx):
             'id': 'Input Pin {}'.format(idx),
             'label': 'Input Value Pin {}'.format(idx),
 
-            'type': 'Input Pin',
+            'type': 'Input Value',
 
             'getters': [{
                 'packet': 'Get Value',
@@ -686,9 +686,8 @@ def input_channel(idx):
                 'packet': 'Input Value',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
-            # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
             'init_code':"""this.setConfiguration({0}, 'i', cfg.pinConfiguration{0} % 2 == 1);
-            this.setInputValueCallbackConfiguration({0}, 1000, false);""".format(idx),
+            this.setInputValueCallbackConfiguration({0}, channelCfg.updateInterval, false);""".format(idx),
             'dispose_code': """this.setInputValueCallbackConfiguration({}, 0, false);""".format(idx),
     }
 
@@ -759,6 +758,7 @@ def edge_count_channel(index):
 
 def pin_config(idx):
     return {
+            'virtual': True,
             'name': 'Pin Configuration {}'.format(idx),
             'type': 'integer',
             'options': [
@@ -782,16 +782,21 @@ com['openhab'] = {
     'params': params,
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Input Pin', 'Switch', 'Input Value',
-                     description='The logic level that is currently measured on the pin.',
-                     read_only=True),
+        oh_generic_channel_type('Input Value', 'Switch', 'Input Value',
+                    update_style='Callback Configuration',
+                    description='The logic level that is currently measured on the pin.',
+                    read_only=True),
         oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
-                     description='The logic level that is currently set on the pin.',
-                     read_only=False),
+                    update_style=None,
+                    description='The logic level that is currently set on the pin.',
+                    read_only=False),
         {
             'id': 'Monoflop',
             'item_type': 'String',
             'params': [{
+                'packet': 'Set Monoflop',
+                'element': 'Time',
+
                 'name': 'Monoflop Duration',
                 'type': 'integer',
                 'default': 1000,
@@ -803,6 +808,9 @@ com['openhab'] = {
                 'description': 'The time (in ms) that the pin should hold the configured value.',
             },
             {
+                'packet': 'Set Monoflop',
+                'element': 'Value',
+
                 'name': 'Monoflop Value',
                 'type': 'boolean',
                 'default': 'true',
@@ -815,9 +823,13 @@ com['openhab'] = {
             'command_options': [('Trigger', 'TRIGGER')]
         },
     oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+        update_style=None,
         description='The current value of the edge counter for the selected channel',
         read_only=True,
         params=[{
+            'packet': 'Set Edge Count Configuration',
+            'element': 'Edge Type',
+
             'name': 'Edge Type',
             'type': 'integer',
             'options':[('Rising', 0),
@@ -829,6 +841,9 @@ com['openhab'] = {
             'label': 'Edge Type',
             'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
         },{
+            'packet': 'Set Edge Count Configuration',
+            'element': 'Debounce',
+
             'name': 'Debounce',
             'type': 'integer',
 
@@ -837,6 +852,9 @@ com['openhab'] = {
             'label': 'Debounce Time',
             'description': 'The debounce time in ms.',
         },{
+            'packet': 'Get Edge Count',
+            'element': 'Reset Counter',
+
             'name': 'Reset On Read',
             'type': 'boolean',
 

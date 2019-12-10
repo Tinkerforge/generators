@@ -332,15 +332,7 @@ com['openhab'] = {
 
             'label': 'Debounce Time',
             'description': 'The debounce time in ms.',
-        }, {
-            'name': 'Reset On Read',
-            'type': 'boolean',
-
-            'default': 'false',
-
-            'label': 'Reset Edge Count On Update',
-            'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
-    }],
+        }],
     'channels': [
         {
             'id': 'Edge Count',
@@ -376,20 +368,36 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+                    update_style=None,
                     description='The current value of the edge counter.',
                     read_only=True,
                     pattern='%d',
                     params=[{
+                        'packet': 'Set Edge Interrupt',
+                        'element': 'Edges',
+
                         'name': 'Refresh Count',
                         'type': 'integer',
 
                         'default': 1,
 
                         'label': 'Refresh Value Every N-th Edge.',
+                    }, {
+                        'packet': 'Get Edge Count',
+                        'element': 'Reset Counter',
+
+                        'name': 'Reset On Read',
+                        'type': 'boolean',
+
+                        'default': 'false',
+
+                        'label': 'Reset Edge Count On Update',
+                        'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
                     }]),
         oh_generic_channel_type('Magnetic Field Detected', 'Switch', 'Magnetic Field Detected',
-                     description='Enabled if a magnetic field of 3.5 millitesla or greater is detected.',
-                     read_only=True),
+                    update_style=None,
+                    description='Enabled if a magnetic field of 3.5 millitesla or greater is detected.',
+                    read_only=True),
     ],
     'actions': ['Get Value', 'Get Edge Count', 'Get Edge Count Config']
 }

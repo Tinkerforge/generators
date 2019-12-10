@@ -708,13 +708,15 @@ this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency.shortValue());"""
     ],
     'channel_types': [
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
-                     description='Temperature of the connected sensor',
-                     read_only=True,
-                     pattern='%.2f %unit%',
-                     min_=-246,
-                     max_=849),
+                    update_style='Callback Period',
+                    description='Temperature of the connected sensor',
+                    read_only=True,
+                    pattern='%.2f %unit%',
+                    min_=-246,
+                    max_=849),
         oh_generic_channel_type('Sensor Connected', 'Switch', 'Sensor Connected',
-                     description='Indicates if the sensor is connected correctly. If this is disabled, there is either no Pt100 or Pt1000 sensor connected, the sensor is connected incorrectly or the sensor itself is faulty.'),
+                    update_style=None,
+                    description='Indicates if the sensor is connected correctly. If this is disabled, there is either no Pt100 or Pt1000 sensor connected, the sensor is connected incorrectly or the sensor itself is faulty.'),
     ],
     'actions': ['Get Temperature', 'Is Sensor Connected', 'Get Wire Mode', 'Get Resistance', 'Get Noise Rejection Filter']
 }

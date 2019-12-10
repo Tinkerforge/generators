@@ -425,11 +425,12 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'NOT USED',
-                     description='Measured current between 0 and 0.022505322A (22.5mA)',
-                     read_only=True,
-                     pattern='%.6f %unit%',
-                     min_=0,
-                     max_=0.022505322)
+                    update_style='Callback Period',
+                    description='Measured current between 0 and 0.022505322A (22.5mA)',
+                    read_only=True,
+                    pattern='%.6f %unit%',
+                    min_=0,
+                    max_=0.022505322)
     ],
     'actions': ['Get Current', 'Get Sample Rate']
 }

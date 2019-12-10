@@ -833,9 +833,14 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('High Contrast Image', 'Image', 'High Contrast Image',
+                    update_style=None,
                     description="The current high contrast image. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Thermal_Imaging.html#high-contrast-image-vs-temperature-image\\\">here</a> for the difference between High Contrast and Temperature Image. If you don't know what to use the High Contrast Image is probably right for you.",
                     read_only=True,
                     params=[{
+                            'packet': 'Set High Contrast Config',
+                            'element': 'Region Of Interest',
+                            'element_index': 0,
+
                             'name': 'High Contrast Column Start',
                             'type': 'integer',
                             'min': 0,
@@ -845,6 +850,10 @@ com['openhab'] = {
                             'label': 'High Contrast Column Start',
                             'description': 'First column of the high contrast region of interest.',
                         }, {
+                            'packet': 'Set High Contrast Config',
+                            'element': 'Region Of Interest',
+                            'element_index': 1,
+
                             'name': 'High Contrast Row Start',
                             'type': 'integer',
                             'min': 0,
@@ -854,6 +863,10 @@ com['openhab'] = {
                             'label': 'High Contrast Row Start',
                             'description': 'First row of the high contrast region of interest.',
                         }, {
+                            'packet': 'Set High Contrast Config',
+                            'element': 'Region Of Interest',
+                            'element_index': 2,
+
                             'name': 'High Contrast Column End',
                             'type': 'integer',
                             'min': 0,
@@ -863,6 +876,10 @@ com['openhab'] = {
                             'label': 'High Contrast Column End',
                             'description': 'Last column of the high contrast region of interest.',
                         }, {
+                            'packet': 'Set High Contrast Config',
+                            'element': 'Region Of Interest',
+                            'element_index': 3,
+
                             'name': 'High Contrast Row End',
                             'type': 'integer',
                             'min': 0,
@@ -872,6 +889,9 @@ com['openhab'] = {
                             'label': 'High Contrast Row End',
                             'description': 'Last row of the high contrast region of interest.',
                         }, {
+                            'packet': 'Set High Contrast Config',
+                            'element': 'Dampening Factor',
+
                             'name': 'Dampening Factor',
                             'type': 'integer',
                             'min': 0,
@@ -881,6 +901,10 @@ com['openhab'] = {
                             'label': 'Dampening Factor',
                             'description': 'This parameter is the amount of temporal dampening applied to the HEQ (history equalization) transformation function. An IIR filter of the form:<pre>(N / 256) * previous + ((256 - N) / 256) * current</pre>is applied, and the HEQ dampening factor represents the value N in the equation, i.e., a value that applies to the amount of influence the previous HEQ transformation function has on the current function. The lower the value of N the higher the influence of the current video frame whereas the higher the value of N the more influence the previous damped transfer function has.',
                         }, {
+                            'packet': 'Set High Contrast Config',
+                            'element': 'Clip Limit',
+                            'element_index': 0,
+
                             'name': 'Clip Limit Low',
                             'type': 'integer',
                             'min': 0,
@@ -889,7 +913,11 @@ com['openhab'] = {
 
                             'label': 'AGC HEQ Clip Limit Low',
                             'description': 'This parameter defines an artificial population that is added to every non-empty histogram bin. In other words, if the Clip Limit Low is set to L, a bin with an actual population of X will have an effective population of L + X. Any empty bin that is nearby a populated bin will be given an artificial population of L. The effect of higher values is to provide a more linear transfer function; lower values provide a more non-linear (equalized) transfer function.',
-                        },  {
+                        }, {
+                            'packet': 'Set High Contrast Config',
+                            'element': 'Clip Limit',
+                            'element_index': 1,
+
                             'name': 'Clip Limit High',
                             'type': 'integer',
                             'min': 0,
@@ -898,7 +926,10 @@ com['openhab'] = {
 
                             'label': 'AGC HEQ Clip Limit High',
                             'description': 'This parameter defines the maximum number of pixels allowed to accumulate in any given histogram bin. Any additional pixels in a given bin are clipped. The effect of this parameter is to limit the influence of highly-populated bins on the resulting HEQ transformation function.',
-                        },   {
+                        }, {
+                            'packet': 'Set High Contrast Config',
+                            'element': 'Empty Counts',
+
                             'name': 'Empty Counts',
                             'type': 'integer',
                             'min': 0,
@@ -910,12 +941,15 @@ com['openhab'] = {
                         },
                     ]),
         oh_generic_channel_type('Temperature Image', 'Image', 'Temperature Image',
+                    update_style=None,
                     description="The current temperature image. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Thermal_Imaging.html#high-contrast-image-vs-temperature-image\\\">here</a> for the difference between High Contrast and Temperature Image. If you don't know what to use the High Contrast Image is probably right for you.",
                     read_only=True),
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'NOT USED',
+                    update_style=None,
                     pattern='%.3f %unit%',
                     read_only=True),
         oh_generic_channel_type('Spotmeter ROI Pixel Count', 'Number:Dimensionless', 'Spotmeter ROI Pixel Count',
+                    update_style=None,
                     pattern='%.3f %unit%',
                     read_only=True),
         {
@@ -933,11 +967,13 @@ com['openhab'] = {
                         ('Complete', 3)]
         },
         oh_generic_channel_type('Shutter Lockout', 'Switch', 'Shutter Lockout',
-                     description='If enabled, shutter is locked out because temperature is outside -10°C to +65°C',
-                     read_only=True),
+                    update_style=None,
+                    description='If enabled, shutter is locked out because temperature is outside -10°C to +65°C',
+                    read_only=True),
         oh_generic_channel_type('Overtemperature Shutdown Imminent', 'Switch', 'Overtemperature Shutdown Imminent',
-                     description='Gets enabled 10 seconds before shutdown.',
-                     read_only=True),
+                    update_style=None,
+                    description='Gets enabled 10 seconds before shutdown.',
+                    read_only=True),
     ],
     'actions': ['Get High Contrast Image', 'Get Temperature Image', 'Get Statistics', 'Get Resolution', 'Get Spotmeter Config', 'Get High Contrast Config']
 }

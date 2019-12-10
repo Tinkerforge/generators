@@ -280,15 +280,7 @@ com['openhab'] = {
 
             'label': 'Debounce Time',
             'description': 'The debounce time in µs is the minimum time between two count increments.',
-        }, {
-            'name': 'Reset On Read',
-            'type': 'boolean',
-
-            'default': 'false',
-
-            'label': 'Reset Counter On Update',
-            'description': 'Enabling this will reset the counter after OpenHAB reads its value. Use this if you want relative counts per update.',
-    }],
+        }],
     'channels': [
         {
             'id': 'Counter',
@@ -301,7 +293,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Counter',
-                'packet_params': ['cfg.resetOnRead'],
+                'packet_params': ['channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 
             'callbacks': [{
@@ -316,13 +308,26 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Counter', 'Number:Dimensionless', 'Counter',
+                    update_style='Callback Configuration',
                     description='The current value of the counter.',
                     read_only=True,
-                    pattern='%d'),
+                    pattern='%d',
+                    params=[{
+                        'packet': 'Get Counter',
+                        'element': 'Reset Counter',
+                        'name': 'Reset On Read',
+                        'type': 'boolean',
+
+                        'default': 'false',
+
+                        'label': 'Reset Counter On Update',
+                        'description': 'Enabling this will reset the counter after OpenHAB reads its value. Use this if you want relative counts per update.',
+                    }]),
         oh_generic_channel_type('Magnetic Flux Density', 'Number:MagneticFluxDensity', 'Magnetic Flux Density',
-                     description='Measured magnetic flux density.',
-                     pattern='%.6f',
-                     read_only=True),
+                    update_style='Callback Configuration',
+                    description='Measured magnetic flux density.',
+                    pattern='%.6f',
+                    read_only=True),
     ],
     'actions': ['Get Magnetic Flux Density', 'Get Counter', 'Get Counter Config']
 }

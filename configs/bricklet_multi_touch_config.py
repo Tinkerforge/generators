@@ -267,6 +267,10 @@ def electrode_channel(idx):
 
 def electrode_config(idx):
     return {
+            'packet': 'Set Electrode Config',
+            'element': 'Enabled Electrodes',
+            'element_index': idx,
+
             'name': 'Electrode {} Enabled'.format(idx),
             'type': 'boolean',
             'default': 'true',
@@ -291,6 +295,10 @@ com['openhab'] = {
             'label': 'Sensitivity',
             'description': 'The sensitivity of the electrodes. An electrode with a high sensitivity will register a touch earlier then an electrode with a low sensitivity.<br/><br/>If you build a big electrode you might need to decrease the sensitivity, since the area that can be charged will get bigger. If you want to be able to activate an electrode from further away you need to increase the sensitivity.'
         }, {
+            'packet': 'Set Electrode Config',
+            'element': 'Enabled Electrodes',
+            'element_index': 12,
+
             'name': 'Proximity Enabled',
             'type': 'boolean',
             'default': 'true',
@@ -299,7 +307,9 @@ com['openhab'] = {
             'description': "True enables the proximity feature, false disables it. It is recommended that you disable the proximity feature if not needed. This will reduce the amount of traffic that is produced.",
         }
     ] + [electrode_config(i) for i in range(0, 12)],
-    'init_code': """this.setElectrodeSensitivity(cfg.sensitivity.shortValue());this.recalibrate();""",
+    'init_code': """this.setElectrodeSensitivity(cfg.sensitivity.shortValue());
+        this.recalibrate();
+        this.setElectrodeConfig({} | (cfg.proximityEnabled ? 1 << 12 : 0));""".format(' | '.join(['(cfg.electrode{0}Enabled ? 1 << {0} : 0)'.format(i) for i in range(0, 12)])),
     'channels': [electrode_channel(i) for i in range(0, 12)] + [
         {
             'predicate': 'cfg.proximityEnabled',
@@ -324,7 +334,9 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Electrode', 'Switch', 'NOT USED', description='The current touch state. An electrode is already counted as touched if a finger is nearly touching the electrode. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.'),
+        oh_generic_channel_type('Electrode', 'Switch', 'NOT USED',
+                    update_style=None,
+                    description='The current touch state. An electrode is already counted as touched if a finger is nearly touching the electrode. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.'),
         {
             'id': 'Recalibrate',
             'item_type': 'String',

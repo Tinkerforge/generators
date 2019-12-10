@@ -302,15 +302,16 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('UV Light', 'UV Index', 'SmartHomeUnits.ONE', divisor=250.0),
+        oh_generic_old_style_channel('UV Light', 'UV Light', 'SmartHomeUnits.ONE', divisor=250.0),
     ],
     'channel_types': [
-        oh_generic_channel_type('UV Index', 'Number:Dimensionless', 'UV Index',
-                     description='Measured UV Index',
-                     read_only=True,
-                     pattern='%.3f %unit%',
-                     min_=0,
-                     max_=50),
+        oh_generic_channel_type('UV Light', 'Number:Dimensionless', 'UV Index',
+                    update_style='Callback Period',
+                    description='Measured UV Index',
+                    read_only=True,
+                    pattern='%.3f %unit%',
+                    min_=0,
+                    max_=50),
     ],
     'actions': ['Get UV Light']
 }

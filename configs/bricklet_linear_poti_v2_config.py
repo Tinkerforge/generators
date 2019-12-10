@@ -79,6 +79,7 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Position', 'Number:Dimensionless', 'Position',
+                    update_style='Callback Configuration',
                     description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).',
                     read_only=True,
                     pattern='%d %unit%',

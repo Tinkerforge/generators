@@ -213,11 +213,15 @@ com['openhab'] = {
     }],
     'channel_types': [
         oh_generic_channel_type('Relay', 'Switch', 'NOT USED',
-                     description='NOT USED'),
+                    update_style=None,
+                    description='NOT USED'),
         {
             'id': 'Monoflop',
             'item_type': 'String',
             'params': [{
+                'packet': 'Set Monoflop',
+                'element': 'Time',
+
                 'name': 'Monoflop Duration',
                 'type': 'integer',
                 'default': 1000,
@@ -229,6 +233,9 @@ com['openhab'] = {
                 'description': 'The time (in ms) that the relay should hold the configured value.',
             },
             {
+                'packet': 'Set Monoflop',
+                'element': 'State',
+
                 'name': 'Monoflop Value',
                 'type': 'boolean',
                 'default': 'true',

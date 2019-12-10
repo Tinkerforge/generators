@@ -171,10 +171,12 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Beep', 'Number:Time', 'Beep',
-                     description='Beeps with the duration in s.',
-                     pattern='%.3f %unit%'),
+                    update_style=None,
+                    description='Beeps with the duration in s.',
+                    pattern='%.3f %unit%'),
         oh_generic_channel_type('Morse Code', 'String', 'Morse Code',
-                     description="Morse code that will be played by the piezo buzzer. The morse code is given as a string consisting of '.' (dot), '-' (minus) and ' ' (space) for dits, dahs and pauses. Every other character is ignored. For example: If you set the string '...---...', the piezo buzzer will beep nine times with the durations 'short short short long long long short short short'. The maximum string size is 60."),
+                    update_style=None,
+                    description="Morse code that will be played by the piezo buzzer. The morse code is given as a string consisting of '.' (dot), '-' (minus) and ' ' (space) for dits, dahs and pauses. Every other character is ignored. For example: If you set the string '...---...', the piezo buzzer will beep nine times with the durations 'short short short long long long short short short'. The maximum string size is 60."),
     ],
     'actions': ['Beep', 'Morse Code']
 }

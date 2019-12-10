@@ -384,6 +384,9 @@ def current_channel(index):
 
 def led_status_config():
     return [{
+            'packet': 'Set Channel LED Config',
+            'element': 'Config',
+
             'name': 'LED Config',
             'type': 'integer',
             'options': [('Off', 0),
@@ -397,6 +400,9 @@ def led_status_config():
             'description': """Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Show Channel Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the measured value.""",
         },
         {
+            'packet': 'Set Channel LED Status Config',
+            'element': 'Config',
+
             'name': 'LED Status Mode',
             'type': 'integer',
             'options': [('Threshold', 0),
@@ -408,6 +414,9 @@ def led_status_config():
             'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
         {
+            'packet': 'Set Channel LED Status Config',
+            'element': 'Min',
+
             'name': 'LED Status Minimum',
             'type': 'integer',
             'min': '-35',
@@ -419,6 +428,9 @@ def led_status_config():
             'description': 'See LED Status Mode for further explaination.',
         },
         {
+            'packet': 'Set Channel LED Status Config',
+            'element': 'Max',
+
             'name': 'LED Status Maximum',
             'type': 'integer',
             'min': '-35',
@@ -475,12 +487,13 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'NOT USED',
-                     description='Measured current between 0 and 0.022505322A (22.5mA)',
-                     read_only=True,
-                     pattern='%.6f %unit%',
-                     min_=0,
-                     max_=0.022505322,
-                     params=led_status_config())
+                    update_style='Callback Configuration',
+                    description='Measured current between 0 and 0.022505322A (22.5mA)',
+                    read_only=True,
+                    pattern='%.6f %unit%',
+                    min_=0,
+                    max_=0.022505322,
+                    params=led_status_config())
     ],
     'actions': ['Get Current', 'Get Channel LED Config', 'Get Channel LED Status Config', 'Get Sample Rate', 'Get Gain']
 }

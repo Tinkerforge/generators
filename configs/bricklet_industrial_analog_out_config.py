@@ -271,6 +271,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
     'params': [
         {
+            'virtual': True,
             'name': 'Control Voltage',
             'type': 'integer',
             'options': [
@@ -367,20 +368,23 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Enabled', 'Switch', 'Output Enabled',
-                     description='Enables/disables the output of voltage and current.',
-                     read_only=False),
+                    update_style=None,
+                    description='Enables/disables the output of voltage and current.',
+                    read_only=False),
         oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Output Voltage',
-                     description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.',
-                     read_only=False,
-                     pattern='%.3f %unit%',
-                     min_=0,
-                     max_=10),
+                    update_style=None,
+                    description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.',
+                    read_only=False,
+                    pattern='%.3f %unit%',
+                    min_=0,
+                    max_=10),
         oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Output Current',
-                     description='The output current in A. The output current and output voltage are linked. Changing the output current also changes the output voltage.',
-                     read_only=False,
-                     pattern='%.6f %unit%',
-                     min_=0,
-                     max_=0.024)
+                    update_style=None,
+                    description='The output current in A. The output current and output voltage are linked. Changing the output current also changes the output voltage.',
+                    read_only=False,
+                    pattern='%.6f %unit%',
+                    min_=0,
+                    max_=0.024)
     ],
     'actions': ['Is Enabled', 'Get Voltage', 'Get Current', 'Get Configuration']
 }

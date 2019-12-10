@@ -372,11 +372,12 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Distance', 'Number:Dimensionless', 'Distance',
-                     description='The current distance value measured by the sensor. The value has a range of 0 to 4095. A small value corresponds to a small distance, a big value corresponds to a big distance. The relation between the measured distance value and the actual distance is affected by the 5V supply voltage (deviations in the supply voltage result in deviations in the distance values) and is non-linear (resolution is bigger at close range).',
-                     read_only=True,
-                     pattern='%.0f %unit%',
-                     min_=0,
-                     max_=4095)
+                    update_style='Callback Period',
+                    description='The current distance value measured by the sensor. The value has a range of 0 to 4095. A small value corresponds to a small distance, a big value corresponds to a big distance. The relation between the measured distance value and the actual distance is affected by the 5V supply voltage (deviations in the supply voltage result in deviations in the distance values) and is non-linear (resolution is bigger at close range).',
+                    read_only=True,
+                    pattern='%.0f %unit%',
+                    min_=0,
+                    max_=4095)
     ],
     'actions': ['Get Distance Value', 'Get Moving Average']
 }

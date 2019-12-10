@@ -850,13 +850,22 @@ com['openhab'] = {
             'default': 'true',
             'label': 'Enable SBAS',
             'description': 'If <a href=\\\"https://en.wikipedia.org/wiki/GNSS_augmentation#Satellite-based_augmentation_system\\\">SBAS</a> is enabled, the position accuracy increases (if SBAS satellites are in view), but the update rate is limited to 5Hz. With SBAS disabled the update rate is increased to 10Hz.</br></br>By default SBAS is enabled and the update rate is 5Hz.'
-        }],
+        },
+        update_interval('Set Status Callback Period', 'Period', 'Status', 'the status'),
+        update_interval('Set Altitude Callback Period', 'Period', 'Altitude', 'the altitude and geodial separation'),
+        update_interval('Set Motion Callback Period', 'Period', 'Motion', 'the course and speed')],
     'init_code': """this.setFixLEDConfig(cfg.fixLEDConfig);
-    this.setSBASConfig(cfg.enableSBAS ? 0 : 1);""",
+        this.setSBASConfig(cfg.enableSBAS ? 0 : 1);
+        this.setStatusCallbackPeriod(cfg.statusUpdateInterval);
+        this.setAltitudeCallbackPeriod(cfg.altitudeUpdateInterval);
+        this.setMotionCallbackPeriod(cfg.motionUpdateInterval);""",
+    'dispose_code': """this.setStatusCallbackPeriod(0);
+        this.setAltitudeCallbackPeriod(0);
+        this.setMotionCallbackPeriod(0);""",
     'channels': [
         {
             'id': 'Location',
-            'type': 'Location',
+            'type': 'Coordinates',
             'callbacks': [{
                 'packet': 'Coordinates',
                 'transform': "new PointType(new DecimalType(latitude / 1000000.0 * (ns == 'N' ? 1 : -1)), new DecimalType(longitude / 1000000.0 * (ew == 'E' ? 1 : -1)))"}],
@@ -877,11 +886,9 @@ com['openhab'] = {
                 'transform': "hasFix ? OnOffType.ON : OnOffType.OFF"}],
 
             'is_trigger_channel': False,
-            'init_code': 'this.setStatusCallbackPeriod(channelCfg.updateInterval);',
-            'dispose_code': 'this.setStatusCallbackPeriod(0);'
         }, {
             'id': 'Satellites In View',
-            'type': 'SatellitesInView',
+            'type': 'Satellites In View',
 
             'getters': [{
                 'packet': 'Get Status',
@@ -907,11 +914,9 @@ com['openhab'] = {
                 'transform': "new QuantityType(altitude / 100.0, SIUnits.METRE)"}],
 
             'is_trigger_channel': False,
-            'init_code': 'this.setAltitudeCallbackPeriod(channelCfg.updateInterval);',
-            'dispose_code': 'this.setAltitudeCallbackPeriod(0);'
         },  {
             'id': 'Geoidal Separation',
-            'type': 'GeoidalSeparation',
+            'type': 'Geoidal Separation',
 
             'getters': [{
                 'packet': 'Get Altitude',
@@ -937,8 +942,6 @@ com['openhab'] = {
                 'transform': "new QuantityType(course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
 
             'is_trigger_channel': False,
-            'init_code': 'this.setMotionCallbackPeriod(channelCfg.updateInterval);',
-            'dispose_code': 'this.setMotionCallbackPeriod(0);'
         },  {
             'id': 'Speed',
             'type': 'Speed',
@@ -955,7 +958,7 @@ com['openhab'] = {
             'is_trigger_channel': False
         },  {
             'id': 'Date Time',
-            'type': 'DateTime',
+            'type': 'Date Time',
 
             'getters': [{
                 'packet': 'Get Date Time',
@@ -992,36 +995,45 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Location', 'Location', 'Location',
-                     description='The location as determined by the bricklet.',
-                     read_only=True),
+        oh_generic_channel_type('Coordinates', 'Location', 'Location',
+                    update_style='Callback Period',
+                    description='The location as determined by the bricklet.',
+                    read_only=True),
         oh_generic_channel_type('Fix', 'Switch', 'Fix',
-                     description='If enabled, a fix is currently available',
-                     read_only=True),
-        oh_generic_channel_type('SatellitesInView', 'Number:Dimensionless', 'Satellites In View',
-                     description='The number of satellites that are in view.',
-                     read_only=True,
-                     pattern='%d %unit%'),
+                    update_style=None,
+                    description='If enabled, a fix is currently available',
+                    read_only=True),
+        oh_generic_channel_type('Satellites In View', 'Number:Dimensionless', 'Satellites In View',
+                    update_style=None,
+                    description='The number of satellites that are in view.',
+                    read_only=True,
+                    pattern='%d %unit%'),
         oh_generic_channel_type('Altitude', 'Number:Length', 'Altitude',
-                     description='The current altitude',
-                     read_only=True,
-                     pattern='%.2f %unit%'),
-        oh_generic_channel_type('GeoidalSeparation', 'Number:Length', 'Geoidal Separation',
-                     description='The geoidal separation corresponding to the current altitude',
-                     read_only=True,
-                     pattern='%.2f %unit%'),
+                    update_style=None,
+                    description='The current altitude',
+                    read_only=True,
+                    pattern='%.2f %unit%'),
+        oh_generic_channel_type('Geoidal Separation', 'Number:Length', 'Geoidal Separation',
+                    update_style=None,
+                    description='The geoidal separation corresponding to the current altitude',
+                    read_only=True,
+                    pattern='%.2f %unit%'),
         oh_generic_channel_type('Course', 'Number:Angle', 'Course',
-                     description='The current course. A course of 0° means the Bricklet is traveling north bound and 90° means it is traveling east bound. Please note that this only returns useful values if an actual movement is present.',
-                     read_only=True,
-                     pattern='%.2f %unit%'),
+                    update_style=None,
+                    description='The current course. A course of 0° means the Bricklet is traveling north bound and 90° means it is traveling east bound. Please note that this only returns useful values if an actual movement is present.',
+                    read_only=True,
+                    pattern='%.2f %unit%'),
         oh_generic_channel_type('Speed', 'Number:Speed', 'Speed',
-                     description='The current speed. Please note that this only returns useful values if an actual movement is present.',
-                     read_only=True,
-                     pattern='%.2f'),
-        oh_generic_channel_type('DateTime', 'DateTime', 'Date Time',
-                     description='The current date and time.',
-                     read_only=True),
+                    update_style=None,
+                    description='The current speed. Please note that this only returns useful values if an actual movement is present.',
+                    read_only=True,
+                    pattern='%.2f'),
+        oh_generic_channel_type('Date Time', 'DateTime', 'Date Time',
+                    update_style='Callback Period',
+                    description='The current date and time.',
+                    read_only=True),
         oh_generic_channel_type('Restart', 'String', 'Restart',
+                    update_style=None,
                     description="Restarts the GPS Bricklet, the following restart types are available:<ul><li>Hot start (use all available data in the NV store)</li> <li>Warm start (don't use ephemeris at restart)</li> <li>Cold start (don't use time, position, almanacs and ephemeris at restart)</li> <li>Factory reset (clear all system/user configurations at restart)</li></ul>",
                     command_options=[('Hot Start', '0'),
                                      ('Warm Start', '1'),

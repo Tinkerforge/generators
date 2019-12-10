@@ -327,7 +327,8 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('LED Values', 'String', 'LED Values',
-                     description="The RGB(W) values for the LEDs.<br/><br/>Command format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...<br/><br/>The data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.<br/><br/> For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue.")
+                    update_style=None,
+                    description="The RGB(W) values for the LEDs.<br/><br/>Command format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...<br/><br/>The data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.<br/><br/> For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue.")
     ],
     'actions': ['Get Red', 'Get Green', 'Get Blue', 'Set Red', 'Set Green', 'Set Blue', 'Get Frame Duration', 'Draw Frame', 'Get Supply Voltage']
 }

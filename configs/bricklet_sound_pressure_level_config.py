@@ -351,13 +351,14 @@ com['openhab'] = {
     'init_code': """
 this.setConfiguration(cfg.fftSize, cfg.weighting);""",
     'channels': [
-        oh_generic_channel('Decibel', 'Sound Pressure', 'SmartHomeUnits.DECIBEL', divisor=10.0),
+        oh_generic_channel('Decibel', 'Decibel', 'SmartHomeUnits.DECIBEL', divisor=10.0),
     ],
     'channel_types': [
-        oh_generic_channel_type('Sound Pressure', 'Number:Dimensionless', 'Sound Pressure',
-                     description='Measured Sound Pressure',
-                     read_only=True,
-                     pattern='%.1f %unit%'),
+        oh_generic_channel_type('Decibel', 'Number:Dimensionless', 'Sound Pressure',
+                    update_style='Callback Configuration',
+                    description='Measured Sound Pressure',
+                    read_only=True,
+                    pattern='%.1f %unit%'),
     ],
     'actions': ['Get Decibel', 'Get Spectrum', 'Get Configuration']
 }

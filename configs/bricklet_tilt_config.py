@@ -168,12 +168,12 @@ com['examples'].append({
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
+    'init_code':"""this.enableTiltStateCallback();""",
+    'dispose_code': """this.disableTiltStateCallback();""",
     'channels': [
         {
             'id': 'Tilted',
             'type': 'Tilted',
-            'init_code':"""this.enableTiltStateCallback();""",
-            'dispose_code': """this.disableTiltStateCallback();""",
 
             'getters': [{
                 'packet': 'Get Tilt State',
@@ -184,8 +184,6 @@ com['openhab'] = {
         }, {
             'id': 'Vibrating',
             'type': 'Vibrating',
-            'init_code':"""this.enableTiltStateCallback();""",
-            'dispose_code': """this.disableTiltStateCallback();""",
 
             'getters': [{
                 'packet': 'Get Tilt State',
@@ -197,11 +195,13 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Tilted', 'Switch', 'Tilted',
-                     description='The current tilt state. Enabled if tilted, disabled if closed or vibrating.',
-                     read_only=True),
+                    update_style=None,
+                    description='The current tilt state. Enabled if tilted, disabled if closed or vibrating.',
+                    read_only=True),
         oh_generic_channel_type('Vibrating', 'Switch', 'Vibrating',
-                     description='The current vibration state. Enabled if vibration is detected, disabled if not. Vibration can only be detected if the bricklet is not tilted.',
-                     read_only=True)
+                    update_style=None,
+                    description='The current vibration state. Enabled if vibration is detected, disabled if not. Vibration can only be detected if the bricklet is not tilted.',
+                    read_only=True)
     ],
     'actions': ['Get Tilt State']
 }

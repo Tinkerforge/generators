@@ -374,11 +374,12 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
-                     description='Measured temperature',
-                     read_only=True,
-                     pattern='%.1f %unit%',
-                     min_=-25,
-                     max_=85),
+                    update_style='Callback Period',
+                    description='Measured temperature',
+                    read_only=True,
+                    pattern='%.1f %unit%',
+                    min_=-25,
+                    max_=85),
     ],
     'actions': ['Get Temperature', 'Get I2C Mode']
 }

@@ -437,28 +437,21 @@ com['examples'].append({
 
 
 date_time_type = oh_generic_channel_type('Date Time', 'DateTime', 'Date Time',
-                     description="The real-time clock handles leap year and inserts the 29th of February accordingly. But leap seconds are not handled. The time is stored as UTC on the clock and converted into your system's timezone when accessed by OpenHAB.",)
+                    update_style=None,
+                    description="The real-time clock handles leap year and inserts the 29th of February accordingly. But leap seconds are not handled. The time is stored as UTC on the clock and converted into your system's timezone when accessed by OpenHAB.",)
 timestamp_type = oh_generic_channel_type('Timestamp', 'Number:Time', 'Timestamp',
+                    update_style=None,
                     description="the current date and the time of the real-time clock converted to seconds. The timestamp has an effective resolution of hundredths of a second.",
                     read_only=True,
                     pattern='%.2f %unit%')
 
-date_time_type['params'] = []
-timestamp_type['params'] = []
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['java.time.ZonedDateTime', 'java.time.ZoneId', 'org.eclipse.smarthome.core.library.types.DateTimeType'],
     'param_groups': oh_generic_channel_param_groups(),
-    'params': [{
-        'name': 'Update Interval',
-        'type': 'integer',
-        'unit': 'ms',
-        'label': 'Update Interval',
-        'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
-        'default': 1000,
-        'groupName': 'update_intervals'
-    }],
-    'init_code':"""this.setDateTimeCallbackConfiguration(cfg.updateInterval);""",
+    'params': [
+        update_interval('Set Date Time Callback Configuration', 'Period', 'Date Time', 'the date time and timestamp'),
+    ],
+    'init_code':"""this.setDateTimeCallbackConfiguration(cfg.dateTimeUpdateInterval);""",
     'dispose_code': """this.setDateTimeCallbackConfiguration(0);""",
     'channels': [
         {

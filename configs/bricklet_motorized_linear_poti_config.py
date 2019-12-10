@@ -246,21 +246,6 @@ com['examples'].append({
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
-    'params': [{
-            'name': 'Smooth Drive Mode',
-            'type': 'boolean',
-            'default': 'false',
-
-            'label': 'Smooth Drive Mode',
-            'description': ' Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.',
-        }, {
-            'name': 'Hold Position',
-            'type': 'boolean',
-            'default': 'false',
-
-            'label': 'Hold Position',
-            'description': 'If you enable the hold position flag, the position will automatically be retained. If a user changes the position of the potentiometer, it will automatically drive back to the original set point.<br/><br/>If the hold position flag disabled, the potentiometer can be changed again by the user as soon as the set point was reached once.',
-        }],
     'channels': [
         oh_generic_channel('Position', 'Position', 'SmartHomeUnits.ONE'),
         {
@@ -276,12 +261,12 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set {title_words}',
-                'packet_params': ['cmd.intValue()', 'cfg.smoothDriveMode ? 1 : 0', 'cfg.holdPosition']
+                'packet_params': ['cmd.intValue()', 'channelCfg.smoothDriveMode ? 1 : 0', 'channelCfg.holdPosition']
             }],
             'setter_command_type': 'Number',
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 1.0,
-            'is_trigger_channel': False
+            'is_trigger_channel': False,
         }, {
             'id': 'Position Reached',
             'type': 'system.trigger',
@@ -298,16 +283,39 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Position', 'Number:Dimensionless', 'Position',
+                    update_style='Callback Configuration',
                     description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).',
                     read_only=True,
                     pattern='%d %unit%',
                     min_=0,
                     max_=100),
         oh_generic_channel_type('Motor Position', 'Number:Dimensionless', 'Motor Position',
+                    update_style=None,
                     description='The motor position of the potentiometer. The value is between 0 (slider down) and 100 (slider up).',
                     pattern='%d %unit%',
                     min_=0,
-                    max_=100)
+                    max_=100,
+                    params= [{
+                        'packet': 'Set Motor Position',
+                        'element': 'Drive Mode',
+
+                        'name': 'Smooth Drive Mode',
+                        'type': 'boolean',
+                        'default': 'false',
+
+                        'label': 'Smooth Drive Mode',
+                        'description': ' Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.',
+                    }, {
+                        'packet': 'Set Motor Position',
+                        'element': 'Hold Position',
+
+                        'name': 'Hold Position',
+                        'type': 'boolean',
+                        'default': 'false',
+
+                        'label': 'Hold Position',
+                        'description': 'If you enable the hold position flag, the position will automatically be retained. If a user changes the position of the potentiometer, it will automatically drive back to the original set point.<br/><br/>If the hold position flag disabled, the potentiometer can be changed again by the user as soon as the set point was reached once.',
+                    }])
     ],
     'actions': ['Get Position', 'Get Motor Position']
 }

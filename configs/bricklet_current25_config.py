@@ -581,13 +581,15 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Current',
-                     description='The current of the sensor.',
-                     read_only=True,
-                     pattern='%.3f %unit%',
-                     min_=-25,
-                     max_=25),
+                    update_style='Callback Period',
+                    description='The current of the sensor.',
+                    read_only=True,
+                    pattern='%.3f %unit%',
+                    min_=-25,
+                    max_=25),
         oh_generic_channel_type('Over Current', 'Switch', 'Over Current',
-                     description='Enabled if more than 25A were measured. To reset this value you have to power cycle the Bricklet.'),
+                    update_style=None,
+                    description='Enabled if more than 25A were measured. To reset this value you have to power cycle the Bricklet.'),
     ],
     'actions': ['Get Current', 'Is Over Current', 'Get Analog Value']
 }

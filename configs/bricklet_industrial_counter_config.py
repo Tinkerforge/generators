@@ -687,8 +687,10 @@ channels += [value_channel(i) for i in range(0, 4)]
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
-    'params': [enable_config(i) for i in range(0, 4)] + [update_interval('Counter', 'all counters'), update_interval('Signal Data', 'all signal data')],
-    'init_code': """this.setAllCounterActive(new boolean[4]{{cfg.enableChannel0, cfg.enableChannel1, cfg.enableChannel2, cfg.enableChannel3}});
+    'params': [enable_config(i) for i in range(0, 4)] + \
+              [update_interval('Set All Counter Callback Configuration', 'Period', 'Counter', 'all counters'),
+               update_interval('Set All Signal Data Callback Configuration', 'Period', 'Signal Data', 'all signal data')],
+    'init_code': """this.setAllCounterActive(new boolean[]{cfg.enableChannel0, cfg.enableChannel1, cfg.enableChannel2, cfg.enableChannel3});
     this.setAllCounterCallbackConfiguration(cfg.counterUpdateInterval, true);
     this.setAllSignalDataCallbackConfiguration(cfg.signalDataUpdateInterval, true);""",
     'dispose_code': """this.setAllCounterCallbackConfiguration(0, true);
@@ -696,23 +698,31 @@ com['openhab'] = {
     'channels': channels,
     'channel_types': [
         oh_generic_channel_type('Duty Cycle', 'Number:Dimensionless', 'NOT USED',
-                     description='The signal duty cycle.',
-                     min_=0,
-                     max_=100,
-                     read_only=True),
+                    update_style=None,
+                    description='The signal duty cycle.',
+                    min_=0,
+                    max_=100,
+                    read_only=True),
         oh_generic_channel_type('Period', 'Number:Time', 'NOT USED',
-                     description='The signal period',
-                     read_only=False),
+                    update_style=None,
+                    description='The signal period',
+                    read_only=False),
         oh_generic_channel_type('Frequency', 'Number:Frequency', 'NOT USED',
-                     description='The signal frequency.',
-                     read_only=True),
+                    update_style=None,
+                    description='The signal frequency.',
+                    read_only=True),
         oh_generic_channel_type('Value', 'Switch', 'NOT USED',
-                     description='The signal value',
-                     read_only=False),
+                    update_style=None,
+                    description='The signal value',
+                    read_only=False),
         oh_generic_channel_type('Counter', 'Number:Dimensionless', 'Counter',
+            update_style=None,
             description='The current counter value for the given channel.',
             read_only=False,
             params=[{
+                'packet': 'Set Counter Configuration',
+                'element': 'Count Edge',
+
                 'name': 'Count Edge',
                 'type': 'integer',
                 'options': [('Rising', 0),
@@ -724,6 +734,9 @@ com['openhab'] = {
                 'label': 'Count Edge',
                 'description': 'Counter can count on rising, falling or both edges.',
             }, {
+                'packet': 'Set Counter Configuration',
+                'element': 'Count Direction',
+
                 'name': 'Count Direction',
                 'type': 'integer',
                 'options': [('Up', 0),
@@ -736,6 +749,9 @@ com['openhab'] = {
                 'label': 'Count Direction',
                 'description': 'Counter can count up or down. You can also use another channel as direction input: Channel 0 additionally supports to use the input of channel 2 as direction. You can configure channel 0 to count up if the value of channel 2 is high and down if the value is low and the other way around. Additionally channel 3 can use channel 1 as direction input in the same manner.',
             }, {
+                'packet': 'Set Counter Configuration',
+                'element': 'Duty Cycle Prescaler',
+
                 'name': 'Duty Cycle Prescaler',
                 'type': 'integer',
                 'options': [('1', 0),
@@ -760,6 +776,9 @@ com['openhab'] = {
                 'label': 'Duty Cycle Prescaler',
                 'description': 'Sets a divider for the internal clock. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time\\\">here</a> for details.',
             }, {
+                'packet': 'Set Counter Configuration',
+                'element': 'Frequency Integration Time',
+
                 'name': 'Frequency Integration Time',
                 'type': 'integer',
                 'options': [('128 MS', 0),
@@ -777,6 +796,9 @@ com['openhab'] = {
                 'label': 'Frequency Integration Time',
                 'description': 'Sets the integration time for the frequency measurement. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time\\\">here</a> for details.',
             }, {
+                'packet': 'Set Channel LED Config',
+                'element': 'Config',
+
                 'name': 'Channel LED Configuration',
                 'type': 'integer',
                 'options': [('Off', 0),

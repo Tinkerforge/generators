@@ -3576,10 +3576,12 @@ com['openhab'] = {
     'channels': [voltage_channel, current_channel],
     'channel_types': [
         oh_generic_channel_type('Stack Voltage', 'Number:ElectricPotential', 'Stack Voltage',
+            update_style='Callback Period',
             description='The stack voltage in V. The stack voltage is the voltage that is supplied via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.',
             read_only=True,
             pattern='%.3f %unit%'),
         oh_generic_channel_type('Stack Current', 'Number:ElectricCurrent', 'Stack Current',
+            update_style='Callback Period',
             description='The stack current in A. The stack current is the current that is drawn via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.',
             read_only=True,
             pattern='%.3f %unit%'),

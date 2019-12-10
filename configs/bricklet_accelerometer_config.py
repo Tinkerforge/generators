@@ -517,7 +517,7 @@ com['openhab'] = {
             'label': 'Frequency Filter',
             'description': 'Filter bandwidth between 50Hz and 800Hz.'
         },
-        update_interval('Acceleration', 'the acceleration')],
+        update_interval('Set Acceleration Callback Period', 'Period', 'Acceleration', 'the acceleration')],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': """this.setConfiguration(cfg.dataRate.shortValue(), cfg.fullScaleRange.shortValue(), cfg.frequencyFilter.shortValue());
     this.setAccelerationCallbackPeriod(cfg.accelerationUpdateInterval);""",
@@ -568,14 +568,17 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
-                     description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.',
-                     read_only=True,
-                     pattern='%.3f %unit%'),
+                    update_style=None,
+                    description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.',
+                    read_only=True,
+                    pattern='%.3f %unit%'),
         oh_generic_channel_type('LED', 'Switch', 'LED',
-                     description='Enables/Disables the LED on the Bricklet.'),
+                    update_style=None,
+                    description='Enables/Disables the LED on the Bricklet.'),
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
-                     description='The temperature of the accelerometer',
-                     read_only=True),
+                    update_style=None,
+                    description='The temperature of the accelerometer',
+                    read_only=True),
     ],
     'actions': ['Get Acceleration', 'Get Temperature', 'Is LED On', 'Get Configuration']
 }

@@ -55,7 +55,7 @@ SetterRefresh = namedtuple('SetterRefresh', ['channel', 'delay'])
 Param = namedtuple('Param', ['name', 'type', 'context', 'default', 'description', 'groupName', 'label',
                              'unit', 'unitLabel', 'advanced', 'limitToOptions',
                              'min', 'max', 'step', 'options',
-                             'packet', 'element', 'element_index'])
+                             'packet', 'element', 'element_index', 'virtual'])
 ParamGroup = namedtuple('ParamGroup', 'name context advanced label description')
 
 
@@ -77,7 +77,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'options': None,
             'packet': None,
             'element': None,
-            'element_index': None
+            'element_index': None,
+            'virtual': False
         }
 
         channel_defaults = {

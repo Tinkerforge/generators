@@ -630,7 +630,8 @@ com['openhab'] = {
     }],
     'channel_types': [
         oh_generic_channel_type('Draw Status', 'Number', 'Draw Status',
-                     description="One of three draw statuses:<ul><li>0: Idle</li><li>1: Copying: Data is being copied from the buffer of the Bricklet to the buffer of the display.</li><li>2: Drawing: The display is updating its content (during this phase the flickering etc happens).</li></ul><br/><br/>You can write to the buffer (through one of the write or draw functions) when the status is either idle or drawing. You should not write to the buffer while it is being copied to the display. There is no double-buffering."),
+                    update_style=None,
+                    description="One of three draw statuses:<ul><li>0: Idle</li><li>1: Copying: Data is being copied from the buffer of the Bricklet to the buffer of the display.</li><li>2: Drawing: The display is updating its content (during this phase the flickering etc happens).</li></ul><br/><br/>You can write to the buffer (through one of the write or draw functions) when the status is either idle or drawing. You should not write to the buffer while it is being copied to the display. There is no double-buffering."),
     ],
     'actions': ['Draw', 'Get Draw Status',
                 'Write Black White', 'Read Black White', 'Write Color', 'Read Color', 'Fill Display',

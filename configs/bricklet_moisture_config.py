@@ -361,6 +361,7 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Moisture', 'Number:Dimensionless', 'Moisture',
+                    update_style='Callback Period',
                     description='The current moisture value. The value has a range of 0 to 4095. A small value corresponds to little moisture, a big value corresponds to much moisture.',
                     read_only=True,
                     pattern='%d',

@@ -1790,19 +1790,15 @@ com['openhab'] = {
             'label': 'Touch LED Config',
             'description': 'The touch LED configuration. By default the LED is on if the LCD is touched.<br/>You can also turn the LED permanently on/off or show a heartbeat.<br/>If the Bricklet is in bootloader mode, the LED is off.'
         },
-        update_interval('GUI Button', 'the GUI buttons', default=100),
-        update_interval('GUI Slider', 'the GUI sliders', default=100),
-        update_interval('GUI Tab', 'the GUI tabs', default=100),
-        update_interval("Touch Position", "touch positions", default=100),
-        update_interval("Touch Gesture", "touch gestures", default=100),
+        update_interval('Set GUI Button Pressed Callback Configuration', 'Period', 'GUI Button', 'the GUI buttons', default=100),
+        update_interval('Set GUI Slider Value Callback Configuration', 'Period', 'GUI Slider', 'the GUI sliders', default=100),
+        update_interval('Set Touch Position Callback Configuration', 'Period', 'Touch Position', 'touch positions', default=100),
+        update_interval('Set Touch Gesture Callback Configuration', 'Period', 'Touch Gesture', 'touch gestures', default=100),
     ] ,
     'init_code': """this.setDisplayConfiguration(cfg.contrast, cfg.defaultBacklightIntensity, cfg.invert, cfg.automaticDraw);
     this.setTouchLEDConfig(cfg.touchLEDConfig);
     this.setGUIButtonPressedCallbackConfiguration(cfg.guiButtonUpdateInterval.longValue(), true);
-    this.setGUISliderValueCallbackConfiguration(cfg.guiSliderUpdateInterval.longValue(), true);
-    this.setGUITabSelectedCallbackConfiguration(cfg.guiTabUpdateInterval.longValue(), true);
-    this.setTouchPositionCallbackConfiguration(cfg.touchPositionUpdateInterval, true);
-    this.setTouchGestureCallbackConfiguration(cfg.touchGestureUpdateInterval, true);""",
+    this.setGUISliderValueCallbackConfiguration(cfg.guiSliderUpdateInterval.longValue(), true);""",
     'channels': [{
                 'id': 'Text',
                 'type': 'Text',
@@ -1849,6 +1845,9 @@ com['openhab'] = {
                     'packet': 'Touch Position',
                     'transform': 'CommonTriggerEvents.PRESSED'}],
 
+                'init_code': """this.setTouchPositionCallbackConfiguration(cfg.touchPositionUpdateInterval, true);""",
+                'dispose_code': """this.setTouchPositionCallbackConfiguration(0, true);""",
+
                 'is_trigger_channel': True,
             }, {
                 'id': 'Touch Gesture',
@@ -1862,16 +1861,22 @@ com['openhab'] = {
                     'packet': 'Touch Gesture',
                     'transform': 'CommonTriggerEvents.PRESSED'}],
 
+                'init_code': """this.setTouchGestureCallbackConfiguration(cfg.touchGestureUpdateInterval, true);""",
+                'dispose_code': """this.setTouchGestureCallbackConfiguration(0, true);""",
+
                 'is_trigger_channel': True,
             }, {
                 'id': 'Selected GUI Tab',
-                'type': 'Selected GUI Tab',
+                'type': 'GUI Tab Selected',
                 'setter_command_type': "Number",
                 'setters': [{
                         'packet': 'Set GUI Tab Selected',
                         'packet_params': ['cmd.intValue()']
                     }
                 ],
+
+                'init_code': """this.setGUITabSelectedCallbackConfiguration(channelCfg.updateInterval.longValue(), true);""",
+                'dispose_code': """this.setGUITabSelectedCallbackConfiguration(0, true);""",
 
                 'getters': [{
                     'packet': 'Get GUI Tab Selected',
@@ -1886,7 +1891,8 @@ com['openhab'] = {
     ] + [gui_button_pressed_channel(i) for i in range(0, 12)] + [gui_slider_value_channel(i) for i in range(0, 6)],
     'channel_types': [
         oh_generic_channel_type('Text', 'String', 'Text',
-                     description="Text to display on the LCD. Command format is [line],[position],[text].<br/><br/>Additional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly."),
+                    update_style=None,
+                    description="Text to display on the LCD. Command format is [line],[position],[text].<br/><br/>Additional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly."),
         {
             'id': 'Clear Display',
             'item_type': 'String',
@@ -1902,14 +1908,17 @@ com['openhab'] = {
             'command_options': [('Draw', 'DRAW')]
         },
         oh_generic_channel_type('Backlight', 'Number:Dimensionless', 'Backlight',
+            update_style=None,
             description="The backlight intensity value from 0 to 100.",
             min_=0,
             max_=100),
-        oh_generic_channel_type('Selected GUI Tab', 'Number', 'Selected GUI Tab',
+        oh_generic_channel_type('GUI Tab Selected', 'Number', 'Selected GUI Tab',
+            update_style='Callback Configuration',
             description="Returns the index of the currently selected tab. If there are not tabs, the returned index is -1.",
             min_=-1,
             max_=10),
         oh_generic_channel_type('GUI Slider', 'Number', 'GUI Slider',
+            update_style=None,
             description="The current slider value for the given index.",
             min_=0,
             max_=120),

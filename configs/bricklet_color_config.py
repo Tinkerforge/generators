@@ -747,7 +747,7 @@ com['openhab'] = {
                 'transform': 'HSBType.fromRGB(r * 255 / 65535, g * 255 / 65535, b * 255 / 65535)'}]
         },
         oh_generic_old_style_channel('Illuminance', 'Illuminance', 'SmartHomeUnits.LUX', divisor='cfg.gain * cfg.integrationTime / 700.0', has_threshold=False),
-        oh_generic_old_style_channel('Color Temperature', 'ColorTemperature', 'SmartHomeUnits.KELVIN', divisor=1, has_threshold=False),
+        oh_generic_old_style_channel('Color Temperature', 'Color Temperature', 'SmartHomeUnits.KELVIN', divisor=1, has_threshold=False),
         {
             'id': 'Light',
             'type': 'Light',
@@ -766,16 +766,20 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Color', 'Color', 'Color',
-                     description='Measured color',
-                     read_only=True),
+                    update_style='Callback Period',
+                    description='Measured color',
+                    read_only=True),
         oh_generic_channel_type('Illuminance', 'Number:Illuminance', 'Illuminance',
-                     description='Measured illuminance. To get a correct illuminance measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.',
-                     read_only=True),
-        oh_generic_channel_type('ColorTemperature', 'Number:Temperature', 'Color Temperature',
-                     description='To get a correct color temperature measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.',
-                     read_only=True),
+                    update_style='Callback Period',
+                    description='Measured illuminance. To get a correct illuminance measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.',
+                    read_only=True),
+        oh_generic_channel_type('Color Temperature', 'Number:Temperature', 'Color Temperature',
+                    update_style='Callback Period',
+                    description='To get a correct color temperature measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.',
+                    read_only=True),
         oh_generic_channel_type('Light', 'Switch', 'Enable Light',
-                     description='Turns the white LED on the Bricklet on/off.'),
+                    update_style=None,
+                    description='Turns the white LED on the Bricklet on/off.'),
     ],
     'actions': ['Get Color', 'Is Light On', 'Get Config', 'Get Illuminance', 'Get Color Temperature']
 }

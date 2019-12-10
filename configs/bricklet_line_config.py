@@ -301,11 +301,12 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Reflectivity', 'Number:Dimensionless', 'Reflectivity',
-                     description='The currently measured reflectivity. The reflectivity is a value between 0 (not reflective) and 4095 (very reflective).<br/><br/>Usually black has a low reflectivity while white has a high reflectivity.',
-                     read_only=True,
-                     pattern='%d',
-                     min_=0,
-                     max_=4095),
+                    update_style='Callback Period',
+                    description='The currently measured reflectivity. The reflectivity is a value between 0 (not reflective) and 4095 (very reflective).<br/><br/>Usually black has a low reflectivity while white has a high reflectivity.',
+                    read_only=True,
+                    pattern='%d',
+                    min_=0,
+                    max_=4095),
     ],
     'actions': ['Get Reflectivity']
 }

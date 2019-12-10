@@ -381,8 +381,7 @@ def concentration_channel(size):
     return {
         'id': 'PM{} Concentration'.format(size),
         'type': 'PM{} Concentration'.format(size),
-        'init_code':"""this.setPMConcentrationCallbackConfiguration(cfg.pmConcentrationUpdateInterval, true);""",
-        'dispose_code': """this.setPMConcentrationCallbackConfiguration(0, true);""",
+
         'getters': [{
             'packet': 'Get PM Concentration',
             'packet_params': [],
@@ -399,16 +398,16 @@ def concentration_channel(size):
 
 def concentration_channel_type(size):
     return oh_generic_channel_type('PM{} Concentration'.format(size), 'Number:Density', 'PM {:.1f} Concentration'.format(size / 10),
-                     description='The particulate matter {:.1f} concentration. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
-                     read_only=True,
-                     pattern='%d %unit%')
+                    update_style=None,
+                    description='The particulate matter {:.1f} concentration. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
+                    read_only=True,
+                    pattern='%d %unit%')
 
 def count_channel(size):
     return {
         'id': 'Part Count {}'.format(size),
         'type': 'Part Count {}'.format(size),
-        'init_code':"""this.setPMCountCallbackConfiguration(cfg.pmCountUpdateInterval, true);""",
-        'dispose_code': """this.setPMCountCallbackConfiguration(0, true);""",
+
         'getters': [{
             'packet': 'Get PM Count',
             'packet_params': [],
@@ -424,30 +423,25 @@ def count_channel(size):
     }
 def count_channel_type(size):
     return oh_generic_channel_type('Part Count {}'.format(size), 'Number:Dimensionless', 'Particulates Greater {:.1f}µm'.format(size / 10),
-                     description='The number of particulates greater than {:.1f}µm in 100 ml of air. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
-                     read_only=True,
-                     pattern='%d')
+                    update_style=None,
+                    description='The number of particulates greater than {:.1f}µm in 100 ml of air. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
+                    read_only=True,
+                    pattern='%d')
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
-    'params': [{
-            'name': 'PM Concentration Update Interval',
-            'type': 'integer',
-            'unit': 'ms',
-            'label': 'PM Concentration Update Interval',
-            'description': 'Specifies the update interval for all PM concentration data in milliseconds. A value of 0 disables automatic updates.',
-            'default': 1000,
-            'groupName': 'update_intervals'
-        }, {
-            'name': 'PM Count Update Interval',
-            'type': 'integer',
-            'unit': 'ms',
-            'label': 'PM Count Update Interval',
-            'description': 'Specifies the update interval for all PM count data in milliseconds. A value of 0 disables automatic updates.',
-            'default': 1000,
-            'groupName': 'update_intervals'
-        }],
+    'params': [
+        update_interval('Set PM Concentration Callback Configuration', 'Period', 'PM Concentration', 'all PM concentration data'),
+        update_interval('Set PM Count Callback Configuration', 'Period', 'PM Count', 'all PM count data')
+    ],
+
+    'init_code': """this.setPMCountCallbackConfiguration(cfg.pmCountUpdateInterval, true);
+        this.setPMConcentrationCallbackConfiguration(cfg.pmConcentrationUpdateInterval, true);""",
+
+    'dispose_code': """this.setPMCountCallbackConfiguration(0, true);
+        this.setPMConcentrationCallbackConfiguration(0, true);""",
+
     'channels': [concentration_channel(i) for i in [10, 25, 100]] +
                 [count_channel(i) for i in [3, 5, 10, 25, 50, 100]] + [
                 {
@@ -471,6 +465,7 @@ com['openhab'] = {
         [concentration_channel_type(i) for i in [10, 25, 100]] +
         [count_channel_type(i) for i in [3, 5, 10, 25, 50, 100]] +
         [oh_generic_channel_type('Sensor Enabled', 'Switch', 'NOT USED',
+                        update_style=None,
                         description='NOT USED')],
     'actions': ['Get PM Concentration', 'Get PM Count', 'Get Sensor Info']
 }

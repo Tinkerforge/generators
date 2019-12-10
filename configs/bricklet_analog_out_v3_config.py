@@ -122,16 +122,18 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Input Voltage', 'Number:ElectricPotential', 'Input Voltage',
-                     description='The input voltage',
-                     read_only=True,
-                     pattern='%.3f %unit%',
-                     min_=0,
-                     max_=15),
+                    update_style=None,
+                    description='The input voltage',
+                    read_only=True,
+                    pattern='%.3f %unit%',
+                    min_=0,
+                    max_=15),
          oh_generic_channel_type('Output Voltage', 'Number:ElectricPotential', 'Output Voltage',
-                     description='The output voltage. The possible range is 0V to 12V',
-                     pattern='%.3f %unit%',
-                     min_=0,
-                     max_=12)
+                    update_style=None,
+                    description='The output voltage. The possible range is 0V to 12V',
+                    pattern='%.3f %unit%',
+                    min_=0,
+                    max_=12)
     ],
     'actions': ['Get Output Voltage', 'Get Input Voltage']
 }

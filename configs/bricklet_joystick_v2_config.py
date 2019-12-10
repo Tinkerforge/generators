@@ -285,14 +285,15 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
-        update_interval('Position', 'X and Y position')
+        update_interval('Set Position Callback Configuration', 'Period', 'Position', 'X and Y position')
     ],
+    'init_code':"""this.setPositionCallbackConfiguration(cfg.positionUpdateInterval, true);""",
+    'dispose_code': """this.setPositionCallbackConfiguration(0, true);""",
     'channels': [ {
             'id': 'Position X',
             'type': 'Position',
             'label': 'Position X',
-            'init_code':"""this.setPositionCallbackConfiguration(cfg.positionUpdateInterval, true);""",
-            'dispose_code': """this.setPositionCallbackConfiguration(0, true);""",
+
             'getters': [{
                 'packet': 'Get Position',
                 'packet_params': [],
@@ -309,8 +310,7 @@ com['openhab'] = {
             'id': 'Position Y',
             'type': 'Position',
             'label': 'Position Y',
-            'init_code':"""this.setPositionCallbackConfiguration(cfg.positionUpdateInterval, true);""",
-            'dispose_code': """this.setPositionCallbackConfiguration(0, true);""",
+
             'getters': [{
                 'packet': 'Get Position',
                 'packet_params': [],
@@ -341,6 +341,7 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Position', 'Number:Dimensionless', 'Position',
+                    update_style='Callback Configuration',
                     description='The position of the joystick. The value ranges between -100 and 100 for both axis. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.',
                     read_only=True,
                     pattern='%d %unit%',

@@ -673,9 +673,11 @@ com['openhab'] = {
         }],
     'channel_types': [
         oh_generic_channel_type('Overrun Error Count', 'Number', 'Overrun Error Count',
+            update_style=None,
             description='The current number of overrun errors',
             read_only=True),
         oh_generic_channel_type('Framing Error Count', 'Number', 'Framing Error Count',
+            update_style=None,
             description='The current number of framing errors',
             read_only=True),
     ],

@@ -62,11 +62,18 @@ def oh_generic_channel_param_groups():
 def oh_generic_trigger_channel_imports():
     return ["org.eclipse.smarthome.core.thing.CommonTriggerEvents"]
 
-def oh_generic_channel_type(id_, item_type, label, description=None, read_only=None, pattern=None, min_=None, max_=None, is_trigger_channel=False, command_options=None, params=()):
+def oh_generic_channel_type(id_, item_type, label, update_style, description=None, read_only=None, pattern=None, min_=None, max_=None, is_trigger_channel=False, command_options=None, params=()):
+    if update_style is not None:
+        period_packet = 'Set {} {}'.format(id_, update_style)
+        period_element = 'Period'
+
     return {
         'id': id_,
         'item_type': item_type,
-        'params':[{
+        'params':([{
+            'packet': period_packet,
+            'element': period_element,
+
             'name': 'Update Interval',
             'type': 'integer',
             'unit': 'ms',
@@ -74,7 +81,7 @@ def oh_generic_channel_type(id_, item_type, label, description=None, read_only=N
             'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
             'default': 1000,
             'groupName': 'update_intervals'
-        }] + list(params), # Use tuple as default for params to silence pylint warning "Dangerous default value [] as argument" (as a list could be mutated, changing the default)
+        }] if update_style != None else []) + list(params), # Use tuple as default for params to silence pylint warning "Dangerous default value [] as argument" (as a list could be mutated, changing the default)
         'label': label,
         'description': description,
         'read_only': read_only,
@@ -85,8 +92,11 @@ def oh_generic_channel_type(id_, item_type, label, description=None, read_only=N
         'command_options': command_options
     }
 
-def update_interval(prefix, description_name, default=1000):
+def update_interval(packet, element, prefix, description_name, default=1000):
     return {
+        'packet': packet,
+        'element': element,
+
         'name': prefix + ' Update Interval',
         'type': 'integer',
         'unit': 'ms',

@@ -78,11 +78,12 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Position', 'Number:Angle', 'Position',
-                     description='The position of the rotary potentiometer. The value is and between -150° (turned left) and 150° (turned right).',
-                     read_only=True,
-                     pattern='%d %unit%',
-                     min_=-150,
-                     max_=150)
+                    update_style='Callback Configuration',
+                    description='The position of the rotary potentiometer. The value is and between -150° (turned left) and 150° (turned right).',
+                    read_only=True,
+                    pattern='%d %unit%',
+                    min_=-150,
+                    max_=150)
     ],
     'actions': ['Get Position']
 }

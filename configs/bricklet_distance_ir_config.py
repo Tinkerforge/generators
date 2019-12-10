@@ -565,11 +565,12 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
-                     description='Measured distance',
-                     read_only=True,
-                     pattern='%.3f %unit%',
-                     min_=40,
-                     max_=1500)
+                    update_style='Callback Period',
+                    description='Measured distance',
+                    read_only=True,
+                    pattern='%.3f %unit%',
+                    min_=40,
+                    max_=1500)
     ],
     'actions': ['Get Distance', 'Get Analog Value', 'Get Sampling Point']
 }

@@ -407,7 +407,7 @@ com['examples'].append({
 def input_channel(index):
     return {
             'id': 'Input {0}'.format(index),
-            'type': 'Input',
+            'type': 'Value',
             'label': 'Input Value {0}'.format(index),
 
             'init_code':"""this.setValueCallbackConfiguration({0}, channelCfg.updateInterval, true);
@@ -448,37 +448,48 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'channels': [input_channel(i) for i in range(0, 4)] + [edge_count_channel(i) for i in range(0, 4)],
     'channel_types': [
-        oh_generic_channel_type('Input', 'Switch', 'Input Value',
-                     description='The logic level that is currently measured on the input.',
-                     read_only=True,
-                     params=[{
-                        'name': 'LED Config',
-                        'type': 'integer',
-                        'options': [('Off', 0),
-                                    ('On', 1),
-                                    ('Show Heartbeat', 2),
-                                    ('Show Channel Status', 3)],
-                        'limitToOptions': 'true',
-                        'default': 3,
+        oh_generic_channel_type('Value', 'Switch', 'Input Value',
+                    update_style='Callback Configuration',
+                    description='The logic level that is currently measured on the input.',
+                    read_only=True,
+                    params=[{
+                    'packet': 'Set Channel LED Config',
+                    'element': 'Config',
 
-                        'label': 'LED Configuration',
-                        'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
-                    }]),
+                    'name': 'LED Config',
+                    'type': 'integer',
+                    'options': [('Off', 0),
+                                ('On', 1),
+                                ('Show Heartbeat', 2),
+                                ('Show Channel Status', 3)],
+                    'limitToOptions': 'true',
+                    'default': 3,
+
+                    'label': 'LED Configuration',
+                    'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
+                }]),
         oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
-                     description='The current value of the edge counter for the selected channel',
-                     read_only=True,
-                     params=[{
+                    update_style=None,
+                    description='The current value of the edge counter for the selected channel',
+                    read_only=True,
+                    params=[{
+                            'packet': 'Set Edge Count Configuration',
+                            'element': 'Edge Type',
+
                             'name': 'Edge Type',
                             'type': 'integer',
                             'options':[('Rising', 0),
-                                       ('Falling', 1),
-                                       ('Both', 2)],
+                                    ('Falling', 1),
+                                    ('Both', 2)],
                             'limitToOptions': 'true',
                             'default': 0,
 
                             'label': 'Edge Type',
                             'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
                         },{
+                            'packet': 'Set Edge Count Configuration',
+                            'element': 'Debounce',
+
                             'name': 'Debounce',
                             'type': 'integer',
 
@@ -487,6 +498,9 @@ com['openhab'] = {
                             'label': 'Debounce Time',
                             'description': 'The debounce time in ms.',
                         },{
+                            'packet': 'Get Edge Count',
+                            'element': 'Reset Counter',
+
                             'name': 'Reset On Read',
                             'type': 'boolean',
 

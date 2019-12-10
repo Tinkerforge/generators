@@ -442,7 +442,6 @@ def input_channel(idx):
                 'packet': 'Interrupt',
                 'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
-            # TODO: Don't hard code update interval. Support channel configuration (not merged into thing conf).
             'init_code':"""this.setInterrupt((short)(this.getInterrupt() | (1 << {idx})));""".format(idx=idx),
             'dispose_code': """this.setInterrupt((short)(this.getInterrupt() & ~(1 << {idx})));""".format(idx=idx),
     }
@@ -472,12 +471,17 @@ com['openhab'] = {
     'channels': channels,
     'channel_types': [
         oh_generic_channel_type('Input Pin', 'Switch', 'Input Value',
-                     description='The logic level that is currently measured on the pin.',
-                     read_only=True),
+                    update_style=None,
+                    description='The logic level that is currently measured on the pin.',
+                    read_only=True),
         oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+            update_style=None,
             description='The current value of the edge counter for the selected channel',
             read_only=True,
             params=[{
+                'packet': 'Set Edge Count Config',
+                'element': 'Edge Type',
+
                 'name': 'Edge Type',
                 'type': 'integer',
                 'options':[('Rising', 0),
@@ -489,6 +493,9 @@ com['openhab'] = {
                 'label': 'Edge Type',
                 'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
             },{
+                'packet': 'Set Edge Count Config',
+                'element': 'Debounce',
+
                 'name': 'Debounce',
                 'type': 'integer',
 
@@ -497,6 +504,9 @@ com['openhab'] = {
                 'label': 'Debounce Time',
                 'description': 'The debounce time in ms.',
             },{
+                'packet': 'Get Edge Count',
+                'element': 'Reset Counter',
+
                 'name': 'Reset On Read',
                 'type': 'boolean',
 

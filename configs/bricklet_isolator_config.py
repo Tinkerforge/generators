@@ -336,7 +336,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
-        update_interval('Statistics', 'all statistics data')
+        update_interval('Set Statistics Callback Configuration', 'Period', 'Statistics', 'all statistics data')
     ],
     'init_code': """this.setStatisticsCallbackConfiguration(cfg.statisticsUpdateInterval, true);""",
     'channels': [
@@ -376,19 +376,23 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Messages From Brick', 'Number:Dimensionless', 'Messages From Brick',
+                    update_style=None,
                     description='Messages passed through the Isolator from the controlling Brick.',
                     read_only=True,
                     pattern='%d'),
         oh_generic_channel_type('Messages From Bricklet', 'Number:Dimensionless', 'Messages From Bricklet',
+                    update_style=None,
                     description='Messages passed through the Isolator from the isolated Bricklet.',
                     read_only=True,
                     pattern='%d'),
         oh_generic_channel_type('Connected Bricklet Device Name', 'String', 'Connected Bricklet Device Name',
-                     description='Device Name of the isolated Bricklet.',
-                     read_only=True),
+                    update_style=None,
+                    description='Device Name of the isolated Bricklet.',
+                    read_only=True),
         oh_generic_channel_type('Connected Bricklet UID', 'String', 'Connected Bricklet UID',
-                     description='UID of the isolated Bricklet.',
-                     read_only=True),
+                    update_style=None,
+                    description='UID of the isolated Bricklet.',
+                    read_only=True),
     ],
     'actions': ['Get Statistics']
 }
