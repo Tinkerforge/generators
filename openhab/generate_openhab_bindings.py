@@ -268,7 +268,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         if channel['type'].startswith('system.'):
             return ChannelType._make([common.FlavoredName(channel['type']).get()] + [None] * (len(ChannelType._fields) - 1))
         try:
-            return next(ct for ct in channel_types if ct.id.space.replace(self.get_name().space + ' ', '') == channel['type'])
+            return next(ct for ct in channel_types if ct.id.space.replace(self.get_name().space + ' ', '', 1) == channel['type'])
         except StopIteration:
             raise common.GeneratorError('openhab: Device "{}" Channel "{}" has type {}, but no such channel type was found.'.format(self.get_long_display_name(), channel['id'].space, channel['type']))
 
