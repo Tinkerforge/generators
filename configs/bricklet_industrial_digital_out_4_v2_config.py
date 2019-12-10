@@ -351,6 +351,8 @@ def output_channel(idx):
                 'packet': 'Monoflop Done',
                 'filter': 'channel == {}'.format(idx),
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+
+            'init_code': """this.setChannelLEDConfig({}, channelCfg.ledConfig);""".format(idx)
     }
 
 def monoflop_channel(idx):

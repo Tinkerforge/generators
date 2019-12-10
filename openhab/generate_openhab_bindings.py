@@ -237,6 +237,25 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                         channel_predicate_uses_param]):
                 raise common.GeneratorError('openhab: Device {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), param.name.space))
 
+        # Channel Params must be used in the channel
+        for c in oh.channels:
+            if c.type.params is None:
+                continue
+            for param in c.type.params:
+                needle = 'channelCfg.{}'.format(param.name.headless)
+
+                channel_init_code_uses_param = c.init_code is not None and needle in c.init_code
+                channel_setters_use_param = any(needle in p for s in c.setters for p in s.packet_params if s.packet_params is not None)
+                channel_getters_use_param = any(needle in p for g in c.getters for p in g.packet_params if g.packet_params is not None)
+                channel_predicate_uses_param = c.predicate is not None and needle in c.predicate
+
+                if not any([channel_init_code_uses_param,
+                            channel_setters_use_param,
+                            channel_getters_use_param,
+                            channel_predicate_uses_param]):
+                    raise common.GeneratorError('openhab: Device {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), param.name.space))
+
+
         # Use only one of command options, state description and trigger channel per channel type
         for ct in oh.channel_types:
             has_command_description = ct.command_options is not None
