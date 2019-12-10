@@ -326,8 +326,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
             for param in channel_type['params']:
                 param['name'] = common.FlavoredName(param['name']).get()
+                if param['packet'] is not None:
+                    param['packet'] = find_packet(param['packet'])
+                    try:
+                        param['element'] = [e for e in param['packet'].get_elements() if e.get_name().space == param['element']][0] # TODO: handle high-level parameters?
+                    except:
+                        raise common.GeneratorError("Element {} not found in packet {}.".format(param['element'], param['packet'].get_name().space))
 
-            channel_type['params'] = [Param(**p) for p in channel_type['params']]
+            channel_type['params'] = [self.add_packet_info(Param(**p)) for p in channel_type['params']]
             oh['channel_types'][ct_idx] = ChannelType(**channel_type)
 
         for c_idx, channel in enumerate(oh['channels']):
@@ -353,7 +359,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         for p_idx, param in enumerate(oh['params']):
             param['name'] = common.FlavoredName(param['name']).get()
-            oh['params'][p_idx] = Param(**param)
+            if param['packet'] is not None:
+                param['packet'] = find_packet(param['packet'])
+                param['element'] = [e for e in param['packet'].get_elements() if e.get_name().space == param['element']][0] # TODO: handle high-level parameters?
+            oh['params'][p_idx] = self.add_packet_info(Param(**param))
 
         for g_idx, group in enumerate(oh['param_groups']):
             oh['param_groups'][g_idx] = ParamGroup(**group)
