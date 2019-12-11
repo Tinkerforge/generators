@@ -787,6 +787,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         with_calls = []
         if c.label is not None:
             with_calls.append('.withLabel("{}")'.format(c.label))
+        elif not c.type.id.space.startswith('system.'):
+            with_calls.append('.withLabel("{}")'.format(c.type.label))
         if c.description is not None:
             with_calls.append('.withDescription("{}")'.format(c.description))
 
