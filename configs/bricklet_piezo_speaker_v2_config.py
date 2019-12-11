@@ -106,7 +106,7 @@ com['packets'].append({
 'name': 'Set Alarm',
 'elements': [('Start Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (50, 14999)}),
              ('End Frequency', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (51, 15000)}),
-             ('Step Size', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (50, 14950)}),
+             ('Step Size', 'uint16', 1, 'in', {'unit': 'Hertz', 'range': (0, 14950)}),
              ('Step Delay', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Volume', 'uint8', 1, 'in', {'range': (0, 10)}),
              ('Duration', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'range': 'type', 'constant_group': 'Alarm Duration'})],
@@ -474,7 +474,7 @@ com['openhab'] = {
                             'type': 'integer',
                             'default': 1,
                             'min': 1,
-                            'max': 65535,
+                            'max': 14950,
                             'label': 'Step Size',
                             'description': 'Size of one step of the sweep between the start/end frequencies in Hz. 1Hz - 65536Hz (has to be small enough to fit into the frequency range)'
                         }, {
@@ -484,7 +484,7 @@ com['openhab'] = {
                             'name': 'Step Delay',
                             'type': 'integer',
                             'default': 1,
-                            'min': 1,
+                            'min': 0,
                             'max': 65535,
                             'label': 'Step Delay',
                             'description': 'Delay between two steps (duration of time that one tone is used in a sweep) in ms. 1ms - 65535ms (has to be small enough to fit into the duration)'

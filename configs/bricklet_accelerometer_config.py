@@ -506,7 +506,7 @@ com['openhab'] = {
             'packet': 'Set Configuration',
             'element': 'Filter Bandwidth',
 
-            'name': 'Frequency Filter',
+            'name': 'Filter Bandwidth',
             'type': 'integer',
             'options': [('800Hz', 0),
                         ('400Hz', 1),
@@ -514,12 +514,12 @@ com['openhab'] = {
                         ('50Hz', 3)],
             'limitToOptions': 'true',
             'default': 2,
-            'label': 'Frequency Filter',
+            'label': 'Filter Bandwidth',
             'description': 'Filter bandwidth between 50Hz and 800Hz.'
         },
         update_interval('Set Acceleration Callback Period', 'Period', 'Acceleration', 'the acceleration')],
     'param_groups': oh_generic_channel_param_groups(),
-    'init_code': """this.setConfiguration(cfg.dataRate.shortValue(), cfg.fullScaleRange.shortValue(), cfg.frequencyFilter.shortValue());
+    'init_code': """this.setConfiguration(cfg.dataRate.shortValue(), cfg.fullScaleRange.shortValue(), cfg.filterBandwidth.shortValue());
     this.setAccelerationCallbackPeriod(cfg.accelerationUpdateInterval);""",
     'channels': [
         {

@@ -472,7 +472,7 @@ com['openhab'] = {
                         ('4x', 2),
                         ('8x', 3)],
             'limitToOptions': 'true',
-            'default': 3,
+            'default': 0,
 
             'label': 'Gain',
             'description': "The gain between 1x and 8x. If you want to measure a very small current, you can increase the gain to get some more resolution.<br/><br/>Example: If you measure 0.5mA with a gain of 8x the return value will be 4mA.",

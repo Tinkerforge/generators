@@ -345,7 +345,7 @@ com['packets'].append({
              ('Dampening Factor', 'uint16', 1, 'in', {'range': (0, 256), 'default': 64}),
              ('Clip Limit', 'uint16', 2, 'in', [{'name': 'AGC HEQ Clip Limit High', 'range': (0, 4800), 'default': 4800},
                                                 {'name': 'AGC HEQ Clip Limit Low', 'range': (0, 1024), 'default': 512}]),
-             ('Empty Counts', 'uint16', 1, 'in', {'default': 2})],
+             ('Empty Counts', 'uint16', 1, 'in', {'default': 2, 'range': (0, 16383)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
