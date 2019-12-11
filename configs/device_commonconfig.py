@@ -225,8 +225,8 @@ The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate 
 enabled, the Brick will try to adapt the baudrate for the communication
 between Bricks and Bricklets according to the amount of data that is transferred.
 
-The baudrate will be increased exponentially if lots of data is send/received and
-decreased linearly if little data is send/received.
+The baudrate will be increased exponentially if lots of data is sent/received and
+decreased linearly if little data is sent/received.
 
 This lowers the baudrate in applications where little data is transferred (e.g.
 a weather station) and increases the robustness. If there is lots of data to transfer
@@ -1179,3 +1179,134 @@ finden. |device_identifier_constant|
 """
 }]
 })
+
+def openhab_spitfp_baudrate(port):
+    return {
+        'packet': 'Set SPITFP Baudrate',
+        'element': 'Baudrate',
+
+        'name': 'SPITFP Baudrate Port {}'.format(port),
+        'type': 'integer',
+        'default': 1400000,
+        'min': 400000,
+        'max': 2000000,
+
+        'label': '(Maximum) SPITFP Baudrate Port {}'.format(port),
+        'description': 'The baudrate for Bricklet port {}.<br/><br/>If you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.<br/><br/>If the dynamic baudrate feature is enabled, this is the maximum baudrate.<br/><br/>Regulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in you applications we recommend to not change the baudrate.'.format(port),
+    }
+
+
+common_openhab = {
+    'bricklet_get_identity': {
+        'actions': ['Get Identity']
+    },
+
+    'brick_get_identity': {
+        'actions': ['Get Identity']
+    },
+
+    'comcu_bricklet': {
+        'actions': ['Read UID', 'Get Chip Temperature', 'Get Status LED Config', 'Get Bootloader Mode', 'Get SPITFP Error Count'],
+        'params': [{
+            'packet': 'Set Status LED Config',
+            'element': 'Config',
+
+            'name': 'Status LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Status', 3)],
+            'limitToOptions': 'true',
+            'default': 3,
+            'label': 'Status LED Config',
+            'description': 'The status LED configuration. By default the LED shows communication traffic between Brick and Bricklet, it flickers once for every 10 received data packets.<br/><br/>You can also turn the LED permanently on/off or show a heartbeat.<br/><br/>If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.'
+        }],
+        'init_code': 'this.setStatusLEDConfig(cfg.statusLEDConfig);'
+    },
+
+    'brick_chip_temperature': {
+        'actions': ['Get Chip Temperature']
+    },
+
+    'brick_status_led': {
+        'actions': ['Is Status LED Enabled'],
+        'params': [{
+            'virtual': True,
+
+            'name': 'Status LED Config',
+            'type': 'boolean',
+            'default': 'true',
+            'label': 'Status LED Config',
+            'description': 'The status LED is the blue LED next to the USB connector. If enabled is is on and it flickers if data is transfered. If disabled it is always off.'
+        }],
+        'init_code': """if(cfg.statusLEDConfig) {
+                this.enableStatusLED();
+            } else {
+                this.disableStatusLED();
+            }"""
+    },
+
+    'eeprom_bricklet_host': {
+        'actions': ['Get Protocol1 Bricklet Name']
+    },
+
+    'comcu_bricklet_host_2_ports': {
+        'actions': ['Get SPITFP Error Count', 'Get SPITFP Baudrate'],
+        'params': [
+            openhab_spitfp_baudrate('A'),
+            openhab_spitfp_baudrate('B'),
+        ],
+        'init_code': """this.setSPITFPBaudrate('a', cfg.spitfpBaudratePortA);
+            this.setSPITFPBaudrate('b', cfg.spitfpBaudratePortB);"""
+    },
+
+    'comcu_bricklet_host_4_ports': {
+        'actions': ['Get SPITFP Error Count', 'Get SPITFP Baudrate'],
+        'params': [
+            openhab_spitfp_baudrate('A'),
+            openhab_spitfp_baudrate('B'),
+            openhab_spitfp_baudrate('C'),
+            openhab_spitfp_baudrate('D'),
+        ],
+        'init_code': """this.setSPITFPBaudrate('a', cfg.spitfpBaudratePortA);
+            this.setSPITFPBaudrate('b', cfg.spitfpBaudratePortB);
+            this.setSPITFPBaudrate('c', cfg.spitfpBaudratePortC);
+            this.setSPITFPBaudrate('d', cfg.spitfpBaudratePortD);"""
+    },
+
+    'comcu_bricklet_host': {
+        'actions': ['Get SPITFP Baudrate Config'],
+        'params': [{
+            'packet': 'Set SPITFP Baudrate Config',
+            'element': 'Enable Dynamic Baudrate',
+
+            'name': 'SPITFP Enable Dynamic Baudrate',
+            'type': 'boolean',
+            'default': 'true',
+            'label': 'SPITFP Enable Dynamic Baudrate',
+            'description': 'The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is enabled, the Brick will try to adapt the baudrate for the communication between Bricks and Bricklets according to the amount of data that is transferred.<br/><br/>The baudrate will be increased exponentially if lots of data is sent/received and decreased linearly if little data is sent/received.<br/><br/>This lowers the baudrate in applications where little data is transferred (e.g. a weather station) and increases the robustness. If there is lots of data to transfer (e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.<br/><br/>In cases where some data has to transferred as fast as possible every few seconds (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn the dynamic baudrate off to get the highest possible performance.<br/><br/>The maximum value of the baudrate can be set per port. If the dynamic baudrate is disabled, the maximum baudrate will be used statically.'
+        }, {
+            'packet': 'Set SPITFP Baudrate Config',
+            'element': 'Minimum Dynamic Baudrate',
+
+            'name': 'SPITFP Minimum Dynamic Baudrate',
+            'type': 'integer',
+            'default': 400000,
+            'min': 400000,
+            'max': 2000000,
+
+            'label': 'SPITFP Minimum Dynamic Baudrate',
+            'description': 'See SPITFP Enable Dynamic Baudrate',
+        }],
+        'init_code': """this.setSPITFPBaudrateConfig(cfg.spitfpEnableDynamicBaudrate, cfg.spitfpMinimumDynamicBaudrate);"""
+    },
+
+    'send_timeout_count': {
+        'actions': ['Get Send Timeout Count']
+    },
+
+    'tng': {
+        'actions': ['Get Timestamp']
+    }
+}

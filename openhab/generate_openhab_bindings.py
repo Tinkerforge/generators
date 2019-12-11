@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from collections import namedtuple
+import copy
 import os
 import shutil
 import sys
@@ -203,6 +204,18 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         return oh
 
+    def apply_features(self, oh):
+        common_openhab = copy.deepcopy(__import__('device_commonconfig').common_openhab)
+        for feature in self.raw_data['features']:
+            if feature not in common_openhab:
+                continue
+            for key, value in common_openhab[feature].items():
+                if key == 'init_code' or key == 'dispose_code':
+                    oh[key] += '\n' + value
+                else:
+                    oh[key] += value
+        return oh
+
     def sanity_check_config(self, oh):
         # Channel labels must be title case
         for c in self.oh.channels:
@@ -298,6 +311,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             oh = self.apply_defaults(self.raw_data['openhab'])
         else:
             oh = self.apply_defaults({})
+
+        oh = self.apply_features(oh)
+        oh = self.apply_defaults(oh)
 
         # Replace config placeholders
         def fmt(format_str, base_name, unit, divisor):
