@@ -34,6 +34,7 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoo
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherSensorHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherStationHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
+import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -88,7 +89,8 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
                                                      (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
                                                      this::registerBrickDaemonDiscoveryService,
                                                      this::deregisterBrickDaemonDiscoveryService,
-                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)));
+                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
+                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)));
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_STATION)) {
             return new BrickletOutdoorWeatherStationHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_SENSOR)) {
@@ -99,7 +101,8 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
         return new DeviceHandler(thing,
                                 (String uid, IPConnection ipcon) -> createDevice(thingName, uid, ipcon),
                                 DeviceFactory.getDeviceInfo(thingName).deviceActionsClass,
-                                () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)));
+                                () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
+                                () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)));
     }
 
     private synchronized void registerBrickDaemonDiscoveryService(TinkerforgeDiscoveryService service) {

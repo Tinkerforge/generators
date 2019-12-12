@@ -13,6 +13,7 @@ import com.tinkerforge.IPConnection;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.discovery.OutdoorWeatherDiscoveryService;
+import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingUID;
@@ -33,8 +34,9 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
         BiFunction<String, IPConnection, Device> deviceSupplier,
         Consumer<OutdoorWeatherDiscoveryService> registerFn,
         Consumer<OutdoorWeatherDiscoveryService> deregisterFn,
-        Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier) {
-        super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier);
+        Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
+        Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
+        super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier, configDescriptionRegistrySupplier);
         this.registerFn = registerFn;
         this.deregisterFn = deregisterFn;
     }

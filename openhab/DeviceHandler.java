@@ -16,7 +16,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
+import org.eclipse.smarthome.config.core.ConfigDescription;
+import org.eclipse.smarthome.config.core.ConfigDescriptionParameter;
+import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.config.core.Configuration;
+import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -38,6 +42,8 @@ import org.eclipse.smarthome.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -74,15 +80,18 @@ public class DeviceHandler extends BaseThingHandler {
     private Class<? extends ThingHandlerService> actionsClass;
 
     private Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier;
+    private Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier;
 
     public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier,
             Class<? extends ThingHandlerService> actionsClass,
-            Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier) {
+            Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
+            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
         super(thing);
 
         this.deviceSupplier = deviceSupplier;
         this.actionsClass = actionsClass;
         this.channelTypeRegistrySupplier = channelTypeRegistrySupplier;
+        this.configDescriptionRegistrySupplier = configDescriptionRegistrySupplier;
     }
 
 	public @Nullable Device getDevice() {
@@ -253,15 +262,66 @@ public class DeviceHandler extends BaseThingHandler {
 
         String desc = def.getDescription();
         if(desc != null) {
-            builder.withDescription(desc);
+            builder = builder.withDescription(desc);
         }
         String label = def.getLabel();
         if(label != null) {
-            builder.withLabel(label);
+            builder = builder.withLabel(label);
         }
+
+        // Initialize channel configuration with default-values
+        URI confDescURI = ct.getConfigDescriptionURI();
+        ConfigDescriptionRegistry reg = configDescriptionRegistrySupplier.get();
+        if (reg == null || confDescURI == null) {
+            return builder.build();
+        }
+
+        ConfigDescription cd = reg.getConfigDescription(confDescURI);
+        if (cd == null) {
+            return builder.build();
+        }
+
+        Configuration config = new Configuration();
+        for (ConfigDescriptionParameter param : cd.getParameters()) {
+            String defaultValue = param.getDefault();
+            if (defaultValue == null) {
+                continue;
+            }
+
+            Object value = getDefaultValueAsCorrectType(param.getType(), defaultValue);
+            if (value == null) {
+                continue;
+            }
+
+            config.put(param.getName(), value);
+        }
+        builder = builder.withConfiguration(config);
 
         return builder.build();
     }
+
+    public @Nullable Object getDefaultValueAsCorrectType(Type parameterType, String defaultValue) {
+        try {
+            switch (parameterType) {
+                case TEXT:
+                    return defaultValue;
+                case BOOLEAN:
+                    return Boolean.parseBoolean(defaultValue);
+                case INTEGER:
+                    return new BigDecimal(defaultValue);
+                case DECIMAL:
+                    return new BigDecimal(defaultValue);
+                default:
+                    return null;
+            }
+        } catch (NumberFormatException ex) {
+            logger.warn(
+                    "Could not parse default value '{}' as type '{}': {}", defaultValue, parameterType, ex.getMessage(),
+                    ex);
+            return null;
+        }
+    }
+
 
     private void configureChannels() {
         List<String> enabledChannelNames = new ArrayList<>();
