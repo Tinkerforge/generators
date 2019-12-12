@@ -21,6 +21,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import org.eclipse.smarthome.config.core.ConfigDescription;
+import org.eclipse.smarthome.config.core.ConfigDescriptionBuilder;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameterBuilder;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
@@ -128,7 +129,7 @@ public class BrickDaemon extends Device {
     public static ConfigDescription getConfigDescription(URI uri) {
         switch(uri.toASCIIString()) {
             case "thing-type:tinkerforge:brickd":
-                return new ConfigDescription(uri, Arrays.asList(
+                return ConfigDescriptionBuilder.create(uri).withParameters(Arrays.asList(
                     ConfigDescriptionParameterBuilder.create("host", Type.TEXT)
                                                      .withLabel("Brick Daemon Hostname/IP")
                                                      .withDescription("The IP/hostname of the Brick Daemon, Ethernet Extension or WIFI Extension.")
@@ -171,7 +172,7 @@ public class BrickDaemon extends Device {
                                                      .withDefault("10.0")
                                                      .withUnit("min")
                                                      .build()
-                ));
+                )).build();
         }
         logger.debug("Unknown config description URI {}", uri);
         return null;

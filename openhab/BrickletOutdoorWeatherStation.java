@@ -19,6 +19,7 @@ import com.tinkerforge.Device.SetterRefresh;
 import java.util.function.BiConsumer;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.core.ConfigDescription;
+import org.eclipse.smarthome.config.core.ConfigDescriptionBuilder;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameterBuilder;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameterGroup;
@@ -200,7 +201,7 @@ public class BrickletOutdoorWeatherStation {
         case "channel-type:tinkerforge:OutdoorWeatherStationWindDirection":
         case "channel-type:tinkerforge:OutdoorWeatherStationBatteryLow":
         case "channel-type:tinkerforge:OutdoorWeatherStationLastChange":
-            return new ConfigDescription(uri, Arrays.asList());
+            return ConfigDescriptionBuilder.create(uri).build();
         default:
             static_logger.debug("Unknown config description URI {}", uri.toASCIIString());
             break;

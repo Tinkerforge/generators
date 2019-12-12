@@ -423,6 +423,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'java.util.function.BiConsumer',
                       'org.eclipse.smarthome.config.core.Configuration',
                       'org.eclipse.smarthome.config.core.ConfigDescription',
+                      'org.eclipse.smarthome.config.core.ConfigDescriptionBuilder',
                       'org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type',
                       'org.eclipse.smarthome.config.core.ConfigDescriptionParameterBuilder',
                       'org.eclipse.smarthome.config.core.ConfigDescriptionParameterGroup',
@@ -879,9 +880,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             ctor_params = (item if item is not None else 'null' for item in [pg.name, pg.context, pg.advanced, pg.label, pg.description])
             ctors.append(ctor_template.format(*ctor_params))
 
-        if len(ctors) > 0:
-            return ', Arrays.asList({})'.format(', '.join(ctors))
-        return ''
+        return ', '.join(ctors)
 
     def get_openhab_get_config_description_impl(self):
         template = """public static ConfigDescription getConfigDescription(URI uri) {{
@@ -895,7 +894,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     }}"""
 
         case_template = """case "{uri}":
-                return new ConfigDescription(uri, Arrays.asList({builder_calls}){groups});"""
+                return ConfigDescriptionBuilder.create(uri).withParameters(Arrays.asList({builder_calls})).withParameterGroups(Arrays.asList({groups})).build();"""
 
         cases = [case_template.format(uri='thing-type:tinkerforge:' + self.get_name().lower_no_space,
                                       builder_calls=', '.join(self.get_openhab_config_description_parameter_builder_call(p) for p in self.oh.params),
