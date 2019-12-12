@@ -624,6 +624,19 @@ com['openhab'] = {
             'label': 'Resolution',
             'description': 'The Thermal Imaging Bricklet can either measure<ul><li>from 0 to 6553 Kelvin (-273.15°C to +6279.85°C) with 0.1°C resolution or</li><li>from 0 to 655 Kelvin (-273.15°C to +381.85°C) with 0.01°C resolution.</li></ul><br/>The accuracy is specified for -10°C to 450°C in the first range and -10°C and 140°C in the second range.',
         }, {
+            'virtual': True,
+
+            'name': 'Color Palette',
+            'type': 'integer',
+            'options': [('Standard', 0),
+                        ('Greyscale', 1),
+                        ('Hot Cold', 2),],
+            'limitToOptions': 'true',
+            'default': 0,
+
+            'label': 'Color Palette',
+            'description': 'The thermal image color palette.',
+        }, {
             'packet': 'Set Spotmeter Config',
             'element': 'Region Of Interest',
             'element_index': 0,
@@ -690,7 +703,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get {title_words}',
             'packet_params': [],
-            'transform': 'new RawType(Helper.convertThermalHighContrastImage(value, logger), "image/png")'}],
+            'transform': 'new RawType(Helper.convertThermalHighContrastImage(value, cfg.colorPalette, logger), "image/png")'}],
         'is_trigger_channel': False
     }, {
         'predicate': 'cfg.imageType == 1',
@@ -701,7 +714,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get {title_words}',
             'packet_params': [],
-            'transform': 'new RawType(Helper.convertThermalTemperatureImage(value, logger), "image/png")'}],
+            'transform': 'new RawType(Helper.convertThermalTemperatureImage(value, cfg.colorPalette, logger), "image/png")'}],
         'is_trigger_channel': False
     }, {
         'id': 'Spotmeter Mean Temperature',
@@ -845,7 +858,7 @@ com['openhab'] = {
                             'type': 'integer',
                             'min': 0,
                             'max': 79,
-                            'default': 39,
+                            'default': 0,
 
                             'label': 'High Contrast Column Start',
                             'description': 'First column of the high contrast region of interest.',
@@ -858,7 +871,7 @@ com['openhab'] = {
                             'type': 'integer',
                             'min': 0,
                             'max': 59,
-                            'default': 29,
+                            'default': 0,
 
                             'label': 'High Contrast Row Start',
                             'description': 'First row of the high contrast region of interest.',
@@ -871,7 +884,7 @@ com['openhab'] = {
                             'type': 'integer',
                             'min': 0,
                             'max': 79,
-                            'default': 40,
+                            'default': 79,
 
                             'label': 'High Contrast Column End',
                             'description': 'Last column of the high contrast region of interest.',
@@ -884,7 +897,7 @@ com['openhab'] = {
                             'type': 'integer',
                             'min': 0,
                             'max': 59,
-                            'default': 30,
+                            'default': 59,
 
                             'label': 'High Contrast Row End',
                             'description': 'Last row of the high contrast region of interest.',
