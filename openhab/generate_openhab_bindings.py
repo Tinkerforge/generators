@@ -240,13 +240,15 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             init_code_uses_param = needle in oh.init_code
             channel_init_code_uses_param = any(c.init_code is not None and needle in c.init_code for c in oh.channels)
             channel_setters_use_param = any(needle in p for c in oh.channels for s in c.setters for p in s.packet_params if s.packet_params is not None)
-            channel_getters_use_param = any(needle in p for c in oh.channels for g in c.getters for p in g.packet_params if g.packet_params is not None)
+            channel_getter_params_use_param = any(needle in p for c in oh.channels for g in c.getters for p in g.packet_params if g.packet_params is not None)
+            channel_getter_transforms_use_param = any(needle in g.transform for c in oh.channels for g in c.getters if g.transform is not None)
             channel_predicate_uses_param = any(needle in c.predicate for c in oh.channels if c.predicate is not None)
 
             if not any([init_code_uses_param,
                         channel_init_code_uses_param,
                         channel_setters_use_param,
-                        channel_getters_use_param,
+                        channel_getter_params_use_param,
+                        channel_getter_transforms_use_param,
                         channel_predicate_uses_param]):
                 raise common.GeneratorError('openhab: Device {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), param.name.space))
 
@@ -260,11 +262,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 channel_init_code_uses_param = c.init_code is not None and needle in c.init_code
                 channel_setters_use_param = any(needle in p for s in c.setters for p in s.packet_params if s.packet_params is not None)
                 channel_getters_use_param = any(needle in p for g in c.getters for p in g.packet_params if g.packet_params is not None)
+                channel_getter_params_use_param = any(needle in p for g in c.getters for p in g.packet_params if g.packet_params is not None)
+                channel_getter_transforms_use_param = any(needle in g.transform for g in c.getters if g.transform is not None)
                 channel_predicate_uses_param = c.predicate is not None and needle in c.predicate
 
                 if not any([channel_init_code_uses_param,
                             channel_setters_use_param,
-                            channel_getters_use_param,
+                            channel_getter_params_use_param,
+                            channel_getter_transforms_use_param,
                             channel_predicate_uses_param]):
                     raise common.GeneratorError('openhab: Device {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), param.name.space))
 
