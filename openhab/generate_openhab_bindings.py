@@ -307,7 +307,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         if channel['type'].startswith('system.'):
             return ChannelType._make([common.FlavoredName(channel['type']).get()] + [None] * (len(ChannelType._fields) - 1))
         try:
-            return next(ct for ct in channel_types if ct.id.space.replace(self.get_name().space + ' ', '', 1) == channel['type'])
+            return next(ct for ct in channel_types if ct.id.space.replace(self.get_category().space + ' ' + self.get_name().space + ' ', '', 1) == channel['type'])
         except StopIteration:
             raise common.GeneratorError('openhab: Device "{}" Channel "{}" has type {}, but no such channel type was found.'.format(self.get_long_display_name(), channel['id'].space, channel['type']))
 
@@ -364,7 +364,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if channel_type['id'].startswith('system.'):
                 channel_type['id'] = common.FlavoredName(channel_type['id']).get()
             else:
-                channel_type['id'] = common.FlavoredName(self.get_name().space + ' ' + channel_type['id']).get()
+                channel_type['id'] = common.FlavoredName(self.get_category().space + ' ' + self.get_name().space + ' ' + channel_type['id']).get()
 
             for param in channel_type['params']:
                 param['name'] = common.FlavoredName(param['name']).get()
@@ -382,7 +382,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if channel['id'].startswith('system.'):
                 channel['id'] = common.FlavoredName(channel['id']).get()
             else:
-                channel['id'] = common.FlavoredName(self.get_name().space + ' ' + channel['id']).get()
+                channel['id'] = common.FlavoredName(self.get_category().space + ' ' + self.get_name().space + ' ' + channel['id']).get()
 
             for g_idx, getter in enumerate(oh['channels'][c_idx]['getters']):
                 getter['packet'] = find_packet(getter['packet'])
@@ -394,7 +394,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 callback['packet'] = find_packet(callback['packet'])
                 oh['channels'][c_idx]['callbacks'][cb_idx] = Callback(**callback)
 
-            oh['channels'][c_idx]['setter_refreshs'] = [SetterRefresh(common.FlavoredName(self.get_name().space + ' ' + r['channel']).get(), r['delay']) for r in oh['channels'][c_idx]['setter_refreshs']]
+            oh['channels'][c_idx]['setter_refreshs'] = [SetterRefresh(common.FlavoredName(self.get_category().space + ' ' + self.get_name().space + ' ' + r['channel']).get(), r['delay']) for r in oh['channels'][c_idx]['setter_refreshs']]
             oh['channels'][c_idx]['type'] = self.find_channel_type(oh['channels'][c_idx], oh['channel_types'])
             oh['channels'][c_idx] = Channel(**channel)
 
@@ -950,14 +950,14 @@ public class {device_camel}Actions implements ThingActions {{
 }}
 """
         input_action_template = """    @RuleAction(label = "{label}")
-    public void {id_headless}(
+    public void {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
         (({device_camel})this.handler.getDevice()).{packet_headless}({packet_params});
     }}
 
-    public static void {id_headless}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
+    public static void {device_headless}{id_camel}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
         if (actions instanceof {device_camel}Actions) {{
-            (({device_camel}Actions) actions).{id_headless}({inputs});
+            (({device_camel}Actions) actions).{device_headless}{id_camel}({inputs});
         }} else {{
             throw new IllegalArgumentException("Instance is not an {device_camel}Actions class.");
         }}
@@ -965,7 +965,7 @@ public class {device_camel}Actions implements ThingActions {{
 
         output_action_template = """    @RuleAction(label = "{label}")
     public {output_annotations}
-           Map<String, Object> {id_headless}(
+           Map<String, Object> {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
         Map<String, Object> result = new HashMap<>();
         {result_type} value = (({device_camel})this.handler.getDevice()).{packet_headless}({packet_params});
@@ -973,9 +973,9 @@ public class {device_camel}Actions implements ThingActions {{
         return result;
     }}
 
-    public static Map<String, Object> {id_headless}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
+    public static Map<String, Object> {device_headless}{id_camel}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
         if (actions instanceof {device_camel}Actions) {{
-            return (({device_camel}Actions) actions).{id_headless}({inputs});
+            return (({device_camel}Actions) actions).{device_headless}{id_camel}({inputs});
         }} else {{
             throw new IllegalArgumentException("Instance is not an {device_camel}Actions class.");
         }}
@@ -1003,6 +1003,8 @@ public class {device_camel}Actions implements ThingActions {{
             if len(outputs) == 0:
                 actions.append(input_action_template.format(label=packet_name.space,
                                                     id_headless=packet_name.headless,
+                                                    device_headless=self.get_category().headless + self.get_name().camel,
+                                                    id_camel=packet_name.camel,
                                                     annotated_inputs=',\n            '.join(annotated_inputs),
                                                     device_camel=self.get_category().camel + self.get_name().camel,
                                                     packet_headless=packet_name.headless,
@@ -1023,6 +1025,8 @@ public class {device_camel}Actions implements ThingActions {{
 
                 actions.append(output_action_template.format(label=packet_name.space,
                                                     id_headless=packet_name.headless,
+                                                    device_headless=self.get_category().headless + self.get_name().camel,
+                                                    id_camel=packet_name.camel,
                                                     annotated_inputs=',\n            '.join(annotated_inputs),
                                                     device_camel=self.get_category().camel + self.get_name().camel,
                                                     packet_headless=packet_name.headless,
@@ -1158,7 +1162,7 @@ public class {name_camel} {{
                                description=self.get_description()['en'],
                                cfg='\n\n    '.join(cfg),
                                channels='\n\n    '.join(channels),
-                               actions=', '.join(a.get_name().headless for a in self.oh.actions))
+                               actions=', '.join(self.get_category().headless + self.get_name().camel + a.get_name().camel for a in self.oh.actions))
 
 class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def __init__(self, *args, **kwargs):
