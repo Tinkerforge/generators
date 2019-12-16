@@ -9,6 +9,8 @@
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from commonconstants import add_callback_value_function
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -318,3 +320,17 @@ com['examples'].append({
               ('setter', 'Set GPIO Config', [('uint8', 1), ('uint8', 0), ('uint8:constant', 8), ('uint8', 0), ('bool', True)], None, None),
               ('loop_footer',)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports(),
+    'param_groups': oh_generic_channel_param_groups(),
+    'channels': [
+        oh_generic_channel('Count', 'Count', 'SmartHomeUnits.ONE')
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Count', 'Number:Dimensionless', 'Count',
+                    update_style='Callback Configuration',
+                    description='The value of the example count (see example.c)',
+                    read_only=True)
+    ]
+}
