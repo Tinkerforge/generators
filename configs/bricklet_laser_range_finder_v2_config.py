@@ -491,10 +491,11 @@ com['openhab'] = {
             'type': 'Enable Laser',
 
             'setters': [{
-                    'packet': 'Set Enable',
-                    'packet_params': ['cmd == OnOffType.ON']
-                }],
-            'setter_command_type': "OnOffType",
+                'packet': 'Set Enable',
+                'packet_params': ['cmd == OnOffType.ON'],
+                'command_type': "OnOffType",
+            }],
+
 
             'getters': [{
                 'packet': 'Get Enable',

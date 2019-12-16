@@ -261,9 +261,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set {title_words}',
-                'packet_params': ['cmd.intValue()', 'channelCfg.smoothDriveMode ? 1 : 0', 'channelCfg.holdPosition']
+                'packet_params': ['cmd.intValue()', 'channelCfg.smoothDriveMode ? 1 : 0', 'channelCfg.holdPosition'],
+                'command_type': 'Number',
             }],
-            'setter_command_type': 'Number',
+
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 1.0,
             'is_trigger_channel': False,

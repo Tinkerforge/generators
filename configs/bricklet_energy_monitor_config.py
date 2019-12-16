@@ -419,8 +419,9 @@ com['openhab'] = {
             'type': 'Reset',
 
             'setters': [{
-                'packet': 'Reset Energy'}],
-            'setter_command_type': "StringType"
+                'packet': 'Reset Energy',
+                'command_type': "StringType"
+            }],
         }
     ],
     'channel_types': [

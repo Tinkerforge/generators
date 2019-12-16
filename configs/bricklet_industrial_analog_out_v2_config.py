@@ -497,8 +497,10 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
 
             'setters': [{
                 'packet': 'Set {title_words}',
-                'packet_params': ['cmd == OnOffType.ON']}],
-            'setter_command_type': "OnOffType",
+                'packet_params': ['cmd == OnOffType.ON'],
+                'command_type': "OnOffType"
+            }],
+
 
             'getters': [{
                 'packet': 'Get {title_words}',
@@ -512,8 +514,10 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
 
             'setters': [{
                 'packet': 'Set {title_words}',
-                'packet_params': ['(int)(cmd.doubleValue() * 1000000.0)']}],
-            'setter_command_type': "Number",
+                'packet_params': ['(int)(cmd.doubleValue() * 1000000.0)'],
+                'command_type': "Number"
+            }],
+
 
             'getters': [{
                 'packet': 'Get {title_words}',
@@ -527,8 +531,10 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
 
             'setters': [{
                 'packet': 'Set {title_words}',
-                'packet_params': ['(int)(cmd.doubleValue() * 1000.0)']}],
-            'setter_command_type': "Number",
+                'packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
+                'command_type': "Number",
+            }],
+
 
             'getters': [{
                 'packet': 'Get {title_words}',

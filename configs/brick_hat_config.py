@@ -302,17 +302,20 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Sleep Mode',
-                'packet_params': ['channelCfg.powerOffDelay', 'channelCfg.powerOffDuration', 'channelCfg.raspberryPiOff', 'channelCfg.brickletsOff', 'channelCfg.sleepIndicator']
+                'packet_params': ['channelCfg.powerOffDelay', 'channelCfg.powerOffDuration', 'channelCfg.raspberryPiOff', 'channelCfg.brickletsOff', 'channelCfg.sleepIndicator'],
+                'command_type': "StringType", # Command type has to be string type to be able to use command options.
             }],
-            'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+
         }, {
             'id': 'Power Bricklets',
             'type': 'Power Bricklets',
 
             'setters': [{
                 'packet': 'Set Bricklet Power',
-                'packet_params': ['cmd == OnOffType.ON']}],
-            'setter_command_type': "OnOffType",
+                'packet_params': ['cmd == OnOffType.ON'],
+                'command_type': "OnOffType",
+            }],
+
 
             'getters': [{
                 'packet': 'Get Bricklet Power',

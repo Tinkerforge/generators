@@ -287,8 +287,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Selected LED State',
-                'packet_params': ['BrickletDualButton.LED_LEFT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF']}],
-            'setter_command_type': 'OnOffType'
+                'packet_params': ['BrickletDualButton.LED_LEFT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF'],
+                'command_type': 'OnOffType'
+            }],
+
         }, {
             'id': 'Right LED',
             'label': 'Right LED',
@@ -302,8 +304,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Selected LED State',
-                'packet_params': ['BrickletDualButton.LED_RIGHT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF']}],
-            'setter_command_type': 'OnOffType'
+                'packet_params': ['BrickletDualButton.LED_RIGHT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF'],
+                'command_type': 'OnOffType'
+            }],
+
         },
     ],
     'channel_types': [

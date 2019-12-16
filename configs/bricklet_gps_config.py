@@ -795,8 +795,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Restart',
-                'packet_params': ['Short.valueOf(cmd.toString())']}],
-            'setter_command_type': "StringType"
+                'packet_params': ['Short.valueOf(cmd.toString())'],
+                'command_type': "StringType"
+            }],
+
         }
     ],
     'channel_types': [

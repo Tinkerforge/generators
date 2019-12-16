@@ -362,9 +362,11 @@ def output_channel(idx):
                 'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'setters': [{
-            'packet': 'Set Selected Values',
-            'packet_params': ['(short)(1 << {})'.format(idx), 'cmd == OnOffType.ON ? (short)0xFF : (short)0']}],
-            'setter_command_type': "OnOffType",
+                'packet': 'Set Selected Values',
+                'packet_params': ['(short)(1 << {})'.format(idx), 'cmd == OnOffType.ON ? (short)0xFF : (short)0'],
+                'command_type': "OnOffType"
+            }],
+
 
             'callbacks': [{
                 'packet': 'Monoflop Done',
@@ -385,8 +387,10 @@ def monoflop_channel(idx):
 
         'setters': [{
             'packet': 'Set Monoflop',
-            'packet_params': ['(short)(1 << {})'.format(idx), 'channelCfg.monoflopValue.booleanValue() ? (short)0xFF : (short)0', 'channelCfg.monoflopDuration.longValue()']}],
-        'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+            'packet_params': ['(short)(1 << {})'.format(idx), 'channelCfg.monoflopValue.booleanValue() ? (short)0xFF : (short)0', 'channelCfg.monoflopDuration.longValue()'],
+            'command_type': "StringType", # Command type has to be string type to be able to use command options.
+        }],
+
         'setter_refreshs': [{
             'channel': 'Output Pin {}'.format(idx),
             'delay': '0'

@@ -359,8 +359,10 @@ this.setInfoLEDConfig(cfg.infoLED);""",
             'type': 'Tare',
 
             'setters': [{
-                'packet': 'Tare'}],
-            'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+                'packet': 'Tare',
+                'command_type': "StringType", # Command type has to be string type to be able to use command options.
+            }],
+
             'setter_refreshs': [{
                 'channel': 'Weight',
                 'delay': '0'

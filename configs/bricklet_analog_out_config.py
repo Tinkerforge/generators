@@ -145,8 +145,9 @@ com['openhab'] = {
             'setters':[{
                 'packet': 'Set {title_words}',
                 'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)'],
+                'command_type': 'Number',
             }],
-            'setter_command_type': 'Number',
+
             'setter_refreshs': [{
                 'channel': 'Mode',
                 'delay': 0
@@ -164,8 +165,9 @@ com['openhab'] = {
             'setters':[{
                 'packet': 'Set {title_words}',
                 'packet_params': ['cmd.shortValue()'],
+                'command_type': 'Number',
             }],
-            'setter_command_type': 'Number',
+
             'setter_refreshs': [{
                 'channel': 'Voltage',
                 'delay': 0

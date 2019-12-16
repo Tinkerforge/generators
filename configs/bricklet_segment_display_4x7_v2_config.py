@@ -346,8 +346,9 @@ com['openhab'] = {
                 'transform': 'new QuantityType(value, SmartHomeUnits.ONE)'}],
             'setters': [{
                 'packet': 'Set Brightness',
-                'packet_params': ['cmd.shortValue()']}],
-            'setter_command_type': 'Number'
+                'packet_params': ['cmd.shortValue()'],
+                'command_type': 'Number'
+            }],
         }, {
             'id': 'Colon Upper',
             'type': 'Colon Upper',
@@ -358,8 +359,9 @@ com['openhab'] = {
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
             'setters': [{
                 'packet': 'Set Selected Segment',
-                'packet_params': ['32', 'cmd == OnOffType.ON']}],
-            'setter_command_type': 'OnOffType'
+                'packet_params': ['32', 'cmd == OnOffType.ON'],
+                'command_type': 'OnOffType'
+            }],
         }, {
             'id': 'Colon Lower',
             'type': 'Colon Lower',
@@ -370,8 +372,10 @@ com['openhab'] = {
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
             'setters': [{
                 'packet': 'Set Selected Segment',
-                'packet_params': ['33', 'cmd == OnOffType.ON']}],
-            'setter_command_type': 'OnOffType'
+                'packet_params': ['33', 'cmd == OnOffType.ON'],
+                'command_type': 'OnOffType'
+            }],
+
         }, {
             'id': 'Tick',
             'type': 'Tick',
@@ -382,8 +386,9 @@ com['openhab'] = {
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
             'setters': [{
                 'packet': 'Set Selected Segment',
-                'packet_params': ['34', 'cmd == OnOffType.ON']}],
-            'setter_command_type': 'OnOffType'
+                'packet_params': ['34', 'cmd == OnOffType.ON'],
+                'command_type': 'OnOffType'
+            }],
         }, {
             'id': 'Segments',
             'type': 'Segments',
@@ -401,9 +406,9 @@ com['openhab'] = {
                     'Helper.shortToBits((short)cmd.intValue())',
                     'this.getSegments().colon',
                     'this.getSegments().tick',
-                ]
+                ],
+                'command_type': 'Number'
             }],
-            'setter_command_type': 'Number'
         },  {
             'id': 'Text',
             'type': 'Text',
@@ -415,7 +420,8 @@ com['openhab'] = {
                                   'Helper.parseSegmentDisplay2TextDigit(cmd.toString(), 2)',
                                   'Helper.parseSegmentDisplay2TextDigit(cmd.toString(), 3)',
                                   'new boolean[]{cmd.toString().contains("`") || cmd.toString().contains(":"), cmd.toString().contains(",") || cmd.toString().contains(":")}',
-                                  'cmd.toString().contains("\'")']
+                                  'cmd.toString().contains("\'")'],
+                'command_type': 'StringType',
             }],
             'setter_refreshs': [
                 {'channel': 'Segments', 'delay': '0'},
@@ -423,7 +429,7 @@ com['openhab'] = {
                 {'channel': 'Colon Lower', 'delay': '0'},
                 {'channel': 'Tick', 'delay': '0'},
             ],
-            'setter_command_type': 'StringType'
+
         }
     ],
     'channel_types': [ {

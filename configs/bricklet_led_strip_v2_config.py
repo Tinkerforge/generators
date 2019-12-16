@@ -609,8 +609,10 @@ com['openhab'] = {
             'type': 'LED Values',
             'setters': [{
                 'packet': 'Set LED Values',
-                'packet_params': ['Helper.parseLEDValueIndex(cmd.toString(), logger)', 'Helper.parseLEDValues(cmd.toString(), logger)']}],
-            'setter_command_type': "StringType",
+                'packet_params': ['Helper.parseLEDValueIndex(cmd.toString(), logger)', 'Helper.parseLEDValues(cmd.toString(), logger)'],
+                'command_type': "StringType",
+            }],
+
         },
     ],
     'channel_types': [

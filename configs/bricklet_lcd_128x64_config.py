@@ -1804,31 +1804,35 @@ com['openhab'] = {
                 'type': 'Text',
                 'setters': [{
                     'packet': 'Write Line',
-                    'packet_params': ['Helper.parseDisplayCommandLine(cmd.toString(), logger)', 'Helper.parseDisplayCommandPosition(cmd.toString(), logger)', 'Helper.parseDisplayCommandText(cmd.toString(), logger, false)']}],
-                'setter_command_type': "StringType",
+                    'packet_params': ['Helper.parseDisplayCommandLine(cmd.toString(), logger)', 'Helper.parseDisplayCommandPosition(cmd.toString(), logger)', 'Helper.parseDisplayCommandText(cmd.toString(), logger, false)'],
+                    'command_type': "StringType",
+                }],
             }, {
                 'id': 'Clear Display',
                 'type': 'Clear Display',
                 'setters': [{
-                    'packet': 'Clear Display'}],
-                'setter_command_type': "StringType",
+                    'packet': 'Clear Display',
+                    'command_type': "StringType"
+                }],
+
             }, {
                 'id': 'Draw Buffered Frame',
                 'type': 'Draw Buffered Frame',
                 'setters': [{
                     'packet': 'Draw Buffered Frame',
-                    'packet_params': ['true']
+                    'packet_params': ['true'],
+                    'command_type': "StringType",
                 }],
-                'setter_command_type': "StringType",
+
             }, {
                 'id': 'Backlight',
                 'type': 'Backlight',
-                'setter_command_type': "Number",
+
                 'setters': [{
-                        'packet': 'Set Display Configuration',
-                        'packet_params': ['cfg.contrast', 'cmd.intValue()', 'cfg.invert', 'cfg.automaticDraw']
-                    }
-                ],
+                    'packet': 'Set Display Configuration',
+                    'packet_params': ['cfg.contrast', 'cmd.intValue()', 'cfg.invert', 'cfg.automaticDraw'],
+                    'command_type': "Number",
+                }],
                 'getters': [{
                     'packet': 'Get Display Configuration',
                     'transform': 'new QuantityType<>(value.backlight, SmartHomeUnits.ONE)'
@@ -1868,12 +1872,12 @@ com['openhab'] = {
             }, {
                 'id': 'Selected GUI Tab',
                 'type': 'GUI Tab Selected',
-                'setter_command_type': "Number",
+
                 'setters': [{
-                        'packet': 'Set GUI Tab Selected',
-                        'packet_params': ['cmd.intValue()']
-                    }
-                ],
+                    'packet': 'Set GUI Tab Selected',
+                    'packet_params': ['cmd.intValue()'],
+                    'command_type': "Number",
+                }],
 
                 'init_code': """this.setGUITabSelectedCallbackConfiguration(channelCfg.updateInterval.longValue(), true);""",
                 'dispose_code': """this.setGUITabSelectedCallbackConfiguration(0, true);""",

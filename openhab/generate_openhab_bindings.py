@@ -40,7 +40,7 @@ OpenHAB = namedtuple('OpenHAB', 'channels channel_types imports params param_gro
 Channel = namedtuple('Channel', ['id', 'type', 'init_code', 'dispose_code',
                                     'java_unit', 'divisor', 'is_trigger_channel',
                                     'getters',
-                                    'setters', 'setter_command_type', 'setter_refreshs',
+                                    'setters', 'setter_refreshs',
                                     'callbacks',
                                     'predicate',
                                     'label', 'description'])
@@ -48,7 +48,7 @@ Channel = namedtuple('Channel', ['id', 'type', 'init_code', 'dispose_code',
 ChannelType = namedtuple('ChannelType', ['id', 'params', 'param_groups', 'item_type', 'category', 'label', 'description',
                                             'read_only', 'pattern', 'min', 'max', 'step', 'options',
                                             'is_trigger_channel', 'command_options'])
-Setter = namedtuple('Setter', ['packet', 'packet_params', 'predicate'])
+Setter = namedtuple('Setter', ['packet', 'packet_params', 'predicate', 'command_type'])
 Getter = namedtuple('Getter', ['packet', 'packet_params', 'predicate', 'transform'])
 Callback = namedtuple('Callback', ['packet', 'filter', 'transform'])
 SetterRefresh = namedtuple('SetterRefresh', ['channel', 'delay'])
@@ -91,7 +91,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'callbacks': [],
 
             'setter_refreshs': [],
-            'setter_command_type': None,
 
             'java_unit': None,
             'divisor': 1,
@@ -112,7 +111,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         setter_defaults = {
             'packet': None,
             'packet_params': [],
-            'predicate': 'true'
+            'predicate': 'true',
+            'command_type': None
         }
 
         callback_defaults = {
@@ -297,8 +297,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                     raise common.GeneratorError('openhab: Device "{}" Channel "{}" has setter refresh for channel "{}" but no such channel was found.'.format(self.get_long_display_name(), c.id.space, r.channel.space))
 
         for c in oh.channels:
-            if len(c.setters) > 0 and c.setter_command_type is None:
-                raise common.GeneratorError('openhab: Device "{}" Channel "{}" has setters but no setter_command_type.'.format(self.get_long_display_name(), c.id.space))
+            for s in c.setters:
+                if s.command_type is None:
+                    raise common.GeneratorError('openhab: Device "{}" Channel "{}" Setter "{}" has no command_type.'.format(self.get_long_display_name(), c.id.space, s.packet.get_name().space))
+
 
 
     def find_channel_type(self, channel, channel_types):
@@ -615,16 +617,18 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         setter_with_predicate_template = """if({pred}) {{
     this.{setter}({setter_params});
 }}"""
-
-        case_template = """case "{camel}":
-                if (command instanceof {command_type}) {{
+        command_template = """{else_}if (command instanceof {command_type}) {{
                     {category_camel}{channel_type_camel}Config channelCfg = channelConfig.as({category_camel}{channel_type_camel}Config.class);
                     {command_type} cmd = ({command_type}) command;
-                    {setters}
-                    {setter_refreshs}
-                }} else {{
-                    logger.warn("Command type {{}} not supported for channel {{}}. Please use a {command_type}.", command.getClass().getName(), channel);
+                    {setter}
                 }}
+        """
+        case_template = """case "{camel}":
+                {commands}
+                else {{
+                    logger.warn("Command type {{}} not supported for channel {{}}. Please use one of {command_types}.", command.getClass().getName(), channel);
+                }}
+                {setter_refreshs}
                 break;"""
         channel_cases = []
         for c in self.oh.channels:
@@ -634,22 +638,29 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
             refreshs = '\n\t\t\t\t'.join(refresh_template.format(r.channel.camel, r.delay) for r in c.setter_refreshs)
 
-            setters = []
+            commands = []
+            first = True
             for s in c.setters:
                 packet_name = s.packet.get_name().headless if not s.packet.has_high_level() else s.packet.get_name(skip=-2).headless
+
                 if s.predicate == 'true':
-                    setters.append(setter_template.format(setter=packet_name, setter_params=', '.join(s.packet_params)))
+                    setter = setter_template.format(setter=packet_name, setter_params=', '.join(s.packet_params))
                 else:
-                    setters.append(setter_with_predicate_template.format(setter=packet_name,
+                    setter = setter_with_predicate_template.format(setter=packet_name,
                                                                          setter_params=', '.join(s.packet_params),
-                                                                         pred=s.predicate))
+                                                                         pred=s.predicate)
+
+                commands.append(command_template.format(category_camel=self.get_category().camel,
+                                                       channel_type_camel=c.type.id.camel,
+                                                       command_type=s.command_type,
+                                                       setter=setter,
+                                                       else_='' if first else 'else '))
+                first = False
 
             channel_cases.append(
-                case_template.format(category_camel=self.get_category().camel,
-                                     channel_type_camel=c.type.id.camel,
-                                     camel=c.id.camel,
-                                     command_type=c.setter_command_type,
-                                     setters='\n                    '.join(setters),
+                case_template.format(camel=c.id.camel,
+                                     command_types=', '.join(s.command_type for s in c.setters),
+                                     commands='\n'.join(commands),
                                      setter_refreshs=refreshs))
 
         if any(len(c.setter_refreshs) > 0 for c in self.oh.channels):

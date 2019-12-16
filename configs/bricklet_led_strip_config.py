@@ -832,7 +832,8 @@ com['openhab'] = {
                                     'Helper.parseLED1ValueLength(cmd.toString(), false, logger)',
                                     'Helper.parseLED1Values(cmd.toString(), 0, false, logger)',
                                     'Helper.parseLED1Values(cmd.toString(), 1, false, logger)',
-                                    'Helper.parseLED1Values(cmd.toString(), 2, false, logger)',]
+                                    'Helper.parseLED1Values(cmd.toString(), 2, false, logger)'],
+                    'command_type': "StringType",
                 }, {
                     'predicate': '!Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)',
                     'packet': 'Set RGBW Values',
@@ -841,10 +842,11 @@ com['openhab'] = {
                                     'Helper.parseLED1Values(cmd.toString(), 0, true, logger)',
                                     'Helper.parseLED1Values(cmd.toString(), 1, true, logger)',
                                     'Helper.parseLED1Values(cmd.toString(), 2, true, logger)',
-                                    'Helper.parseLED1Values(cmd.toString(), 3, true, logger)']
+                                    'Helper.parseLED1Values(cmd.toString(), 3, true, logger)'],
+                    'command_type': "StringType",
                 }
             ],
-            'setter_command_type': "StringType",
+
         },
     ],
     'channel_types': [

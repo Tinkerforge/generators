@@ -130,8 +130,9 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Heater Configuration',
-                'packet_params': ['cmd == OnOffType.ON ? HEATER_CONFIG_ENABLED : HEATER_CONFIG_DISABLED']}],
-            'setter_command_type': "OnOffType",
+                'packet_params': ['cmd == OnOffType.ON ? HEATER_CONFIG_ENABLED : HEATER_CONFIG_DISABLED'],
+                'command_type': "OnOffType"
+            }],
 
             'getters': [{
                 'packet': 'Get Heater Configuration',

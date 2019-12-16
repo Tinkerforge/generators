@@ -457,8 +457,9 @@ com['openhab'] = {
 
                     'setters': [{
                         'packet': 'Set Enable',
-                        'packet_params': ['cmd == OnOffType.ON']}],
-                    'setter_command_type': "OnOffType",
+                        'packet_params': ['cmd == OnOffType.ON'],
+                        'command_type': "OnOffType",
+                    }],
                 }
                 ],
     'channel_types':

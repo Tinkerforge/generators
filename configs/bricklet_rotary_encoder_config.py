@@ -357,8 +357,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Get Count',
-                'packet_params': ['true']}],
-            'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+                'packet_params': ['true'],
+                'command_type': "StringType", # Command type has to be string type to be able to use command options.
+            }],
+
             'setter_refreshs': [{
                 'channel': 'Count',
                 'delay': '0'

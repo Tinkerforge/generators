@@ -197,8 +197,10 @@ com['openhab'] = {
                 'transform': 'new QuantityType(value.brightness, SmartHomeUnits.ONE)'}],
             'setters': [{
                 'packet': 'Set Segments',
-                'packet_params': ['this.getSegments().segments', 'cmd.shortValue()', 'this.getSegments().colon']}],
-            'setter_command_type': 'Number'
+                'packet_params': ['this.getSegments().segments', 'cmd.shortValue()', 'this.getSegments().colon'],
+                'command_type': 'Number'
+            }],
+
         }, {
             'id': 'Colon',
             'type': 'Colon',
@@ -208,8 +210,9 @@ com['openhab'] = {
                 'transform': 'value.colon ? OnOffType.ON : OnOffType.OFF'}],
             'setters': [{
                 'packet': 'Set Segments',
-                'packet_params': ['this.getSegments().segments', 'this.getSegments().brightness', 'cmd == OnOffType.ON']}],
-            'setter_command_type': 'OnOffType'
+                'packet_params': ['this.getSegments().segments', 'this.getSegments().brightness', 'cmd == OnOffType.ON'],
+                'command_type': 'OnOffType'
+            }],
         }, {
             'id': 'Segments',
             'type': 'Segments',
@@ -220,22 +223,24 @@ com['openhab'] = {
             }],
             'setters': [{
                 'packet': 'Set Segments',
-                'packet_params': ['new short[]{(short)(cmd.intValue() >> 24), (short)(cmd.intValue() >> 16), (short)(cmd.intValue() >> 8), (short)(cmd.intValue())}', 'this.getSegments().brightness', 'this.getSegments().colon',]
+                'packet_params': ['new short[]{(short)(cmd.intValue() >> 24), (short)(cmd.intValue() >> 16), (short)(cmd.intValue() >> 8), (short)(cmd.intValue())}', 'this.getSegments().brightness', 'this.getSegments().colon'],
+                'command_type': 'Number'
             }],
-            'setter_command_type': 'Number'
+
         },  {
             'id': 'Text',
             'type': 'Text',
 
             'setters': [{
                 'packet': 'Set Segments',
-                'packet_params': ['Helper.parseSegmentDisplayText(cmd.toString())', 'this.getSegments().brightness', 'cmd.toString().contains(":")']
+                'packet_params': ['Helper.parseSegmentDisplayText(cmd.toString())', 'this.getSegments().brightness', 'cmd.toString().contains(":")'],
+                'command_type': 'StringType'
             }],
             'setter_refreshs': [
                 {'channel': 'Segments', 'delay': '0'},
                 {'channel': 'Colon', 'delay': '0'},
             ],
-            'setter_command_type': 'StringType'
+
         }
     ],
     'channel_types': [ {

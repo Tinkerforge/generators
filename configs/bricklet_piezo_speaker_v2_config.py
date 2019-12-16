@@ -326,8 +326,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Beep',
-                'packet_params': ['channelCfg.defaultFrequency, channelCfg.defaultVolume, cmd == OnOffType.ON ? channelCfg.duration.longValue() : 0']}],
-            'setter_command_type': "OnOffType",
+                'packet_params': ['channelCfg.defaultFrequency, channelCfg.defaultVolume, cmd == OnOffType.ON ? channelCfg.duration.longValue() : 0'],
+                'command_type': "OnOffType"
+            }],
+
             'setter_refreshs': [{
                 'channel': 'Volume',
                 'delay': 0
@@ -350,8 +352,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Alarm',
-                'packet_params': ['channelCfg.startFrequency, channelCfg.endFrequency, channelCfg.stepSize, channelCfg.stepDelay, channelCfg.defaultVolume, cmd == OnOffType.ON ? channelCfg.duration : 0']}],
-            'setter_command_type': "OnOffType",
+                'packet_params': ['channelCfg.startFrequency, channelCfg.endFrequency, channelCfg.stepSize, channelCfg.stepDelay, channelCfg.defaultVolume, cmd == OnOffType.ON ? channelCfg.duration : 0'],
+                'command_type': "OnOffType"
+            }],
+
             'setter_refreshs': [{
                 'channel': 'Volume',
                 'delay': 0
@@ -371,8 +375,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Update Volume',
-                'packet_params': ['cmd.intValue()']}],
-            'setter_command_type': "Number",
+                'packet_params': ['cmd.intValue()'],
+                'command_type': "Number"
+            }],
+
 
             'getters': [{
                 'packet': 'Get Beep',
@@ -390,8 +396,9 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Update Frequency',
-                'packet_params': ['cmd.intValue()']}],
-            'setter_command_type': "Number",
+                'packet_params': ['cmd.intValue()'],
+                'command_type': "Number"
+            }],
 
             'getters': [{
                     'packet': 'Get Beep',

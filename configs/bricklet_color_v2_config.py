@@ -447,8 +447,10 @@ com['openhab'] = {
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
             'setters': [{
                 'packet': 'Set Light',
-                'packet_params': ['cmd == OnOffType.ON']}],
-            'setter_command_type': 'OnOffType'
+                'packet_params': ['cmd == OnOffType.ON'],
+                'command_type': 'OnOffType'
+            }],
+
         },
     ],
     'channel_types': [

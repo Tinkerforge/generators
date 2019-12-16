@@ -554,12 +554,14 @@ com['openhab'] = {
 
             'setters': [{
                 'predicate': 'cmd == OnOffType.ON',
-                'packet': 'LED On'
+                'packet': 'LED On',
+                'command_type': "OnOffType",
             }, {
                 'predicate': 'cmd == OnOffType.OFF',
-                'packet': 'LED Off'
+                'packet': 'LED Off',
+                'command_type': "OnOffType",
             }],
-            'setter_command_type': "OnOffType",
+
 
             'getters': [{
                 'packet': 'Is LED On',

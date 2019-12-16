@@ -403,26 +403,31 @@ com['openhab'] = {
                 'type': 'Text',
                 'setters': [{
                     'packet': 'Write Line',
-                    'packet_params': ['Helper.parseDisplayCommandLine(cmd.toString(), logger)', 'Helper.parseDisplayCommandPosition(cmd.toString(), logger)', 'Helper.parseDisplayCommandText(cmd.toString(), logger, true)']}],
-                'setter_command_type': "StringType",
+                    'packet_params': ['Helper.parseDisplayCommandLine(cmd.toString(), logger)', 'Helper.parseDisplayCommandPosition(cmd.toString(), logger)', 'Helper.parseDisplayCommandText(cmd.toString(), logger, true)'],
+                    'command_type': "StringType",
+                }],
+
             },
             {
                 'id': 'Clear Display',
                 'type': 'Clear Display',
                 'setters': [{
-                    'packet': 'Clear Display'}],
-                'setter_command_type': "StringType",
+                    'packet': 'Clear Display',
+                    'command_type': "StringType",
+                }],
             },
             {
                 'id': 'Backlight',
                 'type': 'Backlight',
-                'setter_command_type': "OnOffType",
+
                 'setters': [{
                         'predicate': 'cmd == OnOffType.ON',
                         'packet': 'Backlight On',
+                        'command_type': "OnOffType",
                     }, {
                         'predicate': 'cmd == OnOffType.OFF',
                         'packet': 'Backlight Off',
+                        'command_type': "OnOffType",
                     }
                 ],
                 'getters': [{

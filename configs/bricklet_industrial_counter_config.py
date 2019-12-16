@@ -657,9 +657,10 @@ def counter_channel(idx):
             }],
             'setters': [{
                 'packet': 'Set Counter',
-                'packet_params': [str(idx), 'cmd.longValue()']
+                'packet_params': [str(idx), 'cmd.longValue()'],
+                'command_type': 'Number',
             }],
-            'setter_command_type': 'Number',
+
 
             'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False

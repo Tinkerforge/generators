@@ -329,8 +329,10 @@ com['openhab'] = {
             'id': 'Recalibrate',
             'type': 'Recalibrate',
             'setters': [{
-                'packet': 'Recalibrate'}],
-            'setter_command_type': "StringType" # Command type has to be string type to be able to use command options.
+                'packet': 'Recalibrate',
+                'command_type': "StringType" # Command type has to be string type to be able to use command options.
+            }],
+
         },
     ],
     'channel_types': [

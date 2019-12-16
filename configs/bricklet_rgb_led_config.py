@@ -86,8 +86,9 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set RGB Value',
-                'packet_params': [percent_type_to_short('cmd.getRed()'), percent_type_to_short('cmd.getGreen()'), percent_type_to_short('cmd.getBlue()'),]}],
-            'setter_command_type': "HSBType",
+                'packet_params': [percent_type_to_short('cmd.getRed()'), percent_type_to_short('cmd.getGreen()'), percent_type_to_short('cmd.getBlue()')],
+                'command_type': "HSBType",
+            }],
 
             'getters': [{
                 'packet': 'Get RGB Value',

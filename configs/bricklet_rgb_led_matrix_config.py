@@ -313,16 +313,18 @@ com['openhab'] = {
             'type': 'LED Values',
             'setters': [{
                     'packet': 'Set Red',
-                    'packet_params': ['Helper.parseLEDMatrixValues(cmd.toString(), 0, logger)']
+                    'packet_params': ['Helper.parseLEDMatrixValues(cmd.toString(), 0, logger)'],
+                    'command_type': "StringType"
                 }, {
                     'packet': 'Set Green',
-                    'packet_params': ['Helper.parseLEDMatrixValues(cmd.toString(), 1, logger)']
+                    'packet_params': ['Helper.parseLEDMatrixValues(cmd.toString(), 1, logger)'],
+                    'command_type': "StringType"
                 }, {
                     'packet': 'Set Blue',
-                    'packet_params': ['Helper.parseLEDMatrixValues(cmd.toString(), 2, logger)']
+                    'packet_params': ['Helper.parseLEDMatrixValues(cmd.toString(), 2, logger)'],
+                    'command_type': "StringType"
                 }
             ],
-            'setter_command_type': "StringType",
         },
     ],
     'channel_types': [

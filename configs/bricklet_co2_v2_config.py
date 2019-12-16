@@ -388,9 +388,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set {title_words}',
-                'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)']
+                'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)'],
+                'command_type': 'Number',
             }],
-            'setter_command_type': 'Number',
+
 
             'java_unit': 'SmartHomeUnits.BAR',
             'divisor': 1000.0,

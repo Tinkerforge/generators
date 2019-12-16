@@ -947,11 +947,13 @@ com['openhab'] = {
             'setters': [{
                     'predicate': 'cmd == OnOffType.ON',
                     'packet': 'Enable Laser',
+                    'command_type': "OnOffType",
                 }, {
                     'predicate': 'cmd == OnOffType.OFF',
                     'packet': 'Disable Laser',
+                    'command_type': "OnOffType",
                 }],
-            'setter_command_type': "OnOffType",
+
 
             'getters': [{
                 'packet': 'Is Laser Enabled',

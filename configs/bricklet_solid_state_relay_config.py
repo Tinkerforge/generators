@@ -229,8 +229,9 @@ com['openhab'] = {
 
         'setters': [{
             'packet': 'Set State',
-            'packet_params': ['cmd == OnOffType.ON']}],
-        'setter_command_type': "OnOffType",
+            'packet_params': ['cmd == OnOffType.ON'],
+            'command_type': "OnOffType",
+        }],
     }, {
         'id': 'Monoflop relay',
         'label': 'Monoflop Relay',
@@ -242,8 +243,10 @@ com['openhab'] = {
 
         'setters': [{
             'packet': 'Set Monoflop',
-            'packet_params': ['channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration']}],
-        'setter_command_type': "StringType", # Command type has to be string type to be able to use command options.
+            'packet_params': ['channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
+            'command_type': "StringType", # Command type has to be string type to be able to use command options.
+        }],
+
         'setter_refreshs': [{
             'channel': 'Relay',
             'delay': '0'

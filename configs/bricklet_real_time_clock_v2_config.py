@@ -471,8 +471,10 @@ com['openhab'] = {
                                         'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMinute()',
                                         'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getSecond()',
                                         'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getNano() / 1000 / 1000 / 10',
-                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfWeek().getValue()']}],
-            'setter_command_type': 'DateTimeType',
+                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfWeek().getValue()'],
+                'command_type': 'DateTimeType',
+            }],
+
 
             'callbacks': [{
                 'packet': 'Date Time',

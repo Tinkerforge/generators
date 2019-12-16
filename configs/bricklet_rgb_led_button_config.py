@@ -189,8 +189,10 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set {title_words}',
-                'packet_params': [percent_type_to_int('cmd.getRed()'), percent_type_to_int('cmd.getGreen()'), percent_type_to_int('cmd.getBlue()'),]}],
-            'setter_command_type': "HSBType",
+                'packet_params': [percent_type_to_int('cmd.getRed()'), percent_type_to_int('cmd.getGreen()'), percent_type_to_int('cmd.getBlue()')],
+                'command_type': "HSBType",
+            }],
+
 
             'getters': [{
                 'packet': 'Get {title_words}',
