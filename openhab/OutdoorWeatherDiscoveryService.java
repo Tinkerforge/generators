@@ -98,6 +98,12 @@ public class OutdoorWeatherDiscoveryService extends AbstractDiscoveryService imp
     }
 
     @Override
+    protected synchronized void stopScan() {
+        super.stopScan();
+        removeOlderResults(getTimestampOfLastScan());
+    }
+
+    @Override
     public Set<ThingTypeUID> getSupportedThingTypes() {
         return new HashSet<ThingTypeUID>(TinkerforgeBindingConstants.SUPPORTED_DEVICES);
     }

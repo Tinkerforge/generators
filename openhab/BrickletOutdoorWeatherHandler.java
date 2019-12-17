@@ -68,6 +68,16 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
     @Override
     public void initialize() {
         super.initialize();
+        this.stopDiscoveryService();
+        this.startDiscoveryService();
+        for(ThingHandler handler : childHandlers)
+            handler.initialize();
+    }
+
+    @Override
+    protected void initializeDevice() {
+        super.initializeDevice();
+        this.stopDiscoveryService();
         this.startDiscoveryService();
         for(ThingHandler handler : childHandlers)
             handler.initialize();

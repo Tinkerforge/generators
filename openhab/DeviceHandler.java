@@ -168,7 +168,7 @@ public class DeviceHandler extends BaseThingHandler {
         return getThing().getChannel(channelID).getConfiguration();
     }
 
-    private void initializeDevice() {
+    protected void initializeDevice() {
         String id = thing.getUID().getId();
         Bridge bridge = getBridge();
         if (bridge == null)
