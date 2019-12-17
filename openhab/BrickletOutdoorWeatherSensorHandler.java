@@ -105,8 +105,6 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
         device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
 
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
-
-        this.getThing().getChannels().forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
     }
 
     @Override
