@@ -809,13 +809,13 @@ function IPConnection() {
                     payloadBoolArray.fill(0x00);
                     extractedBoolArray.fill(false);
 
-                    for(var i = 0; i < Math.ceil(count / 8); i++) {
-                        payloadBoolArray[i] = unpackPayload.readUInt8(payloadReadOffset);
+                    for(var j = 0; j < Math.ceil(count / 8); j++) {
+                        payloadBoolArray[j] = unpackPayload.readUInt8(payloadReadOffset);
                         payloadReadOffset++;
                     }
 
-                    for(var i = 0; i < count; i++) {
-                        extractedBoolArray[i] = ((payloadBoolArray[Math.floor(i / 8)] & (1 << (i % 8))) != 0);
+                    for(var j = 0; j < count; j++) {
+                        extractedBoolArray[j] = ((payloadBoolArray[Math.floor(j / 8)] & (1 << (j % 8))) != 0);
                     }
 
                     returnArguments.push(extractedBoolArray);
