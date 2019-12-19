@@ -315,6 +315,15 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                     raise common.GeneratorError('openhab: Device "{}" Channel "{}" Setter "{}" has no command_type.'.format(self.get_long_display_name(), c.id.space, s.packet.get_name().space))
 
 
+    def add_packet_info(self, param):
+        if param['virtual']:
+            return param
+
+        if param['element'].get_packet().get_doc_type() == 'af':
+            param['advanced'] = True
+
+        return param
+
 
     def find_channel_type(self, channel, channel_types):
         if channel['type'].startswith('system.'):
@@ -388,7 +397,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                     except:
                         raise common.GeneratorError("Element {} not found in packet {}.".format(param['element'], param['packet'].get_name().space))
 
-            channel_type['params'] = [self.add_packet_info(Param(**p)) for p in channel_type['params']]
+            channel_type['params'] = [Param(**self.add_packet_info(p)) for p in channel_type['params']]
             oh['channel_types'][ct_idx] = ChannelType(**channel_type)
 
         for c_idx, channel in enumerate(oh['channels']):
@@ -417,7 +426,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if param['packet'] is not None:
                 param['packet'] = find_packet(param['packet'])
                 param['element'] = [e for e in param['packet'].get_elements() if e.get_name().space == param['element']][0] # TODO: handle high-level parameters?
-            oh['params'][p_idx] = self.add_packet_info(Param(**param))
+            oh['params'][p_idx] = Param(**self.add_packet_info(param))
 
         for g_idx, group in enumerate(oh['param_groups']):
             oh['param_groups'][g_idx] = ParamGroup(**group)
