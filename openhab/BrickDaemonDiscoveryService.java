@@ -70,12 +70,17 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
                 ThingUID thingUid = new ThingUID(ttuid, handler.getThing().getUID(), uid);
 
                 String fwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
+                String hwVersion = hardwareVersion[0] + "." + hardwareVersion[1] + "." + hardwareVersion[2];
 
                 DiscoveryResult result = DiscoveryResultBuilder.create(thingUid)
                                                                .withThingType(ttuid)
                                                                .withLabel(uid)
                                                                .withBridge(handler.getThing().getUID())
                                                                .withProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion)
+                                                               .withProperty(Thing.PROPERTY_HARDWARE_VERSION, hwVersion)
+                                                               .withProperty(Thing.PROPERTY_VENDOR, "Tinkerforge GmbH")
+                                                               .withProperty(Thing.PROPERTY_SERIAL_NUMBER, uid)
+                                                               .withProperty(Thing.PROPERTY_MODEL_ID, deviceIdentifier)
                                                                .build();
                 thingDiscovered(result);
             }

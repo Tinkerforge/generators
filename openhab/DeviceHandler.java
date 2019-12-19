@@ -14,6 +14,7 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
 import org.eclipse.smarthome.config.core.ConfigDescription;
@@ -57,6 +58,7 @@ import java.util.stream.Collectors;
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
+import com.tinkerforge.Device.Identity;
 import com.tinkerforge.Device.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
 
@@ -102,7 +104,9 @@ public class DeviceHandler extends BaseThingHandler {
     public boolean checkReachablity() {
         try {
             logger.debug("Checking reachability of {}", thing.getUID().getId());
-            getDevice().getIdentity();
+            Identity id = getDevice().getIdentity();
+            String fwVersion = id.firmwareVersion[0] + "." + id.firmwareVersion[1] + "." + id.firmwareVersion[2];
+            this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion);
             logger.debug("Done checking reachability of {}", thing.getUID().getId());
 
             // Initialize will set the status itself if the configuration succeeds.
@@ -168,6 +172,43 @@ public class DeviceHandler extends BaseThingHandler {
         return getThing().getChannel(channelID).getConfiguration();
     }
 
+    private void checkFirmware() {
+        String fw = thing.getProperties().getOrDefault(Thing.PROPERTY_FIRMWARE_VERSION, "1.0.0");
+        String min_fw = thing.getProperties().getOrDefault(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION, "1.0.0");
+
+        boolean needs_update = needsFirmwareUpdate(fw, min_fw);
+        boolean has_label = thing.getLabel().contains(TinkerforgeBindingConstants.NEEDS_FIRMWARE_UPDATE_LABEL);
+
+        if (needs_update && !has_label) {
+            thing.setLabel(thing.getLabel() + TinkerforgeBindingConstants.NEEDS_FIRMWARE_UPDATE_LABEL);
+        } else if (!needs_update && has_label) {
+            thing.setLabel(thing.getLabel().replace(TinkerforgeBindingConstants.NEEDS_FIRMWARE_UPDATE_LABEL, ""));
+        }
+    }
+
+    private boolean needsFirmwareUpdate(String fw, String min_fw) {
+        String[] fw_split = fw.split("\\.");
+        String[] min_fw_split = min_fw.split("\\.");
+        if(fw_split.length != min_fw_split.length) {
+            logger.warn("Could not parse firmware version {} or minimum required version {}", fw, min_fw);
+            return false;
+        }
+
+        for(int i = 0; i < fw_split.length; ++i){
+            try {
+                int have = Integer.parseInt(fw_split[i]);
+                int need = Integer.parseInt(min_fw_split[i]);
+                if(have < need) {
+                    return true;
+                }
+            } catch (NumberFormatException e) {
+                logger.warn("Could not parse firmware version {} or minimum required version {}", fw, min_fw);
+                return false;
+            }
+        }
+        return false;
+    }
+
     protected void initializeDevice() {
         String id = thing.getUID().getId();
         Bridge bridge = getBridge();
@@ -183,6 +224,8 @@ public class DeviceHandler extends BaseThingHandler {
         if(!checkReachablity()) {
             return;
         }
+
+        checkFirmware();
 
         try {
             device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);

@@ -34,6 +34,9 @@ public class TinkerforgeBindingConstants {
 
     public static final String BINDING_ID = "tinkerforge";
 
+    public static final String PROPERTY_MINIMUM_FIRMWARE_VERSION = "tinkerforge_minimum_firmware_version";
+    public static final String NEEDS_FIRMWARE_UPDATE_LABEL = " - Firmware too old, please update with Brick Viewer!";
+
     // List of all Thing Type UIDs
     public static final ThingTypeUID THING_TYPE_BRICK_DAEMON = new ThingTypeUID(BINDING_ID, "brickd");
     {thing_type_decls}

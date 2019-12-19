@@ -42,7 +42,7 @@ public class BrickletOutdoorWeather extends Device {
 	public final static int DEVICE_IDENTIFIER = 288;
 	public final static String DEVICE_DISPLAY_NAME = "Outdoor Weather Bricklet";
 
-    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "outdoorweather", DEVICE_IDENTIFIER, BrickletOutdoorWeather.class, DefaultActions.class);
+    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "outdoorweather", DEVICE_IDENTIFIER, BrickletOutdoorWeather.class, DefaultActions.class, "2.0.4");
 
 	public final static byte FUNCTION_GET_STATION_IDENTIFIERS_LOW_LEVEL = (byte)1;
 	public final static byte FUNCTION_GET_SENSOR_IDENTIFIERS_LOW_LEVEL = (byte)2;

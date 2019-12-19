@@ -39,7 +39,7 @@ public class BrickDaemon extends Device {
 	public final static int DEVICE_IDENTIFIER = -1;
 	public final static String DEVICE_DISPLAY_NAME = "Brick Daemon";
 
-    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "brickd", DEVICE_IDENTIFIER, BrickDaemon.class, DefaultActions.class);
+    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "brickd", DEVICE_IDENTIFIER, BrickDaemon.class, DefaultActions.class, "2.0.0");
 
     public final static byte FUNCTION_GET_AUTHENTICATION_NONCE = (byte)1;
     public final static byte FUNCTION_AUTHENTICATE = (byte)2;

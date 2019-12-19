@@ -33,7 +33,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 sys.path.append(os.path.join(os.path.split(os.getcwd())[0], 'java'))
 import common
 from java.generate_java_bindings import JavaBindingsGenerator, JavaBindingsDevice
-
+import urllib.request
 
 
 OpenHAB = namedtuple('OpenHAB', 'channels channel_types imports params param_groups init_code dispose_code category custom actions')
@@ -443,6 +443,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'java.math.BigDecimal',
                       'java.util.ArrayList',
                       'java.util.Collections',
+                      'java.util.HashMap',
+                      'java.util.Map',
                       'java.util.function.Function',
                       'java.util.function.BiConsumer',
                       'org.eclipse.smarthome.config.core.Configuration',
@@ -475,8 +477,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_java_class(self):
         java_class = JavaBindingsDevice.get_java_class(self)
+
         actions = 'Default' if len(self.oh.actions) == 0 else self.get_java_class_name()
-        java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class, {}Actions.class);\n\n'.format(self.get_name().lower_no_space, self.get_java_class_name(), actions)
+        min_fw_version = self.generator.firmwares.get(self.get_category().under + '_' + self.get_name().under, "1.0.0")
+        java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class, {}Actions.class, "{}");\n\n'\
+                        .format(self.get_name().lower_no_space,
+                                self.get_java_class_name(),
+                                actions,
+                                min_fw_version)
         return java_class
 
     def get_filtered_elements_and_type(self, packet, elements, out_of_class=False):
@@ -855,7 +863,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         return template.format(channel_id=c.id.camel, binding=binding, channel_type_id=channel_type_id, with_calls=''.join(with_calls))
 
-    def get_openhab_thing_type_builder_call(self):
+    def get_openhab_get_thing_type_impl(self):
         template = """ThingTypeBuilder.instance(thingTypeUID, "{label}").isListed(false).withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_BRICK_DAEMON.getId())).withConfigDescriptionURI(URI.create("thing-type:tinkerforge:" + thingTypeUID.getId())){with_calls}.build()"""
 
         with_calls = []
@@ -863,18 +871,20 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             with_calls.append('.withCategory("{}")'.format(self.oh.category))
         with_calls.append('.withDescription("{}")'.format(common.select_lang(self.get_description()).replace('"', '\\"')))
         with_calls.append('.withChannelDefinitions(Arrays.asList({}))'.format(', '.join(self.get_openhab_channel_definition_builder_call(c) for c in self.oh.channels)))
-
+        with_calls.append('.withProperties(props)')
         label = 'Tinkerforge ' + self.get_long_display_name()
         not_supported = len(self.oh.channels) == 0 and len(self.oh.actions) == 0
         if not_supported:
             label += ' - This device is not supported yet.'
 
-        return template.format(label=label, with_calls=''.join(with_calls))
+        builder_call = template.format(label=label, with_calls=''.join(with_calls))
 
-    def get_openhab_get_thing_type_impl(self):
-         return """public static ThingType getThingType(ThingTypeUID thingTypeUID) {{
+        return """public static ThingType getThingType(ThingTypeUID thingTypeUID) {{
+             Map<String, String> thingTypeProperties = ThingTypeBuilder.instance(thingTypeUID, "unused").build().getProperties();
+             Map<String, String> props = new HashMap<String, String>(thingTypeProperties);
+             props.putIfAbsent(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION, DEVICE_INFO.minimum_fw_version);
         return {};
-    }}""".format(self.get_openhab_thing_type_builder_call())
+    }}""".format(builder_call)
 
     def get_openhab_config_description_parameter_builder_call(self, param, channel_name=None):
         template = """ConfigDescriptionParameterBuilder.create("{name}", Type.{type_upper}){with_calls}.build()"""
@@ -1190,6 +1200,28 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def __init__(self, *args, **kwargs):
         JavaBindingsGenerator.__init__(self, *args, **kwargs)
         self.released_devices = []
+        self.firmwares = {}
+
+        print("Downloading latest_versions.txt")
+        with urllib.request.urlopen('https://download.tinkerforge.com/latest_versions.txt', timeout=10) as response:
+            latest_fws = response.read().decode('utf-8')
+
+        for line in latest_fws.split('\n'):
+            try:
+                category, device, version = line.split(':')
+            except:
+                continue
+            if category not in ['bricks', 'bricklets']:
+                continue
+
+            # HATs are bricklets in latest_versions, but bricks in the generator
+            if device == 'hat' or device == 'hat_zero':
+                category = 'bricks'
+            # latest_versions list lcd_20x4 with hardware versions v11 and v12
+            if 'lcd_20x4' in device:
+                device = 'lcd_20x4'
+            self.firmwares["{}_{}".format(category[:-1], device)] = version
+        self.firmwares["brick_red"] = "2.0.3" # FIXME: Should not be hard-coded
 
     def get_device_class(self):
         return OpenHABBindingsDevice
