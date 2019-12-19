@@ -233,6 +233,19 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 if any(word[0].islower() for word in param.label.split(' ')):
                     raise common.GeneratorError('openhab: Device {}: Channel Type {}: Parameter label "{}" is not in title case.'.format(self.get_long_display_name(), ct.id.space, param.label))
 
+        # Params must have associated packet and element or be virtual
+        for param in oh.params:
+            if param.virtual or param.element is not None:
+                continue
+            raise common.GeneratorError('openhab: Device {}: Config parameter {} has no associated packet and element and is not marked virtual.'.format(self.get_long_display_name(), param.name.space))
+
+        for c in oh.channels:
+            if c.type.params is None:
+                continue
+            for param in c.type.params:
+                if param.virtual or param.element is not None:
+                    continue
+                raise common.GeneratorError('openhab: Device {}: Channel {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), c.name.space, param.name.space))
 
         # Params must be used
         for param in oh.params:
@@ -271,7 +284,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                             channel_getter_params_use_param,
                             channel_getter_transforms_use_param,
                             channel_predicate_uses_param]):
-                    raise common.GeneratorError('openhab: Device {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), param.name.space))
+                    raise common.GeneratorError('openhab: Device {}: Channel {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), c.name.space, param.name.space))
 
 
         # Use only one of command options, state description and trigger channel per channel type
