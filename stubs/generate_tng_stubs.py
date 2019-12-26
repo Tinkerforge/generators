@@ -29,7 +29,6 @@ import os
 import datetime
 import shutil
 import math
-from sets import Set
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -287,7 +286,7 @@ bool handle_{0}_callback(void) {{
         return callbacks
 
     def get_c_callback_value_include(self):
-        callback_values = Set()
+        callback_values = set()
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
                 c_type = packet.get_elements()[-1].get_c_type('default')
@@ -307,7 +306,7 @@ bool handle_{0}_callback(void) {{
         return cv.format(cv_declaration)
 
     def get_c_callback_value_init(self):
-        callback_values = Set()
+        callback_values = set()
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200 and packet.is_part_of_callback_value():
                 c_type = packet.get_elements()[-1].get_c_type('default')

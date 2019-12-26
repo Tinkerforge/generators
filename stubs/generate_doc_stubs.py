@@ -27,7 +27,6 @@ import sys
 import os
 import datetime
 import shutil
-from sets import Set
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
