@@ -66,7 +66,7 @@ if __name__ == "__main__":
     ipcon.connect(HOST, PORT) # Connect to brickd
     # Don't use device before ipcon is connected
 {sources}
-    raw_input("Press key to exit\n") # Use input() in Python 3{cleanups}
+    input("Press key to exit\n") # Use raw_input() in Python 2{cleanups}
     ipcon.disconnect()
 """
 
