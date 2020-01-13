@@ -593,7 +593,13 @@ com['examples'].append({
               ('getter', ('Get Signal Data', 'signal data from channel 0'), [(('Duty Cycle', 'Duty Cycle (Channel 0)'), 'uint16', 1, 100.0, '%', None), (('Period', 'Period (Channel 0)'), 'uint64', 1, None, 'ns', None), (('Frequency', 'Frequency (Channel 0)'), 'uint32', 1, 1000.0, 'Hz', None), (('Value', 'Value (Channel 0)'), 'bool', 1, None, None, None)], [('uint8:constant', 0)])]
 })
 
-# FIXME: add all-counter / all-signal-data callback example
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('All Counter', 'all counter'), [(('Counter', ['Counter (Channel 0)', 'Counter (Channel 1)', 'Counter (Channel 2)', 'Counter (Channel 3)']), 'int64', 4, None, None, None)], None, None),
+              ('callback_configuration', ('All Counter', 'all counter'), [], 1000, True, None, [])]
+})
+
+# FIXME: all-signal-data callback example
 
 
 def signal_data_channel(idx, data_words, data_headless, divisor, java_unit):
