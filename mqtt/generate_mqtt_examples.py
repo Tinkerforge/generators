@@ -82,7 +82,7 @@ class MQTTExample(common.Example):
                                description=description,
                                device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
-                               sources='\nsetup:\n\t' + '\n\t'.join(sources),#.replace('\n\r', '').lstrip('\r'),
+                               sources='\nsetup:\n\t' + '\n\t'.join(sources).replace('\n\t\n','\n\n'),
                                cleanups=common.wrap_non_empty('\n\ncleanup:\n\t# If you are done, run this to clean up\n\t', '\n\t'.join(cleanups), '').rstrip('\n') + '\n')
 
 class MQTTExampleArgument(common.ExampleArgument):
