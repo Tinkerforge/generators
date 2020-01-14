@@ -833,7 +833,6 @@ def main():
 
     signal.signal(signal.SIGINT, terminate)
     signal.signal(signal.SIGTERM, terminate)
-    signal.signal(signal.SIGQUIT, terminate)
 
     parser = argparse.ArgumentParser(description='Tinkerforge MQTT Bindings')
     parser.add_argument('--ipcon-host', dest='ipcon_host', type=str, default=IPCON_HOST,
