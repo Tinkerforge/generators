@@ -874,7 +874,7 @@ public class BrickletOutdoorWeather extends Device {
     }
 
     public static ThingType getThingType(ThingTypeUID thingTypeUID) {
-        return ThingTypeBuilder.instance(thingTypeUID, "Tinkerforge Outdoor Weather Bricklet").isListed(false).withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_BRICK_DAEMON.getId())).withConfigDescriptionURI(URI.create("thing-type:tinkerforge:" + thingTypeUID.getId())).withDescription("433MHz receiver for outdoor weather station").withChannelDefinitions(Arrays.asList()).buildBridge();
+        return ThingTypeBuilder.instance(thingTypeUID, "Tinkerforge Outdoor Weather Bricklet").isListed(false).withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_BRICK_DAEMON.toString())).withConfigDescriptionURI(URI.create("thing-type:tinkerforge:" + thingTypeUID.getId())).withDescription("433MHz receiver for outdoor weather station").withChannelDefinitions(Arrays.asList()).buildBridge();
     }
 
     public static ConfigDescription getConfigDescription(URI uri) {
