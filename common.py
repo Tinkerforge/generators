@@ -2103,7 +2103,7 @@ class Element(object):
                     default = [default]
 
                 for subdefault in default:
-                    if self.get_type().startswith('int') or self.get_type().startswith('int'):
+                    if self.get_type().startswith('uint') or self.get_type().startswith('int'):
                         if sys.hexversion < 0x03000000:
                             assert isinstance(subdefault, (int, long)), raw_data
                         else:
