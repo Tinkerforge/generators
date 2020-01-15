@@ -848,7 +848,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         setter_with_predicate_template = """if({pred}) {{
     this.{setter}({setter_params});
 }}"""
-        command_template = """{else_}if (command instanceof {command_type}) {{
+        command_template = """if (command instanceof {command_type}) {{
                     {category_camel}{channel_type_camel}Config channelCfg = channelConfig.as({category_camel}{channel_type_camel}Config.class);
                     {command_type} cmd = ({command_type}) command;
                     {setter}
@@ -884,8 +884,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 commands.append(command_template.format(category_camel=self.get_category().camel,
                                                        channel_type_camel=c.type.id.camel,
                                                        command_type=s.command_type,
-                                                       setter=setter,
-                                                       else_='' if first else 'else '))
+                                                       setter=setter))
                 first = False
 
             channel_cases.append(
