@@ -197,7 +197,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Velocity',
 'elements': [('Servo Num', 'uint8', 1, 'in', {'range': [(0, 6), (128, None)]}),
-             ('Velocity', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Per Second', 'default': 65536})],
+             ('Velocity', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Per Second', 'default': 65535})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -224,7 +224,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Velocity',
 'elements': [('Servo Num', 'uint8', 1, 'in', {'range': (0, 6)}),
-             ('Velocity', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second', 'default': 65536})],
+             ('Velocity', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second', 'default': 65535})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -243,7 +243,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Current Velocity',
 'elements': [('Servo Num', 'uint8', 1, 'in', {'range': (0, 6)}),
-             ('Velocity', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second', 'default': 65536})],
+             ('Velocity', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second', 'default': 65535})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -265,7 +265,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Acceleration',
 'elements': [('Servo Num', 'uint8', 1, 'in', {'range': [(0, 6), (128, None)]}),
-             ('Acceleration', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Per Second Squared', 'default': 65536})],
+             ('Acceleration', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Per Second Squared', 'default': 65535})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -289,7 +289,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
 'elements': [('Servo Num', 'uint8', 1, 'in', {'range': (0, 6)}),
-             ('Acceleration', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second Squared', 'default': 65536})],
+             ('Acceleration', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second Squared', 'default': 65535})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -769,7 +769,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Velocity Reached',
 'elements': [('Servo Num', 'uint8', 1, 'out', {'range': (0, 6)}),
-             ('Velocity', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second', 'default': 65536})],
+             ('Velocity', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
