@@ -682,7 +682,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         actions = 'Default' if len(self.oh.actions) == 0 else self.get_java_class_name()
         min_fw_version = self.generator.firmwares.get(self.get_category().under + '_' + self.get_name().under, "1.0.0")
         java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class, {}Actions.class, "{}");\n\n'\
-                        .format(self.get_name().lower_no_space,
+                        .format(self.get_category().lower_no_space + self.get_name().lower_no_space,
                                 self.get_java_class_name(),
                                 actions,
                                 min_fw_version)
@@ -1049,7 +1049,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         case_template = """case "{uri}":
                 return ConfigDescriptionBuilder.create(uri).withParameters(Arrays.asList({builder_calls})).withParameterGroups(Arrays.asList({groups})).build();"""
 
-        cases = [case_template.format(uri='thing-type:tinkerforge:' + self.get_name().lower_no_space,
+        cases = [case_template.format(uri='thing-type:tinkerforge:' + self.get_category().lower_no_space + self.get_name().lower_no_space,
                                       builder_calls=', '.join(p.get_builder_call() for p in self.oh.params),
                                       groups=self.get_openhab_parameter_group_ctor_list(self.oh.param_groups))
                 ] + \
@@ -1236,7 +1236,7 @@ public class {name_camel} {{
     def get_openhab_binding_constant(self):
         thing_type_template = """public static final ThingTypeUID {} = new ThingTypeUID(BINDING_ID, "{}");"""
         thing_type_caps = 'THING_TYPE_' + self.get_name().upper
-        thing_type_decl = thing_type_template.format(thing_type_caps, self.get_name().lower_no_space)
+        thing_type_decl = thing_type_template.format(thing_type_caps, self.get_category().lower_no_space + self.get_name().lower_no_space)
 
         channel_type_template = """public static final ChannelTypeUID {} = new ChannelTypeUID(BINDING_ID, "{}");"""
         channel_types_caps = ['CHANNEL_TYPE_' + ct.id.upper for ct in self.oh.channel_types]
