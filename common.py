@@ -2086,6 +2086,8 @@ class Element(object):
             default = extra.get('default')
 
             if default != None:
+                assert packet.get_type() == 'function', raw_data
+
                 if self.get_cardinality() != 1 and len(raw_data_extra) == 1:
                     if self.get_type() == 'string':
                         assert isinstance(default, str) and len(default) <= self.get_cardinality(), raw_data
