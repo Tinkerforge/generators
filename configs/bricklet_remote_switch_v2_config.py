@@ -294,7 +294,7 @@ Typen A, B und C.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Remote Configuration',
-'elements': [('Remote Type', 'uint8', 1, 'out', {'constant_group': 'Remote Type', 'default': 'A'}),
+'elements': [('Remote Type', 'uint8', 1, 'out', {'constant_group': 'Remote Type', 'default': 0}),
              ('Minimum Repeats', 'uint16', 1, 'out', {'default': 2}),
              ('Callback Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
