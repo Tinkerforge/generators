@@ -49,8 +49,8 @@ class {0}(MQTTCallbackDevice):
 
     def get_mqtt_init_method(self):
         template = """
-	def __init__(self, uid, ipcon, device_class, mqttc):
-		MQTTCallbackDevice.__init__(self, uid, ipcon, device_class, mqttc)
+	def __init__(self, uid, ipcon, device_class_name, device_class, mqttc):
+		MQTTCallbackDevice.__init__(self, uid, ipcon, device_class_name, device_class, mqttc)
 
 {0}
 """

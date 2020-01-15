@@ -653,7 +653,9 @@ class MQTTBindings:
             device = self.ipcon.devices[uid_]
         else:
             try:
-                device = device_class(uid, self.ipcon, device_class, mqttc)
+                if uid_ in self.ipcon.devices:
+                    logging.info("Device {} is already known as {}, but will be displaced by the new requested {}".format(uid, self.ipcon.devices[uid_].device_class_name, device_class_name))
+                device = device_class(uid, self.ipcon, device_class_name, device_class, mqttc)
             except Exception as e:
                 return False, json_error("Could not create device object: {}".format(str(e)))
         return True, device
