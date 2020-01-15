@@ -2115,10 +2115,28 @@ class Element(object):
                         assert len(subdefault) == 1, raw_data
                         assert ord(subdefault) <= 255, raw_data
 
+                    assert range_ != 'dynamic', raw_data
+
+                    if range_ == 'constants':
+                        pass # FIXME: check if default value is in range
+                    elif range_ != None:
+                        if range_ == 'type':
+                            actual_range = [self.get_type_range()]
+                        else:
+                            actual_range = range_
+
+                        found = False
+
+                        for subrange in actual_range:
+                            if subdefault >= subrange[0] and subdefault <= subrange[1]:
+                                found = True
+                                break
+
+                        assert found, raw_data
+
                 if len(default) == 1:
                     default = default[0]
 
-                # FIXME: check if default value is in range
                 # FIXME: add tooltip for contants
 
             self._extra.append({'name': name, 'scale': scale, 'unit': unit, 'range': range_, 'constant_group': constant_group, 'default': default})
