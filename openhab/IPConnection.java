@@ -68,13 +68,6 @@ public class IPConnection extends IPConnectionBase {
 	 */
 	public void removeConnectedListener(ConnectedListener listener) {
 		listenerConnected.remove(listener);
-    }
-
-    /**
-	 * Removes all Connected listener.
-	 */
-	public void clearConnectedListeners() {
-		listenerConnected.clear();
 	}
 
 	/**
@@ -89,9 +82,9 @@ public class IPConnection extends IPConnectionBase {
 	 */
 	public void removeDisconnectedListener(DisconnectedListener listener) {
 		listenerDisconnected.remove(listener);
-    }
+	}
 
-    /**
+	/**
 	 * Removes all Disconnected listener.
 	 */
 	public void clearDisconnectedListeners() {
