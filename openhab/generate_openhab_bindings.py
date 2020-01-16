@@ -1232,7 +1232,7 @@ public class {name_camel} {{
 
     def get_openhab_binding_constant(self):
         thing_type_template = """public static final ThingTypeUID {} = new ThingTypeUID(BINDING_ID, "{}");"""
-        thing_type_caps = 'THING_TYPE_' + self.get_name().upper
+        thing_type_caps = 'THING_TYPE_' + self.get_category().upper + "_" + self.get_name().upper
         thing_type_decl = thing_type_template.format(thing_type_caps, self.get_category().lower_no_space + self.get_name().lower_no_space)
 
         channel_type_template = """public static final ChannelTypeUID {} = new ChannelTypeUID(BINDING_ID, "{}");"""
@@ -1243,8 +1243,9 @@ public class {name_camel} {{
         config_description_types_caps = ['CONFIG_DESCRIPTION_URI_' + ct.id.upper for ct in self.oh.channel_types if not ct.is_system_type()]
         config_description_type_decls = [config_description_type_template.format(name=caps, thing_or_channel='channel', type_caps='CHANNEL_TYPE_' + ct.id.upper) for caps, ct in zip(config_description_types_caps, [ct for ct in self.oh.channel_types]) if not ct.is_system_type()]
 
-        config_description_types_caps.append('CONFIG_DESCRIPTION_URI_' + self.get_name().upper)
-        config_description_type_decls.append(config_description_type_template.format(name='CONFIG_DESCRIPTION_URI_' + self.get_name().upper, thing_or_channel='thing', type_caps=thing_type_caps))
+        config_description_type_caps = 'CONFIG_DESCRIPTION_URI_' + self.get_category().upper + "_" + self.get_name().upper
+        config_description_types_caps.append(config_description_type_caps)
+        config_description_type_decls.append(config_description_type_template.format(name=config_description_type_caps, thing_or_channel='thing', type_caps=thing_type_caps))
 
         return (thing_type_caps, thing_type_decl, channel_types_caps, channel_type_decls, config_description_types_caps, config_description_type_decls)
 
