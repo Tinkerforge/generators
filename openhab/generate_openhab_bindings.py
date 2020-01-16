@@ -703,7 +703,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         for c in self.oh.channels:
             channel_cfg = ['{channel_type_name_camel}Config channelCfg = getChannelConfigFn.apply("{channel_name_camel}").as({channel_type_name_camel}Config.class);'
                                .format(channel_name_camel=c.id.camel,
-                                       channel_type_name_camel=self.get_category().camel + c.type.id.camel)]
+                                       channel_type_name_camel=c.type.id.camel)]
             if c.type.is_system_type():
                 channel_cfg = []
             if c.predicate != 'true':
@@ -778,7 +778,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     }}"""
 
         case_template_with_config = """case "{camel}": {{
-                   {category_camel}{channel_type_camel}Config channelCfg = channelConfig.as({category_camel}{channel_type_camel}Config.class);
+                   {channel_type_camel}Config channelCfg = channelConfig.as({channel_type_camel}Config.class);
                    {getters}
                    return;
                }}"""
@@ -823,7 +823,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                                  i=i))
 
             channel_cases.append(template.format(camel=c.id.camel,
-                                                 category_camel=self.get_category().camel,
                                                  channel_type_camel=c.type.id.camel,
                                                  getters='\n                   '.join(channel_getters)))
 
@@ -849,7 +848,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     this.{setter}({setter_params});
 }}"""
         command_template = """if (command instanceof {command_type}) {{
-                    {category_camel}{channel_type_camel}Config channelCfg = channelConfig.as({category_camel}{channel_type_camel}Config.class);
+                    {channel_type_camel}Config channelCfg = channelConfig.as({channel_type_camel}Config.class);
                     {command_type} cmd = ({command_type}) command;
                     {setter}
                 }}
@@ -881,8 +880,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                                          setter_params=', '.join(s.packet_params),
                                                                          pred=s.predicate)
 
-                commands.append(command_template.format(category_camel=self.get_category().camel,
-                                                       channel_type_camel=c.type.id.camel,
+                commands.append(command_template.format(channel_type_camel=c.type.id.camel,
                                                        command_type=s.command_type,
                                                        setter=setter))
                 first = False
@@ -1220,7 +1218,7 @@ public class {name_camel} {{
                                                                                 default=p.default if p.type != 'text' else '"' + p.default + '"') for p in self.oh.params))))
         for ct in self.oh.channel_types:
             imports = '\n\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in ct.params] else ''
-            class_name = self.get_category().camel + ct.id.camel + 'Config'
+            class_name = ct.id.camel + 'Config'
             classes.append((class_name,
                             template.format(imports=imports,
                                name_camel=class_name,
