@@ -863,13 +863,11 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		}
 
 		long uid = getUIDFromData(packet);
-
-		if (!devices.containsKey(uid)) {
-			// Message for an unknown device, ignoring it
-			return;
-		}
-
 		Device device = devices.get(uid);
+
+		if (device == null) {
+			return; // Message for an unknown device, ignoring it
+		}
 
 		if (sequenceNumber == 0) {
 			if (device.callbacks[functionID] != null) {

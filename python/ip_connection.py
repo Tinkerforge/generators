@@ -1083,10 +1083,10 @@ class IPConnection(object):
                firmware_version, device_identifier, enumeration_type)
             return
 
-        if uid not in self.devices:
-            return
+        device = self.devices.get(uid)
 
-        device = self.devices[uid]
+        if device == None:
+            return
 
         try:
             device.check_device_identifier()
@@ -1301,12 +1301,10 @@ class IPConnection(object):
             return
 
         uid = get_uid_from_data(packet)
+        device = self.devices.get(uid)
 
-        if not uid in self.devices:
-            # Response from an unknown device, ignoring it
-            return
-
-        device = self.devices[uid]
+        if device == None:
+            return # Response from an unknown device, ignoring it
 
         if sequence_number == 0:
             if function_id in device.registered_callbacks or \

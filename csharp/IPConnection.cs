@@ -825,10 +825,10 @@ namespace Tinkerforge
 			else
 			{
 				int uid = GetUIDFromData(cqo.packet);
+				Device device;
 
-				if (devices.ContainsKey(uid))
+				if (devices.TryGetValue(uid, out device))
 				{
-					Device device = devices[uid];
 					Device.CallbackWrapper wrapper = device.callbackWrappers[fid];
 
 					if (wrapper != null)
@@ -993,14 +993,12 @@ namespace Tinkerforge
 			}
 
 			int uid = GetUIDFromData(packet);
+			Device device;
 
-			if (!devices.ContainsKey(uid))
+			if (!devices.TryGetValue(uid, out device))
 			{
-				// Response from an unknown device, ignoring it
-				return;
+				return; // Response from an unknown device, ignoring it
 			}
-
-			Device device = devices[uid];
 
 			if (sequenceNumber == 0)
 			{
