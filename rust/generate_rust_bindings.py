@@ -824,8 +824,8 @@ pub mod low_level_traits;
         self.write_cargo_toml()
         self.write_lib_rs()
         self.write_byte_converter()
-        common.BindingsGenerator.finish(self)
 
+        common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', RustBindingsGenerator)

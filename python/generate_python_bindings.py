@@ -643,11 +643,11 @@ class PythonBindingsGenerator(python_common.PythonGeneratorTrait, common.Binding
         return python_common.PythonElement
 
     def prepare(self):
+        common.BindingsGenerator.prepare(self)
+
         self.device_factory_all_classes = []
         self.device_factory_released_classes = []
         self.device_display_names = []
-
-        return common.BindingsGenerator.prepare(self)
 
     def generate(self, device):
         filename = '{0}_{1}.py'.format(device.get_category().under, device.get_name().under)
@@ -725,7 +725,7 @@ def get_device_display_name(device_identifier):
 
         self.released_files.append('device_display_names.py')
 
-        return common.BindingsGenerator.finish(self)
+        common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', PythonBindingsGenerator)

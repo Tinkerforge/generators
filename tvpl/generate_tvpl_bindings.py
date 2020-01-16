@@ -809,9 +809,6 @@ class TVPLBindingsGenerator(tvpl_common.TVPLGeneratorTrait, common.BindingsGener
     def get_element_class(self):
         return tvpl_common.TVPLElement
 
-    def prepare(self):
-        return common.BindingsGenerator.prepare(self)
-
     def generate(self, device):
         filename_tvpl_block = '{devicecategory}_{devicename}.block'.format(devicecategory=device.get_category().under,
                                                                            devicename=device.get_name().under)
@@ -831,9 +828,6 @@ class TVPLBindingsGenerator(tvpl_common.TVPLGeneratorTrait, common.BindingsGener
 
         if device.is_released():
             self.released_files.append('_'.join([device.get_category().under, device.get_name().under]))
-
-    def finish(self):
-        return common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', TVPLBindingsGenerator)

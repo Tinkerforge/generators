@@ -575,8 +575,6 @@ class ShellBindingsGenerator(shell_common.ShellGeneratorTrait, common.BindingsGe
         self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
 
     def finish(self):
-        common.BindingsGenerator.finish(self)
-
         root_dir = self.get_root_dir()
         bindings_dir = self.get_bindings_dir()
         version = self.get_changelog_version()
@@ -653,6 +651,8 @@ def get_device_display_name(device_identifier):
 
         with open(os.path.join(bindings_dir, 'tinkerforge-bash-completion.sh'), 'w') as f:
             f.write(template)
+
+        common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', ShellBindingsGenerator)

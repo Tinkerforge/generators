@@ -1532,16 +1532,14 @@ class JavaBindingsGenerator(java_common.JavaGeneratorTrait, common.BindingsGener
         return java_common.JavaElement
 
     def prepare(self):
-        self.device_classes = []
+        common.BindingsGenerator.prepare(self)
 
-        result = common.BindingsGenerator.prepare(self)
+        self.device_classes = []
 
         if self.is_matlab():
             os.makedirs(os.path.join(self.get_bindings_dir(), 'matlab'))
         elif self.is_octave():
             os.makedirs(os.path.join(self.get_bindings_dir(), 'octave'))
-
-        return result
 
     def generate(self, device):
         class_name = device.get_java_class_name()
@@ -1576,7 +1574,7 @@ class JavaBindingsGenerator(java_common.JavaGeneratorTrait, common.BindingsGener
             for name in sorted(self.device_classes):
                 f.write('com.tinkerforge.{0}Provider\n'.format(name))
 
-        return common.BindingsGenerator.finish(self)
+        common.BindingsGenerator.finish(self)
 
     def is_matlab(self):
         return False

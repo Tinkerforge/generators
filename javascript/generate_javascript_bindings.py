@@ -1208,7 +1208,7 @@ class JavaScriptBindingsGenerator(javascript_common.JavascriptGeneratorTrait, co
         return javascript_common.JavaScriptElement
 
     def prepare(self):
-        ret = common.BindingsGenerator.prepare(self)
+        common.BindingsGenerator.prepare(self)
 
         browser_api_filename = os.path.join(self.get_bindings_dir(), 'BrowserAPI.js')
         npm_main_filename = os.path.join(self.get_bindings_dir(), 'TinkerforgeNPM.js')
@@ -1233,8 +1233,6 @@ class JavaScriptBindingsGenerator(javascript_common.JavascriptGeneratorTrait, co
         self.source_main_file.write("""function Tinkerforge() {
 	this.IPConnection = require('./Tinkerforge/IPConnection');
 """)
-
-        return ret
 
     def add_browser_api_function(self, device):
         if device.is_released():
@@ -1286,7 +1284,7 @@ module.exports = new Tinkerforge();""")
 module.exports = new Tinkerforge();""")
         self.source_main_file.close()
 
-        return common.BindingsGenerator.finish(self)
+        common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', JavaScriptBindingsGenerator)

@@ -259,8 +259,6 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
             self.part_files.append(filename)
 
     def finish(self):
-        common.BindingsGenerator.finish(self)
-
         root_dir = self.get_root_dir()
         bindings_dir = self.get_bindings_dir()
         version = self.get_changelog_version()
@@ -293,6 +291,8 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
         mqtt.write('\n\n\ndisplay_names = {\n\t' + ',\n\t'.join(self.device_display_names) + '\n}\n\n\n')
         mqtt.write(footer)
         mqtt.close()
+
+        common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', MQTTBindingsGenerator)
