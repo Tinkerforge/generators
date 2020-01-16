@@ -46,4 +46,8 @@ public class DeviceFactory {
     public static Device createDevice(String thingName, String uid, IPConnection ipcon) throws Exception {
 		return (Device)getDeviceInfo(thingName).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
 	}
+
+    public static String getDeviceDisplayName(int deviceIdentifier) {
+		return getDeviceInfo(deviceIdentifier).deviceDisplayName;
+	}
 }
