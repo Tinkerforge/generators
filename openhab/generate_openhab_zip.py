@@ -93,7 +93,6 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'IPConnectionBase.java':          './src/main/java/com/tinkerforge',
             'TinkerforgeListener.java':       './src/main/java/com/tinkerforge',
 
-            'BrickletOutdoorWeather.java':       './src/main/java/com/tinkerforge',
             'BrickletOutdoorWeatherSensor.java':'./src/main/java/com/tinkerforge',
             'BrickletOutdoorWeatherSensorConfig.java':'./src/main/java/com/tinkerforge',
             'BrickletOutdoorWeatherStation.java':'./src/main/java/com/tinkerforge',

@@ -122,7 +122,7 @@ public class BrickletOutdoorWeatherSensor {
 
     public static ThingType getThingType(ThingTypeUID thingTypeUID) {
         return ThingTypeBuilder.instance(thingTypeUID, "Tinkerforge Outdoor Weather Temperature/Humidity Sensor TH-6148 ").isListed(true)
-                .withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_OUTDOOR_WEATHER.toString()))
+                .withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_BRICKLET_OUTDOOR_WEATHER.toString()))
                 .withConfigDescriptionURI(URI.create("thing-type:tinkerforge:" + thingTypeUID.getId()))
                 .withDescription("Weather sensor connected to an Outdoor Weather Bricklet")
                 .withChannelDefinitions(Arrays.asList(

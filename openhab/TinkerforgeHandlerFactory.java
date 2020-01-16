@@ -83,7 +83,7 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
         if (thingTypeUID.equals(THING_TYPE_BRICK_DAEMON)) {
             assert (thing instanceof Bridge);
             return new BrickDaemonHandler((Bridge) thing, this::registerBrickDaemonDiscoveryService, this::deregisterBrickDaemonDiscoveryService);
-        } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER)) {
+        } else if (thingTypeUID.equals(THING_TYPE_BRICKLET_OUTDOOR_WEATHER)) {
             assert (thing instanceof Bridge);
             return new BrickletOutdoorWeatherHandler((Bridge) thing,
                                                      (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),

@@ -20,7 +20,6 @@ public class DeviceFactory {
         deviceInfos = Arrays.asList(
             BrickDaemon.DEVICE_INFO,
             {devices},
-            BrickletOutdoorWeather.DEVICE_INFO,
             BrickletOutdoorWeatherSensor.DEVICE_INFO,
             BrickletOutdoorWeatherStation.DEVICE_INFO
         );

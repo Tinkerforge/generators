@@ -47,6 +47,7 @@ class OpenHAB:
         self.category = kwargs.get('category', None)
         self.custom = kwargs.get('custom', False)
         self.actions = kwargs.get('actions', [])
+        self.is_bridge = kwargs.get('actions', False)
 
 class Channel:
     def __init__(self, **kwargs):
@@ -998,7 +999,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
 
     def get_openhab_get_thing_type_impl(self):
-        template = """ThingTypeBuilder.instance(thingTypeUID, "{label}").isListed(false).withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_BRICK_DAEMON.toString())).withConfigDescriptionURI(URI.create("thing-type:tinkerforge:" + thingTypeUID.getId())){with_calls}.build()"""
+        template = """ThingTypeBuilder.instance(thingTypeUID, "{label}").isListed(false).withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_BRICK_DAEMON.toString())).withConfigDescriptionURI(URI.create("thing-type:tinkerforge:" + thingTypeUID.getId())){with_calls}.build{bridge}()"""
 
         with_calls = []
         if self.oh.category is not None:
@@ -1011,7 +1012,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         if not_supported:
             label += ' - This device is not supported yet.'
 
-        builder_call = template.format(label=label, with_calls=''.join(with_calls))
+        builder_call = template.format(label=label, with_calls=''.join(with_calls), bridge='Bridge' if self.oh.is_bridge else '')
 
         return """public static ThingType getThingType(ThingTypeUID thingTypeUID) {{
              Map<String, String> thingTypeProperties = ThingTypeBuilder.instance(thingTypeUID, "unused").build().getProperties();

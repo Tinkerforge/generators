@@ -366,5 +366,42 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'custom': True
+    'is_bridge': True,
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'param_groups': oh_generic_channel_param_groups(),
+
+    'init_code': """
+    this.setStationCallbackConfiguration(true);
+    this.setSensorCallbackConfiguration(true);""",
+
+    'dispose_code': """this.setStationCallbackConfiguration(false);
+    this.setSensorCallbackConfiguration(false);""",
+
+    'channels': [ {
+            'id': 'Sensor Identifiers',
+            'label': 'Sensor Identifiers',
+            'description': 'The identifiers (number between 0 and 255) of all sensors that have been seen since the startup of the Bricklet.<br/><br/>Each sensor gives itself a random identifier on first startup.<br/><br/>Since firmware version 2.0.2 a sensor is removed from the list if no data was received for 12 hours.',
+
+            'type': 'Sensor Identifiers',
+
+            'getters': [{
+                'packet': 'Get Sensor Identifiers',
+                'transform': 'new StringType(Arrays.stream(value).mapToObj(String::valueOf).reduce((l, r) -> l + ", " + r).get())'}]
+        }, {
+            'id': 'Station Identifiers',
+            'label': 'Station Identifiers',
+            'description': 'The identifiers (number between 0 and 255) of all stations that have been seen since the startup of the Bricklet.<br/><br/>Each station gives itself a random identifier on first startup.<br/><br/>Since firmware version 2.0.2 a station is removed from the list if no data was received for 12 hours.',
+
+            'type': 'Station Identifiers',
+
+            'getters': [{
+                'packet': 'Get Station Identifiers',
+                'transform': 'new StringType(Arrays.stream(value).mapToObj(String::valueOf).reduce((l, r) -> l + ", " + r).get())'}]
+        }
+    ],
+    'channel_types': [
+        oh_generic_channel_type('Sensor Identifiers', 'String', 'NOT USED', update_style=None, description='NOT USED'),
+        oh_generic_channel_type('Station Identifiers', 'String', 'NOT USED', update_style=None, description='NOT USED'),
+    ],
+    'actions': ['Get Station Identifiers', 'Get Sensor Identifiers', 'Get Station Data', 'Get Sensor Data']
 }
