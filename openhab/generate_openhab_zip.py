@@ -95,7 +95,9 @@ class OpenHABZipGenerator(common.ZipGenerator):
 
             'BrickletOutdoorWeather.java':       './src/main/java/com/tinkerforge',
             'BrickletOutdoorWeatherSensor.java':'./src/main/java/com/tinkerforge',
+            'BrickletOutdoorWeatherSensorConfig.java':'./src/main/java/com/tinkerforge',
             'BrickletOutdoorWeatherStation.java':'./src/main/java/com/tinkerforge',
+            'BrickletOutdoorWeatherStationConfig.java':'./src/main/java/com/tinkerforge',
 
 
             os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'): './src/main/java/com/tinkerforge',

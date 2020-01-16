@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.function.Function;
 
 import com.tinkerforge.BrickletOutdoorWeather.StationData;
+import com.tinkerforge.BrickletOutdoorWeather.StationDataListener;
 import com.tinkerforge.Device.SetterRefresh;
 
 import java.util.function.BiConsumer;
@@ -50,13 +51,12 @@ import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 
 
 public class BrickletOutdoorWeatherStation {
-    public BrickletOutdoorWeatherStation(int id, BrickletOutdoorWeather bricklet) {
-        this.id = id;
+    public BrickletOutdoorWeatherStation(BrickletOutdoorWeather bricklet) {
         this.bricklet = bricklet;
     }
 
-    private final int id;
     private final BrickletOutdoorWeather bricklet;
+    public StationDataListener listener = null;
 
     public final static int DEVICE_IDENTIFIER = -288;
     public final static String DEVICE_DISPLAY_NAME = "Outdoor Weather Station";
@@ -68,8 +68,9 @@ public class BrickletOutdoorWeatherStation {
     private final static Logger static_logger = LoggerFactory.getLogger(BrickletOutdoorWeather.class);
 
     public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) {
-        bricklet.addStationDataListener((int identifier, int temperature, int humidity, long windSpeed, long gustSpeed, long rain, int windDirection, boolean batteryLow) -> {
-            if(identifier != this.id)
+        BrickletOutdoorWeatherStationConfig cfg = (BrickletOutdoorWeatherStationConfig) config.as(BrickletOutdoorWeatherStationConfig.class);
+        listener = (int identifier, int temperature, int humidity, long windSpeed, long gustSpeed, long rain, int windDirection, boolean batteryLow) -> {
+            if(identifier != cfg.stationID)
                 return;
             updateStateFn.accept("OutdoorWeatherStationTemperature",   new QuantityType<>(temperature / 10.0, SIUnits.CELSIUS));
             updateStateFn.accept("OutdoorWeatherStationHumidity",      new QuantityType<>(humidity, SmartHomeUnits.PERCENT));
@@ -79,7 +80,8 @@ public class BrickletOutdoorWeatherStation {
             updateStateFn.accept("OutdoorWeatherStationWindDirection", new StringType(getWindDirectionName(windDirection)));
             updateStateFn.accept("OutdoorWeatherStationBatteryLow",    batteryLow ? OnOffType.ON : OnOffType.OFF);
             updateStateFn.accept("OutdoorWeatherStationLastChange",    new DateTimeType(getAbsoluteTime(0)));
-        });
+        };
+        bricklet.addStationDataListener(listener);
     }
 
     public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config)
@@ -166,7 +168,7 @@ public class BrickletOutdoorWeatherStation {
     }
 
     public static ThingType getThingType(ThingTypeUID thingTypeUID) {
-        return ThingTypeBuilder.instance(thingTypeUID, "Tinkerforge Outdoor Weather Station WS-6147.").isListed(false)
+        return ThingTypeBuilder.instance(thingTypeUID, "Tinkerforge Outdoor Weather Station WS-6147.").isListed(true)
                 .withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_OUTDOOR_WEATHER.toString()))
                 .withConfigDescriptionURI(URI.create("thing-type:tinkerforge:" + thingTypeUID.getId()))
                 .withDescription("Weather Station connected to an Outdoor Weather Bricklet")
@@ -193,6 +195,18 @@ public class BrickletOutdoorWeatherStation {
     public static ConfigDescription getConfigDescription(URI uri) {
         switch (uri.toASCIIString()) {
         case "thing-type:tinkerforge:outdoorweatherstation":
+            return ConfigDescriptionBuilder
+                    .create(uri)
+                    .withParameters(
+                        Arrays.asList(
+                            ConfigDescriptionParameterBuilder
+                                .create("stationID", Type.INTEGER)
+                                .withDefault("0")
+                                .withDescription("The ID of the station to query. Each station gives itself a random identifier on startup. The Outdoor Weather Bricklet reports available IDs.")
+                                .withMinimum(BigDecimal.valueOf(0))
+                                .withMaximum(BigDecimal.valueOf(255))
+                                .build()))
+                    .build();
         case "channel-type:tinkerforge:OutdoorWeatherStationTemperature":
         case "channel-type:tinkerforge:OutdoorWeatherStationHumidity":
         case "channel-type:tinkerforge:OutdoorWeatherStationWindSpeed":
@@ -211,30 +225,31 @@ public class BrickletOutdoorWeatherStation {
 
 
     public void refreshValue(String value, org.eclipse.smarthome.config.core.Configuration config, org.eclipse.smarthome.config.core.Configuration channelConfig, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {
+        BrickletOutdoorWeatherStationConfig cfg = (BrickletOutdoorWeatherStationConfig) config.as(BrickletOutdoorWeatherStationConfig.class);
         switch(value) {
             case "OutdoorWeatherStationTemperature":
-                updateStateFn.accept(value, transformOutdoorWeatherTemperatureGetter0(bricklet.getStationData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherTemperatureGetter0(bricklet.getStationData(cfg.stationID)));
                 break;
             case "OutdoorWeatherStationHumidity":
-                updateStateFn.accept(value, transformOutdoorWeatherHumidityGetter0(bricklet.getStationData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherHumidityGetter0(bricklet.getStationData(cfg.stationID)));
                 break;
             case "OutdoorWeatherStationWindSpeed":
-                updateStateFn.accept(value, transformOutdoorWeatherWindSpeedGetter0(bricklet.getStationData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherWindSpeedGetter0(bricklet.getStationData(cfg.stationID)));
                 break;
             case "OutdoorWeatherStationGustSpeed":
-                updateStateFn.accept(value, transformOutdoorWeatherGustSpeedGetter0(bricklet.getStationData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherGustSpeedGetter0(bricklet.getStationData(cfg.stationID)));
                 break;
             case "OutdoorWeatherStationRainFall":
-                updateStateFn.accept(value, transformOutdoorWeatherRainFallGetter0(bricklet.getStationData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherRainFallGetter0(bricklet.getStationData(cfg.stationID)));
                 break;
             case "OutdoorWeatherStationWindDirection":
-                updateStateFn.accept(value, transformOutdoorWeatherWindDirectionGetter0(bricklet.getStationData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherWindDirectionGetter0(bricklet.getStationData(cfg.stationID)));
                 break;
             case "OutdoorWeatherStationBatteryLow":
-                updateStateFn.accept(value, transformOutdoorWeatherBatteryLowGetter0(bricklet.getStationData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherBatteryLowGetter0(bricklet.getStationData(cfg.stationID)));
                 break;
             case "OutdoorWeatherStationLastChange":
-                updateStateFn.accept(value, transformOutdoorWeatherLastChangeGetter0(bricklet.getStationData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherLastChangeGetter0(bricklet.getStationData(cfg.stationID)));
                 break;
             default:
                 logger.warn("Refresh for unknown channel {}", value);

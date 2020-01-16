@@ -12,7 +12,6 @@ import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.binding.tinkerforge.discovery.OutdoorWeatherDiscoveryService;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -23,42 +22,18 @@ import org.eclipse.smarthome.core.thing.binding.builder.BridgeBuilder;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 
 public class BrickletOutdoorWeatherHandler extends DeviceHandler implements BridgeHandler {
-    private Consumer<OutdoorWeatherDiscoveryService> registerFn;
-    private Consumer<OutdoorWeatherDiscoveryService> deregisterFn;
-    private OutdoorWeatherDiscoveryService discoveryService;
-
     private List<ThingHandler> childHandlers = new ArrayList<>();
 
     public BrickletOutdoorWeatherHandler(
         Bridge bridge,
         BiFunction<String, IPConnection, Device> deviceSupplier,
-        Consumer<OutdoorWeatherDiscoveryService> registerFn,
-        Consumer<OutdoorWeatherDiscoveryService> deregisterFn,
         Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
         Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
         super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier, configDescriptionRegistrySupplier);
-        this.registerFn = registerFn;
-        this.deregisterFn = deregisterFn;
     }
 
     public @Nullable BrickletOutdoorWeather getDevice() {
         return (BrickletOutdoorWeather)super.getDevice();
-    }
-
-    private synchronized void startDiscoveryService() {
-        if (discoveryService != null) {
-            return;
-        }
-        discoveryService = new OutdoorWeatherDiscoveryService(this);
-        discoveryService.activate();
-        registerFn.accept(discoveryService);
-    }
-
-    private synchronized void stopDiscoveryService() {
-        if (discoveryService != null) {
-            deregisterFn.accept(discoveryService);
-            discoveryService = null;
-        }
     }
 
     public void handleTimeout() {
@@ -68,8 +43,6 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
     @Override
     public void initialize() {
         super.initialize();
-        this.stopDiscoveryService();
-        this.startDiscoveryService();
         for(ThingHandler handler : childHandlers)
             handler.initialize();
     }
@@ -77,22 +50,8 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
     @Override
     protected void initializeDevice() {
         super.initializeDevice();
-        this.stopDiscoveryService();
-        this.startDiscoveryService();
         for(ThingHandler handler : childHandlers)
             handler.initialize();
-    }
-
-    @Override
-    public void handleRemoval() {
-        this.stopDiscoveryService();
-        super.handleRemoval();
-    }
-
-    @Override
-    public void dispose() {
-        this.stopDiscoveryService();
-        super.dispose();
     }
 
     // BridgeHandler implementation copied over from BaseBridgeHandler.

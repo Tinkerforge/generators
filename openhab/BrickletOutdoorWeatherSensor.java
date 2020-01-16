@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.function.Function;
 
 import com.tinkerforge.BrickletOutdoorWeather.SensorData;
+import com.tinkerforge.BrickletOutdoorWeather.SensorDataListener;
 import com.tinkerforge.Device.SetterRefresh;
 
 import java.util.function.BiConsumer;
@@ -50,13 +51,12 @@ import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 
 
 public class BrickletOutdoorWeatherSensor {
-    public BrickletOutdoorWeatherSensor(int id, BrickletOutdoorWeather bricklet) {
-        this.id = id;
+    public BrickletOutdoorWeatherSensor(BrickletOutdoorWeather bricklet) {
         this.bricklet = bricklet;
     }
 
-    private final int id;
     private final BrickletOutdoorWeather bricklet;
+    public SensorDataListener listener = null;
 
     public final static int DEVICE_IDENTIFIER = -288;
     public final static String DEVICE_DISPLAY_NAME = "Outdoor Weather Sensor";
@@ -68,13 +68,15 @@ public class BrickletOutdoorWeatherSensor {
     private final static Logger static_logger = LoggerFactory.getLogger(BrickletOutdoorWeather.class);
 
     public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) {
-        bricklet.addSensorDataListener((int identifier, int temperature, int humidity) -> {
-            if(identifier != this.id)
+        BrickletOutdoorWeatherSensorConfig cfg = (BrickletOutdoorWeatherSensorConfig) config.as(BrickletOutdoorWeatherSensorConfig.class);
+        listener = (int identifier, int temperature, int humidity) -> {
+            if(identifier != cfg.sensorID)
                 return;
             updateStateFn.accept("OutdoorWeatherSensorTemperature",   new QuantityType<>(temperature / 10.0, SIUnits.CELSIUS));
             updateStateFn.accept("OutdoorWeatherSensorHumidity",      new QuantityType<>(humidity, SmartHomeUnits.PERCENT));
             updateStateFn.accept("OutdoorWeatherSensorLastChange",    new DateTimeType(getAbsoluteTime(0)));
-        });
+        };
+        bricklet.addSensorDataListener(listener);
     }
 
     public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config)
@@ -119,7 +121,7 @@ public class BrickletOutdoorWeatherSensor {
     }
 
     public static ThingType getThingType(ThingTypeUID thingTypeUID) {
-        return ThingTypeBuilder.instance(thingTypeUID, "Tinkerforge Outdoor Weather Temperature/Humidity Sensor TH-6148 ").isListed(false)
+        return ThingTypeBuilder.instance(thingTypeUID, "Tinkerforge Outdoor Weather Temperature/Humidity Sensor TH-6148 ").isListed(true)
                 .withSupportedBridgeTypeUIDs(Arrays.asList(TinkerforgeBindingConstants.THING_TYPE_OUTDOOR_WEATHER.toString()))
                 .withConfigDescriptionURI(URI.create("thing-type:tinkerforge:" + thingTypeUID.getId()))
                 .withDescription("Weather sensor connected to an Outdoor Weather Bricklet")
@@ -136,6 +138,18 @@ public class BrickletOutdoorWeatherSensor {
     public static ConfigDescription getConfigDescription(URI uri) {
         switch (uri.toASCIIString()) {
         case "thing-type:tinkerforge:outdoorweathersensor":
+            return ConfigDescriptionBuilder
+                    .create(uri)
+                    .withParameters(
+                        Arrays.asList(
+                            ConfigDescriptionParameterBuilder
+                                .create("sensorID", Type.INTEGER)
+                                .withDefault("0")
+                                .withDescription("The ID of the sensor to query. Each sensor gives itself a random identifier on startup. The Outdoor Weather Bricklet reports available IDs.")
+                                .withMinimum(BigDecimal.valueOf(0))
+                                .withMaximum(BigDecimal.valueOf(255))
+                                .build()))
+                    .build();
         case "channel-type:tinkerforge:OutdoorWeatherSensorTemperature":
         case "channel-type:tinkerforge:OutdoorWeatherSensorHumidity":
         case "channel-type:tinkerforge:OutdoorWeatherSensorLastChange":
@@ -149,15 +163,16 @@ public class BrickletOutdoorWeatherSensor {
 
 
     public void refreshValue(String value, org.eclipse.smarthome.config.core.Configuration config, org.eclipse.smarthome.config.core.Configuration channelConfig, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {
+        BrickletOutdoorWeatherSensorConfig cfg = (BrickletOutdoorWeatherSensorConfig) config.as(BrickletOutdoorWeatherSensorConfig.class);
         switch(value) {
             case "OutdoorWeatherSensorTemperature":
-                updateStateFn.accept(value, transformOutdoorWeatherTemperatureGetter0(bricklet.getSensorData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherTemperatureGetter0(bricklet.getSensorData(cfg.sensorID)));
                 break;
             case "OutdoorWeatherSensorHumidity":
-                updateStateFn.accept(value, transformOutdoorWeatherHumidityGetter0(bricklet.getSensorData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherHumidityGetter0(bricklet.getSensorData(cfg.sensorID)));
                 break;
             case "OutdoorWeatherSensorLastChange":
-                updateStateFn.accept(value, transformOutdoorWeatherLastChangeGetter0(bricklet.getSensorData(this.id)));
+                updateStateFn.accept(value, transformOutdoorWeatherLastChangeGetter0(bricklet.getSensorData(cfg.sensorID)));
                 break;
             default:
                 logger.warn("Refresh for unknown channel {}", value);

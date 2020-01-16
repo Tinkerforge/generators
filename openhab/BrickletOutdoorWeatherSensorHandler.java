@@ -62,8 +62,6 @@ import com.tinkerforge.IPConnection.EnumerateListener;
 public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
     private final Logger logger = LoggerFactory.getLogger(BrickletOutdoorWeatherSensorHandler.class);
 
-    private boolean wasInitialized = false;
-
     private @Nullable BrickletOutdoorWeatherSensor device;
 
     public BrickletOutdoorWeatherSensorHandler(Thing thing) {
@@ -72,14 +70,15 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
-        String id = thing.getUID().getId();
         Bridge bridge = getBridge();
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Bridge not found.");
             return;
         }
         BrickletOutdoorWeatherHandler outdoorWeatherHandler = ((BrickletOutdoorWeatherHandler) bridge.getHandler());
-        device = new BrickletOutdoorWeatherSensor(Integer.valueOf(id), outdoorWeatherHandler.getDevice());
+        if(device != null)
+            outdoorWeatherHandler.getDevice().removeSensorDataListener(device.listener);
+        device = new BrickletOutdoorWeatherSensor(outdoorWeatherHandler.getDevice());
         configureChannels();
 
         if (this.getBridge().getStatus() == ThingStatus.ONLINE) {
@@ -94,17 +93,20 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
     }
 
     private void initializeDevice() {
-        String id = thing.getUID().getId();
         Bridge bridge = getBridge();
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED);
             return;
         }
         BrickletOutdoorWeatherHandler outdoorWeatherHandler = ((BrickletOutdoorWeatherHandler) bridge.getHandler());
-        device = new BrickletOutdoorWeatherSensor(Integer.valueOf(id), outdoorWeatherHandler.getDevice());
+        if(device != null)
+            outdoorWeatherHandler.getDevice().removeSensorDataListener(device.listener);
+        device = new BrickletOutdoorWeatherSensor(outdoorWeatherHandler.getDevice());
         device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
 
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
+
+        this.getThing().getChannels().forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
     }
 
     @Override
