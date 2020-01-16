@@ -75,12 +75,14 @@ class OpenHABZipGenerator(common.ZipGenerator):
             '../java/DeviceListener.java':            './src/main/java/com/tinkerforge',
             '../java/DeviceProvider.java':            './src/main/java/com/tinkerforge',
             '../java/InvalidParameterException.java': './src/main/java/com/tinkerforge',
+            '../java/IPConnectionBase.java':          './src/main/java/com/tinkerforge',
             '../java/NetworkException.java':          './src/main/java/com/tinkerforge',
             '../java/NotConnectedException.java':     './src/main/java/com/tinkerforge',
             '../java/NotSupportedException.java':     './src/main/java/com/tinkerforge',
             '../java/StreamOutOfSyncException.java':  './src/main/java/com/tinkerforge',
             '../java/TimeoutException.java':          './src/main/java/com/tinkerforge',
             '../java/TinkerforgeException.java':      './src/main/java/com/tinkerforge',
+            '../java/TinkerforgeListener.java':       './src/main/java/com/tinkerforge',
             '../java/UnknownErrorCodeException.java': './src/main/java/com/tinkerforge',
             '../java/WrongDeviceTypeException.java':  './src/main/java/com/tinkerforge',
 
@@ -91,8 +93,6 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'DeviceInfo.java':                './src/main/java/com/tinkerforge',
             'Helper.java':                    './src/main/java/com/tinkerforge',
             'IPConnection.java':              './src/main/java/com/tinkerforge',
-            'IPConnectionBase.java':          './src/main/java/com/tinkerforge',
-            'TinkerforgeListener.java':       './src/main/java/com/tinkerforge',
 
             'BrickletOutdoorWeatherSensor.java':'./src/main/java/com/tinkerforge',
             'BrickletOutdoorWeatherSensorConfig.java':'./src/main/java/com/tinkerforge',
