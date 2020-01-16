@@ -52,7 +52,9 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
                                self.get_name().under)
 
     def get_ruby_class(self):
-        template = """module Tinkerforge
+        template = """require_relative './ip_connection'
+
+module Tinkerforge
   # {1}
   class {0} < Device
     DEVICE_IDENTIFIER = {2} # :nodoc:
