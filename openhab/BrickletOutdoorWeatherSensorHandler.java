@@ -142,6 +142,10 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
+        if (this.getBridge() == null) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Bridge not found.");
+            return;
+        }
         if (this.getBridge().getStatus() == ThingStatus.OFFLINE) {
             // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
             return;
