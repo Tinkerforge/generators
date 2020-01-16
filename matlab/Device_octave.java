@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+ * Copyright (C) 2020 Matthias Bolte <matthias@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted. See the Creative
@@ -34,7 +35,7 @@ public abstract class Device extends DeviceBase {
 	public Device(String uid, IPConnection ipcon) {
 		super(uid, ipcon);
 
-		ipcon.devices.put(this.uid, this); // FIXME: use weakref here
+		ipcon.devices.put(this.uidNumber, this); // FIXME: use weakref here
 	}
 
 	public abstract Identity getIdentity() throws TinkerforgeException;

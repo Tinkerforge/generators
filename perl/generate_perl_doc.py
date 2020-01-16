@@ -4,7 +4,7 @@
 """
 Perl Documentation Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_perl_doc.py: Generator for Perl documentation
@@ -263,6 +263,7 @@ error code:
 * Error->STREAM_OUT_OF_SYNC = 51
 * Error->INVALID_UID = 61
 * Error->NON_ASCII_CHAR_IN_SECRET = 71
+* Error->WRONG_DEVICE_TYPE = 81
 
 All functions listed below are thread-safe.
 
@@ -292,6 +293,7 @@ Fehlercodes definiert:
 * Error->STREAM_OUT_OF_SYNC = 51
 * Error->INVALID_UID = 61
 * Error->NON_ASCII_CHAR_IN_SECRET = 71
+* Error->WRONG_DEVICE_TYPE = 81
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 

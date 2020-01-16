@@ -3,7 +3,7 @@
 
 """
 Java Bindings Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_bindings.py: Generator for Java bindings
@@ -764,6 +764,10 @@ public class {0} extends Device {{
 		apiVersion[0] = {1};
 		apiVersion[1] = {2};
 		apiVersion[2] = {3};
+
+		deviceIdentifier = DEVICE_IDENTIFIER;
+		deviceDisplayName = DEVICE_DISPLAY_NAME;
+
 """
 
         return template.format(self.get_java_class_name(), *self.get_api_version())
@@ -776,7 +780,7 @@ public class {0} extends Device {{
 	/**
 	 * {8}
 	 */
-	public {0} {1}({2}) {3} {{
+	public {0} {1}({2}) {3} {{{9}
 		ByteBuffer bb = ipcon.createRequestPacket((byte){4}, FUNCTION_{5}, this);
 
 {6}
@@ -817,6 +821,10 @@ public class {0} extends Device {{
 
 {2}
 {3}"""
+
+        template_check = """
+		checkDeviceIdentifier();
+"""
 
         for packet in self.get_packets('function'):
             ret = packet.get_java_return_type()
@@ -888,6 +896,11 @@ public class {0} extends Device {{
                                                     bbgets,
                                                     bbret)
 
+            if packet.get_function_id() == 255: # <device>.getIdentity
+                check = ''
+            else:
+                check = template_check
+
             methods += template.format(ret,
                                        name_headless,
                                        parameter,
@@ -896,7 +909,8 @@ public class {0} extends Device {{
                                        name_upper,
                                        bbputs,
                                        response,
-                                       doc)
+                                       doc,
+                                       check)
 
         # high-level
         template_stream_in = """

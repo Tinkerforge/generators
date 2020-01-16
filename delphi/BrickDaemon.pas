@@ -1,5 +1,5 @@
 {
-  Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+  Copyright (C) 2014, 2020 Matthias Bolte <matthias@tinkerforge.com>
 
   Redistribution and use in source and binary forms of this file,
   with or without modification, are permitted. See the Creative
@@ -25,7 +25,7 @@ type
 
   TBrickDaemon = class(TDevice)
   public
-    constructor Create(const uid__: string; ipcon_: TObject);
+    constructor Create(const uid: string; ipcon_: TObject);
     function GetAuthenticationNonce: TArray0To3OfUInt8; virtual;
     procedure Authenticate(const clientNonce: TArray0To3OfUInt8; const digest: TArray0To19OfUInt8); virtual;
     procedure GetIdentity(out uid: string; out connectedUid: string; out position: char;
@@ -38,9 +38,9 @@ implementation
 uses
   IPConnection;
 
-constructor TBrickDaemon.Create(const uid__: string; ipcon_: TObject);
+constructor TBrickDaemon.Create(const uid: string; ipcon_: TObject);
 begin
-  inherited Create(uid__, ipcon_);
+  inherited Create(uid, ipcon_, 0, 'Brick Daemon');
   apiVersion[0] := 2;
   apiVersion[1] := 0;
   apiVersion[2] := 0;

@@ -3,7 +3,7 @@
 
 """
 C# Bindings Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_bindings.py: Generator for C# bindings
@@ -268,7 +268,7 @@ namespace Tinkerforge
 		///  Creates an object with the unique device ID <c>uid</c> and adds  it to
 		///  the IPConnection <c>ipcon</c>.
 		/// </summary>
-		public {0}(string uid, IPConnection ipcon) : base(uid, ipcon)
+		public {0}(string uid, IPConnection ipcon) : base(uid, ipcon, DEVICE_IDENTIFIER, DEVICE_DISPLAY_NAME)
 		{{
 			apiVersion[0] = {2};
 			apiVersion[1] = {3};
@@ -470,7 +470,7 @@ namespace Tinkerforge
 		///  {5}
 		/// </summary>
 		{0}
-		{{
+		{{{6}
 			byte[] request = CreateRequestPacket({1}, FUNCTION_{2});
 {3}
 {4}
@@ -482,6 +482,10 @@ namespace Tinkerforge
 
         template_response = """			byte[] response = SendRequest(request);
 {0}"""
+
+        template_check = """
+			CheckDeviceIdentifier();
+"""
 
         for packet in self.get_packets('function'):
             ret_count = len(packet.get_elements(direction='out'))
@@ -578,12 +582,18 @@ namespace Tinkerforge
             else:
                 method_tail = template_noresponse
 
+            if packet.get_function_id() == 255: # <device>.GetIdentiry
+                check = ''
+            else:
+                check = template_check
+
             methods += template.format(packet.get_csharp_function_signature(),
                                        size,
                                        name_upper,
                                        write_convs,
                                        method_tail,
-                                       doc)
+                                       doc,
+                                       check)
 
         # high-level
         template_stream_in = """

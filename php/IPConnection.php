@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2012-2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (c) 2012-2017, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted. See the Creative
@@ -14,6 +14,9 @@ namespace Tinkerforge;
 if (!extension_loaded('bcmath')) {
     throw new \Exception('Required bcmath extension is not available');
 }
+
+
+require_once(__DIR__ . '/DeviceDisplayNames.php');
 
 
 class Base58
@@ -196,8 +199,21 @@ class StreamOutOfSyncException extends TinkerforgeException
 }
 
 
+class WrongDeviceTypeException extends TinkerforgeException
+{
+
+}
+
+
 abstract class Device
 {
+    /**
+     * @internal
+     */
+    const DEVICE_IDENTIFIER_CHECK_PENDING = 0;
+    const DEVICE_IDENTIFIER_CHECK_MATCH = 1;
+    const DEVICE_IDENTIFIER_CHECK_MISMATCH = 2;
+
     /**
      * @internal
      */
@@ -206,10 +222,19 @@ abstract class Device
     const RESPONSE_EXPECTED_TRUE = 2; // setter
     const RESPONSE_EXPECTED_FALSE = 3; // setter, default
 
+    /**
+     * @internal
+     */
     public $uid = '0'; # Base10
+    public $uid_string = ''; # Base58
     public $api_version = array(0, 0, 0);
 
     public $ipcon = NULL;
+
+    public $device_identifier;
+    public $device_display_name;
+    public $device_identifier_check = self::DEVICE_IDENTIFIER_CHECK_PENDING;
+    public $wrong_device_display_name = '?';
 
     public $response_expected = array();
 
@@ -224,14 +249,14 @@ abstract class Device
     public $pending_callbacks = array();
 
     /**
-     * Creates the device object with the unique device ID *$uid* and adds
-     * it to the IPConnection *$ipcon*.
-     *
-     * @param string $uid
-     * @param IPConnection $ipcon
+     * @internal
      */
-    public function __construct($uid, $ipcon)
+    public function __construct($uid, $ipcon, $device_identifier, $device_display_name)
     {
+        $this->uid_string = $uid;
+        $this->device_identifier = $device_identifier;
+        $this->device_display_name = $device_display_name;
+
         $long_uid = Base58::decode($uid);
 
         if (bccomp($long_uid, '18446744073709551615' /* 0xFFFFFFFFFFFFFFFF */) > 0) {
@@ -394,6 +419,12 @@ abstract class Device
                 break;
             }
 
+            try {
+                $this->checkDeviceIdentifier();
+            } catch (TinkerforgeException $e) {
+                continue; // silently ignoring callbacks from mismatching devices
+            }
+
             $this->handleCallback($pending_callback[0], $pending_callback[1]);
         }
     }
@@ -466,6 +497,34 @@ abstract class Device
 
         return $chunk_data;
     }
+
+    /**
+     * @internal
+     */
+    protected function checkDeviceIdentifier()
+    {
+        if ($this->device_identifier_check === self::DEVICE_IDENTIFIER_CHECK_MATCH) {
+            return;
+        }
+
+        if ($this->device_identifier_check === self::DEVICE_IDENTIFIER_CHECK_PENDING) {
+            $payload = $this->sendRequest(255, ''); # getIdentity
+            $response = unpack('c8uid/c8connected_uid/c1position/C3hardware_version/C3firmware_version/v1device_identifier', $payload);
+            $device_identifier = $response['device_identifier'];
+
+            if ($device_identifier === $this->device_identifier) {
+                $this->device_identifier_check = self::DEVICE_IDENTIFIER_CHECK_MATCH;
+            } else {
+                $this->device_identifier_check = self::DEVICE_IDENTIFIER_CHECK_MISMATCH;
+                $this->wrong_device_display_name = getDeviceDisplayName($device_identifier);
+            }
+        }
+
+        if ($this->device_identifier_check === self::DEVICE_IDENTIFIER_CHECK_MISMATCH) {
+            throw new WrongDeviceTypeException('UID ' . $this->uid_string . ' belongs to a ' . $this->wrong_device_display_name .
+                                               ' instead of the expected ' . $this->device_display_name);
+        }
+    }
 }
 
 
@@ -479,7 +538,7 @@ class BrickDaemon extends Device
 
     public function __construct($uid, $ipcon)
     {
-        parent::__construct($uid, $ipcon);
+        parent::__construct($uid, $ipcon, 0, 'Brick Daemon');
 
         $this->api_version = array(2, 0, 0);
 

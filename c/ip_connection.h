@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2014, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -54,7 +54,8 @@ enum {
 	E_UNKNOWN_ERROR_CODE = -11, // error response from device
 	E_STREAM_OUT_OF_SYNC = -12,
 	E_INVALID_UID = -13,
-	E_NON_ASCII_CHAR_IN_SECRET = -14
+	E_NON_ASCII_CHAR_IN_SECRET = -14,
+	E_WRONG_DEVICE_TYPE = -15
 };
 
 #ifdef IPCON_EXPOSE_MILLISLEEP
@@ -225,6 +226,12 @@ struct _Device {
 
 #define DEVICE_NUM_FUNCTION_IDS 256
 
+typedef enum {
+	DEVICE_IDENTIFIER_CHECK_PENDING = 0,
+	DEVICE_IDENTIFIER_CHECK_MATCH = 1,
+	DEVICE_IDENTIFIER_CHECK_MISMATCH = 2
+} DeviceIdentifierCheck;
+
 /**
  * \internal
  */
@@ -237,6 +244,10 @@ struct _DevicePrivate {
 	IPConnectionPrivate *ipcon_p;
 
 	uint8_t api_version[3];
+
+	uint16_t device_identifier;
+	Mutex device_identifier_mutex;
+	DeviceIdentifierCheck device_identifier_check; // protected by device_identifier_mutex
 
 	Mutex request_mutex;
 
@@ -270,7 +281,8 @@ enum {
  */
 void device_create(Device *device, const char *uid,
                    IPConnectionPrivate *ipcon_p, uint8_t api_version_major,
-                   uint8_t api_version_minor, uint8_t api_version_release);
+                   uint8_t api_version_minor, uint8_t api_version_release,
+                   uint16_t device_identifier);
 
 /**
  * \internal
@@ -309,6 +321,11 @@ int device_get_api_version(DevicePrivate *device_p, uint8_t ret_api_version[3]);
  * \internal
  */
 int device_send_request(DevicePrivate *device_p, Packet *request, Packet *response);
+
+/**
+ * \internal
+ */
+int device_check_device_identifier(DevicePrivate *device_p);
 
 #endif // IPCON_EXPOSE_INTERNALS
 

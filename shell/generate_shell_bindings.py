@@ -3,7 +3,7 @@
 
 """
 Shell Bindings Generator
-Copyright (C) 2013-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_shell_bindings.py: Generator for shell bindings
 
@@ -53,7 +53,7 @@ class {0}(Device):"""
     def get_shell_init_method(self):
         template = """
 	def __init__(self, uid, ipcon):
-		Device.__init__(self, uid, ipcon)
+		Device.__init__(self, uid, ipcon, {1}, DEVICE_DISPLAY_NAMES[{1}])
 
 {0}
 """
@@ -65,9 +65,11 @@ class {0}(Device):"""
                                                             mapping[packet.get_response_expected()]))
 
         if len(response_expected) > 0:
-            return template.format('\t\tre = self.response_expected\n\t\t' + '; '.join(response_expected))
+            return template.format('\t\tre = self.response_expected\n\t\t' + '; '.join(response_expected),
+                                   self.get_device_identifier())
         else:
-            return template.format('')
+            return template.format('',
+                                   self.get_device_identifier())
 
     def get_shell_callback_formats(self):
         callbacks = []
@@ -522,15 +524,6 @@ def dispatch_{0}_{1}(ctx, argv):
         return source
 
 class ShellBindingsGenerator(shell_common.ShellGeneratorTrait, common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
-
-        self.call_devices = []
-        self.dispatch_devices = []
-        self.device_identifier_symbols = []
-        self.completion_devices = []
-        self.part_files = []
-
     def get_bindings_name(self):
         return 'shell'
 
@@ -545,6 +538,16 @@ class ShellBindingsGenerator(shell_common.ShellGeneratorTrait, common.BindingsGe
 
     def get_element_class(self):
         return shell_common.ShellElement
+
+    def prepare(self):
+        common.BindingsGenerator.prepare(self)
+
+        self.call_devices = []
+        self.dispatch_devices = []
+        self.device_identifier_symbols = []
+        self.completion_devices = []
+        self.part_files = []
+        self.device_display_names = []
 
     def generate(self, device):
         if not device.is_released():
@@ -569,6 +572,7 @@ class ShellBindingsGenerator(shell_common.ShellGeneratorTrait, common.BindingsGe
             f.write(device.get_shell_source())
 
         self.part_files.append(filename)
+        self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
 
     def finish(self):
         common.BindingsGenerator.finish(self)
@@ -585,6 +589,29 @@ class ShellBindingsGenerator(shell_common.ShellGeneratorTrait, common.BindingsGe
             footer = f.read().replace('<<VERSION>>', '.'.join(version))
 
         shell.write(header)
+
+        template = """
+
+
+DEVICE_DISPLAY_NAMES = {{
+	{entries}
+}}
+
+def get_device_display_name(device_identifier):
+	device_display_name = DEVICE_DISPLAY_NAMES.get(device_identifier)
+
+	if device_display_name == None:
+		device_display_name = 'Unknown Device [{{0}}]'.format(device_identifier)
+
+	return device_display_name
+"""
+
+        entries = []
+
+        for device_identifier, device_display_name in sorted(self.device_display_names):
+            entries.append("{0}: '{1}'".format(device_identifier, device_display_name))
+
+        shell.write(template.format(entries=',\n\t'.join(entries)))
 
         with open(os.path.join(root_dir, '..', 'python', 'ip_connection.py'), 'r') as f:
             ipcon = f.read()

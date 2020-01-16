@@ -1,5 +1,5 @@
 {
-  Copyright (C) 2012-2013, 2019 Matthias Bolte <matthias@tinkerforge.com>
+  Copyright (C) 2012-2013, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
   Redistribution and use in source and binary forms of this file,
   with or without modification, are permitted. See the Creative
@@ -13,13 +13,18 @@ unit Device;
 interface
 
 uses
-  {$ifdef UNIX}CThreads,{$endif} SyncObjs, SysUtils, Base58, BlockingQueue, LEConverter, DeviceBase;
+  {$ifdef UNIX}CThreads,{$endif} SyncObjs, SysUtils, Base58, BlockingQueue,
+  LEConverter, DeviceBase, DeviceDisplayNames;
 
 const
   DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
   DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE = 1; { getter }
   DEVICE_RESPONSE_EXPECTED_TRUE = 2; { setter }
   DEVICE_RESPONSE_EXPECTED_FALSE = 3; { setter, default }
+
+  DEVICE_IDENTIFIER_CHECK_PENDING = 0;
+  DEVICE_IDENTIFIER_CHECK_MATCH = 1;
+  DEVICE_IDENTIFIER_CHECK_MISMATCH = 2;
 
 type
   { TDevice }
@@ -28,9 +33,14 @@ type
   TDevice = class(TDeviceBase)
   private
     requestMutex: TCriticalSection;
+    deviceIdentifier_: word;
+    deviceDisplayName: string;
+    deviceIdentifierMutex: TCriticalSection;
+    deviceIdentifierCheck: byte; { protected by deviceIdentifierMutex }
+    wrongDeviceDisplayName: string; { protected by deviceIdentifierMutex }
   public
-    uid_: longword;
     uidString: string;
+    uidNumber: longword;
     uidValid: boolean;
     ipcon: TObject;
     apiVersion: TVersionNumber;
@@ -44,7 +54,7 @@ type
     ///  Creates the device object with the unique device ID *uid* and adds
     ///  it to the IPConnection *ipcon*.
     /// </summary>
-    constructor Create(const uid__: string; ipcon_: TObject);
+    constructor Create(const uid: string; ipcon_: TObject; deviceIdentifier: word; deviceDisplayName_: string);
 
     /// <summary>
     ///  Removes the device object from its IPConnection and destroys it.
@@ -104,6 +114,7 @@ type
 
     { Internal }
     function SendRequest(const request: TByteArray): TByteArray;
+    procedure CheckDeviceIdentifier;
   end;
 
   { TDeviceTable }
@@ -128,30 +139,36 @@ uses
   IPConnection;
 
 { TDevice }
-constructor TDevice.Create(const uid__: string; ipcon_: TObject);
-var longUid: uint64; value1, value2, i: longint;
+constructor TDevice.Create(const uid: string; ipcon_: TObject; deviceIdentifier: word; deviceDisplayName_: string);
+var longUidNumber: uint64; value1, value2, i: longint;
 begin
   inherited Create;
-  uidString := uid__;
-  uidValid := Base58Decode(uid__, longUid);
-  if (uidValid and (longUid > $FFFFFFFF)) then begin
+  uidString := uid;
+  uidValid := Base58Decode(uid, longUidNumber);
+  if (uidValid and (longUidNumber > $FFFFFFFF)) then begin
     { Convert from 64bit to 32bit }
-    value1 := longUid and $FFFFFFFF;
-    value2 := longword((longUid shr 32) and $FFFFFFFF);
-    longUid := (value1 and $00000FFF);
-    longUid := longUid or ((value1 and longword($0F000000)) shr 12);
-    longUid := longUid or ((value2 and longword($0000003F)) shl 16);
-    longUid := longUid or ((value2 and longword($000F0000)) shl 6);
-    longUid := longUid or ((value2 and longword($3F000000)) shl 2);
+    value1 := longUidNumber and $FFFFFFFF;
+    value2 := longword((longUidNumber shr 32) and $FFFFFFFF);
+    longUidNumber := (value1 and $00000FFF);
+    longUidNumber := longUidNumber or ((value1 and longword($0F000000)) shr 12);
+    longUidNumber := longUidNumber or ((value2 and longword($0000003F)) shl 16);
+    longUidNumber := longUidNumber or ((value2 and longword($000F0000)) shl 6);
+    longUidNumber := longUidNumber or ((value2 and longword($3F000000)) shl 2);
   end;
-  uid_ := longUid;
-  if (uid_ = 0) then begin
+  uidNumber := longUidNumber;
+  if (uidNumber = 0) then begin
     uidValid := false; { broadcast UID is forbidden }
   end;
+  uidString := uid;
   ipcon := ipcon_;
   apiVersion[0] := 0;
   apiVersion[1] := 0;
   apiVersion[2] := 0;
+  deviceIdentifier_ := deviceIdentifier;
+  deviceDisplayName := deviceDisplayName_;
+  deviceIdentifierMutex := TCriticalSection.Create;
+  deviceIdentifierCheck := DEVICE_IDENTIFIER_CHECK_PENDING;
+  wrongDeviceDisplayName := '?';
   expectedResponseFunctionID := 0;
   expectedResponseSequenceNumber := 0;
   requestMutex := TCriticalSection.Create;
@@ -160,17 +177,18 @@ begin
     responseExpected[i] := DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
   end;
   if (uidValid) then begin
-    (ipcon as TIPConnection).devices.Insert(uid_, self);
+    (ipcon as TIPConnection).devices.Insert(uidNumber, self);
   end;
 end;
 
 destructor TDevice.Destroy;
 begin
   if (uidValid) then begin
-    (ipcon as TIPConnection).devices.Remove(uid_);
+    (ipcon as TIPConnection).devices.Remove(uidNumber);
   end;
-  requestMutex.Destroy;
   responseQueue.Destroy;
+  requestMutex.Destroy;
+  deviceIdentifierMutex.Destroy;
   inherited Destroy;
 end;
 
@@ -280,6 +298,35 @@ begin
   end
   else begin
     ipcon_.SendRequest(request);
+  end;
+end;
+
+procedure TDevice.CheckDeviceIdentifier;
+var request, response: TByteArray; deviceIdentifier: word;
+begin
+  if (deviceIdentifierCheck = DEVICE_IDENTIFIER_CHECK_MATCH) then begin
+    exit;
+  end;
+  deviceIdentifierMutex.Acquire;
+  try
+    if (deviceIdentifierCheck = DEVICE_IDENTIFIER_CHECK_PENDING) then begin
+      request := (ipcon as TIPConnection).CreateRequestPacket(self, 255, 8); // GetIdentity
+      response := SendRequest(request);
+      deviceIdentifier := LEConvertUInt16From(31, response);
+      if (deviceIdentifier = deviceIdentifier_) then begin
+        deviceIdentifierCheck := DEVICE_IDENTIFIER_CHECK_MATCH;
+      end
+      else begin
+        deviceIdentifierCheck := DEVICE_IDENTIFIER_CHECK_MISMATCH;
+        wrongDeviceDisplayName := GetDeviceDisplayName(deviceIdentifier);
+      end;
+    end;
+    if (deviceIdentifierCheck = DEVICE_IDENTIFIER_CHECK_MISMATCH) then begin
+      raise EWrongDeviceTypeException.Create('UID ' + uidString + ' belongs to a ' + wrongDeviceDisplayName +
+                                             ' instead of the expected ' + deviceDisplayName);
+    end;
+  finally
+    deviceIdentifierMutex.Release;
   end;
 end;
 

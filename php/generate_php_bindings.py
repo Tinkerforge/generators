@@ -3,7 +3,7 @@
 
 """
 PHP Bindings Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_bindings.py: Generator for PHP bindings
@@ -159,7 +159,7 @@ class {0} extends Device
 
     def get_php_device_display_name(self):
         template = """
-    const DEVICE_DISPLAY_NAME = "{0}";
+    const DEVICE_DISPLAY_NAME = '{0}';
 """
 
         return template.format(self.get_long_display_name())
@@ -174,7 +174,7 @@ class {0} extends Device
      */
     public function __construct($uid, $ipcon)
     {{
-        parent::__construct($uid, $ipcon);
+        parent::__construct($uid, $ipcon, self::DEVICE_IDENTIFIER, self::DEVICE_DISPLAY_NAME);
 
         $this->api_version = array({0}, {1}, {2});
 """
@@ -196,7 +196,7 @@ class {0} extends Device
      */
     public function {0}({1})
     {{
-        $ret = array();
+        {7}$ret = array();
 
         $payload = '';
 {2}
@@ -216,7 +216,7 @@ class {0} extends Device
      */
     public function {0}({1})
     {{
-        $payload = '';
+        {7}$payload = '';
 {2}
 
 {3}
@@ -322,6 +322,11 @@ class {0} extends Device
 
             doc = packet.get_php_formatted_doc([''] + packet.get_php_parameter_doc().split('\n'))
 
+            if packet.get_function_id() == 255: # <device>->get_identity
+                check = ''
+            else:
+                check = '$this->checkDeviceIdentifier();\n\n        '
+
             if has_multi_return_value:
                 method = method_multi.format(name_headless,
                                              parameter,
@@ -329,7 +334,8 @@ class {0} extends Device
                                              send,
                                              final_unpack,
                                              '\n'.join(collect),
-                                             doc)
+                                             doc,
+                                             check)
             else:
                 method = method_single.format(name_headless,
                                               parameter,
@@ -337,7 +343,8 @@ class {0} extends Device
                                               send,
                                               final_unpack,
                                               '\n'.join(collect),
-                                              doc)
+                                              doc,
+                                              check)
 
             prev = method
             method = method.replace('\n\n\n', '\n\n').replace('\n\n    }', '\n    }')
@@ -923,6 +930,11 @@ class PHPBindingsGenerator(php_common.PHPGeneratorTrait, common.BindingsGenerato
     def get_element_class(self):
         return php_common.PHPElement
 
+    def prepare(self):
+        common.BindingsGenerator.prepare(self)
+
+        self.device_display_names = []
+
     def generate(self, device):
         filename = '{0}.php'.format(device.get_php_class_name())
 
@@ -930,7 +942,41 @@ class PHPBindingsGenerator(php_common.PHPGeneratorTrait, common.BindingsGenerato
             f.write(device.get_php_source())
 
         if device.is_released():
+            self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
             self.released_files.append(filename)
+
+    def finish(self):
+        template = """<?php
+
+{header}
+namespace Tinkerforge;
+
+/**
+ * @internal
+ */
+function getDeviceDisplayName($device_identifier)
+{{
+	switch ($device_identifier) {{
+	{cases}
+	default: return "Unknown Device [$device_identifier]";
+	}}
+}}
+
+?>
+"""
+
+        cases = []
+
+        for device_identifier, device_display_name in sorted(self.device_display_names):
+            cases.append("case {0}: return '{1}';".format(device_identifier, device_display_name))
+
+        with open(os.path.join(self.get_bindings_dir(), 'DeviceDisplayNames.php'), 'w') as f:
+            f.write(template.format(header=self.get_header_comment('asterisk'),
+                                    cases='\n\t'.join(cases)))
+
+        self.released_files.append('DeviceDisplayNames.php')
+
+        common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', PHPBindingsGenerator)

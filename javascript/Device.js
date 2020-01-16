@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 Redistribution and use in source and binary forms of this file,
 with or without modification, are permitted. See the Creative
@@ -9,7 +10,13 @@ Commons Zero (CC0 1.0) License for more details.
 Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1; // getter
 Device.RESPONSE_EXPECTED_TRUE = 2; // setter
 Device.RESPONSE_EXPECTED_FALSE = 3; // setter, default
-Device.ERROR_INVALID_FUNCTION_ID = 21;
+
+Device.ERROR_INVALID_FUNCTION_ID = 21; // keep in sync with IPConnection.ERROR_INVALID_FUNCTION_ID
+Device.ERROR_WRONG_DEVICE_TYPE = 81; // keep in sync with IPConnection.ERROR_WRONG_DEVICE_TYPE
+
+Device.DEVICE_IDENTIFIER_CHECK_PENDING = 0;
+Device.DEVICE_IDENTIFIER_CHECK_MATCH = 1;
+Device.DEVICE_IDENTIFIER_CHECK_MISMATCH = 2;
 
 function base58Decode(str) {
     var alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
@@ -30,12 +37,16 @@ function base58Decode(str) {
     return num;
 }
 
-function Device(deviceRegistering, uid, ipcon) {
-    if (deviceRegistering !== undefined && uid !== undefined && ipcon !== undefined) {
+function Device(deviceRegistering, uid, ipcon, deviceIdentifier, deviceDisplayName) {
+    if (deviceRegistering !== undefined && uid !== undefined && ipcon !== undefined &&
+        deviceIdentifier !== undefined && deviceDisplayName !== undefined) {
         this.uid = base58Decode(uid);
         if (this.uid === 0) {
             throw new Error('UID "' + uid + '" is empty or maps to zero');
         }
+        this.deviceIdentifier = deviceIdentifier;
+        this.deviceDisplayName = deviceDisplayName;
+        this.deviceIdentifierCheck = Device.DEVICE_IDENTIFIER_CHECK_PENDING;
         this.responseExpected = {};
         this.callbackFormats = {};
         this.highLevelCallbacks = {};
@@ -148,6 +159,41 @@ function Device(deviceRegistering, uid, ipcon) {
             streamStateObject['responseProperties']['returnCB'] = null;
             streamStateObject['responseProperties']['errorCB'] = null;
         };
+
+        this.checkDeviceIdentifier = function (returnCallback, errorCallback) {
+            if (this.deviceIdentifierCheck === Device.DEVICE_IDENTIFIER_CHECK_MATCH) {
+                if (returnCallback !== undefined) {
+                    returnCallback();
+                }
+            }
+            else if (this.deviceIdentifierCheck === Device.DEVICE_IDENTIFIER_CHECK_MISMATCH) {
+                if (errorCallback !== undefined) {
+                    errorCallback(Device.ERROR_WRONG_DEVICE_TYPE);
+                }
+            }
+            else { // Device.DEVICE_IDENTIFIER_CHECK_PENDING
+                this.ipcon.sendRequest(this, 255, [], '', 's8 s8 c B3 B3 H', // getIdentity
+                    function (uid, connectedUid, position, hardwareVersion, firmwareVersion, deviceIdentifier) {
+                        if (deviceIdentifier == this.deviceIdentifier) {
+                            this.deviceIdentifierCheck = Device.DEVICE_IDENTIFIER_CHECK_MATCH;
+
+                            if (returnCallback !== undefined) {
+                                returnCallback();
+                            }
+                        }
+                        else {
+                            this.deviceIdentifierCheck = Device.DEVICE_IDENTIFIER_CHECK_MISMATCH;
+
+                            if (errorCallback !== undefined) {
+                                errorCallback(Device.ERROR_WRONG_DEVICE_TYPE);
+                            }
+                        }
+                    }.bind(this),
+                    errorCallback,
+                    false
+                );
+            }
+        }
     }
 }
 

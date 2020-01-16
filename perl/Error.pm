@@ -1,5 +1,5 @@
 # Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-# Copyright (C) 2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2014, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
@@ -124,6 +124,17 @@ Possible return value of the get_code() subroutine.
 =cut
 
 use constant NON_ASCII_CHAR_IN_SECRET => 71;
+
+=back
+=cut
+
+=item WRONG_DEVICE_TYPE
+
+Possible return value of the get_code() subroutine.
+
+=cut
+
+use constant WRONG_DEVICE_TYPE => 81;
 
 =back
 =cut

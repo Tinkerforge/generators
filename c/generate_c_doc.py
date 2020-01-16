@@ -3,7 +3,7 @@
 
 """
 C/C++ Documentation Generator
-Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_c_doc.py: Generator for C/C++ documentation
@@ -291,6 +291,7 @@ Possible error codes are:
 * **E**\\ _STREAM_OUT_OF_SYNC = -12
 * **E**\\ _INVALID_UID = -13
 * **E**\\ _NON_ASCII_CHAR_IN_SECRET = -14
+* **E**\\ _WRONG_DEVICE_TYPE = -15
 
 as defined in :file:`ip_connection.h`.
 
@@ -328,6 +329,7 @@ Mögliche Fehlercodes sind:
 * **E**\\ _STREAM_OUT_OF_SYNC = -12
 * **E**\\ _INVALID_UID = -13
 * **E**\\ _NON_ASCII_CHAR_IN_SECRET = -14
+* **E**\\ _WRONG_DEVICE_TYPE = -15
 
 wie in :file:`ip_connection.h` definiert.
 

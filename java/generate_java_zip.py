@@ -3,7 +3,7 @@
 
 """
 Java ZIP Generator
-Copyright (C) 2012-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_zip.py: Generator for Java ZIP
@@ -100,6 +100,7 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
             shutil.copy(os.path.join(root_dir, 'InvalidParameterException.java'), self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'NotSupportedException.java'),     self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'UnknownErrorCodeException.java'), self.tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'WrongDeviceTypeException.java'),  self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'TinkerforgeListener.java'),       self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)

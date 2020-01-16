@@ -1,5 +1,5 @@
 # Copyright (C) 2013 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-# Copyright (C) 2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2014, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
@@ -29,20 +29,31 @@ use Thread::Queue;
 use Math::BigInt;
 use Tinkerforge::IPConnection;
 use Tinkerforge::Error;
+use Tinkerforge::DeviceDisplayNames qw(get_device_display_name);
 
 # constants
 use constant _RESPONSE_EXPECTED_ALWAYS_TRUE => 1; # getter
 use constant _RESPONSE_EXPECTED_TRUE => 2; # setter
 use constant _RESPONSE_EXPECTED_FALSE => 3; # setter,default
 
+use constant _DEVICE_IDENTIFIER_CHECK_PENDING => 0;
+use constant _DEVICE_IDENTIFIER_CHECK_MATCH => 1;
+use constant _DEVICE_IDENTIFIER_CHECK_MISMATCH => 2;
+
 # the constructor
 sub _new
 {
-	my ($class, $uid, $ipcon, $api_version) =  @_;
+	my ($class, $uid, $ipcon, $api_version, $device_identifier, $device_display_name) =  @_;
 
 	my $self :shared = shared_clone({uid => _base58_decode($uid),
+	                                 uid_string => shared_clone($uid),
 	                                 ipcon => shared_clone($ipcon),
 	                                 api_version => shared_clone($api_version),
+	                                 device_identifier => shared_clone($device_identifier),
+	                                 device_display_name => shared_clone($device_display_name),
+	                                 device_identifier_lock_ref => undef,
+	                                 device_identifier_check => shared_clone(&_DEVICE_IDENTIFIER_CHECK_PENDING),
+	                                 wrong_device_dsisplay_name => shared_clone('?'),
 	                                 registered_callbacks => shared_clone({}),
 	                                 callback_formats => shared_clone({}),
 	                                 high_level_callbacks => shared_clone({}),
@@ -51,14 +62,17 @@ sub _new
 	                                 response_queue => Thread::Queue->new(),
 	                                 device_lock_ref => undef,
 	                                 request_lock_ref => undef,
-	                                 response_expected => shared_clone({})});
+	                                 response_expected => shared_clone({}),
+	                                 stream_lock_ref => undef});
 
 	bless($self, $class);
 
+	my $device_identifier_lock :shared;
 	my $device_lock :shared;
 	my $request_lock :shared;
 	my $stream_lock :shared;
 
+	$self->{device_identifier_lock_ref} = \$device_identifier_lock;
 	$self->{device_lock_ref} = \$device_lock;
 	$self->{request_lock_ref} = \$request_lock;
 	$self->{stream_lock_ref} = \$stream_lock;
@@ -269,6 +283,41 @@ sub _send_request
 		{
 			croak(Tinkerforge::Error->_new(Tinkerforge::Error->TIMEOUT, "Did not receive response for function $function_id in time"));
 		}
+	}
+
+	return 1;
+}
+
+sub _check_device_identifier
+{
+	my ($self) = @_;
+
+	if($self->{device_identifier_check} == &_DEVICE_IDENTIFIER_CHECK_MATCH)
+	{
+		return 1;
+	}
+
+	lock(${$self->{device_identifier_lock_ref}});
+
+	if($self->{device_identifier_check} == &_DEVICE_IDENTIFIER_CHECK_PENDING)
+	{
+		my ($uid, $connected_uid, $position, $hardware_version, $firmware_version, $device_identifier, $enumeration_type) =
+		    $self->_send_request(255, [], '', 'Z8 Z8 a C3 C3 S'); # get_identity
+
+		if($device_identifier == $self->{device_identifier})
+		{
+			$self->{device_identifier_check} = shared_clone(&_DEVICE_IDENTIFIER_CHECK_MATCH);
+		}
+		else
+		{
+			$self->{device_identifier_check} = shared_clone(&_DEVICE_IDENTIFIER_CHECK_MISMATCH);
+			$self->{wrong_device_dsisplay_name} = get_device_display_name($device_identifier);
+		}
+	}
+
+	if ($self->{device_identifier_check} == &_DEVICE_IDENTIFIER_CHECK_MISMATCH) {
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->WRONG_DEVICE_TYPE,
+		      "UID $self->{uid_string} belongs to a $self->{wrong_device_dsisplay_name} instead of the expected $self->{device_display_name}"));
 	}
 
 	return 1;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016, 2019 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2016, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -95,6 +95,20 @@ typedef struct {
 
 typedef struct {
 	PacketHeader header;
+} ATTRIBUTE_PACKED DeviceGetIdentity_Request;
+
+typedef struct {
+	PacketHeader header;
+	char uid[8];
+	char connected_uid[8];
+	char position;
+	uint8_t hardware_version[3];
+	uint8_t firmware_version[3];
+	uint16_t device_identifier;
+} ATTRIBUTE_PACKED DeviceGetIdentity_Response;
+
+typedef struct {
+	PacketHeader header;
 } ATTRIBUTE_PACKED BrickDaemonGetAuthenticationNonce_Request;
 
 typedef struct {
@@ -133,6 +147,8 @@ typedef struct {
 	STATIC_ASSERT(sizeof(Packet) == 80, "Packet has invalid size")
 	STATIC_ASSERT(sizeof(DeviceEnumerate_Broadcast) == 8, "DeviceEnumerate_Broadcast has invalid size")
 	STATIC_ASSERT(sizeof(DeviceEnumerate_Callback) == 34, "DeviceEnumerate_Callback has invalid size")
+	STATIC_ASSERT(sizeof(DeviceGetIdentity_Request) == 8, "DeviceGetIdentity_Request has invalid size")
+	STATIC_ASSERT(sizeof(DeviceGetIdentity_Response) == 33, "DeviceGetIdentity_Response has invalid size")
 	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Request) == 8, "BrickDaemonGetAuthenticationNonce_Request has invalid size")
 	STATIC_ASSERT(sizeof(BrickDaemonGetAuthenticationNonce_Response) == 12, "BrickDaemonGetAuthenticationNonce_Response has invalid size")
 	STATIC_ASSERT(sizeof(BrickDaemonAuthenticate_Request) == 32, "BrickDaemonAuthenticate_Request has invalid size")
@@ -1200,7 +1216,8 @@ static int queue_get(Queue *queue, int *kind, void **data) {
  *****************************************************************************/
 
 enum {
-	IPCON_FUNCTION_ENUMERATE = 254
+	DEVICE_FUNCTION_ENUMERATE = 254,
+	DEVICE_FUNCTION_GET_IDENTITY = 255
 };
 
 static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request);
@@ -1225,12 +1242,15 @@ static void device_destroy(DevicePrivate *device_p) {
 
 	mutex_destroy(&device_p->request_mutex);
 
+	mutex_destroy(&device_p->device_identifier_mutex);
+
 	free(device_p);
 }
 
 void device_create(Device *device, const char *uid_str,
                    IPConnectionPrivate *ipcon_p, uint8_t api_version_major,
-                   uint8_t api_version_minor, uint8_t api_version_release) {
+                   uint8_t api_version_minor, uint8_t api_version_release,
+                   uint16_t device_identifier) {
 	DevicePrivate *device_p;
 	uint64_t uid;
 	uint32_t value1;
@@ -1267,6 +1287,13 @@ void device_create(Device *device, const char *uid_str,
 	device_p->api_version[0] = api_version_major;
 	device_p->api_version[1] = api_version_minor;
 	device_p->api_version[2] = api_version_release;
+
+	// device identifier
+	device_p->device_identifier = device_identifier;
+
+	mutex_create(&device_p->device_identifier_mutex);
+
+	device_p->device_identifier_check = DEVICE_IDENTIFIER_CHECK_PENDING;
 
 	// request
 	mutex_create(&device_p->request_mutex);
@@ -1458,6 +1485,55 @@ int device_send_request(DevicePrivate *device_p, Packet *request, Packet *respon
 	return ret;
 }
 
+int device_check_device_identifier(DevicePrivate *device_p) {
+	DeviceGetIdentity_Request request;
+	DeviceGetIdentity_Response response;
+	uint16_t device_identifier;
+	int ret;
+
+	if (device_p->device_identifier_check == DEVICE_IDENTIFIER_CHECK_PENDING) {
+		mutex_lock(&device_p->device_identifier_mutex);
+
+		if (device_p->device_identifier_check == DEVICE_IDENTIFIER_CHECK_PENDING) {
+			ret = packet_header_create(&request.header, sizeof(request), DEVICE_FUNCTION_GET_IDENTITY, device_p->ipcon_p, device_p);
+
+			if (ret < 0) {
+				mutex_unlock(&device_p->device_identifier_mutex);
+
+				return ret;
+			}
+
+			// initialize to 0 to stop the clang static analyzer from warning about accessing
+			// uninitialized memory when accessing the device_identifier member later on
+			memset(&response, 0, sizeof(response));
+
+			ret = device_send_request(device_p, (Packet *)&request, (Packet *)&response);
+
+			if (ret < 0) {
+				mutex_unlock(&device_p->device_identifier_mutex);
+
+				return ret;
+			}
+
+			device_identifier = leconvert_uint16_from(response.device_identifier);
+
+			if (device_identifier == device_p->device_identifier) {
+				device_p->device_identifier_check = DEVICE_IDENTIFIER_CHECK_MATCH;
+			} else {
+				device_p->device_identifier_check = DEVICE_IDENTIFIER_CHECK_MISMATCH;
+			}
+		}
+
+		mutex_unlock(&device_p->device_identifier_mutex);
+	}
+
+	if (device_p->device_identifier_check == DEVICE_IDENTIFIER_CHECK_MISMATCH) {
+		return E_WRONG_DEVICE_TYPE;
+	}
+
+	return E_OK; // DEVICE_IDENTIFIER_CHECK_MATCH
+}
+
 /*****************************************************************************
  *
  *                                 Brick Daemon
@@ -1472,7 +1548,7 @@ enum {
 static void brickd_create(BrickDaemon *brickd, const char *uid, IPConnection *ipcon) {
 	DevicePrivate *device_p;
 
-	device_create(brickd, uid, ipcon->p, 2, 0, 0);
+	device_create(brickd, uid, ipcon->p, 2, 0, 0, 0);
 
 	device_p = brickd->p;
 
@@ -1679,6 +1755,12 @@ static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) 
 			device_release(device_p);
 
 			return;
+		}
+
+		if (device_check_device_identifier(device_p) < 0) {
+			device_release(device_p);
+
+			return; // silently ignoring callbacks from mismatching devices
 		}
 
 		callback_wrapper_function(device_p, packet);
@@ -2370,7 +2452,7 @@ int ipcon_enumerate(IPConnection *ipcon) {
 	int ret;
 
 	ret = packet_header_create(&enumerate.header, sizeof(DeviceEnumerate_Broadcast),
-	                           IPCON_FUNCTION_ENUMERATE, ipcon_p, NULL);
+	                           DEVICE_FUNCTION_ENUMERATE, ipcon_p, NULL);
 
 	if (ret < 0) {
 		return ret;

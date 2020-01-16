@@ -4,7 +4,7 @@
 """
 MATLAB/Octave ZIP Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_matlab_zip.py: Generator for MATLAB/Octave ZIP
 
@@ -116,6 +116,7 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
             shutil.copy(os.path.join(root_dir, '..', 'java', 'InvalidParameterException.java'), tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'NotSupportedException.java'),     tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'UnknownErrorCodeException.java'), tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'WrongDeviceTypeException.java'),  tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeListener.java'),       tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-i386.so'),         tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-amd64.so'),        tmp_source_com_tinkerforge_dir)

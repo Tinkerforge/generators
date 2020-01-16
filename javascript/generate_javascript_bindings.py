@@ -5,7 +5,7 @@
 JavaScript Bindings Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_bindings.py: Generator for JavaScript bindings
 
@@ -84,7 +84,7 @@ var IPConnection = require('./IPConnection');
 	Creates an object with the unique device ID *uid* and adds it to
 	the IP Connection *ipcon*.
 	*/
-	Device.call(this, this, uid, ipcon);
+	Device.call(this, this, uid, ipcon, {2}.DEVICE_IDENTIFIER, {2}.DEVICE_DISPLAY_NAME);
 	{2}.prototype = Object.create(Device);
 	this.APIVersion = [{3}, {4}, {5}];\n"""
 

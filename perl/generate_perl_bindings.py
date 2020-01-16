@@ -4,7 +4,7 @@
 """
 Perl Bindings Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_perl_bindings.py: Generator for Perl bindings
 
@@ -168,7 +168,7 @@ sub new
 {{
 	my ($class, $uid, $ipcon) = @_;
 
-	my $self = Tinkerforge::Device->_new($uid, $ipcon, [{0}, {1}, {2}]);
+	my $self = Tinkerforge::Device->_new($uid, $ipcon, [{0}, {1}, {2}], &DEVICE_IDENTIFIER, &DEVICE_DISPLAY_NAME);
 """
         response_expected = []
 
@@ -233,7 +233,7 @@ sub new
 sub {0}
 {{
 	my ($self{2}) = @_;
-
+{7}
 	return $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
@@ -247,7 +247,7 @@ sub {0}
 sub {0}
 {{
 	my ($self{2}) = @_;
-
+{7}
 	return $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
@@ -261,7 +261,7 @@ sub {0}
 sub {0}
 {{
 	my ($self{2}) = @_;
-
+{7}
 	$self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
@@ -282,12 +282,17 @@ sub {0}
 
             elements = len(packet.get_elements(direction='out'))
 
-            if elements > 1:
-                methods += multiple_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format)
-            elif elements == 1:
-                methods += single_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format)
+            if packet.get_function_id() == 255: # <device>->get_identity
+                check = ''
             else:
-                methods += no_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format)
+                check = '\n\t$self->_check_device_identifier();\n'
+
+            if elements > 1:
+                methods += multiple_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format, check)
+            elif elements == 1:
+                methods += single_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format, check)
+            else:
+                methods += no_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format, check)
 
         # high-level
         template_stream_in = """
@@ -820,6 +825,11 @@ class PerlBindingsGenerator(perl_common.PerlGeneratorTrait, common.BindingsGener
     def get_element_class(self):
         return perl_common.PerlElement
 
+    def prepare(self):
+        common.BindingsGenerator.prepare(self)
+
+        self.device_display_names = []
+
     def generate(self, device):
         filename = '{0}{1}.pm'.format(device.get_category().camel, device.get_name().camel)
 
@@ -827,7 +837,53 @@ class PerlBindingsGenerator(perl_common.PerlGeneratorTrait, common.BindingsGener
             f.write(device.get_perl_source())
 
         if device.is_released():
+            self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
             self.released_files.append(filename)
+
+    def finish(self):
+        template = """{header}
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Tinkerforge::DeviceDisplayNames - Device Identifier to Device Display Names mapping
+
+=cut
+
+package Tinkerforge::DeviceDisplayNames;
+
+use strict;
+use warnings;
+use Exporter;
+our @ISA = qw(Exporter);
+our @EXPORT = qw(get_device_display_name);
+
+sub get_device_display_name
+{{
+	my ($device_identifier) = @_;
+
+	{cases}
+
+	return "Unknown Device [$device_identifier]";
+}}
+
+1;
+"""
+
+        cases = []
+
+        for device_identifier, device_display_name in sorted(self.device_display_names):
+            cases.append("if($device_identifier == {0}) {{ return '{1}'; }}".format(device_identifier, device_display_name))
+
+        with open(os.path.join(self.get_bindings_dir(), 'DeviceDisplayNames.pm'), 'w') as f:
+            f.write(template.format(header=self.get_header_comment('hash'),
+                                    cases='\n\tels'.join(cases)))
+
+        self.released_files.append('DeviceDisplayNames.pm')
+
+        common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', PerlBindingsGenerator)

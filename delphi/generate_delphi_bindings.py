@@ -3,7 +3,7 @@
 
 """
 Delphi/Lazarus Bindings Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_delphi_bindings.py: Generator for Delphi/Lazarus bindings
@@ -409,19 +409,19 @@ uses
                 '    ///  Creates an object with the unique device ID <c>uid</c>. This object can\n' + \
                 '    ///  then be added to the IP connection.\n' + \
                 '    /// </summary>\n' + \
-                '    constructor Create(const uid__: string; ipcon_: TIPConnection);\n\n' + \
+                '    constructor Create(const uid: string; ipcon_: TIPConnection);\n\n' + \
                 '\n\n'.join(methods + props) + '\n' + \
                 '  end;\n\n'
 
     def get_delphi_constructor(self):
         con = """implementation
 
-constructor {0}.Create(const uid__: string; ipcon_: TIPConnection);
+constructor {0}.Create(const uid: string; ipcon_: TIPConnection);
 begin
-  inherited Create(uid__, ipcon_);
-  apiVersion[0] := {1};
-  apiVersion[1] := {2};
-  apiVersion[2] := {3};
+  inherited Create(uid, ipcon_, {1}_{2}_DEVICE_IDENTIFIER, {1}_{2}_DEVICE_DISPLAY_NAME);
+  apiVersion[0] := {3};
+  apiVersion[1] := {4};
+  apiVersion[2] := {5};
 
 """
         stream_mutex = ''
@@ -458,6 +458,8 @@ begin
   {0}HighLevelCallbackState.length := 0;\n\n'.format(packet.get_name(skip=-2).headless)
 
         return con.format(self.get_delphi_class_name(),
+                          self.get_category().upper,
+                          self.get_name().upper,
                           *self.get_api_version()) + response_expected + stream_mutex + high_level_callback_state
 
     def get_delphi_callback_wrapper_definitions(self):
@@ -601,6 +603,10 @@ begin
 
             method += '\n'
             method += 'begin\n'
+
+            if function_id != 255: # <device>.GetIdentity
+                method += '  CheckDeviceIdentifier;\n'
+
             method += '  request := (ipcon as TIPConnection).CreateRequestPacket(self, {0}, {1});\n'.format(function_id, packet.get_request_size())
 
             method_bool_array_fmt = """  FillChar({0}[0], Length({0}) * SizeOf({0}[0]), 0);
@@ -1568,6 +1574,11 @@ class DelphiBindingsGenerator(delphi_common.DelphiGeneratorTrait, common.Binding
     def get_element_class(self):
         return DelphiBindingsElement
 
+    def prepare(self):
+        common.BindingsGenerator.prepare(self)
+
+        self.device_display_names = []
+
     def generate(self, device):
         filename = '{0}{1}.pas'.format(device.get_category().camel, device.get_name().camel)
 
@@ -1575,7 +1586,47 @@ class DelphiBindingsGenerator(delphi_common.DelphiGeneratorTrait, common.Binding
             f.write(device.get_delphi_source())
 
         if device.is_released():
+            self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
             self.released_files.append(filename)
+
+    def finish(self):
+        template = """{header}
+unit DeviceDisplayNames;
+
+{{$ifdef FPC}}{{$mode OBJFPC}}{{$H+}}{{$endif}}
+
+interface
+
+uses
+  SysUtils;
+
+function GetDeviceDisplayName(const deviceIdentifier: word): string;
+
+implementation
+
+function GetDeviceDisplayName(const deviceIdentifier: word): string;
+begin
+  case deviceIdentifier of
+{cases}
+  else result := 'Unknown Device [' + IntToStr(deviceIdentifier) + ']';
+  end;
+end;
+
+end.
+"""
+
+        cases = []
+
+        for device_identifier, device_display_name in sorted(self.device_display_names):
+            cases.append("  {0}: result := '{1}';".format(device_identifier, device_display_name))
+
+        with open(os.path.join(self.get_bindings_dir(), 'DeviceDisplayNames.pas'), 'w') as f:
+            f.write(template.format(header=self.get_header_comment('curly'),
+                                    cases='\n'.join(cases)))
+
+        self.released_files.append('DeviceDisplayNames.pas')
+
+        common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', DelphiBindingsGenerator)

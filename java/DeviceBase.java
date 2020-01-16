@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
- * Copyright (C) 2012-2013, 2019 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -10,48 +10,61 @@
 
 package com.tinkerforge;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public abstract class DeviceBase {
-	long uid = (long)0;
-	short[] apiVersion = new short[3];
-	byte[] responseExpected = new byte[256];
-	byte expectedResponseFunctionID = 0; // protected by requestMutex
-	byte expectedResponseSequenceNumber = 0; // protected by requestMutex
-	private Object requestMutex = new Object();
-	LinkedBlockingQueue<byte[]> responseQueue = new LinkedBlockingQueue<byte[]>();
-	IPConnection ipcon = null;
-	IPConnection.DeviceCallbackListener[] callbacks = new IPConnection.DeviceCallbackListener[256];
-	IPConnection.DeviceHighLevelCallback[] highLevelCallbacks = new IPConnection.DeviceHighLevelCallback[256];
-	Object streamMutex = new Object();
+	final static byte DEVICE_IDENTIFIER_CHECK_PENDING = 0;
+	final static byte DEVICE_IDENTIFIER_CHECK_MATCH = 1;
+	final static byte DEVICE_IDENTIFIER_CHECK_MISMATCH = 2;
 
 	final static byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
 	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE = 1; // getter
 	final static byte RESPONSE_EXPECTED_FLAG_TRUE = 2; // setter
 	final static byte RESPONSE_EXPECTED_FLAG_FALSE = 3; // setter, default
 
+	long uidNumber;
+	String uidString;
+	int deviceIdentifier;
+	String deviceDisplayName;
+	Object deviceIdentifierMutex = new Object();
+	byte deviceIdentifierCheck = DEVICE_IDENTIFIER_CHECK_PENDING; // protected by deviceIdentifierMutex
+	String wrongDeviceDisplayName = "?"; // protected by deviceIdentifierMutex
+	short[] apiVersion = new short[3];
+	byte[] responseExpected = new byte[256];
+	byte expectedResponseFunctionID = 0; // protected by requestMutex
+	byte expectedResponseSequenceNumber = 0; // protected by requestMutex
+	Object requestMutex = new Object();
+	LinkedBlockingQueue<byte[]> responseQueue = new LinkedBlockingQueue<byte[]>();
+	IPConnection ipcon = null;
+	IPConnection.DeviceCallbackListener[] callbacks = new IPConnection.DeviceCallbackListener[256];
+	IPConnection.DeviceHighLevelCallback[] highLevelCallbacks = new IPConnection.DeviceHighLevelCallback[256];
+	Object streamMutex = new Object();
+
 	public DeviceBase(String uid, IPConnection ipcon) {
-		long uidTmp = IPConnection.base58Decode(uid);
+		long uidNumber = IPConnection.base58Decode(uid);
 
-		if (uidTmp > 0xFFFFFFFFL) {
+		if (uidNumber > 0xFFFFFFFFL) {
 			// convert from 64bit to 32bit
-			long value1 = uidTmp & 0xFFFFFFFFL;
-			long value2 = (uidTmp >> 32) & 0xFFFFFFFFL;
+			long value1 = uidNumber & 0xFFFFFFFFL;
+			long value2 = (uidNumber >> 32) & 0xFFFFFFFFL;
 
-			uidTmp  = (value1 & 0x00000FFFL);
-			uidTmp |= (value1 & 0x0F000000L) >> 12;
-			uidTmp |= (value2 & 0x0000003FL) << 16;
-			uidTmp |= (value2 & 0x000F0000L) << 6;
-			uidTmp |= (value2 & 0x3F000000L) << 2;
+			uidNumber  = (value1 & 0x00000FFFL);
+			uidNumber |= (value1 & 0x0F000000L) >> 12;
+			uidNumber |= (value2 & 0x0000003FL) << 16;
+			uidNumber |= (value2 & 0x000F0000L) << 6;
+			uidNumber |= (value2 & 0x3F000000L) << 2;
 		}
 
-		if (uidTmp == 0) {
+		if (uidNumber == 0) {
 			throw new IllegalArgumentException("UID '" + uid + "' is empty or maps to zero");
 		}
 
-		this.uid = uidTmp;
+		this.uidNumber = uidNumber;
+		this.uidString = uid;
 		this.ipcon = ipcon;
 
 		for (int i = 0; i < responseExpected.length; i++) {
@@ -141,6 +154,41 @@ public abstract class DeviceBase {
 			if (this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_TRUE ||
 			    this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_FALSE) {
 				this.responseExpected[i] = flag;
+			}
+		}
+	}
+
+	void checkDeviceIdentifier() throws TinkerforgeException {
+		if (deviceIdentifierCheck == DEVICE_IDENTIFIER_CHECK_MATCH) {
+			return;
+		}
+
+		synchronized (deviceIdentifierMutex) {
+			if (deviceIdentifierCheck == DEVICE_IDENTIFIER_CHECK_PENDING) {
+				ByteBuffer bb = ipcon.createRequestPacket((byte)8, (byte)255, this); // getIdentity
+				byte[] response = sendRequest(bb.array());
+
+				bb = ByteBuffer.wrap(response, 31, response.length - 31);
+				bb.order(ByteOrder.LITTLE_ENDIAN);
+
+				int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
+
+				if (deviceIdentifier == this.deviceIdentifier) {
+					deviceIdentifierCheck = DEVICE_IDENTIFIER_CHECK_MATCH;
+				} else {
+					deviceIdentifierCheck = DEVICE_IDENTIFIER_CHECK_MISMATCH;
+
+					try {
+						wrongDeviceDisplayName = DeviceFactory.getDeviceDisplayName(deviceIdentifier);
+					} catch (IllegalArgumentException e) {
+						wrongDeviceDisplayName = "Unknown Device [" + deviceIdentifier + "]";
+					}
+				}
+			}
+
+			if (deviceIdentifierCheck == DEVICE_IDENTIFIER_CHECK_MISMATCH) {
+				throw new WrongDeviceTypeException("UID " + uidString + " belongs to a " + wrongDeviceDisplayName +
+				                                   " instead of the expected " + deviceDisplayName);
 			}
 		}
 	}

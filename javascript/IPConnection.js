@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
 Redistribution and use in source and binary forms of this file,
@@ -42,13 +42,14 @@ IPConnection.RETRY_CONNECTION_INTERVAL = 2000;
 IPConnection.ERROR_ALREADY_CONNECTED = 11;
 IPConnection.ERROR_NOT_CONNECTED = 12;
 IPConnection.ERROR_CONNECT_FAILED = 13;
-IPConnection.ERROR_INVALID_FUNCTION_ID = 21;
+IPConnection.ERROR_INVALID_FUNCTION_ID = 21; // keep in sync with Device.ERROR_INVALID_FUNCTION_ID
 IPConnection.ERROR_TIMEOUT = 31;
 IPConnection.ERROR_INVALID_PARAMETER = 41;
 IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42;
 IPConnection.ERROR_UNKNOWN_ERROR = 43;
 IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51;
 IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET = 71;
+IPConnection.ERROR_WRONG_DEVICE_TYPE = 81; // keep in sync with Device.ERROR_WRONG_DEVICE_TYPE
 
 IPConnection.TASK_KIND_CONNECT = 0;
 IPConnection.TASK_KIND_DISCONNECT = 1;
@@ -178,7 +179,7 @@ BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE = 1;
 BrickDaemon.FUNCTION_AUTHENTICATE = 2;
 
 function BrickDaemon(uid, ipcon) {
-    Device.call(this, this, uid, ipcon);
+    Device.call(this, this, uid, ipcon, 0, 'Brick Daemon');
     BrickDaemon.prototype = Object.create(Device);
     this.responseExpected = {};
     this.callbackFormats = {};
@@ -934,6 +935,39 @@ function IPConnection() {
             return;
         }
 
+        if (sendRequestFID == 255) {
+            this.sendRequestInternal(sendRequestDevice,
+                                     sendRequestFID,
+                                     sendRequestData,
+                                     sendRequestPackFormat,
+                                     sendRequestUnpackFormat,
+                                     sendRequestReturnCB,
+                                     sendRequestErrorCB,
+                                     startStreamResponseTimer);
+        }
+        else {
+            sendRequestDevice.checkDeviceIdentifier(function () {
+                this.sendRequestInternal(sendRequestDevice,
+                                         sendRequestFID,
+                                         sendRequestData,
+                                         sendRequestPackFormat,
+                                         sendRequestUnpackFormat,
+                                         sendRequestReturnCB,
+                                         sendRequestErrorCB,
+                                         startStreamResponseTimer);
+            }.bind(this),
+            sendRequestErrorCB);
+        }
+    }
+
+    this.sendRequestInternal = function (sendRequestDevice,
+                                         sendRequestFID,
+                                         sendRequestData,
+                                         sendRequestPackFormat,
+                                         sendRequestUnpackFormat,
+                                         sendRequestReturnCB,
+                                         sendRequestErrorCB,
+                                         startStreamResponseTimer) {
         // Packet creation
         var sendRequestPayload = this.pack(sendRequestData, sendRequestPackFormat);
         var sendRequestHeader = this.createPacketHeader(sendRequestDevice,

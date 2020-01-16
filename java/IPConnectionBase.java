@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015, 2019 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2015, 2019, 2020 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -256,6 +256,16 @@ class CallbackThread extends Thread {
 		} else {
 			long uid = IPConnectionBase.getUIDFromData(cqo.packet);
 			Device device = ipcon.devices.get(uid);
+
+			if (device == null) {
+				return; // packet for an unknown device, ignoring it
+			}
+
+			try {
+				device.checkDeviceIdentifier();
+			} catch (TinkerforgeException e) {
+				return; // silently ignoring callbacks from mismatching devices
+			}
 
 			ipcon.callDeviceListener(device, functionID, cqo.packet);
 		}
@@ -1035,13 +1045,13 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		}
 	}
 
-	ByteBuffer createRequestPacket(byte length, byte functionID, Device device) {
+	ByteBuffer createRequestPacket(byte length, byte functionID, DeviceBase device) {
 		int uid = BROADCAST_UID;
 		byte options = 0;
 		byte flags = 0;
 
 		if (device != null) {
-			uid = (int)device.uid;
+			uid = (int)device.uidNumber;
 
 			if (device.getResponseExpected(functionID)) {
 				options = 8;

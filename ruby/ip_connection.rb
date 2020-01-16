@@ -1,5 +1,5 @@
 # -*- ruby encoding: utf-8 -*-
-# Copyright (C) 2012-2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2014, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
@@ -10,8 +10,10 @@ require 'thread'
 require 'timeout'
 require 'securerandom'
 require 'openssl'
+require_relative './device_display_names'
 
 module Tinkerforge
+  # internal
   class Base58
     ALPHABET = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
 
@@ -64,6 +66,10 @@ module Tinkerforge
   class StreamOutOfSyncException < TinkerforgeException
   end
 
+  class WrongDeviceTypeException < TinkerforgeException
+  end
+
+  # internal
   class Packer
     def self.pack(unpacked, format)
       data = ''
@@ -207,7 +213,12 @@ module Tinkerforge
     end
   end
 
+  # internal
   class Device
+    DEVICE_IDENTIFIER_CHECK_PENDING = 0
+    DEVICE_IDENTIFIER_CHECK_MATCH = 1
+    DEVICE_IDENTIFIER_CHECK_MISMATCH = 2
+
     RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0
     RESPONSE_EXPECTED_ALWAYS_TRUE = 1 # getter
     RESPONSE_EXPECTED_TRUE = 2 # setter
@@ -220,10 +231,10 @@ module Tinkerforge
     attr_accessor :high_level_callbacks
     attr_accessor :registered_callbacks
 
-    # Creates the device object with the unique device ID <tt>uid</tt> and adds
-    # it to the IPConnection <tt>ipcon</tt>.
-    def initialize(uid, ipcon)
+    # internal
+    def initialize(uid, ipcon, device_identifier, device_display_name)
       @uid = Base58.decode uid
+      @uid_string = uid
 
       if @uid > (1 << 64) - 1
         raise ArgumentError, "UID '#{uid}' is too big"
@@ -248,6 +259,12 @@ module Tinkerforge
       @api_version = [0, 0, 0]
 
       @ipcon = ipcon
+
+      @device_identifier = device_identifier
+      @device_display_name = device_display_name
+      @device_identifier_lock = Mutex.new
+      @device_identifier_check = DEVICE_IDENTIFIER_CHECK_PENDING # protected by device_identifier_lock
+      @wrong_device_display_name = '?' # protected by device_identifier_lock
 
       @request_mutex = Mutex.new
 
@@ -449,6 +466,30 @@ module Tinkerforge
 
       response
     end
+
+    # internal
+    def check_device_identifier()
+      if @device_identifier_check == DEVICE_IDENTIFIER_CHECK_MATCH
+        return
+      end
+
+      @device_identifier_lock.synchronize {
+        if @device_identifier_check == DEVICE_IDENTIFIER_CHECK_PENDING
+          device_identifier = send_request(255, [], '', 25, 'Z8 Z8 k C3 C3 S')[5] # <device>.get_identity
+
+          if device_identifier == @device_identifier
+            @device_identifier_check = DEVICE_IDENTIFIER_CHECK_MATCH
+          else
+            @device_identifier_check = DEVICE_IDENTIFIER_CHECK_MISMATCH
+            @wrong_device_display_name = get_device_display_name device_identifier
+          end
+        end
+
+        if @device_identifier_check == DEVICE_IDENTIFIER_CHECK_MISMATCH
+          raise WrongDeviceTypeException, "UID #{@uid_string} belongs to a #{@wrong_device_display_name} instead of the expected #{@device_display_name}"
+        end
+      }
+    end
   end
 
   # internal
@@ -474,7 +515,7 @@ module Tinkerforge
     # Creates an object with the unique device ID <tt>uid</tt> and adds it to
     # the IP Connection <tt>ipcon</tt>.
     def initialize(uid, ipcon)
-      super uid, ipcon
+      super uid, ipcon, 0, 'Brick Daemon'
 
       @api_version = [2, 0, 0]
 
@@ -1024,6 +1065,12 @@ module Tinkerforge
         @registered_callbacks[CALLBACK_ENUMERATE].call(*payload)
       elsif @devices.has_key? uid
         device = @devices[uid]
+
+        begin
+          device.check_device_identifier
+        rescue TinkerforgeException
+          return # silently ignoring callbacks from mismatching devices
+        end
 
         if device.high_level_callbacks.has_key?(-function_id)
           hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]

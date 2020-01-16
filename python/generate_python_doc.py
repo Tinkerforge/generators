@@ -3,7 +3,7 @@
 
 """
 Python Documentation Generator
-Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_doc.py: Generator for Python documentation
@@ -238,6 +238,7 @@ Generally, every function of the Python bindings can throw an
 * Error.STREAM_OUT_OF_SYNC = -12
 * Error.INVALID_UID = -13
 * Error.NON_ASCII_CHAR_IN_SECRET = -14
+* Error.WRONG_DEVICE_TYPE = -15
 
 All functions listed below are thread-safe.
 
@@ -265,6 +266,7 @@ eine ``description`` Property hat. ``value`` kann verschiende Werte haben:
 * Error.STREAM_OUT_OF_SYNC = -12
 * Error.INVALID_UID = -13
 * Error.NON_ASCII_CHAR_IN_SECRET = -14
+* Error.WRONG_DEVICE_TYPE = -15
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 

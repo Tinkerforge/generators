@@ -3,7 +3,7 @@
 
 """
 Python Bindings Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011, 2019 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_bindings.py: Generator for Python bindings
@@ -157,9 +157,9 @@ class {0}(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         \"\"\"
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, {0}.DEVICE_IDENTIFIER, {0}.DEVICE_DISPLAY_NAME)
 
-        self.api_version = ({0}, {1}, {2})
+        self.api_version = ({1}, {2}, {3})
 
 """
         response_expected = ''
@@ -169,7 +169,7 @@ class {0}(Device):
                                  .format(self.get_python_class_name(), packet.get_name().upper,
                                          packet.get_response_expected().upper())
 
-        return template.format(*self.get_api_version()) + common.wrap_non_empty('', response_expected, '\n')
+        return template.format(self.get_python_class_name(), *self.get_api_version()) + common.wrap_non_empty('', response_expected, '\n')
 
     def get_python_callback_formats(self):
         callback_formats = ''
@@ -208,21 +208,21 @@ class {0}(Device):
     def {0}(self{7}{4}):
         \"\"\"
         {9}
-        \"\"\"{10}
+        \"\"\"{10}{11}
         return {1}(*self.ipcon.send_request(self, {2}.FUNCTION_{3}, ({4}{8}), '{5}', '{6}'))
 """
         m_ret = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
-        \"\"\"{9}
+        \"\"\"{9}{10}
         return self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
         m_nor = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
-        \"\"\"{9}
+        \"\"\"{9}{10}
         self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
         methods = ''
@@ -245,16 +245,21 @@ class {0}(Device):
 
             in_f = packet.get_python_format_list('in')
             out_f = packet.get_python_format_list('out')
-            coercions = common.wrap_non_empty('\n        ', packet.get_python_parameter_coercions(), '\n')
 
+            if packet.get_function_id() == 255: # <device>.get_identity
+                check = ''
+            else:
+                check = '\n        self.check_device_identifier()\n'
+
+            coercions = common.wrap_non_empty('\n        ', packet.get_python_parameter_coercions(), '\n')
             elements = len(packet.get_elements(direction='out'))
 
             if elements > 1:
-                methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc, coercions)
+                methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc, check, coercions)
             elif elements == 1:
-                methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc, coercions)
+                methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc, check, coercions)
             else:
-                methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc, coercions)
+                methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc, check, coercions)
 
         # high-level
         template_stream_in = """
@@ -640,6 +645,7 @@ class PythonBindingsGenerator(python_common.PythonGeneratorTrait, common.Binding
     def prepare(self):
         self.device_factory_all_classes = []
         self.device_factory_released_classes = []
+        self.device_display_names = []
 
         return common.BindingsGenerator.prepare(self)
 
@@ -653,6 +659,7 @@ class PythonBindingsGenerator(python_common.PythonGeneratorTrait, common.Binding
 
         if device.is_released():
             self.device_factory_released_classes.append((device.get_python_import_name(), device.get_python_class_name()))
+            self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
             self.released_files.append(filename)
 
     def finish(self):
@@ -691,6 +698,32 @@ def create_device(device_identifier, uid, ipcon):
                 f.write(template.format(self.get_header_comment('hash'),
                                         '\n'.join(imports),
                                         '\n'.join(classes)))
+
+        template = """# -*- coding: utf-8 -*-
+{header}
+DEVICE_DISPLAY_NAMES = {{
+    {entries}
+}}
+
+def get_device_display_name(device_identifier):
+    device_display_name = DEVICE_DISPLAY_NAMES.get(device_identifier)
+
+    if device_display_name == None:
+        device_display_name = 'Unknown Device [{{0}}]'.format(device_identifier)
+
+    return device_display_name
+"""
+
+        entries = []
+
+        for device_identifier, device_display_name in sorted(self.device_display_names):
+            entries.append("{0}: '{1}'".format(device_identifier, device_display_name))
+
+        with open(os.path.join(self.get_bindings_dir(), 'device_display_names.py'), 'w') as f:
+            f.write(template.format(header=self.get_header_comment('hash'),
+                                    entries=',\n    '.join(entries)))
+
+        self.released_files.append('device_display_names.py')
 
         return common.BindingsGenerator.finish(self)
 

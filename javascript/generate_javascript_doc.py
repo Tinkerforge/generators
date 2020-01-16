@@ -4,7 +4,7 @@
 """
 JavaScript Documentation Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_doc.py: Generator for JavaScript documentation
 
@@ -275,6 +275,7 @@ code can be one of the following values:
 * IPConnection.\\ **ERROR**\\ _UNKNOWN_ERROR = 43
 * IPConnection.\\ **ERROR**\\ _STREAM_OUT_OF_SYNC = 51
 * IPConnection.\\ **ERROR**\\ _NON_ASCII_CHAR_IN_SECRET = 71
+* IPConnection.\\ **ERROR**\\ _WRONG_DEVICE_TYPE = 81
 
 The namespace for the JavaScript bindings is ``Tinkerforge.*``.
 
@@ -306,6 +307,7 @@ folgenden Werte sein:
 * IPConnection.\\ **ERROR**\\ _UNKNOWN_ERROR = 43
 * IPConnection.\\ **ERROR**\\ _STREAM_OUT_OF_SYNC = 51
 * IPConnection.\\ **ERROR**\\ _NON_ASCII_CHAR_IN_SECRET = 71
+* IPConnection.\\ **ERROR**\\ _WRONG_DEVICE_TYPE = 81
 
 Der Namespace der JavaScript Bindings ist ``Tinkerforge.*``.
 

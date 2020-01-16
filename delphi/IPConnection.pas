@@ -1,5 +1,5 @@
 {
-  Copyright (C) 2012-2015, 2019 Matthias Bolte <matthias@tinkerforge.com>
+  Copyright (C) 2012-2015, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
   Copyright (C) 2017 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
   Redistribution and use in source and binary forms of this file,
@@ -115,6 +115,10 @@ type
 
   { EInvalidUIDException }
   EInvalidUIDException = class(ETinkerforgeException)
+  end;
+
+  { EWrongDeviceTypeException }
+  EWrongDeviceTypeException = class(ETinkerforgeException)
   end;
 
   { TThreadWrapper }
@@ -1239,6 +1243,13 @@ begin
     callbackWrapper := device.callbackWrappers[functionID];
     if (Assigned(callbackWrapper)) then begin
       try
+        device.CheckDeviceIdentifier;
+      except
+        on ETinkerforgeException do begin
+          exit; { Silently ignoring callbacks from mismatching devices }
+        end;
+      end;
+      try
         callbackWrapper(packet);
       except
         { Ignore exceptions in user code }
@@ -1266,7 +1277,7 @@ begin
   end;
   responseExpected := 0;
   if (device <> nil) then begin
-    LEConvertUInt32To(device.uid_, 0, result);
+    LEConvertUInt32To(device.uidNumber, 0, result);
     if (device.GetResponseExpected(functionID)) then begin
       responseExpected := 1;
     end;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2015, 2017, 2020 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -15,6 +15,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Text;
+using System.Reflection;
 #if WINDOWS_UWP || WINDOWS_UAP
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -48,6 +49,8 @@ namespace Tinkerforge
 		internal const long BROADCAST_UID = (long)0;
 
 		internal const int DISCONNECT_PROBE_INTERVAL = 5000;
+
+		internal static Dictionary<int, string> deviceDisplayNames = new Dictionary<int, string>();
 
 		// enumeration_type parameter to the enumerate callback
 		/// <summary>
@@ -214,6 +217,38 @@ namespace Tinkerforge
 			public BlockingQueue<CallbackQueueObject> queue = null;
 			public object lock_ = null;
 			public bool packetDispatchAllowed = false;
+		}
+
+		static IPConnection()
+		{
+			Type[] types = typeof(Device).Assembly.GetTypes();
+
+			foreach (Type type in types)
+			{
+				if (type.BaseType != typeof(Device) || type == typeof(BrickDaemon))
+				{
+					continue;
+				}
+
+				FieldInfo deviceIdentifierInfo = type.GetField("DEVICE_IDENTIFIER", BindingFlags.Public | BindingFlags.Static);
+				int deviceIdentifier = (int)deviceIdentifierInfo.GetValue(null);
+				FieldInfo deviceDisplayNameInfo = type.GetField("DEVICE_DISPLAY_NAME", BindingFlags.Public | BindingFlags.Static);
+				string deviceDisplayName = (string)deviceDisplayNameInfo.GetValue(null);
+
+				deviceDisplayNames[deviceIdentifier] = deviceDisplayName;
+			}
+		}
+
+		internal static string GetDeviceDisplayName(int deviceIdentifier)
+		{
+			string deviceDisplayName;
+
+			if (!deviceDisplayNames.TryGetValue(deviceIdentifier, out deviceDisplayName))
+			{
+				deviceDisplayName = "Unknown Device [" + deviceIdentifier + "]";
+			}
+
+			return deviceDisplayName;
 		}
 
 		/// <summary>
@@ -766,6 +801,7 @@ namespace Tinkerforge
 			if (fid == CALLBACK_ENUMERATE)
 			{
 				var enumHandler = EnumerateCallback;
+
 				if (enumHandler != null)
 				{
 					string uid_str = LEConverter.StringFrom(8, cqo.packet, 8);
@@ -797,6 +833,15 @@ namespace Tinkerforge
 
 					if (wrapper != null)
 					{
+						try
+						{
+							device.CheckDeviceIdentifier();
+						}
+						catch (TinkerforgeException)
+						{
+							return; // silently ignoring callbacks from mismatching devices
+						}
+
 						wrapper(cqo.packet);
 					}
 				}
@@ -1117,6 +1162,19 @@ namespace Tinkerforge
 	}
 
 	/// <summary>
+	///  Used to report if the API bindings device class does not match the
+	///  device identifier.
+	/// </summary>
+	public class WrongDeviceTypeException : TinkerforgeException
+	{
+		/// <summary>
+		/// </summary>
+		public WrongDeviceTypeException(string message) : base(message)
+		{
+		}
+	}
+
+	/// <summary>
 	/// </summary>
 	public struct UID
 	{
@@ -1177,6 +1235,11 @@ namespace Tinkerforge
 	/// </summary>
 	public abstract class Device
 	{
+		internal int deviceIdentifier;
+		internal string deviceDisplayName;
+		internal object deviceIdentifierLock = new object();
+		internal DeviceIdentifierCheck deviceIdentifierCheck = DeviceIdentifierCheck.PENDING; // protected by deviceIdentifierLock
+		internal string wrongDeviceDisplayName = "?"; // protected by deviceIdentifierLock
 		internal short[] apiVersion = new short[3];
 		internal ResponseExpectedFlag[] responseExpected = new ResponseExpectedFlag[256];
 		internal byte expectedResponseFunctionID = 0; // protected by requestLock
@@ -1199,6 +1262,13 @@ namespace Tinkerforge
 			}
 		}
 
+		internal enum DeviceIdentifierCheck
+		{
+			PENDING = 0,
+			MATCH = 1,
+			MISMATCH = 2
+		}
+
 		internal enum ResponseExpectedFlag
 		{
 			INVALID_FUNCTION_ID = 0,
@@ -1213,10 +1283,12 @@ namespace Tinkerforge
 		///  Creates the device object with the unique device ID *uid* and adds
 		///  it to the IPConnection *ipcon*.
 		/// </summary>
-		public Device(string uid, IPConnection ipcon)
+		public Device(string uid, IPConnection ipcon, int deviceIdentifier, string deviceDisplayName)
 		{
 			internalUID = new UID(uid);
 			this.ipcon = ipcon;
+			this.deviceIdentifier = deviceIdentifier;
+			this.deviceDisplayName = deviceDisplayName;
 
 			for (int i = 0; i < responseExpected.Length; i++)
 			{
@@ -1418,6 +1490,40 @@ namespace Tinkerforge
 
 			return response;
 		}
+
+		internal void CheckDeviceIdentifier()
+		{
+			if (deviceIdentifierCheck == DeviceIdentifierCheck.MATCH)
+			{
+				return;
+			}
+
+			lock (deviceIdentifierLock)
+			{
+				if (deviceIdentifierCheck == DeviceIdentifierCheck.PENDING)
+				{
+					byte[] request = CreateRequestPacket(8, 255); // GetIdentity
+					byte[] response = SendRequest(request);
+					int deviceIdentifier = LEConverter.UShortFrom(31, response);
+
+					if (deviceIdentifier == this.deviceIdentifier)
+					{
+						deviceIdentifierCheck = DeviceIdentifierCheck.MATCH;
+					}
+					else
+					{
+						deviceIdentifierCheck = DeviceIdentifierCheck.MISMATCH;
+						wrongDeviceDisplayName = IPConnection.GetDeviceDisplayName(deviceIdentifier);
+					}
+				}
+
+				if (deviceIdentifierCheck == DeviceIdentifierCheck.MISMATCH)
+				{
+					throw new WrongDeviceTypeException("UID " + UID + " belongs to a " + wrongDeviceDisplayName +
+					                                   " instead of the expected " + deviceDisplayName);
+				}
+			}
+		}
 	}
 
 	internal class HighLevelCallback
@@ -1431,7 +1537,7 @@ namespace Tinkerforge
 		public const byte FUNCTION_GET_AUTHENTICATION_NONCE = 1;
 		public const byte FUNCTION_AUTHENTICATE = 2;
 
-		public BrickDaemon(string uid, IPConnection ipcon) : base(uid, ipcon)
+		public BrickDaemon(string uid, IPConnection ipcon) : base(uid, ipcon, 0, "Brick Daemon")
 		{
 			apiVersion[0] = 2;
 			apiVersion[1] = 0;

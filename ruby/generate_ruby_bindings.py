@@ -3,7 +3,7 @@
 
 """
 Ruby Bindings Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_ruby.py: Generator for Ruby bindings
@@ -109,7 +109,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
     # Creates an object with the unique device ID <tt>uid</tt> and adds it to
     # the IP Connection <tt>ipcon</tt>.
     def initialize(uid, ipcon)
-      super uid, ipcon
+      super uid, ipcon, DEVICE_IDENTIFIER, DEVICE_DISPLAY_NAME
 
       @api_version = [{0}, {1}, {2}]
 
@@ -163,13 +163,13 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         # normal and low-level
         method0 = """
     # {4}
-    def {0}
+    def {0}{5}
       send_request FUNCTION_{1}, [], '', {2}, '{3}'
     end
 """
         method1 = """
     # {6}
-    def {0}({1})
+    def {0}({1}){7}
       send_request FUNCTION_{2}, [{1}], '{3}', {4}, '{5}'
     end
 """
@@ -182,10 +182,15 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
             in_format, _ = packet.get_ruby_format_list('in')
             out_format, out_size = packet.get_ruby_format_list('out')
 
-            if len(parms) > 0:
-                methods += method1.format(name, parms, fid, in_format, out_size, out_format, doc)
+            if packet.get_function_id() == 255: # <device>.get_identity
+                check = ''
             else:
-                methods += method0.format(name, fid, out_size, out_format, doc)
+                check = '\n      check_device_identifier\n'
+
+            if len(parms) > 0:
+                methods += method1.format(name, parms, fid, in_format, out_size, out_format, doc, check)
+            else:
+                methods += method0.format(name, fid, out_size, out_format, doc, check)
 
         # high-level
         template_stream_in = """
@@ -646,6 +651,11 @@ class RubyBindingsGenerator(ruby_common.RubyGeneratorTrait, common.BindingsGener
     def get_element_class(self):
         return ruby_common.RubyElement
 
+    def prepare(self):
+        common.BindingsGenerator.prepare(self)
+
+        self.device_display_names = []
+
     def generate(self, device):
         filename = '{0}_{1}.rb'.format(device.get_category().under, device.get_name().under)
 
@@ -653,7 +663,42 @@ class RubyBindingsGenerator(ruby_common.RubyGeneratorTrait, common.BindingsGener
             f.write(device.get_ruby_source())
 
         if device.is_released():
+            self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
             self.released_files.append(filename)
+
+    def finish(self):
+        template = """# -*- ruby encoding: utf-8 -*-
+{header}
+module Tinkerforge
+  DEVICE_DISPLAY_NAMES = {{
+    {entries}
+  }}
+
+  # internal
+  def get_device_display_name(device_identifier)
+    device_display_name = DEVICE_DISPLAY_NAMES[device_identifier]
+
+    if device_display_name == nil
+      device_display_name = "Unknown Device [#{{device_identifier}}]"
+    end
+
+    device_display_name
+  end
+end
+"""
+
+        entries = []
+
+        for device_identifier, device_display_name in sorted(self.device_display_names):
+            entries.append("{0} => '{1}'".format(device_identifier, device_display_name))
+
+        with open(os.path.join(self.get_bindings_dir(), 'device_display_names.rb'), 'w') as f:
+            f.write(template.format(header=self.get_header_comment('hash'),
+                                    entries=',\n    '.join(entries)))
+
+        self.released_files.append('device_display_names.rb')
+
+        common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', RubyBindingsGenerator)

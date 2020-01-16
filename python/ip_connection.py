@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2015, 2017, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 # Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
@@ -21,6 +21,12 @@ try:
     import queue # Python 3
 except ImportError:
     import Queue as queue # Python 2
+
+if not 'SHELL_BINDINGS' in globals():
+    try:
+        from .device_display_names import get_device_display_name
+    except ValueError:
+        from device_display_names import get_device_display_name
 
 def get_uid_from_data(data):
     return struct.unpack('<I', data[0:4])[0]
@@ -311,6 +317,7 @@ class Error(Exception):
     STREAM_OUT_OF_SYNC = -12
     INVALID_UID = -13
     NON_ASCII_CHAR_IN_SECRET = -14
+    WRONG_DEVICE_TYPE = -15
 
     def __init__(self, value, description, suppress_context=False):
         Exception.__init__(self, '{0} ({1})'.format(description, value))
@@ -330,12 +337,16 @@ class Error(Exception):
             self.__suppress_context__ = True
 
 class Device(object):
+    DEVICE_IDENTIFIER_CHECK_PENDING = 0
+    DEVICE_IDENTIFIER_CHECK_MATCH = 1
+    DEVICE_IDENTIFIER_CHECK_MISMATCH = 2
+
     RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0
     RESPONSE_EXPECTED_ALWAYS_TRUE = 1 # getter
     RESPONSE_EXPECTED_TRUE = 2 # setter
     RESPONSE_EXPECTED_FALSE = 3 # setter, default
 
-    def __init__(self, uid, ipcon):
+    def __init__(self, uid, ipcon, device_identifier, device_display_name):
         """
         Creates the device object with the unique device ID *uid* and adds
         it to the IPConnection *ipcon*.
@@ -353,7 +364,13 @@ class Device(object):
             raise Error(Error.INVALID_UID, 'UID "{0}" is empty or maps to zero'.format(uid))
 
         self.uid = uid_
+        self.uid_string = uid
         self.ipcon = ipcon
+        self.device_identifier = device_identifier
+        self.device_display_name = device_display_name
+        self.device_identifier_lock = threading.Lock()
+        self.device_identifier_check = Device.DEVICE_IDENTIFIER_CHECK_PENDING # protected by device_identifier_lock
+        self.wrong_device_display_name = '?' # protected by device_identifier_lock
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
         self.callback_formats = {}
@@ -456,12 +473,31 @@ class Device(object):
             if self.response_expected[i] in [Device.RESPONSE_EXPECTED_TRUE, Device.RESPONSE_EXPECTED_FALSE]:
                 self.response_expected[i] = flag
 
+    def check_device_identifier(self):
+        if self.device_identifier_check == Device.DEVICE_IDENTIFIER_CHECK_MATCH:
+            return
+
+        with self.device_identifier_lock:
+            if self.device_identifier_check == Device.DEVICE_IDENTIFIER_CHECK_PENDING:
+                device_identifier = self.ipcon.send_request(self, 255, (), '', '8s 8s c 3B 3B H')[5] # <device>.get_identity
+
+                if device_identifier == self.device_identifier:
+                    self.device_identifier_check = Device.DEVICE_IDENTIFIER_CHECK_MATCH
+                else:
+                    self.device_identifier_check = Device.DEVICE_IDENTIFIER_CHECK_MISMATCH
+                    self.wrong_device_display_name = get_device_display_name(device_identifier)
+
+            if self.device_identifier_check == Device.DEVICE_IDENTIFIER_CHECK_MISMATCH:
+                raise Error(Error.WRONG_DEVICE_TYPE,
+                            'UID {0} belongs to a {1} instead of the expected {2}'
+                            .format(self.uid_string, self.wrong_device_display_name, self.device_display_name))
+
 class BrickDaemon(Device):
     FUNCTION_GET_AUTHENTICATION_NONCE = 1
     FUNCTION_AUTHENTICATE = 2
 
     def __init__(self, uid, ipcon):
-        Device.__init__(self, uid, ipcon)
+        Device.__init__(self, uid, ipcon, 0, 'Brick Daemon')
 
         self.api_version = (2, 0, 0)
 
@@ -1051,6 +1087,11 @@ class IPConnection(object):
             return
 
         device = self.devices[uid]
+
+        try:
+            device.check_device_identifier()
+        except Error:
+            return # silently ignoring callbacks from mismatching devices
 
         if -function_id in device.high_level_callbacks:
             hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]

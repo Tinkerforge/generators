@@ -82,6 +82,7 @@ class OpenHABZipGenerator(common.ZipGenerator):
             '../java/TimeoutException.java':          './src/main/java/com/tinkerforge',
             '../java/TinkerforgeException.java':      './src/main/java/com/tinkerforge',
             '../java/UnknownErrorCodeException.java': './src/main/java/com/tinkerforge',
+            '../java/WrongDeviceTypeException.java':  './src/main/java/com/tinkerforge',
 
             'BrickDaemon.java':               './src/main/java/com/tinkerforge',
             'BrickDaemonConfig.java':         './src/main/java/com/tinkerforge',

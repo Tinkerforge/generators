@@ -1,5 +1,5 @@
 # Copyright (C) 2013 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-# Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2014, 2020 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
@@ -1943,6 +1943,15 @@ sub _dispatch_packet
 	if(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}) ||
 	   defined($self->{devices}->{$uid}->{high_level_callbacks}->{-$fid}))
 	{
+		eval
+		{
+			$self->{devices}->{$uid}->_check_device_identifier();
+		}
+		or do
+		{
+			return 1; # silently ignoring callbacks from mismatching devices
+		};
+
 		$self->_dispatch_response($payload, $self->{devices}->{$uid}->{callback_formats}->{$fid}, $uid, $fid);
 	}
 

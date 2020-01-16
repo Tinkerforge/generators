@@ -3,7 +3,7 @@
 
 """
 C/C++ Bindings Generator
-Copyright (C) 2012-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_c_bindings.py: Generator for C/C++ bindings
@@ -251,10 +251,10 @@ typedef struct {{
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 	DevicePrivate *device_p;
 
-	device_create({0}, uid, ipcon->p, {3}, {4}, {5});
+	device_create({0}, uid, ipcon->p, {4}, {5}, {6}, {2}_DEVICE_IDENTIFIER);
 
 	device_p = {0}->p;
-{2}
+{3}
 }}
 """
         cb_temp = """
@@ -286,6 +286,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 
         return template.format(self.get_name().under,
                                self.get_name().camel,
+                               self.get_name().upper,
                                response_expected + callbacks,
                                *self.get_api_version())
 
@@ -324,12 +325,19 @@ int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
 	return device_get_api_version({0}->p, ret_api_version);
 }}
 """
+        template_check = """
+	ret = device_check_device_identifier(device_p);
+
+	if (ret < 0) {
+		return ret;
+	}
+"""
         template = """
 int {0}_{1}({2} *{0}{3}) {{
 	DevicePrivate *device_p = {0}->p;
 	{5}_Request request;{6}
 	int ret;{9}
-
+{11}
 	ret = packet_header_create(&request.header, sizeof(request), {4}, device_p->ipcon_p, device_p);
 
 	if (ret < 0) {{
@@ -379,7 +387,12 @@ int {0}_{1}({2} *{0}{3}) {{
             else:
                 k = ''
 
-            functions += template.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r)
+            if packet.get_function_id() == 255: # <device>_get_identiry
+                check = ''
+            else:
+                check = template_check
+
+            functions += template.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r, check)
 
         # high-level
         template_stream_in = """
