@@ -418,7 +418,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Degree',
 'elements': [('Servo Num', 'uint8', 1, 'in', {'range': [(0, 6), (128, None)]}),
-             ('Min', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree', 'default': 9000}),
+             ('Min', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree', 'default': -9000}),
              ('Max', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree', 'default': 9000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -493,7 +493,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Degree',
 'elements': [('Servo Num', 'uint8', 1, 'in', {'range': (0, 6)}),
-             ('Min', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'default': 9000}),
+             ('Min', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'default': -9000}),
              ('Max', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'default': 9000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
