@@ -47,7 +47,7 @@ class OpenHAB:
         self.category = kwargs.get('category', None)
         self.custom = kwargs.get('custom', False)
         self.actions = kwargs.get('actions', [])
-        self.is_bridge = kwargs.get('actions', False)
+        self.is_bridge = kwargs.get('is_bridge', False)
 
 class Channel:
     def __init__(self, **kwargs):
