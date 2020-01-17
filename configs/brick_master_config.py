@@ -3316,7 +3316,7 @@ Die ``group_id`` und ``group_ssid_prefix`` Parameter identifizieren in bestimmte
 Mesh-Netzwerk und alle WIFI Extension 2.0 mit der gleichen Gruppeneinstellung
 gehören um gleichen Mesh-Netzwerk.
 
-Die ``gateway_ip`` und``gateway_port`` Parameter geben an, wie der Mesh-Gateway
+Die ``gateway_ip`` und ``gateway_port`` Parameter geben an, wie der Mesh-Gateway
 (brickd) erreicht werden kann.
 
 Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
