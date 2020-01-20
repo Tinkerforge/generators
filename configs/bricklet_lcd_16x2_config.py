@@ -265,7 +265,8 @@ a custom character "H", you should transfer the following:
 * ``character[7] = 0b00000000`` (decimal value 0)
 
 The characters can later be written with :func:`Write Line` by using the
-characters with the byte representation 8 to 15.
+characters with the byte representation 8 ("\\\\x08" or "\\\\u0008") to 15
+("\\\\x0F" or "\\\\u000F").
 
 You can play around with the custom characters in Brick Viewer since
 version 2.0.1.
@@ -291,7 +292,8 @@ sollte das folgende Array gesendet werden:
 * ``character[7] = 0b00000000`` (Dezimalwert 0)
 
 Die Buchstaben können später mit :func:`Write Line` mit den chars mit
-den Byterepräsentationen 8 bis 15 geschrieben werden.
+den Byterepräsentationen 8 ("\\\\x08" oder "\\\\u0008") bis 15 ("\\\\x0F" oder
+"\\\\u000F") geschrieben werden.
 
 Es ist möglich die benutzerdefinierten Buchstaben im Brick Viewer ab
 Version 2.0.1 einzustellen.
