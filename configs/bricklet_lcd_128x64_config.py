@@ -947,7 +947,7 @@ remove the button use :func:`Remove GUI Slider`.
 """
 Zeichnet einen Slider an Position (x, y) mit der gegebenen Länge.
 
-Es können bis zu 8 Slider genutzt werden (Index 0-7).
+Es können bis zu 6 Slider genutzt werden.
 
 Wenn eine horizontale Richtung verwendet wird muss Die x-Position + Länge
 im Wertebereich von 1 bis 128 und die y-Position im Wertebereich von
