@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"sync"
 )
@@ -14,18 +16,32 @@ const (
 	ResponseExpectedFlagAlwaysTrue
 )
 
+type deviceIdentifierCheck = uint8
+
+const (
+	deviceIdentifierCheckPending deviceIdentifierCheck = iota
+	deviceIdentifierCheckMatch
+	deviceIdentifierCheckMismatch
+)
+
 type Device struct {
-	apiVersion       [3]uint8
-	ResponseExpected [256]ResponseExpectedFlag
-	internalUID      uint32
-	regTX            chan<- Request
-	callbackRegTX    chan<- CallbackRegistration
-	callbackDeregTX  chan<- CallbackDeregistration
-	highLevelLocks   []sync.Mutex
-	initialized      bool
+	apiVersion             [3]uint8
+	ResponseExpected       [256]ResponseExpectedFlag
+	internalUID            uint32
+	regTX                  chan<- Request
+	callbackRegTX          chan<- CallbackRegistration
+	callbackDeregTX        chan<- CallbackDeregistration
+	highLevelLocks         []sync.Mutex
+	initialized            bool
+	deviceIdentifierCheck  deviceIdentifierCheck
+	deviceIdentifierMutex  sync.Mutex
+	deviceIdentifier       uint16
+	deviceDisplayName      string
+	wrongDeviceDisplayName string
+	UID                    string
 }
 
-func NewDevice(apiVersion [3]uint8, uid string, ipcon *IPConnection, highLevelFunctionCount uint8) (Device, error) {
+func NewDevice(apiVersion [3]uint8, uid string, ipcon *IPConnection, highLevelFunctionCount uint8, deviceIdentifier uint16, deviceDisplayName string) (Device, error) {
 	internalUID, err := Base58ToU32(uid)
 	if err != nil {
 		result := Device{}
@@ -40,7 +56,13 @@ func NewDevice(apiVersion [3]uint8, uid string, ipcon *IPConnection, highLevelFu
 		ipcon.CallbackReg,
 		ipcon.CallbackDereg,
 		make([]sync.Mutex, highLevelFunctionCount),
-		true}, nil
+		true,
+		deviceIdentifierCheckPending,
+		sync.Mutex{},
+		deviceIdentifier,
+		deviceDisplayName,
+		"",
+		uid}, nil
 }
 
 func (device *Device) GetAPIVersion() [3]uint8 {
@@ -92,6 +114,11 @@ func (device *Device) Set(functionID uint8, payload []byte) ([]byte, error) {
 	if !device.initialized {
 		return nil, fmt.Errorf("device is not initialized")
 	}
+	err := device.checkDeviceIdentifier()
+	if err != nil {
+		return nil, err
+	}
+
 	responseExpected := !(device.ResponseExpected[functionID] == ResponseExpectedFlagFalse)
 
 	if responseExpected {
@@ -115,6 +142,12 @@ func (device *Device) Get(functionID uint8, payload []byte) ([]byte, error) {
 	if !device.initialized {
 		return nil, fmt.Errorf("device is not initialized")
 	}
+
+	err := device.checkDeviceIdentifier()
+	if err != nil {
+		return nil, err
+	}
+
 	header := PacketHeader{
 		device.internalUID,
 		uint8(len(payload) + PacketHeaderSize),
@@ -219,9 +252,69 @@ func (device *Device) GetHighLevel(lowLevelClosure func() (LowLevelResult, error
 	return nil, nil, fmt.Errorf("stream is out of sync, please retry")
 }
 
+func (device *Device) checkDeviceIdentifier() error {
+	if device.deviceIdentifierCheck == deviceIdentifierCheckMatch {
+		return nil
+	}
+
+	device.deviceIdentifierMutex.Lock()
+	defer device.deviceIdentifierMutex.Unlock()
+
+	if device.deviceIdentifierCheck == deviceIdentifierCheckPending {
+		reqHeader := PacketHeader{
+			device.internalUID,
+			uint8(PacketHeaderSize),
+			255,
+			0,
+			true,
+			0}
+		reqBytes := reqHeader.ToLeBytes()
+
+		resultBytes, err := ReqWithTimeout(reqBytes, device.regTX)
+		if err != nil {
+			return err
+		}
+		if len(resultBytes) < 8 {
+			return fmt.Errorf("get identity returned packet of unexpected size %d", len(resultBytes))
+		}
+		var header PacketHeader
+
+		header.FillFromBytes(resultBytes)
+		if header.ErrorCode != 0 {
+			return DeviceError(header.ErrorCode)
+		}
+
+		if header.Length < 33 {
+			return fmt.Errorf("get identity returned packet of unexpected size %d", header.Length)
+		}
+
+		resultBuf := bytes.NewBuffer(resultBytes[8:])
+		resultBuf.Next(8 + 8 + 1 + 3 + 3)
+		var deviceIdentifier uint16
+		binary.Read(resultBuf, binary.LittleEndian, &deviceIdentifier)
+		if deviceIdentifier != device.deviceIdentifier {
+			device.deviceIdentifierCheck = deviceIdentifierCheckMismatch
+			device.wrongDeviceDisplayName = getDeviceDisplayName(deviceIdentifier)
+		}
+	}
+
+	if device.deviceIdentifierCheck == deviceIdentifierCheckMismatch {
+		return fmt.Errorf("UID %v belongs to a %v instead of the expected %v", device.UID, device.wrongDeviceDisplayName, device.deviceDisplayName)
+	}
+	return nil
+}
+
 func (device *Device) RegisterCallback(functionID uint8, fn func([]byte)) uint64 {
+	wrapper := func(byteSlice []byte) {
+		err := device.checkDeviceIdentifier()
+		if err != nil {
+			return
+		}
+
+		fn(byteSlice)
+	}
 	idChan := make(chan uint64, ChannelSize)
-	device.callbackRegTX <- CallbackRegistration{device.internalUID, functionID, fn, idChan}
+	device.callbackRegTX <- CallbackRegistration{device.internalUID, functionID, wrapper, idChan}
 	return <-idChan
 }
 

@@ -178,7 +178,7 @@ const DeviceDisplayName = "{device_display_name}"
 // Creates an object with the unique device ID `uid`. This object can then be used after the IP Connection `ipcon` is connected.
 func New(uid string, ipcon *ipconnection.IPConnection) ({name}, error) {{
 	internalIPCon := ipcon.GetInternalHandle().(IPConnection)
-	dev, err := NewDevice([3]uint8{{ {apiVersion} }}, uid, &internalIPCon, {high_level_function_count})
+	dev, err := NewDevice([3]uint8{{ {apiVersion} }}, uid, &internalIPCon, {high_level_function_count}, DeviceIdentifier, DeviceDisplayName)
 	if err != nil {{
 		return {name}{{}}, err
 	}}
@@ -578,6 +578,10 @@ class GoBindingsGenerator(go_common.GoGeneratorTrait, common.BindingsGenerator):
     def get_constant_group_class(self):
         return go_common.GoConstantGroup
 
+    def prepare(self):
+        super().prepare()
+        self.device_display_names = []
+
     def generate(self, device):
         filename = '{0}_{1}'.format(device.get_name().under, device.get_category().under)
         os.mkdir(os.path.join(self.get_bindings_dir(), filename))
@@ -590,6 +594,36 @@ class GoBindingsGenerator(go_common.GoGeneratorTrait, common.BindingsGenerator):
 
         if device.is_released():
             self.released_files.append(filename + '.go')
+            self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
+
+        template = """{header}
+package internal
+
+import (
+    "fmt"
+)
+
+var deviceNames = map[uint16]string{{
+	{entries},
+}}
+
+func getDeviceDisplayName(deviceIdentifier uint16) string {{
+    result := deviceNames[deviceIdentifier]
+    if result == "" {{
+        return fmt.Sprintf("Unknown Device [%v]", deviceIdentifier)
+    }}
+    return result
+}}
+"""
+
+        entries = []
+
+        for device_identifier, device_display_name in sorted(self.device_display_names):
+            entries.append('{0}: "{1}"'.format(device_identifier, device_display_name))
+
+        with open(os.path.join(self.get_bindings_dir(), 'device_display_names.go'), 'w') as f:
+            f.write(template.format(header=self.get_header_comment('asterisk'),
+                                    entries=',\n    '.join(entries)))
 
 def generate(root_dir):
     common.generate(root_dir, 'en', GoBindingsGenerator)

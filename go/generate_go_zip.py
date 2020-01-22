@@ -83,6 +83,7 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
                 'base58.go',
                 'byteconverter.go',
                 'device.go',
+                'bindings/device_display_names.go',
                 'ipconnection.go'
             ],
             "ipconnection": [
