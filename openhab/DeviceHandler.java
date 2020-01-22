@@ -34,6 +34,10 @@ import org.eclipse.smarthome.core.thing.ThingStatusInfo;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
+import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
+import org.eclipse.smarthome.core.thing.binding.firmware.FirmwareUpdateHandler;
+import org.eclipse.smarthome.core.thing.binding.firmware.ProgressCallback;
+import org.eclipse.smarthome.core.thing.binding.firmware.ProgressStep;
 import org.eclipse.smarthome.core.thing.type.ChannelDefinition;
 import org.eclipse.smarthome.core.thing.type.ChannelType;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
@@ -63,13 +67,13 @@ import com.tinkerforge.Device.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
 
 /**
- * The {@link DeviceHandler} is responsible for handling commands,
- * which are sent to one of the channels.
+ * The {@link DeviceHandler} is responsible for handling commands, which are
+ * sent to one of the channels.
  *
  * @author Erik Fleckstein - Initial contribution
  */
 @NonNullByDefault
-public class DeviceHandler extends BaseThingHandler {
+public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHandler {
     private final Logger logger = LoggerFactory.getLogger(DeviceHandler.class);
 
     private boolean wasInitialized = false;
@@ -96,10 +100,9 @@ public class DeviceHandler extends BaseThingHandler {
         this.configDescriptionRegistrySupplier = configDescriptionRegistrySupplier;
     }
 
-	public @Nullable Device getDevice() {
-		return device;
+    public @Nullable Device getDevice() {
+        return device;
     }
-
 
     public boolean checkReachablity() {
         try {
@@ -110,10 +113,10 @@ public class DeviceHandler extends BaseThingHandler {
             logger.debug("Done checking reachability of {}", thing.getUID().getId());
 
             // Initialize will set the status itself if the configuration succeeds.
-            if(!thing.getStatus().equals(ThingStatus.INITIALIZING))
+            if (!thing.getStatus().equals(ThingStatus.INITIALIZING))
                 updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
             return true;
-        } catch(TinkerforgeException e) {
+        } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Device is unreachable.");
             logger.debug("Failed checking reachability of {}: {}", thing.getUID().getId(), e.getMessage());
             return false;
@@ -121,22 +124,22 @@ public class DeviceHandler extends BaseThingHandler {
     }
 
     private void enumerateListener(String uid, String connectedUid, char position, short[] hardwareVersion,
-    short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
+            short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
         String id = thing.getUID().getId();
 
         if (!uid.equals(id)) {
             return;
         }
 
-        switch(enumerationType) {
-            case IPConnection.ENUMERATION_TYPE_AVAILABLE:
-                break;
-            case IPConnection.ENUMERATION_TYPE_CONNECTED:
-                initializeDevice();
-                break;
-            case IPConnection.ENUMERATION_TYPE_DISCONNECTED:
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "Device was unplugged.");
-                break;
+        switch (enumerationType) {
+        case IPConnection.ENUMERATION_TYPE_AVAILABLE:
+            break;
+        case IPConnection.ENUMERATION_TYPE_CONNECTED:
+            initializeDevice();
+            break;
+        case IPConnection.ENUMERATION_TYPE_DISCONNECTED:
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "Device was unplugged.");
+            break;
         }
     }
 
@@ -148,8 +151,7 @@ public class DeviceHandler extends BaseThingHandler {
         }
 
         BrickDaemonHandler brickd = (BrickDaemonHandler) (getBridge().getHandler());
-        if (!wasInitialized)
-        {
+        if (!wasInitialized) {
             brickd.addEnumerateListener(this::enumerateListener);
         }
         wasInitialized = true;
@@ -161,7 +163,7 @@ public class DeviceHandler extends BaseThingHandler {
 
         configureChannels();
 
-        if(this.getBridge().getStatus() == ThingStatus.ONLINE) {
+        if (this.getBridge().getStatus() == ThingStatus.ONLINE) {
             initializeDevice();
         } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
@@ -172,48 +174,10 @@ public class DeviceHandler extends BaseThingHandler {
         return getThing().getChannel(channelID).getConfiguration();
     }
 
-    private void checkFirmware() {
-        String fw = thing.getProperties().getOrDefault(Thing.PROPERTY_FIRMWARE_VERSION, "1.0.0");
-        String min_fw = thing.getProperties().getOrDefault(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION, "1.0.0");
-
-        boolean needs_update = needsFirmwareUpdate(fw, min_fw);
-        boolean has_label = thing.getLabel().contains(TinkerforgeBindingConstants.NEEDS_FIRMWARE_UPDATE_LABEL);
-
-        if (needs_update && !has_label) {
-            thing.setLabel(thing.getLabel() + TinkerforgeBindingConstants.NEEDS_FIRMWARE_UPDATE_LABEL);
-        } else if (!needs_update && has_label) {
-            thing.setLabel(thing.getLabel().replace(TinkerforgeBindingConstants.NEEDS_FIRMWARE_UPDATE_LABEL, ""));
-        }
-    }
-
-    private boolean needsFirmwareUpdate(String fw, String min_fw) {
-        String[] fw_split = fw.split("\\.");
-        String[] min_fw_split = min_fw.split("\\.");
-        if(fw_split.length != min_fw_split.length) {
-            logger.warn("Could not parse firmware version {} or minimum required version {}", fw, min_fw);
-            return false;
-        }
-
-        for(int i = 0; i < fw_split.length; ++i){
-            try {
-                int have = Integer.parseInt(fw_split[i]);
-                int need = Integer.parseInt(min_fw_split[i]);
-                if(have < need) {
-                    return true;
-                }
-            } catch (NumberFormatException e) {
-                logger.warn("Could not parse firmware version {} or minimum required version {}", fw, min_fw);
-                return false;
-            }
-        }
-        return false;
-    }
-
     protected void initializeDevice() {
         String id = thing.getUID().getId();
         Bridge bridge = getBridge();
-        if (bridge == null)
-        {
+        if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED);
             return;
         }
@@ -221,16 +185,13 @@ public class DeviceHandler extends BaseThingHandler {
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
         device = deviceSupplier.apply(id, ipcon);
 
-        if(!checkReachablity()) {
+        if (!checkReachablity()) {
             return;
         }
 
-        checkFirmware();
-
         try {
             device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
-        }
-        catch (TinkerforgeException e) {
+        } catch (TinkerforgeException e) {
             brickd.handleTimeout(this);
             return;
         }
@@ -252,7 +213,7 @@ public class DeviceHandler extends BaseThingHandler {
         try {
             device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
         } catch (TinkerforgeException e) {
-            ((BrickDaemonHandler)(getBridge().getHandler())).handleTimeout(this);
+            ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
         }
     }
 
@@ -265,13 +226,15 @@ public class DeviceHandler extends BaseThingHandler {
         try {
             if (command instanceof RefreshType) {
                 refreshValue(channelUID.getId(), getThing().getChannel(channelUID).getConfiguration());
-            }
-            else {
-                List<SetterRefresh> refreshs = device.handleCommand(getConfig(), getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
-                refreshs.forEach(r -> scheduler.schedule(() -> refreshValue(r.channel, getThing().getChannel(r.channel).getConfiguration()), r.delay, TimeUnit.MILLISECONDS));
+            } else {
+                List<SetterRefresh> refreshs = device.handleCommand(getConfig(),
+                        getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
+                refreshs.forEach(r -> scheduler.schedule(
+                        () -> refreshValue(r.channel, getThing().getChannel(r.channel).getConfiguration()), r.delay,
+                        TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
-            ((BrickDaemonHandler)(getBridge().getHandler())).handleTimeout(this);
+            ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
         }
     }
 
@@ -287,28 +250,27 @@ public class DeviceHandler extends BaseThingHandler {
         }
     }
 
-    private Channel buildChannel(ThingType tt, ChannelDefinition def){
+    private Channel buildChannel(ThingType tt, ChannelDefinition def) {
         ChannelType ct = TinkerforgeChannelTypeProvider.getChannelTypeStatic(def.getChannelTypeUID(), null);
-        if(ct == null) {
+        if (ct == null) {
             ChannelTypeRegistry reg = channelTypeRegistrySupplier.get();
-            if(reg == null) {
+            if (reg == null) {
                 logger.warn("Could not get build channel {}: ChannelTypeRegistry not found.", def.getId());
                 return null;
             }
             ct = reg.getChannelType(def.getChannelTypeUID());
         }
-        ChannelBuilder builder = ChannelBuilder.create(new ChannelUID(getThing().getUID(), def.getId()), ct.getItemType())
-                                               .withAutoUpdatePolicy(def.getAutoUpdatePolicy())
-                                               .withProperties(def.getProperties())
-                                               .withType(def.getChannelTypeUID())
-                                               .withKind(ct.getKind());
+        ChannelBuilder builder = ChannelBuilder
+                .create(new ChannelUID(getThing().getUID(), def.getId()), ct.getItemType())
+                .withAutoUpdatePolicy(def.getAutoUpdatePolicy()).withProperties(def.getProperties())
+                .withType(def.getChannelTypeUID()).withKind(ct.getKind());
 
         String desc = def.getDescription();
-        if(desc != null) {
+        if (desc != null) {
             builder = builder.withDescription(desc);
         }
         String label = def.getLabel();
-        if(label != null) {
+        if (label != null) {
             builder = builder.withLabel(label);
         }
 
@@ -346,46 +308,45 @@ public class DeviceHandler extends BaseThingHandler {
     public @Nullable Object getDefaultValueAsCorrectType(Type parameterType, String defaultValue) {
         try {
             switch (parameterType) {
-                case TEXT:
-                    return defaultValue;
-                case BOOLEAN:
-                    return Boolean.parseBoolean(defaultValue);
-                case INTEGER:
-                    return new BigDecimal(defaultValue);
-                case DECIMAL:
-                    return new BigDecimal(defaultValue);
-                default:
-                    return null;
+            case TEXT:
+                return defaultValue;
+            case BOOLEAN:
+                return Boolean.parseBoolean(defaultValue);
+            case INTEGER:
+                return new BigDecimal(defaultValue);
+            case DECIMAL:
+                return new BigDecimal(defaultValue);
+            default:
+                return null;
             }
         } catch (NumberFormatException ex) {
-            logger.warn(
-                    "Could not parse default value '{}' as type '{}': {}", defaultValue, parameterType, ex.getMessage(),
-                    ex);
+            logger.warn("Could not parse default value '{}' as type '{}': {}", defaultValue, parameterType,
+                    ex.getMessage(), ex);
             return null;
         }
     }
-
 
     private void configureChannels() {
         List<String> enabledChannelNames = new ArrayList<>();
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
-        }
-        catch(TinkerforgeException e) {
-            ((BrickDaemonHandler)(getBridge().getHandler())).handleTimeout(this);
+        } catch (TinkerforgeException e) {
+            ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
         }
 
         ThingType tt = TinkerforgeThingTypeProvider.getThingTypeStatic(this.getThing().getThingTypeUID(), null);
 
         List<Channel> enabledChannels = new ArrayList<>();
-        for(String s : enabledChannelNames) {
+        for (String s : enabledChannelNames) {
             ChannelUID cuid = new ChannelUID(getThing().getUID(), s);
-            ChannelDefinition def = tt.getChannelDefinitions().stream().filter(d -> d.getId().equals(cuid.getId())).findFirst().get();
+            ChannelDefinition def = tt.getChannelDefinitions().stream().filter(d -> d.getId().equals(cuid.getId()))
+                    .findFirst().get();
             Channel newChannel = buildChannel(tt, def);
 
             Channel existingChannel = this.thing.getChannel(newChannel.getUID());
-            if(existingChannel != null)
-                newChannel = ChannelBuilder.create(newChannel).withConfiguration(existingChannel.getConfiguration()).build();
+            if (existingChannel != null)
+                newChannel = ChannelBuilder.create(newChannel).withConfiguration(existingChannel.getConfiguration())
+                        .build();
 
             enabledChannels.add(newChannel);
         }
@@ -396,5 +357,20 @@ public class DeviceHandler extends BaseThingHandler {
     @Override
     public Collection<Class<? extends ThingHandlerService>> getServices() {
         return Collections.singletonList(actionsClass);
+    }
+
+    @Override
+    public void updateFirmware(Firmware firmware, ProgressCallback progressCallback) {
+        // not needed for now
+    }
+
+    @Override
+    public void cancel() {
+        // not needed for now
+    }
+
+    @Override
+    public boolean isUpdateExecutable() {
+        return false;
     }
 }
