@@ -386,7 +386,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Sensor Identifiers',
-                'transform': 'new StringType(Arrays.stream(value).mapToObj(String::valueOf).reduce((l, r) -> l + ", " + r).get())'}]
+                'transform': 'new StringType(Arrays.stream(value).mapToObj(String::valueOf).reduce((l, r) -> l + ", " + r).orElse(""))'}]
         }, {
             'id': 'Station Identifiers',
             'label': 'Station Identifiers',
@@ -396,7 +396,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Station Identifiers',
-                'transform': 'new StringType(Arrays.stream(value).mapToObj(String::valueOf).reduce((l, r) -> l + ", " + r).get())'}]
+                'transform': 'new StringType(Arrays.stream(value).mapToObj(String::valueOf).reduce((l, r) -> l + ", " + r).orElse(""))'}]
         }
     ],
     'channel_types': [

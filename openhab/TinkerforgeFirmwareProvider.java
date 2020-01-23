@@ -43,7 +43,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     @Nullable
     @Override
     public Firmware getFirmware(Thing thing, String version, @Nullable Locale locale) {
-        return getFirmwares(thing, locale).stream().filter(fw -> fw.getVersion().equals(version)).findFirst().orElseGet(() -> null);
+        return getFirmwares(thing, locale).stream().filter(fw -> fw.getVersion().equals(version)).findFirst().orElse(null);
     }
 
     @Override
