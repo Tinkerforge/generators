@@ -67,7 +67,7 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
 
                 ThingTypeUID ttuid = opt.get();
 
-                ThingUID thingUid = new ThingUID(ttuid, handler.getThing().getUID(), uid);
+                ThingUID thingUid = new ThingUID(ttuid, uid);
 
                 String fwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
                 String hwVersion = hardwareVersion[0] + "." + hardwareVersion[1] + "." + hardwareVersion[2];
