@@ -357,14 +357,15 @@ def electrode_channel(idx):
         'predicate': 'cfg.electrode{}Enabled'.format(idx),
         'id': 'Electrode {}'.format(idx),
         'label': 'Electrode {}'.format(idx),
-        'type': 'Electrode',
+        'type': 'system.rawbutton',
         'getters': [{
             'packet': 'Get Touch State',
-            'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+            'transform': 'value[{}] ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'.format(idx)}],
 
         'callbacks': [{
             'packet': 'Touch State',
-            'transform': 'state[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+            'transform': 'state[{}] ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'.format(idx)}],
+        'is_trigger_channel': True
     }
 
 def electrode_config(idx):
@@ -382,7 +383,7 @@ def electrode_config(idx):
         }
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Electrode Sensitivity',
@@ -420,14 +421,15 @@ com['openhab'] = {
             'id': 'Proximity',
             'label': 'Proximity',
             'description': 'The current touch state. If a hand or similar is in proximity to the electrodes, this channel is toggled. The proximity is activated with a distance of 1-2cm. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.',
-            'type': 'Electrode',
+            'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Get Touch State',
-                'transform': 'value[12] ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value[12] ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{
                 'packet': 'Touch State',
-                'transform': 'state[12] ? OnOffType.ON : OnOffType.OFF'}]
+                'transform': 'state[12] ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+            'is_trigger_channel': True
         },
         {
             'id': 'Recalibrate',
@@ -440,12 +442,6 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        {
-            'id': 'Electrode',
-            'item_type': 'Switch',
-            'label': 'Electrode',
-            'description': 'The current touch state. An electrode is already counted as touched if a finger is nearly touching the electrode. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.'
-        },
         {
             'id': 'Recalibrate',
             'item_type': 'String',
