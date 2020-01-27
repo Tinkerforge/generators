@@ -822,6 +822,19 @@ def format_value_with_tooltip(element, value, scale, unit):
             result = '⟨abbr title=«{0}{1} (UInt{2} Max)»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
             break
 
+    if result is None:
+        for exponent in range(10, 65):
+            if value == -2 ** (exponent - 1):
+                result = '⟨abbr title=«{0}{1}»⟩-2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent - 1)
+                break
+            elif value == 2 ** (exponent - 1) - 1:
+                result = '⟨abbr title=«{0}{1}»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent - 1)
+                break
+            elif value == 2 ** exponent - 1:
+                result = '⟨abbr title=«{0}{1}»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
+                break
+
+
     if result == None:
         if len(formatted_value_hint) > 0:
             result = '⟨abbr title=«{0}»⟩{1}⟨/abbr⟩'.format(formatted_value_hint, formatted_value)
