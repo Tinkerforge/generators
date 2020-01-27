@@ -113,8 +113,8 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             logger.debug("Done checking reachability of {}", thing.getUID().getId());
 
             // Initialize will set the status itself if the configuration succeeds.
-            if (!thing.getStatus().equals(ThingStatus.INITIALIZING))
-                updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
+            if (!thing.getStatus().equals(ThingStatus.ONLINE))
+                initializeDevice();
             return true;
         } catch (TinkerforgeException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Device is unreachable.");
@@ -184,10 +184,6 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         BrickDaemonHandler brickd = (BrickDaemonHandler) (bridge.getHandler());
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
         device = deviceSupplier.apply(id, ipcon);
-
-        if (!checkReachablity()) {
-            return;
-        }
 
         try {
             device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
