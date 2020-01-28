@@ -3,7 +3,7 @@
 
 """
 Ruby Documentation Generator
-Copyright (C) 2012-2014, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_ruby_doc.py: Generator for Ruby documentation
@@ -387,12 +387,6 @@ class RubyDocPacket(ruby_common.RubyPacket):
         return ret.format('[' + ', '.join(ret_list) + ']')
 
 class RubyDocGenerator(ruby_common.RubyGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'ruby'
-
-    def get_bindings_display_name(self):
-        return 'Ruby'
-
     def get_doc_rst_filename_part(self):
         return 'Ruby'
 

@@ -3,7 +3,7 @@
 
 """
 Java Generator
-Copyright (C) 2012-2015, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 java_common.py: Common Library for generation of Java bindings and documentation
@@ -332,6 +332,12 @@ class JavaElement(common.Element):
             return self.get_java_default_item_value()
 
 class JavaGeneratorTrait:
+    def get_bindings_name(self):
+        return 'java'
+
+    def get_bindings_display_name(self):
+        return 'Java'
+
     def get_doc_null_value_name(self):
         return 'null'
 

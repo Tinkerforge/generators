@@ -1559,12 +1559,6 @@ class DelphiBindingsElement(delphi_common.DelphiElement):
         return name
 
 class DelphiBindingsGenerator(delphi_common.DelphiGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'delphi'
-
-    def get_bindings_display_name(self):
-        return 'Delphi/Lazarus'
-
     def get_device_class(self):
         return DelphiBindingsDevice
 

@@ -3,7 +3,7 @@
 
 """
 Python Generator
-Copyright (C) 2012-2013, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013, 2017, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 python_common.py: Common Library for generation of Python bindings and documentation
@@ -171,6 +171,12 @@ class PythonElement(common.Element):
             return coercion[1]
 
 class PythonGeneratorTrait:
+    def get_bindings_name(self):
+        return 'python'
+
+    def get_bindings_display_name(self):
+        return 'Python'
+
     def get_doc_null_value_name(self):
         return 'None'
 

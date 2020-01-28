@@ -408,12 +408,6 @@ class PythonDocPacket(python_common.PythonPacket):
         return common.shift_right(text, 1)
 
 class PythonDocGenerator(python_common.PythonGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'python'
-
-    def get_bindings_display_name(self):
-        return 'Python'
-
     def get_doc_rst_filename_part(self):
         return 'Python'
 

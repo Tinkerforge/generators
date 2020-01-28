@@ -3,7 +3,7 @@
 
 """
 Shell Documentation Generator
-Copyright (C) 2012-2015, 2017-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_shell_doc.py: Generator for Shell documentation
@@ -433,12 +433,6 @@ class ShellDocPacket(shell_common.ShellPacket):
         return common.shift_right(text, 1)
 
 class ShellDocGenerator(shell_common.ShellGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'shell'
-
-    def get_bindings_display_name(self):
-        return 'Shell'
-
     def get_doc_rst_filename_part(self):
         return 'Shell'
 

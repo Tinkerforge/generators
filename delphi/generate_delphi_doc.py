@@ -3,7 +3,7 @@
 
 """
 Delphi/Lazarus Documentation Generator
-Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_delphi_doc.py: Generator for Delphi/Lazarus documentation
@@ -364,12 +364,6 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
         return common.shift_right(text, 1)
 
 class DelphiDocGenerator(delphi_common.DelphiGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'delphi'
-
-    def get_bindings_display_name(self):
-        return 'Delphi/Lazarus'
-
     def get_doc_rst_filename_part(self):
         return 'Delphi'
 

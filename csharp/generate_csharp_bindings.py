@@ -1044,12 +1044,6 @@ class CSharpBindingsPacket(csharp_common.CSharpPacket):
         return '\n\t\t///  '.join(text.strip().split('\n'))
 
 class CSharpBindingsGenerator(csharp_common.CSharpGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'csharp'
-
-    def get_bindings_display_name(self):
-        return 'C#'
-
     def get_device_class(self):
         return CSharpBindingsDevice
 

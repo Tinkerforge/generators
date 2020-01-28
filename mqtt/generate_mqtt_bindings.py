@@ -228,12 +228,6 @@ class {0}(MQTTCallbackDevice):
         return source
 
 class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'mqtt'
-
-    def get_bindings_display_name(self):
-        return 'MQTT'
-
     def get_device_class(self):
         return MQTTBindingsDevice
 

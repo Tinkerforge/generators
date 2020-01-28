@@ -3,7 +3,7 @@
 
 """
 C# Documentation Generator
-Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_doc.py: Generator for C# documentation
@@ -370,12 +370,6 @@ class CSharpDocPacket(csharp_common.CSharpPacket):
         return common.shift_right(text, shift_right)
 
 class CSharpDocGenerator(csharp_common.CSharpGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'csharp'
-
-    def get_bindings_display_name(self):
-        return 'C#'
-
     def get_doc_rst_filename_part(self):
         return 'CSharp'
 

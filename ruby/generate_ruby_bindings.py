@@ -638,12 +638,6 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
         return ' '.join(forms), total_size
 
 class RubyBindingsGenerator(ruby_common.RubyGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'ruby'
-
-    def get_bindings_display_name(self):
-        return 'Ruby'
-
     def get_device_class(self):
         return RubyBindingsDevice
 

@@ -3,7 +3,7 @@
 
 """
 C/C++ Generator
-Copyright (C) 2012-2013, 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 c_common.py: Common Library for generation of C/C++ bindings and documentation
@@ -189,6 +189,12 @@ class CElement(common.Element):
         return self.get_cardinality()
 
 class CGeneratorTrait:
+    def get_bindings_name(self):
+        return 'c'
+
+    def get_bindings_display_name(self):
+        return 'C/C++'
+
     def get_doc_null_value_name(self):
         return 'NULL'
 

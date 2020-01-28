@@ -4,7 +4,7 @@
 """
 JavaScript Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014-2015, 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 javascript_common.py: Common Library for generation of JavaScript bindings and documentation
 
@@ -119,6 +119,12 @@ class JavaScriptElement(common.Element):
         return f
 
 class JavascriptGeneratorTrait:
+    def get_bindings_name(self):
+        return 'javascript'
+
+    def get_bindings_display_name(self):
+        return 'JavaScript'
+
     def get_doc_null_value_name(self):
         return 'null'
 

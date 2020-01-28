@@ -4,7 +4,7 @@
 """
 MQTT Generator
 Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
-Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 mqtt_common.py: Common Library for generation of MQTT bindings and documentation
 
@@ -120,6 +120,12 @@ class MQTTElement(common.Element):
         return '{' + ', '.join(symbols) + '}'
 
 class MQTTGeneratorTrait:
+    def get_bindings_name(self):
+        return 'mqtt'
+
+    def get_bindings_display_name(self):
+        return 'MQTT'
+
     def get_doc_null_value_name(self):
         return 'null'
 

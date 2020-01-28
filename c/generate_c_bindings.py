@@ -1370,12 +1370,6 @@ class CBindingsPacket(c_common.CPacket):
         return return_list, needs_i
 
 class CBindingsGenerator(c_common.CGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'c'
-
-    def get_bindings_display_name(self):
-        return 'C/C++'
-
     def get_device_class(self):
         return CBindingsDevice
 

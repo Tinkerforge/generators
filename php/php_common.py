@@ -3,7 +3,7 @@
 
 """
 PHP Generator
-Copyright (C) 2012, 2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 php_common.py: Common Library for generation of PHP bindings and documentation
@@ -226,6 +226,12 @@ class PHPElement(common.Element):
         return value
 
 class PHPGeneratorTrait:
+    def get_bindings_name(self):
+        return 'php'
+
+    def get_bindings_display_name(self):
+        return 'PHP'
+
     def get_doc_null_value_name(self):
         return 'NULL'
 

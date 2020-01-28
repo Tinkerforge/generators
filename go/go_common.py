@@ -4,7 +4,7 @@
 """
 Go Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
-Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 go_common.py: Common Library for generation of Go bindings and documentation
 
@@ -318,6 +318,12 @@ def get_go_type(type_, cardinality, array=False):
     return go_type
 
 class GoGeneratorTrait:
+    def get_bindings_name(self):
+        return 'go'
+
+    def get_bindings_display_name(self):
+        return 'Go'
+
     def get_doc_null_value_name(self):
         return 'nil'
 

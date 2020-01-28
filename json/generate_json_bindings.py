@@ -3,7 +3,7 @@
 
 """
 JSON Bindings Generator
-Copyright (C) 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_json_bindings.py: Generator for JSON bindings
 
@@ -165,6 +165,12 @@ class JSONBindingsElement(common.Element):
         return members
 
 class JSONGeneratorTrait:
+    def get_bindings_name(self):
+        return 'json'
+
+    def get_bindings_display_name(self):
+        return 'JSON'
+
     def get_doc_null_value_name(self):
         return 'null'
 
@@ -172,12 +178,6 @@ class JSONGeneratorTrait:
         return element.get_name().space
 
 class JSONBindingsGenerator(JSONGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'json'
-
-    def get_bindings_display_name(self):
-        return 'JSON'
-
     def get_device_class(self):
         return JSONBindingsDevice
 

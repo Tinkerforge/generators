@@ -309,12 +309,6 @@ class MQTTDocPacket(mqtt_common.MQTTPacket):
         return common.shift_right(text, 1)
 
 class MQTTDocGenerator(mqtt_common.MQTTGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'mqtt'
-
-    def get_bindings_display_name(self):
-        return 'MQTT'
-
     def get_doc_rst_filename_part(self):
         return 'MQTT'
 

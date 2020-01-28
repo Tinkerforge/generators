@@ -4,7 +4,7 @@
 """
 Go Documentation Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
-Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_go_doc.py: Generator for Go documentation
 
@@ -381,12 +381,6 @@ class GoDocPacket(go_common.GoPacket):
         return common.shift_right(text, 1)
 
 class GoDocGenerator(go_common.GoGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'go'
-
-    def get_bindings_display_name(self):
-        return 'Go'
-
     def get_doc_rst_filename_part(self):
         return 'Go'
 

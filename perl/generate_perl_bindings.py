@@ -812,12 +812,6 @@ class PerlBindingsPacket(common.Packet):
         return ' '.join(forms)
 
 class PerlBindingsGenerator(perl_common.PerlGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'perl'
-
-    def get_bindings_display_name(self):
-        return 'Perl'
-
     def get_device_class(self):
         return PerlBindingsDevice
 

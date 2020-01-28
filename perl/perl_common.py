@@ -4,7 +4,7 @@
 """
 Perl Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014, 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 perl_common.py: Common Library for generation of Perl bindings and documentation
 
@@ -146,6 +146,12 @@ class PerlElement(common.Element):
         return value
 
 class PerlGeneratorTrait:
+    def get_bindings_name(self):
+        return 'perl'
+
+    def get_bindings_display_name(self):
+        return 'Perl'
+
     def get_doc_null_value_name(self):
         return 'undef'
 

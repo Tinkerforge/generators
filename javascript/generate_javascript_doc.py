@@ -471,12 +471,6 @@ class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
             return '\n' + '\n'.join(desc) + '\n'
 
 class JavaScriptDocGenerator(javascript_common.JavascriptGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'javascript'
-
-    def get_bindings_display_name(self):
-        return 'JavaScript'
-
     def get_doc_rst_filename_part(self):
         return 'JavaScript'
 

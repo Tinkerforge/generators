@@ -3,7 +3,7 @@
 
 """
 PHP Documentation Generator
-Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_doc.py: Generator for PHP documentation
@@ -427,12 +427,6 @@ class PHPDocPacket(php_common.PHPPacket):
         return common.shift_right(text, 1)
 
 class PHPDocGenerator(php_common.PHPGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'php'
-
-    def get_bindings_display_name(self):
-        return 'PHP'
-
     def get_doc_rst_filename_part(self):
         return 'PHP'
 

@@ -442,12 +442,6 @@ class PerlDocPacket(common.Packet):
         return common.shift_right(text, 1)
 
 class PerlDocGenerator(perl_common.PerlGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'perl'
-
-    def get_bindings_display_name(self):
-        return 'Perl'
-
     def get_doc_rst_filename_part(self):
         return 'Perl'
 

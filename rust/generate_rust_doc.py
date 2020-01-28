@@ -4,7 +4,7 @@
 """
 Rust Documentation Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
-Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_rust_doc.py: Generator for Rust documentation
 
@@ -392,12 +392,6 @@ class RustDocPacket(rust_common.RustPacket):
         return common.shift_right(text, 1)
 
 class RustDocGenerator(rust_common.RustGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'rust'
-
-    def get_bindings_display_name(self):
-        return 'Rust'
-
     def get_doc_rst_filename_part(self):
         return 'Rust'
 

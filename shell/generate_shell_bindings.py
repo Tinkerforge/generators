@@ -526,12 +526,6 @@ def dispatch_{0}_{1}(ctx, argv):
         return source
 
 class ShellBindingsGenerator(shell_common.ShellGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'shell'
-
-    def get_bindings_display_name(self):
-        return 'Shell'
-
     def get_device_class(self):
         return ShellBindingsDevice
 

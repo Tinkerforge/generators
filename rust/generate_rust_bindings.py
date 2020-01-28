@@ -4,6 +4,7 @@
 """
 Rust Bindings Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_rust_bindings.py: Generator for Rust bindings
 
@@ -653,12 +654,6 @@ class RustBindingsPacket(rust_common.RustPacket):
         return "#[derive({traits})]".format(traits=", ".join(self.get_rust_derivable_traits(high_level_only)))
 
 class RustBindingsGenerator(rust_common.RustGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'rust'
-
-    def get_bindings_display_name(self):
-        return 'Rust'
-
     def get_device_class(self):
         return RustBindingsDevice
 

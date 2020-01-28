@@ -1516,12 +1516,6 @@ class JavaBindingsPacket(java_common.JavaPacket):
         return bbgets, bbret
 
 class JavaBindingsGenerator(java_common.JavaGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'java'
-
-    def get_bindings_display_name(self):
-        return 'Java'
-
     def get_device_class(self):
         return JavaBindingsDevice
 

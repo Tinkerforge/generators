@@ -4,7 +4,7 @@
 """
 Rust Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
-Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 rust_common.py: Common Library for generation of Rust bindings and documentation
 
@@ -342,6 +342,12 @@ def get_rust_type(type_, cardinality):
     return rust_type
 
 class RustGeneratorTrait:
+    def get_bindings_name(self):
+        return 'rust'
+
+    def get_bindings_display_name(self):
+        return 'Rust'
+
     def get_doc_null_value_name(self):
         return 'None'
 

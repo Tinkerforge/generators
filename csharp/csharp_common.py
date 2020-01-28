@@ -3,7 +3,7 @@
 
 """
 C# Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 csharp_common.py: Common Library for generation of C# bindings and documentation
@@ -229,6 +229,12 @@ class CSharpElement(common.Element):
             return value
 
 class CSharpGeneratorTrait:
+    def get_bindings_name(self):
+        return 'csharp'
+
+    def get_bindings_display_name(self):
+        return 'C#'
+
     def get_doc_null_value_name(self):
         return 'null'
 

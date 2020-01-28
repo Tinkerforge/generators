@@ -3,7 +3,7 @@
 
 """
 Java Documentation Generator
-Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_doc.py: Generator for Java documentation
@@ -442,12 +442,6 @@ class JavaDocPacket(java_common.JavaPacket):
         return common.shift_right(text, shift_right)
 
 class JavaDocGenerator(java_common.JavaGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'java'
-
-    def get_bindings_display_name(self):
-        return 'Java'
-
     def get_doc_rst_filename_part(self):
         return 'Java'
 

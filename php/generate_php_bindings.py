@@ -915,12 +915,6 @@ class PHPBindingsPacket(php_common.PHPPacket):
         return '\n'.join(param)
 
 class PHPBindingsGenerator(php_common.PHPGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'php'
-
-    def get_bindings_display_name(self):
-        return 'PHP'
-
     def get_device_class(self):
         return PHPBindingsDevice
 

@@ -4,6 +4,7 @@
 """
 Go Bindings Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_go_bindings.py: Generator for Go bindings
 
@@ -569,12 +570,6 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
         ])
 
 class GoBindingsGenerator(go_common.GoGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'go'
-
-    def get_bindings_display_name(self):
-        return 'Go'
-
     def get_device_class(self):
         return GoBindingsDevice
 
