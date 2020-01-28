@@ -585,7 +585,8 @@ class GoBindingsGenerator(go_common.GoGeneratorTrait, common.BindingsGenerator):
         return go_common.GoConstantGroup
 
     def prepare(self):
-        super().prepare()
+        common.BindingsGenerator.prepare(self)
+
         self.device_display_names = []
 
     def generate(self, device):
