@@ -634,12 +634,14 @@ class MQTTBindings:
             response = json.dumps(dict(zip(result_names, response)))
             logging.debug("Stream call {} for device {} of type {} succeded.".format(fnName, uid, device_name))
             return response
+
     @staticmethod
     def parse_uid(uid):
         uid_ = base58decode(uid)
 
         if uid_ > 0xFFFFFFFF:
             uid_ = uid64_to_uid32(uid_)
+
         return uid_
 
     def ensure_dev_exists(self, uid, device_class, device_class_name, mqttc):
@@ -654,9 +656,11 @@ class MQTTBindings:
             try:
                 if uid_ in self.ipcon.devices:
                     logging.info("Device {} is already known as {}, but will be displaced by the new requested {}".format(uid, self.ipcon.devices[uid_].device_class_name, device_class_name))
+
                 device = device_class(uid, self.ipcon, device_class_name, device_class, mqttc)
             except Exception as e:
                 return False, json_error("Could not create device object: {}".format(str(e)))
+
         return True, device
 
     def dispatch_call(self, call_type, device_class_name, uid, fnName, json_args, response_path):
@@ -718,7 +722,9 @@ class MQTTBindings:
                 reason = "no callbacks where registered for this device" if uid_ not in self.ipcon.devices else "a device of type {} with the same UID has callbacks registered".format(self.callback_devices[uid].device_class)
                 logging.debug("Got callback deregistration request for device {} of type {}, but {}. Ignoring the request.".format(uid, device_name, reason))
                 return None
+
             reg_found = self.ipcon.devices[uid_].deregister_callback(callbackInfo.id, path)
+
             if reg_found:
                 logging.debug("Deregistered callback {} for device {} of type {}. Will stop publishing messages to {}.".format(callbackName, uid, device_name, path))
 

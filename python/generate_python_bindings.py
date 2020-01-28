@@ -593,6 +593,7 @@ class {0}(Device):
         source += self.get_python_add_device()
         source += self.get_python_methods()
         source += self.get_python_register_callback_method()
+
         if not self.is_tng():
             source += self.get_python_old_name()
 

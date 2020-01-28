@@ -553,7 +553,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
                                device_identifier = self.get_device_identifier(),
                                device_display_name = self.get_long_display_name(),
                                name_under = self.get_name().under + "_" + self.get_category().under,
-                                name_camel = self.get_go_name(),
+                               name_camel = self.get_go_name(),
                                apiVersion = "{},{},{}".format(*self.get_api_version()),
                                high_level_function_count = high_level_function_count,
                                response_expected_config="\n\t".join(resp_expct_config),
@@ -599,6 +599,7 @@ class GoBindingsGenerator(go_common.GoGeneratorTrait, common.BindingsGenerator):
             content = device.get_go_source().replace("‍REPLACE_WITH_ZWJ", "\u200d")
         else:
             content = device.get_go_source().replace("‍REPLACE_WITH_ZWJ", (u"\u200d").encode('utf-8'))
+
         with open(os.path.join(self.get_bindings_dir(), filename + '.go'), 'w') as f:
             f.write(content)
 

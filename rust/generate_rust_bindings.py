@@ -70,10 +70,10 @@ class RustBindingsDevice(rust_common.RustDevice):
 
 //! {description}
 use crate::{{
-    byte_converter::*,
-    converting_receiver::{conv_receiver},{callback_recv}{high_level_callback_recv}
-    device::*,
-    ip_connection::GetRequestSender,{low_level}
+	byte_converter::*,
+	converting_receiver::{conv_receiver},{callback_recv}{high_level_callback_recv}
+	device::*,
+	ip_connection::GetRequestSender,{low_level}
 }};""".format(header=self.get_generator().get_header_comment(kind='asterisk'),
               description=description,
               callback_recv = "" if len(self.get_packets("callback")) == 0 else "\n\tconverting_callback_receiver::ConvertingCallbackReceiver,",
@@ -93,18 +93,18 @@ use crate::{{
         function_enum_name = self.get_rust_name() + "Function"
 
         result = """pub enum {name} {{
-    {values}
+	{values}
 }}""".format(name= function_enum_name,
              values = ",\n\t".join(name for (name, value) in constants))
 
         # Create mapping from enum values to integer constants
         from_template = """
 impl From<{function}> for u8 {{
-    fn from(fun: {function}) -> Self {{
-        match fun {{
-            {patterns}
-        }}
-    }}
+	fn from(fun: {function}) -> Self {{
+		match fun {{
+			{patterns}
+		}}
+	}}
 }}"""
         result += from_template.format(
             function=function_enum_name,
@@ -145,19 +145,19 @@ impl From<{function}> for u8 {{
         member_template = """pub {name}: {type},"""
         struct_template = """\n{derive_string}
 pub struct {name} {{
-    {members}
+	{members}
 }}
 """
         from_bytes_template = """impl FromByteSlice for {name} {{
-    fn bytes_expected() -> usize {{ {size_in_bytes} }}
-    fn from_le_byte_slice({unused_bytes}bytes: &[u8]) -> {name} {{
-        {name} {{ {init_string} }}
-    }}
+	fn bytes_expected() -> usize {{ {size_in_bytes} }}
+	fn from_le_byte_slice({unused_bytes}bytes: &[u8]) -> {name} {{
+		{name} {{ {init_string} }}
+	}}
 }}
 """
 
         low_level_read_template = """impl LowLevelRead<{data_type}, {result_type}> for {low_level_type} {{
-    fn ll_message_length(&self) -> usize {{
+	fn ll_message_length(&self) -> usize {{
 		{length_var}
 	}}
 
@@ -177,7 +177,7 @@ pub struct {name} {{
 }}
 """
         low_level_write_template = """impl LowLevelWrite<{result_type}> for {low_level_type} {{
-    fn ll_message_written(&self) -> usize {{
+	fn ll_message_written(&self) -> usize {{
 		{written_var}
 	}}
 
@@ -312,57 +312,57 @@ pub struct {name} {{
 
     def get_rust_device_implementation(self):
         template = """impl {name} {{
-    pub const DEVICE_IDENTIFIER: u16 = {device_identifier};
-    pub const DEVICE_DISPLAY_NAME: &'static str = "{device_display_name}";
-    /// Creates an object with the unique device ID `uid`. This object can then be used after the IP Connection `ip_connection` is connected.
-    pub fn new<T: GetRequestSender>(uid: &str, req_sender: T) -> {name} {{
-        let mut result = {name} {{ device: Device::new({apiVersion}, uid, req_sender, {high_level_function_count}) }};
-        {response_expected_config}
-        result
-    }}
+	pub const DEVICE_IDENTIFIER: u16 = {device_identifier};
+	pub const DEVICE_DISPLAY_NAME: &'static str = "{device_display_name}";
+	/// Creates an object with the unique device ID `uid`. This object can then be used after the IP Connection `ip_connection` is connected.
+	pub fn new<T: GetRequestSender>(uid: &str, req_sender: T) -> {name} {{
+		let mut result = {name} {{ device: Device::new({apiVersion}, uid, req_sender, {high_level_function_count}) }};
+		{response_expected_config}
+		result
+	}}
 
-    /// Returns the response expected flag for the function specified by the function ID parameter.
-    /// It is true if the function is expected to send a response, false otherwise.
-    ///
-    /// For getter functions this is enabled by default and cannot be disabled, because those
-    /// functions will always send a response. For callback configuration functions it is enabled
-    /// by default too, but can be disabled by [`set_response_expected`](crate::{name_under}::{name_camel}::set_response_expected).
-    /// For setter functions it is disabled by default and can be enabled.
-    ///
-    /// Enabling the response expected flag for a setter function allows to detect timeouts
-    /// and other error conditions calls of this setter as well. The device will then send a response
-    /// for this purpose. If this flag is disabled for a setter function then no response is send
-    /// and errors are silently ignored, because they cannot be detected.
-    ///
-    /// See [`set_response_expected`](crate::{name_under}::{name_camel}::set_response_expected) for the list of function ID constants available for this function.
-    pub fn get_response_expected(&mut self, fun: {function}) -> Result<bool, GetResponseExpectedError> {{
-        self.device.get_response_expected(u8::from(fun))
-    }}
+	/// Returns the response expected flag for the function specified by the function ID parameter.
+	/// It is true if the function is expected to send a response, false otherwise.
+	///
+	/// For getter functions this is enabled by default and cannot be disabled, because those
+	/// functions will always send a response. For callback configuration functions it is enabled
+	/// by default too, but can be disabled by [`set_response_expected`](crate::{name_under}::{name_camel}::set_response_expected).
+	/// For setter functions it is disabled by default and can be enabled.
+	///
+	/// Enabling the response expected flag for a setter function allows to detect timeouts
+	/// and other error conditions calls of this setter as well. The device will then send a response
+	/// for this purpose. If this flag is disabled for a setter function then no response is send
+	/// and errors are silently ignored, because they cannot be detected.
+	///
+	/// See [`set_response_expected`](crate::{name_under}::{name_camel}::set_response_expected) for the list of function ID constants available for this function.
+	pub fn get_response_expected(&mut self, fun: {function}) -> Result<bool, GetResponseExpectedError> {{
+		self.device.get_response_expected(u8::from(fun))
+	}}
 
-    /// Changes the response expected flag of the function specified by the function ID parameter.
-    /// This flag can only be changed for setter (default value: false) and callback configuration
-    /// functions (default value: true). For getter functions it is always enabled.
-    ///
-    /// Enabling the response expected flag for a setter function allows to detect timeouts and
-    /// other error conditions calls of this setter as well. The device will then send a response
-    /// for this purpose. If this flag is disabled for a setter function then no response is send
-    /// and errors are silently ignored, because they cannot be detected.
-    pub fn set_response_expected(&mut self, fun: {function}, response_expected: bool) -> Result<(), SetResponseExpectedError> {{
-        self.device.set_response_expected(u8::from(fun), response_expected)
-    }}
+	/// Changes the response expected flag of the function specified by the function ID parameter.
+	/// This flag can only be changed for setter (default value: false) and callback configuration
+	/// functions (default value: true). For getter functions it is always enabled.
+	///
+	/// Enabling the response expected flag for a setter function allows to detect timeouts and
+	/// other error conditions calls of this setter as well. The device will then send a response
+	/// for this purpose. If this flag is disabled for a setter function then no response is send
+	/// and errors are silently ignored, because they cannot be detected.
+	pub fn set_response_expected(&mut self, fun: {function}, response_expected: bool) -> Result<(), SetResponseExpectedError> {{
+		self.device.set_response_expected(u8::from(fun), response_expected)
+	}}
 
-    /// Changes the response expected flag for all setter and callback configuration functions of this device at once.
-    pub fn set_response_expected_all(&mut self, response_expected: bool) {{
-        self.device.set_response_expected_all(response_expected)
-    }}
+	/// Changes the response expected flag for all setter and callback configuration functions of this device at once.
+	pub fn set_response_expected_all(&mut self, response_expected: bool) {{
+		self.device.set_response_expected_all(response_expected)
+	}}
 
-    /// Returns the version of the API definition (major, minor, revision) implemented by this API bindings.
-    /// This is neither the release version of this API bindings nor does it tell you anything about the represented Brick or Bricklet.
-    pub fn get_api_version(&self) -> [u8; 3] {{
-        self.device.api_version
-    }}
+	/// Returns the version of the API definition (major, minor, revision) implemented by this API bindings.
+	/// This is neither the release version of this API bindings nor does it tell you anything about the represented Brick or Bricklet.
+	pub fn get_api_version(&self) -> [u8; 3] {{
+		self.device.api_version
+	}}
 
-    {functions}
+	{functions}
 }}"""
         resp_expct_template = "result.device.response_expected[u8::from({function}::{name}) as usize] = {value};"
         resp_expct_config = [resp_expct_template.format(function=self.get_rust_name() + "Function", name=packet.get_name().camel_abbrv, value=self.get_rust_response_expected(packet.get_response_expected())) for packet in self.get_packets('function')]
@@ -370,11 +370,11 @@ pub struct {name} {{
         functions = []
 
         callback_template = """{description}\n\tpub fn get_{name}_callback_receiver(&self) -> ConvertingCallbackReceiver<{type}> {{
-        self.device.get_callback_receiver(u8::from({fun_enum}::Callback{fn_id}))
-    }}"""
+		self.device.get_callback_receiver(u8::from({fun_enum}::Callback{fn_id}))
+	}}"""
         high_level_callback_template = """{description}\n\tpub fn get_{name}_callback_receiver(&self) -> ConvertingHighLevelCallbackReceiver<{payload_type}, {result_type}, {low_level_type}> {{
-        ConvertingHighLevelCallbackReceiver::new(self.device.get_callback_receiver(u8::from({fun_enum}::Callback{fn_id})))
-    }}"""
+		ConvertingHighLevelCallbackReceiver::new(self.device.get_callback_receiver(u8::from({fun_enum}::Callback{fn_id})))
+	}}"""
 
         for packet in self.get_packets('callback'):
             if packet.has_high_level():
@@ -399,45 +399,45 @@ pub struct {name} {{
                                                       fn_id = packet.get_name().camel_abbrv))
 
         function_template = """{description}\n\tpub fn {name}(&self{params}) -> {returnType} {{
-        let {mut}payload = vec![0;{byte_count}];
-        {fill_payload}
-        self.device.{fn}(u8::from({fun_enum}::{fn_id}), payload)
-    }}"""
+		let {mut}payload = vec![0;{byte_count}];
+		{fill_payload}
+		self.device.{fn}(u8::from({fun_enum}::{fn_id}), payload)
+	}}"""
 
 
         stream_in_setter_template = """{description}\n\tpub fn {name}(&self{params}) -> Result<(), BrickletRecvTimeoutError> {{
-        let _ll_result = self.device.set_high_level({high_level_function_idx}, {stream_data}, {stream_size}, {chunk_size}, &mut |{unused_length}length: usize, {unused_chunk_offset}chunk_offset: usize, chunk: &[{chunk_type}]| {{
-            let chunk_length = chunk.len() as u16;
-            let mut chunk_array = [<{chunk_type}>::default(); {chunk_size}];
-            chunk_array[0..chunk_length as usize].copy_from_slice(&chunk);
+		let _ll_result = self.device.set_high_level({high_level_function_idx}, {stream_data}, {stream_size}, {chunk_size}, &mut |{unused_length}length: usize, {unused_chunk_offset}chunk_offset: usize, chunk: &[{chunk_type}]| {{
+			let chunk_length = chunk.len() as u16;
+			let mut chunk_array = [<{chunk_type}>::default(); {chunk_size}];
+			chunk_array[0..chunk_length as usize].copy_from_slice(&chunk);
 
-            let result = self.{low_level_function}({low_level_params}).recv();
-            if let Err(BrickletRecvTimeoutError::SuccessButResponseExpectedIsDisabled) = result{{
-                Ok(Default::default())
-            }}
-            else {{
-                result
-            }}
-        }})?;
-        Ok(())
-    }}"""
+			let result = self.{low_level_function}({low_level_params}).recv();
+			if let Err(BrickletRecvTimeoutError::SuccessButResponseExpectedIsDisabled) = result{{
+				Ok(Default::default())
+			}}
+			else {{
+				result
+			}}
+		}})?;
+		Ok(())
+	}}"""
         stream_in_getter_template = """{description}\n\tpub fn {name}(&self{params}) -> Result<{result_type}, BrickletRecvTimeoutError> {{
-        let ll_result = self.device.set_high_level({high_level_function_idx}, {stream_data}, {stream_size}, {chunk_size}, &mut |{unused_length}length: usize, {unused_chunk_offset}chunk_offset: usize, chunk: &[{chunk_type}]| {{
-            let chunk_length = chunk.len() as u16;
-            let mut chunk_array = [<{chunk_type}>::default(); {chunk_size}];
-            chunk_array[0..chunk_length as usize].copy_from_slice(&chunk);
+		let ll_result = self.device.set_high_level({high_level_function_idx}, {stream_data}, {stream_size}, {chunk_size}, &mut |{unused_length}length: usize, {unused_chunk_offset}chunk_offset: usize, chunk: &[{chunk_type}]| {{
+			let chunk_length = chunk.len() as u16;
+			let mut chunk_array = [<{chunk_type}>::default(); {chunk_size}];
+			chunk_array[0..chunk_length as usize].copy_from_slice(&chunk);
 
-            self.{low_level_function}({low_level_params}).recv()
-        }})?;
-        {short_write_result}
-    }}"""
+			self.{low_level_function}({low_level_params}).recv()
+		}})?;
+		{short_write_result}
+	}}"""
 
         stream_out_getter_template = """{description}\n\tpub fn {name}(&self{params}) -> Result<{open_parenthesis}Vec<{payload_type}>{result_type}{close_parenthesis}, BrickletRecvTimeoutError> {{
-        let ll_result = self.device.get_high_level({high_level_function_idx}, &mut || {{
-            self.{low_level_function}({low_level_params}).recv()
-        }})?;
-        Ok({open_parenthesis}ll_result.0{result}{close_parenthesis})
-    }}"""
+		let ll_result = self.device.get_high_level({high_level_function_idx}, &mut || {{
+			self.{low_level_function}({low_level_params}).recv()
+		}})?;
+		Ok({open_parenthesis}ll_result.0{result}{close_parenthesis})
+	}}"""
 
         high_level_function_count = len([packet for packet in self.get_packets() if packet.get_high_level('stream_in') != None or packet.get_high_level('stream_out') != None])
         high_level_function_counter = -1
@@ -460,14 +460,14 @@ pub struct {name} {{
             byte_offset = 0
 
             string_param_template = """match <String>::try_to_le_byte_vec({param_name}, {max_len}) {{
-            Err(e) => {{
-                let (tx, rx) = std::sync::mpsc::channel::<Result<Vec<u8>, BrickletError>>();
-                let _ = tx.send(Err(e));
-                return ConvertingReceiver::new(rx, std::time::Duration::new(1,0));
-            }}
-            Ok(bytes) => payload[{first_byte}..{to}].copy_from_slice(&bytes)
-        }}
-            """
+			Err(e) => {{
+				let (tx, rx) = std::sync::mpsc::channel::<Result<Vec<u8>, BrickletError>>();
+				let _ = tx.send(Err(e));
+				return ConvertingReceiver::new(rx, std::time::Duration::new(1,0));
+			}}
+			Ok(bytes) => payload[{first_byte}..{to}].copy_from_slice(&bytes)
+		}}
+			"""
 
             for param in packet_params:
                 size = param.get_size()
@@ -688,72 +688,72 @@ class RustBindingsGenerator(rust_common.RustGeneratorTrait, common.BindingsGener
             primitive_type_impl = f.read()
         array_impl = []
         one_byte_template = """impl ToBytes for [u8; {count}] {{
-    fn to_le_byte_vec(arr: [u8; {count}]) -> Vec<u8> {{
-        arr.to_vec()
-    }}
+	fn to_le_byte_vec(arr: [u8; {count}]) -> Vec<u8> {{
+		arr.to_vec()
+	}}
 }}
 
 impl FromByteSlice for [u8; {count}] {{
-    fn from_le_byte_slice(bytes: &[u8]) -> [u8; {count}] {{
-        let mut buf = [0u8; {count}];
-        buf.copy_from_slice(bytes);
-        buf
-    }}
-    fn bytes_expected() -> usize {{ {count} }}
+	fn from_le_byte_slice(bytes: &[u8]) -> [u8; {count}] {{
+		let mut buf = [0u8; {count}];
+		buf.copy_from_slice(bytes);
+		buf
+	}}
+	fn bytes_expected() -> usize {{ {count} }}
 }}"""
         i8_char_template = """impl ToBytes for [{type}; {count}] {{
-    fn to_le_byte_vec(arr: [{type}; {count}]) -> Vec<u8> {{
-        vec![{to_u8}]
-    }}
+	fn to_le_byte_vec(arr: [{type}; {count}]) -> Vec<u8> {{
+		vec![{to_u8}]
+	}}
 }}
 
 impl FromByteSlice for [{type}; {count}] {{
-    fn from_le_byte_slice(bytes: &[u8]) -> [{type}; {count}] {{
-        [{to_i8}]
-    }}
-    fn bytes_expected() -> usize {{ {count} }}
+	fn from_le_byte_slice(bytes: &[u8]) -> [{type}; {count}] {{
+		[{to_i8}]
+	}}
+	fn bytes_expected() -> usize {{ {count} }}
 }}"""
         template = """impl ToBytes for [{type}; {count}] {{
-    fn to_le_byte_vec(arr: [{type}; {count}]) -> Vec<u8> {{
-        let mut buf = vec![0,{count_in_bytes}];
-        LittleEndian::write_{type}_into(&arr, &mut buf);
-        buf
-    }}
+	fn to_le_byte_vec(arr: [{type}; {count}]) -> Vec<u8> {{
+		let mut buf = vec![0,{count_in_bytes}];
+		LittleEndian::write_{type}_into(&arr, &mut buf);
+		buf
+	}}
 }}
 
 impl FromByteSlice for [{type}; {count}] {{
-    fn from_le_byte_slice(bytes: &[u8]) -> [{type}; {count}] {{
-        let mut buf = [0{type}; {count}];
-        LittleEndian::read_{type}_into{unchecked}(&bytes, &mut buf);
-        buf
-    }}
-    fn bytes_expected() -> usize {{ {count_in_bytes} }}
+	fn from_le_byte_slice(bytes: &[u8]) -> [{type}; {count}] {{
+		let mut buf = [0{type}; {count}];
+		LittleEndian::read_{type}_into{unchecked}(&bytes, &mut buf);
+		buf
+	}}
+	fn bytes_expected() -> usize {{ {count_in_bytes} }}
 }}"""
 
         bool_template = """impl ToBytes for [bool; {count}] {{
-    fn to_le_byte_vec(arr: [bool; {count}]) -> Vec<u8> {{
-        let mut buf = vec![0u8; arr.len() / 8 + if arr.len() % 8 == 0 {{0}} else {{1}}];
-        for (i, b) in arr.into_iter().enumerate() {{
-            buf[i / 8] |= (*b as u8) << (i % 8);
-        }}
-        buf
-    }}
+	fn to_le_byte_vec(arr: [bool; {count}]) -> Vec<u8> {{
+		let mut buf = vec![0u8; arr.len() / 8 + if arr.len() % 8 == 0 {{0}} else {{1}}];
+		for (i, b) in arr.into_iter().enumerate() {{
+			buf[i / 8] |= (*b as u8) << (i % 8);
+		}}
+		buf
+	}}
 }}
 
 impl FromByteSlice for [bool; {count}] {{
-    fn from_le_byte_slice(bytes: &[u8]) -> [bool; {count}] {{
-        let mut result = [false; {count}];
-        for (byte, elem) in bytes.into_iter().enumerate() {{
-            for i in 0..8 {{
-                if byte * 8 + i >= result.len() {{
-                    break;
-                }}
-                result[byte * 8 + i] = (*elem & 1 << i) > 0;
-            }}
-        }}
-        result
-    }}
-    fn bytes_expected() -> usize {{ {size_in_bytes} }}
+	fn from_le_byte_slice(bytes: &[u8]) -> [bool; {count}] {{
+		let mut result = [false; {count}];
+		for (byte, elem) in bytes.into_iter().enumerate() {{
+			for i in 0..8 {{
+				if byte * 8 + i >= result.len() {{
+					break;
+				}}
+				result[byte * 8 + i] = (*elem & 1 << i) > 0;
+			}}
+		}}
+		result
+	}}
+	fn bytes_expected() -> usize {{ {size_in_bytes} }}
 }}"""
 
         for i in range(0, 513):
