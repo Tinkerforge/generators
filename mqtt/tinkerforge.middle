@@ -1,6 +1,7 @@
 class MQTTCallbackDevice(Device):
-    def __init__(self, uid, ipcon, device_class_name, device_class, mqttc):
-        Device.__init__(self, uid, ipcon)
+    def __init__(self, uid, ipcon, device_identifier, device_display_name, device_class_name, device_class, mqttc):
+        Device.__init__(self, uid, ipcon, device_identifier, device_display_name)
+
         self.publish_paths = {}
         self.callback_names = {}
         self.callback_symbols = {}

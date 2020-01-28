@@ -50,7 +50,7 @@ class {0}(MQTTCallbackDevice):
     def get_mqtt_init_method(self):
         template = """
 	def __init__(self, uid, ipcon, device_class_name, device_class, mqttc):
-		MQTTCallbackDevice.__init__(self, uid, ipcon, device_class_name, device_class, mqttc)
+		MQTTCallbackDevice.__init__(self, uid, ipcon, {1}, device_names[{1}], device_class_name, device_class, mqttc)
 
 {0}
 """
@@ -62,9 +62,11 @@ class {0}(MQTTCallbackDevice):
                                                             mapping[packet.get_response_expected()]))
 
         if len(response_expected) > 0:
-            return template.format('\t\tre = self.response_expected\n\t\t' + '; '.join(response_expected))
+            return template.format('\t\tre = self.response_expected\n\t\t' + '; '.join(response_expected),
+                                   self.get_device_identifier())
         else:
-            return template.format('')
+            return template.format('',
+                                   self.get_device_identifier())
 
     def get_mqtt_function_map(self):
         template = "\tfunctions = {{\n\t\t{entries}\n\t}}\n"
@@ -275,6 +277,27 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
 
         mqtt.write(header)
 
+        template = """
+
+device_names = {{
+	{entries}
+}}
+
+def get_device_display_name(device_identifier):
+	device_display_name = device_names.get(device_identifier)
+
+	if device_display_name == None:
+		device_display_name = 'Unknown Device [{{0}}]'.format(device_identifier)
+
+	return device_display_name
+"""
+        entries = []
+
+        for device_identifier, device_name in sorted(self.device_display_names):
+            entries.append("\t{0}: '{1}'".format(device_identifier, device_name))
+
+        mqtt.write(template.format(entries=',\n\t'.join(entries)))
+
         with open(os.path.join(root_dir, '..', 'python', 'ip_connection.py'), 'r') as f:
             ipcon = f.read()
 
@@ -294,13 +317,6 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
             mqtt_names.append("\t{0}: '{1}'".format(device_identifier, mqtt_name))
 
         mqtt.write('\n\nmqtt_names = {\n' + ',\n'.join(mqtt_names) + '\n}\n')
-
-        display_names = []
-
-        for device_identifier, device_name in sorted(self.device_display_names):
-            display_names.append("\t{0}: '{1}'".format(device_identifier, device_name))
-
-        mqtt.write('\n\ndisplay_names = {\n' + ',\n'.join(display_names) + '\n}\n\n\n')
 
         mqtt.write(footer)
         mqtt.close()

@@ -347,7 +347,7 @@ class MQTTBindings:
         try:
             return function(self.ipcon)
         except Error as e:
-            if e.value in [Error.INVALID_PARAMETER, Error.NOT_SUPPORTED, Error.UNKNOWN_ERROR_CODE, Error.STREAM_OUT_OF_SYNC, Error.TIMEOUT, Error.NOT_CONNECTED]:
+            if e.value in [Error.INVALID_PARAMETER, Error.NOT_SUPPORTED, Error.UNKNOWN_ERROR_CODE, Error.STREAM_OUT_OF_SYNC, Error.TIMEOUT, Error.NOT_CONNECTED, Error.WRONG_DEVICE_TYPE]:
                 if infoString is not None:
                     return json_error(e.description + " " + infoString, resultDict)
                 return json_error(e.description, resultDict)
@@ -758,7 +758,11 @@ class MQTTBindings:
             else:
                 logging.debug("Ignoring _response_expected, it was not of boolean type. (Call of {} of device {} of type {}.)".format(fnName, uid, device_name))
 
-        response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, fnInfo.id, tuple(args), fnInfo.payload_fmt, fnInfo.response_fmt), dict([(name, None) for name in fnInfo.result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+        def wrapper(ipcon):
+            device.check_device_identifier()
+            return ipcon.send_request(device, fnInfo.id, tuple(args), fnInfo.payload_fmt, fnInfo.response_fmt)
+
+        response = self.handle_ipcon_exceptions(wrapper, dict([(name, None) for name in fnInfo.result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
         if isinstance(response, dict) and "_ERROR" in response:
             return response
 
