@@ -1524,7 +1524,7 @@ sub _dispatch_response
 
 					for(my $i = 0; $i < $count; $i++)
 					{
-						push(@{$return_arr[$iter]}, (($dummy_bool_array_bits[floor($i / 8)] & (1 << ($i % 8))) != 0));
+						push(@{$return_arr[$iter]}, 0 + (($dummy_bool_array_bits[floor($i / 8)] & (1 << ($i % 8))) != 0));
 					}
 
 					$iter++;
@@ -1685,14 +1685,15 @@ sub _dispatch_response
 			my @unpack_tmp_arr = unpack($form_unpack_patched, $payload);
 
 			if($form_unpack_arr_0_arr[0] eq '?') {
-				my ($count) = $form_unpack_arr[0] =~ s/[^\d]//g;
+				$form_unpack_arr[0] =~ s/[^\d]//g;
+				my ($count) = $form_unpack_arr[0];
 				my @return_arr = (0) x $count;
 				my $n = ceil($count / 8);
 
 				my @payload_ = unpack('(C'.$n.')<', $payload);
 
 				for(my $i = 0; $i < $count; $i++) {
-					$return_arr[$i] = (($payload_[floor($i / 8)] & (1 << ($i % 8))) != 0);
+					$return_arr[$i] = 0 + (($payload_[floor($i / 8)] & (1 << ($i % 8))) != 0);
 				}
 
 				if(defined($fid))
