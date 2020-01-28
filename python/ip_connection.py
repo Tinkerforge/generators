@@ -22,7 +22,7 @@ try:
 except ImportError:
     import Queue as queue # Python 2
 
-if not 'SHELL_BINDINGS' in globals():
+if not 'INTERNAL_DEVICE_DISPLAY_NAMES' in globals():
     try:
         from .device_display_names import get_device_display_name
     except ValueError:

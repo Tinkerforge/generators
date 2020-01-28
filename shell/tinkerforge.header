@@ -20,7 +20,7 @@ import threading
 import subprocess
 import textwrap
 
-SHELL_BINDINGS = True
+INTERNAL_DEVICE_DISPLAY_NAMES = True
 
 # error codes are also used as exit codes, valid values are [1..255]
 ERROR_INTERRUPTED = 1

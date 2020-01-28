@@ -29,6 +29,8 @@ import logging
 import traceback
 import argparse
 
+INTERNAL_DEVICE_DISPLAY_NAMES = True
+
 # error codes are also used as exit codes, valid values are [1..255]
 ERROR_INTERRUPTED = 1
 ERROR_SYNTAX_ERROR = 2
