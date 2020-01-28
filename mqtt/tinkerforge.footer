@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-
 def json_error(message, resultDict=None):
     logging.error(message)
     if resultDict is not None:
