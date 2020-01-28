@@ -223,14 +223,6 @@ class {0}(MQTTCallbackDevice):
         return source
 
 class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
-
-        self.part_files = []
-        self.devices = []
-        self.device_mqtt_names = []
-        self.device_display_names = []
-
     def get_bindings_name(self):
         return 'mqtt'
 
@@ -246,6 +238,14 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
     def get_element_class(self):
         return mqtt_common.MQTTElement
 
+    def prepare(self):
+        common.BindingsGenerator.prepare(self)
+
+        self.part_files = []
+        self.devices = []
+        self.device_mqtt_names = []
+        self.device_display_names = []
+
     def generate(self, device):
         filename = '{0}.part'.format(device.get_mqtt_device_name())
 
@@ -254,8 +254,8 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
 
         if device.is_released():
             self.devices.append("'{mqtt_dev_name}': {py_dev_name}".format(mqtt_dev_name=device.get_mqtt_device_name(), py_dev_name=device.get_python_class_name()))
-            self.device_mqtt_names.append("{dev_id} : '{mqtt_dev_name}'".format(dev_id = device.get_device_identifier(), mqtt_dev_name=device.get_mqtt_device_name()))
-            self.device_display_names.append("{dev_id} : '{display_name}'".format(dev_id = device.get_device_identifier(), display_name=device.get_long_display_name()))
+            self.device_mqtt_names.append((device.get_device_identifier(), device.get_mqtt_device_name()))
+            self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
             self.part_files.append(filename)
 
     def finish(self):
@@ -286,9 +286,22 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
                 with open(os.path.join(bindings_dir, filename), 'r') as f:
                     mqtt.write(f.read())
 
-        mqtt.write('\n\n\ndevices = {\n\t' + ',\n\t'.join(self.devices) + '\n}\n\n\n')
-        mqtt.write('\n\n\nmqtt_names = {\n\t' + ',\n\t'.join(self.device_mqtt_names) + '\n}\n\n\n')
-        mqtt.write('\n\n\ndisplay_names = {\n\t' + ',\n\t'.join(self.device_display_names) + '\n}\n\n\n')
+        mqtt.write('\n\n\ndevices = {\n\t' + ',\n\t'.join(sorted(self.devices)) + '\n}\n')
+
+        mqtt_names = []
+
+        for device_identifier, mqtt_name in sorted(self.device_mqtt_names):
+            mqtt_names.append("\t{0}: '{1}'".format(device_identifier, mqtt_name))
+
+        mqtt.write('\n\nmqtt_names = {\n' + ',\n'.join(mqtt_names) + '\n}\n')
+
+        display_names = []
+
+        for device_identifier, device_name in sorted(self.device_display_names):
+            display_names.append("\t{0}: '{1}'".format(device_identifier, device_name))
+
+        mqtt.write('\n\ndisplay_names = {\n' + ',\n'.join(display_names) + '\n}\n\n\n')
+
         mqtt.write(footer)
         mqtt.close()
 
