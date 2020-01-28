@@ -29,11 +29,25 @@ import os
 import shutil
 import sys
 
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen as _urlopen
+    from contextlib import contextmanager
+
+    @contextmanager
+    def urlopen(*args, **kwargs):
+        response = _urlopen(*args, **kwargs)
+
+        try:
+            yield response
+        finally:
+            response.close()
+
 sys.path.append(os.path.split(os.getcwd())[0])
 sys.path.append(os.path.join(os.path.split(os.getcwd())[0], 'java'))
 import common
 from java.generate_java_bindings import JavaBindingsGenerator, JavaBindingsDevice
-import urllib.request
 
 class OpenHAB:
     def __init__(self, **kwargs):
@@ -1312,7 +1326,7 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
         self.firmwares = {}
 
         print("Downloading latest_versions.txt")
-        with urllib.request.urlopen('https://download.tinkerforge.com/latest_versions.txt', timeout=10) as response:
+        with urlopen('https://download.tinkerforge.com/latest_versions.txt', timeout=10) as response:
             latest_fws = response.read().decode('utf-8')
 
         for line in latest_fws.split('\n'):
