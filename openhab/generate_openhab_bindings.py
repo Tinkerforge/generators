@@ -1320,35 +1320,6 @@ public class {name_camel} {{
                                actions=', '.join(self.get_category().headless + self.get_name().camel + a.get_name().camel for a in self.oh.actions))
 
 class OpenHABBindingsGenerator(JavaBindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        JavaBindingsGenerator.__init__(self, *args, **kwargs)
-        self.released_devices = []
-        self.firmwares = {}
-
-        print("Downloading latest_versions.txt")
-        with urlopen('https://download.tinkerforge.com/latest_versions.txt', timeout=10) as response:
-            latest_fws = response.read().decode('utf-8')
-
-        for line in latest_fws.split('\n'):
-            try:
-                category, device, version = line.split(':')
-            except:
-                continue
-            if category not in ['bricks', 'bricklets']:
-                continue
-
-            # HATs are bricklets in latest_versions, but bricks in the generator
-            if device == 'hat' or device == 'hat_zero':
-                category = 'bricks'
-            # latest_versions list lcd_20x4 with hardware versions v11 and v12
-            if 'lcd_20x4' in device:
-                device = 'lcd_20x4'
-            self.firmwares["{}_{}".format(category[:-1], device)] = version
-        self.firmwares["brick_red"] = "2.0.3" # FIXME: Should not be hard-coded
-
-    def get_device_class(self):
-        return OpenHABBindingsDevice
-
     def get_bindings_name(self):
         return 'openhab'
 
@@ -1361,8 +1332,42 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def get_doc_formatted_param(self, element):
         return element.get_name().camel
 
+    def get_device_class(self):
+        return OpenHABBindingsDevice
+
     def is_openhab(self):
         return True
+
+    def prepare(self):
+        JavaBindingsGenerator.prepare(self)
+
+        self.released_devices = []
+        self.firmwares = {}
+
+        print("Downloading latest_versions.txt")
+        with urlopen('https://download.tinkerforge.com/latest_versions.txt', timeout=10) as response:
+            latest_fws = response.read().decode('utf-8')
+
+        for line in latest_fws.split('\n'):
+            try:
+                category, device, version = line.split(':')
+            except:
+                continue
+
+            if category not in ['bricks', 'bricklets']:
+                continue
+
+            # HATs are bricklets in latest_versions, but bricks in the generator
+            if device == 'hat' or device == 'hat_zero':
+                category = 'bricks'
+
+            # latest_versions list lcd_20x4 with hardware versions v11 and v12
+            if 'lcd_20x4' in device:
+                device = 'lcd_20x4'
+
+            self.firmwares["{}_{}".format(category[:-1], device)] = version
+
+        self.firmwares["brick_red"] = "2.0.3" # FIXME: Should not be hard-coded
 
     def generate(self, device):
         if device.oh.custom:
