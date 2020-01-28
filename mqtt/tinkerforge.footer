@@ -643,7 +643,10 @@ class MQTTBindings:
         return uid_
 
     def ensure_dev_exists(self, uid, device_class, device_class_name, mqttc):
-        uid_ = self.parse_uid(uid)
+        try:
+            uid_ = self.parse_uid(uid)
+        except Exception as e:
+            return False, json_error('Could not parse UID "{}": {}'.format(uid, str(e)))
 
         if uid_ in self.ipcon.devices and isinstance(self.ipcon.devices[uid_], device_class):
             device = self.ipcon.devices[uid_]
@@ -706,7 +709,10 @@ class MQTTBindings:
 
             logging.debug("Registered callback {} for device {} of type {}. Will publish messages to {}.".format(callbackName, uid, device_name, path))
         else:
-            uid_ = self.parse_uid(uid)
+            try:
+                uid_ = self.parse_uid(uid)
+            except Exception as e:
+                return json_error('Could not parse UID "{}": {}'.format(uid, str(e)))
 
             if uid_ not in self.ipcon.devices or not isinstance(self.ipcon.devices[uid_], device_class):
                 reason = "no callbacks where registered for this device" if uid_ not in self.ipcon.devices else "a device of type {} with the same UID has callbacks registered".format(self.callback_devices[uid].device_class)
