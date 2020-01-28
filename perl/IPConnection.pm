@@ -1874,11 +1874,8 @@ sub _dispatch_callback
 
 				if(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}))
 				{
-					# FIXME: for some unknown reason directly passing the reference
-					#        to an array doesn't work with eval. it only works if the
-					#        reference is created locally by eval
-					my @array = @{$args};
-					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@array)");
+					# "Escape" array reference
+					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\$args)");
 				}
 			}
 			else
@@ -1897,11 +1894,8 @@ sub _dispatch_callback
 		{
 			if(ref($args) eq "ARRAY")
 			{
-				# FIXME: for some unknown reason directly passing the reference
-				#        to an array doesn't work with eval. it only works if the
-				#        reference is created locally by eval
-				my @array = @{$args};
-				eval("$self->{registered_callbacks}->{$fid}(\@array)");
+				# "Escape" array reference
+				eval("$self->{registered_callbacks}->{$fid}(\$array)");
 			}
 			else
 			{
