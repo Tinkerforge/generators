@@ -35,11 +35,17 @@ packet_param_types = set()
 packet_return_types = set()
 
 class GoBindingsDevice(go_common.GoDevice):
-
     def get_go_imports(self):
-        tf_doc_link = {'en': '// See also the documentation here: https://www.tinkerforge.com/en/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Go.html.',
-                       'de': '// Siehe auch die Dokumentation hier: https://www.tinkerforge.com/de/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Go.html.'
-        }
+        if self.is_tng():
+            tf_doc_link = {
+                'en': '// See also the documentation here: https://www.tinkerforge.com/en/doc/Software/{device_category_camel}/{device_category_camel}_{device_name_camel}_Go.html.',
+                'de': '// Siehe auch die Dokumentation hier: https://www.tinkerforge.com/de/doc/Software/{device_category_camel}/{device_category_camel}_{device_name_camel}_Go.html.'
+            }
+        else:
+            tf_doc_link = {
+                'en': '// See also the documentation here: https://www.tinkerforge.com/en/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Go.html.',
+                'de': '// Siehe auch die Dokumentation hier: https://www.tinkerforge.com/de/doc/Software/{device_category_camel}s/{device_name_camel}_{device_category_camel}_Go.html.'
+            }
 
         desc = common.select_lang(self.get_description())
 
@@ -583,8 +589,11 @@ class GoBindingsGenerator(go_common.GoGeneratorTrait, common.BindingsGenerator):
         self.device_display_names = []
 
     def generate(self, device):
-        filename = '{0}_{1}'.format(device.get_name().under, device.get_category().under)
-        os.mkdir(os.path.join(self.get_bindings_dir(), filename))
+        if device.is_tng():
+            filename = '{0}_{1}'.format(device.get_category().under, device.get_name().under)
+        else:
+            filename = '{0}_{1}'.format(device.get_name().under, device.get_category().under)
+
         if sys.version_info.major >= 3:
             content = device.get_go_source().replace("‍REPLACE_WITH_ZWJ", "\u200d")
         else:
