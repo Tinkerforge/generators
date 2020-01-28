@@ -561,8 +561,7 @@ class ShellBindingsGenerator(shell_common.ShellGeneratorTrait, common.BindingsGe
                                                                       device.get_name().under,
                                                                       device.get_category().under))
 
-        self.device_identifier_symbols.append("{0}: '{1}'".format(device.get_device_identifier(),
-                                                                  device.get_shell_device_name()))
+        self.device_identifier_symbols.append((device.get_device_identifier(), device.get_shell_device_name()))
 
         self.completion_devices.append(device.get_shell_device_name())
 
@@ -621,9 +620,15 @@ def get_device_display_name(device_identifier):
                 with open(os.path.join(bindings_dir, filename), 'r') as f:
                     shell.write(f.read())
 
-        shell.write('\ncall_devices = {\n' + ',\n'.join(self.call_devices) + '\n}\n')
-        shell.write('\ndispatch_devices = {\n' + ',\n'.join(self.dispatch_devices) + '\n}\n')
-        shell.write('\ndevice_identifier_symbols = {\n' + ',\n'.join(self.device_identifier_symbols) + '\n}\n')
+        shell.write('\ncall_devices = {\n' + ',\n'.join(sorted(self.call_devices)) + '\n}\n')
+        shell.write('\ndispatch_devices = {\n' + ',\n'.join(sorted(self.dispatch_devices)) + '\n}\n')
+
+        device_identifier_symbols = []
+
+        for device_identifier, device_name in sorted(self.device_identifier_symbols):
+            device_identifier_symbols.append("{0}: '{1}'".format(device_identifier, device_name))
+
+        shell.write('\ndevice_identifier_symbols = {\n' + ',\n'.join(device_identifier_symbols) + '\n}\n')
         shell.write(footer)
         shell.close()
 
