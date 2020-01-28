@@ -324,6 +324,8 @@ def get_device_display_name(device_identifier):
         mqtt.write(footer)
         mqtt.close()
 
+        os.system('chmod +x {0}/tinkerforge_mqtt'.format(bindings_dir))
+
         common.BindingsGenerator.finish(self)
 
 def generate(root_dir):
