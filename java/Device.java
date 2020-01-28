@@ -34,8 +34,6 @@ public abstract class Device extends DeviceBase {
 	 */
 	public Device(String uid, IPConnection ipcon) {
 		super(uid, ipcon);
-
-		ipcon.devices.put(this.uidNumber, this); // FIXME: use weakref here
 	}
 
 	public abstract Identity getIdentity() throws TinkerforgeException;

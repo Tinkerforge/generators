@@ -214,6 +214,8 @@ sub new
 
 	bless($self, $class);
 
+	$ipcon->_add_device($self);
+
 	return $self;
 }
 

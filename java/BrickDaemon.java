@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2014, 2020 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -25,6 +25,8 @@ class BrickDaemon extends Device {
 
 		responseExpected[IPConnection.unsignedByte(FUNCTION_GET_AUTHENTICATION_NONCE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
 		responseExpected[IPConnection.unsignedByte(FUNCTION_AUTHENTICATE)] = RESPONSE_EXPECTED_FLAG_TRUE;
+
+		ipcon.addDevice(this);
 	}
 
 	public byte[] getAuthenticationNonce() throws TinkerforgeException {

@@ -863,6 +863,10 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 
 	protected abstract void callDeviceListener(Device device, byte functionID, byte[] packet);
 
+	void addDevice(Device device) {
+		devices.put(device.uidNumber, device); // FIXME: use weakref here
+	}
+
 	void handleResponse(byte[] packet) {
 		byte functionID = getFunctionIDFromData(packet);
 		short sequenceNumber = unsignedByte(getSequenceNumberFromData(packet));

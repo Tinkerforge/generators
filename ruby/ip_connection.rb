@@ -282,8 +282,6 @@ module Tinkerforge
       @callback_formats = {}
       @high_level_callbacks = {}
       @registered_callbacks = {}
-
-      @ipcon.devices[@uid] = self # FIXME: use a weakref here
     end
 
     # Returns the API version (major, minor, revision) of the bindings for
@@ -521,6 +519,8 @@ module Tinkerforge
 
       @response_expected[FUNCTION_GET_AUTHENTICATION_NONCE] = RESPONSE_EXPECTED_ALWAYS_TRUE
       @response_expected[FUNCTION_AUTHENTICATE] = RESPONSE_EXPECTED_TRUE
+
+      @ipcon.add_device self
     end
 
     def get_authentication_nonce
@@ -533,7 +533,6 @@ module Tinkerforge
   end
 
   class IPConnection
-    attr_accessor :devices
     attr_accessor :timeout
 
     CALLBACK_ENUMERATE = 253
@@ -770,6 +769,11 @@ module Tinkerforge
     def register_callback(id, &block)
       callback = block
       @registered_callbacks[id] = callback
+    end
+
+    # internal
+    def add_device(device)
+      @devices[device.uid] = device # FIXME: use a weakref here
     end
 
     # internal

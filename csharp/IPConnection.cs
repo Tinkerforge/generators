@@ -1292,8 +1292,6 @@ namespace Tinkerforge
 			{
 				responseExpected[i] = ResponseExpectedFlag.INVALID_FUNCTION_ID;
 			}
-
-			ipcon.AddDevice(this);
 		}
 
 		/// <summary>
@@ -1543,6 +1541,8 @@ namespace Tinkerforge
 
 			responseExpected[FUNCTION_GET_AUTHENTICATION_NONCE] = ResponseExpectedFlag.ALWAYS_TRUE;
 			responseExpected[FUNCTION_AUTHENTICATE] = ResponseExpectedFlag.TRUE;
+
+			ipcon.AddDevice(this);
 		}
 
 		public byte[] GetAuthenticationNonce()

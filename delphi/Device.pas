@@ -176,9 +176,6 @@ begin
   for i := 0 to Length(responseExpected) - 1 do begin
     responseExpected[i] := DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
   end;
-  if (uidValid) then begin
-    (ipcon as TIPConnection).devices.Insert(uidNumber, self);
-  end;
 end;
 
 destructor TDevice.Destroy;

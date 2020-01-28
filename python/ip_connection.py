@@ -402,8 +402,6 @@ class Device(object):
         self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        ipcon.devices[self.uid] = self # FIXME: maybe use a weakref here
-
     def get_api_version(self):
         """
         Returns the API version (major, minor, revision) of the bindings for
@@ -517,6 +515,8 @@ class BrickDaemon(Device):
 
         self.response_expected[BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE] = BrickDaemon.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDaemon.FUNCTION_AUTHENTICATE] = BrickDaemon.RESPONSE_EXPECTED_TRUE
+
+        ipcon.add_device(self)
 
     def get_authentication_nonce(self):
         return self.ipcon.send_request(self, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, (), '', '4B')
@@ -987,6 +987,10 @@ class IPConnection(object):
     def set_auto_reconnect_internal(self, auto_reconnect, connect_failure_callback):
         self.auto_reconnect_internal = auto_reconnect
         self.connect_failure_callback = connect_failure_callback
+
+    # internal
+    def add_device(self, device):
+        self.devices[device.uid] = device # FIXME: maybe use a weakref here
 
     # internal
     def receive_loop(self, socket_id):

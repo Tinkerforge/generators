@@ -157,7 +157,7 @@ module Tinkerforge
                                                         'true' if stream.has_single_chunk() else 'false',
                                                         ', '.join(map(lambda role: "'{0}'".format(role) if role != None else 'nil', roles)))
 
-        return high_level_callbacks + '    end\n'
+        return high_level_callbacks + '      @ipcon.add_device self\n     end\n'
 
     def get_ruby_methods(self):
         methods = ''

@@ -249,12 +249,14 @@ typedef struct {{
     def get_c_create_function(self):
         template = """
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
+	IPConnectionPrivate *ipcon_p = ipcon->p;
 	DevicePrivate *device_p;
 
-	device_create({0}, uid, ipcon->p, {4}, {5}, {6}, {2}_DEVICE_IDENTIFIER);
+	device_create({0}, uid, ipcon_p, {4}, {5}, {6}, {2}_DEVICE_IDENTIFIER);
 
 	device_p = {0}->p;
 {3}
+	ipcon_add_device(ipcon_p, device_p);
 }}
 """
         cb_temp = """

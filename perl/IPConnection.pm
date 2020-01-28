@@ -699,6 +699,8 @@ sub _brickd_create
 	$self->{brickd} = Tinkerforge::Device->_new('2', $self, [2, 0, 0]);
 	$self->{brickd}->{response_expected}->{&_BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE} = Tinkerforge::Device->_RESPONSE_EXPECTED_ALWAYS_TRUE;
 	$self->{brickd}->{response_expected}->{&_BRICK_DAEMON_FUNCTION_AUTHENTICATE} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
+
+	$self->_add_device($self->{brickd});
 }
 
 sub _brickd_get_authentication_nonce
@@ -989,6 +991,13 @@ sub _handle_disconnect_by_peer
 
 	$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED,
 	                                  $disconnect_reason, $socket_id]);
+}
+
+sub _add_device
+{
+	my ($self, $device) = @_;
+
+	$self->{devices}->{$device->{uid}} = $device;
 }
 
 sub _ipcon_send

@@ -1327,11 +1327,6 @@ void device_create(Device *device, const char *uid_str,
 		device_p->high_level_callbacks[i].data = NULL;
 		device_p->high_level_callbacks[i].length = 0;
 	}
-
-	// add to IPConnection
-	if (device_p->uid_valid) {
-		table_insert(&ipcon_p->devices, device_p->uid, device_p);
-	}
 }
 
 void device_release(DevicePrivate *device_p) {
@@ -1546,14 +1541,17 @@ enum {
 };
 
 static void brickd_create(BrickDaemon *brickd, const char *uid, IPConnection *ipcon) {
+	IPConnectionPrivate *ipcon_p = ipcon->p;
 	DevicePrivate *device_p;
 
-	device_create(brickd, uid, ipcon->p, 2, 0, 0, 0);
+	device_create(brickd, uid, ipcon_p, 2, 0, 0, 0);
 
 	device_p = brickd->p;
 
 	device_p->response_expected[BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE;
 	device_p->response_expected[BRICK_DAEMON_FUNCTION_AUTHENTICATE] = DEVICE_RESPONSE_EXPECTED_TRUE;
+
+	ipcon_add_device(ipcon_p, device_p);
 }
 
 static void brickd_destroy(BrickDaemon *brickd) {
@@ -2479,6 +2477,12 @@ void ipcon_register_callback(IPConnection *ipcon, int16_t callback_id,
 
 	ipcon_p->registered_callbacks[callback_id] = function;
 	ipcon_p->registered_callback_user_data[callback_id] = user_data;
+}
+
+void ipcon_add_device(IPConnectionPrivate *ipcon_p, DevicePrivate *device_p) {
+	if (device_p->uid_valid) {
+		table_insert(&ipcon_p->devices, device_p->uid, device_p);
+	}
 }
 
 int packet_header_create(PacketHeader *header, uint8_t length,

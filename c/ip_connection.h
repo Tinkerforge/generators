@@ -598,6 +598,11 @@ void ipcon_register_callback(IPConnection *ipcon, int16_t callback_id,
 /**
  * \internal
  */
+void ipcon_add_device(IPConnectionPrivate *ipcon_p, DevicePrivate *device_p);
+
+/**
+ * \internal
+ */
 int packet_header_create(PacketHeader *header, uint8_t length,
                          uint8_t function_id, IPConnectionPrivate *ipcon_p,
                          DevicePrivate *device_p);

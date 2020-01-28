@@ -4,6 +4,7 @@
 """
 MQTT Bindings Generator
 Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_mqtt_bindings.py: Generator for MQTT bindings
 
@@ -53,6 +54,8 @@ class {0}(MQTTCallbackDevice):
 		MQTTCallbackDevice.__init__(self, uid, ipcon, {1}, device_names[{1}], device_class_name, device_class, mqttc)
 
 {0}
+
+		ipcon.add_device(self)
 """
         response_expected = []
         mapping = {'always_true': 1, 'true': 2, 'false': 3}

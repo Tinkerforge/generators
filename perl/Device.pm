@@ -77,8 +77,6 @@ sub _new
 	$self->{request_lock_ref} = \$request_lock;
 	$self->{stream_lock_ref} = \$stream_lock;
 
-	$self->{ipcon}->{devices}->{$self->{uid}} = $self;
-
 	return $self;
 }
 

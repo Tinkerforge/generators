@@ -46,6 +46,7 @@ begin
   apiVersion[2] := 0;
   responseExpected[BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE] := DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE;
   responseExpected[BRICK_DAEMON_FUNCTION_AUTHENTICATE] := DEVICE_RESPONSE_EXPECTED_TRUE;
+  (ipcon_ as TIPConnection).AddDevice(self);
 end;
 
 function TBrickDaemon.GetAuthenticationNonce: TArray0To3OfUInt8;

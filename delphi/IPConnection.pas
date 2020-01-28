@@ -317,6 +317,7 @@ type
     property OnDisconnected: TIPConnectionNotifyDisconnected read disconnectedCallback write disconnectedCallback;
 
     { Internal }
+    procedure AddDevice(device: TDevice);
     function IsConnected: boolean;
     function CreateRequestPacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
     procedure SendRequest(const request: TByteArray);
@@ -1255,6 +1256,13 @@ begin
         { Ignore exceptions in user code }
       end;
     end;
+  end;
+end;
+
+procedure TIPConnection.AddDevice(device: TDevice);
+begin
+  if (device.uidValid) then begin
+    devices.Insert(device.uidNumber, device);
   end;
 end;
 

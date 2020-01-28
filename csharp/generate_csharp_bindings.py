@@ -299,7 +299,7 @@ namespace Tinkerforge
             result.append(template.format(name=packet.get_name().upper,
                                           flag=packet.get_response_expected().upper()))
 
-        return '\n' + ''.join(result) + '\t\t}\n'
+        return '\n' + ''.join(result) + '\n\t\t\tipcon.AddDevice(this);\n\t\t}\n'
 
     def get_csharp_callbacks(self):
         callbacks = ''

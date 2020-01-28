@@ -291,8 +291,6 @@ abstract class Device
         for ($i = 0; $i < 256; ++$i) {
             $this->response_expected[$i] = self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
         }
-
-        $ipcon->devices[$this->uid] = $this; // FIXME: use a weakref here
     }
 
     /**
@@ -544,6 +542,8 @@ class BrickDaemon extends Device
 
         $this->response_expected[self::FUNCTION_GET_AUTHENTICATION_NONCE] = self::RESPONSE_EXPECTED_ALWAYS_TRUE;
         $this->response_expected[self::FUNCTION_AUTHENTICATE] = self::RESPONSE_EXPECTED_TRUE;
+
+        $ipcon->addDevice($this);
     }
 
     public function getAuthenticationNonce()
@@ -1062,6 +1062,14 @@ class IPConnection
 
         $this->registered_callbacks[$callback_id] = $function;
         $this->registered_callback_user_data[$callback_id] = $user_data;
+    }
+
+    /**
+     * @internal
+     */
+    public function addDevice($device)
+    {
+        $this->devices[$device->uid] = $device; // FIXME: use a weakref here
     }
 
     /**

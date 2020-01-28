@@ -56,6 +56,8 @@ class {0}(Device):"""
 		Device.__init__(self, uid, ipcon, {1}, DEVICE_DISPLAY_NAMES[{1}])
 
 {0}
+
+		ipcon.add_device(self)
 """
         response_expected = []
         mapping = {'always_true': 1, 'true': 2, 'false': 3}

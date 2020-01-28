@@ -86,7 +86,7 @@ class {0} extends Device
 
             callbacks += template.format(packet.get_name(skip=-2).upper)
 
-        return common.wrap_non_empty('\n', callbacks, '') + '\n    }\n'
+        return common.wrap_non_empty('\n', callbacks, '') + '\n\n        $ipcon->addDevice($this);\n    }\n'
 
     def get_php_callback_id_definitions(self):
         callbacks = ''

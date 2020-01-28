@@ -203,6 +203,9 @@ class {0}(Device):
 
         return high_level_callbacks
 
+    def get_python_add_device(self):
+        return '        ipcon.add_device(self)\n'
+
     def get_python_methods(self):
         m_tup = """
     def {0}(self{7}{4}):
@@ -587,6 +590,7 @@ class {0}(Device):
         source += self.get_python_init_method()
         source += self.get_python_callback_formats()
         source += self.get_python_high_level_callbacks()
+        source += self.get_python_add_device()
         source += self.get_python_methods()
         source += self.get_python_register_callback_method()
         if not self.is_tng():

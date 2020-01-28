@@ -483,7 +483,7 @@ public class {0} extends Device {{
 
             listeners += template.format(type_, cbdata, name_camel, device_param, listener_type, listener_call, high_level_callback, high_level_handling)
 
-        return listeners + '\t}\n'
+        return listeners + '\n\t\tipcon.addDevice(this);\n\t}\n'
 
     def get_java_add_listener(self):
         listeners = ''

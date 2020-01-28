@@ -472,7 +472,7 @@ begin
                                          packet.get_name().upper,
                                          packet.get_name().camel)
 
-        return callbacks + 'end;\n\n'
+        return callbacks + '\n  (ipcon as TIPConnection).AddDevice(self);\nend;\n\n'
 
     def get_high_level_method_parameter(self, e, ret_type, stream_in, stream_out, output_count):
         e_param = None
