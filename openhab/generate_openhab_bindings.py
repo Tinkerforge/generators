@@ -527,6 +527,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 if s.command_type is None:
                     raise common.GeneratorError('openhab: Device "{}" Channel "{}" Setter "{}" has no command_type.'.format(self.get_long_display_name(), c.id.space, s.packet.get_name().space))
 
+        for ct in self.oh.channel_types:
+            if ct.is_trigger_channel and "system." in ct.id:
+                raise common.GeneratorError('openhab: Device {} Channel Type {} is marked as trigger channel, but uses a custom type (not system.trigger or similar). This is theoretically supported, but the device handler currently assumes (when sending initial refreshs), that all trigger channels are of system-wide type.'.format(self.get_long_display_name(), ct.id))
 
     def add_packet_info(self, param):
         if param['virtual']:
@@ -540,7 +543,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def find_channel_type(self, channel, channel_types):
         if channel['type'].startswith('system.'):
-            system_type = ChannelType(**{'id': common.FlavoredName(channel['type']).get(), 'label': "CTRL+F ME", 'description': "CTRL+F ME"})
+            system_type = ChannelType(**{'id': common.FlavoredName(channel['type']).get(), 'label': "CTRL+F ME", 'description': "CTRL+F ME", 'is_trigger_channel': True})
             #system_type = self.apply_defaults({'channel_types': {'id': common.FlavoredName(channel['type']).get()}})['channel_types'][0]
             return system_type
             #return ChannelType._make([common.FlavoredName(channel['type']).get()] + [None] * (len(ChannelType._fields) - 1))

@@ -104,7 +104,7 @@ public class RemoteSocketTypeBHandler extends BaseThingHandler {
 
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
 
-        this.getThing().getChannels().forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
+        this.getThing().getChannels().stream().filter(c -> !c.getChannelTypeUID().toString().startsWith("system")).forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
     }
 
     @Override
