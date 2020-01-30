@@ -1318,7 +1318,7 @@ namespace Tinkerforge
 		///  to detect timeouts and other error conditions calls of this setter
 		///  as well. The device will then send a response for this purpose.
 		///  If this flag is disabled for a setter function then no response
-		///  is send and errors are silently ignored, because they cannot be
+		///  is sent and errors are silently ignored, because they cannot be
 		///  detected.
 		/// </summary>
 		public bool GetResponseExpected(byte functionId)
@@ -1345,7 +1345,7 @@ namespace Tinkerforge
 		///  to detect timeouts and other error conditions calls of this setter
 		///  as well. The device will then send a response for this purpose.
 		///  If this flag is disabled for a setter function then no response
-		///  is send and errors are silently ignored, because they cannot be
+		///  is sent and errors are silently ignored, because they cannot be
 		///  detected.
 		/// </summary>
 		public void SetResponseExpected(byte functionId, bool responseExpected)

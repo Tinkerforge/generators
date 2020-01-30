@@ -1066,7 +1066,7 @@ void {0}_destroy({1} *{0});
  * Enabling the response expected flag for a setter function allows to
  * detect timeouts and other error conditions calls of this setter as well.
  * The device will then send a response for this purpose. If this flag is
- * disabled for a setter function then no response is send and errors are
+ * disabled for a setter function then no response is sent and errors are
  * silently ignored, because they cannot be detected.
  */
 int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected);
@@ -1082,7 +1082,7 @@ int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_
  * Enabling the response expected flag for a setter function allows to detect
  * timeouts and other error conditions calls of this setter as well. The device
  * will then send a response for this purpose. If this flag is disabled for a
- * setter function then no response is send and errors are silently ignored,
+ * setter function then no response is sent and errors are silently ignored,
  * because they cannot be detected.
  */
 int {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected);

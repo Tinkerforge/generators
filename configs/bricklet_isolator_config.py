@@ -68,8 +68,8 @@ between Bricks and Bricklets according to the amount of data that is transferred
 The baudrate for communication config between
 Brick and Isolator Bricklet can be set through the API of the Brick.
 
-The baudrate will be increased exponentially if lots of data is send/received and
-decreased linearly if little data is send/received.
+The baudrate will be increased exponentially if lots of data is sent/received and
+decreased linearly if little data is sent/received.
 
 This lowers the baudrate in applications where little data is transferred (e.g.
 a weather station) and increases the robustness. If there is lots of data to transfer

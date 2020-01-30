@@ -109,7 +109,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the number of times the code is send when one of the Switch Socket
+Sets the number of times the code is sent when one of the Switch Socket
 functions is called. The repeats basically correspond to the amount of time
 that a button of the remote is pressed.
 

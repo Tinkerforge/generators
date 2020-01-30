@@ -233,7 +233,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
  The ``--expect-response`` option for setter functions allows to detect
  timeouts and other error conditions calls of setters as well. The device will
  then send a response for this purpose. If this option is not given for a
- setter function then no response is send and errors are silently ignored,
+ setter function then no response is sent and errors are silently ignored,
  because they cannot be detected.
 
 

@@ -203,7 +203,7 @@ func New(uid string, ipcon *ipconnection.IPConnection) ({name}, error) {{
 //
 // Enabling the response expected flag for a setter function allows to detect timeouts
 // and other error conditions calls of this setter as well. The device will then send a response
-// for this purpose. If this flag is disabled for a setter function then no response is send
+// for this purpose. If this flag is disabled for a setter function then no response is sent
 // and errors are silently ignored, because they cannot be detected.
 //
 // See SetResponseExpected for the list of function ID constants available for this function.
@@ -217,7 +217,7 @@ func (device *{name}) GetResponseExpected(functionID {function}) (bool, error) {
 //
 // Enabling the response expected flag for a setter function allows to detect timeouts and
 // other error conditions calls of this setter as well. The device will then send a response
-// for this purpose. If this flag is disabled for a setter function then no response is send
+// for this purpose. If this flag is disabled for a setter function then no response is sent
 // and errors are silently ignored, because they cannot be detected.
 func (device *{name}) SetResponseExpected(functionID {function}, responseExpected bool) error {{
 	return device.device.SetResponseExpected(uint8(functionID), responseExpected)

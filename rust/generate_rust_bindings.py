@@ -332,7 +332,7 @@ pub struct {name} {{
 	///
 	/// Enabling the response expected flag for a setter function allows to detect timeouts
 	/// and other error conditions calls of this setter as well. The device will then send a response
-	/// for this purpose. If this flag is disabled for a setter function then no response is send
+	/// for this purpose. If this flag is disabled for a setter function then no response is sent
 	/// and errors are silently ignored, because they cannot be detected.
 	///
 	/// See [`set_response_expected`](crate::{name_under}::{name_camel}::set_response_expected) for the list of function ID constants available for this function.
@@ -346,7 +346,7 @@ pub struct {name} {{
 	///
 	/// Enabling the response expected flag for a setter function allows to detect timeouts and
 	/// other error conditions calls of this setter as well. The device will then send a response
-	/// for this purpose. If this flag is disabled for a setter function then no response is send
+	/// for this purpose. If this flag is disabled for a setter function then no response is sent
 	/// and errors are silently ignored, because they cannot be detected.
 	pub fn set_response_expected(&mut self, fun: {function}, response_expected: bool) -> Result<(), SetResponseExpectedError> {{
 		self.device.set_response_expected(u8::from(fun), response_expected)

@@ -369,7 +369,7 @@ it is disabled by default and can be enabled.
 Enabling the response expected flag for a setter function allows to
 detect timeouts and other error conditions calls of this setter as
 well. The device will then send a response for this purpose. If this
-flag is disabled for a setter function then no response is send and
+flag is disabled for a setter function then no response is sent and
 errors are silently ignored, because they cannot be detected.
 
 =cut
@@ -406,7 +406,7 @@ Changes the response expected flag of the function specified by the
 Enabling the response expected flag for a setter function allows to
 detect timeouts and other error conditions calls of this setter as
 well. The device will then send a response for this purpose. If this
-flag is disabled for a setter function then no response is send and
+flag is disabled for a setter function then no response is sent and
 errors are silently ignored, because they cannot be detected.
 
 =cut

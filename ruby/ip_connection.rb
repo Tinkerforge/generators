@@ -303,7 +303,7 @@ module Tinkerforge
     # Enabling the response expected flag for a setter function allows to
     # detect timeouts and other error conditions calls of this setter as
     # well. The device will then send a response for this purpose. If this
-    # flag is disabled for a setter function then no response is send and
+    # flag is disabled for a setter function then no response is sent and
     # errors are silently ignored, because they cannot be detected.
     def get_response_expected(function_id)
       if function_id < 0 or function_id > 255
@@ -332,7 +332,7 @@ module Tinkerforge
     # Enabling the response expected flag for a setter function allows to
     # detect timeouts and other error conditions calls of this setter as
     # well. The device will then send a response for this purpose. If this
-    # flag is disabled for a setter function then no response is send and
+    # flag is disabled for a setter function then no response is sent and
     # errors are silently ignored, because they cannot be detected.
     def set_response_expected(function_id, response_expected)
       if function_id < 0 or function_id > 255
