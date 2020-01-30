@@ -67,6 +67,11 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'BrickletOutdoorWeatherHandler.java':           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'BrickletOutdoorWeatherSensorHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'BrickletOutdoorWeatherStationHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'BrickletRemoteSwitchHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'RemoteSocketTypeAHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'RemoteSocketTypeBHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'RemoteSocketTypeCHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'RemoteDimmerTypeBHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'DeviceHandler.java':                           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
 
             # Reuse from java generator
@@ -99,6 +104,16 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'BrickletOutdoorWeatherSensorConfig.java':'./src/main/java/com/tinkerforge',
             'BrickletOutdoorWeatherStation.java':'./src/main/java/com/tinkerforge',
             'BrickletOutdoorWeatherStationConfig.java':'./src/main/java/com/tinkerforge',
+
+            'RemoteSocketTypeA.java':'./src/main/java/com/tinkerforge',
+            'RemoteSocketTypeAConfig.java':'./src/main/java/com/tinkerforge',
+            'RemoteSocketTypeB.java':'./src/main/java/com/tinkerforge',
+            'RemoteSocketTypeBConfig.java':'./src/main/java/com/tinkerforge',
+            'RemoteSocketTypeC.java':'./src/main/java/com/tinkerforge',
+            'RemoteSocketTypeCConfig.java':'./src/main/java/com/tinkerforge',
+            'RemoteDimmerTypeB.java':'./src/main/java/com/tinkerforge',
+            'RemoteDimmerTypeBConfig.java':'./src/main/java/com/tinkerforge',
+
 
 
             os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'): './src/main/java/com/tinkerforge',

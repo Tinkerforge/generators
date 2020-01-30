@@ -21,7 +21,11 @@ public class DeviceFactory {
             BrickDaemon.DEVICE_INFO,
             {devices},
             BrickletOutdoorWeatherSensor.DEVICE_INFO,
-            BrickletOutdoorWeatherStation.DEVICE_INFO
+            BrickletOutdoorWeatherStation.DEVICE_INFO,
+            RemoteSocketTypeA.DEVICE_INFO,
+            RemoteSocketTypeB.DEVICE_INFO,
+            RemoteSocketTypeC.DEVICE_INFO,
+            RemoteDimmerTypeB.DEVICE_INFO
         );
     }
 

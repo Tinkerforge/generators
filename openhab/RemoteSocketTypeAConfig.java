@@ -1,0 +1,9 @@
+package com.tinkerforge;
+
+public class RemoteSocketTypeAConfig {
+    Integer houseCode = 0;
+    Integer receiverCode = 0;
+    Integer repeats = 0;
+
+    public RemoteSocketTypeAConfig() {}
+}

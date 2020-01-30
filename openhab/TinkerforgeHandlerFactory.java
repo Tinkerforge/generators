@@ -33,7 +33,12 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickDaemonHan
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherSensorHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherStationHandler;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletRemoteSwitchHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteDimmerTypeBHandler;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteSocketTypeAHandler;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteSocketTypeBHandler;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteSocketTypeCHandler;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
@@ -89,10 +94,24 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
                                                      (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
                                                      () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
                                                      () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)));
+        } else if (thingTypeUID.equals(THING_TYPE_BRICKLET_REMOTE_SWITCH) || thingTypeUID.equals(THING_TYPE_BRICKLET_REMOTE_SWITCH_V2)) {
+            assert (thing instanceof Bridge);
+            return new BrickletRemoteSwitchHandler((Bridge) thing,
+                                                     (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
+                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
+                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)));
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_STATION)) {
             return new BrickletOutdoorWeatherStationHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_SENSOR)) {
             return new BrickletOutdoorWeatherSensorHandler(thing);
+        } else if (thingTypeUID.equals(THING_TYPE_REMOTE_SOCKET_TYPE_A)) {
+            return new RemoteSocketTypeAHandler(thing);
+        } else if (thingTypeUID.equals(THING_TYPE_REMOTE_SOCKET_TYPE_B)) {
+            return new RemoteSocketTypeBHandler(thing);
+        } else if (thingTypeUID.equals(THING_TYPE_REMOTE_SOCKET_TYPE_C)) {
+            return new RemoteSocketTypeCHandler(thing);
+        } else if (thingTypeUID.equals(THING_TYPE_REMOTE_DIMMER_TYPE_B)) {
+            return new RemoteDimmerTypeBHandler(thing);
         }
 
         String thingName = thingTypeUID.getId();

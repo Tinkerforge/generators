@@ -565,6 +565,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
+    'is_bridge': True,
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType',
                                                'org.eclipse.smarthome.core.library.types.DecimalType'],
     'param_groups': oh_generic_channel_param_groups(),
