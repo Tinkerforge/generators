@@ -737,7 +737,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return {transform};
     }}"""
         # To init
-        cb_registration = 'this.add{camel}Listener(({args}) -> {{if({filter}) {{{updateFn}.accept("{channel_camel}", transform{channel_camel}Callback{i}({args}{comma}cfg));}}}});'
+        cb_registration = '{predicate}this.add{camel}Listener(({args}) -> {{if({filter}) {{{updateFn}.accept("{channel_camel}", transform{channel_camel}Callback{i}({args}{comma}cfg));}}}});{end_predicate}'
         # To dispose
         cb_deregistration = 'this.listener{camel}.clear();'
 
@@ -752,13 +752,16 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
             for i, callback in enumerate(c.callbacks):
                 elements = callback.packet.get_elements(direction='out', high_level=True)
-                regs.append(cb_registration.format(camel=callback.packet.get_name().camel,
+                regs.append(cb_registration.format(
+                                                predicate='if({}) {{\n'.format(c.predicate) if c.predicate is not 'true' else '',
+                                                camel=callback.packet.get_name().camel,
                                                 filter=callback.filter,
                                                 channel_camel=c.id.camel,
                                                 args=', '.join(e.get_name().headless for e in elements),
                                                 updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
                                                 i=i,
-                                                comma=', ' if len(elements) > 0 else ''))
+                                                comma=', ' if len(elements) > 0 else '',
+                                                end_predicate='}' if c.predicate is not 'true' else ''))
 
                 packet_name = callback.packet.get_name().camel if not callback.packet.has_high_level() else callback.packet.get_name(skip=-2).camel
                 deregs.append(cb_deregistration.format(camel=callback.packet.get_name().camel))
