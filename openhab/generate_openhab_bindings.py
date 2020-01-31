@@ -274,6 +274,9 @@ class ParamGroup:
         self.description = kwargs.get('description', None)
 
 class OpenHABBindingsDevice(JavaBindingsDevice):
+    def has_java_legacy_types(self):
+        return False
+
     def apply_defaults(self, oh):
         param_defaults = {
             'context': None,

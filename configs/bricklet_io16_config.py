@@ -629,9 +629,9 @@ def input_channel(idx):
                 'packet': 'Interrupt',
                 'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx % 8)}],
 
-            'init_code':"""this.setPortConfiguration({port}, (short)(1 << {idx_mod}), 'i', cfg.pinConfiguration{idx} % 2 == 1);
-            this.setPortInterrupt({port}, (short)(this.getPortInterrupt({port}) | (1 << {idx_mod})));""".format(port="\'a\'" if idx <= 7 else "\'b\'", idx_mod=idx % 8, idx=idx),
-            'dispose_code': """this.setPortInterrupt({port}, (short)(this.getPortInterrupt({port}) & ~(1 << {idx})));""".format(port="\'a\'" if idx <= 7 else "\'b\'",idx=idx % 8),
+            'init_code':"""this.setPortConfiguration({port},1 << {idx_mod}, 'i', cfg.pinConfiguration{idx} % 2 == 1);
+            this.setPortInterrupt({port}, this.getPortInterrupt({port}) | (1 << {idx_mod}));""".format(port="\'a\'" if idx <= 7 else "\'b\'", idx_mod=idx % 8, idx=idx),
+            'dispose_code': """this.setPortInterrupt({port}, this.getPortInterrupt({port}) & ~(1 << {idx}));""".format(port="\'a\'" if idx <= 7 else "\'b\'",idx=idx % 8),
     }
 
 def output_channel(idx):
@@ -649,7 +649,7 @@ def output_channel(idx):
 
             'setters': [{
                 'packet': 'Set Selected Values',
-                'packet_params': ["\'a\'" if idx <= 7 else "\'b\'", '(short)(1 << {})'.format(idx % 8), 'cmd == OnOffType.ON ? (short)0xFF : (short)0'],
+                'packet_params': ["\'a\'" if idx <= 7 else "\'b\'", '1 << {}'.format(idx % 8), 'cmd == OnOffType.ON ? 0xFF : 0'],
                 'command_type': "OnOffType"
             }],
 
@@ -659,7 +659,7 @@ def output_channel(idx):
                 'filter': 'port == {} && (selectionMask & (1 << {})) > 0'.format("\'a\'" if idx <= 7 else "\'b\'", idx % 8),
                 'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx % 8)}],
 
-            'init_code':"""this.setPortConfiguration({port}, (short)(1 << {idx_mod}), 'o', cfg.pinConfiguration{idx} % 2 == 1);""".format(port="\'a\'" if idx <= 7 else "\'b\'", idx_mod=idx % 8, idx=idx),
+            'init_code':"""this.setPortConfiguration({port}, 1 << {idx_mod}, 'o', cfg.pinConfiguration{idx} % 2 == 1);""".format(port="\'a\'" if idx <= 7 else "\'b\'", idx_mod=idx % 8, idx=idx),
     }
 
 def monoflop_channel(idx):
@@ -672,12 +672,12 @@ def monoflop_channel(idx):
 
         'getters': [{
             'packet': 'Get Port Monoflop',
-            'packet_params': ["\'a\'" if idx <= 7 else "\'b\'", '(short){}'.format(idx % 8)],
+            'packet_params': ["\'a\'" if idx <= 7 else "\'b\'", str(idx % 8)],
             'transform': 'value.value > 0 ? OnOffType.ON : OnOffType.OFF'}],
 
         'setters': [{
             'packet': 'Set Port Monoflop',
-            'packet_params': ["\'a\'" if idx <= 7 else "\'b\'", '(short)(1 << {})'.format(idx % 8), 'channelCfg.monoflopValue.booleanValue() ? (short)0xFF : (short)0', 'channelCfg.monoflopDuration.longValue()'],
+            'packet_params': ["\'a\'" if idx <= 7 else "\'b\'", '1 << {}'.format(idx % 8), 'channelCfg.monoflopValue.booleanValue() ? 0xFF : 0', 'channelCfg.monoflopDuration.longValue()'],
             'command_type': "StringType", # Command type has to be string type to be able to use command options.
         }],
 
@@ -694,11 +694,11 @@ def edge_count_channel(index):
             'type': 'Edge Count',
             'label': 'Edge Count {0}'.format(pin_name(index)),
 
-            'init_code':"""this.setEdgeCountConfig((short)(1 << {}), channelCfg.edgeType.shortValue(), channelCfg.debounce.shortValue());""".format(index),
+            'init_code':"""this.setEdgeCountConfig(1 << {}, channelCfg.edgeType, channelCfg.debounce);""".format(index),
 
             'getters': [{
                 'packet': 'Get Edge Count',
-                'packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
+                'packet_params': [str(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 
             'java_unit': 'SmartHomeUnits.ONE',

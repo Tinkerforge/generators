@@ -623,8 +623,8 @@ com['openhab'] = {
     'channels': [
         oh_generic_old_style_channel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
     ],
-    'init_code': """this.setAveraging(cfg.averageLength.shortValue());
-    this.setRange(cfg.measurementRange.shortValue());""",
+    'init_code': """this.setAveraging(cfg.averageLength);
+    this.setRange(cfg.measurementRange);""",
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
                     update_style='Callback Period',

@@ -248,7 +248,7 @@ com['openhab'] = {
             'description': 'Inverts the color (black/white) of the display.',
         },
     ] ,
-    'init_code': """this.setDisplayConfiguration(cfg.contrast.shortValue(), cfg.invert);""",
+    'init_code': """this.setDisplayConfiguration(cfg.contrast, cfg.invert);""",
     'channels': [
             {
                 'id': 'Text',

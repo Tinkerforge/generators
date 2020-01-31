@@ -842,7 +842,7 @@ com['openhab'] = {
             'description': 'Configures the current conversion time.'
         },
     ],
-    'init_code': """this.setConfiguration(cfg.averaging.shortValue(), cfg.voltageConversionTime.shortValue(), cfg.currentConversionTime.shortValue());""",
+    'init_code': """this.setConfiguration(cfg.averaging, cfg.voltageConversionTime, cfg.currentConversionTime);""",
     'channels': [
         oh_generic_old_style_channel('Current', 'Current', 'SmartHomeUnits.AMPERE', divisor=1000.0),
         oh_generic_old_style_channel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),

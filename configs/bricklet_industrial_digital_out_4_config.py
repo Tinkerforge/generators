@@ -363,7 +363,7 @@ def output_channel(idx):
 
             'setters': [{
                 'packet': 'Set Selected Values',
-                'packet_params': ['(short)(1 << {})'.format(idx), 'cmd == OnOffType.ON ? (short)0xFF : (short)0'],
+                'packet_params': ['1 << {}'.format(idx), 'cmd == OnOffType.ON ? 0xFF : 0'],
                 'command_type': "OnOffType"
             }],
 
@@ -382,12 +382,12 @@ def monoflop_channel(idx):
 
         'getters': [{
             'packet': 'Get Monoflop',
-            'packet_params': ['(short){}'.format(idx)],
+            'packet_params': [str(idx)],
             'transform': 'value.value > 0 ? OnOffType.ON : OnOffType.OFF'}],
 
         'setters': [{
             'packet': 'Set Monoflop',
-            'packet_params': ['(short)(1 << {})'.format(idx), 'channelCfg.monoflopValue.booleanValue() ? (short)0xFF : (short)0', 'channelCfg.monoflopDuration.longValue()'],
+            'packet_params': ['1 << {}'.format(idx), 'channelCfg.monoflopValue.booleanValue() ? 0xFF : 0', 'channelCfg.monoflopDuration.longValue()'],
             'command_type': "StringType", # Command type has to be string type to be able to use command options.
         }],
 

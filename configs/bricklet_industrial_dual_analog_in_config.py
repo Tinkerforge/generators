@@ -417,12 +417,12 @@ def voltage_channel(index):
             'type': 'Voltage',
             'label': 'Voltage Channel {0}'.format(index),
 
-            'init_code':"""this.setVoltageCallbackPeriod((short){0}, channelCfg.updateInterval);""".format(index),
-            'dispose_code': """this.setVoltageCallbackPeriod((short){0}, 0);""".format(index),
+            'init_code':"""this.setVoltageCallbackPeriod({0}, channelCfg.updateInterval);""".format(index),
+            'dispose_code': """this.setVoltageCallbackPeriod({0}, 0);""".format(index),
 
             'getters': [{
                 'packet': 'Get Voltage',
-                'packet_params': ['(short){}'.format(index)],
+                'packet_params': [str(index)],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
             'callbacks': [{
@@ -461,7 +461,7 @@ com['openhab'] = {
             'advanced': 'true'
         }
     ],
-    'init_code': """this.setSampleRate(cfg.sampleRate.shortValue());""",
+    'init_code': """this.setSampleRate(cfg.sampleRate);""",
     'channels': [
         voltage_channel(0),
         voltage_channel(1),

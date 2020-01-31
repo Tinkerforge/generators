@@ -694,8 +694,8 @@ com['openhab'] = {
             'description': 'Sets the noise rejection filter to either 50 Hz or 60 Hz. Noise from 50 Hz or 60 Hz power sources (including harmonics of the AC power’s fundamental frequency) is attenuated by 82dB',
         },
     ],
-    'init_code': """this.setWireMode(cfg.wireMode.shortValue());
-this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency.shortValue());""",
+    'init_code': """this.setWireMode(cfg.wireMode);
+this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency);""",
     'channels': [
         oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
         {

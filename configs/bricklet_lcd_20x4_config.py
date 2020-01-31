@@ -465,11 +465,11 @@ def custom_character_param(idx):
 def custom_character_init_code(idx):
     return """
 if(cfg.customCharacter{0}.longValue() >= 0) {{
-    short[] bytes = new short[8];
+    int[] bytes = new int[8];
     for(int i = 0; i < 8; ++i) {{
-        bytes[i] = (short)((cfg.customCharacter{0}.longValue() >> (i * 8)) & 0xFF);
+        bytes[i] = (cfg.customCharacter{0}.longValue() >> (i * 8)) & 0xFF;
     }}
-    this.setCustomCharacter((short)({0}), bytes);
+    this.setCustomCharacter({0}, bytes);
 }}""".format(idx)
 
 def default_text_param(idx):
@@ -483,7 +483,7 @@ def default_text_param(idx):
     }
 
 def default_text_init_code(idx):
-    return """this.setDefaultText((short)({0}), cfg.defaultTextLine{0});""".format(idx)
+    return """this.setDefaultText({0}, cfg.defaultTextLine{0});""".format(idx)
 
 def button_channel(idx):
     return {
@@ -492,7 +492,7 @@ def button_channel(idx):
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Is Button Pressed',
-                'packet_params': ['(short)({})'.format(idx)],
+                'packet_params': [str(idx)],
                 'transform': 'value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{

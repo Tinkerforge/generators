@@ -344,7 +344,7 @@ com['openhab'] = {
             'description': 'The length of a moving averaging for the dust_density.<br/><br/>Setting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.'
         }
     ],
-    'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
+    'init_code': """this.setMovingAverage(cfg.movingAverageLength);""",
     'channels': [
         oh_generic_old_style_channel('Dust Density', 'Dust Density', 'SmartHomeUnits.MICROGRAM_PER_CUBICMETRE')
     ],

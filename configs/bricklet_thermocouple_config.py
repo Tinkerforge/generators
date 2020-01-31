@@ -511,7 +511,7 @@ com['openhab'] = {
             'description': 'The frequency filter can be either configured to 50Hz or to 60Hz. You should configure it according to your utility frequency.'
         }],
     'param_groups': oh_generic_channel_param_groups(),
-    'init_code': """this.setConfiguration(cfg.averageLength.shortValue(), cfg.thermocoupleType.shortValue(), cfg.frequencyFilter.shortValue());""",
+    'init_code': """this.setConfiguration(cfg.averageLength, cfg.thermocoupleType, cfg.frequencyFilter);""",
     'channels': [
         oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
         {

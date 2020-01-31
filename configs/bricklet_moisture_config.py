@@ -355,7 +355,7 @@ com['openhab'] = {
         'description': 'The length of a moving averaging for the moisture value.<br/><br/>Setting the length to 0 will turn the averaging off. With less averaging, there is more noise on the data.'
 
     }],
-    'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
+    'init_code': """this.setMovingAverage(cfg.movingAverageLength);""",
     'channels': [
         moisture_channel
     ],

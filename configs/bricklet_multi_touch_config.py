@@ -308,7 +308,7 @@ com['openhab'] = {
             'description': "True enables the proximity feature, false disables it. It is recommended that you disable the proximity feature if not needed. This will reduce the amount of traffic that is produced.",
         }
     ] + [electrode_config(i) for i in range(0, 12)],
-    'init_code': """this.setElectrodeSensitivity(cfg.sensitivity.shortValue());
+    'init_code': """this.setElectrodeSensitivity(cfg.sensitivity);
         this.recalibrate();
         this.setElectrodeConfig({} | (cfg.proximityEnabled ? 1 << 12 : 0));""".format(' | '.join(['(cfg.electrode{0}Enabled ? 1 << {0} : 0)'.format(i) for i in range(0, 12)])),
     'channels': [electrode_channel(i) for i in range(0, 12)] + [

@@ -484,7 +484,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Position', 'Position', 'SmartHomeUnits.DEGREE_ANGLE', cast_literal='(short)')
+        oh_generic_old_style_channel('Position', 'Position', 'SmartHomeUnits.DEGREE_ANGLE')
     ],
     'channel_types': [
         oh_generic_channel_type('Position', 'Number:Angle', 'Position',

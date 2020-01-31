@@ -314,7 +314,7 @@ com['openhab'] = {
             'description': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
         }
     ],
-    'init_code': """this.setConfiguration(cfg.voltageRange.shortValue(), cfg.currentRange.shortValue());""",
+    'init_code': """this.setConfiguration(cfg.voltageRange, cfg.currentRange);""",
     'channels': [{
             'id': 'Enabled',
             'type': 'Enabled',
@@ -365,7 +365,7 @@ com['openhab'] = {
                 'packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
                 'command_type': "Number"
             }],
-            
+
             'getters': [{
                 'packet': 'Get {title_words}',
                 'transform': 'new QuantityType(value / 1000.0, SmartHomeUnits.VOLT)'}]

@@ -725,7 +725,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': """this.setChipType(cfg.chipType);
-    this.setChannelMapping(cfg.channelMapping.shortValue());
+    this.setChannelMapping(cfg.channelMapping);
     this.setFrameDuration(cfg.frameDuration);
     this.setClockFrequency(cfg.clockFrequency.longValue());""",
     'params': [ {

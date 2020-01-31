@@ -378,12 +378,12 @@ def current_channel(index):
             'type': 'Current',
             'label': 'Current Sensor {0}'.format(index),
 
-            'init_code':"""this.setCurrentCallbackPeriod((short){0}, channelCfg.updateInterval);""".format(index),
-            'dispose_code': """this.setCurrentCallbackPeriod((short){0}, 0);""".format(index),
+            'init_code':"""this.setCurrentCallbackPeriod({0}, channelCfg.updateInterval);""".format(index),
+            'dispose_code': """this.setCurrentCallbackPeriod({0}, 0);""".format(index),
 
             'getters': [{
                 'packet': 'Get Current',
-                'packet_params': ['(short){}'.format(index)],
+                'packet_params': [str(index)],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
             'callbacks': [{
@@ -418,7 +418,7 @@ com['openhab'] = {
             'advanced': 'true'
         }
     ],
-    'init_code': """this.setSampleRate(cfg.sampleRate.shortValue());""",
+    'init_code': """this.setSampleRate(cfg.sampleRate);""",
     'channels': [
         current_channel(0),
         current_channel(1),

@@ -537,7 +537,7 @@ com['openhab'] = {
             'description': 'The length of a moving averaging for the weight value.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
         }
     ],
-    'init_code': """this.setMovingAverage(cfg.movingAverage.shortValue());""",
+    'init_code': """this.setMovingAverage(cfg.movingAverage);""",
     'channels': [
         oh_generic_old_style_channel('Weight', 'Weight', 'SIUnits.GRAM', divisor=1),
         {

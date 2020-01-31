@@ -74,8 +74,8 @@ com['examples'].append({
 'functions': [('setter', 'Set RGB Value', [('uint8', 0), ('uint8', 170), ('uint8', 234)], 'Set light blue color', None)]
 })
 
-def percent_type_to_short(name):
-    return '(short)({}.doubleValue() * 255.0 / 100.0)'.format(name)
+def percent_type_to_int(name):
+    return '(int)({}.doubleValue() * 255.0 / 100.0)'.format(name)
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.HSBType'],
@@ -86,7 +86,7 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set RGB Value',
-                'packet_params': [percent_type_to_short('cmd.getRed()'), percent_type_to_short('cmd.getGreen()'), percent_type_to_short('cmd.getBlue()')],
+                'packet_params': [percent_type_to_int('cmd.getRed()'), percent_type_to_int('cmd.getGreen()'), percent_type_to_int('cmd.getBlue()')],
                 'command_type': "HSBType",
             }],
 
