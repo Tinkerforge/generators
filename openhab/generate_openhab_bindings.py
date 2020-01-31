@@ -463,6 +463,17 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                     continue
                 raise common.GeneratorError('openhab: Device {}: Channel {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), c.name.space, param.name.space))
 
+         # Setters/Getters must have string params
+        for c in oh.channels:
+            for s in c.setters:
+                for param in s.packet_params:
+                    if not isinstance(param, str):
+                        raise common.GeneratorError('openhab: Device "{}" Channel "{}" Setter "{}" Param "{}" is not a string'.format(self.get_long_display_name(), c.id.space, s.packet.get_name().space, param))
+            for g in c.getters:
+                for param in g.packet_params:
+                    if not isinstance(param, str):
+                        raise common.GeneratorError('openhab: Device "{}" Channel "{}" Getter "{}" Param "{}" is not a string'.format(self.get_long_display_name(), c.id.space, g.packet.get_name().space, param))
+
         # Params must be used
         for param in oh.params:
             needle = 'cfg.{}'.format(param.name.headless)
@@ -525,11 +536,13 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 if not r.channel in ids:
                     raise common.GeneratorError('openhab: Device "{}" Channel "{}" has setter refresh for channel "{}" but no such channel was found.'.format(self.get_long_display_name(), c.id.space, r.channel.space))
 
+        # Channels must have a command type per setter
         for c in oh.channels:
             for s in c.setters:
                 if s.command_type is None:
                     raise common.GeneratorError('openhab: Device "{}" Channel "{}" Setter "{}" has no command_type.'.format(self.get_long_display_name(), c.id.space, s.packet.get_name().space))
 
+        # Trigger channels must be of system. type (for now)
         for ct in self.oh.channel_types:
             if ct.is_trigger_channel and "system." in ct.id:
                 raise common.GeneratorError('openhab: Device {} Channel Type {} is marked as trigger channel, but uses a custom type (not system.trigger or similar). This is theoretically supported, but the device handler currently assumes (when sending initial refreshs), that all trigger channels are of system-wide type.'.format(self.get_long_display_name(), ct.id))
