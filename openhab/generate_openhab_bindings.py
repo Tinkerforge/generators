@@ -28,21 +28,7 @@ import copy
 import os
 import shutil
 import sys
-
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib2 import urlopen as _urlopen
-    from contextlib import contextmanager
-
-    @contextmanager
-    def urlopen(*args, **kwargs):
-        response = _urlopen(*args, **kwargs)
-
-        try:
-            yield response
-        finally:
-            response.close()
+import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 sys.path.append(os.path.join(os.path.split(os.getcwd())[0], 'java'))
@@ -62,6 +48,7 @@ class OpenHAB:
         self.custom = kwargs.get('custom', False)
         self.actions = kwargs.get('actions', [])
         self.is_bridge = kwargs.get('is_bridge', False)
+        self.required_firmware_version = kwargs.get('required_firmware_version', False)
 
 class Channel:
     def __init__(self, **kwargs):
@@ -605,14 +592,26 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                 channel_type['params'][p_idx] = fmt_dict(param, channel_type['id'], param['unit'], 1)
             oh['channel_types'][ct_idx] = fmt_dict(channel_type, channel_type['id'], None, None)
 
+        used_packets = []
+
+        # Search possible packet usage in init_code etc.
+        used_packet_names = re.findall("this\.([a-zA-Z0-9]+)\(", str(oh))
+        for packet in self.get_packets():
+            if packet.get_name().headless in used_packet_names:
+                used_packets.append(packet)
+            if packet.has_high_level() and packet.get_name(skip=-2).headless in used_packet_names:
+                used_packets.append(packet)
+
 
         def find_packet(name):
             if name is None:
                 return None
             for p in self.get_packets():
                 if p.get_name().space == name:
+                    used_packets.append(p)
                     return p
                 if p.has_high_level() and p.get_name(skip=-2).space == name:
+                    used_packets.append(p)
                     return p
             raise common.GeneratorError('openhab: Device {}: Packet {} not found.'.format(self.get_long_display_name(), name))
 
@@ -669,6 +668,12 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         for a_idx, action in enumerate(oh['actions']):
             oh['actions'][a_idx] = find_packet(action)
 
+        if 'required_firmware_version' not in oh:
+            oh['required_firmware_version'] = [2, 0, 0]
+
+        req_version = max([packet.get_since_firmware() for packet in used_packets] + [oh['required_firmware_version']])
+        oh['required_firmware_version'] = "{}.{}.{}".format(*req_version)
+
         self.oh = OpenHAB(**oh)
         self.sanity_check_config(self.oh)
 
@@ -714,12 +719,11 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         java_class = JavaBindingsDevice.get_java_class(self)
 
         actions = 'Default' if len(self.oh.actions) == 0 else self.get_java_class_name()
-        min_fw_version = self.generator.firmwares.get(self.get_category().under + '_' + self.get_name().under, "1.0.0")
         java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class, {}Actions.class, "{}");\n\n'\
                         .format(self.get_category().lower_no_space + self.get_name().lower_no_space,
                                 self.get_java_class_name(),
                                 actions,
-                                min_fw_version)
+                                self.oh.required_firmware_version)
         return java_class
 
     def get_filtered_elements_and_type(self, packet, elements, out_of_class=False):
@@ -1362,34 +1366,7 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
 
     def prepare(self):
         JavaBindingsGenerator.prepare(self)
-
         self.released_devices = []
-        self.firmwares = {}
-
-        print("Downloading latest_versions.txt")
-        with urlopen('https://download.tinkerforge.com/latest_versions.txt', timeout=10) as response:
-            latest_fws = response.read().decode('utf-8')
-
-        for line in latest_fws.split('\n'):
-            try:
-                category, device, version = line.split(':')
-            except:
-                continue
-
-            if category not in ['bricks', 'bricklets']:
-                continue
-
-            # HATs are bricklets in latest_versions, but bricks in the generator
-            if device == 'hat' or device == 'hat_zero':
-                category = 'bricks'
-
-            # latest_versions list lcd_20x4 with hardware versions v11 and v12
-            if 'lcd_20x4' in device:
-                device = 'lcd_20x4'
-
-            self.firmwares["{}_{}".format(category[:-1], device)] = version
-
-        self.firmwares["brick_red"] = "2.0.3" # FIXME: Should not be hard-coded
 
     def generate(self, device):
         if device.oh.custom:
