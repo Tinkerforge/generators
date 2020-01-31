@@ -187,9 +187,9 @@ class RustExampleParameter(common.ExampleParameter):
 
     def get_rust_write_lines(self, parameter_struct_name='', override_parameter_name=''):
         name = self.get_name().under
-        if parameter_struct_name is not '':
+        if parameter_struct_name != '':
             name = parameter_struct_name + "." + name
-        if override_parameter_name is not '':
+        if override_parameter_name != '':
             name = override_parameter_name
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:

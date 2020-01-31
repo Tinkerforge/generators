@@ -753,7 +753,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             for i, callback in enumerate(c.callbacks):
                 elements = callback.packet.get_elements(direction='out', high_level=True)
                 regs.append(cb_registration.format(
-                                                predicate='if({}) {{\n'.format(c.predicate) if c.predicate is not 'true' else '',
+                                                predicate='if({}) {{\n'.format(c.predicate) if c.predicate != 'true' else '',
                                                 camel=callback.packet.get_name().camel,
                                                 filter=callback.filter,
                                                 channel_camel=c.id.camel,
@@ -761,7 +761,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                 updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
                                                 i=i,
                                                 comma=', ' if len(elements) > 0 else '',
-                                                end_predicate='}' if c.predicate is not 'true' else ''))
+                                                end_predicate='}' if c.predicate != 'true' else ''))
 
                 packet_name = callback.packet.get_name().camel if not callback.packet.has_high_level() else callback.packet.get_name(skip=-2).camel
                 deregs.append(cb_deregistration.format(camel=callback.packet.get_name().camel))
