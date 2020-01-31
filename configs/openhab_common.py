@@ -62,7 +62,7 @@ def oh_generic_channel_param_groups():
 def oh_generic_trigger_channel_imports():
     return ["org.eclipse.smarthome.core.thing.CommonTriggerEvents"]
 
-def oh_generic_channel_type(id_, item_type, label, update_style, description=None, read_only=None, pattern=None, min_=None, max_=None, is_trigger_channel=False, command_options=None, params=()):
+def oh_generic_channel_type(id_, item_type, label, update_style, description=None, read_only=None, pattern=None, min_=None, max_=None, is_trigger_channel=False, command_options=None, params=(), update_interval_default=1000):
     if update_style is not None:
         period_packet = 'Set {} {}'.format(id_, update_style)
         period_element = 'Period'
@@ -79,7 +79,7 @@ def oh_generic_channel_type(id_, item_type, label, update_style, description=Non
             'unit': 'ms',
             'label': 'Update Interval',
             'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
-            'default': 1000,
+            'default': update_interval_default,
             'groupName': 'update_intervals'
         }] if update_style != None else []) + list(params), # Use tuple as default for params to silence pylint warning "Dangerous default value [] as argument" (as a list could be mutated, changing the default)
         'label': label,
