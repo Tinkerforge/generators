@@ -298,8 +298,8 @@ public class {0} extends Device {{
                 read_parameter = 'ReadCallbackData data'
                 error_parameter = 'ErrorCallbackData data'
             else:
-                read_parameter = 'char[] message, short length'
-                error_parameter = 'short error'
+                read_parameter = 'char[] message, {} length'.format('short' if self.has_java_legacy_types() else 'int')
+                error_parameter = '{} error'.format('short' if self.has_java_legacy_types() else 'int')
 
             listeners += """
 	/**
@@ -568,9 +568,9 @@ public class {0} extends Device {{
                     error_parameters = 'ErrorCallbackData data'
                     error_forward = 'listener.errorCallback(data);'
                 else:
-                    read_parameters = 'char[] message, short length'
+                    read_parameters = 'char[] message, {} length'.format('short' if self.has_java_legacy_types() else 'int')
                     read_forward = 'listener.readCallback(message, length);'
-                    error_parameters = 'short error'
+                    error_parameters = '{} error'.format('short' if self.has_java_legacy_types() else 'int')
                     error_forward = 'listener.errorCallback(error);'
 
                 listeners += """
