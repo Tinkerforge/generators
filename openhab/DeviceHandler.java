@@ -159,6 +159,8 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
 
         String id = thing.getUID().getId();
+        if(device != null)
+            device.cancelManualUpdates();
         device = deviceSupplier.apply(id, ipcon);
 
         configureChannels();
@@ -183,10 +185,12 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         }
         BrickDaemonHandler brickd = (BrickDaemonHandler) (bridge.getHandler());
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
+        if(device != null)
+            device.cancelManualUpdates();
         device = deviceSupplier.apply(id, ipcon);
 
         try {
-            device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
+            device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel, scheduler, this);
         } catch (TinkerforgeException e) {
             brickd.handleTimeout(this);
             return;

@@ -66,6 +66,7 @@ class Channel:
         self.predicate = kwargs.get('predicate', 'true')
         self.label = kwargs.get('label', None)
         self.description = kwargs.get('description', None)
+        self.automatic_update = kwargs.get('automatic_update', True)
 
     def get_builder_call(self):
         template = """new ChannelDefinitionBuilder("{channel_id}", new ChannelTypeUID("{binding}", "{channel_type_id}")){with_calls}.build()"""
@@ -534,6 +535,20 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if ct.is_trigger_channel and "system." in ct.id:
                 raise common.GeneratorError('openhab: Device {} Channel Type {} is marked as trigger channel, but uses a custom type (not system.trigger or similar). This is theoretically supported, but the device handler currently assumes (when sending initial refreshs), that all trigger channels are of system-wide type.'.format(self.get_long_display_name(), ct.id))
 
+        for c in oh.channels:
+            if len(c.setters) == 0 and len(c.callbacks) == 0 and len(c.getters) > 0:
+                c.automatic_update = False
+                if len([p for p in c.type.params if p.label == 'Update Interval']) == 0:
+                    c.type.params.append(Param(**{
+                        'virtual': True,
+                        'name': common.FlavoredName('Update Interval').get(),
+                        'type': 'integer',
+                        'unit': 'ms',
+                        'label': 'Update Interval',
+                        'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
+                        'default': 1000,
+                    }))
+
     def add_packet_info(self, param):
         if param['virtual']:
             return param
@@ -687,6 +702,9 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'java.util.Map',
                       'java.util.function.Function',
                       'java.util.function.BiConsumer',
+                      'java.util.concurrent.ScheduledExecutorService',
+                      'java.util.concurrent.ScheduledFuture',
+                      'java.util.concurrent.TimeUnit',
                       'org.eclipse.smarthome.config.core.Configuration',
                       'org.eclipse.smarthome.config.core.ConfigDescription',
                       'org.eclipse.smarthome.config.core.ConfigDescriptionBuilder',
@@ -699,11 +717,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'org.eclipse.smarthome.core.types.Command',
                       'org.eclipse.smarthome.core.types.CommandDescriptionBuilder',
                       'org.eclipse.smarthome.core.types.CommandOption',
+                      'org.eclipse.smarthome.core.thing.ChannelUID',
                       'org.eclipse.smarthome.core.thing.ThingTypeUID',
+                      'org.eclipse.smarthome.core.thing.binding.BaseThingHandler',
                       'org.eclipse.smarthome.core.thing.type.ChannelDefinitionBuilder',
                       'org.eclipse.smarthome.core.thing.type.ChannelType',
                       'org.eclipse.smarthome.core.thing.type.ChannelTypeBuilder',
                       'org.eclipse.smarthome.core.thing.type.ChannelTypeUID',
+                      'org.eclipse.smarthome.core.types.RefreshType',
                       'org.eclipse.smarthome.core.thing.type.ThingType',
                       'org.eclipse.smarthome.core.thing.type.ThingTypeBuilder',
                       'org.eclipse.smarthome.core.types.StateDescriptionFragmentBuilder',
@@ -737,6 +758,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return elements, type_
 
     def get_openhab_channel_init_code(self):
+        manual_update_template = """if(channelCfg.updateInterval > 0) {{
+    this.manualChannelUpdates.add(scheduler.scheduleWithFixedDelay(() -> handler.handleCommand(new ChannelUID(handler.getThing().getUID(), "{channel_name_camel}"), RefreshType.REFRESH), channelCfg.updateInterval, channelCfg.updateInterval, TimeUnit.MILLISECONDS));
+}}"""
+
         init_code = []
         for c in self.oh.channels:
             channel_cfg = ['{channel_type_name_camel}Config channelCfg = getChannelConfigFn.apply("{channel_name_camel}").as({channel_type_name_camel}Config.class);'
@@ -749,7 +774,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             else:
                 init_code += ['{']
 
-            init_code +=  channel_cfg + c.init_code.split('\n') + ['}']
+            init_code +=  channel_cfg + c.init_code.split('\n')
+            if not c.automatic_update:
+                init_code += [manual_update_template.format(channel_name_camel=c.id.camel)]
+            init_code += ['}']
         return init_code
 
     def get_openhab_callback_impl(self):
@@ -962,7 +990,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
     private final static Logger static_logger = LoggerFactory.getLogger({name_camel}.class);
 
     @Override
-    public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
+    public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException {{
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         {callback_registrations}
         {init_code}

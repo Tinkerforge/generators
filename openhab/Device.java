@@ -10,8 +10,11 @@
 package com.tinkerforge;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -20,6 +23,7 @@ import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.type.ChannelType;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 import org.eclipse.smarthome.core.thing.type.ThingType;
@@ -61,9 +65,15 @@ public abstract class Device extends DeviceBase {
 		ipcon.devices.put(this.uidNumber, this); // FIXME: use weakref here
 	}
 
+    protected List<ScheduledFuture<?>> manualChannelUpdates = new ArrayList<ScheduledFuture<?>>();
+
+    public void cancelManualUpdates() {
+        manualChannelUpdates.forEach(f -> f.cancel(true));
+    }
+
     public abstract Identity getIdentity() throws TinkerforgeException;
 
-    public abstract void initialize(Configuration config, Function<String, Configuration> getChannelConfigFn, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
+    public abstract void initialize(Configuration config, Function<String, Configuration> getChannelConfigFn, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException;
 
     public abstract void dispose(Configuration config) throws TinkerforgeException;
 
