@@ -2,6 +2,7 @@ package com.tinkerforge;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.ZoneId;
@@ -514,9 +515,9 @@ public class Helper {
     };
 
 
-    public static byte[] convertThermalHighContrastImage(int[] pixels, int colorPalette, Logger logger) {
-        BufferedImage image = new BufferedImage(80, 60, BufferedImage.TYPE_INT_ARGB);
-        int[] rgbArray = new int[80 * 60];
+    public static byte[] convertThermalHighContrastImage(int[] pixels, int colorPalette, Logger logger, int scaleFactor) {
+        BufferedImage image = new BufferedImage(80 * scaleFactor, 60 * scaleFactor, BufferedImage.TYPE_INT_ARGB);
+        int[] rgbArray = new int[80 * scaleFactor * 60 * scaleFactor];
         int[] palette;
         if (colorPalette == 0) {
             palette = thermalColorStandard;
@@ -527,12 +528,15 @@ public class Helper {
         }
         for (int y = 0; y < 60; ++y) {
             for (int x = 0; x < 80; ++x) {
-                int stride = y * 80 + x;
-                int pixel = pixels[stride];
-                rgbArray[stride] = palette[pixel];
+                int pixelStride = y * 80 + x;
+                int scaledStride = y * 80 * scaleFactor * scaleFactor + x * scaleFactor;
+                int pixel = pixels[pixelStride];
+                for(int offsetX = 0; offsetX < scaleFactor; ++offsetX)
+                    for(int offsetY = 0; offsetY < scaleFactor; ++offsetY)
+                        rgbArray[scaledStride + offsetX + offsetY * 80 * scaleFactor] = palette[pixel];
             }
         }
-        image.setRGB(0, 0, 80, 60, rgbArray, 0, 80);
+        image.setRGB(0, 0, 80 * scaleFactor, 60 * scaleFactor, rgbArray, 0, 80 * scaleFactor);
 
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
@@ -543,13 +547,13 @@ public class Helper {
         return result.toByteArray();
     }
 
-    public static byte[] convertThermalTemperatureImage(int[] pixels, int colorPalette, Logger logger) {
+    public static byte[] convertThermalTemperatureImage(int[] pixels, int colorPalette, Logger logger, int scaleFactor) {
         int max = Arrays.stream(pixels).max().getAsInt();
         int min = Arrays.stream(pixels).min().getAsInt();
         int interval = max - min;
         int [] relative = Arrays.stream(pixels).map(i -> ((i - min) * 255) / interval).toArray();
 
-        return convertThermalHighContrastImage(relative, colorPalette, logger);
+        return convertThermalHighContrastImage(relative, colorPalette, logger, scaleFactor);
     }
 
     public static int[] parseLEDMatrixValues(String command, int channel, Logger logger) {

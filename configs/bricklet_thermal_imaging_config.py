@@ -611,6 +611,16 @@ com['openhab'] = {
             'label': 'Image Type',
             'description': 'The necessary bandwidth of this Bricklet is too high to use the high contrast and temperature image at the same time. You have to configure the one you want to use, the Bricklet will optimize the internal configuration accordingly.',
         }, {
+            'virtual': 'true',
+
+            'name': 'Scale Factor',
+            'type': 'integer',
+            'min': 1,
+            'default': 1,
+
+            'label': 'Scale Factor',
+            'description': 'Multiplicator for the image width and height. The image has a resolution of 80x60, so for a image of size 160x120 use a scale factor of 4.'
+        }, {
             'packet': 'Set Resolution',
             'element': 'Resolution',
 
@@ -703,7 +713,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get {title_words}',
             'packet_params': [],
-            'transform': 'new RawType(Helper.convertThermalHighContrastImage(value, cfg.colorPalette, logger), "image/png")'}],
+            'transform': 'new RawType(Helper.convertThermalHighContrastImage(value, cfg.colorPalette, logger, cfg.scaleFactor), "image/png")'}],
         'is_trigger_channel': False
     }, {
         'predicate': 'cfg.imageType == 1',
@@ -714,7 +724,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get {title_words}',
             'packet_params': [],
-            'transform': 'new RawType(Helper.convertThermalTemperatureImage(value, cfg.colorPalette, logger), "image/png")'}],
+            'transform': 'new RawType(Helper.convertThermalTemperatureImage(value, cfg.colorPalette, logger, cfg.scaleFactor), "image/png")'}],
         'is_trigger_channel': False
     }, {
         'id': 'Spotmeter Mean Temperature',
