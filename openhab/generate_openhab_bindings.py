@@ -535,19 +535,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if ct.is_trigger_channel and "system." in ct.id:
                 raise common.GeneratorError('openhab: Device {} Channel Type {} is marked as trigger channel, but uses a custom type (not system.trigger or similar). This is theoretically supported, but the device handler currently assumes (when sending initial refreshs), that all trigger channels are of system-wide type.'.format(self.get_long_display_name(), ct.id))
 
-        for c in oh.channels:
-            if len(c.setters) == 0 and len(c.callbacks) == 0 and len(c.getters) > 0:
-                c.automatic_update = False
-                if len([p for p in c.type.params if p.label == 'Update Interval']) == 0:
-                    c.type.params.append(Param(**{
-                        'virtual': True,
-                        'name': common.FlavoredName('Update Interval').get(),
-                        'type': 'integer',
-                        'unit': 'ms',
-                        'label': 'Update Interval',
-                        'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
-                        'default': 1000,
-                    }))
 
     def add_packet_info(self, param):
         if param['virtual']:
@@ -691,6 +678,24 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         self.oh = OpenHAB(**oh)
         self.sanity_check_config(self.oh)
+
+        # Add update interval param to channels updated by the scheduler.
+        # This must happen after the sanity checks, as they would
+        # raise unused parameter errors:
+        # The init code where the params are used is generated later.
+        for c in oh.channels:
+            if len(c.setters) == 0 and len(c.callbacks) == 0 and len(c.getters) > 0:
+                c.automatic_update = False
+                if len([p for p in c.type.params if p.label == 'Update Interval']) == 0:
+                    c.type.params.append(Param(**{
+                        'virtual': True,
+                        'name': common.FlavoredName('Update Interval').get(),
+                        'type': 'integer',
+                        'unit': 'ms',
+                        'label': 'Update Interval',
+                        'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
+                        'default': 1000,
+                    }))
 
     def get_java_import(self):
         java_imports = JavaBindingsDevice.get_java_import(self)
