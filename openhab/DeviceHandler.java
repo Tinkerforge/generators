@@ -87,6 +87,8 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     private Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier;
     private Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier;
+    private @Nullable EnumerateListener enumerateListener;
+
 
     public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier,
             Class<? extends ThingHandlerService> actionsClass,
@@ -155,7 +157,8 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
         BrickDaemonHandler brickd = (BrickDaemonHandler) (getBridge().getHandler());
         if (!wasInitialized) {
-            brickd.addEnumerateListener(this::enumerateListener);
+            enumerateListener = this::enumerateListener;
+            brickd.addEnumerateListener(enumerateListener);
         }
         wasInitialized = true;
 
