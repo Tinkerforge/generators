@@ -683,7 +683,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         # This must happen after the sanity checks, as they would
         # raise unused parameter errors:
         # The init code where the params are used is generated later.
-        for c in oh.channels:
+        for c in self.oh.channels:
             if len(c.setters) == 0 and len(c.callbacks) == 0 and len(c.getters) > 0:
                 c.automatic_update = False
                 if len([p for p in c.type.params if p.label == 'Update Interval']) == 0:
