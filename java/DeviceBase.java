@@ -45,7 +45,7 @@ public abstract class DeviceBase {
 	Object streamMutex = new Object();
 
 	public DeviceBase(String uid, IPConnection ipcon) {
-		long uidNumber = IPConnection.base58Decode(uid);
+		long uidNumber = IPConnectionBase.base58Decode(uid);
 
 		if (uidNumber > 0xFFFFFFFFL) {
 			// convert from 64bit to 32bit
@@ -98,7 +98,7 @@ public abstract class DeviceBase {
 	 * silently ignored, because they cannot be detected.
 	 */
 	public boolean getResponseExpected(byte functionId) {
-		byte flag = responseExpected[IPConnection.unsignedByte(functionId)];
+		byte flag = responseExpected[IPConnectionBase.unsignedByte(functionId)];
 
 		if (flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
 			throw new IllegalArgumentException("Invalid function ID " + functionId);
@@ -121,7 +121,7 @@ public abstract class DeviceBase {
 	 * errors are silently ignored, because they cannot be detected.
 	 */
 	public void setResponseExpected(byte functionId, boolean responseExpected) {
-		int index = IPConnection.unsignedByte(functionId);
+		int index = IPConnectionBase.unsignedByte(functionId);
 		byte flag = this.responseExpected[index];
 
 		if (flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
@@ -171,7 +171,7 @@ public abstract class DeviceBase {
 				bb = ByteBuffer.wrap(response, 31, response.length - 31);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 
-				int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
+				int deviceIdentifier = IPConnectionBase.unsignedShort(bb.getShort());
 
 				if (deviceIdentifier == this.deviceIdentifier) {
 					deviceIdentifierCheck = DEVICE_IDENTIFIER_CHECK_MATCH;
@@ -196,12 +196,12 @@ public abstract class DeviceBase {
 	byte[] sendRequest(byte[] request) throws TinkerforgeException {
 		byte[] response = null;
 
-		if (IPConnection.getResponseExpectedFromData(request)) {
-			byte functionID = IPConnection.getFunctionIDFromData(request);
+		if (IPConnectionBase.getResponseExpectedFromData(request)) {
+			byte functionID = IPConnectionBase.getFunctionIDFromData(request);
 
 			synchronized (requestMutex) {
 				expectedResponseFunctionID = functionID;
-				expectedResponseSequenceNumber = IPConnection.getSequenceNumberFromData(request);
+				expectedResponseSequenceNumber = IPConnectionBase.getSequenceNumberFromData(request);
 
 				try {
 					ipcon.sendRequest(request);
@@ -219,8 +219,8 @@ public abstract class DeviceBase {
 							throw new TimeoutException("Did not receive response in time for function ID " + functionID);
 						}
 
-						if (expectedResponseFunctionID == IPConnection.getFunctionIDFromData(response) &&
-						    expectedResponseSequenceNumber == IPConnection.getSequenceNumberFromData(response)) {
+						if (expectedResponseFunctionID == IPConnectionBase.getFunctionIDFromData(response) &&
+						    expectedResponseSequenceNumber == IPConnectionBase.getSequenceNumberFromData(response)) {
 							// ignore old responses that arrived after the timeout expired, but before setting
 							// expectedResponseFunctionID and expectedResponseSequenceNumber back to 0
 							break;
@@ -232,7 +232,7 @@ public abstract class DeviceBase {
 				}
 			}
 
-			byte errorCode = IPConnection.getErrorCodeFromData(response);
+			byte errorCode = IPConnectionBase.getErrorCodeFromData(response);
 
 			switch (errorCode) {
 				case 0:

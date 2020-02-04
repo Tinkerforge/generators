@@ -328,7 +328,7 @@ public class {0} extends Device {{
 
     def get_java_response_expected(self):
         result = []
-        template = '\t\tresponseExpected[IPConnection.unsignedByte(FUNCTION_{name})] = RESPONSE_EXPECTED_FLAG_{flag};\n'
+        template = '\t\tresponseExpected[IPConnectionBase.unsignedByte(FUNCTION_{name})] = RESPONSE_EXPECTED_FLAG_{flag};\n'
 
         for packet in self.get_packets('function'):
             result.append(template.format(name=packet.get_name().upper,
@@ -353,7 +353,7 @@ public class {0} extends Device {{
 
 {1}"""
         template_stream_out = """
-				IPConnection.DeviceHighLevelCallback highLevelCallback = highLevelCallbacks[-CALLBACK_{name_upper}];
+				IPConnectionBase.DeviceHighLevelCallback highLevelCallback = highLevelCallbacks[-CALLBACK_{name_upper}];
 				{stream_length_type} {stream_name_headless}ChunkLength = Math.min({stream_length} - {stream_name_headless}ChunkOffset, {chunk_cardinality});
 
 				if (highLevelCallback.data == null) {{ // no stream in-progress
@@ -1442,11 +1442,11 @@ class JavaBindingsPacket(java_common.JavaPacket):
             suffix = ''
 
             if element.get_type() == 'uint8':
-                cast = 'IPConnection.unsignedByte'
+                cast = 'IPConnectionBase.unsignedByte'
             elif element.get_type() == 'uint16':
-                cast = 'IPConnection.unsignedShort'
+                cast = 'IPConnectionBase.unsignedShort'
             elif element.get_type() == 'uint32':
-                cast = 'IPConnection.unsignedInt'
+                cast = 'IPConnectionBase.unsignedInt'
             elif element.get_type() == 'bool' and element.get_cardinality() <= 1:
                 suffix = ' != 0'
             elif element.get_type() == 'bool' and element.get_cardinality() > 1:
@@ -1458,7 +1458,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
                 else:
                     cast = '(char)'
             elif element.get_type() == 'string':
-                cast = 'IPConnection.string'
+                cast = 'IPConnectionBase.string'
                 cast_extra = ', {0}'.format(element.get_cardinality())
 
             format_type_ = ''
