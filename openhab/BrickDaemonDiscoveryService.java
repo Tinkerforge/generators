@@ -97,14 +97,14 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
     @Override
     protected void startBackgroundDiscovery() {
         logger.debug(
-                "Start Tinkerforge device background discovery for Brick Daemon %s", this.handler.getThing().getUID());
+                "Start Tinkerforge device background discovery for Brick Daemon {}", this.handler.getThing().getUID());
         if (job == null || job.isCancelled()) {
             job = scheduler.scheduleWithFixedDelay(() -> {
                 try {
-                    logger.debug("Enumerating devices for Brick Daemon %s.", this.handler.getThing().getUID());
+                    logger.debug("Enumerating devices for Brick Daemon {}.", this.handler.getThing().getUID());
                     handler.enumerate();
                 } catch (NotConnectedException e) {
-                    logger.debug("Brick Daemon %s currently not connected.", this.handler.getThing().getUID());
+                    logger.debug("Brick Daemon {} currently not connected.", this.handler.getThing().getUID());
                 }
             }, 2500, 10 * 60 * 1000, TimeUnit.MILLISECONDS);
         }
@@ -123,10 +123,10 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
     @Override
     protected void startScan() {
         try {
-            logger.debug("Enumerating devices for Brick Daemon %s.", this.handler.getThing().getUID());
+            logger.debug("Enumerating devices for Brick Daemon {}.", this.handler.getThing().getUID());
             handler.enumerate();
         } catch (NotConnectedException e) {
-            logger.debug("Brick Daemon %s currently not connected.", this.handler.getThing().getUID());
+            logger.debug("Brick Daemon {} currently not connected.", this.handler.getThing().getUID());
         }
     }
 

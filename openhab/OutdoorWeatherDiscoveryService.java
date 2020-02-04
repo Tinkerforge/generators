@@ -76,7 +76,7 @@ public class OutdoorWeatherDiscoveryService extends AbstractDiscoveryService imp
 
     @Override
     protected void startBackgroundDiscovery() {
-        logger.debug("Start Tinkerforge outdoor weather device background discovery for outdoor weather bricklet %s", handler.getThing().getUID());
+        logger.debug("Start Tinkerforge outdoor weather device background discovery for outdoor weather bricklet {}", handler.getThing().getUID());
         if (job == null || job.isCancelled()) {
             job = scheduler.scheduleWithFixedDelay(this::discover, 2500, 60 * 1000, TimeUnit.MILLISECONDS);
         }
@@ -85,7 +85,7 @@ public class OutdoorWeatherDiscoveryService extends AbstractDiscoveryService imp
     @Override
     protected void stopBackgroundDiscovery() {
         logger.debug(
-                "Stop Tinkerforge outdoor weather device background discovery for outdoor weather bricklet %s", this.handler.getThing().getUID());
+                "Stop Tinkerforge outdoor weather device background discovery for outdoor weather bricklet {}", this.handler.getThing().getUID());
         if (job != null && !job.isCancelled()) {
             job.cancel(true);
             job = null;
