@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -24,6 +26,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.tinkerforge.AlreadyConnectedException;
 import com.tinkerforge.BrickDaemonConfig;
@@ -67,30 +71,32 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
     }
 
-    private List<Boolean> checkReachability(Function<Thing, Boolean> filter) {
-        List<Callable<Boolean>> tasks = new ArrayList<>();
-        for (Thing thing : getThing().getThings()) {
-            if (!filter.apply(thing)) {
-                continue;
-            }
-            DeviceHandler handler = (DeviceHandler) thing.getHandler();
-            Callable<Boolean> task = () -> handler.checkReachablity();
-            tasks.add(task);
+    private class ReachabilityResult {
+        Boolean reachable;
+        DeviceHandler handler;
+        ReachabilityResult(Boolean reachable, DeviceHandler handler) {
+            this.reachable = reachable;
+            this.handler = handler;
         }
+    }
 
-        List<Future<Boolean>> futures = new ArrayList<>();
+    private List<ReachabilityResult> checkReachability(Predicate<? super Thing> filter) {
+        List<DeviceHandler> handlers = getThing().getThings().stream().filter(filter).map(t -> (DeviceHandler) t.getHandler()).collect(Collectors.toList());
+        List<Callable<ReachabilityResult>> tasks = handlers.stream().map(h -> (Callable<ReachabilityResult>)(() -> new ReachabilityResult(h.checkReachablity(), h))).collect(Collectors.toList());
+
+        List<Future<ReachabilityResult>> futures = new ArrayList<>();
         try {
             futures = scheduler.invokeAll(tasks);
         } catch (InterruptedException e) {
-            return Collections.nCopies(tasks.size(), false);
+            return handlers.stream().map(h -> new ReachabilityResult(false, h)).collect(Collectors.toList());
         }
 
-        List<Boolean> result = new ArrayList<>();
-        for (Future<Boolean> future : futures) {
+        List<ReachabilityResult> result = new ArrayList<>();
+        for(int i = 0; i < handlers.size(); ++i){
             try {
-                result.add(future.get());
+                result.add(futures.get(i).get());
             } catch (InterruptedException | ExecutionException e) {
-                result.add(false);
+                result.add(new ReachabilityResult(false, handlers.get(i)));
             }
         }
         return result;
@@ -135,8 +141,8 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         }
     }
 
-    private boolean none(List<Boolean> lst) {
-        return !lst.stream().anyMatch(r -> r);
+    private boolean none(List<ReachabilityResult> lst) {
+        return !lst.stream().anyMatch(r -> r.reachable);
     }
 
     private void heartbeat() {
@@ -144,9 +150,10 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
             return;
 
         int allPacketsLost = 0;
+        List<ReachabilityResult> reachabilityResults = new ArrayList<>();
         while(allPacketsLost < ALL_PACKETS_LOST_THRESHOLD) {
-            List<Boolean> reachable = this.checkReachability(thing -> true);
-
+            List<ReachabilityResult> reachable = this.checkReachability(thing -> true);
+            reachabilityResults.addAll(reachable);
             //Only assume lost connection if there are devices that can have been checked
             if(none(reachable) && reachable.size() > 0) {
                 ++allPacketsLost;
@@ -154,6 +161,14 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
                 break;
             }
         }
+
+        Map<DeviceHandler, List<ReachabilityResult>> map = reachabilityResults.stream().collect(Collectors.groupingBy(r -> r.handler));
+        for(Entry<DeviceHandler, List<ReachabilityResult>> entry : map.entrySet()) {
+            if (none(entry.getValue())) {
+                entry.getKey().reachabilityCheckFailed();
+            }
+        }
+
         if (allPacketsLost >= ALL_PACKETS_LOST_THRESHOLD) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
                         "Connection lost. Trying to reconnect.");

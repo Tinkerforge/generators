@@ -117,10 +117,13 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
                 initializeDevice();
             return true;
         } catch (TinkerforgeException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Device is unreachable.");
             logger.debug("Failed checking reachability of {}: {}", thing.getUID().getId(), e.getMessage());
             return false;
         }
+    }
+
+    public void reachabilityCheckFailed() {
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Device is unreachable.");
     }
 
     private void enumerateListener(String uid, String connectedUid, char position, short[] hardwareVersion,
@@ -219,7 +222,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        if (this.getBridge().getStatus() == ThingStatus.OFFLINE) {
+        if (this.getBridge() == null || this.getBridge().getStatus() == ThingStatus.OFFLINE) {
             return;
         }
 
@@ -242,12 +245,16 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     public void handleRemoval() {
         try {
             if (device != null) {
+                device.cancelManualUpdates();
+                BrickDaemonHandler brickd = (BrickDaemonHandler) (getBridge().getHandler());
+                if (brickd != null)
+                    brickd.removeEnumerateListener(enumerateListener);
                 device.dispose(getConfig());
             }
-            updateStatus(ThingStatus.REMOVED);
+
         } catch (TinkerforgeException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
+        updateStatus(ThingStatus.REMOVED);
     }
 
     private Channel buildChannel(ThingType tt, ChannelDefinition def) {
