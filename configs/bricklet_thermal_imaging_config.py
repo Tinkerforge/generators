@@ -10,7 +10,7 @@ from openhab_common import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 278,
     'name': 'Thermal Imaging',
@@ -582,6 +582,58 @@ von oben links bis unten rechts angeordnet.
 
 Jeder 16-Bit Wert stellt ein Pixel aus dem Temperatur Bild dar und kann als
 solcher direkt dargestellt werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Flux Linear Parameters',
+'elements': [('Scene Emissivity',       'uint16', 1, 'in', {'unit': 'Percent', 'range': (82, 8192), 'default': 8192}),
+             ('Temperature Background', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Kelvin', 'range': (0, 65535), 'default': 29515}),
+             ('Tau Window',             'uint16', 1, 'in', {'unit': 'Percent', 'range': (82, 8192), 'default': 8192}),
+             ('Temperatur Window',      'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Kelvin', 'range': (0, 65535), 'default': 29515}),
+             ('Tau Atmosphere',         'uint16', 1, 'in', {'unit': 'Percent', 'range': (82, 8192), 'default': 8192}),
+             ('Temperature Atmosphere', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Kelvin', 'range': (0, 65535), 'default': 29515}),
+             ('Reflection Window',      'uint16', 1, 'in', {'unit': 'Percent', 'range': (0, 8192), 'default': 0}),
+             ('Temperature Reflection', 'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Kelvin', 'range': (0, 65535), 'default': 29515})],
+'since_firmware': [2, 0, 5],
+'doc': ['af', {
+'en':
+"""
+Sets the flux linear parameters that can be used for radiometry calibration.
+
+See FLIR document 102-PS245-100-01 for more details.
+""",
+'de':
+"""
+Setzt die Flux-Linear-Parmaeter die für eine Radiometrie-Kalibrierung benötigt werden.
+
+Siehe FLIR-Dokument 102-PS245-100-01 für mehr Informationen.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Flux Linear Parameters',
+'elements': [('Scene Emissivity',       'uint16', 1, 'out', {'unit': 'Percent', 'range': (82, 8192), 'default': 8192}),
+             ('Temperature Background', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Kelvin', 'range': (0, 65535), 'default': 29515}),
+             ('Tau Window',             'uint16', 1, 'out', {'unit': 'Percent', 'range': (82, 8192), 'default': 8192}),
+             ('Temperatur Window',      'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Kelvin', 'range': (0, 65535), 'default': 29515}),
+             ('Tau Atmosphere',         'uint16', 1, 'out', {'unit': 'Percent', 'range': (82, 8192), 'default': 8192}),
+             ('Temperature Atmosphere', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Kelvin', 'range': (0, 65535), 'default': 29515}),
+             ('Reflection Window',      'uint16', 1, 'out', {'unit': 'Percent', 'range': (0, 8192), 'default': 0}),
+             ('Temperature Reflection', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Kelvin', 'range': (0, 65535), 'default': 29515})],
+'since_firmware': [2, 0, 5],
+'doc': ['af', {
+'en':
+"""
+Returns the flux linear parameters, as set by :func:`Set Flux Linear Parameters`.
+""",
+'de':
+"""
+Gibt die Flux-Linear-Parameter zurück, wie von :func:`Set Flux Linear Parameter` gesetzt.
 """
 }]
 })
