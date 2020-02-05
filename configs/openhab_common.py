@@ -33,8 +33,8 @@ def oh_generic_old_style_channel(id_, type_, unit, divisor=1.0, has_threshold=Tr
     return {
         'id': id_,
         'type': type_,
-        'init_code':("""this.set{camel}CallbackPeriod(channelCfg.updateInterval);""" +
-                    ("""\nthis.set{camel}CallbackThreshold(\'x\', 0, 0);"""if has_threshold else '')),
+        'init_code': ("""this.set{camel}CallbackPeriod(channelCfg.updateInterval);""" +
+                     ("""\nthis.set{camel}CallbackThreshold(\'x\', 0, 0);"""if has_threshold else '')),
         'dispose_code': """this.set{camel}CallbackPeriod(0);""",
         'getters': [{
             'packet': 'Get {title_words}',
@@ -70,7 +70,7 @@ def oh_generic_channel_type(id_, item_type, label, update_style, description=Non
     return {
         'id': id_,
         'item_type': item_type,
-        'params':([{
+        'params': ([{
             'packet': period_packet,
             'element': period_element,
 

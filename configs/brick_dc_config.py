@@ -120,7 +120,7 @@ neuen Zielwert, wie von :func:`Set Velocity` vorgegeben, beschleunigt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Acceleration',
-'elements': [('Acceleration', 'uint16', 1, 'in', {'scale':(100, 32767), 'unit': 'Percent Per Second', 'default': 10000})],
+'elements': [('Acceleration', 'uint16', 1, 'in', {'scale': (100, 32767), 'unit': 'Percent Per Second', 'default': 10000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -156,7 +156,7 @@ Zielgeschwindigkeit. Es Wird keine Beschleunigungsrampe gefahren.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('Acceleration', 'uint16', 1, 'out', {'scale':(100, 32767), 'unit': 'Percent Per Second', 'default': 10000})],
+'elements': [('Acceleration', 'uint16', 1, 'out', {'scale': (100, 32767), 'unit': 'Percent Per Second', 'default': 10000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
