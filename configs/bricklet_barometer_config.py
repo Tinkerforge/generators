@@ -541,7 +541,7 @@ com['packets'].append({
 'name': 'Set Averaging',
 'elements': [('Moving Average Pressure', 'uint8', 1, 'in', {'range': (0, 25), 'default': 25}),
              ('Average Pressure', 'uint8', 1, 'in', {'range': (0, 10), 'default': 10}),
-             ('Average Temperature', 'uint8', 1, 'in', {'range': (0, 255), 'default': 10})],
+             ('Average Temperature', 'uint8', 1, 'in', {'default': 10})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -584,7 +584,7 @@ com['packets'].append({
 'name': 'Get Averaging',
 'elements': [('Moving Average Pressure', 'uint8', 1, 'out', {'range': (0, 25), 'default': 25}),
              ('Average Pressure', 'uint8', 1, 'out', {'range': (0, 10), 'default': 10}),
-             ('Average Temperature', 'uint8', 1, 'out', {'range': (0, 255), 'default': 10})],
+             ('Average Temperature', 'uint8', 1, 'out', {'default': 10})],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

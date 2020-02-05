@@ -150,7 +150,7 @@ und ist der Versatz zum 01.01.2000 00:00:00,0000.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Offset',
-'elements': [('Offset', 'int8', 1, 'in', {'scale': (217, 100), 'unit': 'Parts Per Million', 'range':(-128, 127)})],
+'elements': [('Offset', 'int8', 1, 'in', {'scale': (217, 100), 'unit': 'Parts Per Million'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -218,7 +218,7 @@ gesetzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Offset',
-'elements': [('Offset', 'int8', 1, 'out', {'scale': (217, 100), 'unit': 'Parts Per Million', 'range':(-128, 127)})],
+'elements': [('Offset', 'int8', 1, 'out', {'scale': (217, 100), 'unit': 'Parts Per Million'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

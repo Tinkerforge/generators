@@ -2065,6 +2065,9 @@ class Element(object):
                     if i < len(range_) - 1:
                         assert subrange[1] < range_[i + 1][0], raw_data
 
+                    if self.get_type() not in ['float', 'string']:
+                        assert subrange != self.get_type_range(), raw_data
+
                     if self.get_type() == 'char':
                         assert isinstance(subrange[0], str), raw_data
                         assert isinstance(subrange[1], str), raw_data

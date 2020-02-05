@@ -238,8 +238,8 @@ Gibt die Konfiguration zurück, wie von :func:`Set Configuration` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Moving Average',
-'elements': [('Distance Average Length', 'uint8', 1, 'in', {'range': (0, 255), 'default': 10}),
-             ('Velocity Average Length', 'uint8', 1, 'in', {'range': (0, 255), 'default': 10})],
+'elements': [('Distance Average Length', 'uint8', 1, 'in', {'default': 10}),
+             ('Velocity Average Length', 'uint8', 1, 'in', {'default': 10})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -264,8 +264,8 @@ die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Moving Average',
-'elements': [('Distance Average Length', 'uint8', 1, 'out', {'range': (0, 255), 'default': 10}),
-             ('Velocity Average Length', 'uint8', 1, 'out', {'range': (0, 255), 'default': 10})],
+'elements': [('Distance Average Length', 'uint8', 1, 'out', {'default': 10}),
+             ('Velocity Average Length', 'uint8', 1, 'out', {'default': 10})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
