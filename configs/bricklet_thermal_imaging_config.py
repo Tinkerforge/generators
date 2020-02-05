@@ -633,7 +633,7 @@ Returns the flux linear parameters, as set by :func:`Set Flux Linear Parameters`
 """,
 'de':
 """
-Gibt die Flux-Linear-Parameter zurück, wie von :func:`Set Flux Linear Parameter` gesetzt.
+Gibt die Flux-Linear-Parameter zurück, wie von :func:`Set Flux Linear Parameters` gesetzt.
 """
 }]
 })
