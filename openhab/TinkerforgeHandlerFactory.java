@@ -21,7 +21,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
-import com.tinkerforge.DeviceFactory;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 
@@ -72,9 +73,9 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
         return TinkerforgeBindingConstants.SUPPORTED_DEVICES.contains(thingTypeUID);
     }
 
-    private @Nullable Device createDevice(String thingName, String uid, IPConnection ipcon) {
+    private @Nullable DeviceWrapper createDevice(String thingName, String uid, IPConnection ipcon) {
         try {
-            return (Device)DeviceFactory.createDevice(thingName, uid, ipcon);
+            return (DeviceWrapper)DeviceWrapperFactory.createDevice(thingName, uid, ipcon);
         }
         catch(Exception e) {
             logger.warn("Could not create device {} with uid {}: {}.", thingName, uid, e);
@@ -117,7 +118,7 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
         String thingName = thingTypeUID.getId();
         return new DeviceHandler(thing,
                                 (String uid, IPConnection ipcon) -> createDevice(thingName, uid, ipcon),
-                                DeviceFactory.getDeviceInfo(thingName).deviceActionsClass,
+                                DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass,
                                 () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
                                 () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)));
     }

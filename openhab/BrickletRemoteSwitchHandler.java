@@ -15,7 +15,12 @@ import java.util.function.Supplier;
 import com.tinkerforge.BrickletOutdoorWeather;
 import com.tinkerforge.BrickletRemoteSwitch;
 import com.tinkerforge.BrickletRemoteSwitchV2;
-import com.tinkerforge.DefaultActions;
+
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletRemoteSwitchV2Wrapper;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletRemoteSwitchWrapper;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DefaultActions;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
+
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
@@ -54,11 +59,11 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         void removeSwitchingDoneListener();
     }
 
-    class BrickletRemoteSwitchWrapper implements RemoteSwitch {
-        BrickletRemoteSwitch rs;
+    class BrickletRemoteSwitchWrapperWrapper implements RemoteSwitch {
+        BrickletRemoteSwitchWrapper rs;
         BrickletRemoteSwitch.SwitchingDoneListener listener;
 
-        public BrickletRemoteSwitchWrapper(BrickletRemoteSwitch rs) {
+        public BrickletRemoteSwitchWrapperWrapper(BrickletRemoteSwitchWrapper rs) {
             this.rs = rs;
         }
         @Override
@@ -103,11 +108,11 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         }
     }
 
-    class BrickletRemoteSwitchV2Wrapper implements RemoteSwitch {
-        BrickletRemoteSwitchV2 rs;
+    class BrickletRemoteSwitchV2WrapperWrapper implements RemoteSwitch {
+        BrickletRemoteSwitchV2Wrapper rs;
         BrickletRemoteSwitchV2.SwitchingDoneListener listener;
 
-        public BrickletRemoteSwitchV2Wrapper(BrickletRemoteSwitchV2 rs) {
+        public BrickletRemoteSwitchV2WrapperWrapper(BrickletRemoteSwitchV2Wrapper rs) {
             this.rs = rs;
         }
         @Override
@@ -170,7 +175,7 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
     private AtomicBoolean isSwitching = new AtomicBoolean(true);
     private ScheduledFuture<?> workFuture = null;
 
-    public BrickletRemoteSwitchHandler(Bridge bridge, BiFunction<String, IPConnection, Device> deviceSupplier,
+    public BrickletRemoteSwitchHandler(Bridge bridge, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
             Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
             Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
         super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier,
@@ -199,15 +204,15 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         if(remoteSwitch != null)
             remoteSwitch.removeSwitchingDoneListener();
 
-        if (this.getDevice() instanceof BrickletRemoteSwitch) {
-            remoteSwitch = new BrickletRemoteSwitchWrapper((BrickletRemoteSwitch) this.getDevice());
-        } else if (this.getDevice() instanceof BrickletRemoteSwitchV2) {
-            remoteSwitch = new BrickletRemoteSwitchV2Wrapper((BrickletRemoteSwitchV2) this.getDevice());
+        if (this.getDevice() instanceof BrickletRemoteSwitchWrapper) {
+            remoteSwitch = new BrickletRemoteSwitchWrapperWrapper((BrickletRemoteSwitchWrapper) this.getDevice());
+        } else if (this.getDevice() instanceof BrickletRemoteSwitchV2Wrapper) {
+            remoteSwitch = new BrickletRemoteSwitchV2WrapperWrapper((BrickletRemoteSwitchV2Wrapper) this.getDevice());
         }
         remoteSwitch.addSwitchingDoneListener(isSwitching);
 
         try {
-            isSwitching.set(remoteSwitch.getSwitchingState() == BrickletRemoteSwitch.SWITCHING_STATE_BUSY);
+            isSwitching.set(remoteSwitch.getSwitchingState() == BrickletRemoteSwitchWrapper.SWITCHING_STATE_BUSY);
             workFuture = scheduler.scheduleWithFixedDelay(this::work, 500, 500, TimeUnit.MILLISECONDS);
         } catch (TinkerforgeException e) {
             handleTimeout();

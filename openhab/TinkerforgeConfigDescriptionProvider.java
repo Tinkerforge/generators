@@ -9,8 +9,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.tinkerforge.DeviceFactory;
-import com.tinkerforge.DeviceInfo;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceInfo;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.config.core.ConfigDescription;
@@ -48,7 +48,7 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
 
         try {
             thingTypeUID = TinkerforgeBindingConstants.SUPPORTED_CONFIG_DESCRIPTIONS.get(uri);
-            info = DeviceFactory.getDeviceInfo(thingTypeUID.getId());
+            info = DeviceWrapperFactory.getDeviceInfo(thingTypeUID.getId());
         }
         catch (Exception e) {
             logger.debug("Could not find device info for configDescriptionURI {}: {}.", uri, e.getMessage());

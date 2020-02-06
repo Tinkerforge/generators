@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,13 +24,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.tinkerforge.AlreadyConnectedException;
-import com.tinkerforge.BrickDaemonConfig;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickDaemonConfig;
 import com.tinkerforge.IPConnection;
+import com.tinkerforge.IPConnection.DisconnectedListener;
 import com.tinkerforge.IPConnection.EnumerateListener;
 import com.tinkerforge.NetworkException;
 import com.tinkerforge.NotConnectedException;
@@ -46,6 +45,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     @Nullable
     private ScheduledFuture<?> connectFuture;
     private ScheduledFuture<?> heartbeatFuture;
+    private DisconnectedListener disconnectedListener;
 
     private final Logger logger = LoggerFactory.getLogger(BrickDaemonHandler.class);
     private final int FIRST_RECONNECT_INTERVAL_SECS = 10;
@@ -177,7 +177,8 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     }
 
     private void connect() {
-        ipcon.clearDisconnectedListeners();
+        if(disconnectedListener != null)
+            ipcon.removeDisconnectedListener(disconnectedListener);
 
         BrickDaemonConfig cfg = getConfigAs(BrickDaemonConfig.class);
 
@@ -207,11 +208,13 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
             }
         }
 
-        ipcon.addDisconnectedListener(reason -> {
+        disconnectedListener = reason -> {
             updateStatus(ThingStatus.OFFLINE);
             this.stopDiscoveryService();
             attemptReconnect(FIRST_RECONNECT_INTERVAL_SECS);
-        });
+        };
+
+        ipcon.addDisconnectedListener(disconnectedListener);
 
         this.startDiscoveryService();
 
@@ -267,7 +270,8 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
                 connectFuture.cancel(false);
             if (heartbeatFuture != null)
                 heartbeatFuture.cancel(false);
-            ipcon.clearDisconnectedListeners();
+            if (disconnectedListener != null)
+                ipcon.removeDisconnectedListener(disconnectedListener);
             this.stopDiscoveryService();
             ipcon.disconnect();
         } catch (NotConnectedException e) {

@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tinkerforge.IPConnection.EnumerateListener;
-import com.tinkerforge.DeviceFactory;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.IPConnectionBase;
 import com.tinkerforge.NotConnectedException;
@@ -49,10 +49,10 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
                 try {
                     opt = TinkerforgeBindingConstants.SUPPORTED_DEVICES
                                                      .stream()
-                                                     .filter(ttuid -> ttuid.getId().equals(DeviceFactory.getDeviceInfo(deviceIdentifier).deviceThingTypeName))
+                                                     .filter(ttuid -> ttuid.getId().equals(DeviceWrapperFactory.getDeviceInfo(deviceIdentifier).deviceThingTypeName))
                                                      .findFirst();
                 }
-                catch (IllegalArgumentException e){ //DeviceFactory throws if the deviceIdentifier is unknown.
+                catch (IllegalArgumentException e){ //DeviceWrapperFactory throws if the deviceIdentifier is unknown.
                     logger.debug("Discovered unknown device {} with UID {} connected to {} at port {}.", deviceIdentifier, uid, connectedUid, position);
                     return;
                 }

@@ -20,9 +20,7 @@ import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
 import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingRegistry;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingStatusInfo;
@@ -39,18 +37,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
-import com.tinkerforge.BrickletOutdoorWeather;
-import com.tinkerforge.BrickletOutdoorWeatherStation;
-import com.tinkerforge.Device;
-import com.tinkerforge.IPConnection;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletOutdoorWeatherStation;
 import com.tinkerforge.TinkerforgeException;
-import com.tinkerforge.Device.SetterRefresh;
-import com.tinkerforge.IPConnection.EnumerateListener;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
 
 /**
  * The {@link BrickletOutdoorWeatherStationHandler} is responsible for handling
@@ -102,7 +93,7 @@ public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
         if(device != null)
             outdoorWeatherHandler.getDevice().removeStationDataListener(device.listener);
         device = new BrickletOutdoorWeatherStation(outdoorWeatherHandler.getDevice());
-        device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
+        device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel, scheduler, this);
 
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
 

@@ -1,4 +1,4 @@
-package com.tinkerforge;
+package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -406,7 +406,7 @@ public class Helper {
     }
 
     public static String getDeviceName(int deviceID) {
-        return DeviceFactory.getDeviceInfo(deviceID).deviceDisplayName;
+        return DeviceWrapperFactory.getDeviceInfo(deviceID).deviceDisplayName;
     }
 
     private static final int[] thermalColorStandard = new int[] {

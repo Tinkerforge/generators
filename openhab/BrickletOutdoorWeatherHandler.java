@@ -3,15 +3,14 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.tinkerforge.BrickletOutdoorWeather;
-import com.tinkerforge.DefaultActions;
-import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletOutdoorWeatherWrapper;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DefaultActions;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -26,14 +25,14 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
 
     public BrickletOutdoorWeatherHandler(
         Bridge bridge,
-        BiFunction<String, IPConnection, Device> deviceSupplier,
+        BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
         Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
         Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
         super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier, configDescriptionRegistrySupplier);
     }
 
-    public @Nullable BrickletOutdoorWeather getDevice() {
-        return (BrickletOutdoorWeather)super.getDevice();
+    public @Nullable BrickletOutdoorWeatherWrapper getDevice() {
+        return (BrickletOutdoorWeatherWrapper)super.getDevice();
     }
 
     public void handleTimeout() {

@@ -697,13 +697,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                         'default': 1000,
                     }))
 
-    def get_java_import(self):
-        java_imports = JavaBindingsDevice.get_java_import(self)
+    def get_openhab_imports(self):
         oh_imports = ['java.net.URI',
                       'java.math.BigDecimal',
                       'java.util.ArrayList',
+                      'java.util.Arrays',
                       'java.util.Collections',
                       'java.util.HashMap',
+                      'java.util.List',
                       'java.util.Map',
                       'java.util.function.Function',
                       'java.util.function.BiConsumer',
@@ -737,20 +738,78 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'org.slf4j.Logger',
                       'org.slf4j.LoggerFactory'] + self.oh.imports
 
-        java_imports += '\n'.join('import {};'.format(i) for i in oh_imports) + '\n'
+        return '\n'.join('import {};'.format(i) for i in oh_imports) + '\n'
 
-        return java_imports
+    def get_openhab_device_wrapper_functions(self):
+        func_template = """public {device_class}{return_type} {name}({params_signature}) throws TinkerforgeException {{
+    {return_}this.dev.{name}({params});
+}}"""
 
-    def get_java_class(self):
-        java_class = JavaBindingsDevice.get_java_class(self)
+        cb_template = """public void add{0}Listener({1}.{0}Listener l) {{
+    this.dev.add{0}Listener(l);
+}}
 
-        actions = 'Default' if len(self.oh.actions) == 0 else self.get_java_class_name()
-        java_class += '    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "{}", DEVICE_IDENTIFIER, {}.class, {}Actions.class, "{}");\n\n'\
-                        .format(self.get_category().lower_no_space + self.get_name().lower_no_space,
-                                self.get_java_class_name(),
-                                actions,
-                                self.oh.required_firmware_version)
-        return java_class
+public void remove{0}Listener({1}.{0}Listener l) {{
+    this.dev.remove{0}Listener(l);
+}}"""
+        funcs = []
+        for packet in self.get_packets('function'):
+            ret_count = len(packet.get_elements(direction='out', high_level=True))
+            ret_type = packet.get_java_return_type(high_level=True)
+            funcs.append(func_template.format(device_class=self.get_java_class_name()+'.' if ret_count > 1 else '',
+                                              return_type=ret_type,
+                                              name=packet.get_name().headless if not packet.has_high_level() else packet.get_name(skip=-2).headless,
+                                              params_signature=packet.get_java_parameters(high_level=True),
+                                              params=packet.get_java_parameters(high_level=True, context='call'),
+                                              return_='return ' if ret_count > 0 else ''))
+
+        for packet in self.get_packets('callback'):
+            funcs.append(cb_template.format(packet.get_name().camel if not packet.has_high_level() else packet.get_name(skip=-2).camel,
+                                            self.get_java_class_name()))
+
+        return '\n\n'.join(funcs)
+
+    def get_openhab_device_wrapper(self):
+        template = """{header}
+package org.eclipse.smarthome.binding.tinkerforge.internal.device;
+
+{imports}
+import com.tinkerforge.{device_camel};
+import com.tinkerforge.IPConnection;
+import com.tinkerforge.TinkerforgeException;
+
+public class {device_camel}Wrapper extends DeviceWrapper {{
+    {device_camel} dev;
+
+    {device_info}
+
+    public {device_camel}Wrapper(String uid, IPConnection ipcon) {{
+        super();
+        this.dev = new {device_camel}(uid, ipcon);
+    }}
+
+    {wrapper_consts}
+
+    {wrapper_funcs}
+
+    {device_impl}
+}}"""
+
+        dev_info_template = 'public final static DeviceInfo DEVICE_INFO = new DeviceInfo({device_camel}.DEVICE_DISPLAY_NAME, "{device_lower}", {device_camel}.DEVICE_IDENTIFIER, {device_camel}Wrapper.class, {actions}Actions.class, "{version}", {isCoMCU});'
+
+        dev_info = dev_info_template.format(device_lower=self.get_category().lower_no_space + self.get_name().lower_no_space,
+                                            device_camel=self.get_java_class_name(),
+                                            actions='Default' if len(self.oh.actions) == 0 else self.get_java_class_name(),
+                                            version=self.oh.required_firmware_version,
+                                            isCoMCU='true' if self.has_comcu() else 'false')
+
+        return template.format(header=self.get_generator().get_header_comment('asterisk'),
+                               imports=self.get_openhab_imports(),
+                               device_camel=self.get_category().camel + self.get_name().camel,
+                               device_info=dev_info,
+                               wrapper_consts=self.get_java_constants(),
+                               wrapper_funcs=self.get_openhab_device_wrapper_functions(),
+                               device_impl=self.get_openhab_device_impl())
 
     def get_filtered_elements_and_type(self, packet, elements, out_of_class=False):
         if len(elements) > 1:
@@ -789,14 +848,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         transformation_template = """    private {state_or_string} transform{camel}Callback{i}({callback_args}{device_camel}Config cfg) {{
         return {transform};
     }}"""
-        # To init
-        cb_registration = '{predicate}this.add{camel}Listener(({args}) -> {{if({filter}) {{{updateFn}.accept("{channel_camel}", transform{channel_camel}Callback{i}({args}{comma}cfg));}}}});{end_predicate}'
-        # To dispose
-        cb_deregistration = 'this.listener{camel}.clear();'
+        cb_registration = '{predicate}this.add{camel}Listener(this.reg(({args}) -> {{if({filter}) {{{updateFn}.accept("{channel_camel}", transform{channel_camel}Callback{i}({args}{comma}cfg));}}}}, this.dev::remove{camel}Listener));{end_predicate}'
 
         regs = []
 
-        deregs = []
         dispose_code = []
         lambda_transforms = []
         for c in self.oh.channels:
@@ -817,7 +872,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                 end_predicate='}' if c.predicate != 'true' else ''))
 
                 packet_name = callback.packet.get_name().camel if not callback.packet.has_high_level() else callback.packet.get_name(skip=-2).camel
-                deregs.append(cb_deregistration.format(camel=callback.packet.get_name().camel))
                 dispose_code += c.dispose_code.split('\n')
                 lambda_transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
                                                                 camel=c.id.camel,
@@ -826,7 +880,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                                                                 i=i,
                                                                 device_camel=self.get_category().camel + self.get_name().camel))
 
-        return (regs, deregs, dispose_code, lambda_transforms)
+        return (regs,  dispose_code, lambda_transforms)
 
     def get_openhab_getter_impl(self):
         func_template = """    @Override
@@ -877,7 +931,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             for i, getter in enumerate(c.getters):
                 packet_name = getter.packet.get_name().headless if not getter.packet.has_high_level() else getter.packet.get_name(skip=-2).headless
                 elements = getter.packet.get_elements(direction='out', high_level=True)
-                _, type_ = self.get_filtered_elements_and_type(getter.packet, elements)
+                _, type_ = self.get_filtered_elements_and_type(getter.packet, elements, out_of_class=True)
 
                 channel_getters.append(getter_template.format(updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
                                                               camel=c.id.camel,
@@ -991,8 +1045,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def get_openhab_device_impl(self):
         template = """
-    private final Logger logger = LoggerFactory.getLogger({name_camel}.class);
-    private final static Logger static_logger = LoggerFactory.getLogger({name_camel}.class);
+    private final Logger logger = LoggerFactory.getLogger({name_camel}Wrapper.class);
+    private final static Logger static_logger = LoggerFactory.getLogger({name_camel}Wrapper.class);
 
     @Override
     public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException {{
@@ -1003,8 +1057,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     @Override
     public void dispose(org.eclipse.smarthome.config.core.Configuration config) throws TinkerforgeException {{
+        super.dispose(config);
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
-        {callback_deregistrations}
         {dispose_code}
     }}
 
@@ -1031,7 +1085,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         init_code = self.oh.init_code.split('\n') + self.get_openhab_channel_init_code()
         dispose_code = self.oh.dispose_code.split('\n')
-        callback_regs, callback_deregs, callback_dispose_code, lambda_transforms = self.get_openhab_callback_impl()
+        callback_regs, callback_dispose_code, lambda_transforms = self.get_openhab_callback_impl()
         refresh_value, getter_transforms = self.get_openhab_getter_impl()
         handle_command = self.get_openhab_setter_impl()
         channel_enablers = self.get_openhab_channel_enablers()
@@ -1039,7 +1093,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return template.format(name_camel=self.get_category().camel + self.get_name().camel,
                                init_code='\n\t\t'.join(init_code),
                                callback_registrations='\n\t\t'.join(callback_regs),
-                               callback_deregistrations='\n\t\t'.join(callback_deregs),
                                dispose_code='\n\t\t'.join(callback_dispose_code + dispose_code),
                                channel_enablers='\n\t\t'.join(channel_enablers),
                                get_channel_type=self.get_openhab_get_channel_type_impl(),
@@ -1132,7 +1185,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return template.format(cases='\n            '.join(cases))
 
     def get_openhab_actions_class(self):
-        template = """package com.tinkerforge;
+        template = """package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -1146,6 +1199,9 @@ import org.openhab.core.automation.annotation.RuleAction;
 
 import java.util.Map;
 import java.util.HashMap;
+
+import com.tinkerforge.TinkerforgeException;
+import com.tinkerforge.{device_camel};
 
 @ThingActionsScope(name = "tinkerforge")
 @NonNullByDefault
@@ -1165,7 +1221,7 @@ public class {device_camel}Actions implements ThingActions {{
         input_action_template = """    @RuleAction(label = "{label}")
     public void {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
-        (({device_camel})this.handler.getDevice()).{packet_headless}({packet_params});
+        (({device_camel}Wrapper)this.handler.getDevice()).{packet_headless}({packet_params});
     }}
 
     public static void {device_headless}{id_camel}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
@@ -1181,7 +1237,7 @@ public class {device_camel}Actions implements ThingActions {{
            Map<String, Object> {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
         Map<String, Object> result = new HashMap<>();
-        {result_type} value = (({device_camel})this.handler.getDevice()).{packet_headless}({packet_params});
+        {result_type} value = (({device_camel}Wrapper)this.handler.getDevice()).{packet_headless}({packet_params});
         {transforms}
         return result;
     }}
@@ -1254,14 +1310,8 @@ public class {device_camel}Actions implements ThingActions {{
         return template.format(device_camel=self.get_category().camel + self.get_name().camel,
                                actions='\n\n'.join(actions))
 
-    def get_java_source(self, close_device_class=False):
-        source =  JavaBindingsDevice.get_java_source(self, close_device_class=False)
-        source += self.get_openhab_device_impl()
-        source += '}\n'
-        return source
-
     def get_openhab_config_classes(self):
-        template = """package com.tinkerforge;{imports}
+        template = """package org.eclipse.smarthome.binding.tinkerforge.internal.device;{imports}
 
 public class {name_camel} {{
     {parameters}
@@ -1389,7 +1439,7 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
         return 'null'
 
     def get_doc_formatted_param(self, element):
-        return element.get_name().camel
+        return element.get_name().headless
 
     def get_device_class(self):
         return OpenHABBindingsDevice
@@ -1408,6 +1458,9 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
 
         with open(os.path.join(self.get_bindings_dir(), class_name + '.java'), 'w') as f:
             f.write(device.get_java_source())
+
+        with open(os.path.join(self.get_bindings_dir(), class_name + 'Wrapper.java'), 'w') as f:
+            f.write(device.get_openhab_device_wrapper())
 
         config_classes = device.get_openhab_config_classes()
         for config_class_name, config_class in config_classes:
@@ -1445,10 +1498,10 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
                                         '{config_description_decls}': '\n\t'.join(config_desc_decls),
                                         '{config_description_assigns}': '\n\t\t'.join('SUPPORTED_CONFIG_DESCRIPTIONS.put({}, {});'.format(ctype, ttype) for ctypes, ttype in zip(config_descs, thing_types) for ctype in ctypes)
                                     })
-        common.specialize_template(os.path.join(self.get_root_dir(), 'DeviceFactory.java.template'),
-                                    os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'),
+        common.specialize_template(os.path.join(self.get_root_dir(), 'DeviceWrapperFactory.java.template'),
+                                    os.path.join(self.get_bindings_dir(), 'DeviceWrapperFactory.java'),
                                     {
-                                        '{devices}': ',\n\t\t\t'.join(d.get_java_class_name() + '.DEVICE_INFO' for d in self.released_devices)
+                                        '{devices}': ',\n\t\t\t'.join(d.get_java_class_name() + 'Wrapper.DEVICE_INFO' for d in self.released_devices)
                                     })
 
         docs = [(d.get_name().under + '_' + d.get_category().under, d.get_openhab_docs()) for d in self.released_devices if d.get_openhab_docs() is not None]

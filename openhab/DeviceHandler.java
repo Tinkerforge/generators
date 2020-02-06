@@ -63,7 +63,9 @@ import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
 import com.tinkerforge.Device.Identity;
-import com.tinkerforge.Device.SetterRefresh;
+
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
 
 /**
@@ -79,9 +81,9 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     private boolean wasInitialized = false;
 
     @Nullable
-    private Device device;
+    private DeviceWrapper device;
 
-    private final BiFunction<String, IPConnection, Device> deviceSupplier;
+    private final BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier;
 
     private Class<? extends ThingHandlerService> actionsClass;
 
@@ -90,7 +92,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     private @Nullable EnumerateListener enumerateListener;
 
 
-    public DeviceHandler(Thing thing, BiFunction<String, IPConnection, Device> deviceSupplier,
+    public DeviceHandler(Thing thing, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
             Class<? extends ThingHandlerService> actionsClass,
             Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
             Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
@@ -102,7 +104,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         this.configDescriptionRegistrySupplier = configDescriptionRegistrySupplier;
     }
 
-    public @Nullable Device getDevice() {
+    public @Nullable DeviceWrapper getDevice() {
         return device;
     }
 

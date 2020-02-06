@@ -45,11 +45,11 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import com.tinkerforge.BrickletOutdoorWeather;
-import com.tinkerforge.RemoteSocketTypeC;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeC;
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
-import com.tinkerforge.Device.SetterRefresh;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
 
 /**
@@ -100,7 +100,7 @@ public class RemoteSocketTypeCHandler extends BaseThingHandler {
         BrickletRemoteSwitchHandler handler = ((BrickletRemoteSwitchHandler) bridge.getHandler());
 
         device = new RemoteSocketTypeC(handler);
-        device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel);
+        //device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel, scheduler, this);
 
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
 

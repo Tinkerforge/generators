@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletOutdoorWeatherWrapper;
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
@@ -19,7 +20,7 @@ import com.tinkerforge.BrickletOutdoorWeather;
 import com.tinkerforge.TinkerforgeException;
 
 public class OutdoorWeatherDiscoveryService extends AbstractDiscoveryService implements TinkerforgeDiscoveryService{
-    BrickletOutdoorWeather device;
+    BrickletOutdoorWeatherWrapper device;
     BrickletOutdoorWeatherHandler handler;
     EnumerateListener listener;
     ScheduledFuture<?> job = null;

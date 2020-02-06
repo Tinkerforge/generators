@@ -37,6 +37,7 @@ class OpenHABZipGenerator(common.ZipGenerator):
         self.tmp_dir                          = self.get_tmp_dir()
 
         self.tmp_bindings_dir = os.path.join(self.tmp_dir, 'src', 'main', 'java', 'com', 'tinkerforge')
+        self.tmp_oh_dir = os.path.join(self.tmp_dir, 'src', 'main', 'java', 'org', 'eclipse', 'smarthome', 'binding', 'tinkerforge', 'internal', 'device')
         self.tmp_xml_dir = os.path.join(self.tmp_dir, 'src', 'main', 'resources', 'ESH-INF', 'thing')
 
         #TODO: use os.path.join
@@ -77,11 +78,16 @@ class OpenHABZipGenerator(common.ZipGenerator):
             # Reuse from java generator
             '../java/AlreadyConnectedException.java': './src/main/java/com/tinkerforge',
             '../java/CryptoException.java':           './src/main/java/com/tinkerforge',
+            '../java/BrickDaemon.java':               './src/main/java/com/tinkerforge',
+            '../java/Device.java':                    './src/main/java/com/tinkerforge',
+            '../java/Device.java':                    './src/main/java/com/tinkerforge',
             '../java/DeviceBase.java':                './src/main/java/com/tinkerforge',
+            '../java/DeviceFactory.java':             './src/main/java/com/tinkerforge',
             '../java/DeviceListener.java':            './src/main/java/com/tinkerforge',
             '../java/DeviceProvider.java':            './src/main/java/com/tinkerforge',
             '../java/InvalidParameterException.java': './src/main/java/com/tinkerforge',
             '../java/IPConnectionBase.java':          './src/main/java/com/tinkerforge',
+            '../java/IPConnection.java':              './src/main/java/com/tinkerforge',
             '../java/NetworkException.java':          './src/main/java/com/tinkerforge',
             '../java/NotConnectedException.java':     './src/main/java/com/tinkerforge',
             '../java/NotSupportedException.java':     './src/main/java/com/tinkerforge',
@@ -92,31 +98,30 @@ class OpenHABZipGenerator(common.ZipGenerator):
             '../java/UnknownErrorCodeException.java': './src/main/java/com/tinkerforge',
             '../java/WrongDeviceTypeException.java':  './src/main/java/com/tinkerforge',
 
-            'BrickDaemon.java':               './src/main/java/com/tinkerforge',
-            'BrickDaemonConfig.java':         './src/main/java/com/tinkerforge',
-            'DefaultActions.java':             './src/main/java/com/tinkerforge',
-            'Device.java':                    './src/main/java/com/tinkerforge',
-            'DeviceInfo.java':                './src/main/java/com/tinkerforge',
-            'Helper.java':                    './src/main/java/com/tinkerforge',
-            'IPConnection.java':              './src/main/java/com/tinkerforge',
+            'BrickDaemonWrapper.java':        './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'BrickDaemonConfig.java':         './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'DefaultActions.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'DeviceWrapper.java':             './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'DeviceInfo.java':                './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'Helper.java':                    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
 
-            'BrickletOutdoorWeatherSensor.java':'./src/main/java/com/tinkerforge',
-            'BrickletOutdoorWeatherSensorConfig.java':'./src/main/java/com/tinkerforge',
-            'BrickletOutdoorWeatherStation.java':'./src/main/java/com/tinkerforge',
-            'BrickletOutdoorWeatherStationConfig.java':'./src/main/java/com/tinkerforge',
+            'BrickletOutdoorWeatherSensor.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'BrickletOutdoorWeatherSensorConfig.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'BrickletOutdoorWeatherStation.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'BrickletOutdoorWeatherStationConfig.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
 
-            'RemoteSocketTypeA.java':'./src/main/java/com/tinkerforge',
-            'RemoteSocketTypeAConfig.java':'./src/main/java/com/tinkerforge',
-            'RemoteSocketTypeB.java':'./src/main/java/com/tinkerforge',
-            'RemoteSocketTypeBConfig.java':'./src/main/java/com/tinkerforge',
-            'RemoteSocketTypeC.java':'./src/main/java/com/tinkerforge',
-            'RemoteSocketTypeCConfig.java':'./src/main/java/com/tinkerforge',
-            'RemoteDimmerTypeB.java':'./src/main/java/com/tinkerforge',
-            'RemoteDimmerTypeBConfig.java':'./src/main/java/com/tinkerforge',
-
+            'RemoteSocketTypeA.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeAConfig.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeB.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeBConfig.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeC.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeCConfig.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'RemoteDimmerTypeB.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'RemoteDimmerTypeBConfig.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
 
 
-            os.path.join(self.get_bindings_dir(), 'DeviceFactory.java'): './src/main/java/com/tinkerforge',
+
+            os.path.join(self.get_bindings_dir(), 'DeviceWrapperFactory.java'): './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
             os.path.join(self.get_bindings_dir(), 'TinkerforgeBindingConstants.java'): './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal'
         }
         self.file_dests = {os.path.join(self.get_bindings_dir(), '..', k): os.path.join(self.tmp_dir, *v.split('/')) for k, v in self.file_dests.items()}
@@ -151,8 +156,8 @@ class OpenHABZipGenerator(common.ZipGenerator):
             shutil.copy(device_file, self.tmp_bindings_dir)
 
         for file in os.listdir(self.get_bindings_dir()):
-            if device.get_category().camel+device.get_name().camel in file and (file.endswith('Config.java') or file.endswith('Actions.java')):
-                shutil.copy(os.path.join(self.get_bindings_dir(), file), self.tmp_bindings_dir)
+            if device.get_category().camel+device.get_name().camel in file and (file.endswith('Config.java') or file.endswith('Actions.java') or file.endswith('Wrapper.java')):
+                shutil.copy(os.path.join(self.get_bindings_dir(), file), self.tmp_oh_dir)
 
     def finish(self):
         root_dir = self.get_root_dir()

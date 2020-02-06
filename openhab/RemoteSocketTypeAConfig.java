@@ -1,4 +1,4 @@
-package com.tinkerforge;
+package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
 public class RemoteSocketTypeAConfig {
     Integer houseCode = 0;
