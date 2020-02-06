@@ -296,11 +296,11 @@ com['openhab'] = {
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Get Button State',
-                'transform': 'value.buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+                'transform': 'value.buttonL == BrickletDualButtonV2.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{
                 'packet': 'State Changed',
-                'transform': 'buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+                'transform': 'buttonL == BrickletDualButtonV2.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'is_trigger_channel': True
         },
@@ -310,11 +310,11 @@ com['openhab'] = {
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Get Button State',
-                'transform': 'value.buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+                'transform': 'value.buttonR == BrickletDualButtonV2.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{
                 'packet': 'State Changed',
-                'transform': 'buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
+                'transform': 'buttonR == BrickletDualButtonV2.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'is_trigger_channel': True
         }, {
@@ -326,11 +326,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get LED State',
-                'transform': 'value.ledL == BrickletDualButton.LED_STATE_ON ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value.ledL == BrickletDualButtonV2.LED_STATE_ON ? OnOffType.ON : OnOffType.OFF'}],
 
             'setters': [{
                 'packet': 'Set Selected LED State',
-                'packet_params': ['BrickletDualButton.LED_LEFT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF'],
+                'packet_params': ['BrickletDualButtonV2.LED_LEFT', 'cmd == OnOffType.ON? BrickletDualButtonV2.LED_STATE_ON : BrickletDualButtonV2.LED_STATE_OFF'],
                 'command_type': 'OnOffType'
             }],
 
@@ -343,11 +343,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get LED State',
-                'transform': 'value.ledR == BrickletDualButton.LED_STATE_ON ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value.ledR == BrickletDualButtonV2.LED_STATE_ON ? OnOffType.ON : OnOffType.OFF'}],
 
             'setters': [{
                 'packet': 'Set Selected LED State',
-                'packet_params': ['BrickletDualButton.LED_RIGHT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF'],
+                'packet_params': ['BrickletDualButtonV2.LED_RIGHT', 'cmd == OnOffType.ON? BrickletDualButtonV2.LED_STATE_ON : BrickletDualButtonV2.LED_STATE_OFF'],
                 'command_type': 'OnOffType'
             }],
         },

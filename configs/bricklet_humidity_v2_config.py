@@ -338,14 +338,14 @@ this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperat
 
             'setters': [{
                 'packet': 'Set Heater Configuration',
-                'packet_params': ['cmd == OnOffType.ON ? HEATER_CONFIG_ENABLED : HEATER_CONFIG_DISABLED'],
+                'packet_params': ['cmd == OnOffType.ON ? BrickletHumidityV2.HEATER_CONFIG_ENABLED : BrickletHumidityV2.HEATER_CONFIG_DISABLED'],
                 'command_type': "OnOffType",
             }],
 
 
             'getters': [{
                 'packet': 'Get Heater Configuration',
-                'transform': 'value == HEATER_CONFIG_ENABLED ? OnOffType.ON : OnOffType.OFF'}]
+                'transform': 'value == BrickletHumidityV2.HEATER_CONFIG_ENABLED ? OnOffType.ON : OnOffType.OFF'}]
         }
     ],
     'channel_types': [
