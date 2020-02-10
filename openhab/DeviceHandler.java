@@ -113,8 +113,11 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         try {
             logger.debug("Checking reachability of {}", thing.getUID().getId());
             Identity id = getDevice().getIdentity();
-            String fwVersion = id.firmwareVersion[0] + "." + id.firmwareVersion[1] + "." + id.firmwareVersion[2];
-            this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion);
+            boolean isInBootloader = device instanceof CoMCUFlashable && ((CoMCUFlashable)device).getBootloaderMode() != CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE;
+            if(!isInBootloader) {
+                String fwVersion = id.firmwareVersion[0] + "." + id.firmwareVersion[1] + "." + id.firmwareVersion[2];
+                this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion);
+            }
             logger.debug("Done checking reachability of {}", thing.getUID().getId());
 
             // Initialize will set the status itself if the configuration succeeds.
@@ -199,6 +202,11 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         device = deviceSupplier.apply(id, ipcon);
 
         try {
+            if(device instanceof CoMCUFlashable && ((CoMCUFlashable)device).getBootloaderMode() != CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE) {
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "Device is in bootloader mode. Please flash a suitable firmware.");
+                this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, "0.0.0");
+                return;
+            }
             device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel,
                     scheduler, this);
         } catch (TinkerforgeException e) {
