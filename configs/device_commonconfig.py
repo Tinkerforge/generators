@@ -747,7 +747,7 @@ Setzt den Firmware-Pointer für :func:`Write Firmware`. Der Pointer
 muss um je 64 Byte erhöht werden. Die Daten werden alle 4 Datenblöcke
 in den Flash geschrieben (4 Datenblöcke entsprechen einer Page mit 256 Byte).
 
-Diese Funktion wird vom Brick Viewer während des flashens benutzt. In einem
+Diese Funktion wird vom Brick Viewer während des Flashens benutzt. In einem
 normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
 """
 }]
@@ -836,7 +836,7 @@ alle 4 Datenblöcke in den Flash geschrieben.
 
 Eine Firmware kann nur im Bootloader-Mode geschrieben werden.
 
-Diese Funktion wird vom Brick Viewer während des flashens benutzt. In einem
+Diese Funktion wird vom Brick Viewer während des Flashens benutzt. In einem
 normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
 """
 }]
@@ -1102,6 +1102,7 @@ Funktionsaufrufe auf bestehenden führen zu undefiniertem Verhalten.
 """
 }]
 })
+
 
 common_packets.append({
 'feature': 'comcu_bricklet',
