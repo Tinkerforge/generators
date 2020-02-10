@@ -1,6 +1,8 @@
 
 package org.eclipse.smarthome.binding.tinkerforge.internal;
 
+import java.net.URL;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -8,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
@@ -20,6 +24,7 @@ import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
 import org.eclipse.smarthome.core.thing.binding.firmware.FirmwareBuilder;
 import org.eclipse.smarthome.core.thing.firmware.FirmwareProvider;
 import org.eclipse.smarthome.io.net.http.HttpClientFactory;
+import org.eclipse.smarthome.io.net.http.HttpUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -31,7 +36,17 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
 
     private final Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
 
-    private final ConcurrentMap<String, String> latestVersions = new ConcurrentHashMap<>();
+    private class FirmwareInfo {
+        public FirmwareInfo(String version, String url) {
+            this.version = version;
+            this.url = url;
+
+        }
+        String version;
+        String url;
+    }
+
+    private final ConcurrentMap<String, FirmwareInfo> latestVersions = new ConcurrentHashMap<>();
 
     protected final ScheduledExecutorService scheduler = ThreadPoolManager.getScheduledPool("tinkerforge-firmware");
 
@@ -43,7 +58,8 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     @Nullable
     @Override
     public Firmware getFirmware(Thing thing, String version, @Nullable Locale locale) {
-        return getFirmwares(thing, locale).stream().filter(fw -> fw.getVersion().equals(version)).findFirst().orElse(null);
+        return getFirmwares(thing, locale).stream().filter(fw -> fw.getVersion().equals(version)).findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -54,29 +70,52 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     @Override
     public Set<Firmware> getFirmwares(Thing thing, Locale locale) {
         Set<Firmware> result = new HashSet<>();
-        result.add(buildFirmware(thing.getThingTypeUID(), thing.getProperties().get(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION)));
+        result.add(buildFirmware(thing.getThingTypeUID(),
+                thing.getProperties().get(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION), null));
         String id = thing.getThingTypeUID().getId();
-        String version = latestVersions.get(id);
-        if (version != null)
-            result.add(buildFirmware(thing.getThingTypeUID(), version));
+        FirmwareInfo info = latestVersions.get(id);
+        if (info != null)
+            result.add(buildFirmware(thing.getThingTypeUID(), info.version, info.url));
         return result;
 
     }
 
-    private Firmware buildFirmware(ThingTypeUID ttuid, String version) {
+    private Firmware buildFirmware(ThingTypeUID ttuid, String version, String url) {
         return FirmwareBuilder.create(ttuid, version)
                               .withVendor("Tinkerforge GmbH")
+                              .withProperties(Collections.singletonMap(TinkerforgeBindingConstants.PROPERTY_FIRMWARE_URL, url))
                               .build();
     }
 
     private void parseLatestVersions(String latestVersionsText) {
         for(String line : latestVersionsText.split("\n")) {
-            if (!(line.startsWith("bricks:") || line.startsWith("bricklets:") || line.startsWith("extensions:")))
+            boolean isBrick = line.startsWith("bricks:");
+            boolean isBricklet = line.startsWith("bricklets:");
+            boolean isExtension = line.startsWith("extensions:");
+            if (!(isBrick || isBricklet || isExtension))
                 continue;
 
             String[] splt = line.split(":");
-            String deviceName = splt[0].substring(0, splt[0].length() - 1) + splt[1].replace("_", "");
-            latestVersions.put(deviceName, splt[2]);
+            String deviceType = splt[0].substring(0, splt[0].length() - 1);
+            String deviceName = splt[1];
+            String thingName = deviceType + deviceName.replace("_", "");
+
+            if(deviceName.equals("hat") || deviceName.equals("hat_zero"))
+                thingName = "brick" + deviceName.replace("_", "");
+
+            if(deviceName.contains("lcd_20x4_v1"))
+                thingName = deviceType + "lcd20x4";
+
+            String version = splt[2];
+            boolean isCoMCU = isExtension || DeviceWrapperFactory.getDeviceInfo(thingName).isCoMCU;
+            String urlString = String.format(
+                "https://download.tinkerforge.com/firmwares/%s/%s/%s_%s_firmware_%s.%s",
+                deviceType + 's', deviceName,
+                deviceType, deviceName,
+                version.replace(".", "_"),
+                isCoMCU ? "zbin" : "bin");
+
+            latestVersions.put(thingName, new FirmwareInfo(version, urlString));
         }
     }
 
@@ -93,7 +132,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
                         parseLatestVersions(getContentAsString());
                         scheduler.schedule(() -> getLatestVersions(), 1, TimeUnit.HOURS);
                     } else {
-                        logger.info("Failed to download latest versions: {}", result.getFailure().getMessage());
+                        logger.info("Failed to download latest versions: {}", result.getFailure().toString());
                         scheduler.schedule(() -> getLatestVersions(), 5, TimeUnit.MINUTES);
                     }
                 }

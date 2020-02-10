@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import com.tinkerforge.IPConnection;
 
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletOutdoorWeatherWrapper;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DefaultActions;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
@@ -23,12 +24,10 @@ import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 public class BrickletOutdoorWeatherHandler extends DeviceHandler implements BridgeHandler {
     private List<ThingHandler> childHandlers = new ArrayList<>();
 
-    public BrickletOutdoorWeatherHandler(
-        Bridge bridge,
-        BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
-        Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
-        Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
-        super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier, configDescriptionRegistrySupplier);
+    public BrickletOutdoorWeatherHandler(Bridge bridge, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
+            Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
+            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier, HttpClient httpClient) {
+        super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier, configDescriptionRegistrySupplier, httpClient);
     }
 
     public @Nullable BrickletOutdoorWeatherWrapper getDevice() {

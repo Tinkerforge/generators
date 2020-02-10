@@ -26,6 +26,7 @@ import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
 
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -66,9 +67,10 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         public BrickletRemoteSwitchWrapperWrapper(BrickletRemoteSwitchWrapper rs) {
             this.rs = rs;
         }
+
         @Override
         public void switchSocketA(int houseCode, int receiverCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketA(houseCode, receiverCode,switchTo);
+            this.rs.switchSocketA(houseCode, receiverCode, switchTo);
         }
 
         @Override
@@ -83,7 +85,7 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
 
         @Override
         public void switchSocketC(char systemCode, int deviceCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketC(systemCode, deviceCode,switchTo);
+            this.rs.switchSocketC(systemCode, deviceCode, switchTo);
         }
 
         @Override
@@ -115,9 +117,10 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         public BrickletRemoteSwitchV2WrapperWrapper(BrickletRemoteSwitchV2Wrapper rs) {
             this.rs = rs;
         }
+
         @Override
         public void switchSocketA(int houseCode, int receiverCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketA(houseCode, receiverCode,switchTo);
+            this.rs.switchSocketA(houseCode, receiverCode, switchTo);
         }
 
         @Override
@@ -132,7 +135,7 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
 
         @Override
         public void switchSocketC(char systemCode, int deviceCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketC(systemCode, deviceCode,switchTo);
+            this.rs.switchSocketC(systemCode, deviceCode, switchTo);
         }
 
         @Override
@@ -177,9 +180,9 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
 
     public BrickletRemoteSwitchHandler(Bridge bridge, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
             Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
-            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
+            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier, HttpClient httpClient) {
         super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier,
-                configDescriptionRegistrySupplier);
+                configDescriptionRegistrySupplier, httpClient);
     }
 
     public void handleTimeout() {

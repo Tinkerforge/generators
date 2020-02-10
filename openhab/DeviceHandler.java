@@ -14,7 +14,7 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
+import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
 import org.eclipse.smarthome.config.core.ConfigDescription;
@@ -25,19 +25,17 @@ import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
 import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingRegistry;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingStatusInfo;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
 import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
 import org.eclipse.smarthome.core.thing.binding.firmware.FirmwareUpdateHandler;
 import org.eclipse.smarthome.core.thing.binding.firmware.ProgressCallback;
-import org.eclipse.smarthome.core.thing.binding.firmware.ProgressStep;
 import org.eclipse.smarthome.core.thing.type.ChannelDefinition;
 import org.eclipse.smarthome.core.thing.type.ChannelType;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
@@ -53,18 +51,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-import com.tinkerforge.Device;
+import com.tinkerforge.BrickMaster;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
 import com.tinkerforge.Device.Identity;
 
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.CoMCUFlashable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashHost;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
 
@@ -90,18 +90,19 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     private Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier;
     private Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier;
     private @Nullable EnumerateListener enumerateListener;
-
+    private @Nullable HttpClient httpClient;
 
     public DeviceHandler(Thing thing, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
             Class<? extends ThingHandlerService> actionsClass,
             Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
-            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
+            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier, @Nullable HttpClient httpClient) {
         super(thing);
 
         this.deviceSupplier = deviceSupplier;
         this.actionsClass = actionsClass;
         this.channelTypeRegistrySupplier = channelTypeRegistrySupplier;
         this.configDescriptionRegistrySupplier = configDescriptionRegistrySupplier;
+        this.httpClient = httpClient;
     }
 
     public @Nullable DeviceWrapper getDevice() {
@@ -138,15 +139,15 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             return;
         }
 
-        switch (enumerationType) {
-        case IPConnection.ENUMERATION_TYPE_AVAILABLE:
-            break;
-        case IPConnection.ENUMERATION_TYPE_CONNECTED:
-            initializeDevice();
-            break;
-        case IPConnection.ENUMERATION_TYPE_DISCONNECTED:
+        if (enumerationType == IPConnection.ENUMERATION_TYPE_DISCONNECTED) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "Device was unplugged.");
-            break;
+            return;
+        }
+        String fwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
+        this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion);
+
+        if (enumerationType == IPConnection.ENUMERATION_TYPE_CONNECTED) {
+            initializeDevice();
         }
     }
 
@@ -167,7 +168,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
 
         String id = thing.getUID().getId();
-        if(device != null)
+        if (device != null)
             device.cancelManualUpdates();
         device = deviceSupplier.apply(id, ipcon);
 
@@ -193,19 +194,21 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         }
         BrickDaemonHandler brickd = (BrickDaemonHandler) (bridge.getHandler());
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
-        if(device != null)
+        if (device != null)
             device.cancelManualUpdates();
         device = deviceSupplier.apply(id, ipcon);
 
         try {
-            device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel, scheduler, this);
+            device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel,
+                    scheduler, this);
         } catch (TinkerforgeException e) {
             brickd.handleTimeout(this);
             return;
         }
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
 
-        this.getThing().getChannels().stream().filter(c -> !c.getChannelTypeUID().toString().startsWith("system")).forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
+        this.getThing().getChannels().stream().filter(c -> !c.getChannelTypeUID().toString().startsWith("system"))
+                .forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
     }
 
     @Override
@@ -373,7 +376,59 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     @Override
     public void updateFirmware(Firmware firmware, ProgressCallback progressCallback) {
-        // not needed for now
+        if (this.device instanceof CoMCUFlashable) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.FIRMWARE_UPDATING, "Firmware is updating");
+
+            CoMCUFlashable flashable = (CoMCUFlashable) this.device;
+            flashable.flash(firmware, progressCallback, this.httpClient);
+
+            updateStatus(ThingStatus.ONLINE);
+            return;
+        }
+
+        if (this.device instanceof StandardFlashable) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.FIRMWARE_UPDATING, "Firmware is updating");
+
+            Identity id;
+            try {
+                id = this.device.getIdentity();
+            } catch (TinkerforgeException e) {
+                progressCallback.failed("Failed to get device identity: {}", e.getMessage());
+                ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
+                return;
+            }
+            String hostUID = id.connectedUid;
+
+            ThingHandler hostHandler = ((BrickDaemonHandler) getBridge().getHandler()).getChildHandler(hostUID);
+
+            DeviceWrapper hostDevice;
+            if (hostHandler != null)
+                hostDevice = ((DeviceHandler) hostHandler).getDevice();
+            else {
+                IPConnection ipcon = ((BrickDaemonHandler) getBridge().getHandler()).ipcon;
+                Identity hostId;
+                try {
+                    hostId = new BrickMaster(hostUID, ipcon).getIdentity();
+                } catch (TinkerforgeException e) {
+                    progressCallback.failed("Failed to get host identity: {}", e.getMessage());
+                    ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
+                    return;
+                }
+                try {
+                    hostDevice = DeviceWrapperFactory.createDevice(hostId.deviceIdentifier, hostUID, ipcon);
+                } catch (Exception e) {
+                    progressCallback.failed("Failed to create host device wrapper: {}", e.getMessage());
+                    return;
+                }
+            }
+
+            if (!(hostDevice instanceof StandardFlashHost)) {
+                progressCallback.failed("Device is connected to host that does not implement StandardFlashHost");
+                return;
+            }
+
+            ((StandardFlashHost)hostDevice).flash(id.position, firmware, progressCallback, httpClient);
+        }
     }
 
     @Override
@@ -383,6 +438,6 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     @Override
     public boolean isUpdateExecutable() {
-        return false;
+        return this.httpClient != null && (this.device instanceof CoMCUFlashable || this.device instanceof StandardFlashable);
     }
 }

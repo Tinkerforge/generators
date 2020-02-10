@@ -28,6 +28,7 @@ import com.tinkerforge.IPConnection;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
 import org.eclipse.smarthome.binding.tinkerforge.discovery.TinkerforgeDiscoveryService;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickDaemonHandler;
@@ -50,8 +51,10 @@ import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
+import org.eclipse.smarthome.io.net.http.HttpClientFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +70,7 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
     private final Map<TinkerforgeDiscoveryService, @Nullable ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
     private final Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
+    private @Nullable HttpClient httpClient;
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
@@ -94,13 +98,15 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
             return new BrickletOutdoorWeatherHandler((Bridge) thing,
                                                      (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
                                                      () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
-                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)));
+                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)),
+                    httpClient);
         } else if (thingTypeUID.equals(THING_TYPE_BRICKLET_REMOTE_SWITCH) || thingTypeUID.equals(THING_TYPE_BRICKLET_REMOTE_SWITCH_V2)) {
             assert (thing instanceof Bridge);
             return new BrickletRemoteSwitchHandler((Bridge) thing,
                                                      (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
                                                      () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
-                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)));
+                                                     () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)),
+                    httpClient);
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_STATION)) {
             return new BrickletOutdoorWeatherStationHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_SENSOR)) {
@@ -120,7 +126,8 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
                                 (String uid, IPConnection ipcon) -> createDevice(thingName, uid, ipcon),
                                 DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass,
                                 () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
-                                () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)));
+                                () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)),
+                httpClient);
     }
 
     private synchronized void registerBrickDaemonDiscoveryService(TinkerforgeDiscoveryService service) {
@@ -153,4 +160,14 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
             }
         }
     }*/
+
+
+    @Reference
+    protected void setHttpClientFactory(HttpClientFactory httpClientFactory) {
+        this.httpClient = httpClientFactory.getCommonHttpClient();
+    }
+
+    protected void unsetHttpClientFactory(HttpClientFactory httpClientFactory) {
+       this.httpClient = null;
+    }
 }

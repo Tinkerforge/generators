@@ -1,0 +1,59 @@
+/* ***********************************************************
+ * This file was automatically generated on 2019-06-12.      *
+ *                                                           *
+ * Java Bindings Version 2.1.23                              *
+ *                                                           *
+ * If you have a bugfix for this file and want to commit it, *
+ * please fix the bug in the generator. You can find a link  *
+ * to the generators git repository on tinkerforge.com       *
+ *************************************************************/
+
+package org.eclipse.smarthome.binding.tinkerforge.internal.device;
+
+import java.util.Arrays;
+import java.util.List;
+
+import com.tinkerforge.IPConnection;
+
+public class DeviceWrapperFactory {
+    private final static List<DeviceInfo> deviceInfos;
+
+    static {
+        deviceInfos = Arrays.asList(
+            BrickDaemonWrapper.DEVICE_INFO,
+            {devices},
+            BrickletOutdoorWeatherSensor.DEVICE_INFO,
+            BrickletOutdoorWeatherStation.DEVICE_INFO,
+            RemoteSocketTypeA.DEVICE_INFO,
+            RemoteSocketTypeB.DEVICE_INFO,
+            RemoteSocketTypeC.DEVICE_INFO,
+            RemoteDimmerTypeB.DEVICE_INFO
+        );
+    }
+
+    public static DeviceInfo getDeviceInfo(int deviceIdentifier) {
+        return deviceInfos.stream()
+                   .filter(info -> info.deviceIdentifier == deviceIdentifier)
+                   .findFirst()
+                   .orElseThrow(() -> new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier));
+    }
+
+    public static DeviceInfo getDeviceInfo(String thingName) {
+        return deviceInfos.stream()
+                   .filter(info -> info.deviceThingTypeName.equals(thingName))
+                   .findFirst()
+                   .orElseThrow(() -> new IllegalArgumentException("Unknown device thing name: " + thingName));
+    }
+
+	public static DeviceWrapper createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {
+		return (DeviceWrapper)getDeviceInfo(deviceIdentifier).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+    }
+
+    public static DeviceWrapper createDevice(String thingName, String uid, IPConnection ipcon) throws Exception {
+		return (DeviceWrapper)getDeviceInfo(thingName).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+	}
+
+    public static String getDeviceDisplayName(int deviceIdentifier) {
+		return getDeviceInfo(deviceIdentifier).deviceDisplayName;
+	}
+}

@@ -49,6 +49,7 @@ class OpenHAB:
         self.actions = kwargs.get('actions', [])
         self.is_bridge = kwargs.get('is_bridge', False)
         self.required_firmware_version = kwargs.get('required_firmware_version', False)
+        self.implemented_interfaces = kwargs.get('implemented_interfaces', [])
 
 class Channel:
     def __init__(self, **kwargs):
@@ -357,7 +358,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'dispose_code': '',
             'category': None,
             'custom': False,
-            'actions': []
+            'actions': [],
+            'implemented_interfaces': []
         }
 
         tmp = oh_defaults.copy()
@@ -410,7 +412,15 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def apply_features(self, oh):
         common_openhab = copy.deepcopy(__import__('device_commonconfig').common_openhab)
+        iface_map = {
+            'comcu_bricklet': 'CoMCUFlashable',
+            'standard_bricklet_host_2_ports': 'StandardFlashHost',
+            'standard_bricklet_host_4_ports': 'StandardFlashHost',
+            'tng': 'TngFlashable'
+        }
         for feature in self.raw_data['features']:
+            if feature in iface_map:
+                oh['implemented_interfaces'].append(iface_map[feature])
             if feature not in common_openhab:
                 continue
             for key, value in common_openhab[feature].items():
@@ -418,6 +428,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                     oh[key] += '\n' + value
                 else:
                     oh[key] += value
+        if len(oh['implemented_interfaces']) == 0:
+            oh['implemented_interfaces'].append('StandardFlashable')
         return oh
 
     def sanity_check_config(self, oh):
@@ -778,7 +790,7 @@ import com.tinkerforge.{device_camel};
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
 
-public class {device_camel}Wrapper extends DeviceWrapper {{
+public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
     {device_camel} dev;
 
     {device_info}
@@ -806,6 +818,7 @@ public class {device_camel}Wrapper extends DeviceWrapper {{
         return template.format(header=self.get_generator().get_header_comment('asterisk'),
                                imports=self.get_openhab_imports(),
                                device_camel=self.get_category().camel + self.get_name().camel,
+                               interfaces=common.wrap_non_empty('implements ', ', '.join(self.oh.implemented_interfaces), ''),
                                device_info=dev_info,
                                wrapper_consts=self.get_java_constants(),
                                wrapper_funcs=self.get_openhab_device_wrapper_functions(),

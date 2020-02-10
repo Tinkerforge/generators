@@ -104,6 +104,11 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'DeviceWrapper.java':             './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
             'DeviceInfo.java':                './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
             'Helper.java':                    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'CoMCUFlashable.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'FlashUtils.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'StandardFlashable.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'TngFlashable.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'StandardFlashHost.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
 
             'BrickletOutdoorWeatherSensor.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
             'BrickletOutdoorWeatherSensorConfig.java':'./src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',

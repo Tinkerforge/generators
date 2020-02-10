@@ -10,6 +10,7 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -55,6 +57,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     private final int HEARTBEAT_INTERVAL_SECS = 90;
 
     private final int ALL_PACKETS_LOST_THRESHOLD = 5;
+    private final Map<String, ThingHandler> childHandlers = new ConcurrentHashMap<>();
 
     public BrickDaemonHandler(Bridge bridge, Consumer<TinkerforgeDiscoveryService> registerFn,
             Consumer<TinkerforgeDiscoveryService> deregisterFn) {
@@ -276,5 +279,21 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
             ipcon.disconnect();
         } catch (NotConnectedException e) {
         }
+    }
+
+    @Override
+    public void childHandlerInitialized(ThingHandler childHandler, Thing childThing) {
+        super.childHandlerInitialized(childHandler, childThing);
+        childHandlers.put(childThing.getUID().getId(), childHandler);
+    }
+
+    @Override
+    public void childHandlerDisposed(ThingHandler childHandler, Thing childThing) {
+        super.childHandlerDisposed(childHandler, childThing);
+        childHandlers.remove(childThing.getUID().getId());
+    }
+
+    public ThingHandler getChildHandler(String uid) {
+        return childHandlers.getOrDefault(uid, null);
     }
 }
