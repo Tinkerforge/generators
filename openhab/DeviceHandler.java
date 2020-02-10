@@ -175,7 +175,12 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             device.cancelManualUpdates();
         device = deviceSupplier.apply(id, ipcon);
 
-        configureChannels();
+        boolean success = configureChannels();
+        if(!success) {
+            logger.debug("Failed to configure channels for {}", thing.getUID().getId());
+            return;
+        }
+
 
         if (this.getBridge().getStatus() == ThingStatus.ONLINE) {
             initializeDevice();
@@ -349,12 +354,13 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         }
     }
 
-    private void configureChannels() {
+    private boolean configureChannels() {
         List<String> enabledChannelNames = new ArrayList<>();
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
         } catch (TinkerforgeException e) {
             ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
+            return false;
         }
 
         ThingType tt = TinkerforgeThingTypeProvider.getThingTypeStatic(this.getThing().getThingTypeUID(), null);
@@ -375,6 +381,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         }
 
         updateThing(editThing().withChannels(enabledChannels).build());
+        return true;
     }
 
     @Override
