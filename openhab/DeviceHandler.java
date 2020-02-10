@@ -115,14 +115,21 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             Identity id = getDevice().getIdentity();
             boolean isInBootloader = device instanceof CoMCUFlashable && ((CoMCUFlashable)device).getBootloaderMode() != CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE;
             if(!isInBootloader) {
+                logger.debug("{} is not in bootloader mode.", thing.getUID().getId());
                 String fwVersion = id.firmwareVersion[0] + "." + id.firmwareVersion[1] + "." + id.firmwareVersion[2];
                 this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion);
+            } else {
+                logger.debug("{} is in bootloader mode.", thing.getUID().getId());
             }
             logger.debug("Done checking reachability of {}", thing.getUID().getId());
 
             // Initialize will set the status itself if the configuration succeeds.
-            if (!thing.getStatus().equals(ThingStatus.ONLINE))
+            if (!thing.getStatus().equals(ThingStatus.ONLINE)) {
+                logger.debug("{} was not already online. Reinitializing", thing.getUID().getId());
                 initializeDevice();
+            } else {
+                logger.debug("{} was already online. Will not reinitialize.", thing.getUID().getId());
+            }
             return true;
         } catch (TinkerforgeException e) {
             logger.debug("Failed checking reachability of {}: {}", thing.getUID().getId(), e.getMessage());
@@ -137,16 +144,18 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     private void enumerateListener(String uid, String connectedUid, char position, short[] hardwareVersion,
             short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
         String id = thing.getUID().getId();
-
         if (!uid.equals(id)) {
             return;
         }
+
+        String hwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
+        String fwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
+        logger.debug("Enumeration {}, {}, {}, {}, {}, {}, {}", uid, connectedUid, position, hwVersion, fwVersion, device, enumerationType);
 
         if (enumerationType == IPConnection.ENUMERATION_TYPE_DISCONNECTED) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "Device was unplugged.");
             return;
         }
-        String fwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
         this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion);
 
         if (enumerationType == IPConnection.ENUMERATION_TYPE_CONNECTED) {
@@ -156,6 +165,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     @Override
     public void initialize() {
+        logger.debug("Initializing handler for {}", thing.getUID().getId());
         if (getBridge() == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Bridge not found.");
             return;
@@ -163,6 +173,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
         BrickDaemonHandler brickd = (BrickDaemonHandler) (getBridge().getHandler());
         if (!wasInitialized) {
+            logger.debug("Adding enumerate listener for {}", thing.getUID().getId());
             enumerateListener = this::enumerateListener;
             brickd.addEnumerateListener(enumerateListener);
         }
@@ -171,8 +182,10 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
 
         String id = thing.getUID().getId();
-        if (device != null)
+        if (device != null) {
+            logger.debug("Removing old manual update handler for {}", thing.getUID().getId());
             device.cancelManualUpdates();
+        }
         device = deviceSupplier.apply(id, ipcon);
 
         boolean success = configureChannels();
@@ -195,6 +208,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     protected void initializeDevice() {
         String id = thing.getUID().getId();
+        logger.debug("Initializing {}", id);
         Bridge bridge = getBridge();
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED);
@@ -202,8 +216,10 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         }
         BrickDaemonHandler brickd = (BrickDaemonHandler) (bridge.getHandler());
         com.tinkerforge.IPConnection ipcon = brickd.ipcon;
-        if (device != null)
+        if (device != null) {
+            logger.debug("Removing old manual update handler for {}", thing.getUID().getId());
             device.cancelManualUpdates();
+        }
         device = deviceSupplier.apply(id, ipcon);
 
         try {
@@ -214,12 +230,14 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             }
             device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel,
                     scheduler, this);
+            logger.debug("Initialized {}", thing.getUID().getId());
         } catch (TinkerforgeException e) {
+            logger.debug("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
             brickd.handleTimeout(this);
             return;
         }
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
-
+        logger.debug("Refreshing channels of {}", thing.getUID().getId());
         this.getThing().getChannels().stream().filter(c -> !c.getChannelTypeUID().toString().startsWith("system"))
                 .forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
     }
@@ -227,8 +245,10 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     @Override
     public void bridgeStatusChanged(ThingStatusInfo bridgeStatusInfo) {
         if (bridgeStatusInfo.getStatus() == ThingStatus.ONLINE) {
+            logger.debug("Bridge of {} went online", thing.getUID().getId());
             initializeDevice();
         } else if (bridgeStatusInfo.getStatus() == ThingStatus.OFFLINE) {
+            logger.debug("Bridge of {} went offline", thing.getUID().getId());
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
         }
     }
@@ -264,6 +284,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     @Override
     public void handleRemoval() {
+        logger.debug("Removing {}", thing.getUID().getId());
         try {
             if (device != null) {
                 device.cancelManualUpdates();
@@ -272,6 +293,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
                     brickd.removeEnumerateListener(enumerateListener);
                 device.dispose(getConfig());
             }
+            logger.debug("Removed {}", thing.getUID().getId());
 
         } catch (TinkerforgeException e) {
         }

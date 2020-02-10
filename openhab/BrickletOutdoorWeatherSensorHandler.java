@@ -70,21 +70,26 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
+        logger.debug("Initializing outdoor weather sensor handler {}", thing.getUID().getId());
         Bridge bridge = getBridge();
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Bridge not found.");
             return;
         }
         BrickletOutdoorWeatherHandler outdoorWeatherHandler = ((BrickletOutdoorWeatherHandler) bridge.getHandler());
-        if(device != null)
+        if(device != null) {
             outdoorWeatherHandler.getDevice().removeSensorDataListener(device.listener);
+            logger.debug("Removed old outdoor weather sensor {} handler", thing.getUID().getId());
+        }
         device = new BrickletOutdoorWeatherSensor(outdoorWeatherHandler.getDevice());
         configureChannels();
 
         if (this.getBridge().getStatus() == ThingStatus.ONLINE) {
             initializeDevice();
+            logger.debug("Initialized outdoor weather sensor handler {}", thing.getUID().getId());
         } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
+            logger.debug("Bridge of outdoor weather sensor {} offline", thing.getUID().getId());
         }
     }
 
@@ -93,6 +98,7 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
     }
 
     private void initializeDevice() {
+        logger.debug("Initializing outdoor weather sensor {}", thing.getUID().getId());
         Bridge bridge = getBridge();
         if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED);
@@ -103,7 +109,7 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
             outdoorWeatherHandler.getDevice().removeSensorDataListener(device.listener);
         device = new BrickletOutdoorWeatherSensor(outdoorWeatherHandler.getDevice());
         device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel, scheduler, this);
-
+        logger.debug("Initialized outdoor weather sensor {}", thing.getUID().getId());
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
 
         this.getThing().getChannels().stream().filter(c -> !c.getChannelTypeUID().toString().startsWith("system")).forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
