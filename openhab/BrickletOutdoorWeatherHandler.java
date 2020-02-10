@@ -40,6 +40,8 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
 
     @Override
     public void initialize() {
+        if(this.getDevice() != null)
+            this.getDevice().cancelManualUpdates();
         super.initialize();
         for(ThingHandler handler : childHandlers)
             handler.initialize();
@@ -47,6 +49,8 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
 
     @Override
     protected void initializeDevice() {
+        if(this.getDevice() != null)
+            this.getDevice().cancelManualUpdates();
         super.initializeDevice();
         for(ThingHandler handler : childHandlers)
             handler.initialize();
