@@ -865,6 +865,8 @@ public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
 
         regs = []
 
+        dispose_template = '{predicate}{code}{end_predicate}'
+
         dispose_code = []
         lambda_transforms = []
         for c in self.oh.channels:
@@ -885,7 +887,10 @@ public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
                                                 end_predicate='}' if c.predicate != 'true' else ''))
 
                 packet_name = callback.packet.get_name().camel if not callback.packet.has_high_level() else callback.packet.get_name(skip=-2).camel
-                dispose_code += c.dispose_code.split('\n')
+                if len(c.dispose_code) > 0:
+                    dispose_code += [dispose_template.format(predicate='if({}) {{\n'.format(c.predicate) if c.predicate != 'true' else '',
+                                                            code=c.dispose_code,
+                                                            end_predicate='}' if c.predicate != 'true' else '')]
                 lambda_transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
                                                                 camel=c.id.camel,
                                                                 callback_args=common.wrap_non_empty('', ', '.join(e.get_java_type() + ' ' + e.get_name().headless for e in elements), ', '),
