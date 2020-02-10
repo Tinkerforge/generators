@@ -490,11 +490,72 @@ v1.x.y Plugins zu ermöglichen.
 }]
 }
 
+write_bricklet_plugin = {
+'feature': 'standard_bricklet_host',
+'type': 'function',
+'function_id': 246,
+'name': 'Write Bricklet Plugin',
+'elements': [('Port', 'char', 1, 'in', {}),
+             ('Offset', 'uint8', 1, 'in', {}),
+             ('Chunk', 'uint8', 32, 'in', {})],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+Writes 32 bytes of firmware to the bricklet attached at the given port.
+The bytes are written to the position offset * 32.
+
+This function is used by Brick Viewer during flashing. It should not be
+necessary to call it in a normal user program.
+""",
+'de':
+"""
+Schreibt 32 Bytes Firmware auf das Bricklet, dass am gegebenen Port angeschlossen ist.
+Die Bytes werden an die Position offset * 32 geschrieben.
+
+Diese Funktion wird vom Brick Viewer während des Flashens benutzt. In einem
+normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
+"""
+}]
+}
+
+read_bricklet_plugin = {
+'feature': 'standard_bricklet_host',
+'type': 'function',
+'function_id': 247,
+'name': 'Read Bricklet Plugin',
+'elements': [('Port', 'char', 1, 'in', {}),
+             ('Offset', 'uint8', 1, 'in', {}),
+             ('Chunk', 'uint8', 32, 'out', {})],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+Reads 32 bytes of firmware from the bricklet attached at the given port.
+The bytes are read starting at the position offset * 32.
+
+This function is used by Brick Viewer during flashing. It should not be
+necessary to call it in a normal user program.
+""",
+'de':
+"""
+Liest 32 Bytes Firmware vom Bricklet, dass am gegebenen Port angeschlossen ist.
+Die Bytes werden ab der Position offset * 32 gelesen.
+
+Diese Funktion wird vom Brick Viewer während des Flashens benutzt. In einem
+normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
+"""
+}]
+}
+
+
 for i in [2, 4]:
     for blueprint in [set_spitfp_baudrate,
                       get_spitfp_baudrate,
                       get_spitfp_error_count,
-                      get_protocol1_bricklet_name]:
+                      get_protocol1_bricklet_name,
+                      write_bricklet_plugin,
+                      read_bricklet_plugin]:
         pkt = deepcopy(blueprint)
         pkt['feature'] += '_{}_ports'.format(i)
         pkt['elements'][0][4]['range'] = ('a', chr(ord('a') + i - 1))
