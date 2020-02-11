@@ -169,6 +169,7 @@ com['openhab'] = {
             'id': 'Pressed',
             'type': 'system.rawbutton',
             'label': 'Pressed',
+            'description': 'Triggers if the button is pressed or released',
 
             'getters': [{
                 'packet': 'Is Pressed',

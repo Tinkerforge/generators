@@ -1671,6 +1671,7 @@ com['openhab'] = {
             'id': 'Position Reached',
             'type': 'system.trigger',
             'label': 'Position Reached',
+            'description': "This channel is triggered when a position set by the setSteps or setTargetPosition action is reached.<br/><br/>Note<br/><br/>Since we can't get any feedback from the stepper motor, this only works if the acceleration (see setSpeedRamping()) is set smaller or equal to the maximum acceleration of the motor. Otherwise the motor will lag behind the control value and the listener will be triggered too early.",
 
             'callbacks': [{
                 'packet': 'Position Reached',
@@ -1681,6 +1682,7 @@ com['openhab'] = {
             'id': 'Unter Voltage',
             'type': 'system.trigger',
             'label': 'Unter Voltage',
+            'description': 'This channel is triggered when the input voltage drops below the configured minimum voltage.',
 
             'callbacks': [{
                 'packet': 'Under Voltage',

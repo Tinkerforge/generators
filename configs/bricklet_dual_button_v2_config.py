@@ -294,6 +294,7 @@ com['openhab'] = {
             'id': 'Left Button',
             'label': 'Left Button',
             'type': 'system.rawbutton',
+            'description': 'This channel triggers if the left button is pressed or released',
             'getters': [{
                 'packet': 'Get Button State',
                 'transform': 'value.buttonL == BrickletDualButtonV2.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
@@ -308,6 +309,7 @@ com['openhab'] = {
             'id': 'Right Button',
             'label': 'Right Button',
             'type': 'system.rawbutton',
+            'description': 'This channel triggers if the right button is pressed or released',
             'getters': [{
                 'packet': 'Get Button State',
                 'transform': 'value.buttonR == BrickletDualButtonV2.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],

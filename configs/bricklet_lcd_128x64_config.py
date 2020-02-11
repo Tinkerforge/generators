@@ -1696,6 +1696,7 @@ def gui_button_pressed_channel(index):
     return {
         'id': 'GUI Button {}'.format(index),
         'label': 'GUI Button {}'.format(index),
+        'description': 'Triggers when GUI Button {} is pressed or released.'.format(index),
         'type': 'system.rawbutton',
         'getters': [{
             'packet': 'Get GUI Button Pressed',
@@ -1840,6 +1841,7 @@ com['openhab'] = {
             }, {
                 'id': 'Touch Position',
                 'label': 'Touch Position',
+                'description': 'Triggers when a new touch position is available. You can then use the getTouchPosition action to query the touch position information.',
                 'type': 'system.trigger',
                 'getters': [{
                     'packet': 'Get Touch Position',
@@ -1856,6 +1858,7 @@ com['openhab'] = {
             }, {
                 'id': 'Touch Gesture',
                 'label': 'Touch Gesture',
+                'description': 'Triggers when a new touch gesture is available. You can then use the getTouchGesture action to query the touch position information.',
                 'type': 'system.trigger',
                 'getters': [{
                     'packet': 'Get Touch Gesture',

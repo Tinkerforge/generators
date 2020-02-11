@@ -250,6 +250,7 @@ com['openhab'] = {
         {
             'id': 'Left Button',
             'label': 'Left Button',
+            'description': 'This channel triggers if the right button is pressed or released',
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Get Button State',
@@ -264,6 +265,7 @@ com['openhab'] = {
         {
             'id': 'Right Button',
             'label': 'Right Button',
+            'description': 'This channel triggers if the right button is pressed or released',
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Get Button State',

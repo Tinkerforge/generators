@@ -628,6 +628,7 @@ com['openhab'] = {
             'id': 'Frame Started',
             'label': 'Frame Started',
             'type': 'system.trigger',
+            'description': 'This channel is triggered directly after a new frame render is started. You should send the data for the next frame directly after this listener was triggered.',
 
             'callbacks': [{
                 'packet': 'Frame Started',
@@ -637,8 +638,8 @@ com['openhab'] = {
         }, {
             'id': 'Frame Available',
             'label': 'Frame Available',
+            'description': "This channel is triggered in slave mode when a new frame was received from the DMX master and it can be read out. You have to read the frame before the master has written the next frame using the readFrame action.",
             'type': 'system.trigger',
-
             'callbacks': [{
                 'packet': 'Frame Available',
                 'transform': 'CommonTriggerEvents.PRESSED'}],

@@ -202,6 +202,7 @@ com['openhab'] = {
             'id': 'Button',
             'label': 'Button',
             'type': 'system.rawbutton',
+            'description': 'This channel triggers if the button is pressed or released',
             'getters': [{
                 'packet': 'Get Button State',
                 'transform': 'value == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],

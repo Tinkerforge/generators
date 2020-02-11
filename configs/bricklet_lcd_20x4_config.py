@@ -490,6 +490,7 @@ def button_channel(idx):
             'id': 'Button {}'.format(idx),
             'label': 'Button {}'.format(idx),
             'type': 'system.rawbutton',
+            'description': 'This channel triggers if button {} is pressed or released'.format(idx),
             'getters': [{
                 'packet': 'Is Button Pressed',
                 'packet_params': [str(idx)],

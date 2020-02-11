@@ -301,6 +301,7 @@ com['openhab'] = {
     'channels': [{
             'id': 'Frame Started',
             'label': 'Frame Started',
+            'description': 'This channel is triggered directly after a new frame render is started. You should send the data for the next frame directly after this listener was triggered.',
             'type': 'system.trigger',
 
             'callbacks': [{
