@@ -470,5 +470,5 @@ com['openhab'] = {
                     update_style=None,
                     description='Turns the white LED on the Bricklet on/off.'),
     ],
-    'actions': ['Get Color', 'Get Illuminance', 'Get Color Temperature', 'Get Light', 'Get Configuration']
+    'actions': ['Get Color', 'Get Illuminance', 'Get Color Temperature', {'fn': 'Set Light', 'refreshs': ['Light']}, 'Get Light', 'Get Configuration']
 }

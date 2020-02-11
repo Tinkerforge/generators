@@ -391,5 +391,6 @@ com['openhab'] = {
                     min_=0,
                     max_=0.024)
     ],
-    'actions': ['Is Enabled', 'Get Voltage', 'Get Current', 'Get Configuration']
+    'actions': [{'fn': 'Enable', 'refreshs': ['Enabled']}, {'fn': 'Disable', 'refreshs': ['Enabled']}, 'Is Enabled',
+                'Get Voltage', 'Get Current', 'Get Configuration']
 }

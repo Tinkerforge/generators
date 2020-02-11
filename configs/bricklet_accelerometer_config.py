@@ -582,5 +582,5 @@ com['openhab'] = {
                     description='The temperature of the accelerometer',
                     read_only=True),
     ],
-    'actions': ['Get Acceleration', 'Get Temperature', 'Is LED On', 'Get Configuration']
+    'actions': ['Get Acceleration', 'Get Temperature', {'fn': 'LED On', 'refreshs': ['LED']}, {'fn': 'LED Off', 'refreshs': ['LED']}, 'Is LED On', 'Get Configuration']
 }

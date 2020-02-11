@@ -367,5 +367,5 @@ this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperat
                     update_style=None,
                     description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),
     ],
-    'actions': ['Get Humidity', 'Get Temperature', 'Get Heater Configuration', 'Get Moving Average Configuration', 'Get Samples Per Second']
+    'actions': ['Get Humidity', 'Get Temperature', {'fn': 'Set Heater Configuration', 'refreshs': ['Heater']}, 'Get Heater Configuration', 'Get Moving Average Configuration', 'Get Samples Per Second']
 }

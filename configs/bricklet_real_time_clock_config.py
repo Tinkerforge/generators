@@ -504,5 +504,5 @@ com['openhab'] = {
         date_time_type,
         timestamp_type
     ],
-    'actions': ['Get Date Time', 'Get Timestamp', 'Get Offset']
+    'actions': [{'fn': 'Set Date Time', 'refreshs': ['Date Time']}, 'Get Date Time', 'Get Timestamp', 'Get Offset']
 }

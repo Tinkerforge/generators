@@ -192,7 +192,7 @@ com['openhab'] = {
             'command_type': "OnOffType",
         }],
     }, {
-        'id': 'Monoflop relay',
+        'id': 'Monoflop Relay',
         'label': 'Monoflop Relay',
         'type': 'Monoflop',
 
@@ -248,6 +248,7 @@ com['openhab'] = {
             'command_options': [('Trigger', 'TRIGGER')]
         }
     ],
-    'actions': ['Get State', 'Get Monoflop']
+    'actions': [{'fn': 'Set State', 'refreshs': ['Relay', 'Monoflop Relay']}, 'Get State',
+                {'fn': 'Set Monoflop', 'refreshs': ['Relay', 'Monoflop Relay']}, 'Get Monoflop']
 }
 

@@ -399,5 +399,5 @@ com['openhab'] = {
                     description='Enabled if a magnetic field of 3.5 millitesla or greater is detected.',
                     read_only=True),
     ],
-    'actions': ['Get Value', 'Get Edge Count', 'Get Edge Count Config']
+    'actions': ['Get Value', {'fn': 'Get Edge Count', 'refreshs': ['Edge Count']}, 'Get Edge Count Config']
 }

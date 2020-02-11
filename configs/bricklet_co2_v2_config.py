@@ -419,5 +419,5 @@ com['openhab'] = {
                     description='The CO2 concentration (among other things) depends on the ambient air pressure. To increase the accuracy of the CO2 Bricklet 2.0 you can set the current air pressure. You use the Barometer Bricklet 2.0 or the Air Quality Bricklet to get the current air pressure. The expected unit of the ambient air pressure value is bar. By default air pressure compensation is disabled. Once you set a value it will be used for compensation. You can turn the compensation off again by setting the value to 0. It is sufficient to update the value every few minutes.',
                     pattern='%.3f %unit%')
     ],
-    'actions': ['Get All Values', 'Get Air Pressure', 'Get Temperature Offset', 'Get CO2 Concentration', 'Get Temperature', 'Get Humidity']
+    'actions': ['Get All Values', {'fn': 'Set Air Pressure', 'refreshs': ['Air Pressure']}, 'Get Air Pressure', 'Get Temperature Offset', 'Get CO2 Concentration', 'Get Temperature', 'Get Humidity']
 }

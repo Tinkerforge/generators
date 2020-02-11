@@ -516,5 +516,5 @@ com['openhab'] = {
                 'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
             }])
     ],
-    'actions': ['Get Value', 'Get Edge Count Config']
+    'actions': ['Get Value', {'fn': 'Get Edge Count', 'refreshs': ['Edge Count Pin 0', 'Edge Count Pin 1', 'Edge Count Pin 2', 'Edge Count Pin 3']}, 'Get Edge Count Config']
 }

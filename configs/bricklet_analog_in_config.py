@@ -634,5 +634,5 @@ com['openhab'] = {
                     min_=0,
                     max_=42)
     ],
-    'actions': ['Get Voltage', 'Get Analog Value', 'Get Averaging']
+    'actions': ['Get Voltage', 'Get Analog Value', 'Get Averaging', 'Get Range']
 }

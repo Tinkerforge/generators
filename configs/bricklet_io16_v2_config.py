@@ -820,5 +820,10 @@ com['openhab'] = {
                 'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
             }])
     ],
-    'actions': ['Get Value', 'Get Configuration', 'Get Edge Count', 'Get Monoflop', 'Get Edge Count Configuration']
+    'actions': [{'fn': 'Set Value', 'refreshs': ['Output Pin {}'.format(i) for i in range(0, 16)] + ['Monoflop Pin {}'.format(i) for i in range(0, 16)]},
+                {'fn': 'Set Selected Value', 'refreshs': ['Output Pin {}'.format(i) for i in range(0, 16)] + ['Monoflop Pin {}'.format(i) for i in range(0, 16)]},
+                {'fn': 'Set Monoflop', 'refreshs': ['Output Pin {}'.format(i) for i in range(0, 16)] + ['Monoflop Pin {}'.format(i) for i in range(0, 16)]},
+                'Get Value', 'Get Configuration',
+                {'fn': 'Get Edge Count', 'refreshs': ['Edge Count Pin {}'.format(i) for i in range(0, 16)]},
+                'Get Monoflop', 'Get Edge Count Configuration']
 }

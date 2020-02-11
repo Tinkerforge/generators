@@ -95,5 +95,6 @@ com['openhab'] = {
                     description='The USB supply voltage of the Raspberry Pi.',
                     read_only=True,
                     pattern='%.3f %unit%')
-    ]
+    ],
+    'actions': ['Get USB Voltage']
 }

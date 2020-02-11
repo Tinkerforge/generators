@@ -296,7 +296,7 @@ com['openhab'] = {
                     pattern='%d %unit%',
                     min_=0,
                     max_=100,
-                    params= [{
+                    params=[{
                         'packet': 'Set Motor Position',
                         'element': 'Drive Mode',
 
@@ -318,5 +318,5 @@ com['openhab'] = {
                         'description': 'If you enable the hold position flag, the position will automatically be retained. If a user changes the position of the potentiometer, it will automatically drive back to the original set point.<br/><br/>If the hold position flag disabled, the potentiometer can be changed again by the user as soon as the set point was reached once.',
                     }])
     ],
-    'actions': ['Get Position', 'Get Motor Position']
+    'actions': ['Get Position', {'fn': 'Set Motor Position', 'refreshs': ['Motor Position']}, 'Get Motor Position']
 }

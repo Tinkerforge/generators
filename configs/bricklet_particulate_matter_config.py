@@ -468,6 +468,6 @@ com['openhab'] = {
         [oh_generic_channel_type('Sensor Enabled', 'Switch', 'NOT USED',
                         update_style=None,
                         description='NOT USED')],
-    'actions': ['Get PM Concentration', 'Get PM Count', 'Get Sensor Info']
+    'actions': ['Get PM Concentration', 'Get PM Count', 'Get Sensor Info', {'fn': 'Set Enable', 'refreshs': ['Sensor Enabled']}, 'Get Enable']
 }
 

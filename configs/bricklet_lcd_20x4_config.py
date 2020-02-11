@@ -593,5 +593,7 @@ com['openhab'] = {
                     update_style=None,
                     description="Toggles the LCD's backlight")
     ],
-    'actions': ['Write Line', 'Clear Display', 'Is Backlight On', 'Get Config', 'Is Button Pressed', 'Set Custom Character', 'Get Custom Character', 'Set Default Text', 'Get Default Text', 'Set Default Text Counter', 'Get Default Text Counter']
+    'actions': ['Write Line', 'Clear Display',
+                {'fn': 'Backlight On', 'refreshs': ['Backlight']}, {'fn': 'Backlight Off', 'refreshs': ['Backlight']}, 'Is Backlight On',
+                'Get Config', 'Is Button Pressed', 'Set Custom Character', 'Get Custom Character', 'Set Default Text', 'Get Default Text', 'Set Default Text Counter', 'Get Default Text Counter']
 }

@@ -218,5 +218,5 @@ com['openhab'] = {
                     update_style=None,
                     read_only=False)
     ],
-    'actions': ['Get Color', 'Get Button State', 'Get Color Calibration']
+    'actions': ['Get Color', 'Get Button State', 'Get Color Calibration', {'fn': 'Set Color', 'refreshs': ['Color']}]
 }

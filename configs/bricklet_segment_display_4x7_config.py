@@ -273,6 +273,6 @@ com['openhab'] = {
                     update_style=None,
                     description="Text to display on the seven segment display. Supported are A-Z, a-z, 0-9, \\\", (, ), +, -, =, [, ], ^, _ and |. An unsupported character will show as empty. A colon anywhere in the text will light the display's colon on. For example HiTF: will show as Hi:TF on the display."),
     ],
-    'actions': ['Get Segments', 'Start Counter', 'Get Counter Value']
+    'actions': [{'fn': 'Set Segments', 'refreshs': ['Segments', 'Colon', 'Brightness']}, 'Get Segments', 'Start Counter', 'Get Counter Value']
 }
 

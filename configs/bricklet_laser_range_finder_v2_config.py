@@ -521,5 +521,7 @@ com['openhab'] = {
                     update_style=None,
                     description='Activates the laser of the LIDAR.'),
     ],
-    'actions': ['Get Distance', 'Get Velocity', 'Get Enable', 'Get Configuration', 'Get Distance LED Config', 'Get Moving Average', 'Get Offset Calibration']
+    'actions': ['Get Distance', 'Get Velocity',
+                {'fn': 'Set Enable', 'refreshs': ['Enable Laser']}, 'Get Enable',
+                'Get Configuration', 'Get Distance LED Config', 'Get Moving Average', 'Get Offset Calibration']
 }

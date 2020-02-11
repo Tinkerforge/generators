@@ -314,5 +314,5 @@ com['openhab'] = {
                     min_=0,
                     max_=255)
     ],
-    'actions': ['Get Motion Detected', 'Get Sensitivity', 'Get Indicator']
+    'actions': ['Get Motion Detected', 'Get Sensitivity', {'fn': 'Set Indicator', 'refreshs': ['Top Left Indicator', 'Top Right Indicator', 'Bottom Indicator']}, 'Get Indicator']
 }

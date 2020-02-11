@@ -151,5 +151,5 @@ com['openhab'] = {
                     update_style=None,
                     description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),
     ],
-    'actions': ['Get Temperature', 'Get Heater Configuration']
+    'actions': ['Get Temperature', {'fn': 'Set Heater Configuration', 'refreshs': ['Heater']}, 'Get Heater Configuration']
 }

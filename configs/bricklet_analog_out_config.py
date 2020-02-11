@@ -198,5 +198,5 @@ com['openhab'] = {
                         ('500k To Ground', 3)]
         },
     ],
-    'actions': ['Get Voltage', 'Get Mode']
+    'actions': [{'fn': 'Set Voltage', 'refreshs': ['Voltage']}, 'Get Voltage', {'fn': 'Set Mode', 'refreshs': ['Mode']}, 'Get Mode']
 }

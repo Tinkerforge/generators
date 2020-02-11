@@ -591,5 +591,6 @@ com['openhab'] = {
                     update_style=None,
                     description='Activates/Deactivates the LED.'),
     ],
-    'actions': ['Get Weight', 'Tare', 'Get Moving Average', 'Get Configuration', 'Is LED On']
+    'actions': ['Get Weight', 'Tare', 'Get Moving Average', 'Get Configuration',
+                {'fn': 'LED On', 'refreshs': ['LED']}, {'fn': 'LED Off', 'refreshs': ['LED']}, 'Is LED On']
 }

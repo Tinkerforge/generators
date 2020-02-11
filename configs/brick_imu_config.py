@@ -1245,5 +1245,6 @@ com['openhab'] = {
         oh_generic_channel_type('Enable LEDs', 'Switch', 'Enable LEDs',
                     update_style=None,
                     description='Enable/disable the orientation and direction LEDs of the IMU Brick.'),
-    ]
+    ],
+    'actions': ['Get Orientation', 'Get Quaternion', {'fn': 'Leds On', 'refreshs': ['Enable LEDs']}, {'fn': 'Leds Off', 'refreshs': ['Enable LEDs']}, 'Get Convergence Speed', 'Get Acceleration', 'Get Magnetic Field', 'Get Angular Velocity', 'Get All Data', 'Get IMU Temperature', 'Get Calibration', 'Is Orientation Calculation On']
 }

@@ -439,5 +439,9 @@ com['openhab'] = {
             'command_options': [('Trigger', 'TRIGGER')]
         }
     ],
-    'actions': ['Get Value', 'Get Monoflop', 'Get Channel LED Config', 'Set PWM Configuration', 'Get PWM Configuration']
+    'actions': [{'fn': 'Set Value', 'refreshs': ['Output Pin 0', 'Output Pin 1', 'Output Pin 2', 'Output Pin 3', 'Monoflop Pin 0', 'Monoflop Pin 1', 'Monoflop Pin 2', 'Monoflop Pin 3']},
+                {'fn': 'Set Selected Value', 'refreshs': ['Output Pin 0', 'Output Pin 1', 'Output Pin 2', 'Output Pin 3', 'Monoflop Pin 0', 'Monoflop Pin 1', 'Monoflop Pin 2', 'Monoflop Pin 3']},
+                {'fn': 'Set Monoflop', 'refreshs': ['Output Pin 0', 'Output Pin 1', 'Output Pin 2', 'Output Pin 3', 'Monoflop Pin 0', 'Monoflop Pin 1', 'Monoflop Pin 2', 'Monoflop Pin 3']},
+                {'fn': 'Set PWM Configuration', 'refreshs': ['Output Pin 0', 'Output Pin 1', 'Output Pin 2', 'Output Pin 3', 'Monoflop Pin 0', 'Monoflop Pin 1', 'Monoflop Pin 2', 'Monoflop Pin 3']},
+                'Get Value', 'Get Monoflop', 'Get Channel LED Config', 'Get PWM Configuration']
 }

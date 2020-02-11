@@ -332,5 +332,6 @@ com['openhab'] = {
                     update_style='Callback Configuration',
                     description='The value of the example count (see example.c)',
                     read_only=True)
-    ]
+    ],
+    'actions': ['Get Count']
 }

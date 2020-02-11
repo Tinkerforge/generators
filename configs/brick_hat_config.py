@@ -435,5 +435,6 @@ com['openhab'] = {
             'description': "Starts the configured sleep mode. Note: Triggering this will cut the Raspberry Pi's power after the configured amount of seconds. You have to shut down the operating system yourself, e.g. by calling 'sudo shutdown -h now'.",
             'command_options': [('Trigger', 'Start Sleep Mode')]
         }
-    ]
+    ],
+    'actions': ['Set Sleep Mode', 'Get Sleep Mode', {'fn': 'Set Bricklet Power', 'refreshs': ['Power Bricklets']}, 'Get Bricklet Power', 'Get Voltages']
 }

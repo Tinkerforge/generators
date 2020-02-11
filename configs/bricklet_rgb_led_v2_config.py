@@ -102,5 +102,5 @@ com['openhab'] = {
                     update_style=None,
                     read_only=False)
     ],
-    'actions': ['Get RGB Value']
+    'actions': [{'fn': 'Set RGB Value', 'refreshs': ['Color']},'Get RGB Value']
 }

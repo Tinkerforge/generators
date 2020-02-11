@@ -379,7 +379,7 @@ def relay_channel(channel):
 
 def monoflop_channel(channel):
     return {
-        'id': 'Monoflop relay {}'.format(channel),
+        'id': 'Monoflop Relay {}'.format(channel),
         'label': 'Monoflop Relay {}'.format(channel),
         'type': 'Monoflop',
 
@@ -441,6 +441,9 @@ com['openhab'] = {
             'command_options': [('Trigger', 'TRIGGER')]
         }
     ],
-    'actions': ['Get Value', 'Get Monoflop']
+    'actions': [{'fn': 'Set Value', 'refreshs': ['Relay 0', 'Relay 1', 'Relay 2', 'Relay 3', 'Monoflop Relay 0', 'Monoflop Relay 1', 'Monoflop Relay 2', 'Monoflop Relay 3']},
+                {'fn': 'Set Monoflop', 'refreshs': ['Relay 0', 'Relay 1', 'Relay 2', 'Relay 3', 'Monoflop Relay 0', 'Monoflop Relay 1', 'Monoflop Relay 2', 'Monoflop Relay 3']},
+                {'fn': 'Set Selected Values', 'refreshs': ['Relay 0', 'Relay 1', 'Relay 2', 'Relay 3', 'Monoflop Relay 0', 'Monoflop Relay 1', 'Monoflop Relay 2', 'Monoflop Relay 3']},
+                'Get Value', 'Get Monoflop']
 }
 

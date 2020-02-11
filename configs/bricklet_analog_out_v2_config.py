@@ -135,5 +135,5 @@ com['openhab'] = {
                     min_=0,
                     max_=12)
     ],
-    'actions': ['Get Output Voltage', 'Get Input Voltage']
+    'actions': [{'fn': 'Set Output Voltage', 'refreshs': ['Output Voltage']}, 'Get Output Voltage', 'Get Input Voltage']
 }
