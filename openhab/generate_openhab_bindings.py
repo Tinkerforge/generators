@@ -262,6 +262,11 @@ class ParamGroup:
         self.label = kwargs.get('label', None)
         self.description = kwargs.get('description', None)
 
+class Action:
+    def __init__(self, **kwargs):
+        self.fn = kwargs['fn']
+        self.refreshs = kwargs.get('refreshs', [])
+
 class OpenHABBindingsDevice(JavaBindingsDevice):
     def has_java_legacy_types(self):
         return False
@@ -362,6 +367,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'implemented_interfaces': []
         }
 
+        action_defaults = {
+            'refreshs': []
+        }
+
         tmp = oh_defaults.copy()
         tmp.update(oh)
         oh = tmp
@@ -407,6 +416,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             tmp = param_group_defaults.copy()
             tmp.update(param_group)
             oh['param_groups'][pg_idx] = tmp
+
+        for a_idx, action in enumerate(oh['actions']):
+            if not isinstance(action, dict):
+                action = {'fn': action}
+
+            tmp = action_defaults.copy()
+            tmp.update(action)
+            oh['actions'][a_idx] = tmp
 
         return oh
 
@@ -680,7 +697,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             oh['param_groups'][g_idx] = ParamGroup(**group)
 
         for a_idx, action in enumerate(oh['actions']):
-            oh['actions'][a_idx] = find_packet(action)
+            action['fn'] = find_packet(action['fn'])
+            oh['actions'][a_idx] = Action(**action)
 
         if 'required_firmware_version' not in oh:
             oh['required_firmware_version'] = [2, 0, 0]
@@ -708,6 +726,13 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                         'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
                         'default': 1000,
                     }))
+
+        for action in self.oh.actions:
+            for i, refresh in enumerate(action.refreshs):
+                try:
+                    action.refreshs[i] = next(c for c in self.oh.channels if c.id.space.replace(self.get_category().space + ' ' + self.get_name().space + ' ', '', 1) == refresh)
+                except StopIteration:
+                    raise common.GeneratorError('openhab: Device {}: Action {}: Unknown channel {}.'.format(self.get_long_display_name(), action.fn.get_name().space, refresh))
 
     def get_openhab_imports(self):
         oh_imports = ['java.net.URI',
@@ -1211,6 +1236,8 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingActions;
 import org.eclipse.smarthome.core.thing.binding.ThingActionsScope;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.openhab.core.automation.annotation.ActionInput;
 import org.openhab.core.automation.annotation.ActionOutput;
 import org.openhab.core.automation.annotation.RuleAction;
@@ -1240,6 +1267,7 @@ public class {device_camel}Actions implements ThingActions {{
     public void {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
         (({device_camel}Wrapper)this.handler.getDevice()).{packet_headless}({packet_params});
+        {refreshs}
     }}
 
     public static void {device_headless}{id_camel}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
@@ -1256,6 +1284,7 @@ public class {device_camel}Actions implements ThingActions {{
             {annotated_inputs}) throws TinkerforgeException {{
         Map<String, Object> result = new HashMap<>();
         {result_type} value = (({device_camel}Wrapper)this.handler.getDevice()).{packet_headless}({packet_params});
+        {refreshs}
         {transforms}
         return result;
     }}
@@ -1274,8 +1303,11 @@ public class {device_camel}Actions implements ThingActions {{
 
         transform_template = """result.put("{id}", {transform});"""
 
+        refresh_template = """this.handler.handleCommand(new ChannelUID(handler.getThing().getUID(), "{channel_name}"), RefreshType.REFRESH);"""
+
         actions = []
-        for packet in self.oh.actions:
+        for action in self.oh.actions:
+            packet = action.fn
             inputs = packet.get_elements(direction='in', high_level=True)
             outputs = packet.get_elements(direction='out', high_level=True)
 
@@ -1284,6 +1316,8 @@ public class {device_camel}Actions implements ThingActions {{
             typed_inputs = ["{type} {id}".format(id=elem.get_name().headless,
                                                  type=elem.get_java_type()) for elem in inputs]
             input_names = [elem.get_name().headless for elem in inputs]
+
+            refreshs = [refresh_template.format(channel_name=c.id.camel) for c in action.refreshs]
 
             packet_name = packet.get_name() if not packet.has_high_level() else packet.get_name(skip=-2)
 
@@ -1296,6 +1330,7 @@ public class {device_camel}Actions implements ThingActions {{
                                                     device_camel=self.get_category().camel + self.get_name().camel,
                                                     packet_headless=packet_name.headless,
                                                     packet_params=', '.join(input_names),
+                                                    refreshs='\n'.join(refreshs),
                                                     typed_inputs=common.wrap_non_empty(', ', ', '.join(typed_inputs), ''),
                                                     inputs=', '.join(input_names)))
             else:
@@ -1322,6 +1357,7 @@ public class {device_camel}Actions implements ThingActions {{
                                                     inputs=', '.join(input_names),
                                                     output_annotations='\n           '.join(output_annotations),
                                                     result_type=result_type,
+                                                    refreshs='\n'.join(refreshs),
                                                     transforms='\n        '.join(transforms)
                                                     ))
 
@@ -1444,7 +1480,7 @@ public class {name_camel} {{
                                description=self.get_description()['en'],
                                cfg='\n\n    '.join(cfg),
                                channels='\n\n    '.join(channels),
-                               actions=', '.join(self.get_category().headless + self.get_name().camel + a.get_name().camel for a in self.oh.actions))
+                               actions=', '.join(self.get_category().headless + self.get_name().camel + a.fn.get_name().camel for a in self.oh.actions))
 
 class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def get_bindings_name(self):
