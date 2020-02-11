@@ -1,6 +1,7 @@
 package org.eclipse.smarthome.binding.tinkerforge.discovery;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -101,6 +102,7 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
         if (job == null || job.isCancelled()) {
             job = scheduler.scheduleWithFixedDelay(() -> {
                 try {
+                    removeOlderResults(new Date().getTime());
                     logger.debug("Enumerating devices for Brick Daemon {}.", this.handler.getThing().getUID());
                     handler.enumerate();
                 } catch (NotConnectedException e) {
@@ -128,6 +130,12 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
         } catch (NotConnectedException e) {
             logger.debug("Brick Daemon {} currently not connected.", this.handler.getThing().getUID());
         }
+    }
+
+    @Override
+    protected synchronized void stopScan() {
+        super.stopScan();
+        removeOlderResults(getTimestampOfLastScan());
     }
 
     @Override
