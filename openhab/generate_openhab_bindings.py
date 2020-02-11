@@ -861,7 +861,7 @@ public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
 
     def get_openhab_channel_init_code(self):
         manual_update_template = """if(channelCfg.updateInterval > 0) {{
-    this.manualChannelUpdates.add(scheduler.scheduleWithFixedDelay(() -> handler.handleCommand(new ChannelUID(handler.getThing().getUID(), "{channel_name_camel}"), RefreshType.REFRESH), channelCfg.updateInterval, channelCfg.updateInterval, TimeUnit.MILLISECONDS));
+    this.manualChannelUpdates.add(scheduler.scheduleWithFixedDelay(() -> {{if(handler.getThing().getStatus() == ThingStatus.ONLINE) {{handler.handleCommand(new ChannelUID(handler.getThing().getUID(), "{channel_name_camel}"), RefreshType.REFRESH);}}}}, channelCfg.updateInterval, channelCfg.updateInterval, TimeUnit.MILLISECONDS));
 }}"""
 
         init_code = []
