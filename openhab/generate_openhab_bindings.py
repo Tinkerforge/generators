@@ -761,6 +761,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'org.eclipse.smarthome.core.types.CommandDescriptionBuilder',
                       'org.eclipse.smarthome.core.types.CommandOption',
                       'org.eclipse.smarthome.core.thing.ChannelUID',
+                      'org.eclipse.smarthome.core.thing.ThingStatus',
                       'org.eclipse.smarthome.core.thing.ThingTypeUID',
                       'org.eclipse.smarthome.core.thing.binding.BaseThingHandler',
                       'org.eclipse.smarthome.core.thing.type.ChannelDefinitionBuilder',
@@ -1303,7 +1304,7 @@ public class {device_camel}Actions implements ThingActions {{
 
         transform_template = """result.put("{id}", {transform});"""
 
-        refresh_template = """this.handler.handleCommand(new ChannelUID(handler.getThing().getUID(), "{channel_name}"), RefreshType.REFRESH);"""
+        refresh_template = """if(handler.getThing().getChannel(new ChannelUID(handler.getThing().getUID(), "{channel_name}")) != null){{\n\tthis.handler.handleCommand(new ChannelUID(handler.getThing().getUID(), "{channel_name}"), RefreshType.REFRESH);\n}}"""
 
         actions = []
         for action in self.oh.actions:
