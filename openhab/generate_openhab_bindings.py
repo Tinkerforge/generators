@@ -91,7 +91,7 @@ class Channel:
 class ChannelType:
     def __init__(self, **kwargs):
         self.id = kwargs['id']
-        self.label = kwargs['label']
+        self.label = kwargs.get('label', None)
         self.description = kwargs.get('description', None)
         self.params = kwargs.get('params', [])
         self.param_groups = kwargs.get('param_groups', [])
@@ -450,6 +450,16 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         return oh
 
     def sanity_check_config(self, oh):
+        # Channels must have a label or inherit one
+        for c in oh.channels:
+            if c.label is None and  c.type.label is None:
+                raise common.GeneratorError('openhab: Device {} Channel {} has no label and does not inherit one from its channel type.'.format(self.get_long_display_name(), c.id.space))
+
+        # Channels must have a description or inherit one
+        for c in oh.channels:
+            if c.description is None and c.type.description is None:
+                raise common.GeneratorError('openhab: Device {} Channel {} has no description and does not inherit one from its channel type.'.format(self.get_long_display_name(), c.id.space))
+
         # Channel labels must be title case
         for c in self.oh.channels:
             label = c.label if c.label is not None else c.type.label
@@ -577,7 +587,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
     def find_channel_type(self, channel, channel_types):
         if channel['type'].startswith('system.'):
-            system_type = ChannelType(**{'id': common.FlavoredName(channel['type']).get(), 'label': "CTRL+F ME", 'description': "CTRL+F ME", 'is_trigger_channel': True})
+            system_type = ChannelType(**{'id': common.FlavoredName(channel['type']).get(), 'is_trigger_channel': True})
             #system_type = self.apply_defaults({'channel_types': {'id': common.FlavoredName(channel['type']).get()}})['channel_types'][0]
             return system_type
             #return ChannelType._make([common.FlavoredName(channel['type']).get()] + [None] * (len(ChannelType._fields) - 1))
