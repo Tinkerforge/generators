@@ -3115,8 +3115,8 @@ class Device(object):
         since_firmwares = list(since_firmwares)
 
         if len(since_firmwares) + self.get_api_version_extra() != self.get_api_version()[2]:
-            raise GeneratorError('API version mismatch: len({0}) + {1} != {2}'
-                                 .format(since_firmwares, self.get_api_version_extra(), self.get_api_version()[2]))
+            raise GeneratorError('API version mismatch: API version is 2.0.{}, expected was 2.0.{}, i.e. len(set(since_firmwares)) (= {}) + api_versions_extra (= {})'
+                                 .format(self.get_api_version()[2], len(since_firmwares) + self.get_api_version_extra(), len(since_firmwares), self.get_api_version_extra()))
 
         function_names = set()
         callback_names = set()
