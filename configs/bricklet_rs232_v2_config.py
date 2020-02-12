@@ -286,8 +286,8 @@ Gibt die Buffer-Konfiguration zurück, wie von :func:`Set Buffer Config` gesetzt
 com['packets'].append({
 'type': 'function',
 'name': 'Get Buffer Status',
-'elements': [('Send Buffer Used', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216)}),
-             ('Receive Buffer Used', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (1024, 9216)})],
+'elements': [('Send Buffer Used', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (0, 9216)}),
+             ('Receive Buffer Used', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (0, 9216)})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
