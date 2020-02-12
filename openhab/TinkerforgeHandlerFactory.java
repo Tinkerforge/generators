@@ -90,6 +90,7 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
     @Override
     protected @Nullable ThingHandler createHandler(Thing thing) {
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
+        String thingName = thingTypeUID.getId();
         if (thingTypeUID.equals(THING_TYPE_BRICK_DAEMON)) {
             assert (thing instanceof Bridge);
             return new BrickDaemonHandler((Bridge) thing, this::registerBrickDaemonDiscoveryService, this::deregisterBrickDaemonDiscoveryService);
@@ -97,6 +98,7 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
             assert (thing instanceof Bridge);
             return new BrickletOutdoorWeatherHandler((Bridge) thing,
                                                      (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
+                                                     DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass,
                                                      () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
                                                      () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)),
                     httpClient);
@@ -104,6 +106,7 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
             assert (thing instanceof Bridge);
             return new BrickletRemoteSwitchHandler((Bridge) thing,
                                                      (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
+                                                     DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass,
                                                      () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
                                                      () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)),
                     httpClient);
@@ -121,7 +124,6 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
             return new RemoteDimmerTypeBHandler(thing);
         }
 
-        String thingName = thingTypeUID.getId();
         return new DeviceHandler(thing,
                                 (String uid, IPConnection ipcon) -> createDevice(thingName, uid, ipcon),
                                 DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass,

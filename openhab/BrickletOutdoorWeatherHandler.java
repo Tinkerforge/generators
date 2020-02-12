@@ -18,6 +18,7 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 import org.eclipse.smarthome.core.thing.binding.builder.BridgeBuilder;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 
@@ -25,9 +26,10 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
     private List<ThingHandler> childHandlers = new ArrayList<>();
 
     public BrickletOutdoorWeatherHandler(Bridge bridge, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
+            Class<? extends ThingHandlerService> actionsClass,
             Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
             Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier, HttpClient httpClient) {
-        super(bridge, deviceSupplier, DefaultActions.class, channelTypeRegistrySupplier, configDescriptionRegistrySupplier, httpClient);
+        super(bridge, deviceSupplier, actionsClass, channelTypeRegistrySupplier, configDescriptionRegistrySupplier, httpClient);
     }
 
     public @Nullable BrickletOutdoorWeatherWrapper getDevice() {
