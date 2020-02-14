@@ -371,20 +371,20 @@ Er gibt die Anzahl der aufgetreten Overrun und Parity Fehler zurück.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Available Callback',
+'name': 'Set Frame Readable Callback Configuration',
 'elements': [('Frame Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (0, 9216)})],
 'since_firmware': [2, 0, 3],
 'doc': ['ccf', {
 'en':
 """
-Enables/Disables the :cb:`Available` callback. The frame size is the number of bytes, that have to be available to trigger the callback.
+Configures the :cb:`Frame Readable` callback. The frame size is the number of bytes, that have to be readable to trigger the callback.
 A frame size of 0 disables the callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :cb:`Available` Callback. Die Frame Size ist die Anzahl an Bytes, die verfügbar sein müssen, damit der Callback auslöst.
+Konfiguriert den :cb:`Frame Readable` Callback. Die Frame Size ist die Anzahl an Bytes, die lesbar sein müssen, damit der Callback auslöst.
 Eine Frame Size von 0 deaktiviert den Callback.
 
 Im Startzustand ist der Callback deaktiviert.
@@ -394,21 +394,23 @@ Im Startzustand ist der Callback deaktiviert.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Available',
-'elements': [('Count', 'uint16', 1, 'out', {})],
+'name': 'Frame Readable',
+'elements': [('Frame Count', 'uint16', 1, 'out', {})],
 'since_firmware': [2, 0, 3],
 'doc': ['c', {
 'en':
 """
-This callback is called if new data is available. Count is the number of bytes available.
+This callback is called if at least one frame of data is readable. The frame size is configured with :func:`Set Frame Readable Callback Configuration`.
+The frame count parameter is the number of frames that can be read.
 This callback is triggered only once until :func:`Read` is called. This means, that if you have configured a frame size of X bytes,
-you can read exactly X bytes using the :func:`Read` function, every time the callback triggers without checking the count :word:`parameter`.
+you can read exactly X bytes using the :func:`Read` function, every time the callback triggers without checking the frame count :word:`parameter`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst, wenn neue Daten verfügbar sind. Count ist die Anzahl an Bytes, die zum Lesen bereitstehen.
+Dieser Callback wird ausgelöst, wenn mindestens ein neuer Frame an Daten verfügbar sind. Die Größe eines Frames kann mit :func:`Set Frame Readable Callback Configuration` konfiguriert werden.
+Frame Count ist die Anzahl an Frames, die zum Lesen bereitstehen.
 Der Callback wird nur einmal pro :func:`Read` Aufruf ausgelöst. Das heißt, dass wenn eine Framegröße von X Bytes konfiguriert wird, jedes Mal
-wenn das Callback ausgelöst wird, X Bytes mit der :func:`Read`-Funktion gelesen werden können, ohne dass der Count-:word:`parameter` geprüft werden muss.
+wenn das Callback ausgelöst wird, X Bytes mit der :func:`Read`-Funktion gelesen werden können, ohne dass der Frame Count-:word:`parameter` geprüft werden muss.
 """
 }]
 })
@@ -506,7 +508,7 @@ com['openhab'] = {
             'label': 'Send Buffer Size',
             'description': 'The send buffer size in bytes. In total the send and receive buffers are 10240 byte (10 KiB) in size. The minimum buffer size is 1024 byte (1 KiB) each. The binding will configure the read buffer size accordingly. The send buffer holds data that is given by the user and can not be written to RS232 yet. The receive buffer holds data that is received through RS232 but could not yet be send to the user.'
         }, {
-            'packet': 'Set Available Callback',
+            'packet': 'Set Frame Readable Callback Configuration',
             'element': 'Frame Size',
 
             'name': 'Frame Size',
@@ -516,20 +518,20 @@ com['openhab'] = {
             'default': 1,
 
             'label': 'Frame Size',
-            'description': 'The size of receivable data frames in bytes. Set this to something other than 1, if you want to receive data with a fix frame size. The available channel will trigger every time a frame of this size is ready to be read, but will wait until this frame is read before triggering again. This means, you can use this channel as a trigger in a rule, that will read exactly one frame.'
+            'description': 'The size of receivable data frames in bytes. Set this to something other than 1, if you want to receive data with a fix frame size. The frame readable channel will trigger every time a frame of this size is ready to be read, but will wait until this frame is read before triggering again. This means, you can use this channel as a trigger in a rule, that will read exactly one frame.'
         }],
 
     'init_code': """this.setConfiguration(cfg.baudRate, cfg.parity, cfg.stopBits, cfg.wordLength, cfg.flowControl);
     this.setBufferConfig(cfg.sendBufferSize, 10240 - cfg.sendBufferSize);
-    this.setAvailableCallback(cfg.frameSize);""",
+    this.setFrameReadableCallbackConfiguration(cfg.frameSize);""",
 
     'channels': [{
-            'id': 'Frame Available',
-            'label': 'Frame Available',
+            'id': 'Frame Readable',
+            'label': 'Frame Readable',
             'description': "This channel is triggered in when a new frame was received and can be read out. The channel will only trigger again if the frame was read.",
             'type': 'system.trigger',
             'callbacks': [{
-                'packet': 'Available',
+                'packet': 'Frame Readable',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
 
             'is_trigger_channel': True,
