@@ -6,9 +6,11 @@
 
 # RS232 Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2108,
     'name': 'RS232 V2',
@@ -363,6 +365,50 @@ the current overrun and parity error count.
 """
 Dieser Callback wird aufgerufen wenn ein neuer Fehler auftritt.
 Er gibt die Anzahl der aufgetreten Overrun und Parity Fehler zurück.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Available Callback',
+'elements': [('Frame Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (0, 9216)})],
+'since_firmware': [2, 0, 3],
+'doc': ['ccf', {
+'en':
+"""
+Enables/Disables the :cb:`Available` callback. The frame size is the number of bytes, that have to be available to trigger the callback.
+A frame size of 0 disables the callback.
+
+By default the callback is disabled.
+""",
+'de':
+"""
+Aktiviert den :cb:`Available` Callback. Die Frame Size ist die Anzahl an Bytes, die verfügbar sein müssen, damit der Callback auslöst.
+Eine Frame Size von 0 deaktiviert den Callback.
+
+Im Startzustand ist der Callback deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Available',
+'elements': [('Count', 'uint16', 1, 'out', {})],
+'since_firmware': [2, 0, 3],
+'doc': ['c', {
+'en':
+"""
+This callback is called if new data is available. Count is the number of bytes available.
+This callback is triggered only once until :func:`Read` is called. This means, that if you have configured a frame size of X bytes,
+you can read exactly X bytes using the :func:`Read` function, every time the callback triggers without checking the count :word:`parameter`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst, wenn neue Daten verfügbar sind. Count ist die Anzahl an Bytes, die zum Lesen bereitstehen.
+Der Callback wird nur einmal pro :func:`Read` Aufruf ausgelöst. Das heißt, dass wenn eine Framegröße von X Bytes konfiguriert wird, jedes Mal
+wenn das Callback ausgelöst wird, X Bytes mit der :func:`Read`-Funktion gelesen werden können, ohne dass der Count-:word:`parameter` geprüft werden muss.
 """
 }]
 })
