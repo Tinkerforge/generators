@@ -372,7 +372,7 @@ Er gibt die Anzahl der aufgetreten Overrun und Parity Fehler zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Readable Callback Configuration',
-'elements': [('Frame Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (0, 9216)})],
+'elements': [('Frame Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (0, 9216), 'default': 0})],
 'since_firmware': [2, 0, 3],
 'doc': ['ccf', {
 'en':
