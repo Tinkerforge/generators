@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 277,
     'name': 'RS485',
@@ -1938,6 +1938,54 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 """
 }]
 })
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Frame Readable Callback Configuration',
+'elements': [('Frame Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (0, 9216), 'default': 0})],
+'since_firmware': [2, 0, 3],
+'doc': ['ccf', {
+'en':
+"""
+Configures the :cb:`Frame Readable` callback. The frame size is the number of bytes, that have to be readable to trigger the callback.
+A frame size of 0 disables the callback.
+
+By default the callback is disabled.
+""",
+'de':
+"""
+Konfiguriert den :cb:`Frame Readable` Callback. Die Frame Size ist die Anzahl an Bytes, die lesbar sein müssen, damit der Callback auslöst.
+Eine Frame Size von 0 deaktiviert den Callback.
+
+Im Startzustand ist der Callback deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Frame Readable',
+'elements': [('Frame Count', 'uint16', 1, 'out', {})],
+'since_firmware': [2, 0, 3],
+'doc': ['c', {
+'en':
+"""
+This callback is called if at least one frame of data is readable. The frame size is configured with :func:`Set Frame Readable Callback Configuration`.
+The frame count parameter is the number of frames that can be read.
+This callback is triggered only once until :func:`Read` is called. This means, that if you have configured a frame size of X bytes,
+you can read exactly X bytes using the :func:`Read` function, every time the callback triggers without checking the frame count :word:`parameter`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst, wenn mindestens ein neuer Frame an Daten verfügbar sind. Die Größe eines Frames kann mit :func:`Set Frame Readable Callback Configuration` konfiguriert werden.
+Frame Count ist die Anzahl an Frames, die zum Lesen bereitstehen.
+Der Callback wird nur einmal pro :func:`Read` Aufruf ausgelöst. Das heißt, dass wenn eine Framegröße von X Bytes konfiguriert wird, jedes Mal
+wenn das Callback ausgelöst wird, X Bytes mit der :func:`Read`-Funktion gelesen werden können, ohne dass der Frame Count-:word:`parameter` geprüft werden muss.
+"""
+}]
+})
+
 
 com['examples'].append({
 'name': 'Loopback',
