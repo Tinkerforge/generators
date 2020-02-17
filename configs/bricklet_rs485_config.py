@@ -6,6 +6,8 @@
 
 # RS485 Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -2012,3 +2014,213 @@ com['examples'].append({
               ('callback', ('Modbus Slave Write Single Register Request', 'Modbus slave write single register request'), [(('Request ID', 'Request ID'), 'uint8', 1, None, None, None), (('Register Address', 'Register Address'), 'uint32', 1, None, None, None), (('Register Value', 'Register Value'), 'uint16', 1, None, None, None)], None, None)],
 'incomplete': True # because of special callback logic
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'packet': 'Set RS485 Configuration',
+            'element': 'Baudrate',
+
+            'name': 'Baud Rate',
+            'type': 'integer',
+            'min': 100,
+            'max': 2000000,
+            'default': 115200,
+
+            'label': 'Baud Rate',
+            'description': 'The baud rate to send/receive with.',
+        }, {
+            'packet': 'Set RS485 Configuration',
+            'element': 'Parity',
+
+            'name': 'Parity',
+            'type': 'integer',
+            'options': [('None', 0),
+                        ('Odd', 1),
+                        ('Even', 2)],
+            'limitToOptions': 'true',
+            'default': 0,
+
+            'label': 'Parity',
+            'description': 'The parity mode to use. See <a href=\\\"https://en.wikipedia.org/wiki/Serial_port#Parity\\\">here</a>'
+        }, {
+            'packet': 'Set RS485 Configuration',
+            'element': 'Stopbits',
+
+            'name': 'Stop Bits',
+            'type': 'integer',
+            'options': [('1', 1),
+                        ('2', 2)],
+            'limitToOptions': 'true',
+            'default': 1,
+
+            'label': 'Stop Bits',
+            'description': 'The number of stop bits to send/expect.'
+        }, {
+            'packet': 'Set RS485 Configuration',
+            'element': 'Wordlength',
+
+            'name': 'Word Length',
+            'type': 'integer',
+            'options': [('5', 5),
+              ('6', 6),
+              ('7', 7),
+              ('8', 8)],
+            'limitToOptions': 'true',
+            'default': 8,
+
+            'label': 'Word Length',
+            'description': 'The length of a serial word. Typically one byte.'
+        }, {
+            'packet': 'Set RS485 Configuration',
+            'element': 'Duplex',
+
+            'name': 'Duplex',
+            'type': 'integer',
+            'options': [('Half', 0),
+                        ('Full', 1)],
+            'limitToOptions': 'true',
+            'default': 0,
+
+            'label': 'Duplex',
+            'description': 'The flow control mechanism to use. Software uses control characters in-band. Hardware uses the RTS and CTS lines.'
+        }, {
+            'packet': 'Set Buffer Config',
+            'element': 'Send Buffer Size',
+
+            'name': 'Send Buffer Size',
+            'type': 'integer',
+            'min': 1024,
+            'max': 9216,
+            'default': 5120,
+
+            'label': 'Send Buffer Size',
+            'description': 'The send buffer size in bytes. In total the send and receive buffers are 10240 byte (10 KiB) in size. The minimum buffer size is 1024 byte (1 KiB) each. The binding will configure the read buffer size accordingly. The send buffer holds data that is given by the user and can not be written to RS232 yet. The receive buffer holds data that is received through RS232 but could not yet be send to the user.'
+        }, {
+            'packet': 'Set Frame Readable Callback Configuration',
+            'element': 'Frame Size',
+
+            'name': 'Frame Size',
+            'type': 'integer',
+            'min': 0,
+            'max': 9216,
+            'default': 1,
+
+            'label': 'Frame Size',
+            'description': 'The size of receivable data frames in bytes. Set this to something other than 1, if you want to receive data with a fix frame size. The frame readable channel will trigger every time a frame of this size is ready to be read, but will wait until this frame is read before triggering again. This means, you can use this channel as a trigger in a rule, that will read exactly one frame.'
+        }, {
+            'packet': 'Set Communication LED Config',
+            'element': 'Config',
+
+            'name': 'Communication LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Communication', 3)],
+            'limitToOptions': 'true',
+            'default': 3,
+
+            'label': 'Communication LED Config',
+            'description': "By default the LED shows RS485 communication traffic by flickering. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
+        }, {
+            'packet': 'Set Error LED Config',
+            'element': 'Config',
+
+            'name': 'Error LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Error', 3)],
+            'limitToOptions': 'true',
+            'default': 3,
+
+            'label': 'Error LED Config',
+            'description': "By default the error LED turns on if there is any error (see FrameErrorCountListener callback). You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
+        }],
+
+    'init_code': """this.setRS485Configuration(cfg.baudRate, cfg.parity, cfg.stopBits, cfg.wordLength, cfg.duplex);
+    this.setBufferConfig(cfg.sendBufferSize, 10240 - cfg.sendBufferSize);
+    this.setMode(BrickletRS485.MODE_RS485);
+    this.setFrameReadableCallbackConfiguration(cfg.frameSize);
+    this.setCommunicationLEDConfig(cfg.communicationLEDConfig);
+    this.setErrorLEDConfig(cfg.errorLEDConfig);""",
+
+    'channels': [{
+            'id': 'Frame Readable',
+            'label': 'Frame Readable',
+            'description': "This channel is triggered in when a new frame was received and can be read out. The channel will only trigger again if the frame was read.",
+            'type': 'system.trigger',
+            'callbacks': [{
+                'packet': 'Frame Readable',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }, {
+            'id': 'Overrun Error Count',
+            'label': 'Overrun Error Count',
+            'type': 'Overrun Error Count',
+
+            'getters': [{
+                'packet': 'Get Error Count',
+                'transform': 'new DecimalType(value.overrunErrorCount)'
+            }],
+
+            'callbacks': [{
+                'packet': 'Error Count',
+                'transform': 'new DecimalType(overrunErrorCount)'}],
+        }, {
+            'id': 'Parity Error Count',
+            'label': 'Parity Error Count',
+            'type': 'Parity Error Count',
+
+            'getters': [{
+                'packet': 'Get Error Count',
+                'transform': 'new DecimalType(value.parityErrorCount)'
+            }],
+
+            'callbacks': [{
+                'packet': 'Error Count',
+                'transform': 'new DecimalType(parityErrorCount)'}],
+        }, {
+            'id': 'Send Buffer Used',
+            'label': 'Send Buffer Used',
+            'type': 'Send Buffer Used',
+
+            'getters': [{
+                'packet': 'Get Buffer Status',
+                'transform': 'new QuantityType(value.sendBufferUsed, SmartHomeUnits.BYTE)'
+            }],
+        }, {
+            'id': 'Receive Buffer Used',
+            'label': 'Receive Buffer Used',
+            'type': 'Receive Buffer Used',
+
+            'getters': [{
+                'packet': 'Get Buffer Status',
+                'transform': 'new QuantityType(value.receiveBufferUsed, SmartHomeUnits.BYTE)'
+            }],
+        }],
+    'channel_types': [
+        oh_generic_channel_type('Overrun Error Count', 'Number', 'Overrun Error Count',
+            update_style=None,
+            description='The current number of overrun errors',
+            read_only=True),
+        oh_generic_channel_type('Parity Error Count', 'Number', 'Framing Error Count',
+            update_style=None,
+            description='The current number of parity errors',
+            read_only=True),
+        oh_generic_channel_type('Send Buffer Used', 'Number:DataAmount', 'Send Buffer Used',
+            update_style=None,
+            description='The number of bytes currently in the send buffer',
+            read_only=True),
+        oh_generic_channel_type('Receive Buffer Used', 'Number:DataAmount', 'Receive Buffer Used',
+            update_style=None,
+            description='The number of bytes currently in the receive buffer',
+            read_only=True),
+    ],
+    'actions': ['Write', 'Read', 'Get RS485 Configuration', 'Get Mode', 'Get Communication LED Config', 'Get Error LED Config', 'Get Buffer Config', 'Get Buffer Status', 'Get Error Count']
+}
+
