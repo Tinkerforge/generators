@@ -43,7 +43,7 @@ use constant _DEVICE_IDENTIFIER_CHECK_MISMATCH => 2;
 # the constructor
 sub _new
 {
-	my ($class, $uid, $ipcon, $api_version, $device_identifier, $device_display_name) =  @_;
+	my ($class, $uid, $ipcon, $api_version, $device_identifier, $device_display_name) = @_;
 
 	my $self :shared = shared_clone({uid => _base58_decode($uid),
 	                                 uid_string => shared_clone($uid),
@@ -313,7 +313,8 @@ sub _check_device_identifier
 		}
 	}
 
-	if ($self->{device_identifier_check} == &_DEVICE_IDENTIFIER_CHECK_MISMATCH) {
+	if($self->{device_identifier_check} == &_DEVICE_IDENTIFIER_CHECK_MISMATCH)
+	{
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->WRONG_DEVICE_TYPE,
 		      "UID $self->{uid_string} belongs to a $self->{wrong_device_dsisplay_name} instead of the expected $self->{device_display_name}"));
 	}
