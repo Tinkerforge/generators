@@ -1946,7 +1946,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Readable Callback Configuration',
 'elements': [('Frame Size', 'uint16', 1, 'in', {'unit': 'Byte', 'range': (0, 9216), 'default': 0})],
-'since_firmware': [2, 0, 3],
+'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
 """
@@ -1969,7 +1969,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Frame Readable',
 'elements': [('Frame Count', 'uint16', 1, 'out', {})],
-'since_firmware': [2, 0, 3],
+'since_firmware': [2, 0, 5],
 'doc': ['c', {
 'en':
 """
@@ -2015,10 +2015,55 @@ com['examples'].append({
 'incomplete': True # because of special callback logic
 })
 
+def modbus_error_channel(name_space, name_camel, desc):
+    return {
+        'predicate': 'cfg.mode != 0',
+        'id': '{} Error Count'.format(name_space),
+        'label': '{} Error Count'.format(name_space),
+        'description': desc,
+        'type': 'Modbus Error',
+
+        'getters': [{
+            'packet': 'Get Modbus Common Error Count',
+            'transform': 'new DecimalType(value.{}ErrorCount)'.format(name_camel)
+        }],
+    }
+
+modbus_common_error_channels = [modbus_error_channel(*tup) for tup in [
+    ('Timeout', 'timeout', 'Number of timeouts occurred.'),
+    ('Checksum', 'checksum', 'Number of failures due to Modbus frame CRC16 checksum mismatch.'),
+    ('Frame Too Big', 'frameTooBig', 'Number of times frames were rejected because they exceeded maximum Modbus frame size which is 256 bytes.'),
+    ('Illegal Function', 'illegalFunction', 'Number of errors when an unimplemented or illegal function is requested. This corresponds to Modbus exception code 1.'),
+    ('Illegal Data Address', 'illegalDataAddress', 'Number of errors due to invalid data address. This corresponds to Modbus exception code 2.'),
+    ('Illegal Data Value', 'illegalDataValue', 'Number of errors due to invalid data value. This corresponds to Modbus exception code 3.'),
+    ('Slave Device Failure', 'slaveDeviceFailure', 'Number of errors occurred on the slave device which were unrecoverable. This corresponds to Modbus exception code 4.')]]
+
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
-    'param_groups': oh_generic_channel_param_groups(),
+    'param_groups': oh_generic_channel_param_groups() + [{
+        'name': 'RS485',
+        'label': 'RS485',
+        'description': 'Settings only used in RS485 mode',
+    }, {
+        'name': 'Modbus Master',
+        'label': 'Modbus Master',
+        'description': 'Settings only used in Modbus Master RTU mode',
+    }],
     'params': [{
+            'packet': 'Set Mode',
+            'element': 'Mode',
+
+            'name': 'Mode',
+            'type': 'integer',
+            'options': [('RS485', 0),
+                        ('Modbus Master RTU', 1)],
+            'limitToOptions': 'true',
+            'default': 0,
+
+            'label': 'Mode',
+            'description': 'The mode of the Bricklet in which it operates.',
+        }, {
+            'groupName': 'RS485',
             'packet': 'Set RS485 Configuration',
             'element': 'Baudrate',
 
@@ -2031,6 +2076,7 @@ com['openhab'] = {
             'label': 'Baud Rate',
             'description': 'The baud rate to send/receive with.',
         }, {
+            'groupName': 'RS485',
             'packet': 'Set RS485 Configuration',
             'element': 'Parity',
 
@@ -2045,6 +2091,7 @@ com['openhab'] = {
             'label': 'Parity',
             'description': 'The parity mode to use. See <a href=\\\"https://en.wikipedia.org/wiki/Serial_port#Parity\\\">here</a>'
         }, {
+            'groupName': 'RS485',
             'packet': 'Set RS485 Configuration',
             'element': 'Stopbits',
 
@@ -2058,6 +2105,7 @@ com['openhab'] = {
             'label': 'Stop Bits',
             'description': 'The number of stop bits to send/expect.'
         }, {
+            'groupName': 'RS485',
             'packet': 'Set RS485 Configuration',
             'element': 'Wordlength',
 
@@ -2073,6 +2121,7 @@ com['openhab'] = {
             'label': 'Word Length',
             'description': 'The length of a serial word. Typically one byte.'
         }, {
+            'groupName': 'RS485',
             'packet': 'Set RS485 Configuration',
             'element': 'Duplex',
 
@@ -2098,6 +2147,7 @@ com['openhab'] = {
             'label': 'Send Buffer Size',
             'description': 'The send buffer size in bytes. In total the send and receive buffers are 10240 byte (10 KiB) in size. The minimum buffer size is 1024 byte (1 KiB) each. The binding will configure the read buffer size accordingly. The send buffer holds data that is given by the user and can not be written to RS232 yet. The receive buffer holds data that is received through RS232 but could not yet be send to the user.'
         }, {
+            'groupName': 'RS485',
             'packet': 'Set Frame Readable Callback Configuration',
             'element': 'Frame Size',
 
@@ -2110,6 +2160,20 @@ com['openhab'] = {
             'label': 'Frame Size',
             'description': 'The size of receivable data frames in bytes. Set this to something other than 1, if you want to receive data with a fix frame size. The frame readable channel will trigger every time a frame of this size is ready to be read, but will wait until this frame is read before triggering again. This means, you can use this channel as a trigger in a rule, that will read exactly one frame.'
         }, {
+            'groupName': 'Modbus Master',
+            'packet': 'Set Modbus Configuration',
+            'element': 'Master Request Timeout',
+
+            'name': 'Master Request Timeout',
+            'type': 'integer',
+            'min': 0,
+            'default': 1000,
+
+            'label': 'Request Timeout',
+            'description': 'Time in milliseconds that the master should wait for a response from a slave when in Modbus master mode.'
+        },
+
+        {
             'packet': 'Set Communication LED Config',
             'element': 'Config',
 
@@ -2143,7 +2207,8 @@ com['openhab'] = {
 
     'init_code': """this.setRS485Configuration(cfg.baudRate, cfg.parity, cfg.stopBits, cfg.wordLength, cfg.duplex);
     this.setBufferConfig(cfg.sendBufferSize, 10240 - cfg.sendBufferSize);
-    this.setMode(BrickletRS485.MODE_RS485);
+    this.setMode(cfg.mode);
+    this.setModbusConfiguration(1, cfg.masterRequestTimeout);
     this.setFrameReadableCallbackConfiguration(cfg.frameSize);
     this.setCommunicationLEDConfig(cfg.communicationLEDConfig);
     this.setErrorLEDConfig(cfg.errorLEDConfig);""",
@@ -2184,7 +2249,9 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Error Count',
                 'transform': 'new DecimalType(parityErrorCount)'}],
-        }, {
+        }]
+        + modbus_common_error_channels + [
+        {
             'id': 'Send Buffer Used',
             'label': 'Send Buffer Used',
             'type': 'Send Buffer Used',
@@ -2212,6 +2279,10 @@ com['openhab'] = {
             update_style=None,
             description='The current number of parity errors',
             read_only=True),
+        oh_generic_channel_type('Modbus Error', 'Number', 'NOT USED',
+            update_style=None,
+            description='NOT USED',
+            read_only=True),
         oh_generic_channel_type('Send Buffer Used', 'Number:DataAmount', 'Send Buffer Used',
             update_style=None,
             description='The number of bytes currently in the send buffer',
@@ -2221,6 +2292,8 @@ com['openhab'] = {
             description='The number of bytes currently in the receive buffer',
             read_only=True),
     ],
-    'actions': ['Write', 'Read', 'Get RS485 Configuration', 'Get Mode', 'Get Communication LED Config', 'Get Error LED Config', 'Get Buffer Config', 'Get Buffer Status', 'Get Error Count']
+    #'actions': ['Write', 'Read', 'Get RS485 Configuration', 'Get Mode', 'Get Communication LED Config', 'Get Error LED Config', 'Get Buffer Config', 'Get Buffer Status', 'Get Error Count',
+    #            'Get Modbus Configuration', 'Get Modbus Common Error Count', 'Modbus Master Read Coils', 'Modbus Master Read Holding Registers', 'Modbus Master Write Single Coil', 'Modbus Master Write Single Register', 'Modbus Master Write Multiple Coils', 'Modbus Master Write Multiple Registers', 'Modbus Master Read Discrete Inputs', 'Modbus Master Read Input Registers']
+    'actions': 'custom'
 }
 

@@ -265,6 +265,11 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     }
 
     @Override
+    public Configuration getConfig() {
+        return super.getConfig();
+    }
+
+    @Override
     public void bridgeStatusChanged(ThingStatusInfo bridgeStatusInfo) {
         if (bridgeStatusInfo.getStatus() == ThingStatus.ONLINE) {
             logger.debug("Bridge of {} went online", thing.getUID().getId());
