@@ -53,7 +53,7 @@ sub _new
 	                                 device_display_name => shared_clone($device_display_name),
 	                                 device_identifier_lock_ref => undef,
 	                                 device_identifier_check => shared_clone(&_DEVICE_IDENTIFIER_CHECK_PENDING),
-	                                 wrong_device_dsisplay_name => shared_clone('?'),
+	                                 wrong_device_display_name => shared_clone('?'),
 	                                 registered_callbacks => shared_clone({}),
 	                                 callback_formats => shared_clone({}),
 	                                 high_level_callbacks => shared_clone({}),
@@ -309,14 +309,14 @@ sub _check_device_identifier
 		else
 		{
 			$self->{device_identifier_check} = shared_clone(&_DEVICE_IDENTIFIER_CHECK_MISMATCH);
-			$self->{wrong_device_dsisplay_name} = get_device_display_name($device_identifier);
+			$self->{wrong_device_display_name} = get_device_display_name($device_identifier);
 		}
 	}
 
 	if($self->{device_identifier_check} == &_DEVICE_IDENTIFIER_CHECK_MISMATCH)
 	{
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->WRONG_DEVICE_TYPE,
-		      "UID $self->{uid_string} belongs to a $self->{wrong_device_dsisplay_name} instead of the expected $self->{device_display_name}"));
+		      "UID $self->{uid_string} belongs to a $self->{wrong_device_display_name} instead of the expected $self->{device_display_name}"));
 	}
 
 	return 1;
