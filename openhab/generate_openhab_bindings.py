@@ -417,13 +417,14 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             tmp.update(param_group)
             oh['param_groups'][pg_idx] = tmp
 
-        for a_idx, action in enumerate(oh['actions']):
-            if not isinstance(action, dict):
-                action = {'fn': action}
+        if oh['actions'] != 'custom':
+            for a_idx, action in enumerate(oh['actions']):
+                if not isinstance(action, dict):
+                    action = {'fn': action}
 
-            tmp = action_defaults.copy()
-            tmp.update(action)
-            oh['actions'][a_idx] = tmp
+                tmp = action_defaults.copy()
+                tmp.update(action)
+                oh['actions'][a_idx] = tmp
 
         return oh
 
@@ -441,6 +442,8 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             if feature not in common_openhab:
                 continue
             for key, value in common_openhab[feature].items():
+                if key == 'actions' and oh[key] == 'custom':
+                    continue
                 if key == 'init_code' or key == 'dispose_code':
                     oh[key] += '\n' + value
                 else:
@@ -706,9 +709,10 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
         for g_idx, group in enumerate(oh['param_groups']):
             oh['param_groups'][g_idx] = ParamGroup(**group)
 
-        for a_idx, action in enumerate(oh['actions']):
-            action['fn'] = find_packet(action['fn'])
-            oh['actions'][a_idx] = Action(**action)
+        if oh['actions'] != 'custom':
+            for a_idx, action in enumerate(oh['actions']):
+                action['fn'] = find_packet(action['fn'])
+                oh['actions'][a_idx] = Action(**action)
 
         if 'required_firmware_version' not in oh:
             oh['required_firmware_version'] = [2, 0, 0]
@@ -737,12 +741,13 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                         'default': 1000,
                     }))
 
-        for action in self.oh.actions:
-            for i, refresh in enumerate(action.refreshs):
-                try:
-                    action.refreshs[i] = next(c for c in self.oh.channels if c.id.space.replace(self.get_category().space + ' ' + self.get_name().space + ' ', '', 1) == refresh)
-                except StopIteration:
-                    raise common.GeneratorError('openhab: Device {}: Action {}: Unknown channel {}.'.format(self.get_long_display_name(), action.fn.get_name().space, refresh))
+        if self.oh.actions != 'custom':
+            for action in self.oh.actions:
+                for i, refresh in enumerate(action.refreshs):
+                    try:
+                        action.refreshs[i] = next(c for c in self.oh.channels if c.id.space.replace(self.get_category().space + ' ' + self.get_name().space + ' ', '', 1) == refresh)
+                    except StopIteration:
+                        raise common.GeneratorError('openhab: Device {}: Action {}: Unknown channel {}.'.format(self.get_long_display_name(), action.fn.get_name().space, refresh))
 
     def get_openhab_imports(self):
         oh_imports = ['java.net.URI',
@@ -1491,7 +1496,7 @@ public class {name_camel} {{
                                description=self.get_description()['en'],
                                cfg='\n\n    '.join(cfg),
                                channels='\n\n    '.join(channels),
-                               actions=', '.join(self.get_category().headless + self.get_name().camel + a.fn.get_name().camel for a in self.oh.actions))
+                               actions=', '.join(self.get_category().headless + self.get_name().camel + a.fn.get_name().camel for a in self.oh.actions) if self.oh.actions != 'custom' else 'custom')
 
 class OpenHABBindingsGenerator(JavaBindingsGenerator):
     def get_bindings_name(self):
@@ -1532,7 +1537,9 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
             with open(os.path.join(self.get_bindings_dir(), config_class_name + '.java'), 'w') as f:
                 f.write(config_class)
 
-        if len(device.oh.actions) > 0:
+        if device.oh.actions == 'custom':
+            shutil.copy(class_name + 'Actions.java', os.path.join(self.get_bindings_dir(), class_name + 'Actions.java'))
+        elif len(device.oh.actions) > 0:
             with open(os.path.join(self.get_bindings_dir(), class_name + 'Actions.java'), 'w') as f:
                 f.write(device.get_openhab_actions_class())
 
