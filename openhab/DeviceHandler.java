@@ -15,6 +15,7 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
 import org.eclipse.smarthome.config.core.ConfigDescription;
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -206,6 +208,16 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         return getThing().getChannel(channelID).getConfiguration();
     }
 
+    private int compareFWs(short[] left, short[] right) {
+        for(int i = 0; i < 3; ++i) {
+            int cmp = Short.compare(left[i], right[i]);
+            if(cmp != 0) {
+                return cmp;
+            }
+        }
+        return 0;
+    }
+
     protected void initializeDevice() {
         String id = thing.getUID().getId();
         logger.debug("Initializing {}", id);
@@ -228,6 +240,16 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
                 this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, "0.0.0");
                 return;
             }
+
+            short[] fw = device.getIdentity().firmwareVersion;
+            String minFWString = getThing().getProperties().getOrDefault(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION, "2.0.0");
+            String[] splt = minFWString.split("\\.");
+            short[] minFW = {Short.parseShort(splt[0]), Short.parseShort(splt[1]), Short.parseShort(splt[2])};
+            if(compareFWs(fw, minFW) < 0) {
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, String.format("Device firmware %d.%d.%d is older than the minimum required version %s. Please update the firmware.", fw[0], fw[1], fw[2], minFWString));
+                return;
+            }
+
             device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel,
                     scheduler, this);
             logger.debug("Initialized {}", thing.getUID().getId());
@@ -475,6 +497,10 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     @Override
     public boolean isUpdateExecutable() {
-        return this.httpClient != null && (this.device instanceof CoMCUFlashable || this.device instanceof StandardFlashable);
+        boolean bridgeReachable = getBridge() != null && getBridge().getStatus() == ThingStatus.ONLINE;
+        boolean updateSchemeSupported = this.device instanceof CoMCUFlashable || this.device instanceof StandardFlashable;
+        boolean thingReachable = getThing().getStatusInfo().getStatusDetail() != ThingStatusDetail.COMMUNICATION_ERROR;
+
+        return this.httpClient != null && bridgeReachable && thingReachable && updateSchemeSupported;
     }
 }

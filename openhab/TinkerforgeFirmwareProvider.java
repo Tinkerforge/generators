@@ -70,8 +70,6 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     @Override
     public Set<Firmware> getFirmwares(Thing thing, Locale locale) {
         Set<Firmware> result = new HashSet<>();
-        result.add(buildFirmware(thing.getThingTypeUID(),
-                thing.getProperties().get(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION), null));
         String id = thing.getThingTypeUID().getId();
         FirmwareInfo info = latestVersions.get(id);
         if (info != null)
