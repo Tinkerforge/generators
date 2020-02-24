@@ -347,33 +347,43 @@ end;
 procedure TDeviceTable.Insert(const uid: longword; const device: TDevice);
 var len: longint; i: longint;
 begin
-  len := Length(uids);
-  for i := 0 to len - 1 do begin
-    if (uids[i] = uid) then begin
-      devices[i] := device;
-      exit;
+  mutex.Acquire;
+  try
+    len := Length(uids);
+    for i := 0 to len - 1 do begin
+      if (uids[i] = uid) then begin
+        devices[i] := device;
+        exit;
+      end;
     end;
+    SetLength(uids, len + 1);
+    SetLength(devices, len + 1);
+    uids[len] := uid;
+    devices[len] := device;
+  finally
+    mutex.Release;
   end;
-  SetLength(uids, len + 1);
-  SetLength(devices, len + 1);
-  uids[len] := uid;
-  devices[len] := device;
 end;
 
 procedure TDeviceTable.Remove(const uid: longword);
 var len: longint; i: longint; k: longint;
 begin
-  len := Length(uids);
-  for i := 0 to len - 1 do begin
-    if (uids[i] = uid) then begin
-      for k := i + 1 to len - 1 do begin
-        uids[k - 1] := uids[k];
-        devices[k - 1] := devices[k];
+  mutex.Acquire;
+  try
+    len := Length(uids);
+    for i := 0 to len - 1 do begin
+      if (uids[i] = uid) then begin
+        for k := i + 1 to len - 1 do begin
+          uids[k - 1] := uids[k];
+          devices[k - 1] := devices[k];
+        end;
+        SetLength(uids, len - 1);
+        SetLength(devices, len - 1);
+        exit;
       end;
-      SetLength(uids, len - 1);
-      SetLength(devices, len - 1);
-      exit;
     end;
+  finally
+    mutex.Release;
   end;
 end;
 
@@ -381,12 +391,17 @@ function TDeviceTable.Get(const uid: longword): TDevice;
 var len: longint; i: longint;
 begin
   result := nil;
-  len := Length(uids);
-  for i := 0 to len - 1 do begin
-    if (uids[i] = uid) then begin
-      result := devices[i];
-      exit;
+  mutex.Acquire;
+  try
+    len := Length(uids);
+    for i := 0 to len - 1 do begin
+      if (uids[i] = uid) then begin
+        result := devices[i];
+        exit;
+      end;
     end;
+  finally
+    mutex.Release;
   end;
 end;
 
