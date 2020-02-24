@@ -1109,6 +1109,7 @@ public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
 
     @Override
     public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException {{
+        this.dev.setResponseExpectedAll(true);
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         {callback_registrations}
         {init_code}
