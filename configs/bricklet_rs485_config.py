@@ -177,13 +177,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :cb:`Read` callback.
+Enables the :cb:`Read` callback. This will disable the :cb:`Frame Readable` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :cb:`Read` Callback.
+Aktiviert den :cb:`Read` Callback. Dies deaktiviert den :cb:`Frame Readable` Callback.
 
 Im Startzustand ist der Callback deaktiviert.
 """
@@ -1951,14 +1951,14 @@ com['packets'].append({
 'en':
 """
 Configures the :cb:`Frame Readable` callback. The frame size is the number of bytes, that have to be readable to trigger the callback.
-A frame size of 0 disables the callback.
+A frame size of 0 disables the callback. A frame size greater than 0 enables the callback and disables the :cb:`Read` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
 Konfiguriert den :cb:`Frame Readable` Callback. Die Frame Size ist die Anzahl an Bytes, die lesbar sein müssen, damit der Callback auslöst.
-Eine Frame Size von 0 deaktiviert den Callback.
+Eine Frame Size von 0 deaktiviert den Callback. Eine Frame Size größer als 0 aktiviert diesen und deaktiviert den :cb:`Read` Callback.
 
 Im Startzustand ist der Callback deaktiviert.
 """
