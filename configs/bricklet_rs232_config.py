@@ -6,6 +6,8 @@
 
 # RS232 Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 3],
@@ -428,3 +430,155 @@ com['examples'].append({
               ('setter', 'Enable Read Callback', [], 'Enable read callback', None)],
 'incomplete': True # because of special logic and callback with array parameter
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'packet': 'Set Configuration',
+            'element': 'Baudrate',
+
+            'name': 'Baud Rate',
+            'type': 'integer',
+            'options': [('300', 0),
+                        ('600', 1),
+                        ('1200', 2),
+                        ('2400', 3),
+                        ('4800', 4),
+                        ('9600', 5),
+                        ('14400', 6),
+                        ('19200', 7),
+                        ('28800', 8),
+                        ('38400', 9),
+                        ('57600', 10),
+                        ('115200', 11),
+                        ('230400', 12)],
+            'limitToOptions': 'true',
+            'default': 11,
+
+            'label': 'Baud Rate',
+            'description': 'The baud rate to send/receive with.',
+        }, {
+            'packet': 'Set Configuration',
+            'element': 'Parity',
+
+            'name': 'Parity',
+            'type': 'integer',
+            'options': [('None', 0),
+                        ('Odd', 1),
+                        ('Even', 2),
+                        ('Forced Parity 1', 3),
+                        ('Forced Parity 0', 4)],
+            'limitToOptions': 'true',
+            'default': 0,
+
+            'label': 'Parity',
+            'description': 'The parity mode to use. See <a href=\\\"https://en.wikipedia.org/wiki/Serial_port#Parity\\\">here</a>'
+        }, {
+            'packet': 'Set Configuration',
+            'element': 'Stopbits',
+
+            'name': 'Stop Bits',
+            'type': 'integer',
+            'options': [('1', 1),
+                        ('2', 2)],
+            'limitToOptions': 'true',
+            'default': 1,
+
+            'label': 'Stop Bits',
+            'description': 'The number of stop bits to send/expect.'
+        }, {
+            'packet': 'Set Configuration',
+            'element': 'Wordlength',
+
+            'name': 'Word Length',
+            'type': 'integer',
+            'options': [('5', 5),
+                        ('6', 6),
+                        ('7', 7),
+                        ('8', 8)],
+            'limitToOptions': 'true',
+            'default': 8,
+
+            'label': 'Word Length',
+            'description': 'The length of a serial word. Typically one byte.'
+        }, {
+            'virtual': True,
+
+            'name': 'Flow Control',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('Software', 1),
+                        ('Hardware', 2)],
+            'limitToOptions': 'true',
+            'default': 0,
+
+            'label': 'Flow Control',
+            'description': 'The flow control mechanism to use. Software uses control characters in-band. Hardware uses the RTS and CTS lines.'
+        }, {
+            'packet': 'Set Frame Readable Callback Configuration',
+            'element': 'Frame Size',
+
+            'name': 'Frame Size',
+            'type': 'integer',
+            'min': 0,
+            'max': 100,
+            'default': 1,
+
+            'label': 'Frame Size',
+            'description': 'The size of receivable data frames in bytes. Set this to something other than 1, if you want to receive data with a fix frame size. The frame readable channel will trigger every time a frame of this size is ready to be read, but will wait until this frame is read before triggering again. This means, you can use this channel as a trigger in a rule, that will read exactly one frame.'
+        }],
+
+    'init_code': """this.setConfiguration(cfg.baudRate.shortValue(), cfg.parity.shortValue(), cfg.stopBits.shortValue(), cfg.wordLength.shortValue(), (short)(cfg.flowControl == 1 ? 1 : 0), (short)(cfg.flowControl == 2 ? 1 : 0));
+    this.setFrameReadableCallbackConfiguration(cfg.frameSize.shortValue());""",
+
+    'channels': [{
+            'id': 'Frame Readable',
+            'label': 'Frame Readable',
+            'description': "This channel is triggered in when a new frame was received and can be read out. The channel will only trigger again if the frame was read.",
+            'type': 'system.trigger',
+            'callbacks': [{
+                'packet': 'Frame Readable',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }, {
+            'id': 'Overrun Error',
+            'label': 'Overrun Error',
+            'type': 'system.trigger',
+            'description': 'Triggers if an overrun error occures.',
+
+            'callbacks': [{
+                'packet': 'Error',
+                'filter': '(error & 1 << 0) == 0',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }, {
+            'id': 'Parity Error',
+            'label': 'Parity Error',
+            'type': 'system.trigger',
+            'description': 'Triggers if a parity error occures.',
+
+            'callbacks': [{
+                'packet': 'Error',
+                'filter': '(error & 1 << 1) == 0',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }, {
+            'id': 'Framing Error',
+            'label': 'Framing Error',
+            'type': 'system.trigger',
+            'description': 'Triggers if a framing error occures.',
+
+            'callbacks': [{
+                'packet': 'Error',
+                'filter': '(error & 1 << 2) == 0',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }],
+    'channel_types': [],
+    'actions': ['Write', 'Read', 'Read Frame', 'Get Configuration', 'Set Break Condition']
+}
