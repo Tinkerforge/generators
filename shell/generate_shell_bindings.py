@@ -56,8 +56,6 @@ class {0}(Device):"""
 		Device.__init__(self, uid, ipcon, {1}, DEVICE_DISPLAY_NAMES[{1}])
 
 {0}
-
-		ipcon.add_device(self)
 """
         response_expected = []
         mapping = {'always_true': 1, 'true': 2, 'false': 3}
@@ -108,6 +106,9 @@ class {0}(Device):"""
             return '\t\thlc = self.high_level_callbacks\n\t\t' + '; '.join(high_level_callbacks) + '\n'
         else:
             return '\n'
+
+    def get_shell_add_device(self):
+        return '\t\tipcon.add_device(self)\n'
 
     def get_shell_call_header(self):
         template = """
@@ -516,6 +517,7 @@ def dispatch_{0}_{1}(ctx, argv):
         source += self.get_shell_init_method()
         source += self.get_shell_callback_formats()
         source += self.get_shell_high_level_callbacks()
+        source += self.get_shell_add_device()
         source += self.get_shell_call_header()
         source += self.get_shell_call_functions()
         source += self.get_shell_call_footer()
