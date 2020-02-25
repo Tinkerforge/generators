@@ -239,6 +239,7 @@ Generally, every function of the Python bindings can throw an
 * Error.INVALID_UID = -13
 * Error.NON_ASCII_CHAR_IN_SECRET = -14
 * Error.WRONG_DEVICE_TYPE = -15
+* Error.DEVICE_REPLACED = -16
 
 All functions listed below are thread-safe.
 
@@ -267,6 +268,7 @@ eine ``description`` Property hat. ``value`` kann verschiende Werte haben:
 * Error.INVALID_UID = -13
 * Error.NON_ASCII_CHAR_IN_SECRET = -14
 * Error.WRONG_DEVICE_TYPE = -15
+* Error.DEVICE_REPLACED = -16
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 

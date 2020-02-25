@@ -287,7 +287,7 @@ sub {0}
             if packet.get_function_id() == 255: # <device>->get_identity
                 check = ''
             else:
-                check = '\n\t$self->_check_device_identifier();\n'
+                check = '\n\t$self->_check_validity();\n'
 
             if elements > 1:
                 methods += multiple_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format, check)

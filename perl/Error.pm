@@ -139,6 +139,17 @@ use constant WRONG_DEVICE_TYPE => 81;
 =back
 =cut
 
+=item DEVICE_REPLACED
+
+Possible return value of the get_code() subroutine.
+
+=cut
+
+use constant DEVICE_REPLACED => 82;
+
+=back
+=cut
+
 # overloading function stringify()
 use overload ('""' => '_stringify');
 

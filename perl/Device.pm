@@ -45,7 +45,8 @@ sub _new
 {
 	my ($class, $uid, $ipcon, $api_version, $device_identifier, $device_display_name) = @_;
 
-	my $self :shared = shared_clone({uid => _base58_decode($uid),
+	my $self :shared = shared_clone({replaced => shared_clone(0),
+	                                 uid => _base58_decode($uid),
 	                                 uid_string => shared_clone($uid),
 	                                 ipcon => shared_clone($ipcon),
 	                                 api_version => shared_clone($api_version),
@@ -286,9 +287,14 @@ sub _send_request
 	return 1;
 }
 
-sub _check_device_identifier
+sub _check_validity
 {
 	my ($self) = @_;
+
+	if($self->{replaced})
+	{
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->DEVICE_REPLACED, "Device has been replaced"));
+	}
 
 	if($self->{device_identifier_check} == &_DEVICE_IDENTIFIER_CHECK_MATCH)
 	{

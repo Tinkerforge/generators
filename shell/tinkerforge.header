@@ -288,7 +288,7 @@ def device_call(ctx, device_class, function_id, request_data, format_in,
 	def function(ipcon):
 		device = device_class(ctx.uid, ipcon)
 
-		device.check_device_identifier()
+		device.check_validity()
 
 		if expect_response:
 			device.set_response_expected(function_id, True)

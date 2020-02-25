@@ -26,6 +26,7 @@ public abstract class DeviceBase {
 	final static byte RESPONSE_EXPECTED_FLAG_TRUE = 2; // setter
 	final static byte RESPONSE_EXPECTED_FLAG_FALSE = 3; // setter, default
 
+	boolean replaced;
 	long uidNumber;
 	String uidString;
 	int deviceIdentifier;
@@ -63,6 +64,7 @@ public abstract class DeviceBase {
 			throw new IllegalArgumentException("UID '" + uid + "' is empty or maps to zero");
 		}
 
+		this.replaced = false;
 		this.uidNumber = uidNumber;
 		this.uidString = uid;
 		this.ipcon = ipcon;
@@ -158,7 +160,11 @@ public abstract class DeviceBase {
 		}
 	}
 
-	void checkDeviceIdentifier() throws TinkerforgeException {
+	void checkValidity() throws TinkerforgeException {
+		if (replaced) {
+			throw new DeviceReplacedException();
+		}
+
 		if (deviceIdentifierCheck == DEVICE_IDENTIFIER_CHECK_MATCH) {
 			return;
 		}

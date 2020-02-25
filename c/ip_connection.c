@@ -1038,18 +1038,20 @@ static void table_destroy(Table *table) {
 	mutex_destroy(&table->mutex);
 }
 
-static void table_insert(Table *table, uint32_t key, void *value) {
+static void *table_insert(Table *table, uint32_t key, void *value) {
 	int i;
+	void *replaced_value;
 
 	mutex_lock(&table->mutex);
 
 	for (i = 0; i < table->used; ++i) {
 		if (table->keys[i] == key) {
+			replaced_value = table->values[i];
 			table->values[i] = value;
 
 			mutex_unlock(&table->mutex);
 
-			return;
+			return replaced_value;
 		}
 	}
 
@@ -1065,6 +1067,8 @@ static void table_insert(Table *table, uint32_t key, void *value) {
 	++table->used;
 
 	mutex_unlock(&table->mutex);
+
+	return NULL;
 }
 
 static void table_remove(Table *table, uint32_t key) {
@@ -1226,7 +1230,7 @@ static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request);
 static void device_destroy(DevicePrivate *device_p) {
 	int i;
 
-	if (device_p->uid_valid) {
+	if (!device_p->replaced && device_p->uid_valid) {
 		table_remove(&device_p->ipcon_p->devices, device_p->uid);
 	}
 
@@ -1259,6 +1263,8 @@ void device_create(Device *device, const char *uid_str,
 
 	device_p = (DevicePrivate *)malloc(sizeof(DevicePrivate));
 	device->p = device_p;
+
+	device_p->replaced = false;
 
 	device_p->uid_valid = base58_decode(uid_str, &uid);
 
@@ -1410,15 +1416,12 @@ int device_get_api_version(DevicePrivate *device_p, uint8_t ret_api_version[3]) 
 	return E_OK;
 }
 
+// NOTE: assumes that device_check_validity was successful
 int device_send_request(DevicePrivate *device_p, Packet *request, Packet *response) {
 	int ret = E_OK;
 	uint8_t sequence_number = packet_header_get_sequence_number(&request->header);
 	uint8_t response_expected = packet_header_get_response_expected(&request->header);
 	uint8_t error_code;
-
-	if (!device_p->uid_valid) {
-		return E_INVALID_UID;
-	}
 
 	if (response_expected) {
 		mutex_lock(&device_p->request_mutex);
@@ -1480,11 +1483,19 @@ int device_send_request(DevicePrivate *device_p, Packet *request, Packet *respon
 	return ret;
 }
 
-int device_check_device_identifier(DevicePrivate *device_p) {
+int device_check_validity(DevicePrivate *device_p) {
 	DeviceGetIdentity_Request request;
 	DeviceGetIdentity_Response response;
 	uint16_t device_identifier;
 	int ret;
+
+	if (device_p->replaced) {
+		return E_DEVICE_REPLACED;
+	}
+
+	if (!device_p->uid_valid) {
+		return E_INVALID_UID;
+	}
 
 	if (device_p->device_identifier_check == DEVICE_IDENTIFIER_CHECK_PENDING) {
 		mutex_lock(&device_p->device_identifier_mutex);
@@ -1755,10 +1766,10 @@ static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) 
 			return;
 		}
 
-		if (device_check_device_identifier(device_p) < 0) {
+		if (device_check_validity(device_p) < 0) {
 			device_release(device_p);
 
-			return; // silently ignoring callbacks from mismatching devices
+			return; // silently ignoring callbacks for invalid devices
 		}
 
 		callback_wrapper_function(device_p, packet);
@@ -2480,8 +2491,14 @@ void ipcon_register_callback(IPConnection *ipcon, int16_t callback_id,
 }
 
 void ipcon_add_device(IPConnectionPrivate *ipcon_p, DevicePrivate *device_p) {
+	DevicePrivate *replaced_device_p;
+
 	if (device_p->uid_valid) {
-		table_insert(&ipcon_p->devices, device_p->uid, device_p);
+		replaced_device_p = (DevicePrivate *)table_insert(&ipcon_p->devices, device_p->uid, device_p);
+
+		if (replaced_device_p != NULL) {
+			replaced_device_p->replaced = true;
+		}
 	}
 }
 

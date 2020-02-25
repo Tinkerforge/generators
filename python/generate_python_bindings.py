@@ -252,7 +252,7 @@ class {0}(Device):
             if packet.get_function_id() == 255: # <device>.get_identity
                 check = ''
             else:
-                check = '\n        self.check_device_identifier()\n'
+                check = '\n        self.check_validity()\n'
 
             coercions = common.wrap_non_empty('\n        ', packet.get_python_parameter_coercions(), '\n')
             elements = len(packet.get_elements(direction='out'))

@@ -262,9 +262,9 @@ class CallbackThread extends Thread {
 			}
 
 			try {
-				device.checkDeviceIdentifier();
+				device.checkValidity();
 			} catch (TinkerforgeException e) {
-				return; // silently ignoring callbacks from mismatching devices
+				return; // silently ignoring callbacks for invalid devices
 			}
 
 			ipcon.callDeviceListener(device, functionID, cqo.packet);
@@ -410,6 +410,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	int responseTimeout = 2500;
 
 	Hashtable<Long, Device> devices = new Hashtable<Long, Device>();
+	private Object replaceMutex = new Object(); // used to synchronize replacements in the devices hashtable
 	LinkedBlockingQueue<CallbackQueueObject> callbackQueue = null;
 
 	Object socketMutex = new Object();
@@ -864,7 +865,15 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	protected abstract void callDeviceListener(Device device, byte functionID, byte[] packet);
 
 	void addDevice(Device device) {
-		devices.put(device.uidNumber, device); // FIXME: use weakref here
+		synchronized (replaceMutex) {
+			Device replacedDevice = devices.get(device.uidNumber);
+
+			if (replacedDevice != null) {
+				replacedDevice.replaced = true;
+			}
+
+			devices.put(device.uidNumber, device); // FIXME: use weakref here
+		}
 	}
 
 	void handleResponse(byte[] packet) {

@@ -187,7 +187,7 @@ module Tinkerforge
             if packet.get_function_id() == 255: # <device>.get_identity
                 check = ''
             else:
-                check = '\n      check_device_identifier\n'
+                check = '\n      check_validity\n'
 
             if len(parms) > 0:
                 methods += method1.format(name, parms, fid, in_format, out_size, out_format, doc, check)

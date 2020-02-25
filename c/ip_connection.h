@@ -55,7 +55,8 @@ enum {
 	E_STREAM_OUT_OF_SYNC = -12,
 	E_INVALID_UID = -13,
 	E_NON_ASCII_CHAR_IN_SECRET = -14,
-	E_WRONG_DEVICE_TYPE = -15
+	E_WRONG_DEVICE_TYPE = -15,
+	E_DEVICE_REPLACED = -16
 };
 
 #ifdef IPCON_EXPOSE_MILLISLEEP
@@ -238,6 +239,8 @@ typedef enum {
 struct _DevicePrivate {
 	int ref_count;
 
+	bool replaced;
+
 	uint32_t uid; // always host endian
 	bool uid_valid;
 
@@ -325,7 +328,7 @@ int device_send_request(DevicePrivate *device_p, Packet *request, Packet *respon
 /**
  * \internal
  */
-int device_check_device_identifier(DevicePrivate *device_p);
+int device_check_validity(DevicePrivate *device_p);
 
 #endif // IPCON_EXPOSE_INTERNALS
 

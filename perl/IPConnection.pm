@@ -248,6 +248,7 @@ sub new
 	                                 auto_reconnect_allowed => 0,
 	                                 auto_reconnect_pending => 0,
 	                                 devices => shared_clone({}),
+	                                 replace_lock_ref => undef, # used to synchronize replacements in the devices hash
 	                                 registered_callbacks => shared_clone({}),
 	                                 socket_fileno => undef, # protected by SOCKET_LOCK
 	                                 socket_id => 0,
@@ -269,12 +270,14 @@ sub new
 
 	bless($self, $class);
 
+	my $replace_lock :shared;
 	my $socket_lock :shared;
 	my $local_socket_lock :shared;
 	my $send_lock :shared;
 	my $sequence_number_lock :shared;
 	my $authentication_lock :shared;
 
+	$self->{replace_lock_ref} = \$replace_lock;
 	$self->{socket_lock_ref} = \$socket_lock;
 	$self->{local_socket_lock_ref} = \$local_socket_lock;
 	$self->{send_lock_ref} = \$send_lock;
@@ -996,6 +999,13 @@ sub _handle_disconnect_by_peer
 sub _add_device
 {
 	my ($self, $device) = @_;
+
+	lock(${$self->{replace_lock_ref}});
+
+	if (defined($self->{devices}->{$device->{uid}}))
+	{
+		$self->{devices}->{$device->{uid}}->{replaced} = 1;
+	}
 
 	$self->{devices}->{$device->{uid}} = $device;
 }

@@ -605,7 +605,7 @@ begin
             method += 'begin\n'
 
             if function_id != 255: # <device>.GetIdentity
-                method += '  CheckDeviceIdentifier;\n'
+                method += '  CheckValidity;\n'
 
             method += '  request := (ipcon as TIPConnection).CreateRequestPacket(self, {0}, {1});\n'.format(function_id, packet.get_request_size())
 

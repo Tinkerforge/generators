@@ -39,6 +39,7 @@ type
     deviceIdentifierCheck: byte; { protected by deviceIdentifierMutex }
     wrongDeviceDisplayName: string; { protected by deviceIdentifierMutex }
   public
+    replaced: boolean;
     uidString: string;
     uidNumber: longword;
     uidValid: boolean;
@@ -114,7 +115,7 @@ type
 
     { Internal }
     function SendRequest(const request: TByteArray): TByteArray;
-    procedure CheckDeviceIdentifier;
+    procedure CheckValidity;
   end;
 
   { TDeviceTable }
@@ -128,7 +129,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Insert(const uid: longword; const device: TDevice);
+    function Insert(const uid: longword; const device: TDevice; out replacedDevice: TDevice): boolean;
     procedure Remove(const uid: longword);
     function Get(const uid: longword): TDevice;
   end;
@@ -143,6 +144,7 @@ constructor TDevice.Create(const uid: string; ipcon_: TObject; deviceIdentifier:
 var longUidNumber: uint64; value1, value2, i: longint;
 begin
   inherited Create;
+  replaced := false;
   uidString := uid;
   uidValid := Base58Decode(uid, longUidNumber);
   if (uidValid and (longUidNumber > $FFFFFFFF)) then begin
@@ -180,7 +182,7 @@ end;
 
 destructor TDevice.Destroy;
 begin
-  if (uidValid) then begin
+  if (not replaced and uidValid) then begin
     (ipcon as TIPConnection).devices.Remove(uidNumber);
   end;
   responseQueue.Destroy;
@@ -245,12 +247,10 @@ begin
   end;
 end;
 
+{ NOTE: assumes that CheckValidity was successful }
 function TDevice.SendRequest(const request: TByteArray): TByteArray;
 var ipcon_: TIPConnection; kind, errorCode, functionID: byte;
 begin
-  if (not uidValid) then begin
-    raise EInvalidUIDException.Create('UID "' + uidString + '" is invalid');
-  end;
   SetLength(result, 0);
   ipcon_ := ipcon as TIPConnection;
   if (GetResponseExpectedFromData(request)) then begin
@@ -298,9 +298,15 @@ begin
   end;
 end;
 
-procedure TDevice.CheckDeviceIdentifier;
+procedure TDevice.CheckValidity;
 var request, response: TByteArray; deviceIdentifier: word;
 begin
+  if (replaced) then begin
+    raise EDeviceReplacedException.Create('Device has been replaced');
+  end;
+  if (not uidValid) then begin
+    raise EInvalidUIDException.Create('UID "' + uidString + '" is invalid');
+  end;
   if (deviceIdentifierCheck = DEVICE_IDENTIFIER_CHECK_MATCH) then begin
     exit;
   end;
@@ -344,7 +350,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TDeviceTable.Insert(const uid: longword; const device: TDevice);
+function TDeviceTable.Insert(const uid: longword; const device: TDevice; out replacedDevice: TDevice): boolean;
 var len: longint; i: longint;
 begin
   mutex.Acquire;
@@ -352,7 +358,9 @@ begin
     len := Length(uids);
     for i := 0 to len - 1 do begin
       if (uids[i] = uid) then begin
+        replacedDevice := devices[i];
         devices[i] := device;
+        result := true;
         exit;
       end;
     end;
@@ -360,6 +368,7 @@ begin
     SetLength(devices, len + 1);
     uids[len] := uid;
     devices[len] := device;
+    result := false;
   finally
     mutex.Release;
   end;

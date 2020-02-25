@@ -484,7 +484,7 @@ namespace Tinkerforge
 {0}"""
 
         template_check = """
-			CheckDeviceIdentifier();
+			CheckValidity();
 """
 
         for packet in self.get_packets('function'):

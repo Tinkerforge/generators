@@ -325,7 +325,7 @@ class {0} extends Device
             if packet.get_function_id() == 255: # <device>->get_identity
                 check = ''
             else:
-                check = '$this->checkDeviceIdentifier();\n\n        '
+                check = '$this->checkValidity();\n\n        '
 
             if has_multi_return_value:
                 method = method_multi.format(name_headless,

@@ -335,6 +335,7 @@ class Error(Exception):
     INVALID_UID = -13
     NON_ASCII_CHAR_IN_SECRET = -14
     WRONG_DEVICE_TYPE = -15
+    DEVICE_REPLACED = -16
 
     def __init__(self, value, description, suppress_context=False):
         Exception.__init__(self, '{0} ({1})'.format(description, value))
@@ -376,6 +377,7 @@ class Device(object):
         if uid_ == 0:
             raise Error(Error.INVALID_UID, 'UID "{0}" is empty or maps to zero'.format(uid))
 
+        self.replaced = False
         self.uid = uid_
         self.uid_string = uid
         self.ipcon = ipcon
@@ -485,7 +487,10 @@ class Device(object):
                 self.response_expected[i] = flag
 
     # internal
-    def check_device_identifier(self):
+    def check_validity(self):
+        if self.replaced:
+            raise Error(Error.DEVICE_REPLACED, 'Device has been replaced')
+
         if self.device_identifier_check == Device.DEVICE_IDENTIFIER_CHECK_MATCH:
             return
 
@@ -593,6 +598,7 @@ class IPConnection(object):
         self.authentication_lock = threading.Lock() # protects authentication handshake
         self.next_authentication_nonce = 0 # protected by authentication_lock
         self.devices = {}
+        self.replace_lock = threading.Lock() # used to synchronize replacements in the devices dict
         self.registered_callbacks = {}
         self.socket = None # protected by socket_lock
         self.socket_id = 0 # protected by socket_lock
@@ -990,7 +996,13 @@ class IPConnection(object):
 
     # internal
     def add_device(self, device):
-        self.devices[device.uid] = device # FIXME: maybe use a weakref here
+        with self.replace_lock:
+            replaced_device = self.devices.get(device.uid)
+
+            if replaced_device != None:
+                replaced_device.replaced = True
+
+            self.devices[device.uid] = device # FIXME: maybe use a weakref here
 
     # internal
     def receive_loop(self, socket_id):
@@ -1113,9 +1125,9 @@ class IPConnection(object):
             return
 
         try:
-            device.check_device_identifier()
+            device.check_validity()
         except Error:
-            return # silently ignoring callbacks from mismatching devices
+            return # silently ignoring callbacks for invalid devices
 
         if -function_id in device.high_level_callbacks:
             hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]

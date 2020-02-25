@@ -823,7 +823,7 @@ public class {0} extends Device {{
 {3}"""
 
         template_check = """
-		checkDeviceIdentifier();
+		checkValidity();
 """
 
         for packet in self.get_packets('function'):

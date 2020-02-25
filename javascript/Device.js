@@ -13,6 +13,7 @@ Device.RESPONSE_EXPECTED_FALSE = 3; // setter, default
 
 Device.ERROR_INVALID_FUNCTION_ID = 21; // keep in sync with IPConnection.ERROR_INVALID_FUNCTION_ID
 Device.ERROR_WRONG_DEVICE_TYPE = 81; // keep in sync with IPConnection.ERROR_WRONG_DEVICE_TYPE
+Device.ERROR_DEVICE_REPLACED = 82; // keep in sync with IPConnection.ERROR_DEVICE_REPLACED
 
 Device.DEVICE_IDENTIFIER_CHECK_PENDING = 0;
 Device.DEVICE_IDENTIFIER_CHECK_MATCH = 1;
@@ -40,6 +41,7 @@ function base58Decode(str) {
 function Device(deviceRegistering, uid, ipcon, deviceIdentifier, deviceDisplayName) {
     if (deviceRegistering !== undefined && uid !== undefined && ipcon !== undefined &&
         deviceIdentifier !== undefined && deviceDisplayName !== undefined) {
+        this.replaced = false;
         this.uid = base58Decode(uid);
         if (this.uid === 0) {
             throw new Error('UID "' + uid + '" is empty or maps to zero');
@@ -69,6 +71,12 @@ function Device(deviceRegistering, uid, ipcon, deviceIdentifier, deviceDisplayNa
                                     */
         // Creates the device object with the unique device ID *uid* and adds
         // it to the IPConnection *ipcon*.
+        var replacedDevice = this.ipcon.devices[this.uid];
+
+        if (replacedDevice !== undefined) {
+            replacedDevice.replaced = true;
+        }
+
         this.ipcon.devices[this.uid] = deviceRegistering;
 
         this.getDeviceOID = function () {
@@ -160,8 +168,13 @@ function Device(deviceRegistering, uid, ipcon, deviceIdentifier, deviceDisplayNa
             streamStateObject['responseProperties']['errorCB'] = null;
         };
 
-        this.checkDeviceIdentifier = function (returnCallback, errorCallback) {
-            if (this.deviceIdentifierCheck === Device.DEVICE_IDENTIFIER_CHECK_MATCH) {
+        this.checkValidity = function (returnCallback, errorCallback) {
+            if (this.replaced) {
+                if (errorCallback !== undefined) {
+                    errorCallback(Device.ERROR_DEVICE_REPLACED);
+                }
+            }
+            else if (this.deviceIdentifierCheck === Device.DEVICE_IDENTIFIER_CHECK_MATCH) {
                 if (returnCallback !== undefined) {
                     returnCallback();
                 }

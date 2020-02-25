@@ -205,6 +205,12 @@ class WrongDeviceTypeException extends TinkerforgeException
 }
 
 
+class DeviceReplacedException extends TinkerforgeException
+{
+
+}
+
+
 abstract class Device
 {
     /**
@@ -225,6 +231,8 @@ abstract class Device
     /**
      * @internal
      */
+    public $replaced = FALSE;
+
     public $uid = '0'; # Base10
     public $uid_string = ''; # Base58
     public $api_version = array(0, 0, 0);
@@ -418,7 +426,7 @@ abstract class Device
             }
 
             try {
-                $this->checkDeviceIdentifier();
+                $this->checkValidity();
             } catch (TinkerforgeException $e) {
                 continue; // silently ignoring callbacks from mismatching devices
             }
@@ -499,8 +507,12 @@ abstract class Device
     /**
      * @internal
      */
-    protected function checkDeviceIdentifier()
+    protected function checkValidity()
     {
+        if ($this->replaced) {
+            throw new DeviceReplacedException('Device has been replaced');
+        }
+
         if ($this->device_identifier_check === self::DEVICE_IDENTIFIER_CHECK_MATCH) {
             return;
         }
@@ -1069,6 +1081,10 @@ class IPConnection
      */
     public function addDevice($device)
     {
+        if (isset($this->devices[$device->uid])) {
+            $this->devices[$device->uid]->replaced = TRUE;
+        }
+
         $this->devices[$device->uid] = $device; // FIXME: use a weakref here
     }
 

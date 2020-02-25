@@ -767,7 +767,7 @@ class MQTTBindings:
                 logging.debug("Ignoring _response_expected, it was not of boolean type. (Call of {} of device {} of type {}.)".format(fnName, uid, device_name))
 
         def wrapper(ipcon):
-            device.check_device_identifier()
+            device.check_validity()
             return ipcon.send_request(device, fnInfo.id, tuple(args), fnInfo.payload_fmt, fnInfo.response_fmt)
 
         response = self.handle_ipcon_exceptions(wrapper, dict([(name, None) for name in fnInfo.result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))

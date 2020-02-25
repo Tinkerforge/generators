@@ -264,6 +264,7 @@ error code:
 * Error->INVALID_UID = 61
 * Error->NON_ASCII_CHAR_IN_SECRET = 71
 * Error->WRONG_DEVICE_TYPE = 81
+* Error->DEVICE_REPLACED = 82
 
 All functions listed below are thread-safe.
 
@@ -294,6 +295,7 @@ Fehlercodes definiert:
 * Error->INVALID_UID = 61
 * Error->NON_ASCII_CHAR_IN_SECRET = 71
 * Error->WRONG_DEVICE_TYPE = 81
+* Error->DEVICE_REPLACED = 82
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 

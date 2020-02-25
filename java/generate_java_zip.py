@@ -101,6 +101,7 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
             shutil.copy(os.path.join(root_dir, 'NotSupportedException.java'),     self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'UnknownErrorCodeException.java'), self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'WrongDeviceTypeException.java'),  self.tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'DeviceReplacedException.java'),   self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'TinkerforgeListener.java'),       self.tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)

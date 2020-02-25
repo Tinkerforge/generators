@@ -117,6 +117,7 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
             shutil.copy(os.path.join(root_dir, '..', 'java', 'NotSupportedException.java'),     tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'UnknownErrorCodeException.java'), tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'WrongDeviceTypeException.java'),  tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceReplacedException.java'),   tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeListener.java'),       tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-i386.so'),         tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-amd64.so'),        tmp_source_com_tinkerforge_dir)

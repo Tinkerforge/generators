@@ -121,6 +121,10 @@ type
   EWrongDeviceTypeException = class(ETinkerforgeException)
   end;
 
+  { EDeviceReplacedException }
+  EDeviceReplacedException = class(ETinkerforgeException)
+  end;
+
   { TThreadWrapper }
   TThreadWrapper = class;
   TThreadProcedure = procedure(thread: TThreadWrapper; opaque: pointer) of object;
@@ -1244,10 +1248,10 @@ begin
     callbackWrapper := device.callbackWrappers[functionID];
     if (Assigned(callbackWrapper)) then begin
       try
-        device.CheckDeviceIdentifier;
+        device.CheckValidity;
       except
         on ETinkerforgeException do begin
-          exit; { Silently ignoring callbacks from mismatching devices }
+          exit; { Silently ignoring callbacks for invalid devices }
         end;
       end;
       try
@@ -1260,9 +1264,12 @@ begin
 end;
 
 procedure TIPConnection.AddDevice(device: TDevice);
+var replacedDevice: TDevice;
 begin
   if (device.uidValid) then begin
-    devices.Insert(device.uidNumber, device);
+    if (devices.Insert(device.uidNumber, device, replacedDevice)) then begin
+      replacedDevice.replaced := true;
+    end;
   end;
 end;
 

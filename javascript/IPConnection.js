@@ -50,6 +50,7 @@ IPConnection.ERROR_UNKNOWN_ERROR = 43;
 IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51;
 IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET = 71;
 IPConnection.ERROR_WRONG_DEVICE_TYPE = 81; // keep in sync with Device.ERROR_WRONG_DEVICE_TYPE
+IPConnection.ERROR_DEVICE_REPLACED = 82; // keep in sync with Device.ERROR_WRONG_DEVICE_TYPE
 
 IPConnection.TASK_KIND_CONNECT = 0;
 IPConnection.TASK_KIND_DISCONNECT = 1;
@@ -946,7 +947,7 @@ function IPConnection() {
                                      startStreamResponseTimer);
         }
         else {
-            sendRequestDevice.checkDeviceIdentifier(function () {
+            sendRequestDevice.checkValidity(function () {
                 this.sendRequestInternal(sendRequestDevice,
                                          sendRequestFID,
                                          sendRequestData,

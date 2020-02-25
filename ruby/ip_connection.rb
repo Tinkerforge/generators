@@ -69,6 +69,9 @@ module Tinkerforge
   class WrongDeviceTypeException < TinkerforgeException
   end
 
+  class DeviceReplacedException < TinkerforgeException
+  end
+
   # internal
   class Packer
     def self.pack(unpacked, format)
@@ -224,6 +227,7 @@ module Tinkerforge
     RESPONSE_EXPECTED_TRUE = 2 # setter
     RESPONSE_EXPECTED_FALSE = 3 # setter, default
 
+    attr_accessor :replaced
     attr_accessor :uid
     attr_accessor :expected_response_function_id
     attr_accessor :expected_response_sequence_number
@@ -233,6 +237,7 @@ module Tinkerforge
 
     # internal
     def initialize(uid, ipcon, device_identifier, device_display_name)
+      @replaced = false
       @uid = Base58.decode uid
       @uid_string = uid
 
@@ -466,7 +471,11 @@ module Tinkerforge
     end
 
     # internal
-    def check_device_identifier()
+    def check_validity()
+      if @replaced
+        raise DeviceReplacedException, 'Device has been replaced'
+      end
+
       if @device_identifier_check == DEVICE_IDENTIFIER_CHECK_MATCH
         return
       end
@@ -578,6 +587,7 @@ module Tinkerforge
       @authentication_mutex = Mutex.new # protects authentication handshake
 
       @devices = {}
+      @replace_mutex = Mutex.new # used to synchronize replacements in the devices dict
 
       @registered_callbacks = {}
 
@@ -773,7 +783,15 @@ module Tinkerforge
 
     # internal
     def add_device(device)
-      @devices[device.uid] = device # FIXME: use a weakref here
+      @replace_mutex.synchronize {
+        replaced_device = @devices.fetch device.uid, nil
+
+        if replaced_device != nil
+          replaced_device.replaced = true
+        end
+
+        @devices[device.uid] = device # FIXME: use a weakref here
+      }
     end
 
     # internal
@@ -1071,9 +1089,9 @@ module Tinkerforge
         device = @devices[uid]
 
         begin
-          device.check_device_identifier
+          device.check_validity
         rescue TinkerforgeException
-          return # silently ignoring callbacks from mismatching devices
+          return # silently ignoring callbacks for invalid devices
         end
 
         if device.high_level_callbacks.has_key?(-function_id)

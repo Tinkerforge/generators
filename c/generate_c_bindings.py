@@ -328,7 +328,7 @@ int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
 }}
 """
         template_check = """
-	ret = device_check_device_identifier(device_p);
+	ret = device_check_validity(device_p);
 
 	if (ret < 0) {
 		return ret;

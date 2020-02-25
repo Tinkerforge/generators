@@ -148,6 +148,7 @@ namespace Tinkerforge
 		bool receiveFlag = true;
 		CallbackContext callback = null;
 		internal Dictionary<int, Device> devices = new Dictionary<int, Device>();
+		internal object replaceLock = new object(); // used to synchronize replacements in the devices dictionary
 		BlockingQueue<bool> waiter = new BlockingQueue<bool>();
 
 		bool disconnectProbeFlag = false;
@@ -835,11 +836,11 @@ namespace Tinkerforge
 					{
 						try
 						{
-							device.CheckDeviceIdentifier();
+							device.CheckValidity();
 						}
 						catch (TinkerforgeException)
 						{
-							return; // silently ignoring callbacks from mismatching devices
+							return; // silently ignoring callbacks for invalid devices
 						}
 
 						wrapper(cqo.packet);
@@ -1051,7 +1052,17 @@ namespace Tinkerforge
 
 		internal void AddDevice(Device device)
 		{
-			devices[(int)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
+			lock (replaceLock)
+			{
+				Device replacedDevice;
+
+				if (devices.TryGetValue((int)device.internalUID, out replacedDevice))
+				{
+					replacedDevice.replaced = true;
+				}
+
+				devices[(int)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
+			}
 		}
 	}
 
@@ -1173,6 +1184,19 @@ namespace Tinkerforge
 	}
 
 	/// <summary>
+	///  Used to report if the device object got replaced by other device
+	///  object and does no longer receive responses.
+	/// </summary>
+	public class DeviceReplacedException : TinkerforgeException
+	{
+		/// <summary>
+		/// </summary>
+		public DeviceReplacedException()
+		{
+		}
+	}
+
+	/// <summary>
 	/// </summary>
 	public struct UID
 	{
@@ -1233,6 +1257,7 @@ namespace Tinkerforge
 	/// </summary>
 	public abstract class Device
 	{
+		internal bool replaced;
 		internal int deviceIdentifier;
 		internal string deviceDisplayName;
 		internal object deviceIdentifierLock = new object();
@@ -1487,8 +1512,13 @@ namespace Tinkerforge
 			return response;
 		}
 
-		internal void CheckDeviceIdentifier()
+		internal void CheckValidity()
 		{
+			if (replaced)
+			{
+				throw new DeviceReplacedException();
+			}
+
 			if (deviceIdentifierCheck == DeviceIdentifierCheck.MATCH)
 			{
 				return;
