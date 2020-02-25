@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 2],
+    'api_version': [2, 0, 3],
     'category': 'Bricklet',
     'device_identifier': 254,
     'name': 'RS232',
@@ -167,13 +167,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :cb:`Read` callback.
+Enables the :cb:`Read` callback. This will disable the :cb:`Frame Readable` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :cb:`Read` Callback.
+Aktiviert den :cb:`Read` Callback. Dies deaktiviert den :cb:`Frame Readable` Callback.
 
 Im Startzustand ist der Callback deaktiviert
 """
@@ -329,6 +329,94 @@ The parameter sets the hold-time of the break condition.
 """
 Setzt eine Break Condition (die TX-Ausgabe wird fest of logisch 0 gezwungen).
 Der Parameter setzt die Haltezeit der Break Condition.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Frame Readable Callback Configuration',
+'elements': [('Frame Size', 'uint8', 1, 'in', {'unit': 'Byte', 'range': (0, 100), 'default': 0})],
+'since_firmware': [2, 0, 4],
+'doc': ['ccf', {
+'en':
+"""
+Configures the :cb:`Frame Readable` callback. The frame size is the number of bytes, that have to be readable to trigger the callback.
+A frame size of 0 disables the callback. A frame size greater than 0 enables the callback and disables the :cb:`Read` callback.
+
+By default the callback is disabled.
+""",
+'de':
+"""
+Konfiguriert den :cb:`Frame Readable` Callback. Die Frame Size ist die Anzahl an Bytes, die lesbar sein müssen, damit der Callback auslöst.
+Eine Frame Size von 0 deaktiviert den Callback. Eine Frame Size größer als 0 aktiviert diesen und deaktiviert den :cb:`Read` Callback.
+
+Im Startzustand ist der Callback deaktiviert.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Frame Readable Callback Configuration',
+'elements': [('Frame Size', 'uint8', 1, 'out', {'unit': 'Byte', 'range': (0, 100), 'default': 0})],
+'since_firmware': [2, 0, 4],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by :func:`Set Frame Readable Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels :func:`Set Frame Readable Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Frame Readable',
+'elements': [('Frame Count', 'uint8', 1, 'out', {})],
+'since_firmware': [2, 0, 4],
+'doc': ['c', {
+'en':
+"""
+This callback is called if at least one frame of data is readable. The frame size is configured with :func:`Set Frame Readable Callback Configuration`.
+The frame count parameter is the number of frames that can be read.
+This callback is triggered only once until :func:`Read` or :func:`Read Frame` is called. This means, that if you have configured a frame size of X bytes,
+you can read exactly X bytes using the :func:`Read Frame` function, every time the callback triggers without checking the frame count :word:`parameter`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst, wenn mindestens ein neuer Frame an Daten verfügbar sind. Die Größe eines Frames kann mit :func:`Set Frame Readable Callback Configuration` konfiguriert werden.
+Frame Count ist die Anzahl an Frames, die zum Lesen bereitstehen.
+Der Callback wird nur einmal pro :func:`Read` oder :func:`Read Frame` Aufruf ausgelöst. Das heißt, dass wenn eine Framegröße von X Bytes konfiguriert wird, jedes Mal
+wenn das Callback ausgelöst wird, X Bytes mit der :func:`Read Frame`-Funktion gelesen werden können, ohne dass der Frame Count-:word:`parameter` geprüft werden muss.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Read Frame',
+'elements': [('Message', 'char', 60, 'out', {}),
+             ('Length', 'uint8', 1, 'out', {'range': (0, 60)})],
+'since_firmware': [2, 0, 4],
+'doc': ['bf', {
+'en':
+"""
+Returns up to one frame of bytes from the read buffer.
+The frame size is configured with :func:`Set Frame Readable Callback Configuration`.
+If the length is given as 0, there was no
+new data available.
+""",
+'de':
+"""
+Gibt bis zu einem Frame an Daten aus dem Lesebuffer zurück.
+Die Größe eines Frames kann mit :func:`Set Frame Readable Callback Configuration` konfiguriert werden.
+Wenn die Länge als 0 gegeben wird, waren keine
+neuen Daten verfügbar.
 """
 }]
 })
