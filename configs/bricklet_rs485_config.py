@@ -1966,6 +1966,23 @@ Im Startzustand ist der Callback deaktiviert.
 })
 
 com['packets'].append({
+'type': 'function',
+'name': 'Get Frame Readable Callback Configuration',
+'elements': [('Frame Size', 'uint16', 1, 'out', {'unit': 'Byte', 'range': (0, 9216), 'default': 0})],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by :func:`Set Frame Readable Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels :func:`Set Frame Readable Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': 'Frame Readable',
 'elements': [('Frame Count', 'uint16', 1, 'out', {})],
