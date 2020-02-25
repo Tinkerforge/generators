@@ -385,7 +385,7 @@ def monoflop_channel(channel):
 
         'getters': [{
             'packet': 'Get Monoflop',
-            'packet_params': [str(channel)],
+            'packet_params': ['(short) {}'.format(channel)],
             'transform': 'value.value == 1 ? OnOffType.ON : OnOffType.OFF'}],
 
         'setters': [{

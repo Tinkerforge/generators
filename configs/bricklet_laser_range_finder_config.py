@@ -809,7 +809,7 @@ com['examples'].append({
 distance_channel = oh_generic_old_style_channel('Distance', 'Distance', 'SIUnits.METRE', divisor=100.0)
 distance_channel['predicate'] = 'this.getSensorHardwareVersion() == 3 || cfg.mode == 0'
 
-velocity_channel = oh_generic_old_style_channel('Velocity', 'Velocity', 'SmartHomeUnits.METRE_PER_SECOND', divisor=100.0)
+velocity_channel = oh_generic_old_style_channel('Velocity', 'Velocity', 'SmartHomeUnits.METRE_PER_SECOND', divisor=100.0, cast_literal='(short)')
 velocity_channel['predicate'] = 'this.getSensorHardwareVersion() == 3 || cfg.mode != 0'
 
 com['openhab'] = {
@@ -932,11 +932,11 @@ com['openhab'] = {
         }
     ],
     'init_code': """if(this.getSensorHardwareVersion() == 1) {{
-        this.setMode(cfg.mode);
+        this.setMode(cfg.mode.shortValue());
     }} else {{
-        this.setConfiguration(cfg.acquisitionCount, cfg.enableQuickTermination, cfg.thresholdValue, cfg.enableFixedMeasurementFrequency ? cfg.measurementFrequency : 0);
+        this.setConfiguration(cfg.acquisitionCount.shortValue(), cfg.enableQuickTermination, cfg.thresholdValue.shortValue(), cfg.enableFixedMeasurementFrequency ? cfg.measurementFrequency : 0);
     }}
-    this.setMovingAverage(cfg.distanceMovingAverageLength, cfg.velocityMovingAverageLength);""",
+    this.setMovingAverage(cfg.distanceMovingAverageLength.shortValue(), cfg.velocityMovingAverageLength.shortValue());""",
     'channels': [
         distance_channel,
         velocity_channel,

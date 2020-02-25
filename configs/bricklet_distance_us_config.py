@@ -366,7 +366,7 @@ com['openhab'] = {
             'advanced': True
         }
     ],
-    'init_code': """this.setMovingAverage(cfg.movingAverageLength);""",
+    'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
     'channels': [
         distance_channel
     ],

@@ -354,7 +354,7 @@ def button_channel(idx):
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Is Button Pressed',
-                'packet_params': [str(idx)],
+                'packet_params': ['(short)({})'.format(idx)],
                 'transform': 'value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{

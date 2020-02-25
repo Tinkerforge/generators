@@ -550,10 +550,10 @@ com['examples'].append({
               ('callback_threshold', ('Object Temperature', 'object temperature'), [], '>', [(100, 0)])]
 })
 
-ambient_temp_channel = oh_generic_old_style_channel('Ambient Temperature', 'Ambient Temperature', 'SIUnits.CELSIUS', divisor=10.0)
+ambient_temp_channel = oh_generic_old_style_channel('Ambient Temperature', 'Ambient Temperature', 'SIUnits.CELSIUS', divisor=10.0, cast_literal='(short)')
 ambient_temp_channel['callbacks'][0]['transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
 
-object_temp_channel = oh_generic_old_style_channel('Object Temperature', 'Object Temperature', 'SIUnits.CELSIUS', divisor=10.0)
+object_temp_channel = oh_generic_old_style_channel('Object Temperature', 'Object Temperature', 'SIUnits.CELSIUS', divisor=10.0, cast_literal='(short)')
 object_temp_channel['callbacks'][0]['transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
 
 com['openhab'] = {

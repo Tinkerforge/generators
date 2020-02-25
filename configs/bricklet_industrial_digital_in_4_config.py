@@ -442,8 +442,8 @@ def input_channel(idx):
                 'packet': 'Interrupt',
                 'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
-            'init_code':"""this.setInterrupt(this.getInterrupt() | (1 << {idx}));""".format(idx=idx),
-            'dispose_code': """this.setInterrupt(this.getInterrupt() & ~(1 << {idx}));""".format(idx=idx),
+            'init_code':"""this.setInterrupt((short)(this.getInterrupt() | (1 << {idx})));""".format(idx=idx),
+            'dispose_code': """this.setInterrupt((short)(this.getInterrupt() & ~(1 << {idx})));""".format(idx=idx),
     }
 
 def edge_count_channel(index):
@@ -452,11 +452,11 @@ def edge_count_channel(index):
             'type': 'Edge Count',
             'label': 'Edge Count Pin {0}'.format(index),
 
-            'init_code':"""this.setEdgeCountConfig(1 << {}, channelCfg.edgeType, channelCfg.debounce);""".format(index),
+            'init_code':"""this.setEdgeCountConfig((short)(1 << {}), channelCfg.edgeType.shortValue(), channelCfg.debounce.shortValue());""".format(index),
 
             'getters': [{
                 'packet': 'Get Edge Count',
-                'packet_params': [str(index), 'channelCfg.resetOnRead'],
+                'packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 
             'java_unit': 'SmartHomeUnits.ONE',

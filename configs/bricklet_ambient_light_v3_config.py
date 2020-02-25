@@ -236,7 +236,7 @@ com['openhab'] = {
             'description': 'A longer integration time will result in less noise on the data.<br/><br/>With a long integration time the sensor might be saturated before the measured value reaches the maximum of the selected illuminance range. In this case 0lux is reported.<br/><br/>If the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
         }
     ],
-    'init_code': """this.setConfiguration(cfg.illuminanceRange, cfg.integrationTime);""",
+    'init_code': """this.setConfiguration(cfg.illuminanceRange.shortValue(), cfg.integrationTime.shortValue());""",
     'channels': [
         oh_generic_channel('Illuminance', 'Illuminance', 'SmartHomeUnits.LUX', divisor=100.0)
     ],

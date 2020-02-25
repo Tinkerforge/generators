@@ -1359,8 +1359,8 @@ com['openhab'] = {
     this.setLinearAccelerationPeriod(cfg.linearAccelerationUpdateInterval);
     this.setGravityVectorPeriod(cfg.gravityVectorUpdateInterval);
     this.setTemperaturePeriod(cfg.temperatureUpdateInterval);
-    this.setSensorConfiguration(cfg.magnetometerRate, cfg.gyroscopeRange, cfg.gyroscopeBandwidth, cfg.accelerometerRange, cfg.accelerometerBandwidth);
-    this.setSensorFusionMode(cfg.sensorFusionMode);
+    this.setSensorConfiguration(cfg.magnetometerRate.shortValue(), cfg.gyroscopeRange.shortValue(), cfg.gyroscopeBandwidth.shortValue(), cfg.accelerometerRange.shortValue(), cfg.accelerometerBandwidth.shortValue());
+    this.setSensorFusionMode(cfg.sensorFusionMode.shortValue());
     """,
     'channels': [{
             'id': 'Acceleration {}'.format(axis.upper()),

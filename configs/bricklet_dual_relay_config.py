@@ -230,7 +230,7 @@ def relay_channel(channel):
 
         'setters': [{
             'packet': 'Set Selected State',
-            'packet_params': [str(channel), 'cmd == OnOffType.ON'],
+            'packet_params': ['(short){}'.format(channel), 'cmd == OnOffType.ON'],
             'command_type': "OnOffType",
         }],
 
@@ -244,12 +244,12 @@ def monoflop_channel(channel):
 
         'getters': [{
             'packet': 'Get Monoflop',
-            'packet_params': [str(channel)],
+            'packet_params': ['(short) {}'.format(channel)],
             'transform': 'value.state ? OnOffType.ON : OnOffType.OFF'}],
 
         'setters': [{
             'packet': 'Set Monoflop',
-            'packet_params': [str(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
+            'packet_params': ['(short){}'.format(channel), 'channelCfg.monoflopValue.booleanValue()', 'channelCfg.monoflopDuration'],
             'command_type': "StringType", # Command type has to be string type to be able to use command options.
         }],
 

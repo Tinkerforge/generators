@@ -346,7 +346,7 @@ com['openhab'] = {
                 'transform': 'new QuantityType(value, SmartHomeUnits.ONE)'}],
             'setters': [{
                 'packet': 'Set Brightness',
-                'packet_params': ['cmd.intValue()'],
+                'packet_params': ['cmd.shortValue()'],
                 'command_type': 'Number'
             }],
         }, {
@@ -400,10 +400,10 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set Segments',
                 'packet_params': [
-                    'Helper.intToBits(cmd.intValue() >> 24)',
-                    'Helper.intToBits(cmd.intValue() >> 16)',
-                    'Helper.intToBits(cmd.intValue() >> 8)',
-                    'Helper.intToBits(cmd.intValue())',
+                    'Helper.shortToBits((short)(cmd.intValue() >> 24))',
+                    'Helper.shortToBits((short)(cmd.intValue() >> 16))',
+                    'Helper.shortToBits((short)(cmd.intValue() >> 8))',
+                    'Helper.shortToBits((short)cmd.intValue())',
                     'this.getSegments().colon',
                     'this.getSegments().tick',
                 ],

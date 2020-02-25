@@ -339,7 +339,7 @@ com['openhab'] = {
             'type': 'Edge Count',
             'label': 'Edge Count',
 
-            'init_code':"""this.setEdgeCountConfig(cfg.edgeType, cfg.debounce);
+            'init_code':"""this.setEdgeCountConfig(cfg.edgeType.shortValue(), cfg.debounce.shortValue());
             this.setEdgeInterrupt(channelCfg.refreshCount);""",
 
             'getters': [{

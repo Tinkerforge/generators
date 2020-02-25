@@ -731,7 +731,7 @@ com['openhab'] = {
             'description': 'The integration time provides a trade-off between conversion time and accuracy. With a longer integration time the values read will be more accurate but it will take longer time to get the conversion results.',
         }],
     'param_groups': oh_generic_channel_param_groups(),
-    'init_code': """this.setConfig(cfg.gain, cfg.integrationTime);""",
+    'init_code': """this.setConfig(cfg.gain.shortValue(), cfg.integrationTime.shortValue());""",
     'channels': [
         {
             'id': 'Color',

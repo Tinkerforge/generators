@@ -470,13 +470,13 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set Date Time',
                 'packet_params': ['cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getYear()',
-                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMonth().getValue()',
-                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfMonth()',
-                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getHour()',
-                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMinute()',
-                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getSecond()',
-                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getNano() / 1000 / 1000 / 10',
-                                        'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfWeek().getValue()'],
+                                        '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMonth().getValue()',
+                                        '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfMonth()',
+                                        '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getHour()',
+                                        '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getMinute()',
+                                        '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getSecond()',
+                                        '(short)(cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getNano() / 1000 / 1000 / 10)',
+                                        '(short)cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfWeek().getValue()'],
                 'command_type': 'DateTimeType'
             }],
 

@@ -369,7 +369,7 @@ com['openhab'] = {
             'description': 'If automatic draw is enabled, the display is automatically updated when writing text or clearing the display. If it is disabled, the changes are written into an internal buffer and only shown on the display after triggering the Draw Buffered Frame channel.',
         },
     ] ,
-    'init_code': """this.setDisplayConfiguration(cfg.contrast, cfg.invert, cfg.automaticDraw);""",
+    'init_code': """this.setDisplayConfiguration(cfg.contrast.shortValue(), cfg.invert, cfg.automaticDraw);""",
     'channels': [
             {
                 'id': 'Text',

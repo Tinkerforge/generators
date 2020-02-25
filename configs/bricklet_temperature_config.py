@@ -368,9 +368,9 @@ com['openhab'] = {
             'description': 'Sets the I2C mode. If you have problems with obvious outliers in the Temperature Bricklet measurements, they may be caused by EMI issues. In this case it may be helpful to lower the I2C speed. It is however not recommended to lower the I2C speed in applications where a high throughput needs to be achieved.',
         }
     ],
-    'init_code': """this.setI2CMode(cfg.i2cMode);""",
+    'init_code': """this.setI2CMode(cfg.i2cMode.shortValue());""",
     'channels': [
-        oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0, cast_literal='(short)'),
     ],
     'channel_types': [
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',

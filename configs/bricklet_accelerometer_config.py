@@ -519,7 +519,7 @@ com['openhab'] = {
         },
         update_interval('Set Acceleration Callback Period', 'Period', 'Acceleration', 'the acceleration')],
     'param_groups': oh_generic_channel_param_groups(),
-    'init_code': """this.setConfiguration(cfg.dataRate, cfg.fullScaleRange, cfg.filterBandwidth);
+    'init_code': """this.setConfiguration(cfg.dataRate.shortValue(), cfg.fullScaleRange.shortValue(), cfg.filterBandwidth.shortValue());
     this.setAccelerationCallbackPeriod(cfg.accelerationUpdateInterval);""",
     'channels': [
         {

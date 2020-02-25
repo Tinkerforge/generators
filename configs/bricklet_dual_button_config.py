@@ -245,7 +245,7 @@ com['openhab'] = {
                         ('Channel - Default Off', 3)],
         }
     ],
-    'init_code': 'this.setLEDState(cfg.leftLEDState, cfg.rightLEDState);',
+    'init_code': 'this.setLEDState(cfg.leftLEDState.shortValue(), cfg.rightLEDState.shortValue());',
     'channels': [
         {
             'id': 'Left Button',

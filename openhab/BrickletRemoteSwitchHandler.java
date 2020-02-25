@@ -71,27 +71,27 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
 
         @Override
         public void switchSocketA(int houseCode, int receiverCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketA(houseCode, receiverCode, switchTo);
+            this.rs.switchSocketA((short) houseCode, (short) receiverCode,(short) switchTo);
         }
 
         @Override
         public void switchSocketB(int address, int unit, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketB(address, unit, switchTo);
+            this.rs.switchSocketB((long) address, (short) unit, (short) switchTo);
         }
 
         @Override
         public void dimSocketB(int address, int unit, int dimValue) throws TinkerforgeException {
-            this.rs.dimSocketB(address, unit, dimValue);
+            this.rs.dimSocketB((int) address, (short) unit, (short) dimValue);
         }
 
         @Override
         public void switchSocketC(char systemCode, int deviceCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketC(systemCode, deviceCode, switchTo);
+            this.rs.switchSocketC(systemCode, (short) deviceCode,(short) switchTo);
         }
 
         @Override
         public void setRepeats(int repeats) throws TinkerforgeException {
-            this.rs.setRepeats(repeats);
+            this.rs.setRepeats((short) repeats);
         }
 
         @Override
@@ -126,12 +126,12 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
 
         @Override
         public void switchSocketB(int address, int unit, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketB(address, unit, switchTo);
+            this.rs.switchSocketB((long) address, unit, switchTo);
         }
 
         @Override
         public void dimSocketB(int address, int unit, int dimValue) throws TinkerforgeException {
-            this.rs.dimSocketB(address, unit, dimValue);
+            this.rs.dimSocketB((int) address, unit, dimValue);
         }
 
         @Override

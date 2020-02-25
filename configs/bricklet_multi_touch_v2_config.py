@@ -410,7 +410,7 @@ com['openhab'] = {
         },
         update_interval('Set Touch State Callback Configuration', 'Period', 'Electrode', 'the electrode and proximity state')
     ] + [electrode_config(i) for i in range(0, 12)],
-    'init_code': """this.setElectrodeSensitivity(cfg.sensitivity);
+    'init_code': """this.setElectrodeSensitivity(cfg.sensitivity.shortValue());
         this.recalibrate();
         this.setElectrodeConfig(new boolean[]{{{}, cfg.proximityEnabled}});
         this.setTouchStateCallbackConfiguration(cfg.electrodeUpdateInterval, true);""".format(', '.join(['cfg.electrode{}Enabled'.format(i) for i in range(0, 12)])),

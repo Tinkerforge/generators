@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 public class Helper {
 
 
-    public static int parseDisplayCommandLine(String cmd, Logger logger) {
+    public static short parseDisplayCommandLine(String cmd, Logger logger) {
         String[] splt = cmd.toString().split(",", 3);
         if(splt.length != 3) {
             logger.warn("Could not parse display command {}: Could not split into line, position and text. Format is [LINE],[POSITION],[TEXT].", cmd);
@@ -28,23 +28,23 @@ public class Helper {
         }
 
         try {
-            return Integer.parseInt(splt[0]);
+            return Short.parseShort(splt[0]);
         } catch (NumberFormatException e) {
-            logger.warn("Could not parse display command {}: Line {} could not be parsed as int", cmd, splt[0]);
+            logger.warn("Could not parse display command {}: Line {} could not be parsed as short", cmd, splt[0]);
         }
         return 0;
     }
 
-    public static int parseDisplayCommandPosition(String cmd, Logger logger) {
+    public static short parseDisplayCommandPosition(String cmd, Logger logger) {
         String[] splt = cmd.toString().split(",", 3);
         if(splt.length != 3) {
             // No need to log an error here, parseDisplayCommandLine will already have complained about this.
             return 0;
         }
         try {
-            return Integer.parseInt(splt[1]);
+            return Short.parseShort(splt[1]);
         } catch (NumberFormatException e) {
-            logger.warn("Could not parse display command {}: Position {} could not be parsed as int", cmd, splt[1]);
+            logger.warn("Could not parse display command {}: Position {} could not be parsed as short", cmd, splt[1]);
         }
         return 0;
     }
@@ -260,33 +260,33 @@ public class Helper {
         }
 	}
 
-    public static int parseLED1ValueLength(String string, boolean usesFourChannels, Logger logger) {
+    public static short parseLED1ValueLength(String string, boolean usesFourChannels, Logger logger) {
         int elements = (int)string.chars().filter(c -> c == ',').count(); // there should be a + 1 here, but the first element is the index, which must not be counted.
         int result = elements / (usesFourChannels ? 4 : 3);
 
-        int maxControllableLEDs = (usesFourChannels ? 12 : 16);
+        short maxControllableLEDs = (short) (usesFourChannels ? 12 : 16);
         if(result > maxControllableLEDs) {
             logger.warn("Could not parse LED Value command: A maximum of {} LEDs can be set with one command, but got {}.", maxControllableLEDs, result);
             return 0;
         }
 
-        return result;
+        return (short)result;
     }
 
-    public static int[] parseLED1Values(String string, int channel, boolean usesFourChannels, Logger logger)
+    public static short[] parseLED1Values(String string, int channel, boolean usesFourChannels, Logger logger)
     {
         try {
             String[] splt = string.split(",");
-            int[] result = new int[usesFourChannels ? 12 : 16];
+            short[] result = new short[usesFourChannels ? 12 : 16];
             int nextInsert = 0;
 
             for (int i = 1 + channel; i < splt.length; i += (usesFourChannels ? 4 : 3)) {
-                result[nextInsert] = Integer.valueOf(splt[i]);
+                result[nextInsert] = Short.valueOf(splt[i]);
             }
             return result;
         } catch (Exception e) {
             logger.warn("Could not parse LED Value command: {}", e.getMessage());
-            return new int[]{};
+            return new short[]{};
         }
     }
 
@@ -312,47 +312,47 @@ public class Helper {
         }
     }
 
-    public static boolean[] intToBits(int i) {
+    public static boolean[] shortToBits(short s) {
         boolean[] result = new boolean[8];
-        for (int bit = 0; bit < 8; ++bit) {
-            result[bit] = (i & (1 << (bit))) != 0;
+        for (int i = 0; i < 8; ++i) {
+            result[i] = (s & (1 << (i))) != 0;
         }
         return result;
     }
 
-    private static int translateCharacter(char c) {
-        int[] digits = {
+    private static short translateCharacter(char c) {
+        short[] digits = {
             0x3f,0x06,0x5b,0x4f,0x66, //0-4
             0x6d,0x7d,0x07,0x7f,0x6f  //5-9
         };
-        int[] capitals = {
+        short[] capitals = {
             0x77,0x7f,0x39,0x3f,0x79,0x71, //A-F
             0x7d,0x76,0x30,0x0E,0x76,0x38, //G-L
             0x15,0x15,0x3F,0x73,0x67,0x77, //M-R
             0x6d,0x31,0x3e,0x3e,0x2a,0x76, //S-X
             0x66,0x5b,                     //Y-Z
         };
-        int[] minuscules = {
+        short[] minuscules = {
             0x5c,0x7c,0x58,0x5e,0x7B,0x71, //a-f
             0x6f,0x74,0x10,0x0C,0x76,0x18, //g-l
             0x15,0x54,0x63,0x73,0x67,0x50, //m-r
             0x6d,0x78,0x1c,0x62,0x2a,0x76, //s-x
             0x6E,0x5b,                     //y-z
         };
-        Map<Character, Integer> special_characters = new HashMap<>();
-        special_characters.put((char)'"', 0x22);
-        special_characters.put((char)'(', 0x39);
-        special_characters.put((char)')', 0x0F);
-        special_characters.put((char)'+', 0x70);
-        special_characters.put((char)'-', 0x40);
-        special_characters.put((char)'=', 0x09);
-        special_characters.put((char)'[', 0x39);
-        special_characters.put((char)']', 0x0F);
-        special_characters.put((char)'^', 0x23);
-        special_characters.put((char)'_', 0x08);
-        special_characters.put((char)'|', 0x06);
+        Map<Character, Short> special_characters = new HashMap<>();
+        special_characters.put((char)'"', (short)0x22);
+        special_characters.put((char)'(', (short)0x39);
+        special_characters.put((char)')', (short)0x0F);
+        special_characters.put((char)'+', (short)0x70);
+        special_characters.put((char)'-', (short)0x40);
+        special_characters.put((char)'=', (short)0x09);
+        special_characters.put((char)'[', (short)0x39);
+        special_characters.put((char)']', (short)0x0F);
+        special_characters.put((char)'^', (short)0x23);
+        special_characters.put((char)'_', (short)0x08);
+        special_characters.put((char)'|', (short)0x06);
 
-        int digit = 0;
+        short digit = 0;
         if (c >= 48 && c <= 57) {
             digit = digits[c - 48];
         } else if (c >= 65 && c <= 90) {
@@ -360,7 +360,7 @@ public class Helper {
         } else if (c >= 97 && c <= 122) {
             digit = minuscules[c - 97];
         } else {
-            digit = special_characters.getOrDefault(c, 0);
+            digit = special_characters.getOrDefault(c, (short)0);
         }
 
         return digit;
@@ -383,9 +383,9 @@ public class Helper {
 
         for (int i = 0; i < string.length(); ++i) {
             char c = string.charAt(i);
-            int s = translateCharacter(c);
+            short s = translateCharacter(c);
             if (s != 0 && seenDigits < 4) {
-                result[seenDigits] = intToBits(s);
+                result[seenDigits] = shortToBits(s);
                 ++seenDigits;
             }
             if(seenDigits > 0 && c == '.') {
@@ -396,9 +396,9 @@ public class Helper {
         return result[digit];
     }
 
-    public static int[] parseSegmentDisplayText(String string) {
+    public static short[] parseSegmentDisplayText(String string) {
         String copy = string.replace(":", "");
-        int[] result = new int[4];
+        short[] result = new short[4];
         for (int i = 0; i < Math.min(copy.length(), 4); ++i) {
             result[i] = translateCharacter(copy.charAt(i));
         }
