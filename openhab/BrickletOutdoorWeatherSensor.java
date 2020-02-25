@@ -2,12 +2,15 @@
 package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.net.URI;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.tinkerforge.TinkerforgeException;
@@ -42,9 +45,26 @@ import org.eclipse.smarthome.core.library.types.QuantityType;
 import org.eclipse.smarthome.core.library.unit.SIUnits;
 import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 
-public class BrickletOutdoorWeatherSensor extends DeviceWrapper {
+public class BrickletOutdoorWeatherSensor implements DeviceWrapper {
     public BrickletOutdoorWeatherSensor(BrickletOutdoorWeatherWrapper bricklet) {
         this.bricklet = bricklet;
+    }
+
+    private List<ScheduledFuture<?>> manualChannelUpdates = new ArrayList<ScheduledFuture<?>>();
+    private List<ListenerReg> listenerRegs = new ArrayList<ListenerReg>();
+
+    public void cancelManualUpdates() {
+        manualChannelUpdates.forEach(f -> f.cancel(true));
+    }
+
+    public <T> T reg(T listener, Consumer<T> toRemove) {
+        listenerRegs.add(new ListenerReg<T>(listener, toRemove));
+        return listener;
+    }
+
+    @Override
+    public void dispose(Configuration config) throws TinkerforgeException {
+        listenerRegs.forEach(reg -> reg.toRemove.accept(reg.listener));
     }
 
     private final BrickletOutdoorWeatherWrapper bricklet;

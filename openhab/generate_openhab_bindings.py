@@ -757,6 +757,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
                       'java.util.Map',
                       'java.util.function.Function',
                       'java.util.function.BiConsumer',
+                      'java.util.function.Consumer',
                       'java.util.concurrent.ScheduledExecutorService',
                       'java.util.concurrent.ScheduledFuture',
                       'java.util.concurrent.TimeUnit',
@@ -790,35 +791,6 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
 
         return '\n'.join('import {};'.format(i) for i in oh_imports) + '\n'
 
-    def get_openhab_device_wrapper_functions(self):
-        func_template = """public {device_class}{return_type} {name}({params_signature}) throws TinkerforgeException {{
-    {return_}this.dev.{name}({params});
-}}"""
-
-        cb_template = """public void add{0}Listener({1}.{0}Listener l) {{
-    this.dev.add{0}Listener(l);
-}}
-
-public void remove{0}Listener({1}.{0}Listener l) {{
-    this.dev.remove{0}Listener(l);
-}}"""
-        funcs = []
-        for packet in self.get_packets('function'):
-            ret_count = len(packet.get_elements(direction='out', high_level=True))
-            ret_type = packet.get_java_return_type(high_level=True)
-            funcs.append(func_template.format(device_class=self.get_java_class_name()+'.' if ret_count > 1 else '',
-                                              return_type=ret_type,
-                                              name=packet.get_name().headless if not packet.has_high_level() else packet.get_name(skip=-2).headless,
-                                              params_signature=packet.get_java_parameters(high_level=True),
-                                              params=packet.get_java_parameters(high_level=True, context='call'),
-                                              return_='return ' if ret_count > 0 else ''))
-
-        for packet in self.get_packets('callback'):
-            funcs.append(cb_template.format(packet.get_name().camel if not packet.has_high_level() else packet.get_name(skip=-2).camel,
-                                            self.get_java_class_name()))
-
-        return '\n\n'.join(funcs)
-
     def get_openhab_device_wrapper(self):
         template = """{header}
 package org.eclipse.smarthome.binding.tinkerforge.internal.device;
@@ -828,19 +800,24 @@ import com.tinkerforge.{device_camel};
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
 
-public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
-    {device_camel} dev;
-
+public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     {device_info}
 
     public {device_camel}Wrapper(String uid, IPConnection ipcon) {{
-        super();
-        this.dev = new {device_camel}(uid, ipcon);
+        super(uid, ipcon);
     }}
 
-    {wrapper_consts}
+    private List<ScheduledFuture<?>> manualChannelUpdates = new ArrayList<ScheduledFuture<?>>();
+    private List<ListenerReg> listenerRegs = new ArrayList<ListenerReg>();
 
-    {wrapper_funcs}
+    public void cancelManualUpdates() {{
+        manualChannelUpdates.forEach(f -> f.cancel(true));
+    }}
+
+    public <T> T reg(T listener, Consumer<T> toRemove) {{
+        listenerRegs.add(new ListenerReg<T>(listener, toRemove));
+        return listener;
+    }}
 
     {device_impl}
 }}"""
@@ -856,10 +833,8 @@ public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
         return template.format(header=self.get_generator().get_header_comment('asterisk'),
                                imports=self.get_openhab_imports(),
                                device_camel=self.get_category().camel + self.get_name().camel,
-                               interfaces=common.wrap_non_empty('implements ', ', '.join(self.oh.implemented_interfaces), ''),
+                               interfaces=common.wrap_non_empty('implements ', ', '.join(self.oh.implemented_interfaces + ['DeviceWrapper']), ' '),
                                device_info=dev_info,
-                               wrapper_consts=self.get_java_constants(),
-                               wrapper_funcs=self.get_openhab_device_wrapper_functions(),
                                device_impl=self.get_openhab_device_impl())
 
     def get_filtered_elements_and_type(self, packet, elements, out_of_class=False):
@@ -899,7 +874,7 @@ public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
         transformation_template = """    private {state_or_string} transform{camel}Callback{i}({callback_args}{device_camel}Config cfg) {{
         return {transform};
     }}"""
-        cb_registration = '{predicate}this.add{camel}Listener(this.reg(({args}) -> {{if({filter}) {{{updateFn}.accept("{channel_camel}", transform{channel_camel}Callback{i}({args}{comma}cfg));}}}}, this.dev::remove{camel}Listener));{end_predicate}'
+        cb_registration = '{predicate}this.add{camel}Listener(this.reg(({args}) -> {{if({filter}) {{{updateFn}.accept("{channel_camel}", transform{channel_camel}Callback{i}({args}{comma}cfg));}}}}, this::remove{camel}Listener));{end_predicate}'
 
         regs = []
 
@@ -1106,7 +1081,7 @@ public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
 
     @Override
     public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException {{
-        this.dev.setResponseExpectedAll(true);
+        this.setResponseExpectedAll(true);
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         {callback_registrations}
         {init_code}
@@ -1114,7 +1089,8 @@ public class {device_camel}Wrapper extends DeviceWrapper {interfaces}{{
 
     @Override
     public void dispose(org.eclipse.smarthome.config.core.Configuration config) throws TinkerforgeException {{
-        super.dispose(config);
+        listenerRegs.forEach(reg -> reg.toRemove.accept(reg.listener));
+
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         {dispose_code}
     }}

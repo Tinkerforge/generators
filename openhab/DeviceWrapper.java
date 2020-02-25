@@ -18,7 +18,7 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 
 
-public abstract class DeviceWrapper {
+public interface DeviceWrapper {
     public class SetterRefresh {
         public final String channel;
         public final long delay;
@@ -39,24 +39,13 @@ public abstract class DeviceWrapper {
         }
     }
 
-    protected List<ScheduledFuture<?>> manualChannelUpdates = new ArrayList<ScheduledFuture<?>>();
+    public abstract void cancelManualUpdates();
 
-    protected List<ListenerReg> listenerRegs = new ArrayList<ListenerReg>();
-
-    public void cancelManualUpdates() {
-        manualChannelUpdates.forEach(f -> f.cancel(true));
-    }
-
-    public <T> T reg(T listener, Consumer<T> toRemove) {
-        listenerRegs.add(new ListenerReg<T>(listener, toRemove));
-        return listener;
-    }
+    public abstract <T> T reg(T listener, Consumer<T> toRemove);
 
     public abstract void initialize(Configuration config, Function<String, Configuration> getChannelConfigFn, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException;
 
-    public void dispose(Configuration config) throws TinkerforgeException {
-        listenerRegs.forEach(reg -> reg.toRemove.accept(reg.listener));
-    };
+    public abstract void dispose(Configuration config) throws TinkerforgeException;
 
     public abstract void refreshValue(String value, Configuration config, Configuration channelConfig, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
 
