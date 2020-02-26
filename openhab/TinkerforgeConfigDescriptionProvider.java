@@ -29,7 +29,7 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
 
     private final Map<URI, ConfigDescription> configDescriptionCache = new HashMap<>();
 
-    private final static Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
+    private final static Logger logger = LoggerFactory.getLogger(TinkerforgeConfigDescriptionProvider.class);
 
     @Override
     public Collection<ConfigDescription> getConfigDescriptions(@Nullable Locale locale) {
