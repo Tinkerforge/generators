@@ -107,7 +107,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature Image Low Level',
 'elements': [('Image Chunk Offset', 'uint16', 1, 'out', {}),
-             ('Image Chunk Data', 'uint16', 31, 'out', {'scale': 'dynamic', 'unit': 'Kelvin', 'range': (-1000, 1400)})],
+             ('Image Chunk Data', 'uint16', 31, 'out', {'scale': 'dynamic', 'unit': 'Kelvin'})],
 'high_level': {'stream_out': {'name': 'Image', 'fixed_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -554,7 +554,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Temperature Image Low Level',
 'elements': [('Image Chunk Offset', 'uint16', 1, 'out', {}),
-             ('Image Chunk Data', 'uint16', 31, 'out', {'scale': 'dynamic', 'unit': 'Kelvin', 'range': (-1000, 1400)})],
+             ('Image Chunk Data', 'uint16', 31, 'out', {'scale': 'dynamic', 'unit': 'Kelvin'})],
 'high_level': {'stream_out': {'name': 'Image', 'fixed_length': 80*60}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
