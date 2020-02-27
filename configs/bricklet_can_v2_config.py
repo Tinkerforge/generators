@@ -6,6 +6,8 @@
 
 # CAN Bricklet 2.0 communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -1168,3 +1170,110 @@ com['examples'].append({
 'cleanups': [('setter', 'Set Frame Read Callback Configuration', [('bool', False)], None, None)],
 'incomplete': True # because of callback with array parameter and write-frame function success output parameter
 })
+
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'packet': 'Set Transceiver Configuration',
+            'element': 'Baud Rate',
+
+            'name': 'Baud Rate',
+            'type': 'integer',
+            'min': 10000,
+            'max': 1000000,
+            'default': 125000,
+
+            'label': 'Baud Rate',
+            'description': 'The baud rate to send/receive with.',
+        }, {
+            'packet': 'Set Transceiver Configuration',
+            'element': 'Sample Point',
+
+            'name': 'Sample Point',
+            'type': 'decimal',
+            'default': 62.5,
+            'min': 50,
+            'max': 90,
+            'step': 0.1,
+
+            'label': 'Sample Point',
+            'description': 'Configures when to sample a bit during each bit period.'
+        }, {
+            'packet': 'Set Transceiver Configuration',
+            'element': 'Transceiver Mode',
+
+            'name': 'Transceiver Mode',
+            'type': 'integer',
+            'options': [('Normal', 0),
+                        ('Loopback', 1),
+                        ('Read Only', 2)],
+            'limitToOptions': 'true',
+            'default': 0,
+
+            'label': 'Transceiver Mode',
+            'description': 'The CAN transceiver has three different modes:<ul><li>Normal: Reads from and writes to the CAN bus and performs active bus error detection and acknowledgement.</li><li>Loopback: All reads and writes are performed internally. The transceiver is disconnected from the actual CAN bus.</li><li>Read-Only: Only reads from the CAN bus, but does neither active bus error detection nor acknowledgement. Only the receiving part of the transceiver is connected to the CAN bus.</li></ul>'
+        }, {
+            'packet': 'Set Communication LED Config',
+            'element': 'Config',
+
+            'name': 'Communication LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Communication', 3)],
+            'limitToOptions': 'true',
+            'default': 3,
+
+            'label': 'Communication LED Config',
+            'description': "By default the LED shows CAN-Bus traffic, it flickers once for every 40 transmitted or received frames. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
+        }, {
+            'packet': 'Set Error LED Config',
+            'element': 'Config',
+
+            'name': 'Error LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Transceiver State', 3),
+                        ('Show Error', 4)],
+            'limitToOptions': 'true',
+            'default': 3,
+
+            'label': 'Error LED Config',
+            'description': "By default (show-transceiver-state) the error LED turns on if the CAN transceiver is passive or disabled state (see the getErrorLog action). If the CAN transceiver is in active state the LED turns off.<br/><br/>If the LED is configured as show-error then the error LED turns on if any error occurs. If you call this function with the show-error option again, the LED will turn off until the next error occurs.<br/><br/>You can also turn the LED permanently on/off or show a heartbeat.<br/><br/>If the Bricklet is in bootloader mode, the LED is off.",
+        }],
+
+    'init_code': """this.setTransceiverConfiguration(cfg.baudRate, (int)(cfg.samplePoint.doubleValue() * 10), cfg.transceiverMode);
+    this.setCommunicationLEDConfig(cfg.communicationLEDConfig);
+    this.setErrorLEDConfig(cfg.errorLEDConfig);
+    this.setFrameReadableCallbackConfiguration(true);
+    this.setErrorOccuredCallbackConfiguration(true);""",
+
+    'channels': [{
+            'id': 'Frame Readable',
+            'label': 'Frame Readable',
+            'description': "This channel is triggered when a new frame was received and can be read out. The channel will only trigger again if the frame was read.",
+            'type': 'system.trigger',
+            'callbacks': [{
+                'packet': 'Frame Readable',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }, {
+            'id': 'Error Occured',
+            'label': 'Error Occured',
+            'description': "This channel is triggered if any error occured while writing, reading or transmitting CAN frames. The channel will trigger only once until the getErrorLog action is called.",
+            'type': 'system.trigger',
+            'callbacks': [{
+                'packet': 'Error Occured',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }],
+    'channel_types': [],
+    'actions': ['Write Frame', 'Read Frame', 'Get Transceiver Configuration', 'Set Queue Configuration', 'Get Queue Configuration', 'Set Read Filter Configuration', 'Get Read Filter Configuration', 'Get Error Log']
+}
