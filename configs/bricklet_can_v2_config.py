@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2107,
     'name': 'CAN V2',
@@ -875,146 +875,289 @@ aktiviert werden.
 }]
 })
 
-#com['packets'].append({
-#'type': 'function',
-#'name': 'Set Timestamped Frame Configuration',
-#'elements': [('Enabled', 'bool', 1, 'in'),
+com['packets'].append({
+'type': 'function',
+'name': 'Set Frame Readable Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [2, 0, 3],
+'doc': ['ccf', {
+'en':
+"""
+Enables and disables the :cb:`Frame Readable` callback.
+
+By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Read` callback.
+""",
+'de':
+"""
+Aktiviert und deaktiviert den :cb:`Frame Readable` Callback.
+
+Standardmäßig ist der Callback deaktiviert. Wenn dieser Callback aktiviert wird, wird der :cb:`Frame Read` Callback deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Frame Readable Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
+'since_firmware': [2, 0, 3],
+'doc': ['ccf', {
+'en':
+"""
+Returns *true* if the :cb:`Frame Readable` callback is enabled, *false* otherwise.
+""",
+'de':
+"""
+Gibt *true* zurück falls der :cb:`Frame Readable` Callback aktiviert ist, *false*
+sonst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Frame Readable',
+'elements': [],
+'since_firmware': [2, 0, 3],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered if a data or remote frame was received by the CAN
+transceiver. The received frame can be read with :func:`Read Frame`.
+If additional frames are received, but :func:`Read Frame` was not called yet, the callback
+will not trigger again.
+
+A configurable read filter can be used to define which frames should be
+received by the CAN transceiver and put into the read queue (see
+:func:`Set Queue Configuration`).
+
+To enable this callback, use :func:`Set Frame Readable Callback Configuration`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst, sobald ein Data- oder Remote-Frame vom
+CAN-Transceiver empfangen wurde. Der empfangene Frame kann mit :func:`Read Frame`
+ausgelesen werden. Falls weitere Frames empfangen werden, bevor :func:`Read Frame` aufgerufen
+wurde, wird der Callback nicht erneut ausgelöst.
+
+Mittels eines einstellbaren Lesefilters kann festgelegt werden, welche Frames
+vom CAN-Transceiver überhaupt empfangen und im Lese-Queue abgelegt werden
+sollen (siehe :func:`Set Queue Configuration`).
+
+Dieser Callback kann durch :func:`Set Frame Readable Callback Configuration`
+aktiviert werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Error Occured Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [2, 0, 3],
+'doc': ['ccf', {
+'en':
+"""
+Enables and disables the :cb:`Error Occured` callback.
+
+By default the callback is disabled.
+""",
+'de':
+"""
+Aktiviert und deaktiviert den :cb:`Error Occured` Callback.
+
+Standardmäßig ist der Callback deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Error Occured Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
+'since_firmware': [2, 0, 3],
+'doc': ['ccf', {
+'en':
+"""
+Returns *true* if the :cb:`Error Occured` callback is enabled, *false* otherwise.
+""",
+'de':
+"""
+Gibt *true* zurück falls der :cb:`Error Occured` Callback aktiviert ist, *false*
+sonst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Error Occured',
+'elements': [],
+'since_firmware': [2, 0, 3],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered if any error occured while writing, reading or transmitting CAN frames.
+
+The callback is only triggered once until :func:`Get Error Log` is called. That function will return
+details abount the error(s) occured.
+
+To enable this callback, use :func:`Set Error Occured Callback Configuration`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst, wenn ein Fehler während des Schreibens, Lesens oder Empfangens von CAN-Frames auftritt.
+
+Der Callback wird nur einmal ausgelöst, bis :func:`Get Error Log` aufgerufen wird. Diese Funktion liefert Details
+über aufgetretene Fehler.
+
+Dieser Callback kann durch :func:`Set Error Occured Callback Configuration`
+aktiviert werden.
+"""
+}]
+})
+
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Set Timestamped Frame Configuration',
+# 'elements': [('Enabled', 'bool', 1, 'in'),
 #             ('Write Backlog Size', 'uint16', 1, 'in'),
 #             ('Read Backlog Size', 'uint16', 1, 'in')],
-#'since_firmware': [2, 0, 3],
-#'doc': ['af', {
-#'en':
-#"""
-#""",
-#'de':
-#"""
-#"""
-#}]
-#})
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['af', {
+# 'en':
+# """
+# """,
+# 'de':
+# """
+# """
+# }]
+# })
 
-#com['packets'].append({
-#'type': 'function',
-#'name': 'Get Timestamped Frame Configuration',
-#'elements': [('Enabled', 'bool', 1, 'out'),
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Get Timestamped Frame Configuration',
+# 'elements': [('Enabled', 'bool', 1, 'out'),
 #             ('Write Backlog Size', 'uint16', 1, 'out'),
 #             ('Read Backlog Size', 'uint16', 1, 'out')],
-#'since_firmware': [2, 0, 3],
-#'doc': ['af', {
-#'en':
-#"""
-#""",
-#'de':
-#"""
-#"""
-#}]
-#})
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['af', {
+# 'en':
+# """
+# """,
+# 'de':
+# """
+# """
+# }]
+# })
 
-#com['packets'].append({
-#'type': 'function',
-#'name': 'Write Timestamped Frame Low Level',
-#'elements': [('Frame Type', 'uint8', 1, 'in', {'constant_group': 'Frame Type'}),
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Write Timestamped Frame Low Level',
+# 'elements': [('Frame Type', 'uint8', 1, 'in', {'constant_group': 'Frame Type'}),
 #             ('Identifier', 'uint32', 1, 'in'),
 #             ('Data Length', 'uint8', 1, 'in'),
 #             ('Data Data', 'uint8', 15, 'in'),
 #             ('Timestamp', 'uint64', 1, 'in'),
 #             ('Success', 'bool', 1, 'out')],
-#'high_level': {'stream_in': {'name': 'Data', 'single_chunk': True}},
-#'since_firmware': [2, 0, 3],
-#'doc': ['af', {
-#'en':
-#"""
-#""",
-#'de':
-#"""
-#"""
-#}]
-#})
+# 'high_level': {'stream_in': {'name': 'Data', 'single_chunk': True}},
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['af', {
+# 'en':
+# """
+# """,
+# 'de':
+# """
+# """
+# }]
+# })
 
-#com['packets'].append({
-#'type': 'function',
-#'name': 'Read Timestamped Frame Low Level',
-#'elements': [('Success', 'bool', 1, 'out'),
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Read Timestamped Frame Low Level',
+# 'elements': [('Success', 'bool', 1, 'out'),
 #             ('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
 #             ('Identifier', 'uint32', 1, 'out'),
 #             ('Data Length', 'uint8', 1, 'out'),
 #             ('Data Data', 'uint8', 15, 'out'),
 #             ('Timestamp', 'uint64', 1, 'out')],
-#'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
-#'since_firmware': [2, 0, 3],
-#'doc': ['af', {
-#'en':
-#"""
-#""",
-#'de':
-#"""
-#"""
-#}]
-#})
+# 'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['af', {
+# 'en':
+# """
+# """,
+# 'de':
+# """
+# """
+# }]
+# })
 
-#com['packets'].append({
-#'type': 'function',
-#'name': 'Get Timestamp',
-#'elements': [('Timestamp', 'uint64', 1, 'out')],
-#'since_firmware': [2, 0, 3],
-#'doc': ['af', {
-#'en':
-#"""
-#""",
-#'de':
-#"""
-#"""
-#}]
-#})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Get Timestamp',
+# 'elements': [('Timestamp', 'uint64', 1, 'out')],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['af', {
+# 'en':
+# """
+# """,
+# 'de':
+# """
+# """
+# }]
+# })
 
-#com['packets'].append({
-#'type': 'function',
-#'name': 'Set Timestamped Frame Read Callback Configuration',
-#'elements': [('Enabled', 'bool', 1, 'in')],
-#'since_firmware': [2, 0, 3],
-#'doc': ['ccf', {
-#'en':
-#"""
-#""",
-#'de':
-#"""
-#"""
-#}]
-#})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Set Timestamped Frame Read Callback Configuration',
+# 'elements': [('Enabled', 'bool', 1, 'in')],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['ccf', {
+# 'en':
+# """
+# """,
+# 'de':
+# """
+# """
+# }]
+# })
 
-#com['packets'].append({
-#'type': 'function',
-#'name': 'Get Timestamped Frame Read Callback Configuration',
-#'elements': [('Enabled', 'bool', 1, 'out')],
-#'since_firmware': [2, 0, 3],
-#'doc': ['ccf', {
-#'en':
-#"""
-#""",
-#'de':
-#"""
-#"""
-#}]
-#})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Get Timestamped Frame Read Callback Configuration',
+# 'elements': [('Enabled', 'bool', 1, 'out')],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['ccf', {
+# 'en':
+# """
+# """,
+# 'de':
+# """
+# """
+# }]
+# })
 
-#com['packets'].append({
-#'type': 'callback',
-#'name': 'Timestamped Frame Read Low Level',
-#'elements': [('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
+# com['packets'].append({
+# 'type': 'callback',
+# 'name': 'Timestamped Frame Read Low Level',
+# 'elements': [('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
 #             ('Identifier', 'uint32', 1, 'out'),
 #             ('Data Length', 'uint8', 1, 'out'),
 #             ('Data Data', 'uint8', 15, 'out'),
 #             ('Timestamp', 'uint64', 1, 'out')],
-#'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
-#'since_firmware': [2, 0, 3],
-#'doc': ['c', {
-#'en':
-#"""
-#""",
-#'de':
-#"""
-#"""
-#}]
-#})
+# 'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['c', {
+# 'en':
+# """
+# """,
+# 'de':
+# """
+# """
+# }]
+# })
+
 
 com['examples'].append({
 'name': 'Loopback',
