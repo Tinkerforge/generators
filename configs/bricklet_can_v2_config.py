@@ -675,7 +675,8 @@ number of these errors:
 The read buffer overflow counter counts the overflows of all configured read
 buffers. Which read buffer exactly suffered from an overflow can be figured
 out from the read buffer overflow occurrence list
-(``read_buffer_overflow_error_occurred``).
+(``read_buffer_overflow_error_occurred``). Reading the error log clears the
+occurence list.
 """,
 'de':
 """
@@ -718,7 +719,8 @@ zählen die Anzahl dieser Fehler:
 Der Lese-Buffer-Überlauf-Zähler zählt die Überläuft aller konfigurierten
 Lese-Buffer. In welchem Lese-Buffer seit dem letzten Aufruf dieser Funktion ein
 Überlauf aufgetreten ist kann an der Liste des Lese-Buffer-Überlauf-Auftretens
-(``read_buffer_overflow_error_occurred``) abgelesen werden.
+(``read_buffer_overflow_error_occurred``) abgelesen werden. Auslesen des Fehler-Logs
+setzt diese Liste zurück.
 """
 }]
 })
