@@ -854,7 +854,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
 
         init_code = []
         for c in self.oh.channels:
-            if len(c.init_code) == 0:
+            if c.automatic_update and len(c.init_code) == 0:
                 continue
             channel_cfg = ['{channel_type_name_camel}Config channelCfg = getChannelConfigFn.apply("{channel_name_camel}").as({channel_type_name_camel}Config.class);'
                                .format(channel_name_camel=c.id.camel,
