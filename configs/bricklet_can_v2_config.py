@@ -853,7 +853,7 @@ For details on the ``data`` return value see :func:`Read Frame`.
 
 A configurable read filter can be used to define which frames should be
 received by the CAN transceiver and put into the read queue (see
-:func:`Set Queue Configuration`).
+:func:`Set Read Filter Configuration`).
 
 To enable this callback, use :func:`Set Frame Read Callback Configuration`.
 """,
@@ -869,7 +869,7 @@ Für Details zum ``data`` Rückgabewerte siehe :func:`Read Frame`.
 
 Mittels eines einstellbaren Lesefilters kann festgelegt werden, welche Frames
 vom CAN-Transceiver überhaupt empfangen und im Lese-Queue abgelegt werden
-sollen (siehe :func:`Set Queue Configuration`).
+sollen (siehe :func:`Set Read Filter Configuration`).
 
 Dieser Callback kann durch :func:`Set Frame Read Callback Configuration`
 aktiviert werden.
@@ -931,7 +931,7 @@ will not trigger again.
 
 A configurable read filter can be used to define which frames should be
 received by the CAN transceiver and put into the read queue (see
-:func:`Set Queue Configuration`).
+:func:`Set Read Filter Configuration`).
 
 To enable this callback, use :func:`Set Frame Readable Callback Configuration`.
 """,
@@ -944,7 +944,7 @@ wurde, wird der Callback nicht erneut ausgelöst.
 
 Mittels eines einstellbaren Lesefilters kann festgelegt werden, welche Frames
 vom CAN-Transceiver überhaupt empfangen und im Lese-Queue abgelegt werden
-sollen (siehe :func:`Set Queue Configuration`).
+sollen (siehe :func:`Set Read Filter Configuration`).
 
 Dieser Callback kann durch :func:`Set Frame Readable Callback Configuration`
 aktiviert werden.
