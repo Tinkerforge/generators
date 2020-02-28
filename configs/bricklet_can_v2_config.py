@@ -239,13 +239,13 @@ com['packets'].append({
 """
 Enables and disables the :cb:`Frame Read` callback.
 
-By default the callback is disabled.
+By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Readable` callback.
 """,
 'de':
 """
 Aktiviert und deaktiviert den :cb:`Frame Read` Callback.
 
-Standardmäßig ist der Callback deaktiviert.
+Standardmäßig ist der Callback deaktiviert. Wenn dieser Callback aktiviert wird, wird der :cb:`Frame Readable` Callback deaktiviert.
 """
 }]
 })
