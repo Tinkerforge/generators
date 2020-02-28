@@ -6,6 +6,8 @@
 
 # NFC Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -1286,3 +1288,136 @@ com['examples'].append({
               ('setter', 'Set Mode', [('uint8:constant', 3)], 'Enable reader mode', None)],
 'incomplete': True # because of special logic in callback
 })
+
+state_list = """
+    <ul><li>READER_STATE_INITIALIZATION = 0</li>
+    <li>READER_STATE_IDLE = 128</li>
+    <li>READER_STATE_ERROR = 192</li>
+    <li>READER_STATE_REQUEST_TAG_ID = 2</li>
+    <li>READER_STATE_REQUEST_TAG_ID_READY = 130</li>
+    <li>READER_STATE_REQUEST_TAG_ID_ERROR = 194</li>
+    <li>READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE = 3</li>
+    <li>READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE_READY = 131</li>
+    <li>READER_STATE_AUTHENTICATE_MIFARE_CLASSIC_PAGE_ERROR = 195</li>
+    <li>READER_STATE_WRITE_PAGE = 4</li>
+    <li>READER_STATE_WRITE_PAGE_READY = 132</li>
+    <li>READER_STATE_WRITE_PAGE_ERROR = 196</li>
+    <li>READER_STATE_REQUEST_PAGE = 5</li>
+    <li>READER_STATE_REQUEST_PAGE_READY = 133</li>
+    <li>READER_STATE_REQUEST_PAGE_ERROR = 197</li>
+    <li>READER_STATE_WRITE_NDEF = 6</li>
+    <li>READER_STATE_WRITE_NDEF_READY = 134</li>
+    <li>READER_STATE_WRITE_NDEF_ERROR = 198</li>
+    <li>READER_STATE_REQUEST_NDEF = 7</li>
+    <li>READER_STATE_REQUEST_NDEF_READY = 135</li>
+    <li>READER_STATE_REQUEST_NDEF_ERROR = 199</li>
+    <br/>
+    <li>CARDEMU_STATE_INITIALIZATION = 0</li>
+    <li>CARDEMU_STATE_IDLE = 128</li>
+    <li>CARDEMU_STATE_ERROR = 192</li>
+    <li>CARDEMU_STATE_DISCOVER = 2</li>
+    <li>CARDEMU_STATE_DISCOVER_READY = 130</li>
+    <li>CARDEMU_STATE_DISCOVER_ERROR = 194</li>
+    <li>CARDEMU_STATE_TRANSFER_NDEF = 3</li>
+    <li>CARDEMU_STATE_TRANSFER_NDEF_READY = 131</li>
+    <li>CARDEMU_STATE_TRANSFER_NDEF_ERROR = 195</li>
+    <br/>
+    <li>P2P_STATE_INITIALIZATION = 0</li>
+    <li>P2P_STATE_IDLE = 128</li>
+    <li>P2P_STATE_ERROR = 192</li>
+    <li>P2P_STATE_DISCOVER = 2</li>
+    <li>P2P_STATE_DISCOVER_READY = 130</li>
+    <li>P2P_STATE_DISCOVER_ERROR = 194</li>
+    <li>P2P_STATE_TRANSFER_NDEF = 3</li>
+    <li>P2P_STATE_TRANSFER_NDEF_READY = 131</li>
+    <li>P2P_STATE_TRANSFER_NDEF_ERROR = 195</li></<ul>""".replace('\n    ', '')
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'packet': 'Set Mode',
+            'element': 'Mode',
+
+            'name': 'Mode',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('Cardemu', 1),
+                        ('P2P', 2),
+                        ('Reader', 3)],
+            'limitToOptions': 'true',
+            'default': 0,
+
+            'label': 'Mode',
+            'description': 'The NFC Bricklet supports four modes:<br/><br/><ul><li>Off</li><li>Card Emulation (Cardemu): Emulates a tag for other readers</li><li>Peer to Peer (P2P): Exchange data with other readers</li><li>Reader: Reads and writes tags</li></ul><br/><br/>If you change a mode, the Bricklet will reconfigure the hardware for this mode. Therefore, you can only use functions corresponding to the current mode. For example, in Reader mode you can only use Reader functions.',
+        },  {
+            'packet': 'Set Detection LED Config',
+            'element': 'Config',
+
+            'name': 'Detection LED Config',
+            'type': 'integer',
+            'options': [('Off', 0),
+                        ('On', 1),
+                        ('Show Heartbeat', 2),
+                        ('Show Detection', 3)],
+            'limitToOptions': 'true',
+            'default': 3,
+
+            'label': 'Detection LED Config',
+            'description': "The detection LED configuration. By default the LED shows if a card/reader is detected.<br/><br/>You can also turn the LED permanently on/off or show a heartbeat.<br/><br/If the Bricklet is in bootloader mode, the LED is off.",
+        }, {
+            'packet': 'Set Maximum Timeout',
+            'element': 'Timeout',
+
+            'name': 'Maximum Timeout',
+            'type': 'integer',
+            'min': 0,
+            'max': 2**16 - 1,
+            'default': 2000,
+
+            'label': 'Maximum Timeout',
+            'description': "This is a global maximum used for all internal state timeouts. The timeouts depend heavily on the used tags etc. For example: If you use a Type 2 tag and you want to detect if it is present, you have to use the readerRequestTagID action and wait for the state to change to either the error state or the ready state.<br/><br/>With the default configuration this takes 2-3 seconds. By setting the maximum timeout to 100ms you can reduce this time to ~150-200ms. For Type 2 this would also still work with a 20ms timeout (a Type 2 tag answers usually within 10ms). A type 4 tag can take up to 500ms in our tests.<br/><br/>If you need a fast response time to discover if a tag is present or not you can find a good timeout value by trial and error for your specific tag.<br/><br/>By default we use a very conservative timeout, to be sure that any tag can always answer in time.",
+        }],
+
+    'init_code': """this.setMode(cfg.mode);
+    this.setDetectionLEDConfig(cfg.detectionLEDConfig);
+    this.setMaximumTimeout(cfg.maximumTimeout);""",
+
+    'channels': [{
+            'id': 'State',
+            'type': 'State',
+            'callbacks': [{
+                'packet': 'Reader State Changed',
+                'transform': 'new DecimalType(state)'
+                }, {
+                'packet': 'Cardemu State Changed',
+                'transform': 'new DecimalType(state)'
+                }, {
+                'packet': 'P2P State Changed',
+                'transform': 'new DecimalType(state)'
+                }
+            ],
+            'getters': [{
+                'predicate': 'cfg.mode == 1',
+                'packet': 'Reader Get State',
+                'transform': 'new DecimalType(value.state)'
+            }, {
+                'predicate': 'cfg.mode == 2',
+                'packet': 'Cardemu Get State',
+                'transform': 'new DecimalType(value.state)'
+            }, {
+                'predicate': 'cfg.mode == 3',
+                'packet': 'P2P Get State',
+                'transform': 'new DecimalType(value.state)'
+            }, ]
+        }],
+    'channel_types': [oh_generic_channel_type('State', 'Number:Dimensionless', 'State',
+            update_style=None,
+            description="The current state of the bricklet. The meaning of the state depends on the configured mode. Calling actions is only allowed in idle, ready and error states (e.g. all states >= 128). The following states are defined:" + state_list,
+            read_only=True)],
+    'actions': ['Get Mode',
+                'Reader Request Tag ID', 'Reader Get Tag ID', 'Reader Get State', 'Reader Write NDEF', 'Reader Request NDEF', 'Reader Read NDEF', 'Reader Authenticate Mifare Classic Page', 'Reader Write Page', 'Reader Request Page', 'Reader Read Page',
+                'Cardemu Get State', 'Cardemu Start Discovery', 'Cardemu Write NDEF', 'Cardemu Start Transfer',
+                'P2P Get State', 'P2P Start Discovery', 'P2P Write NDEF', 'P2P Start Transfer', 'P2P Read NDEF',
+                ]
+}
