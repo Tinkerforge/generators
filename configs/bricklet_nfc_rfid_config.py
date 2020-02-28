@@ -6,6 +6,8 @@
 
 # NFC/RFID Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -477,3 +479,45 @@ com['examples'].append({
               ('setter', 'Request Tag ID', [('uint8:constant', 2)], 'Select NFC Forum Type 2 tag', None)],
 'incomplete': True # because of special logic in callback
 })
+
+
+state_list = """
+    <ul><li>STATE_INITIALIZATION = 0</li>
+    <li>STATE_IDLE = 128</li>
+    <li>STATE_ERROR = 192</li>
+    <li>STATE_REQUEST_TAG_ID = 2</li>
+    <li>STATE_REQUEST_TAG_ID_READY = 130</li>
+    <li>STATE_REQUEST_TAG_ID_ERROR = 194</li>
+    <li>STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE = 3</li>
+    <li>STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_READY = 131</li>
+    <li>STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_ERROR = 195</li>
+    <li>STATE_WRITE_PAGE = 4</li>
+    <li>STATE_WRITE_PAGE_READY = 132</li>
+    <li>STATE_WRITE_PAGE_ERROR = 196</li>
+    <li>STATE_REQUEST_PAGE = 5</li>
+    <li>STATE_REQUEST_PAGE_READY = 133</li>
+    <li>STATE_REQUEST_PAGE_ERROR = 197</li></ul>""".replace('\n    ', '')
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [],
+    'init_code': "",
+    'channels': [{
+            'id': 'State',
+            'type': 'State',
+            'callbacks': [{
+                'packet': 'State Changed',
+                'transform': 'new DecimalType(state)'
+            }],
+            'getters': [{
+                'packet': 'Get State',
+                'transform': 'new DecimalType(value.state)'
+            }]
+        }],
+    'channel_types': [oh_generic_channel_type('State', 'Number:Dimensionless', 'State',
+            update_style=None,
+            description="The current state of the bricklet. Calling actions is only allowed in idle, ready and error states (e.g. all states >= 128). The following states are defined:" + state_list,
+            read_only=True)],
+    'actions': ['Request Tag ID', 'Get Tag ID', 'Get State', 'Authenticate Mifare Classic Page', 'Write Page', 'Request Page', 'Get Page', ]
+}
