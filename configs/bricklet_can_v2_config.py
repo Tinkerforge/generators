@@ -954,19 +954,19 @@ aktiviert werden.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Error Occured Callback Configuration',
+'name': 'Set Error Occurred Callback Configuration',
 'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [2, 0, 3],
 'doc': ['ccf', {
 'en':
 """
-Enables and disables the :cb:`Error Occured` callback.
+Enables and disables the :cb:`Error Occurred` callback.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert und deaktiviert den :cb:`Error Occured` Callback.
+Aktiviert und deaktiviert den :cb:`Error Occurred` Callback.
 
 Standardmäßig ist der Callback deaktiviert.
 """
@@ -975,17 +975,17 @@ Standardmäßig ist der Callback deaktiviert.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Error Occured Callback Configuration',
+'name': 'Get Error Occurred Callback Configuration',
 'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [2, 0, 3],
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :cb:`Error Occured` callback is enabled, *false* otherwise.
+Returns *true* if the :cb:`Error Occurred` callback is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls der :cb:`Error Occured` Callback aktiviert ist, *false*
+Gibt *true* zurück falls der :cb:`Error Occurred` Callback aktiviert ist, *false*
 sonst.
 """
 }]
@@ -993,18 +993,18 @@ sonst.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Error Occured',
+'name': 'Error Occurred',
 'elements': [],
 'since_firmware': [2, 0, 3],
 'doc': ['c', {
 'en':
 """
-This callback is triggered if any error occured while writing, reading or transmitting CAN frames.
+This callback is triggered if any error occurred while writing, reading or transmitting CAN frames.
 
 The callback is only triggered once until :func:`Get Error Log` is called. That function will return
-details abount the error(s) occured.
+details abount the error(s) occurred.
 
-To enable this callback, use :func:`Set Error Occured Callback Configuration`.
+To enable this callback, use :func:`Set Error Occurred Callback Configuration`.
 """,
 'de':
 """
@@ -1013,7 +1013,7 @@ Dieser Callback wird ausgelöst, wenn ein Fehler während des Schreibens, Lesens
 Der Callback wird nur einmal ausgelöst, bis :func:`Get Error Log` aufgerufen wird. Diese Funktion liefert Details
 über aufgetretene Fehler.
 
-Dieser Callback kann durch :func:`Set Error Occured Callback Configuration`
+Dieser Callback kann durch :func:`Set Error Occurred Callback Configuration`
 aktiviert werden.
 """
 }]
@@ -1251,7 +1251,7 @@ com['openhab'] = {
     this.setCommunicationLEDConfig(cfg.communicationLEDConfig);
     this.setErrorLEDConfig(cfg.errorLEDConfig);
     this.setFrameReadableCallbackConfiguration(true);
-    this.setErrorOccuredCallbackConfiguration(true);""",
+    this.setErrorOccurredCallbackConfiguration(true);""",
 
     'channels': [{
             'id': 'Frame Readable',
@@ -1264,12 +1264,12 @@ com['openhab'] = {
 
             'is_trigger_channel': True,
         }, {
-            'id': 'Error Occured',
-            'label': 'Error Occured',
-            'description': "This channel is triggered if any error occured while writing, reading or transmitting CAN frames. The channel will trigger only once until the getErrorLog action is called.",
+            'id': 'Error Occurred',
+            'label': 'Error Occurred',
+            'description': "This channel is triggered if any error occurred while writing, reading or transmitting CAN frames. The channel will trigger only once until the getErrorLog action is called.",
             'type': 'system.trigger',
             'callbacks': [{
-                'packet': 'Error Occured',
+                'packet': 'Error Occurred',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
 
             'is_trigger_channel': True,

@@ -226,7 +226,7 @@ API
 To allow non-blocking usage, nearly every function of the Rust bindings returns
 a wrapper around a mpsc::Receiver. To block until the function has finished and
 get your result, call one of the receiver's recv variants. Those return either
-the result sent by the device, or any error occured.
+the result sent by the device, or any error occurred.
 
 Functions returning a result directly will block until the device has finished
 processing the request.
