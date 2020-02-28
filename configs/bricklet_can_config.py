@@ -6,6 +6,8 @@
 
 # CAN Bricklet communication config
 
+from openhab_common import *
+
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 1],
@@ -699,3 +701,154 @@ com['examples'].append({
 'cleanups': [('setter', 'Disable Frame Read Callback', [], None, None)],
 'incomplete': True # because of callback with array parameter
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'packet': 'Set Configuration',
+            'element': 'Baud Rate',
+
+            'name': 'Baud Rate',
+            'type': 'integer',
+            'options': [('10kbps', 0),
+                        ('20kbps', 1),
+                        ('50kbps', 2),
+                        ('125kbps', 3),
+                        ('250kbps', 4),
+                        ('500kbps', 5),
+                        ('800kbps', 6),
+                        ('1000kbps', 7)],
+            'limitToOptions': 'true',
+            'default': 3,
+
+            'label': 'Baud Rate',
+            'description': 'The baud rate to send/receive with.',
+        }, {
+            'packet': 'Set Configuration',
+            'element': 'Transceiver Mode',
+
+            'name': 'Transceiver Mode',
+            'type': 'integer',
+            'options': [('Normal', 0),
+                        ('Loopback', 1),
+                        ('Read Only', 2)],
+            'limitToOptions': 'true',
+            'default': 0,
+
+            'label': 'Transceiver Mode',
+            'description': 'The CAN transceiver has three different modes:<ul><li>Normal: Reads from and writes to the CAN bus and performs active bus error detection and acknowledgement.</li><li>Loopback: All reads and writes are performed internally. The transceiver is disconnected from the actual CAN bus.</li><li>Read-Only: Only reads from the CAN bus, but does neither active bus error detection nor acknowledgement. Only the receiving part of the transceiver is connected to the CAN bus.</li></ul>'
+        }, {
+            'packet': 'Set Configuration',
+            'element': 'Write Timeout',
+
+            'name': 'Write Timeout',
+            'type': 'integer',
+            'default': 0,
+            'min': -1,
+            'max': 2**31 - 1,
+
+            'label': 'Write Timeout',
+            'description': 'The write timeout has three different modes that define how a failed frame transmission should be handled:<ul><li>One-Shot (= -1): Only one transmission attempt will be made. If the transmission fails then the frame is discarded.</li><li>Infinite (= 0): Infinite transmission attempts will be made. The frame will never be discarded.</li><li>Milliseconds (> 0): A limited number of transmission attempts will be made. If the frame could not be transmitted successfully after the configured number of milliseconds then the frame is discarded.</li></ul>'
+        }],
+
+    'init_code': """this.setConfiguration(cfg.baudRate.shortValue(), cfg.transceiverMode.shortValue(), cfg.writeTimeout);
+    this.setFrameReadableCallbackConfiguration(true);""",
+
+    'channels': [{
+            'id': 'Frame Readable',
+            'label': 'Frame Readable',
+            'description': "This channel is triggered when a new frame was received and can be read out. The channel will only trigger again if the frame was read.",
+            'type': 'system.trigger',
+            'callbacks': [{
+                'packet': 'Frame Readable',
+                'transform': 'CommonTriggerEvents.PRESSED'}],
+
+            'is_trigger_channel': True,
+        }, {
+            'id': 'Write Error Level',
+            'type': 'Write Error Level',
+
+            'getters': [{
+                'packet': 'Get Error Log',
+                'transform': 'new DecimalType(value.writeErrorLevel)'
+            }],
+        }, {
+            'id': 'Read Error Level',
+            'type': 'Read Error Level',
+
+            'getters': [{
+                'packet': 'Get Error Log',
+                'transform': 'new DecimalType(value.readErrorLevel)'
+            }],
+        }, {
+            'id': 'Transceiver Disabled',
+            'type': 'Transceiver Disabled',
+
+            'getters': [{
+                'packet': 'Get Error Log',
+                'transform': 'value.transceiverDisabled ? OnOffType.ON : OnOffType.OFF'
+            }],
+        }, {
+            'id': 'Write Timeout Count',
+            'type': 'Write Timeout Count',
+
+            'getters': [{
+                'packet': 'Get Error Log',
+                'transform': 'new DecimalType(value.writeTimeoutCount)'
+            }],
+        }, {
+            'id': 'Read Register Overflow Count',
+            'type': 'Read Register Overflow Count',
+
+            'getters': [{
+                'packet': 'Get Error Log',
+                'transform': 'new DecimalType(value.readRegisterOverflowCount)'
+            }],
+        }, {
+            'id': 'Read Buffer Overflow Count',
+            'type': 'Read Buffer Overflow Count',
+
+            'getters': [{
+                'packet': 'Get Error Log',
+                'transform': 'new DecimalType(value.readBufferOverflowCount)'
+            }],
+        }],
+    'channel_types': [
+         oh_generic_channel_type('Write Error Level', 'Number', 'Write Error Level',
+            update_style=None,
+            description='The write error level indicates the current level of checksum, acknowledgement, form, bit and stuffing errors during CAN bus write operations.<br/><br/>When the write error level extends 255 then the CAN transceiver gets disabled and no frames can be transmitted or received anymore. The CAN transceiver will automatically be activated again after the CAN bus is idle for a while.<br/><br/>The write error level is not available in read-only transceiver mode and is reset to 0 as a side effect of changing the configuration or the read filter.',
+            read_only=True,
+            min_=0,
+            max_=255),
+        oh_generic_channel_type('Read Error Level', 'Number', 'Read Error Level',
+            update_style=None,
+            description='The read error level indicates the current level of checksum, acknowledgement, form, bit and stuffing errors during CAN bus read operations.<br/><br/>The read error level is not available in read-only transceiver mode and is reset to 0 as a side effect of changing the configuration or the read filter.',
+            read_only=True,
+            min_=0,
+            max_=255),
+        oh_generic_channel_type('Transceiver Disabled', 'Switch', 'Transceiver Disabled',
+            update_style=None,
+            description='When the write error level extends 255 then the CAN transceiver gets disabled and no frames can be transmitted or received anymore. The CAN transceiver will automatically be activated again after the CAN bus is idle for a while.',
+            read_only=True),
+        oh_generic_channel_type('Write Timeout Count', 'Number', 'Write Timeout Count',
+            update_style=None,
+            description='A write timeout occurs if a frame could not be transmitted before the configured write timeout expired.',
+            read_only=True,
+            min_=0,
+            max_='4294967295L'),
+        oh_generic_channel_type('Read Register Overflow Count', 'Number', 'Read Register Overflow Count',
+            update_style=None,
+            description='A read register overflow occurs if the read register of the CAN transceiver still contains the last received frame when the next frame arrives. In this case the newly arrived frame is lost. This happens if the CAN transceiver receives more frames than the Bricklet can handle. Using the read filter (see the setReadFilter action) can help to reduce the amount of received frames. This count is not exact, but a lower bound, because the Bricklet might not able detect all overflows if they occur in rapid succession.',
+            read_only=True,
+            min_=0,
+            max_='4294967295L'),
+        oh_generic_channel_type('Read Buffer Overflow Count', 'Number', 'Read Buffer Overflow Count',
+            update_style=None,
+            description='A read buffer overflow occurs if the read buffer of the Bricklet is already full when the next frame should be read from the read register of the CAN transceiver. In this case the frame in the read register is lost. This happens if the CAN transceiver receives more frames to be added to the read buffer than are removed from the read buffer using the readFrame action.',
+            read_only=True,
+            min_=0,
+            max_='4294967295L')
+    ],
+    'actions': ['Write Frame', 'Read Frame', 'Get Configuration', 'Set Read Filter', 'Get Read Filter', 'Get Error Log']
+}
