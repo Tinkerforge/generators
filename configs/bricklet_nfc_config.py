@@ -249,19 +249,6 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-To read or write a tag that is in proximity of the NFC Bricklet you
-first have to call this function with the expected tag type as parameter.
-It is no problem if you don't know the tag type. You can cycle through
-the available tag types until the tag answers the request.
-
-Currently the following tag types are supported:
-
-* Mifare Classic
-* NFC Forum Type 1
-* NFC Forum Type 2
-* NFC Forum Type 3
-* NFC Forum Type 4
-
 After you call :func:`Reader Request Tag ID` the NFC Bricklet will try to read
 the tag ID from the tag. After this process is done the state will change.
 You can either register the :cb:`Reader State Changed` callback or you can poll
