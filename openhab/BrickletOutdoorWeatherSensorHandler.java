@@ -48,6 +48,7 @@ import com.tinkerforge.BrickletOutdoorWeather;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletOutdoorWeatherSensor;
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
+import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
@@ -141,7 +142,12 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
             device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
             updateStatus(ThingStatus.ONLINE);
         } catch (TinkerforgeException e) {
-            ((BrickletOutdoorWeatherHandler)getBridge().getHandler()).handleTimeout();
+            if(e instanceof TimeoutException) {
+                logger.debug("Failed to refresh value for {}: {}", channelId, e.getMessage());
+                ((BrickletOutdoorWeatherHandler)getBridge().getHandler()).handleTimeout();
+            } else {
+                logger.warn("Failed to refresh value for {}: {}", channelId, e.getMessage());
+            }
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
@@ -168,7 +174,12 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
                         TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
-            ((BrickletOutdoorWeatherHandler)getBridge().getHandler()).handleTimeout();
+            if(e instanceof TimeoutException) {
+                logger.debug("Failed to send command {} to channel {}: {}",command.toFullString(), channelUID.toString(), e.getMessage());
+                ((BrickletOutdoorWeatherHandler)getBridge().getHandler()).handleTimeout();
+            } else {
+                logger.warn("Failed to send command {} to channel {}: {}",command.toFullString(), channelUID.toString(), e.getMessage());
+            }
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
@@ -198,7 +209,12 @@ public class BrickletOutdoorWeatherSensorHandler extends BaseThingHandler {
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
         } catch (TinkerforgeException e) {
-            ((BrickletOutdoorWeatherHandler)getBridge().getHandler()).handleTimeout();
+            if(e instanceof TimeoutException) {
+                logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
+                ((BrickletOutdoorWeatherHandler)getBridge().getHandler()).handleTimeout();
+            } else {
+                logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
+            }
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
 

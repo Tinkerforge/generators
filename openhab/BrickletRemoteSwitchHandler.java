@@ -23,6 +23,7 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
 
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
+import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
 
 import org.eclipse.jdt.annotation.Nullable;
@@ -220,7 +221,12 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
             isSwitching.set(remoteSwitch.getSwitchingState() == BrickletRemoteSwitchWrapper.SWITCHING_STATE_BUSY);
             workFuture = scheduler.scheduleWithFixedDelay(this::work, 500, 500, TimeUnit.MILLISECONDS);
         } catch (TinkerforgeException e) {
-            handleTimeout();
+            if(e instanceof TimeoutException) {
+                logger.debug("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
+                ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
+            } else {
+                logger.warn("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
+            }
         }
     }
 
