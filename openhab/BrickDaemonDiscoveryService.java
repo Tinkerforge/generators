@@ -102,9 +102,10 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
         if (job == null || job.isCancelled()) {
             job = scheduler.scheduleWithFixedDelay(() -> {
                 try {
-                    removeOlderResults(new Date().getTime());
+                    long scanStart = new Date().getTime();
                     logger.debug("Enumerating devices for Brick Daemon {}.", this.handler.getThing().getUID());
                     handler.enumerate();
+                    scheduler.schedule(() -> removeOlderResults(scanStart), 2500, TimeUnit.MILLISECONDS);
                 } catch (NotConnectedException e) {
                     logger.debug("Brick Daemon {} currently not connected.", this.handler.getThing().getUID());
                 }
