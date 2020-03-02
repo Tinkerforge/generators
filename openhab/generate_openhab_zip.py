@@ -55,7 +55,6 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'tinkerforge_xx_XX.properties': './src/main/resources/ESH-INF/i18n',
 
             'BrickDaemonDiscoveryService.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/discovery',
-            'OutdoorWeatherDiscoveryService.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/discovery',
             'TinkerforgeDiscoveryService.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/discovery',
 
             'TinkerforgeHandlerFactory.java':               './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
