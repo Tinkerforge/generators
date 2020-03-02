@@ -8,6 +8,9 @@
 
 from openhab_common import *
 
+# see COUNTER_{MIN,MAX}_VALUE in software/src/counter.h
+COUNTER_RANGE = (((2 ** 16) - 1) * (-(2 ** 31)), ((2 ** 16) - 1) * ((2 ** 31) - 1) + ((2 ** 16) - 1) - 1)
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -106,7 +109,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Counter',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Counter', 'int64', 1, 'out', {})],
+             ('Counter', 'int64', 1, 'out', {'range': COUNTER_RANGE})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -123,7 +126,7 @@ Gibt den aktuellen Zählerstand für den gegebenen Kanal zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Counter',
-'elements': [('Counter', 'int64', 4, 'out', {})],
+'elements': [('Counter', 'int64', 4, 'out', {'range': COUNTER_RANGE})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -141,7 +144,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Counter',
 'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Counter', 'int64', 1, 'in')],
+             ('Counter', 'int64', 1, 'in', {'range': COUNTER_RANGE})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -162,7 +165,7 @@ Der Standardwert für alle Zähler nach dem Start ist 0.
 com['packets'].append({
 'type': 'function',
 'name': 'Set All Counter',
-'elements': [('Counter', 'int64', 4, 'in')],
+'elements': [('Counter', 'int64', 4, 'in', {'range': COUNTER_RANGE})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -541,7 +544,7 @@ Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config`
 com['packets'].append({
 'type': 'callback',
 'name': 'All Counter',
-'elements': [('Counter', 'int64', 4, 'out', {})],
+'elements': [('Counter', 'int64', 4, 'out', {'range': COUNTER_RANGE})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
