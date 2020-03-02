@@ -84,7 +84,12 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     }
 
     private List<ReachabilityResult> checkReachability(Predicate<? super Thing> filter) {
-        List<DeviceHandler> handlers = getThing().getThings().stream().filter(filter).map(t -> (DeviceHandler) t.getHandler()).collect(Collectors.toList());
+        List<DeviceHandler> handlers = getThing().getThings()
+                                                 .stream()
+                                                 .filter(filter)
+                                                 .map(t -> (DeviceHandler) t.getHandler())
+                                                 .filter(h -> h != null) // If checkReachability is called fast enough, some things don't have a handler yet.
+                                                 .collect(Collectors.toList());
         List<Callable<ReachabilityResult>> tasks = handlers.stream().map(h -> (Callable<ReachabilityResult>)(() -> new ReachabilityResult(h.checkReachablity(), h))).collect(Collectors.toList());
 
         List<Future<ReachabilityResult>> futures = new ArrayList<>();
