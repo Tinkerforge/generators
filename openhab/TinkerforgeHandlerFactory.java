@@ -23,6 +23,11 @@ import java.util.Set;
 
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteDimmerTypeB;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeA;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeB;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeC;
+
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
 
@@ -37,10 +42,7 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoo
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherStationHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletRemoteSwitchHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteDimmerTypeBHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteSocketTypeAHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteSocketTypeBHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteSocketTypeCHandler;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteSwitchDeviceHandler;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
@@ -115,13 +117,13 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_SENSOR)) {
             return new BrickletOutdoorWeatherSensorHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_REMOTE_SOCKET_TYPE_A)) {
-            return new RemoteSocketTypeAHandler(thing);
+            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteSocketTypeA(handler));
         } else if (thingTypeUID.equals(THING_TYPE_REMOTE_SOCKET_TYPE_B)) {
-            return new RemoteSocketTypeBHandler(thing);
+            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteSocketTypeB(handler));
         } else if (thingTypeUID.equals(THING_TYPE_REMOTE_SOCKET_TYPE_C)) {
-            return new RemoteSocketTypeCHandler(thing);
+            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteSocketTypeC(handler));
         } else if (thingTypeUID.equals(THING_TYPE_REMOTE_DIMMER_TYPE_B)) {
-            return new RemoteDimmerTypeBHandler(thing);
+            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteDimmerTypeB(handler));
         }
 
         return new DeviceHandler(thing,

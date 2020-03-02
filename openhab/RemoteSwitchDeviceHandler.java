@@ -42,30 +42,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.tinkerforge.BrickletOutdoorWeather;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeB;
+
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeA;
 import com.tinkerforge.Device;
 import com.tinkerforge.IPConnection;
+import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
 import com.tinkerforge.IPConnection.EnumerateListener;
 
 /**
- * The {@link RemoteSocketTypeBHandler} is responsible for handling
- * commands, which are sent to one of the channels.
+ * The {@link RemoteSwitchDeviceHandler} is responsible for handling commands,
+ * which are sent to one of the channels.
  *
  * @author Erik Fleckstein - Initial contribution
  */
 @NonNullByDefault
-public class RemoteSocketTypeBHandler extends BaseThingHandler {
-    private final Logger logger = LoggerFactory.getLogger(RemoteSocketTypeBHandler.class);
+public class RemoteSwitchDeviceHandler extends BaseThingHandler {
+    private final Logger logger = LoggerFactory.getLogger(RemoteSwitchDeviceHandler.class);
 
-    private @Nullable RemoteSocketTypeB device;
+    private @Nullable DeviceWrapper device;
+    private Function<BrickletRemoteSwitchHandler, DeviceWrapper> deviceSupplier;
 
-    public RemoteSocketTypeBHandler(Thing thing) {
+    public RemoteSwitchDeviceHandler(Thing thing, Function<BrickletRemoteSwitchHandler, DeviceWrapper> deviceSupplier) {
         super(thing);
+        this.deviceSupplier = deviceSupplier;
     }
 
     @Override
@@ -77,7 +83,7 @@ public class RemoteSocketTypeBHandler extends BaseThingHandler {
         }
         BrickletRemoteSwitchHandler handler = ((BrickletRemoteSwitchHandler) bridge.getHandler());
 
-        device = new RemoteSocketTypeB(handler);
+        device = deviceSupplier.apply(handler);
         configureChannels();
 
         if (this.getBridge().getStatus() == ThingStatus.ONLINE) {
@@ -85,10 +91,6 @@ public class RemoteSocketTypeBHandler extends BaseThingHandler {
         } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
         }
-    }
-
-    private Configuration getChannelConfiguration(String channelID) {
-        return getThing().getChannel(channelID).getConfiguration();
     }
 
     private void initializeDevice() {
@@ -99,8 +101,7 @@ public class RemoteSocketTypeBHandler extends BaseThingHandler {
         }
         BrickletRemoteSwitchHandler handler = ((BrickletRemoteSwitchHandler) bridge.getHandler());
 
-        device = new RemoteSocketTypeB(handler);
-        //device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel, scheduler, this);
+        device = deviceSupplier.apply(handler);
 
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
 
@@ -133,7 +134,12 @@ public class RemoteSocketTypeBHandler extends BaseThingHandler {
             device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
             updateStatus(ThingStatus.ONLINE);
         } catch (TinkerforgeException e) {
-            ((BrickletOutdoorWeatherHandler)getBridge().getHandler()).handleTimeout();
+            if(e instanceof TimeoutException) {
+                logger.debug("Failed to refresh value for {}: {}", channelId, e.getMessage());
+                ((BrickletRemoteSwitchHandler)getBridge().getHandler()).handleTimeout();
+            } else {
+                logger.warn("Failed to refresh value for {}: {}", channelId, e.getMessage());
+            }
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
@@ -160,7 +166,12 @@ public class RemoteSocketTypeBHandler extends BaseThingHandler {
                         TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
-            ((BrickletOutdoorWeatherHandler)getBridge().getHandler()).handleTimeout();
+            if(e instanceof TimeoutException) {
+                logger.debug("Failed to send command {} to channel {}: {}",command.toFullString(), channelUID.toString(), e.getMessage());
+                ((BrickletRemoteSwitchHandler)getBridge().getHandler()).handleTimeout();
+            } else {
+                logger.warn("Failed to send command {} to channel {}: {}",command.toFullString(), channelUID.toString(), e.getMessage());
+            }
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
@@ -190,7 +201,12 @@ public class RemoteSocketTypeBHandler extends BaseThingHandler {
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
         } catch (TinkerforgeException e) {
-            ((BrickletOutdoorWeatherHandler)getBridge().getHandler()).handleTimeout();
+            if(e instanceof TimeoutException) {
+                logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
+                ((BrickletRemoteSwitchHandler)getBridge().getHandler()).handleTimeout();
+            } else {
+                logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
+            }
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
 

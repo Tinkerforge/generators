@@ -68,10 +68,7 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'BrickletOutdoorWeatherSensorHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'BrickletOutdoorWeatherStationHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'BrickletRemoteSwitchHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'RemoteSocketTypeAHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'RemoteSocketTypeBHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'RemoteSocketTypeCHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'RemoteDimmerTypeBHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'RemoteSwitchDeviceHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'DeviceHandler.java':                           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
 
             # Reuse from java generator
