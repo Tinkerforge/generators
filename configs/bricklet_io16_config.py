@@ -694,7 +694,7 @@ def edge_count_channel(index):
             'type': 'Edge Count',
             'label': 'Edge Count {0}'.format(pin_name(index)),
 
-            'init_code':"""this.setEdgeCountConfig((short)(1 << {}), channelCfg.edgeType.shortValue(), channelCfg.debounce.shortValue());""".format(index),
+            'init_code':"""this.setEdgeCountConfig((short)({}), channelCfg.edgeType.shortValue(), channelCfg.debounce.shortValue());""".format(index),
 
             'getters': [{
                 'packet': 'Get Edge Count',
