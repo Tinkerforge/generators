@@ -613,7 +613,7 @@ com['openhab'] = {
                         ('Up To 36V', 3),
                         ('Up To 45V', 4),
                         ('Up To 3V', 5)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Measurement Range',

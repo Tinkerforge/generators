@@ -314,7 +314,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('10Hz', 0),
                         ('80Hz', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Measurement Rate',
@@ -328,7 +328,7 @@ com['openhab'] = {
             'options': [('128x', 0),
                         ('64x', 1),
                         ('32x', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Gain',
@@ -342,7 +342,7 @@ com['openhab'] = {
             'options': [('Off', 0),
                         ('On', 1),
                         ('Show Heartbeat', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Info LED',

@@ -578,7 +578,7 @@ com['openhab'] = {
         'options': [('A', 0),
                     ('B', 1),
                     ('C', 2)],
-        'limitToOptions': 'true',
+        'limit_to_options': 'true',
         'default': 0,
 
         'label': 'Remote Type',

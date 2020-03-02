@@ -399,7 +399,7 @@ com['openhab'] = {
                         ('4x', 1),
                         ('16x', 2),
                         ('60x', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Gain',
@@ -415,7 +415,7 @@ com['openhab'] = {
                         ('101ms', 2),
                         ('154ms', 3),
                         ('700ms', 4)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Integration Time',

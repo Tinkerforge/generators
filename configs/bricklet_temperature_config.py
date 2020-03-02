@@ -362,7 +362,7 @@ com['openhab'] = {
             'default': 0,
             'options': [('Fast (400kHz)', 0),
                         ('Slow (100kHz)', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
 
             'label': 'I2C Mode',
             'description': 'Sets the I2C mode. If you have problems with obvious outliers in the Temperature Bricklet measurements, they may be caused by EMI issues. In this case it may be helpful to lower the I2C speed. It is however not recommended to lower the I2C speed in applications where a high throughput needs to be achieved.',

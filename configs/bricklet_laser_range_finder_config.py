@@ -849,7 +849,7 @@ com['openhab'] = {
                         ('Velocity Max 32m/s', 2),
                         ('Velocity Max 64m/s', 3),
                         ('Velocity Max 127m/s', 4)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Mode',

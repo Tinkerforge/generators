@@ -462,7 +462,7 @@ com['openhab'] = {
                                     ('On', 1),
                                     ('Show Heartbeat', 2),
                                     ('Show Channel Status', 3)],
-                        'limitToOptions': 'true',
+                        'limit_to_options': 'true',
                         'default': 3,
 
                         'label': 'LED Configuration',
@@ -482,7 +482,7 @@ com['openhab'] = {
                             'options':[('Rising', 0),
                                     ('Falling', 1),
                                     ('Both', 2)],
-                            'limitToOptions': 'true',
+                            'limit_to_options': 'true',
                             'default': 0,
 
                             'label': 'Edge Type',

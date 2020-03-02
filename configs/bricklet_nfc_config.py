@@ -1345,7 +1345,7 @@ com['openhab'] = {
                         ('Cardemu', 1),
                         ('P2P', 2),
                         ('Reader', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Mode',
@@ -1360,7 +1360,7 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Detection', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Detection LED Config',

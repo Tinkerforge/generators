@@ -324,7 +324,7 @@ com['openhab'] = {
               ('256', 1),
               ('512', 2),
               ('1024', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
 
             'label': 'FFT Size',
             'description': 'With different FFT sizes the Bricklet has a different amount of samples per second and the size of the FFT bins changes. The higher the FFT size the more precise is the result of the dB(X) calculation.',
@@ -342,7 +342,7 @@ com['openhab'] = {
               ('dB(D)', 3),
               ('dB(Z)', 4),
               ('ITU-R 468', 5)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
 
             'label': 'Weighting',
             'description': 'The Bricklet supports different weighting functions. dB(A/B/C/D) are the standard dB weighting curves. dB(A) is often used to measure volumes at concerts etc. dB(Z) has a flat response, no weighting is applied. ITU-R 468 is an ITU weighting standard mostly used in the UK and Europe.',

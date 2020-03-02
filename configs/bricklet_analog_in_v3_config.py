@@ -219,7 +219,7 @@ com['openhab'] = {
                         ('4096x', 7),
                         ('8192x', 8),
                         ('16384x', 9)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 7,
 
             'label': 'Oversampling',

@@ -1256,7 +1256,7 @@ com['openhab'] = {
                        ('20Hz', 5),
                        ('25Hz', 6),
                        ('30Hz', 7)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 5,
             'label': 'Magnetometer Rate',
             'description': 'This option is auto-controlled in fusion mode.'
@@ -1271,7 +1271,7 @@ com['openhab'] = {
                         ('500°/s', 2),
                         ('250°/s', 3),
                         ('125°/s', 4)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
             'label': 'Gyroscope Range',
             'description': 'This option is auto-controlled in fusion mode.'
@@ -1289,7 +1289,7 @@ com['openhab'] = {
                        ('12Hz', 5),
                        ('64Hz', 6),
                        ('32Hz', 7)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 7,
             'label': 'Gyroscope Bandwidth',
             'description': 'This option is auto-controlled in fusion mode.'
@@ -1303,7 +1303,7 @@ com['openhab'] = {
                        ('±4G', 1),
                        ('±8G', 2),
                        ('±16G', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
             'label': 'Accelerometer Range',
             'description': 'This option is user selectable in all fusion modes.'
@@ -1321,7 +1321,7 @@ com['openhab'] = {
                        ('250Hz', 5),
                        ('500Hz', 6),
                        ('1000Hz', 7)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
             'label': 'Accelerometer Bandwidth',
             'description': 'This option is auto-controlled in fusion mode.'
@@ -1336,7 +1336,7 @@ com['openhab'] = {
                        ('On Without Magnetometer', 2),
                        ('On Without Fast Magnetometer Calibration', 3)],
             'default': 1,
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'label': 'Sensor Fusion Mode',
             'description': "If the fusion mode is turned off, the Acceleration, Magnetic Field and Angular Velocity channels return uncalibrated and uncompensated sensor data. All other sensor channels return no data.<br/><br/>Since firmware version 2.0.6 you can also use a fusion mode without magnetometer. In this mode the calculated orientation is relative (with magnetometer it is absolute with respect to the earth). However, the calculation can't be influenced by spurious magnetic fields.<br/><br/>Since firmware version 2.0.13 you can also use a fusion mode without fast magnetometer calibration. This mode is the same as the normal fusion mode, but the fast magnetometer calibration is turned off. So to find the orientation the first time will likely take longer, but small magnetic influences might not affect the automatic calibration as much.<br/><br/>By default sensor fusion is on."
         },

@@ -657,7 +657,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('High Contrast Image', 0),
                         ('Linear Temperature Image', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Image Type',
@@ -680,7 +680,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('0 To 6553 Kelvin', 0),
                         ('0 To 655 Kelvin', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Resolution',
@@ -693,7 +693,7 @@ com['openhab'] = {
             'options': [('Standard', 0),
                         ('Greyscale', 1),
                         ('Hot Cold', 2),],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Color Palette',

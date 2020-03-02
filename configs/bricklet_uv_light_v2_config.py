@@ -254,7 +254,7 @@ com['openhab'] = {
                         ('200ms', 2),
                         ('400ms', 3),
                         ('800ms', 4)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Integration Time',

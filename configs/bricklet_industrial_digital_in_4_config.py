@@ -487,7 +487,7 @@ com['openhab'] = {
                 'options':[('Rising', 0),
                             ('Falling', 1),
                             ('Both', 2)],
-                'limitToOptions': 'true',
+                'limit_to_options': 'true',
                 'default': 0,
 
                 'label': 'Edge Type',

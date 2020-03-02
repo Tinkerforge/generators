@@ -572,7 +572,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('Master', 0),
                         ('Slave', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'DMX Mode',
@@ -587,7 +587,7 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Communication', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Communication LED Config',
@@ -602,7 +602,7 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Error', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Error LED Config',

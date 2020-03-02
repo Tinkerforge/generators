@@ -396,7 +396,7 @@ def led_status_config():
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Channel Status', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'LED Configuration',
@@ -410,7 +410,7 @@ def led_status_config():
             'type': 'integer',
             'options': [('Threshold', 0),
                         ('Intensity', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'LED Status Mode',
@@ -463,7 +463,7 @@ com['openhab'] = {
                         ('4 SPS', 5),
                         ('2 SPS', 6),
                         ('1 SPS', 7)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 6,
 
             'label': 'Sample Rate',

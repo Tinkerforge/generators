@@ -275,7 +275,7 @@ com['openhab'] = {
                         ('4', 4),
                         ('8', 8),
                         ('16', 16)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 16,
             'label': 'Average Length',
             'description': 'Available averaging sizes are 1, 2, 4, 8 and 16 samples.<br/><br/>The conversion time depends on the averaging and filter configuration, it can be calculated as follows:<ul><li>60Hz: time = 82 + (samples - 1) * 16.67</li><li>50Hz: time = 98 + (samples - 1) * 20</li></ul>'
@@ -295,7 +295,7 @@ com['openhab'] = {
                         ('T', 7),
                         ('G8', 8),
                         ('G32', 9)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
             'label': 'Thermocouple Type',
             'description': 'As thermocouple type you can use B, E, J, K, N, R, S and T. If you have a different thermocouple or a custom thermocouple you can also use G8 and G32. With these types the returned value will not be in °C/100, it will be calculated by the following formulas:<ul><li>G8: value = 8 * 1.6 * 2^17 * Vin</li><li>G32: value = 32 * 1.6 * 2^17 * Vin</li></ul>where Vin is the thermocouple input voltage.'
@@ -307,7 +307,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('50Hz', 0),
                         ('60Hz', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
             'label': 'Frequency Filter',
             'description': 'The frequency filter can be either configured to 50Hz or to 60Hz. You should configure it according to your utility frequency.'

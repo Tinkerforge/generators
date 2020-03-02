@@ -278,7 +278,7 @@ com['openhab'] = {
                 ('Current', '0'),
                 ('Voltage', '1'),
             ],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Output Configuration',
@@ -292,7 +292,7 @@ com['openhab'] = {
             'options': [('0 To 5V', 0),
                         ('0 To 10V', 1)
             ],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Voltage Range',
@@ -307,7 +307,7 @@ com['openhab'] = {
                         ('0 To 20mA', 1),
                         ('0 To 24mA', 2)
             ],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Current Range',
@@ -365,7 +365,7 @@ com['openhab'] = {
                 'packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
                 'command_type': "Number"
             }],
-            
+
             'getters': [{
                 'packet': 'Get {title_words}',
                 'transform': 'new QuantityType(value / 1000.0, SmartHomeUnits.VOLT)'}]

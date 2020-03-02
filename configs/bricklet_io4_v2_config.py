@@ -771,7 +771,7 @@ def pin_config(idx):
                 ('Output (Initial high)', 1),
                 ('Output (Initial low)', 0)
             ],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Pin Configuration {}'.format(idx),
@@ -839,7 +839,7 @@ com['openhab'] = {
             'options':[('Rising', 0),
                         ('Falling', 1),
                         ('Both', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Edge Type',

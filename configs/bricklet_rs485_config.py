@@ -2074,7 +2074,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('RS485', 0),
                         ('Modbus Master RTU', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Mode',
@@ -2102,7 +2102,7 @@ com['openhab'] = {
             'options': [('None', 0),
                         ('Odd', 1),
                         ('Even', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Parity',
@@ -2116,7 +2116,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('1', 1),
                         ('2', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Stop Bits',
@@ -2132,7 +2132,7 @@ com['openhab'] = {
               ('6', 6),
               ('7', 7),
               ('8', 8)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 8,
 
             'label': 'Word Length',
@@ -2146,7 +2146,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('Half', 0),
                         ('Full', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Duplex',
@@ -2200,7 +2200,7 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Communication', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Communication LED Config',
@@ -2215,7 +2215,7 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Error', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Error LED Config',

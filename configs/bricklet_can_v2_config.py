@@ -1209,7 +1209,7 @@ com['openhab'] = {
             'options': [('Normal', 0),
                         ('Loopback', 1),
                         ('Read Only', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Transceiver Mode',
@@ -1224,7 +1224,7 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Communication', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Communication LED Config',
@@ -1240,7 +1240,7 @@ com['openhab'] = {
                         ('Show Heartbeat', 2),
                         ('Show Transceiver State', 3),
                         ('Show Error', 4)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Error LED Config',

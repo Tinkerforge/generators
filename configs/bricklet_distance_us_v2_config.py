@@ -183,7 +183,7 @@ com['openhab'] = {
             'default': 0,
             'options':  [('2 Hz', 0),
                          ('10 Hz', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
 
             'label': 'Update Rate',
             'description': 'With 2 Hz update rate the noise is about +-1mm, while with 10 Hz update rate the noise increases to about +-5mm.',
@@ -198,7 +198,7 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Distance', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
 
             'label': 'Distance LED Config',
             'description': 'Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).',

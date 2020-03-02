@@ -673,7 +673,7 @@ com['openhab'] = {
             'options': [('2-wire', 2),
                         ('3-wire', 3),
                         ('4-wire', 4)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 2,
 
             'label': 'Wire Mode',
@@ -687,7 +687,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('50 Hz', 0),
                         ('60 Hz', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Noise Rejection Filter Frequency',

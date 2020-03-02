@@ -410,7 +410,7 @@ com['openhab'] = {
                         ('60 SPS', 1),
                         ('15 SPS', 2),
                         ('4 SPS', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Sample Rate',

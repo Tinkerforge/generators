@@ -425,7 +425,7 @@ com['openhab'] = {
                         ('8000Lux', 3),
                         ('1300Lux', 4),
                         ('600Lux', 5)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Illuminance Range',
@@ -444,7 +444,7 @@ com['openhab'] = {
                         ('300ms', 5),
                         ('350ms', 6),
                         ('400ms', 7)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Integration Time',

@@ -193,7 +193,7 @@ class Param:
         self.unit = kwargs.get('unit', None)
         self.unitLabel = kwargs.get('unitLabel', None)
         self.advanced = kwargs.get('advanced', None)
-        self.limitToOptions = kwargs.get('limitToOptions', None)
+        self.limit_to_options = {None: None, 'true': True, 'false': False}[kwargs.get('limit_to_options', None)]
         self.min = kwargs.get('min', None)
         self.max = kwargs.get('max', None)
         self.step = kwargs.get('step', None)
@@ -237,8 +237,8 @@ class Param:
         if self.advanced is not None:
             with_calls.append('.withAdvanced({val})'.format(val='true' if self.advanced else 'false'))
 
-        if self.limitToOptions is not None:
-            with_calls.append('.withLimitToOptions({val})'.format(val='true' if self.advanced else 'false'))
+        if self.limit_to_options is not None:
+            with_calls.append('.withLimitToOptions({val})'.format(val='true' if self.limit_to_options else 'false'))
 
         if self.min is not None:
             with_calls.append('.withMinimum(BigDecimal.valueOf({val}))'.format(val=self.min))
@@ -278,7 +278,7 @@ class OpenHABBindingsDevice(JavaBindingsDevice):
             'unit': None,
             'unitLabel': None,
             'advanced': None,
-            'limitToOptions': None,
+            'limit_to_options': None,
             'min': None,
             'max': None,
             'step': None,
@@ -1447,7 +1447,7 @@ public class {name_camel} {{
                 desc = group.description
             desc = desc.replace('<br/>', '\n                ').replace('\\\\', '\\')
 
-            cfg.append(param_template.format(name=p.label, type=p.type if p.limitToOptions != 'true' else 'choice', description=desc))
+            cfg.append(param_template.format(name=p.label, type=p.type if not p.limit_to_options else 'choice', description=desc))
 
         channel_template = """        {name} ({type})
                 {description}"""

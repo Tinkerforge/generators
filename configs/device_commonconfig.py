@@ -1279,7 +1279,7 @@ common_openhab = {
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Status', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
             'label': 'Status LED Config',
             'description': 'The status LED configuration. By default the LED shows communication traffic between Brick and Bricklet, it flickers once for every 10 received data packets.<br/><br/>You can also turn the LED permanently on/off or show a heartbeat.<br/><br/>If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.'

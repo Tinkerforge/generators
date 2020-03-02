@@ -719,7 +719,7 @@ com['openhab'] = {
                         ('500kbps', 5),
                         ('800kbps', 6),
                         ('1000kbps', 7)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Baud Rate',
@@ -733,7 +733,7 @@ com['openhab'] = {
             'options': [('Normal', 0),
                         ('Loopback', 1),
                         ('Read Only', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Transceiver Mode',

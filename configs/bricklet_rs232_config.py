@@ -453,7 +453,7 @@ com['openhab'] = {
                         ('57600', 10),
                         ('115200', 11),
                         ('230400', 12)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 11,
 
             'label': 'Baud Rate',
@@ -469,7 +469,7 @@ com['openhab'] = {
                         ('Even', 2),
                         ('Forced Parity 1', 3),
                         ('Forced Parity 0', 4)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Parity',
@@ -482,7 +482,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('1', 1),
                         ('2', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Stop Bits',
@@ -497,7 +497,7 @@ com['openhab'] = {
                         ('6', 6),
                         ('7', 7),
                         ('8', 8)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 8,
 
             'label': 'Word Length',
@@ -510,7 +510,7 @@ com['openhab'] = {
             'options': [('Off', 0),
                         ('Software', 1),
                         ('Hardware', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Flow Control',

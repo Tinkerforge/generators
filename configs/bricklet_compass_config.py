@@ -318,7 +318,7 @@ com['openhab'] = {
                         ('200Hz', 1),
                         ('400Hz', 2),
                         ('600Hz', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
 
             'label': 'Data Rate',
             'description': 'The data rate that is used by the magnetometer. The lower the data rate, the lower is the noise on the data.',

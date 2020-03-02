@@ -436,7 +436,7 @@ com['openhab'] = {
                         ('25Hz', 3),
                         ('50Hz', 4),
                         ('75Hz', 5)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 4,
 
             'label': 'Data Rate',
@@ -450,7 +450,7 @@ com['openhab'] = {
             'options': [('Off', 0),
                         ('1/9th', 1),
                         ('1/20th', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Air Pressure Low Pass Filter',

@@ -739,7 +739,7 @@ com['openhab'] = {
                         ('WS2812', 2812),
                         ('LPD8806', 8806),
                         ('APA102', 102)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 2801,
 
             'label': 'LED Driver Chip Type',
@@ -780,7 +780,7 @@ com['openhab'] = {
                         ('WGRB', 210),
                         ('WBGR', 228),
                         ('WBRG', 225)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 36,
 
             'label': 'LED Channel Mapping',

@@ -398,7 +398,7 @@ com['openhab'] = {
                 ('Current', '0'),
                 ('Voltage', '1'),
             ],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Output Configuration',
@@ -412,7 +412,7 @@ com['openhab'] = {
             'options': [('0 To 5V', 0),
                         ('0 To 10V', 1)
             ],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Voltage Range',
@@ -427,7 +427,7 @@ com['openhab'] = {
                         ('0 To 20mA', 1),
                         ('0 To 24mA', 2)
             ],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
 
             'label': 'Current Range',
@@ -442,7 +442,7 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2),
                         ('Show Out Status', 3)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 3,
 
             'label': 'Output LED Configuration',
@@ -455,7 +455,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('Threshold', 0),
                         ('Intensity', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Output LED Status Mode',

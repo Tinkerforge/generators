@@ -652,7 +652,7 @@ com['openhab'] = {
                         ('6400Hz', 13),
                         ('12800Hz', 14),
                         ('25600Hz', 15)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 7,
             'label': 'Data Rate',
             'description': 'The data rate of 0.781Hz to 25600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
@@ -665,7 +665,7 @@ com['openhab'] = {
             'options': [('2g', 0),
                         ('4g', 1),
                         ('8g', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
             'label': 'Full Scale Range',
             'description': 'Full scale range of -2g to +2g up to -8g to +8g. Decreasing data rate or full scale range will also decrease the noise on the data.'
@@ -678,7 +678,7 @@ com['openhab'] = {
             'options': [('Off', 0),
                         ('On', 1),
                         ('Show Heartbeat', 2)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
             'label': 'Info LED Mode',
             'description': 'Configures the info LED (marked as \\\"Force\\\" on the Bricklet) to be either turned off, turned on, or blink in heartbeat mode.'
@@ -699,7 +699,7 @@ com['openhab'] = {
             'type': 'integer',
             'options': [('Ninth', 0),
                         ('Half', 1)],
-            'limitToOptions': 'true',
+            'limit_to_options': 'true',
             'default': 0,
             'label': 'Low Pass Filter Corner Frequency',
             'description': 'The low pass filter roll off corner frequency can be half or a ninth of the output data rate.'

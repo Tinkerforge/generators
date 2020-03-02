@@ -738,7 +738,7 @@ com['openhab'] = {
                 'options': [('Rising', 0),
                             ('Falling', 1),
                             ('Both', 2)],
-                'limitToOptions': 'true',
+                'limit_to_options': 'true',
                 'default': 0,
 
                 'label': 'Count Edge',
@@ -753,7 +753,7 @@ com['openhab'] = {
                             ('Down', 1),
                             ('External Up', 2),
                             ('External Down', 3)],
-                'limitToOptions': 'true',
+                'limit_to_options': 'true',
                 'default': 0,
 
                 'label': 'Count Direction',
@@ -780,7 +780,7 @@ com['openhab'] = {
                             ('8192', 13),
                             ('16384', 14),
                             ('32768', 15)],
-                'limitToOptions': 'true',
+                'limit_to_options': 'true',
                 'default': 0,
 
                 'label': 'Duty Cycle Prescaler',
@@ -800,7 +800,7 @@ com['openhab'] = {
                             ('8192 MS', 6),
                             ('16384 MS', 7),
                             ('32768 MS', 8)],
-                'limitToOptions': 'true',
+                'limit_to_options': 'true',
                 'default': 3,
 
                 'label': 'Frequency Integration Time',
@@ -815,7 +815,7 @@ com['openhab'] = {
                             ('On', 1),
                             ('Show Heartbeat', 2),
                             ('Show Channel Status', 3)],
-                'limitToOptions': 'true',
+                'limit_to_options': 'true',
                 'default': 3,
 
                 'label': 'Channel LED Configuration',

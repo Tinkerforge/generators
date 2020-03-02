@@ -256,7 +256,7 @@ com['openhab'] = {
                     ('On', 1),
                     ('Show Heartbeat', 2),
                     ('Show Communication', 3)],
-        'limitToOptions': 'true',
+        'limit_to_options': 'true',
         'default': 3,
 
         'label': 'Communication LED Config',
