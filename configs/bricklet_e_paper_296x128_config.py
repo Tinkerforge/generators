@@ -198,8 +198,8 @@ com['packets'].append({
              ('X End', 'uint16', 1, 'in', {'range': (0, 295)}),
              ('Y End', 'uint8', 1, 'in', {'range': (0, 127)}),
              ('Pixels Length', 'uint16', 1, 'out', {'range': (0, 296*128)}),
-             ('Pixels Chunk Offset', 'uint16', 1, 'out'),
-             ('Pixels Chunk Data', 'bool', 58*8, 'out')],
+             ('Pixels Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Pixels Chunk Data', 'bool', 58*8, 'out', {})],
 'high_level': {'stream_out': {'name': 'Pixels'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -238,8 +238,8 @@ com['packets'].append({
              ('X End', 'uint16', 1, 'in', {'range': (0, 295)}),
              ('Y End', 'uint8', 1, 'in', {'range': (0, 127)}),
              ('Pixels Length', 'uint16', 1, 'in', {'range': (0, 296*128)}),
-             ('Pixels Chunk Offset', 'uint16', 1, 'in'),
-             ('Pixels Chunk Data', 'bool', 54*8, 'in')],
+             ('Pixels Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Pixels Chunk Data', 'bool', 54*8, 'in', {})],
 'high_level': {'stream_in': {'name': 'Pixels'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -291,8 +291,8 @@ com['packets'].append({
              ('X End', 'uint16', 1, 'in', {'range': (0, 295)}),
              ('Y End', 'uint8', 1, 'in', {'range': (0, 127)}),
              ('Pixels Length', 'uint16', 1, 'out', {'range': (0, 296*128)}),
-             ('Pixels Chunk Offset', 'uint16', 1, 'out'),
-             ('Pixels Chunk Data', 'bool', 58*8, 'out')],
+             ('Pixels Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Pixels Chunk Data', 'bool', 58*8, 'out', {})],
 'high_level': {'stream_out': {'name': 'Pixels'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

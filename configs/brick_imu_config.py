@@ -369,7 +369,7 @@ Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Acceleration Range',
-'elements': [('Range', 'uint8', 1, 'in')],
+'elements': [('Range', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -386,7 +386,7 @@ Bisher nicht implementiert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration Range',
-'elements': [('Range', 'uint8', 1, 'out')],
+'elements': [('Range', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -403,7 +403,7 @@ Bisher nicht implementiert.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Magnetometer Range',
-'elements': [('Range', 'uint8', 1, 'in')],
+'elements': [('Range', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -420,7 +420,7 @@ Bisher nicht implementiert.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Magnetometer Range',
-'elements': [('Range', 'uint8', 1, 'out')],
+'elements': [('Range', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

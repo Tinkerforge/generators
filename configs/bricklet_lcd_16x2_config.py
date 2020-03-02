@@ -36,7 +36,7 @@ com['packets'].append({
 'name': 'Write Line',
 'elements': [('Line', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Position', 'uint8', 1, 'in', {'range': (0, 15)}),
-             ('Text', 'string', 16, 'in')],
+             ('Text', 'string', 16, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

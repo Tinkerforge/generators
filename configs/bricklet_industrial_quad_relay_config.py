@@ -269,8 +269,8 @@ mit Bricklets verbunden die zusammen gruppiert werden können.
 com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
-'elements': [('Selection Mask', 'uint16', 1, 'out'),
-             ('Value Mask', 'uint16', 1, 'out')],
+'elements': [('Selection Mask', 'uint16', 1, 'out', {}),
+             ('Value Mask', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

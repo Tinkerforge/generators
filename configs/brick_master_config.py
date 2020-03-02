@@ -415,7 +415,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Chibi Slave Address',
 'elements': [('Num', 'uint8', 1, 'in', {'range': (0, 254)}),
-             ('Address', 'uint8', 1, 'in')],
+             ('Address', 'uint8', 1, 'in', {})],
 'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
@@ -462,7 +462,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Chibi Slave Address',
 'elements': [('Num', 'uint8', 1, 'in', {'range': (0, 254)}),
-             ('Address', 'uint8', 1, 'out')],
+             ('Address', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':

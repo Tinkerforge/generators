@@ -734,8 +734,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Reader Read Page Low Level',
 'elements': [('Data Length', 'uint16', 1, 'out', {'range': (0, 8192)}),
-             ('Data Chunk Offset', 'uint16', 1, 'out'),
-             ('Data Chunk Data', 'uint8', 60, 'out')],
+             ('Data Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Data Chunk Data', 'uint8', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Data'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -867,8 +867,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Cardemu Write NDEF Low Level',
 'elements': [('NDEF Length', 'uint16', 1, 'in', {'range': (0, 255)}),
-             ('NDEF Chunk Offset', 'uint16', 1, 'in'),
-             ('NDEF Chunk Data', 'uint8', 60, 'in')],
+             ('NDEF Chunk Offset', 'uint16', 1, 'in', {}),
+             ('NDEF Chunk Data', 'uint8', 60, 'in', {})],
 'high_level': {'stream_in': {'name': 'NDEF'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -931,7 +931,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Cardemu State Changed',
 'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'Cardemu State'}),
-             ('Idle', 'bool', 1, 'out')],
+             ('Idle', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

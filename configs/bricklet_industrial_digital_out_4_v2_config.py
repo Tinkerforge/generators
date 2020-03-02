@@ -96,7 +96,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Value',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 3)}),
-             ('Value', 'bool', 1, 'in')],
+             ('Value', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -196,7 +196,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Monoflop Done',
 'elements': [('Channel', 'uint8', 1, 'out', {'range': (0, 3)}),
-             ('Value', 'bool', 1, 'out')],
+             ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

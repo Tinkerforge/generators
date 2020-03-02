@@ -71,7 +71,7 @@ add_callback_value_function(
     doc       = count_doc
 )
 
-com['packets'][0]['elements'].insert(0, ('Reset', 'bool', 1, 'in'))
+com['packets'][0]['elements'].insert(0, ('Reset', 'bool', 1, 'in', {}))
 
 com['packets'].append({
 'type': 'function',

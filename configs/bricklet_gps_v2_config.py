@@ -252,7 +252,7 @@ com['packets'].append({
 'name': 'Get Satellite System Status Low Level',
 'elements': [('Satellite System', 'uint8', 1, 'in', {'constant_group': 'Satellite System'}),
              ('Satellite Numbers Length', 'uint8', 1, 'out', {'range': (0, 12)}),
-             ('Satellite Numbers Data', 'uint8', 12, 'out'),
+             ('Satellite Numbers Data', 'uint8', 12, 'out', {}),
              ('Fix', 'uint8', 1, 'out', {'constant_group': 'Fix'}),
              ('PDOP', 'uint16', 1, 'out', {'scale': (1, 100)}),
              ('HDOP', 'uint16', 1, 'out', {'scale': (1, 100)}),

@@ -166,7 +166,7 @@ ein hohes Schreib-Fehlerlevel (siehe :func:`Get Error Log`).
 com['packets'].append({
 'type': 'function',
 'name': 'Read Frame Low Level',
-'elements': [('Success', 'bool', 1, 'out'),
+'elements': [('Success', 'bool', 1, 'out', {}),
              ('Frame Type', 'uint8', 1, 'out', {'constant_group': 'Frame Type'}),
              ('Identifier', 'uint32', 1, 'out', {'range': (0, 2**30-1)}),
              ('Data Length', 'uint8', 1, 'out', {'range': (0, 15)}),

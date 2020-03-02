@@ -1490,8 +1490,8 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Program Identifier',
-'elements': [('Program Id', 'uint16', 1, 'in'),
-             ('Session Id', 'uint16', 1, 'in'),
+'elements': [('Program Id', 'uint16', 1, 'in', {}),
+             ('Session Id', 'uint16', 1, 'in', {}),
              ('Error Code', 'uint8', 1, 'out', {'constant_group': 'Error Code'}),
              ('Identifier String Id', 'uint16', 1, 'out', {})],
 'since_firmware': [1, 0, 0],

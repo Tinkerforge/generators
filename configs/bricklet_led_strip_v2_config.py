@@ -82,8 +82,8 @@ com['packets'].append({
 'name': 'Set LED Values Low Level',
 'elements': [('Index', 'uint16', 1, 'in', {'range': (0, 6144)}),
              ('Value Length', 'uint16', 1, 'in', {'range': (0, 6144)}),
-             ('Value Chunk Offset', 'uint16', 1, 'in'),
-             ('Value Chunk Data', 'uint8', 58, 'in')],
+             ('Value Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Value Chunk Data', 'uint8', 58, 'in', {})],
 'high_level': {'stream_in': {'name': 'Value'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -154,8 +154,8 @@ com['packets'].append({
 'elements': [('Index', 'uint16', 1, 'in', {'range': (0, 6144)}),
              ('Length', 'uint16', 1, 'in', {'range': (0, 6144)}),
              ('Value Length', 'uint16', 1, 'out', {'range': (0, 6144)}),
-             ('Value Chunk Offset', 'uint16', 1, 'out'),
-             ('Value Chunk Data', 'uint8', 60, 'out')],
+             ('Value Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Value Chunk Data', 'uint8', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Value'}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
