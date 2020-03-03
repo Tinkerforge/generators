@@ -5,5 +5,6 @@ public class RemoteSocketTypeBConfig {
     Integer unit = 0;
     Integer repeats = 0;
 
-    public RemoteSocketTypeBConfig() {}
+    public RemoteSocketTypeBConfig() {
+    }
 }

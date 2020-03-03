@@ -1,7 +1,5 @@
-
 package org.eclipse.smarthome.binding.tinkerforge.internal;
 
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
@@ -11,12 +9,11 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
-
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.client.util.BufferingResponseListener;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
 import org.eclipse.smarthome.core.common.ThreadPoolManager;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
@@ -24,7 +21,6 @@ import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
 import org.eclipse.smarthome.core.thing.binding.firmware.FirmwareBuilder;
 import org.eclipse.smarthome.core.thing.firmware.FirmwareProvider;
 import org.eclipse.smarthome.io.net.http.HttpClientFactory;
-import org.eclipse.smarthome.io.net.http.HttpUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -42,6 +38,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
             this.url = url;
 
         }
+
         String version;
         String url;
     }
@@ -79,14 +76,13 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     }
 
     private Firmware buildFirmware(ThingTypeUID ttuid, String version, String url) {
-        return FirmwareBuilder.create(ttuid, version)
-                              .withVendor("Tinkerforge GmbH")
-                              .withProperties(Collections.singletonMap(TinkerforgeBindingConstants.PROPERTY_FIRMWARE_URL, url))
-                              .build();
+        return FirmwareBuilder.create(ttuid, version).withVendor("Tinkerforge GmbH")
+                .withProperties(Collections.singletonMap(TinkerforgeBindingConstants.PROPERTY_FIRMWARE_URL, url))
+                .build();
     }
 
     private void parseLatestVersions(String latestVersionsText) {
-        for(String line : latestVersionsText.split("\n")) {
+        for (String line : latestVersionsText.split("\n")) {
             boolean isBrick = line.startsWith("bricks:");
             boolean isBricklet = line.startsWith("bricklets:");
             boolean isExtension = line.startsWith("extensions:");
@@ -98,20 +94,17 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
             String deviceName = splt[1];
             String thingName = deviceType + deviceName.replace("_", "");
 
-            if(deviceName.equals("hat") || deviceName.equals("hat_zero"))
+            if (deviceName.equals("hat") || deviceName.equals("hat_zero"))
                 thingName = "brick" + deviceName.replace("_", "");
 
-            if(deviceName.contains("lcd_20x4_v1"))
+            if (deviceName.contains("lcd_20x4_v1"))
                 thingName = deviceType + "lcd20x4";
 
             String version = splt[2];
             boolean isCoMCU = isExtension || DeviceWrapperFactory.getDeviceInfo(thingName).isCoMCU;
-            String urlString = String.format(
-                "https://download.tinkerforge.com/firmwares/%s/%s/%s_%s_firmware_%s.%s",
-                deviceType + 's', deviceName,
-                deviceType, deviceName,
-                version.replace(".", "_"),
-                isCoMCU ? "zbin" : "bin");
+            String urlString = String.format("https://download.tinkerforge.com/firmwares/%s/%s/%s_%s_firmware_%s.%s",
+                    deviceType + 's', deviceName, deviceType, deviceName, version.replace(".", "_"), isCoMCU ? "zbin"
+                            : "bin");
 
             latestVersions.put(thingName, new FirmwareInfo(version, urlString));
         }
@@ -121,20 +114,19 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
         if (this.httpClient == null)
             return;
 
-        this.httpClient
-            .newRequest("https://download.tinkerforge.com/latest_versions.txt")
-            .send(new BufferingResponseListener() {
-                @Override
-                public void onComplete(Result result) {
-                    if (result.isSucceeded()) {
-                        parseLatestVersions(getContentAsString());
-                        scheduler.schedule(() -> getLatestVersions(), 1, TimeUnit.HOURS);
-                    } else {
-                        logger.info("Failed to download latest versions: {}", result.getFailure().toString());
-                        scheduler.schedule(() -> getLatestVersions(), 5, TimeUnit.MINUTES);
+        this.httpClient.newRequest("https://download.tinkerforge.com/latest_versions.txt").send(
+                new BufferingResponseListener() {
+                    @Override
+                    public void onComplete(Result result) {
+                        if (result.isSucceeded()) {
+                            parseLatestVersions(getContentAsString());
+                            scheduler.schedule(() -> getLatestVersions(), 1, TimeUnit.HOURS);
+                        } else {
+                            logger.info("Failed to download latest versions: {}", result.getFailure().toString());
+                            scheduler.schedule(() -> getLatestVersions(), 5, TimeUnit.MINUTES);
+                        }
                     }
-                }
-            });
+                });
     }
 
     @Reference

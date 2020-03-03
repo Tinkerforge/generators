@@ -1,3 +1,4 @@
 package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
-public interface StandardFlashable {}
+public interface StandardFlashable {
+}

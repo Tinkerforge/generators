@@ -1,19 +1,5 @@
 package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
-import org.eclipse.smarthome.core.types.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +14,22 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.tinkerforge.AlreadyConnectedException;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickDaemonConfig;
+import org.eclipse.smarthome.core.thing.Bridge;
+import org.eclipse.smarthome.core.thing.ChannelUID;
+import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingStatus;
+import org.eclipse.smarthome.core.thing.ThingStatusDetail;
+import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.eclipse.smarthome.core.types.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.tinkerforge.AlreadyConnectedException;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.IPConnection.DisconnectedListener;
 import com.tinkerforge.IPConnection.EnumerateListener;
@@ -76,6 +76,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     private class ReachabilityResult {
         Boolean reachable;
         DeviceHandler handler;
+
         ReachabilityResult(Boolean reachable, DeviceHandler handler) {
             this.reachable = reachable;
             this.handler = handler;
@@ -83,13 +84,14 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     }
 
     private List<ReachabilityResult> checkReachability(Predicate<? super Thing> filter) {
-        List<DeviceHandler> handlers = getThing().getThings()
-                                                 .stream()
-                                                 .filter(filter)
-                                                 .map(t -> (DeviceHandler) t.getHandler())
-                                                 .filter(h -> h != null) // If checkReachability is called fast enough, some things don't have a handler yet.
-                                                 .collect(Collectors.toList());
-        List<Callable<ReachabilityResult>> tasks = handlers.stream().map(h -> (Callable<ReachabilityResult>)(() -> new ReachabilityResult(h.checkReachablity(), h))).collect(Collectors.toList());
+        List<DeviceHandler> handlers = getThing().getThings().stream().filter(filter)
+                .map(t -> (DeviceHandler) t.getHandler()).filter(h -> h != null) // If checkReachability is called fast
+                                                                                 // enough, some things don't have a
+                                                                                 // handler yet.
+                .collect(Collectors.toList());
+        List<Callable<ReachabilityResult>> tasks = handlers.stream()
+                .map(h -> (Callable<ReachabilityResult>) (() -> new ReachabilityResult(h.checkReachablity(), h)))
+                .collect(Collectors.toList());
 
         List<Future<ReachabilityResult>> futures = new ArrayList<>();
         try {
@@ -99,7 +101,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         }
 
         List<ReachabilityResult> result = new ArrayList<>();
-        for(int i = 0; i < handlers.size(); ++i){
+        for (int i = 0; i < handlers.size(); ++i) {
             try {
                 result.add(futures.get(i).get());
             } catch (InterruptedException | ExecutionException e) {
@@ -113,11 +115,11 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         logger.trace("Attempting to reconnect...");
         this.dispose();
         this.connect();
-        if(!thing.getStatus().equals(ThingStatus.ONLINE))
-        {
+        if (!thing.getStatus().equals(ThingStatus.ONLINE)) {
             final int newReconnectInterval = Math.min(MAX_RECONNECT_INTERVAL_SECS, reconnectInterval * 2);
             logger.trace("Failed to reconnect. Will try again in {} seconds.", newReconnectInterval);
-            connectFuture = scheduler.schedule(() -> this.attemptReconnect(newReconnectInterval), newReconnectInterval, TimeUnit.SECONDS);
+            connectFuture = scheduler.schedule(() -> this.attemptReconnect(newReconnectInterval), newReconnectInterval,
+                    TimeUnit.SECONDS);
         } else {
             logger.trace("Reconnected");
         }
@@ -125,10 +127,11 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
     public void handleTimeout(DeviceHandler handler) {
         logger.trace("Timeout for device {}", handler.getThing().getUID());
-        if(heartbeatFuture != null)
+        if (heartbeatFuture != null)
             heartbeatFuture.cancel(false);
         // Replace canceled heartbeat with one, that will run immediately
-        heartbeatFuture = scheduler.scheduleWithFixedDelay(this::heartbeat, 0, HEARTBEAT_INTERVAL_SECS, TimeUnit.SECONDS);
+        heartbeatFuture = scheduler.scheduleWithFixedDelay(this::heartbeat, 0, HEARTBEAT_INTERVAL_SECS,
+                TimeUnit.SECONDS);
     }
 
     private synchronized void startDiscoveryService() {
@@ -153,24 +156,25 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     }
 
     private void heartbeat() {
-        if(thing.getStatus().equals(ThingStatus.OFFLINE))
+        if (thing.getStatus().equals(ThingStatus.OFFLINE))
             return;
 
         int allPacketsLost = 0;
         List<ReachabilityResult> reachabilityResults = new ArrayList<>();
-        while(allPacketsLost < ALL_PACKETS_LOST_THRESHOLD) {
+        while (allPacketsLost < ALL_PACKETS_LOST_THRESHOLD) {
             List<ReachabilityResult> reachable = this.checkReachability(thing -> true);
             reachabilityResults.addAll(reachable);
-            //Only assume lost connection if there are devices that can have been checked
-            if(none(reachable) && reachable.size() > 0) {
+            // Only assume lost connection if there are devices that can have been checked
+            if (none(reachable) && reachable.size() > 0) {
                 ++allPacketsLost;
             } else {
                 break;
             }
         }
 
-        Map<DeviceHandler, List<ReachabilityResult>> map = reachabilityResults.stream().collect(Collectors.groupingBy(r -> r.handler));
-        for(Entry<DeviceHandler, List<ReachabilityResult>> entry : map.entrySet()) {
+        Map<DeviceHandler, List<ReachabilityResult>> map = reachabilityResults.stream().collect(
+                Collectors.groupingBy(r -> r.handler));
+        for (Entry<DeviceHandler, List<ReachabilityResult>> entry : map.entrySet()) {
             if (none(entry.getValue())) {
                 entry.getKey().reachabilityCheckFailed();
             }
@@ -178,13 +182,13 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
         if (allPacketsLost >= ALL_PACKETS_LOST_THRESHOLD) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
-                        "Connection lost. Trying to reconnect.");
+                    "Connection lost. Trying to reconnect.");
             attemptReconnect(FIRST_RECONNECT_INTERVAL_SECS);
         }
     }
 
     private void connect() {
-        if(disconnectedListener != null)
+        if (disconnectedListener != null)
             ipcon.removeDisconnectedListener(disconnectedListener);
 
         BrickDaemonConfig cfg = getConfigAs(BrickDaemonConfig.class);
@@ -205,11 +209,10 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
             } catch (TinkerforgeException e) {
                 if (e instanceof TimeoutException) {
                     updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                                "Could not authenticate (maybe the password was wrong?): " + e.getLocalizedMessage());
-                }
-                else {
-                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
-                                "Could not authenticate: " + e.getLocalizedMessage());
+                            "Could not authenticate (maybe the password was wrong?): " + e.getLocalizedMessage());
+                } else {
+                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Could not authenticate: "
+                            + e.getLocalizedMessage());
                 }
                 return;
             }
@@ -225,32 +228,39 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
         this.startDiscoveryService();
 
-        heartbeatFuture = scheduler.scheduleWithFixedDelay(this::heartbeat, FIRST_HEARTBEAT_INTERVAL_SECS, HEARTBEAT_INTERVAL_SECS, TimeUnit.SECONDS);
+        heartbeatFuture = scheduler.scheduleWithFixedDelay(this::heartbeat, FIRST_HEARTBEAT_INTERVAL_SECS,
+                HEARTBEAT_INTERVAL_SECS, TimeUnit.SECONDS);
 
         updateStatus(ThingStatus.ONLINE);
     }
 
     @Override
     public void initialize() {
-        // The framework requires you to return from this method quickly. Also, before leaving this method a thing
-        // status from one of ONLINE, OFFLINE or UNKNOWN must be set. This might already be the real thing status in
+        // The framework requires you to return from this method quickly. Also, before
+        // leaving this method a thing
+        // status from one of ONLINE, OFFLINE or UNKNOWN must be set. This might already
+        // be the real thing status in
         // case you can decide it directly.
-        // In case you can not decide the thing status directly (e.g. for long running connection handshake using WAN
-        // access or similar) you should set status UNKNOWN here and then decide the real status asynchronously in the
+        // In case you can not decide the thing status directly (e.g. for long running
+        // connection handshake using WAN
+        // access or similar) you should set status UNKNOWN here and then decide the
+        // real status asynchronously in the
         // background.
 
-        // set the thing status to UNKNOWN temporarily and let the background task decide for the real status.
-        // the framework is then able to reuse the resources from the thing handler initialization.
+        // set the thing status to UNKNOWN temporarily and let the background task
+        // decide for the real status.
+        // the framework is then able to reuse the resources from the thing handler
+        // initialization.
         // we set this upfront to reliably check status updates in unit tests.
         updateStatus(ThingStatus.UNKNOWN);
-        connectFuture = scheduler.schedule(() -> this.attemptReconnect(FIRST_RECONNECT_INTERVAL_SECS), 0, TimeUnit.SECONDS);
+        connectFuture = scheduler.schedule(() -> this.attemptReconnect(FIRST_RECONNECT_INTERVAL_SECS), 0,
+                TimeUnit.SECONDS);
     }
 
     public void enumerate() throws NotConnectedException {
         try {
             ipcon.enumerate();
-        }
-        catch (NotConnectedException e) {
+        } catch (NotConnectedException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
                     "Could not enumerate: Not connected.");
         }

@@ -12,17 +12,22 @@
  */
 package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.CommonTriggerEvents;
 import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingRegistry;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingStatusInfo;
@@ -37,24 +42,8 @@ import org.eclipse.smarthome.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import com.tinkerforge.BrickletOutdoorWeather;
-
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeA;
-import com.tinkerforge.Device;
-import com.tinkerforge.IPConnection;
 import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
-import com.tinkerforge.IPConnection.EnumerateListener;
 
 /**
  * The {@link RemoteSwitchDeviceHandler} is responsible for handling commands,
@@ -105,7 +94,8 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
 
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
 
-        this.getThing().getChannels().stream().filter(c -> !c.getChannelTypeUID().toString().startsWith("system")).forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
+        this.getThing().getChannels().stream().filter(c -> !c.getChannelTypeUID().toString().startsWith("system"))
+                .forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
     }
 
     @Override
@@ -134,9 +124,9 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
             device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
             updateStatus(ThingStatus.ONLINE);
         } catch (TinkerforgeException e) {
-            if(e instanceof TimeoutException) {
+            if (e instanceof TimeoutException) {
                 logger.debug("Failed to refresh value for {}: {}", channelId, e.getMessage());
-                ((BrickletRemoteSwitchHandler)getBridge().getHandler()).handleTimeout();
+                ((BrickletRemoteSwitchHandler) getBridge().getHandler()).handleTimeout();
             } else {
                 logger.warn("Failed to refresh value for {}: {}", channelId, e.getMessage());
             }
@@ -159,18 +149,20 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
             if (command instanceof RefreshType) {
                 refreshValue(channelUID.getId(), getThing().getChannel(channelUID).getConfiguration());
             } else {
-                List<SetterRefresh> refreshs = device.handleCommand(getConfig(),
-                        getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
+                List<SetterRefresh> refreshs = device.handleCommand(getConfig(), getThing().getChannel(channelUID)
+                        .getConfiguration(), channelUID.getId(), command);
                 refreshs.forEach(r -> scheduler.schedule(
                         () -> refreshValue(r.channel, getThing().getChannel(r.channel).getConfiguration()), r.delay,
                         TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
-            if(e instanceof TimeoutException) {
-                logger.debug("Failed to send command {} to channel {}: {}",command.toFullString(), channelUID.toString(), e.getMessage());
-                ((BrickletRemoteSwitchHandler)getBridge().getHandler()).handleTimeout();
+            if (e instanceof TimeoutException) {
+                logger.debug("Failed to send command {} to channel {}: {}", command.toFullString(),
+                        channelUID.toString(), e.getMessage());
+                ((BrickletRemoteSwitchHandler) getBridge().getHandler()).handleTimeout();
             } else {
-                logger.warn("Failed to send command {} to channel {}: {}",command.toFullString(), channelUID.toString(), e.getMessage());
+                logger.warn("Failed to send command {} to channel {}: {}", command.toFullString(),
+                        channelUID.toString(), e.getMessage());
             }
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
@@ -201,11 +193,13 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
         } catch (TinkerforgeException e) {
-            if(e instanceof TimeoutException) {
-                logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
-                ((BrickletRemoteSwitchHandler)getBridge().getHandler()).handleTimeout();
+            if (e instanceof TimeoutException) {
+                logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
+                        e.getMessage());
+                ((BrickletRemoteSwitchHandler) getBridge().getHandler()).handleTimeout();
             } else {
-                logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
+                logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
+                        e.getMessage());
             }
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }

@@ -1,23 +1,18 @@
 package org.eclipse.smarthome.binding.tinkerforge.internal;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceInfo;
-
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceInfo;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.ThingTypeProvider;
 import org.eclipse.smarthome.core.thing.type.ThingType;
-import org.eclipse.smarthome.core.thing.type.ThingTypeBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +42,7 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
         DeviceInfo info = null;
         try {
             info = DeviceWrapperFactory.getDeviceInfo(thingTypeUID.getId());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.debug("Could not find device info for thingTypeUID {}: {}.", thingTypeUID, e.getMessage());
             return null;
         }
@@ -57,7 +51,8 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
             Method m = info.deviceClass.getMethod("getThingType", ThingTypeUID.class);
             result = (ThingType) m.invoke(null, thingTypeUID);
         } catch (Exception e) {
-            logger.debug("Could not find thing type for thingTypeUID {} of device {}: {}.", thingTypeUID, info.deviceDisplayName, e.getMessage());
+            logger.debug("Could not find thing type for thingTypeUID {} of device {}: {}.", thingTypeUID,
+                    info.deviceDisplayName, e.getMessage());
             return null;
         }
 

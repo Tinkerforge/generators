@@ -32,28 +32,26 @@ public class DeviceWrapperFactory {
     }
 
     public static DeviceInfo getDeviceInfo(int deviceIdentifier) {
-        return deviceInfos.stream()
-                   .filter(info -> info.deviceIdentifier == deviceIdentifier)
-                   .findFirst()
-                   .orElseThrow(() -> new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier));
+        return deviceInfos.stream().filter(info -> info.deviceIdentifier == deviceIdentifier).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier));
     }
 
     public static DeviceInfo getDeviceInfo(String thingName) {
-        return deviceInfos.stream()
-                   .filter(info -> info.deviceThingTypeName.equals(thingName))
-                   .findFirst()
-                   .orElseThrow(() -> new IllegalArgumentException("Unknown device thing name: " + thingName));
+        return deviceInfos.stream().filter(info -> info.deviceThingTypeName.equals(thingName)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown device thing name: " + thingName));
     }
 
-	public static DeviceWrapper createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {
-		return (DeviceWrapper)getDeviceInfo(deviceIdentifier).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+    public static DeviceWrapper createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {
+        return (DeviceWrapper) getDeviceInfo(deviceIdentifier).deviceClass
+                .getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
     }
 
     public static DeviceWrapper createDevice(String thingName, String uid, IPConnection ipcon) throws Exception {
-		return (DeviceWrapper)getDeviceInfo(thingName).deviceClass.getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
-	}
+        return (DeviceWrapper) getDeviceInfo(thingName).deviceClass.getConstructor(String.class, IPConnection.class)
+                .newInstance(uid, ipcon);
+    }
 
     public static String getDeviceDisplayName(int deviceIdentifier) {
-		return getDeviceInfo(deviceIdentifier).deviceDisplayName;
-	}
+        return getDeviceInfo(deviceIdentifier).deviceDisplayName;
+    }
 }

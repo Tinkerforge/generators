@@ -12,17 +12,33 @@
  */
 package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
 
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.CoMCUFlashable;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashHost;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashable;
 import org.eclipse.smarthome.config.core.ConfigDescription;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameter;
+import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -46,30 +62,12 @@ import org.eclipse.smarthome.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
-
 import com.tinkerforge.BrickMaster;
+import com.tinkerforge.Device.Identity;
 import com.tinkerforge.IPConnection;
+import com.tinkerforge.IPConnection.EnumerateListener;
 import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
-import com.tinkerforge.Device.Identity;
-
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.CoMCUFlashable;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashHost;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashable;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
-import com.tinkerforge.IPConnection.EnumerateListener;
 
 /**
  * The {@link DeviceHandler} is responsible for handling commands, which are
@@ -116,8 +114,9 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         try {
             logger.debug("Checking reachability of {}", thing.getUID().getId());
             Identity id = getDevice().getIdentity();
-            boolean isInBootloader = device instanceof CoMCUFlashable && ((CoMCUFlashable)device).getBootloaderMode() != CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE;
-            if(!isInBootloader) {
+            boolean isInBootloader = device instanceof CoMCUFlashable
+                    && ((CoMCUFlashable) device).getBootloaderMode() != CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE;
+            if (!isInBootloader) {
                 logger.debug("{} is not in bootloader mode.", thing.getUID().getId());
                 String fwVersion = id.firmwareVersion[0] + "." + id.firmwareVersion[1] + "." + id.firmwareVersion[2];
                 this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion);
@@ -153,7 +152,8 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
         String hwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
         String fwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
-        logger.debug("Enumeration {}, {}, {}, {}, {}, {}, {}", uid, connectedUid, position, hwVersion, fwVersion, device, enumerationType);
+        logger.debug("Enumeration {}, {}, {}, {}, {}, {}, {}", uid, connectedUid, position, hwVersion, fwVersion,
+                device, enumerationType);
 
         if (enumerationType == IPConnection.ENUMERATION_TYPE_DISCONNECTED) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "Device was unplugged.");
@@ -192,11 +192,10 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         device = deviceSupplier.apply(id, ipcon);
 
         boolean success = configureChannels();
-        if(!success) {
+        if (!success) {
             logger.debug("Failed to configure channels for {}", thing.getUID().getId());
             return;
         }
-
 
         if (this.getBridge().getStatus() == ThingStatus.ONLINE) {
             initializeDevice();
@@ -210,9 +209,9 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     }
 
     private int compareFWs(short[] left, short[] right) {
-        for(int i = 0; i < 3; ++i) {
+        for (int i = 0; i < 3; ++i) {
             int cmp = Short.compare(left[i], right[i]);
-            if(cmp != 0) {
+            if (cmp != 0) {
                 return cmp;
             }
         }
@@ -236,18 +235,26 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         device = deviceSupplier.apply(id, ipcon);
 
         try {
-            if(device instanceof CoMCUFlashable && ((CoMCUFlashable)device).getBootloaderMode() != CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE) {
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, "Device is in bootloader mode. Please flash a suitable firmware.");
+            if (device instanceof CoMCUFlashable
+                    && ((CoMCUFlashable) device).getBootloaderMode() != CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE) {
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE,
+                        "Device is in bootloader mode. Please flash a suitable firmware.");
                 this.getThing().setProperty(Thing.PROPERTY_FIRMWARE_VERSION, "0.0.0");
                 return;
             }
 
             short[] fw = device.getIdentity().firmwareVersion;
-            String minFWString = getThing().getProperties().getOrDefault(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION, "2.0.0");
+            String minFWString = getThing().getProperties().getOrDefault(
+                    TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION, "2.0.0");
             String[] splt = minFWString.split("\\.");
-            short[] minFW = {Short.parseShort(splt[0]), Short.parseShort(splt[1]), Short.parseShort(splt[2])};
-            if(compareFWs(fw, minFW) < 0) {
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.NONE, String.format("Device firmware %d.%d.%d is older than the minimum required version %s. Please update the firmware.", fw[0], fw[1], fw[2], minFWString));
+            short[] minFW = { Short.parseShort(splt[0]), Short.parseShort(splt[1]), Short.parseShort(splt[2]) };
+            if (compareFWs(fw, minFW) < 0) {
+                updateStatus(
+                        ThingStatus.OFFLINE,
+                        ThingStatusDetail.NONE,
+                        String.format(
+                                "Device firmware %d.%d.%d is older than the minimum required version %s. Please update the firmware.",
+                                fw[0], fw[1], fw[2], minFWString));
                 return;
             }
 
@@ -256,7 +263,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             logger.debug("Initialized {}", thing.getUID().getId());
         } catch (TinkerforgeException e) {
             logger.debug("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
-            if(e instanceof TimeoutException) {
+            if (e instanceof TimeoutException) {
                 logger.debug("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
                 brickd.handleTimeout(this);
             } else {
@@ -291,7 +298,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         try {
             device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
         } catch (TinkerforgeException e) {
-            if(e instanceof TimeoutException) {
+            if (e instanceof TimeoutException) {
                 logger.debug("Failed to refresh value for {}: {}", channelId, e.getMessage());
                 ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
             } else {
@@ -310,18 +317,20 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             if (command instanceof RefreshType) {
                 refreshValue(channelUID.getId(), getThing().getChannel(channelUID).getConfiguration());
             } else {
-                List<SetterRefresh> refreshs = device.handleCommand(getConfig(),
-                        getThing().getChannel(channelUID).getConfiguration(), channelUID.getId(), command);
+                List<SetterRefresh> refreshs = device.handleCommand(getConfig(), getThing().getChannel(channelUID)
+                        .getConfiguration(), channelUID.getId(), command);
                 refreshs.forEach(r -> scheduler.schedule(
                         () -> refreshValue(r.channel, getThing().getChannel(r.channel).getConfiguration()), r.delay,
                         TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
-            if(e instanceof TimeoutException) {
-                logger.debug("Failed to send command {} to channel {}: {}",command.toFullString(), channelUID.toString(), e.getMessage());
+            if (e instanceof TimeoutException) {
+                logger.debug("Failed to send command {} to channel {}: {}", command.toFullString(),
+                        channelUID.toString(), e.getMessage());
                 ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
             } else {
-                logger.warn("Failed to send command {} to channel {}: {}",command.toFullString(), channelUID.toString(), e.getMessage());
+                logger.warn("Failed to send command {} to channel {}: {}", command.toFullString(),
+                        channelUID.toString(), e.getMessage());
             }
         }
     }
@@ -402,16 +411,16 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     public @Nullable Object getDefaultValueAsCorrectType(Type parameterType, String defaultValue) {
         try {
             switch (parameterType) {
-            case TEXT:
-                return defaultValue;
-            case BOOLEAN:
-                return Boolean.parseBoolean(defaultValue);
-            case INTEGER:
-                return new BigDecimal(defaultValue);
-            case DECIMAL:
-                return new BigDecimal(defaultValue);
-            default:
-                return null;
+                case TEXT:
+                    return defaultValue;
+                case BOOLEAN:
+                    return Boolean.parseBoolean(defaultValue);
+                case INTEGER:
+                    return new BigDecimal(defaultValue);
+                case DECIMAL:
+                    return new BigDecimal(defaultValue);
+                default:
+                    return null;
             }
         } catch (NumberFormatException ex) {
             logger.warn("Could not parse default value '{}' as type '{}': {}", defaultValue, parameterType,
@@ -425,11 +434,13 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         try {
             enabledChannelNames = device.getEnabledChannels(getConfig());
         } catch (TinkerforgeException e) {
-            if(e instanceof TimeoutException) {
-                logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
+            if (e instanceof TimeoutException) {
+                logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
+                        e.getMessage());
                 ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
             } else {
-                logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
+                logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
+                        e.getMessage());
             }
             return false;
         }
@@ -513,7 +524,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
                 return;
             }
 
-            ((StandardFlashHost)hostDevice).flash(id.position, firmware, progressCallback, httpClient);
+            ((StandardFlashHost) hostDevice).flash(id.position, firmware, progressCallback, httpClient);
         }
     }
 
@@ -525,7 +536,8 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
     @Override
     public boolean isUpdateExecutable() {
         boolean bridgeReachable = getBridge() != null && getBridge().getStatus() == ThingStatus.ONLINE;
-        boolean updateSchemeSupported = this.device instanceof CoMCUFlashable || this.device instanceof StandardFlashable;
+        boolean updateSchemeSupported = this.device instanceof CoMCUFlashable
+                || this.device instanceof StandardFlashable;
         boolean thingReachable = getThing().getStatusInfo().getStatusDetail() != ThingStatusDetail.COMMUNICATION_ERROR;
 
         return this.httpClient != null && bridgeReachable && thingReachable && updateSchemeSupported;

@@ -5,5 +5,6 @@ public class RemoteSocketTypeCConfig {
     Integer deviceCode = 0;
     Integer repeats = 0;
 
-    public RemoteSocketTypeCConfig() {}
+    public RemoteSocketTypeCConfig() {
+    }
 }

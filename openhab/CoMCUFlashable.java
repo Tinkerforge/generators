@@ -7,12 +7,12 @@ import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.tinkerforge.TinkerforgeException;
-
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
 import org.eclipse.smarthome.core.thing.binding.firmware.ProgressCallback;
 import org.eclipse.smarthome.core.thing.binding.firmware.ProgressStep;
+
+import com.tinkerforge.TinkerforgeException;
 
 public interface CoMCUFlashable {
     public final static int BOOTLOADER_MODE_BOOTLOADER = 0;
@@ -39,7 +39,7 @@ public interface CoMCUFlashable {
         progressCallback.defineSequence(ProgressStep.DOWNLOADING, ProgressStep.UPDATING, ProgressStep.REBOOTING);
 
         byte[] plugin = FlashUtils.downloadFirmware(firmware, progressCallback, httpClient);
-        if(plugin == null)
+        if (plugin == null)
             return;
 
         ZipInputStream zf = new ZipInputStream(new ByteArrayInputStream(plugin));
@@ -72,8 +72,8 @@ public interface CoMCUFlashable {
 
         plugin = plugin_data;
         int regular_plugin_upto = -1;
-        for(int i = plugin.length - 13; i >= 4; --i) {
-            if(plugin[i] == 0x12 && plugin[i-1] == 0x34 && plugin[i-2] == 0x56 && plugin[i-3] == 0x78) {
+        for (int i = plugin.length - 13; i >= 4; --i) {
+            if (plugin[i] == 0x12 && plugin[i - 1] == 0x34 && plugin[i - 2] == 0x56 && plugin[i - 3] == 0x78) {
                 regular_plugin_upto = i;
                 break;
             }
@@ -101,7 +101,7 @@ public interface CoMCUFlashable {
             return;
         }
         if (mode_ret != 0 && mode_ret != 2) {
-            //report error
+            // report error
             if (mode_ret != 5) {
                 progressCallback.failed("Failed to reboot into firmware: Set bootloader mode returned {}", mode_ret);
                 return;
@@ -151,32 +151,31 @@ class CoMCUHelper {
 
         int num_packets = plugin.length / 64;
         int[] index_list;
-        if(regular_plugin_upto >= (plugin.length - 64 * 4))
+        if (regular_plugin_upto >= (plugin.length - 64 * 4))
             index_list = IntStream.range(0, num_packets).toArray();
         else {
             int packet_up_to = ((regular_plugin_upto / 256) + 1) * 4;
             index_list = IntStream.concat(IntStream.range(0, packet_up_to),
-                                          IntStream.of(num_packets - 4, num_packets - 3, num_packets - 2, num_packets - 1))
-                                  .toArray();
+                    IntStream.of(num_packets - 4, num_packets - 3, num_packets - 2, num_packets - 1)).toArray();
         }
 
         int[] chunk = new int[64];
 
-        for(int position : index_list) {
+        for (int position : index_list) {
             int start = position * 64;
             int end = (position + 1) * 64;
 
-            for(int i = 0; i < 64; ++i)
+            for (int i = 0; i < 64; ++i)
                 chunk[i] = plugin[start + i];
 
             try {
                 bricklet.setWriteFirmwarePointer(start);
                 bricklet.writeFirmware(chunk);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 try {
                     bricklet.setWriteFirmwarePointer(start);
                     bricklet.writeFirmware(chunk);
-                } catch(Exception e1) {
+                } catch (Exception e1) {
                     return;
                 }
             }

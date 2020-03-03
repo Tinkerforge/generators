@@ -51,7 +51,8 @@ public class FlashUtils {
                     try {
                         queue.put(getContent());
                     } catch (InterruptedException e) {
-                        progressCallback.failed("Failed to download firmware: interrupted while putting firmware in the result queue.");
+                        progressCallback
+                                .failed("Failed to download firmware: interrupted while putting firmware in the result queue.");
                     }
                 } else {
                     progressCallback.failed("Failed to download firmware: {}", result.getFailure().toString());
@@ -63,7 +64,8 @@ public class FlashUtils {
         try {
             plugin = queue.poll(1, TimeUnit.MINUTES);
         } catch (InterruptedException e1) {
-            progressCallback.failed("Failed to download firmware: interrupted while waiting for firmware result queue.");
+            progressCallback
+                    .failed("Failed to download firmware: interrupted while waiting for firmware result queue.");
             return null;
         }
         return plugin;

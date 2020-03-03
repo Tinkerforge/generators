@@ -14,9 +14,12 @@ public class DefaultActions implements ThingActions {
     private @Nullable DeviceHandler handler;
 
     @Override
-    public void setThingHandler(@Nullable ThingHandler handler) { this.handler = (DeviceHandler) handler; }
+    public void setThingHandler(@Nullable ThingHandler handler) {
+        this.handler = (DeviceHandler) handler;
+    }
 
     @Override
-    public @Nullable ThingHandler getThingHandler() { return handler; }
+    public @Nullable ThingHandler getThingHandler() {
+        return handler;
+    }
 }
-

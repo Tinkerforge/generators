@@ -7,8 +7,9 @@ import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickDaemonHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickDaemonHandler;
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResult;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
@@ -18,9 +19,8 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tinkerforge.IPConnection.EnumerateListener;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
 import com.tinkerforge.IPConnection;
+import com.tinkerforge.IPConnection.EnumerateListener;
 import com.tinkerforge.IPConnectionBase;
 import com.tinkerforge.NotConnectedException;
 
@@ -43,10 +43,10 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
 
         Optional<ThingTypeUID> opt = null;
         try {
-            opt = TinkerforgeBindingConstants.SUPPORTED_DEVICES.stream()
-                    .filter(ttuid -> ttuid.getId()
-                            .equals(DeviceWrapperFactory.getDeviceInfo(deviceIdentifier).deviceThingTypeName))
-                    .findFirst();
+            opt = TinkerforgeBindingConstants.SUPPORTED_DEVICES
+                    .stream()
+                    .filter(ttuid -> ttuid.getId().equals(
+                            DeviceWrapperFactory.getDeviceInfo(deviceIdentifier).deviceThingTypeName)).findFirst();
         } catch (IllegalArgumentException e) { // DeviceWrapperFactory throws if the deviceIdentifier is
                                                // unknown.
             logger.debug("Discovered unknown device {} with UID {} connected to {} at port {}.", deviceIdentifier, uid,
@@ -73,7 +73,8 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
         DiscoveryResult result = DiscoveryResultBuilder.create(thingUid).withThingType(ttuid).withLabel(uid)
                 .withBridge(handler.getThing().getUID()).withProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion)
                 .withProperty(Thing.PROPERTY_HARDWARE_VERSION, hwVersion)
-                .withProperty(Thing.PROPERTY_VENDOR, "Tinkerforge GmbH").withProperty(Thing.PROPERTY_SERIAL_NUMBER, uid)
+                .withProperty(Thing.PROPERTY_VENDOR, "Tinkerforge GmbH")
+                .withProperty(Thing.PROPERTY_SERIAL_NUMBER, uid)
                 .withProperty(Thing.PROPERTY_MODEL_ID, deviceIdentifier).build();
         thingDiscovered(result);
     }
@@ -91,8 +92,8 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
 
     @Override
     protected void startBackgroundDiscovery() {
-        logger.debug("Start Tinkerforge device background discovery for Brick Daemon {}",
-                this.handler.getThing().getUID());
+        logger.debug("Start Tinkerforge device background discovery for Brick Daemon {}", this.handler.getThing()
+                .getUID());
         if (job == null || job.isCancelled()) {
             job = scheduler.scheduleWithFixedDelay(() -> {
                 try {
@@ -109,8 +110,8 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
 
     @Override
     protected void stopBackgroundDiscovery() {
-        logger.debug(
-                "Stop Tinkerforge device background discovery for Brick Daemon " + this.handler.getThing().getUID());
+        logger.debug("Stop Tinkerforge device background discovery for Brick Daemon "
+                + this.handler.getThing().getUID());
         if (job != null && !job.isCancelled()) {
             job.cancel(true);
             job = null;

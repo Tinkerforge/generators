@@ -1,22 +1,18 @@
 package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.tinkerforge.TinkerforgeException;
-import com.tinkerforge.Device.Identity;
-
 import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.types.State;
-import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
+import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.State;
 
+import com.tinkerforge.Device.Identity;
+import com.tinkerforge.TinkerforgeException;
 
 public interface DeviceWrapper {
     public class SetterRefresh {
@@ -43,13 +39,18 @@ public interface DeviceWrapper {
 
     public abstract <T> T reg(T listener, Consumer<T> toRemove);
 
-    public abstract void initialize(Configuration config, Function<String, Configuration> getChannelConfigFn, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException;
+    public abstract void initialize(Configuration config, Function<String, Configuration> getChannelConfigFn,
+            BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn,
+            ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException;
 
     public abstract void dispose(Configuration config) throws TinkerforgeException;
 
-    public abstract void refreshValue(String value, Configuration config, Configuration channelConfig, BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException;
+    public abstract void refreshValue(String value, Configuration config, Configuration channelConfig,
+            BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn)
+            throws TinkerforgeException;
 
-    public abstract List<SetterRefresh> handleCommand(Configuration config, Configuration channelConfig, String channel, Command command) throws TinkerforgeException;
+    public abstract List<SetterRefresh> handleCommand(Configuration config, Configuration channelConfig,
+            String channel, Command command) throws TinkerforgeException;
 
     public abstract List<String> getEnabledChannels(Configuration config) throws TinkerforgeException;
 

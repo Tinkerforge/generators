@@ -1,12 +1,3 @@
-/*
- * Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
- * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
- *
- * Redistribution and use in source and binary forms of this file,
- * with or without modification, are permitted. See the Creative
- * Commons Zero (CC0 1.0) License for more details.
- */
-
 package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
 import java.math.BigDecimal;
@@ -21,15 +12,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.tinkerforge.Device.Identity;
-import com.tinkerforge.IPConnection;
-import com.tinkerforge.TinkerforgeException;
-
 import org.eclipse.smarthome.config.core.ConfigDescription;
 import org.eclipse.smarthome.config.core.ConfigDescriptionBuilder;
+import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameterBuilder;
 import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.type.ChannelType;
@@ -40,6 +27,10 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.tinkerforge.Device.Identity;
+import com.tinkerforge.IPConnection;
+import com.tinkerforge.TinkerforgeException;
 
 public class BrickDaemonWrapper implements DeviceWrapper {
     public final static DeviceInfo DEVICE_INFO = new DeviceInfo("Brick Daemon", "brickd", -1, BrickDaemonWrapper.class,
@@ -106,34 +97,49 @@ public class BrickDaemonWrapper implements DeviceWrapper {
 
     public static ConfigDescription getConfigDescription(URI uri) {
         switch (uri.toASCIIString()) {
-        case "thing-type:tinkerforge:brickd":
-            return ConfigDescriptionBuilder.create(uri).withParameters(Arrays.asList(
-                    ConfigDescriptionParameterBuilder.create("host", Type.TEXT).withLabel("Brick Daemon Hostname/IP")
-                            .withDescription(
-                                    "The IP/hostname of the Brick Daemon, Ethernet Extension or WIFI Extension.")
-                            .withContext("network-address").withAdvanced(false).withDefault("localhost").build(),
-                    ConfigDescriptionParameterBuilder.create("port", Type.INTEGER).withLabel("Brick Daemon Port")
-                            .withDescription(
-                                    "The port is optional, if none is provided, the standard port 4223 is used.")
-                            .withContext("network-address").withAdvanced(false).withDefault("4223")
-                            .withMinimum(BigDecimal.valueOf(1)).withMaximum(BigDecimal.valueOf(65535))
-                            .withStepSize(BigDecimal.valueOf(1)).build(),
-                    ConfigDescriptionParameterBuilder.create("auth", Type.BOOLEAN).withLabel("Use authentication")
-                            .withDescription("Use authentication when connecting to the Brick Daemon.")
-                            .withAdvanced(true).withDefault("false").build(),
-                    ConfigDescriptionParameterBuilder.create("password", Type.TEXT).withLabel("Password")
-                            .withDescription("The password to use for authenticating.").withContext("password")
-                            .withAdvanced(true).build(),
-                    ConfigDescriptionParameterBuilder.create("enableBackgroundDiscovery", Type.BOOLEAN)
-                            .withLabel("Enable Background Discovery")
-                            .withDescription(
-                                    "This will check periodically for new devices attached to the Brick Daemon, Ethernet Extension or WIFI Extension.")
-                            .withAdvanced(true).withDefault("true").build(),
-                    ConfigDescriptionParameterBuilder.create("backgroundDiscoveryInterval", Type.DECIMAL)
-                            .withLabel("Background Discovery Interval")
-                            .withDescription("Minutes to wait between Background Discovery Scans.").withAdvanced(true)
-                            .withDefault("10.0").withUnit("min").build()))
-                    .build();
+            case "thing-type:tinkerforge:brickd":
+                return ConfigDescriptionBuilder
+                        .create(uri)
+                        .withParameters(
+                                Arrays.asList(
+                                        ConfigDescriptionParameterBuilder
+                                                .create("host", Type.TEXT)
+                                                .withLabel("Brick Daemon Hostname/IP")
+                                                .withDescription(
+                                                        "The IP/hostname of the Brick Daemon, Ethernet Extension or WIFI Extension.")
+                                                .withContext("network-address").withAdvanced(false)
+                                                .withDefault("localhost").build(),
+                                        ConfigDescriptionParameterBuilder
+                                                .create("port", Type.INTEGER)
+                                                .withLabel("Brick Daemon Port")
+                                                .withDescription(
+                                                        "The port is optional, if none is provided, the standard port 4223 is used.")
+                                                .withContext("network-address").withAdvanced(false).withDefault("4223")
+                                                .withMinimum(BigDecimal.valueOf(1))
+                                                .withMaximum(BigDecimal.valueOf(65535))
+                                                .withStepSize(BigDecimal.valueOf(1)).build(),
+                                        ConfigDescriptionParameterBuilder
+                                                .create("auth", Type.BOOLEAN)
+                                                .withLabel("Use authentication")
+                                                .withDescription(
+                                                        "Use authentication when connecting to the Brick Daemon.")
+                                                .withAdvanced(true).withDefault("false").build(),
+                                        ConfigDescriptionParameterBuilder.create("password", Type.TEXT)
+                                                .withLabel("Password")
+                                                .withDescription("The password to use for authenticating.")
+                                                .withContext("password").withAdvanced(true).build(),
+                                        ConfigDescriptionParameterBuilder
+                                                .create("enableBackgroundDiscovery", Type.BOOLEAN)
+                                                .withLabel("Enable Background Discovery")
+                                                .withDescription(
+                                                        "This will check periodically for new devices attached to the Brick Daemon, Ethernet Extension or WIFI Extension.")
+                                                .withAdvanced(true).withDefault("true").build(),
+                                        ConfigDescriptionParameterBuilder
+                                                .create("backgroundDiscoveryInterval", Type.DECIMAL)
+                                                .withLabel("Background Discovery Interval")
+                                                .withDescription("Minutes to wait between Background Discovery Scans.")
+                                                .withAdvanced(true).withDefault("10.0").withUnit("min").build()))
+                        .build();
         }
         logger.debug("Unknown config description URI {}", uri);
         return null;

@@ -5,5 +5,6 @@ public class RemoteDimmerTypeBConfig {
     Integer unit = 0;
     Integer repeats = 0;
 
-    public RemoteDimmerTypeBConfig() {}
+    public RemoteDimmerTypeBConfig() {
+    }
 }
