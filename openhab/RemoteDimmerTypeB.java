@@ -146,7 +146,6 @@ public class RemoteDimmerTypeB implements DeviceWrapper {
             org.eclipse.smarthome.config.core.Configuration channelConfig,
             BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn,
             BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {
-        RemoteDimmerTypeBConfig cfg = (RemoteDimmerTypeBConfig) config.as(RemoteDimmerTypeBConfig.class);
         switch (value) {
             case "RemoteDimmerTypeBValue":
                 break;

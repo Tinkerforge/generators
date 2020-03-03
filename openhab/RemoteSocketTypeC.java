@@ -159,7 +159,6 @@ public class RemoteSocketTypeC implements DeviceWrapper {
             org.eclipse.smarthome.config.core.Configuration channelConfig,
             BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn,
             BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {
-        RemoteSocketTypeCConfig cfg = (RemoteSocketTypeCConfig) config.as(RemoteSocketTypeCConfig.class);
         switch (value) {
             case "RemoteSocketTypeCCommand":
                 break;

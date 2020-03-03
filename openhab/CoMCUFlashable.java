@@ -163,7 +163,6 @@ class CoMCUHelper {
 
         for (int position : index_list) {
             int start = position * 64;
-            int end = (position + 1) * 64;
 
             for (int i = 0; i < 64; ++i)
                 chunk[i] = plugin[start + i];

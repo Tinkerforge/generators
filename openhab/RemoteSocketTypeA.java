@@ -147,7 +147,6 @@ public class RemoteSocketTypeA implements DeviceWrapper {
             org.eclipse.smarthome.config.core.Configuration channelConfig,
             BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn,
             BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {
-        RemoteSocketTypeAConfig cfg = (RemoteSocketTypeAConfig) config.as(RemoteSocketTypeAConfig.class);
         switch (value) {
             case "RemoteSocketTypeACommand":
                 break;

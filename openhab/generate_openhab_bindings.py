@@ -859,8 +859,10 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
             channel_cfg = ['{channel_type_name_camel}Config channelCfg = getChannelConfigFn.apply("{channel_name_camel}").as({channel_type_name_camel}Config.class);'
                                .format(channel_name_camel=c.id.camel,
                                        channel_type_name_camel=c.type.id.camel)]
-            if c.type.is_system_type():
+
+            if 'channelCfg.' not in c.predicate and 'channelCfg.' not in c.init_code and c.automatic_update:
                 channel_cfg = []
+
             if c.predicate != 'true':
                 init_code += ['if ({}) {{'.format(c.predicate)]
             else:
@@ -918,7 +920,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     def get_openhab_getter_impl(self):
         func_template = """    @Override
     public void refreshValue(String channel, org.eclipse.smarthome.config.core.Configuration config, org.eclipse.smarthome.config.core.Configuration channelConfig, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
-        {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
+        {config}
         switch(channel) {{
             {channel_cases}
             default:
@@ -949,7 +951,8 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         empty_case_template = """case "{camel}":
                return;"""
 
-
+        config = "{0}Config cfg = ({0}Config) config.as({0}Config.class);".format(self.get_category().camel + self.get_name().camel);
+        config = '' if all(len(c.getters) == 0 for c in self.oh.channels) else config
 
         channel_cases = []
         transforms = []
@@ -958,8 +961,6 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                 channel_cases.append(empty_case_template.format(camel=c.id.camel))
                 continue
 
-
-            template = case_template if c.type.is_system_type() else case_template_with_config
             channel_getters = []
             for i, getter in enumerate(c.getters):
                 packet_name = getter.packet.get_name().headless if not getter.packet.has_high_level() else getter.packet.get_name(skip=-2).headless
@@ -982,12 +983,14 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                                                                  type_=type_,
                                                                  transform=getter.transform,
                                                                  i=i))
-
+            getters = '\n                   '.join(channel_getters)
+            template = case_template if 'channelCfg.' not in getters else case_template_with_config
             channel_cases.append(template.format(camel=c.id.camel,
                                                  channel_type_camel=c.type.id.camel,
-                                                 getters='\n                   '.join(channel_getters)))
+                                                 getters=getters))
 
         return (func_template.format(name_camel=self.get_category().camel + self.get_name().camel,
+                                     config=config,
                                      channel_cases='\n            '.join(channel_cases)), transforms)
 
 
@@ -995,7 +998,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         template = """    @Override
     public List<SetterRefresh> handleCommand(org.eclipse.smarthome.config.core.Configuration config, org.eclipse.smarthome.config.core.Configuration channelConfig, String channel, Command command) throws TinkerforgeException {{
         List<SetterRefresh> result = {refresh_init};
-        {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
+        {config}
         switch(channel) {{
             {channel_cases}
             default:
@@ -1004,16 +1007,19 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         return result;
     }}"""
 
+        config = "{0}Config cfg = ({0}Config) config.as({0}Config.class);".format(self.get_category().camel + self.get_name().camel)
+
         setter_template = "this.{setter}({setter_params});"
         setter_with_predicate_template = """if({pred}) {{
     this.{setter}({setter_params});
 }}"""
         command_template = """if (command instanceof {command_type}) {{
-                    {channel_type_camel}Config channelCfg = channelConfig.as({channel_type_camel}Config.class);
-                    {command_type} cmd = ({command_type}) command;
+                    {channel_config}
+                    {command}
                     {setter}
                 }}
         """
+        channel_config_template = "{0}Config channelCfg = channelConfig.as({0}Config.class);"
         case_template = """case "{camel}":
                 {commands}
                 else {{
@@ -1040,10 +1046,12 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                     setter = setter_with_predicate_template.format(setter=packet_name,
                                                                          setter_params=', '.join(s.packet_params),
                                                                          pred=s.predicate)
-
+                command = "{0} cmd = ({0}) command;".format(s.command_type) if not (s.command_type == 'StringType' and c.type.command_options is not None and len(c.type.command_options) == 1) else ''
                 commands.append(command_template.format(channel_type_camel=c.type.id.camel,
-                                                       command_type=s.command_type,
-                                                       setter=setter))
+                                                        channel_config=channel_config_template.format(c.type.id.camel) if 'channelCfg.' in setter else '',
+                                                        command_type=s.command_type,
+                                                        command=command,
+                                                        setter=setter))
                 first = False
 
             channel_cases.append(
@@ -1056,10 +1064,11 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
             refresh_init = 'new ArrayList<SetterRefresh>()'
         else:
             refresh_init = 'Collections.emptyList()'
-
+        channel_cases = '\n            '.join(channel_cases)
         return template.format(refresh_init=refresh_init,
-                              name_camel=self.get_category().camel + self.get_name().camel,
-                              channel_cases='\n            '.join(channel_cases))
+                               name_camel=self.get_category().camel + self.get_name().camel,
+                               config=config if 'cfg.' in channel_cases else '',
+                               channel_cases=channel_cases)
 
     def get_openhab_channel_enablers(self):
         template = """if ({pred}) {{
@@ -1084,7 +1093,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     @Override
     public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException {{
         this.setResponseExpectedAll(true);
-        {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
+        {init_config}
         {callback_registrations}
         {init_code}
     }}
@@ -1093,13 +1102,13 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     public void dispose(org.eclipse.smarthome.config.core.Configuration config) throws TinkerforgeException {{
         listenerRegs.forEach(ListenerReg::deregister);
 
-        {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
+        {dispose_config}
         {dispose_code}
     }}
 
     @Override
     public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config) throws TinkerforgeException{{
-        {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
+        {enabled_channels_config}
         List<String> result = new ArrayList<String>();
         {channel_enablers}
         return result;
@@ -1118,6 +1127,8 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     {transforms}
 """
 
+        config = "{0}Config cfg = ({0}Config) config.as({0}Config.class);".format(self.get_category().camel + self.get_name().camel)
+
         init_code = self.oh.init_code.split('\n') + self.get_openhab_channel_init_code()
         dispose_code = self.oh.dispose_code.split('\n')
         callback_regs, callback_dispose_code, lambda_transforms = self.get_openhab_callback_impl()
@@ -1125,11 +1136,19 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         handle_command = self.get_openhab_setter_impl()
         channel_enablers = self.get_openhab_channel_enablers()
 
+        init_code = '\n\t\t'.join(init_code)
+        callback_regs = '\n\t\t'.join(callback_regs)
+        dispose_code = '\n\t\t'.join(callback_dispose_code + dispose_code)
+        channel_enablers = '\n\t\t'.join(channel_enablers)
+
         return template.format(name_camel=self.get_category().camel + self.get_name().camel,
-                               init_code='\n\t\t'.join(init_code),
-                               callback_registrations='\n\t\t'.join(callback_regs),
-                               dispose_code='\n\t\t'.join(callback_dispose_code + dispose_code),
-                               channel_enablers='\n\t\t'.join(channel_enablers),
+                               init_config=config if 'cfg.' in init_code or callback_regs != '' else '',
+                               init_code=init_code,
+                               callback_registrations=callback_regs,
+                               dispose_config=config if 'cfg.' in dispose_code else '',
+                               dispose_code=dispose_code,
+                               enabled_channels_config=config if 'cfg.' in channel_enablers else '',
+                               channel_enablers=channel_enablers,
                                get_channel_type=self.get_openhab_get_channel_type_impl(),
                                get_thing_type=self.get_openhab_get_thing_type_impl(),
                                get_config_description=self.get_openhab_get_config_description_impl(),
