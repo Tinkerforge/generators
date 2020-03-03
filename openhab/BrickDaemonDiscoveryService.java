@@ -59,10 +59,6 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
             return;
         }
 
-        if (enumerationType == IPConnection.ENUMERATION_TYPE_CONNECTED) {
-            // TODO: call dispose and init on existing device?
-        }
-
         ThingTypeUID ttuid = opt.get();
 
         ThingUID thingUid = new ThingUID(ttuid, uid);
