@@ -1,6 +1,5 @@
 package org.eclipse.smarthome.binding.tinkerforge.discovery;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
@@ -25,8 +24,7 @@ import com.tinkerforge.IPConnection;
 import com.tinkerforge.IPConnectionBase;
 import com.tinkerforge.NotConnectedException;
 
-
-public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implements TinkerforgeDiscoveryService {
+public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
     BrickDaemonHandler handler;
     EnumerateListener listener;
     ScheduledFuture<?> job = null;
@@ -37,55 +35,51 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
         this.handler = handler;
     }
 
+    private void listenerFn(String uid, String connectedUid, char position, short[] hardwareVersion,
+            short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
+        if (enumerationType == IPConnectionBase.ENUMERATION_TYPE_DISCONNECTED) {
+            return;
+        }
+
+        Optional<ThingTypeUID> opt = null;
+        try {
+            opt = TinkerforgeBindingConstants.SUPPORTED_DEVICES.stream()
+                    .filter(ttuid -> ttuid.getId()
+                            .equals(DeviceWrapperFactory.getDeviceInfo(deviceIdentifier).deviceThingTypeName))
+                    .findFirst();
+        } catch (IllegalArgumentException e) { // DeviceWrapperFactory throws if the deviceIdentifier is
+                                               // unknown.
+            logger.debug("Discovered unknown device {} with UID {} connected to {} at port {}.", deviceIdentifier, uid,
+                    connectedUid, position);
+            return;
+        }
+        if (!opt.isPresent()) {
+            logger.debug("Discovered unknown device {} with UID {} connected to {} at port {}.", deviceIdentifier, uid,
+                    connectedUid, position);
+            return;
+        }
+
+        if (enumerationType == IPConnection.ENUMERATION_TYPE_CONNECTED) {
+            // TODO: call dispose and init on existing device?
+        }
+
+        ThingTypeUID ttuid = opt.get();
+
+        ThingUID thingUid = new ThingUID(ttuid, uid);
+
+        String fwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
+        String hwVersion = hardwareVersion[0] + "." + hardwareVersion[1] + "." + hardwareVersion[2];
+
+        DiscoveryResult result = DiscoveryResultBuilder.create(thingUid).withThingType(ttuid).withLabel(uid)
+                .withBridge(handler.getThing().getUID()).withProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion)
+                .withProperty(Thing.PROPERTY_HARDWARE_VERSION, hwVersion)
+                .withProperty(Thing.PROPERTY_VENDOR, "Tinkerforge GmbH").withProperty(Thing.PROPERTY_SERIAL_NUMBER, uid)
+                .withProperty(Thing.PROPERTY_MODEL_ID, deviceIdentifier).build();
+        thingDiscovered(result);
+    }
+
     public void activate() {
-        this.listener = new EnumerateListener() {
-            @Override
-            public void enumerate(String uid, String connectedUid, char position, short[] hardwareVersion,
-                    short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
-                if (enumerationType == IPConnectionBase.ENUMERATION_TYPE_DISCONNECTED) {
-                    return;
-                }
-
-                Optional<ThingTypeUID> opt = null;
-                try {
-                    opt = TinkerforgeBindingConstants.SUPPORTED_DEVICES
-                                                     .stream()
-                                                     .filter(ttuid -> ttuid.getId().equals(DeviceWrapperFactory.getDeviceInfo(deviceIdentifier).deviceThingTypeName))
-                                                     .findFirst();
-                }
-                catch (IllegalArgumentException e){ //DeviceWrapperFactory throws if the deviceIdentifier is unknown.
-                    logger.debug("Discovered unknown device {} with UID {} connected to {} at port {}.", deviceIdentifier, uid, connectedUid, position);
-                    return;
-                }
-                if (!opt.isPresent()) {
-                     logger.debug("Discovered unknown device {} with UID {} connected to {} at port {}.", deviceIdentifier, uid, connectedUid, position);
-                    return;
-                }
-
-                if (enumerationType == IPConnection.ENUMERATION_TYPE_CONNECTED) {
-                    //TODO: call dispose and init on existing device?
-                }
-
-                ThingTypeUID ttuid = opt.get();
-
-                ThingUID thingUid = new ThingUID(ttuid, uid);
-
-                String fwVersion = firmwareVersion[0] + "." + firmwareVersion[1] + "." + firmwareVersion[2];
-                String hwVersion = hardwareVersion[0] + "." + hardwareVersion[1] + "." + hardwareVersion[2];
-
-                DiscoveryResult result = DiscoveryResultBuilder.create(thingUid)
-                                                               .withThingType(ttuid)
-                                                               .withLabel(uid)
-                                                               .withBridge(handler.getThing().getUID())
-                                                               .withProperty(Thing.PROPERTY_FIRMWARE_VERSION, fwVersion)
-                                                               .withProperty(Thing.PROPERTY_HARDWARE_VERSION, hwVersion)
-                                                               .withProperty(Thing.PROPERTY_VENDOR, "Tinkerforge GmbH")
-                                                               .withProperty(Thing.PROPERTY_SERIAL_NUMBER, uid)
-                                                               .withProperty(Thing.PROPERTY_MODEL_ID, deviceIdentifier)
-                                                               .build();
-                thingDiscovered(result);
-            }
-        };
+        this.listener = this::listenerFn;
         this.handler.addEnumerateListener(this.listener);
         startBackgroundDiscovery();
     }
@@ -97,8 +91,8 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
 
     @Override
     protected void startBackgroundDiscovery() {
-        logger.debug(
-                "Start Tinkerforge device background discovery for Brick Daemon {}", this.handler.getThing().getUID());
+        logger.debug("Start Tinkerforge device background discovery for Brick Daemon {}",
+                this.handler.getThing().getUID());
         if (job == null || job.isCancelled()) {
             job = scheduler.scheduleWithFixedDelay(() -> {
                 try {
@@ -144,10 +138,8 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService implem
         return new HashSet<ThingTypeUID>(TinkerforgeBindingConstants.SUPPORTED_DEVICES);
     }
 
-    @Override
     public void stopDiscovery() {
         stopBackgroundDiscovery();
         deactivate();
     }
-
 }

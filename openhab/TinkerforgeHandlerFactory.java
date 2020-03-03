@@ -35,7 +35,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
-import org.eclipse.smarthome.binding.tinkerforge.discovery.TinkerforgeDiscoveryService;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickDaemonHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherSensorHandler;
@@ -69,7 +68,7 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 @Component(configurationPid = "binding.tinkerforge", service = ThingHandlerFactory.class)
 public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
-    private final Map<TinkerforgeDiscoveryService, @Nullable ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
+    private final Map<BrickDaemonDiscoveryService, @Nullable ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
     private final Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
     private @Nullable HttpClient httpClient;
@@ -134,11 +133,11 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
                 httpClient);
     }
 
-    private synchronized void registerBrickDaemonDiscoveryService(TinkerforgeDiscoveryService service) {
+    private synchronized void registerBrickDaemonDiscoveryService(BrickDaemonDiscoveryService service) {
         this.discoveryServiceRegs.put(service, bundleContext.registerService(DiscoveryService.class.getName(), service, new Hashtable<String, Object>()));
     }
 
-    private synchronized void deregisterBrickDaemonDiscoveryService(TinkerforgeDiscoveryService service) {
+    private synchronized void deregisterBrickDaemonDiscoveryService(BrickDaemonDiscoveryService service) {
         ServiceRegistration<?> serviceReg = this.discoveryServiceRegs.remove(service);
         if (serviceReg != null) {
             // remove discovery service, if bridge handler is removed
