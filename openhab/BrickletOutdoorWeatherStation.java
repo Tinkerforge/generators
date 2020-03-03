@@ -49,8 +49,8 @@ public class BrickletOutdoorWeatherStation implements DeviceWrapper {
         this.bricklet = bricklet;
     }
 
-    private List<ScheduledFuture<?>> manualChannelUpdates = new ArrayList<ScheduledFuture<?>>();
-    private List<ListenerReg> listenerRegs = new ArrayList<ListenerReg>();
+    private List<ScheduledFuture<?>> manualChannelUpdates = new ArrayList<>();
+    private List<ListenerReg<?>> listenerRegs = new ArrayList<>();
 
     public void cancelManualUpdates() {
         manualChannelUpdates.forEach(f -> f.cancel(true));
@@ -63,7 +63,7 @@ public class BrickletOutdoorWeatherStation implements DeviceWrapper {
 
     @Override
     public void dispose(Configuration config) throws TinkerforgeException {
-        listenerRegs.forEach(reg -> reg.toRemove.accept(reg.listener));
+        listenerRegs.forEach(ListenerReg::deregister);
     }
 
     private final BrickletOutdoorWeatherWrapper bricklet;

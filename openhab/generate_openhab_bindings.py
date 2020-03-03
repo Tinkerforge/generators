@@ -807,8 +807,8 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         super(uid, ipcon);
     }}
 
-    private List<ScheduledFuture<?>> manualChannelUpdates = new ArrayList<ScheduledFuture<?>>();
-    private List<ListenerReg> listenerRegs = new ArrayList<ListenerReg>();
+    private List<ScheduledFuture<?>> manualChannelUpdates = new ArrayList<>();
+    private List<ListenerReg<?>> listenerRegs = new ArrayList<>();
 
     public void cancelManualUpdates() {{
         manualChannelUpdates.forEach(f -> f.cancel(true));
@@ -1091,7 +1091,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
 
     @Override
     public void dispose(org.eclipse.smarthome.config.core.Configuration config) throws TinkerforgeException {{
-        listenerRegs.forEach(reg -> reg.toRemove.accept(reg.listener));
+        listenerRegs.forEach(ListenerReg::deregister);
 
         {name_camel}Config cfg = ({name_camel}Config) config.as({name_camel}Config.class);
         {dispose_code}

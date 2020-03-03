@@ -33,6 +33,10 @@ public interface DeviceWrapper {
             this.listener = listener;
             this.toRemove = toRemove;
         }
+
+        public void deregister() {
+            toRemove.accept(listener);
+        }
     }
 
     public abstract void cancelManualUpdates();
