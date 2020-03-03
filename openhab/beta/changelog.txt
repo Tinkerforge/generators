@@ -1,0 +1,193 @@
+2019-09-05: 2.0.0 Beta 1
+- Initial version
+
+2019-09-10: 2.0.0 Beta 2
+- Add support for:
+    - Analog In Bricklet
+    - Analog In 2.0 Bricklet
+    - Industrial Digital In 4 Bricklet
+    - Industrial Digital Out 4 Bricklet
+    - Joystick 2.0 Bricklet
+- Model Humidity 2.0 and Temperature 2.0 Heater as channel
+
+2019-09-12: 2.0.0 Beta 3
+- Add support for:
+    - GPS Bricklet
+    - GPS 2.0 Bricklet
+    - LED Strip Bricklet
+    - LED Strip 2.0 Bricklet
+- Fix Real Time Clock millisecond to nanosecond conversion
+
+2019-09-13: 2.0.0 Beta 4
+- Add support for:
+    - HAT Brick
+    - HAT Zero Brick
+    - CO2 Bricklet
+    - Color Bricklet
+    - Dust Detector Bricklet
+    - Hall Effect Bricklet
+    - Joystick Bricklet
+    - Linear Poti Bricklet
+    - Linear Poti 2.0 Bricklet
+    - Moisture Bricklet
+    - Segment Display 4x7 Bricklet
+    - Segment Display 4x7 2.0 Bricklet
+    - Tilt Bricklet
+- Show firmware version of discovered devices
+
+2019-09-16: 2.0.0 Beta 5
+- Add support for:
+    - Accelerometer Bricklet
+    - Accelerometer 2.0 Bricklet
+    - Industrial Dual 0-20mA Bricklet
+    - Industrial Dual 0-20mA Bricklet 2.0
+    - Thermocouple Bricklet
+    - Thermocouple 2.0 Bricklet
+- Fix naming inconsistencies
+- Fix channel reconfiguration logic
+
+2019-09-17: 2.0.0 Beta 6
+- Add support for:
+    - Analog Out Bricklet
+    - Analog Out 2.0 Bricklet
+    - Analog Out 3.0 Bricklet
+    - Current12 Bricklet
+    - Current25 Bricklet
+    - Laser Range Finder Bricklet
+    - Laser Range Finder 2.0 Bricklet
+    - Line Bricklet
+    - Motorized Linear Poti Bricklet
+- Keep channel configuration when en/disabling channels
+- Fix description of non-moving averages
+
+2019-09-20: 2.0.0 Beta 7
+- Add support for:
+    - CO2 2.0 Bricklet
+    - Dual Button 2.0 Bricklet
+    - Hall Effect 2.0 Bricklet
+    - Industrial Analog Out Bricklet
+    - Industrial Counter Bricklet
+    - Industrial Digital Out 4 2.0 Bricklet
+    - Isolator Bricklet
+    - RGB LED Bricklet
+    - RGB LED 2.0 Bricklet
+    - Rotary Encoder 2.0 Bricklet
+    - Rotary Poti Bricklet
+    - Thermal Imaging Bricklet
+    - Voltage Bricklet
+- Always show air pressure in bar.
+
+2019-09-23: 2.0.0 Beta 8
+- Recreate all channels when reconfiguring
+
+2019-09-24: 2.0.0 Beta 9
+- Add support for:
+    - Outdoor Weather Bricklet
+
+2019-09-25: 2.0.0 Beta 10
+- Add support for:
+    - RGB LED Matrix Bricklet
+    - IMU Brick
+    - IMU 2.0 Brick
+- Fix trigger channel building
+
+2019-09-27: 2.0.0 Beta 11
+- Add Backlight channel for LCD 128x64 Bricklet
+- Allow all Number types (Decimal, Quantity and PercentType) for Channels accepting one of them
+
+2019-10-25: 2.0.0 Beta 12
+- Add custom heartbeat mechanism
+- Fix initial values of IO16 input pins
+
+2019-11-06: 2.0.0 Beta 13
+- Add support for:
+    - DC Brick
+    - Master Brick
+    - RED Brick
+    - Servo Brick
+    - Silent Stepper Brick
+    - Stepper Brick
+    - DMX Bricklet
+    - E-Paper 296x128 Bricklet
+    - One Wire Bricklet
+    - Piezo Buzzer Bricklet
+    - Piezo Speaker Bricklet
+    - Piezo Speaker 2.0 Bricklet
+- Complete support for:
+    - IO4 2.0 Bricklet
+    - LCD 16x2 Bricklet
+    - LCD 20x4 Bricklet
+    - LCD 128x64 Bricklet
+    - OLED 64x48 Bricklet
+    - OLED 128x64 Bricklet
+    - OLED 128x64 2.0 Bricklet
+- Fix heartbeat/reconnect logging
+- Add actions to all supported devices
+- Fix initial moisture channel value of Moisture Bricklets
+- Model Dual Button Bricklet LEDs as channels
+
+2019-12-19: 2.0.0 Beta 14
+- Add support for:
+    - Remote Switch Bricklet
+    - Remote Switch 2.0 Bricklet
+    - XMC1400 Breakout Bricklet
+- Add missing labels to channels
+- Use correct character set for displays
+- Allow configuration of status LED and SPI baudrates
+- Add more color palettes to Thermal Imaging Bricklet
+- Use unused and remove unnecessary configuration parameters
+- Set defaults for run-time generated channels
+- Prefix action and channel type names with device category and name
+- Fix Outdoor Weather Bricklet reset behaviour
+- Mark configuration as advanced if API is flagged so
+- Show a warning if a device's firmware is too old
+
+
+2020-01-22: 2.0.0 Beta 15
+- Prefix thing type names with device category
+- Fix LCD 20x4 backlight channel
+- Fix bridge linkage
+- Rework Outdoor Weather Bricklet support
+- Remove duplicated category prefixes
+- Rework firmware update notifications
+
+2020-01-23: 2.0.0 Beta 16
+- Fix Outdoor Weather Bricklet reboot behaviour
+- Remove Bridge ID from Thing UIDs
+
+2020-01-31: 2.0.0 Beta 17
+- Reinitialize devices in case they could be uninitialized and came back online
+- Rework Remote Switch Bricklet (2.0) support
+- Don't refresh trigger channels when initializing
+- Use new java type scheme
+- Set minimal required firmware version based on feature use
+
+2020-02-10: 2.0.0 Beta 18
+- Schedule updates for channels without callback
+- Add scaling for thermal images
+- Fix some reinitialization/dispose bugs
+- Fix log messages
+- Add firmware update support for standard (legacy) and CoMCU Bricklets
+- Change Multi Touch Bricklet electrodes back to stateful channels
+
+2020-02-28: 2.0.0 Beta 19
+- Add support for:
+    - CAN Bricklet
+    - CAN 2.0 Bricklet
+    - NFC RFID Bricklet
+    - NFC Bricklet
+    - RS232 Bricklet
+    - RS232 2.0 Bricklet
+    - RS485 Bricklet (RS485 and Modbus Master for now)
+- Fix logger name of TinkerforgeConfigDescriptionProvider
+- Use legacy java type scheme
+- Allow flashing if device is offline but reachable
+- Add missing channel labels and descriptions
+- Add more actions
+
+2020-03-02: 2.0.0 Beta 20
+- Fix choice options
+- Improve error messages and timeout handling
+- Fix order of discovery and removal of old discovery results
+- Fix IO-16 edge counter
+- Fix race condition in reachability check

@@ -1572,7 +1572,7 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
                                     })
 
         docs = [(d.get_name().under + '_' + d.get_category().under, d.get_openhab_docs()) for d in self.released_devices if d.get_openhab_docs() is not None]
-        doc_folder = os.path.join(self.get_bindings_dir(), '..', 'doc')
+        doc_folder = os.path.join(self.get_bindings_dir(), '..', 'beta', 'doc')
         shutil.rmtree(doc_folder, ignore_errors=True)
         os.makedirs(doc_folder)
 
