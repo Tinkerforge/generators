@@ -787,7 +787,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType(value.spotmeterStatistics[0] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+            'transform': 'new QuantityType<>(value.spotmeterStatistics[0] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
         'java_unit': 'SmartHomeUnits.KELVIN',
         'is_trigger_channel': False
     }, {
@@ -799,7 +799,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType(value.spotmeterStatistics[1] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+            'transform': 'new QuantityType<>(value.spotmeterStatistics[1] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
         'java_unit': 'SmartHomeUnits.KELVIN',
         'is_trigger_channel': False
     }, {
@@ -811,7 +811,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType(value.spotmeterStatistics[2] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+            'transform': 'new QuantityType<>(value.spotmeterStatistics[2] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
         'java_unit': 'SmartHomeUnits.KELVIN',
         'is_trigger_channel': False
     }, {
@@ -822,7 +822,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType(value.spotmeterStatistics[3], {unit})'}],
+            'transform': 'new QuantityType<>(value.spotmeterStatistics[3], {unit})'}],
         'java_unit': 'SmartHomeUnits.ONE',
         'is_trigger_channel': False
     }, {
@@ -834,7 +834,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType(value.temperatures[0] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+            'transform': 'new QuantityType<>(value.temperatures[0] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
         'java_unit': 'SmartHomeUnits.KELVIN',
         'is_trigger_channel': False
     }, {
@@ -846,7 +846,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType(value.temperatures[1] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+            'transform': 'new QuantityType<>(value.temperatures[1] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
         'java_unit': 'SmartHomeUnits.KELVIN',
         'is_trigger_channel': False
     },  {
@@ -858,7 +858,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType(value.temperatures[2] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+            'transform': 'new QuantityType<>(value.temperatures[2] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
         'java_unit': 'SmartHomeUnits.KELVIN',
         'is_trigger_channel': False
     }, {
@@ -870,7 +870,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType(value.temperatures[3] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
+            'transform': 'new QuantityType<>(value.temperatures[3] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
         'java_unit': 'SmartHomeUnits.KELVIN',
         'is_trigger_channel': False
     }, {
@@ -881,7 +881,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType(value.ffcStatus, {unit})'}],
+            'transform': 'new QuantityType<>(value.ffcStatus, {unit})'}],
         'java_unit': 'SmartHomeUnits.ONE',
         'is_trigger_channel': False
     }, {

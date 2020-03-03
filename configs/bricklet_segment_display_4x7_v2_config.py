@@ -343,7 +343,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Brightness',
-                'transform': 'new QuantityType(value, SmartHomeUnits.ONE)'}],
+                'transform': 'new QuantityType<>(value, SmartHomeUnits.ONE)'}],
             'setters': [{
                 'packet': 'Set Brightness',
                 'packet_params': ['cmd.shortValue()'],
@@ -395,7 +395,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Segments',
-                'transform': 'new QuantityType((Helper.bitsToLong(value.digit0) << 24) | (Helper.bitsToLong(value.digit0) << 16) | (Helper.bitsToLong(value.digit0) << 8) | Helper.bitsToLong(value.digit0), SmartHomeUnits.ONE)'
+                'transform': 'new QuantityType<>((Helper.bitsToLong(value.digit0) << 24) | (Helper.bitsToLong(value.digit0) << 16) | (Helper.bitsToLong(value.digit0) << 8) | Helper.bitsToLong(value.digit0), SmartHomeUnits.ONE)'
             }],
             'setters': [{
                 'packet': 'Set Segments',

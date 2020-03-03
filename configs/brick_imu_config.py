@@ -1124,11 +1124,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Orientation',
-                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(angle.lower())}],
+                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(angle.lower())}],
 
             'callbacks': [{
                 'packet': 'Orientation',
-                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(angle.lower())}],
+                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(angle.lower())}],
             'java_unit': 'SmartHomeUnits.DEGREE_ANGLE',
             'divisor': '100.0',
             'is_trigger_channel': False
@@ -1140,11 +1140,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Quaternion',
-                'transform': 'new QuantityType(value.{}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new QuantityType<>(value.{}, {{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Quaternion',
-                'transform': 'new QuantityType({}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new QuantityType<>({}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z', 'W']
@@ -1174,11 +1174,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Acceleration',
-                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Acceleration',
-                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
             'divisor': 1000.0,
             'is_trigger_channel': False
@@ -1190,11 +1190,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Magnetic Field',
-                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Magnetic Field',
-                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.TESLA',
             'divisor': 1000000000.0,
             'is_trigger_channel': False
@@ -1206,11 +1206,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Angular Velocity',
-                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Angular Velocity',
-                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 14.375,
             'is_trigger_channel': False

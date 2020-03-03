@@ -529,11 +529,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Acceleration',
-                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis)}],
+                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis)}],
 
             'callbacks': [{
                 'packet': 'Acceleration',
-                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis)}],
+                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis)}],
             'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
             'divisor': '1000.0',
             'is_trigger_channel': False
@@ -545,7 +545,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Temperature',
-                'transform': 'new QuantityType(value{divisor}, {unit})'}],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
             'java_unit': 'SIUnits.CELSIUS',
             'is_trigger_channel': False
         }, {

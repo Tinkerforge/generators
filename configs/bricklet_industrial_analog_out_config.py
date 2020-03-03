@@ -352,7 +352,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get {title_words}',
-                'transform': 'new QuantityType(value / 1000000.0, SmartHomeUnits.AMPERE)'}]
+                'transform': 'new QuantityType<>(value / 1000000.0, SmartHomeUnits.AMPERE)'}]
         },
         {
             'id': 'Voltage',
@@ -368,7 +368,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get {title_words}',
-                'transform': 'new QuantityType(value / 1000.0, SmartHomeUnits.VOLT)'}]
+                'transform': 'new QuantityType<>(value / 1000.0, SmartHomeUnits.VOLT)'}]
         }
     ],
     'channel_types': [

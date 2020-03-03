@@ -585,7 +585,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Buffer Status',
-                'transform': 'new QuantityType(value.sendBufferUsed, SmartHomeUnits.BYTE)'
+                'transform': 'new QuantityType<>(value.sendBufferUsed, SmartHomeUnits.BYTE)'
             }],
         }, {
             'id': 'Receive Buffer Used',
@@ -594,7 +594,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Buffer Status',
-                'transform': 'new QuantityType(value.receiveBufferUsed, SmartHomeUnits.BYTE)'
+                'transform': 'new QuantityType<>(value.receiveBufferUsed, SmartHomeUnits.BYTE)'
             }],
         }],
     'channel_types': [

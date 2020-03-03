@@ -265,7 +265,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Indicator',
-                'transform': 'new QuantityType(value.topLeft, {unit})'}],
+                'transform': 'new QuantityType<>(value.topLeft, {unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
@@ -280,7 +280,7 @@ com['openhab'] = {
             'type': 'Indicator',
             'getters': [{
                 'packet': 'Get Indicator',
-                'transform': 'new QuantityType(value.topRight, {unit})'}],
+                'transform': 'new QuantityType<>(value.topRight, {unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
@@ -295,7 +295,7 @@ com['openhab'] = {
             'type': 'Indicator',
             'getters': [{
                 'packet': 'Get Indicator',
-                'transform': 'new QuantityType(value.bottom, {unit})'}],
+                'transform': 'new QuantityType<>(value.bottom, {unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',

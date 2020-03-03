@@ -161,7 +161,7 @@ com['openhab'] = {
             'type': 'Mode',
             'getters': [{
                 'packet': 'Get {title_words}',
-                'transform': 'new QuantityType(value, SmartHomeUnits.ONE)'}],
+                'transform': 'new QuantityType<>(value, SmartHomeUnits.ONE)'}],
             'setters':[{
                 'packet': 'Set {title_words}',
                 'packet_params': ['cmd.shortValue()'],

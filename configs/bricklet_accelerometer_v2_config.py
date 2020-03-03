@@ -718,11 +718,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Acceleration',
-                'transform': 'new QuantityType(value.{}{{divisor}}, {{unit}})'.format(axis)}],
+                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis)}],
 
             'callbacks': [{
                 'packet': 'Acceleration',
-                'transform': 'new QuantityType({}{{divisor}}, {{unit}})'.format(axis)}],
+                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis)}],
             'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
             'divisor': '10000.0',
             'is_trigger_channel': False

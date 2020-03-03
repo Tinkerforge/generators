@@ -893,11 +893,11 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Status',
                 'packet_params': [],
-                'transform': "new QuantityType(value.satellitesView, SmartHomeUnits.ONE)"}],
+                'transform': "new QuantityType<>(value.satellitesView, SmartHomeUnits.ONE)"}],
 
             'callbacks': [{
                 'packet': 'Status',
-                'transform': "new QuantityType(satellitesView, SmartHomeUnits.ONE)"}],
+                'transform': "new QuantityType<>(satellitesView, SmartHomeUnits.ONE)"}],
 
             'is_trigger_channel': False
         },  {
@@ -907,11 +907,11 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Altitude',
                 'packet_params': [],
-                'transform': "new QuantityType(value.altitude / 100.0, SIUnits.METRE)"}],
+                'transform': "new QuantityType<>(value.altitude / 100.0, SIUnits.METRE)"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
-                'transform': "new QuantityType(altitude / 100.0, SIUnits.METRE)"}],
+                'transform': "new QuantityType<>(altitude / 100.0, SIUnits.METRE)"}],
 
             'is_trigger_channel': False,
         },  {
@@ -921,11 +921,11 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Altitude',
                 'packet_params': [],
-                'transform': "new QuantityType(value.geoidalSeparation / 100.0, SIUnits.METRE)"}],
+                'transform': "new QuantityType<>(value.geoidalSeparation / 100.0, SIUnits.METRE)"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
-                'transform': "new QuantityType(geoidalSeparation / 100.0, SIUnits.METRE)"}],
+                'transform': "new QuantityType<>(geoidalSeparation / 100.0, SIUnits.METRE)"}],
 
             'is_trigger_channel': False
         },  {
@@ -935,11 +935,11 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Motion',
                 'packet_params': [],
-                'transform': "new QuantityType(value.course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
+                'transform': "new QuantityType<>(value.course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
 
             'callbacks': [{
                 'packet': 'Motion',
-                'transform': "new QuantityType(course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
+                'transform': "new QuantityType<>(course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
 
             'is_trigger_channel': False,
         },  {
@@ -949,11 +949,11 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Motion',
                 'packet_params': [],
-                'transform': "new QuantityType(value.speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
+                'transform': "new QuantityType<>(value.speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
 
             'callbacks': [{
                 'packet': 'Motion',
-                'transform': "new QuantityType(speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
+                'transform': "new QuantityType<>(speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
 
             'is_trigger_channel': False
         },  {
