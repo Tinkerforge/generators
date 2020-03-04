@@ -12,7 +12,7 @@ package com.tinkerforge;
 import java.util.Arrays;
 
 public abstract class Device extends DeviceBase {
-	public class Identity {
+	public static class Identity {
 		public String uid;
 		public String connectedUid;
 		public char position;
