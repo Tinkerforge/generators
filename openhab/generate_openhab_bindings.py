@@ -800,6 +800,10 @@ import com.tinkerforge.{device_camel};
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+
+@NonNullByDefault
 public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     {device_info}
 
@@ -1157,7 +1161,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                                transforms='\n\t'.join(lambda_transforms + getter_transforms))
 
     def get_openhab_get_channel_type_impl(self):
-        template = """public static ChannelType getChannelType(ChannelTypeUID channelTypeUID) {{
+        template = """public static @Nullable ChannelType getChannelType(ChannelTypeUID channelTypeUID) {{
         switch(channelTypeUID.getId()) {{
             {}
             default:
@@ -1214,7 +1218,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         return ', '.join(ctors)
 
     def get_openhab_get_config_description_impl(self):
-        template = """public static ConfigDescription getConfigDescription(URI uri) {{
+        template = """public static @Nullable ConfigDescription getConfigDescription(URI uri) {{
         switch(uri.toASCIIString()) {{
             {cases}
             default:

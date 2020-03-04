@@ -15,8 +15,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
+import org.eclipse.smarthome.binding.tinkerforge.internal.Utils;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickDaemonConfig;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -38,14 +40,14 @@ import com.tinkerforge.NotConnectedException;
 import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
 
+@NonNullByDefault
 public class BrickDaemonHandler extends BaseBridgeHandler {
     public IPConnection ipcon;
     private Consumer<BrickDaemonDiscoveryService> registerFn;
     private Consumer<BrickDaemonDiscoveryService> deregisterFn;
-    private BrickDaemonDiscoveryService discoveryService;
-    @Nullable
-    private ScheduledFuture<?> connectFuture;
-    private ScheduledFuture<?> heartbeatFuture;
+    private @Nullable BrickDaemonDiscoveryService discoveryService;
+    private @Nullable ScheduledFuture<?> connectFuture;
+    private @Nullable ScheduledFuture<?> heartbeatFuture;
     private DisconnectedListener disconnectedListener;
 
     private final Logger logger = LoggerFactory.getLogger(BrickDaemonHandler.class);
@@ -66,6 +68,12 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         ipcon = new IPConnection();
         // attemptReconnect implements a custom auto reconnect mechanism
         ipcon.setAutoReconnect(false);
+
+        disconnectedListener = reason -> {
+            updateStatus(ThingStatus.OFFLINE);
+            this.stopDiscoveryService();
+            attemptReconnect(FIRST_RECONNECT_INTERVAL_SECS);
+        };
     }
 
     @Override
@@ -140,13 +148,13 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         }
         discoveryService = new BrickDaemonDiscoveryService(this);
         discoveryService.activate();
-        registerFn.accept(discoveryService);
+        registerFn.accept(Utils.assertNonNull(discoveryService));
     }
 
     private synchronized void stopDiscoveryService() {
         if (discoveryService != null) {
             discoveryService.deactivate();
-            deregisterFn.accept(discoveryService);
+            deregisterFn.accept(Utils.assertNonNull(discoveryService));
             discoveryService = null;
         }
     }
@@ -188,8 +196,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     }
 
     private void connect() {
-        if (disconnectedListener != null)
-            ipcon.removeDisconnectedListener(disconnectedListener);
+        ipcon.removeDisconnectedListener(disconnectedListener);
 
         BrickDaemonConfig cfg = getConfigAs(BrickDaemonConfig.class);
 
@@ -218,11 +225,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
             }
         }
 
-        disconnectedListener = reason -> {
-            updateStatus(ThingStatus.OFFLINE);
-            this.stopDiscoveryService();
-            attemptReconnect(FIRST_RECONNECT_INTERVAL_SECS);
-        };
+
 
         ipcon.addDisconnectedListener(disconnectedListener);
 
@@ -307,7 +310,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         childHandlers.remove(childThing.getUID().getId());
     }
 
-    public ThingHandler getChildHandler(String uid) {
-        return childHandlers.getOrDefault(uid, null);
+    public @Nullable ThingHandler getChildHandler(String uid) {
+        return childHandlers.get(uid);
     }
 }

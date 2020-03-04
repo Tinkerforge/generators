@@ -5,6 +5,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Result;
@@ -14,7 +16,7 @@ import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
 import org.eclipse.smarthome.core.thing.binding.firmware.ProgressCallback;
 
 public class FlashUtils {
-    public static byte[] downloadFirmware(Firmware firmware, ProgressCallback progressCallback, HttpClient httpClient) {
+    public static byte @Nullable [] downloadFirmware(@NonNull Firmware firmware, @NonNull ProgressCallback progressCallback, @NonNull HttpClient httpClient) {
         String url = firmware.getProperties().getOrDefault(TinkerforgeBindingConstants.PROPERTY_FIRMWARE_URL, "");
         if (url == "") {
             progressCallback.failed("Failed to update: firmware download URL missing");

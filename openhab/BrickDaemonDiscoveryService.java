@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickDaemonHandler;
@@ -19,20 +21,21 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tinkerforge.IPConnection;
 import com.tinkerforge.IPConnection.EnumerateListener;
 import com.tinkerforge.IPConnectionBase;
 import com.tinkerforge.NotConnectedException;
 
+@NonNullByDefault
 public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
-    BrickDaemonHandler handler;
-    EnumerateListener listener;
-    ScheduledFuture<?> job = null;
+    private BrickDaemonHandler handler;
+    private EnumerateListener listener;
+    private @Nullable ScheduledFuture<?> job = null;
     private final Logger logger = LoggerFactory.getLogger(BrickDaemonDiscoveryService.class);
 
     public BrickDaemonDiscoveryService(BrickDaemonHandler handler) {
         super(new HashSet<>(TinkerforgeBindingConstants.SUPPORTED_DEVICES), 10, true);
         this.handler = handler;
+        this.listener = this::listenerFn;
     }
 
     private void listenerFn(String uid, String connectedUid, char position, short[] hardwareVersion,
@@ -76,7 +79,6 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
     }
 
     public void activate() {
-        this.listener = this::listenerFn;
         this.handler.addEnumerateListener(this.listener);
         startBackgroundDiscovery();
     }

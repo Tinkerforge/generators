@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
 import org.eclipse.smarthome.core.thing.binding.firmware.ProgressCallback;
@@ -14,6 +15,7 @@ import org.eclipse.smarthome.core.thing.binding.firmware.ProgressStep;
 
 import com.tinkerforge.TinkerforgeException;
 
+@NonNullByDefault
 public interface CoMCUFlashable {
     public final static int BOOTLOADER_MODE_BOOTLOADER = 0;
     public final static int BOOTLOADER_MODE_FIRMWARE = 1;
@@ -126,6 +128,7 @@ public interface CoMCUFlashable {
     }
 }
 
+@NonNullByDefault
 class CoMCUHelper {
     static void waitForBootloaderMode(CoMCUFlashable bricklet, int mode) throws TinkerforgeException {
         int counter = 0;

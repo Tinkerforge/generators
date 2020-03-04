@@ -13,6 +13,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
 import org.eclipse.smarthome.config.core.ConfigDescription;
 import org.eclipse.smarthome.config.core.ConfigDescriptionBuilder;
@@ -44,6 +46,7 @@ import com.tinkerforge.BrickletOutdoorWeather.StationDataListener;
 import com.tinkerforge.Device.Identity;
 import com.tinkerforge.TinkerforgeException;
 
+@NonNullByDefault
 public class BrickletOutdoorWeatherStation implements DeviceWrapper {
     public BrickletOutdoorWeatherStation(BrickletOutdoorWeatherWrapper bricklet) {
         this.bricklet = bricklet;
@@ -67,7 +70,7 @@ public class BrickletOutdoorWeatherStation implements DeviceWrapper {
     }
 
     private final BrickletOutdoorWeatherWrapper bricklet;
-    public StationDataListener listener = null;
+    public @Nullable StationDataListener listener = null;
 
     public final static int DEVICE_IDENTIFIER = -288;
     public final static String DEVICE_DISPLAY_NAME = "Outdoor Weather Station";
@@ -111,7 +114,7 @@ public class BrickletOutdoorWeatherStation implements DeviceWrapper {
                 "OutdoorWeatherStationLastChange");
     }
 
-    public static ChannelType getChannelType(ChannelTypeUID channelTypeUID) {
+    public static @Nullable ChannelType getChannelType(ChannelTypeUID channelTypeUID) {
         switch (channelTypeUID.getId()) {
             case "OutdoorWeatherStationTemperature":
                 return ChannelTypeBuilder
@@ -231,7 +234,7 @@ public class BrickletOutdoorWeatherStation implements DeviceWrapper {
                                         .build())).build();
     }
 
-    public static ConfigDescription getConfigDescription(URI uri) {
+    public static @Nullable ConfigDescription getConfigDescription(URI uri) {
         switch (uri.toASCIIString()) {
             case "thing-type:tinkerforge:outdoorweatherstation":
                 return ConfigDescriptionBuilder
@@ -368,6 +371,6 @@ public class BrickletOutdoorWeatherStation implements DeviceWrapper {
 
     @Override
     public Identity getIdentity() throws TinkerforgeException {
-        return null;
+        return new Identity();
     }
 }

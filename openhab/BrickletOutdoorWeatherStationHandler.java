@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
+import org.eclipse.smarthome.binding.tinkerforge.internal.Utils;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletOutdoorWeatherStation;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
 import org.eclipse.smarthome.config.core.Configuration;
@@ -73,7 +74,7 @@ public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
             outdoorWeatherHandler.getDevice().removeStationDataListener(device.listener);
             logger.debug("Removed old outdoor weather station {} handler", thing.getUID().getId());
         }
-        device = new BrickletOutdoorWeatherStation(outdoorWeatherHandler.getDevice());
+        device = new BrickletOutdoorWeatherStation(Utils.assertNonNull(outdoorWeatherHandler.getDevice()));
         configureChannels();
 
         if (this.getBridge().getStatus() == ThingStatus.ONLINE) {
@@ -99,7 +100,7 @@ public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
         BrickletOutdoorWeatherHandler outdoorWeatherHandler = ((BrickletOutdoorWeatherHandler) bridge.getHandler());
         if (device != null)
             outdoorWeatherHandler.getDevice().removeStationDataListener(device.listener);
-        device = new BrickletOutdoorWeatherStation(outdoorWeatherHandler.getDevice());
+        device = new BrickletOutdoorWeatherStation(Utils.assertNonNull(outdoorWeatherHandler.getDevice()));
         device.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel,
                 scheduler, this);
         logger.debug("Initialized outdoor weather station {}", thing.getUID().getId());

@@ -3,6 +3,7 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
 import org.eclipse.smarthome.core.thing.binding.firmware.ProgressCallback;
@@ -10,6 +11,7 @@ import org.eclipse.smarthome.core.thing.binding.firmware.ProgressStep;
 
 import com.tinkerforge.TinkerforgeException;
 
+@NonNullByDefault
 public interface StandardFlashHost {
     public abstract void writeBrickletPlugin(char port, short chunkOffset, short[] chunk) throws TinkerforgeException;
 

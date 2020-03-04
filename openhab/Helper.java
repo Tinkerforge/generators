@@ -12,8 +12,10 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.slf4j.Logger;
 
+@NonNullByDefault
 public class Helper {
 
     public static short parseDisplayCommandLine(String cmd, Logger logger) {

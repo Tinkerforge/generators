@@ -1,5 +1,8 @@
 package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
+@NonNullByDefault
 public class RemoteDimmerTypeBConfig {
     Integer address = 0;
     Integer unit = 0;

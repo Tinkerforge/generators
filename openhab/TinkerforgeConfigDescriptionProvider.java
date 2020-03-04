@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceInfo;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
@@ -18,6 +19,7 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@NonNullByDefault
 @Component(service = { TinkerforgeConfigDescriptionProvider.class, ConfigDescriptionProvider.class }, immediate = true)
 public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionProvider {
 
@@ -28,7 +30,8 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
     @Override
     public Collection<ConfigDescription> getConfigDescriptions(@Nullable Locale locale) {
         return TinkerforgeBindingConstants.SUPPORTED_CONFIG_DESCRIPTIONS.keySet().stream()
-                .map(uri -> getConfigDescription(uri, locale)).collect(Collectors.toList());
+                .map(uri -> getConfigDescription(uri, locale)).filter(cd -> cd != null)
+                .map(cd -> Utils.assertNonNull(cd)).collect(Collectors.toList());
     }
 
     @Override

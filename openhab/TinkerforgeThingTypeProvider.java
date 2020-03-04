@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceInfo;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
@@ -17,6 +18,7 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@NonNullByDefault
 @Component(service = ThingTypeProvider.class, immediate = true)
 public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
 
@@ -26,7 +28,7 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
     @Override
     public Collection<ThingType> getThingTypes(@Nullable Locale locale) {
         return TinkerforgeBindingConstants.SUPPORTED_DEVICES.stream().map(uid -> getThingType(uid, locale))
-                .collect(Collectors.toList());
+                .filter(tt -> tt != null).map(tt -> Utils.assertNonNull(tt)).collect(Collectors.toList());
     }
 
     @Override

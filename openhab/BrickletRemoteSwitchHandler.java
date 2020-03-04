@@ -178,7 +178,7 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
     public BrickletRemoteSwitchHandler(Bridge bridge, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
             Class<? extends ThingHandlerService> actionsClass,
             Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
-            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier, HttpClient httpClient) {
+            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier, @Nullable HttpClient httpClient) {
         super(bridge, deviceSupplier, actionsClass, channelTypeRegistrySupplier, configDescriptionRegistrySupplier,
                 httpClient);
     }

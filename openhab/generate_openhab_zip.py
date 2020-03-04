@@ -62,6 +62,7 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'TinkerforgeConfigDescriptionProvider.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
             'TinkerforgeThingTypeProvider.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
             'TinkerforgeFirmwareProvider.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'Utils.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
 
             'BrickDaemonHandler.java':                      './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'BrickletOutdoorWeatherHandler.java':           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',

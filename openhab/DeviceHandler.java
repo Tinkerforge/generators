@@ -28,6 +28,7 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
+import org.eclipse.smarthome.binding.tinkerforge.internal.Utils;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.CoMCUFlashable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
@@ -81,16 +82,14 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     private boolean wasInitialized = false;
 
-    @Nullable
-    private DeviceWrapper device;
+    private @Nullable DeviceWrapper device;
 
     private final BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier;
 
     private Class<? extends ThingHandlerService> actionsClass;
-
     private Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier;
     private Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier;
-    private @Nullable EnumerateListener enumerateListener;
+    private EnumerateListener enumerateListener;
     private @Nullable HttpClient httpClient;
 
     public DeviceHandler(Thing thing, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
@@ -104,6 +103,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         this.channelTypeRegistrySupplier = channelTypeRegistrySupplier;
         this.configDescriptionRegistrySupplier = configDescriptionRegistrySupplier;
         this.httpClient = httpClient;
+        this.enumerateListener = this::enumerateListenerFn;
     }
 
     public @Nullable DeviceWrapper getDevice() {
@@ -143,7 +143,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Device is unreachable.");
     }
 
-    private void enumerateListener(String uid, String connectedUid, char position, short[] hardwareVersion,
+    private void enumerateListenerFn(String uid, String connectedUid, char position, short[] hardwareVersion,
             short[] firmwareVersion, int deviceIdentifier, short enumerationType) {
         String id = thing.getUID().getId();
         if (!uid.equals(id)) {
@@ -177,7 +177,6 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         BrickDaemonHandler brickd = (BrickDaemonHandler) (getBridge().getHandler());
         if (!wasInitialized) {
             logger.debug("Adding enumerate listener for {}", thing.getUID().getId());
-            enumerateListener = this::enumerateListener;
             brickd.addEnumerateListener(enumerateListener);
         }
         wasInitialized = true;
@@ -477,7 +476,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.FIRMWARE_UPDATING, "Firmware is updating");
 
             CoMCUFlashable flashable = (CoMCUFlashable) this.device;
-            flashable.flash(firmware, progressCallback, this.httpClient);
+            flashable.flash(firmware, progressCallback, Utils.assertNonNull(this.httpClient));
 
             updateStatus(ThingStatus.ONLINE);
             return;
@@ -524,7 +523,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
                 return;
             }
 
-            ((StandardFlashHost) hostDevice).flash(id.position, firmware, progressCallback, httpClient);
+            ((StandardFlashHost) hostDevice).flash(id.position, firmware, progressCallback, Utils.assertNonNull(this.httpClient));
         }
     }
 

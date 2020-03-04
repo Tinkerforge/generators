@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceInfo;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
@@ -20,6 +21,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@NonNullByDefault
 @Component(service = ChannelTypeProvider.class, immediate = true)
 public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
 
@@ -40,6 +42,7 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
     @Override
     public Collection<ChannelType> getChannelTypes(@Nullable Locale locale) {
         return TinkerforgeBindingConstants.SUPPORTED_CHANNELS.keySet().stream().map(uid -> getChannelType(uid, locale))
+                .filter(ct -> ct != null).map(ct -> Utils.assertNonNull(ct))
                 .collect(Collectors.toList());
     }
 

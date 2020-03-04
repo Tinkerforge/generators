@@ -12,6 +12,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletRemoteSwitchHandler;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletRemoteSwitchHandler.Task;
@@ -39,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.tinkerforge.Device.Identity;
 import com.tinkerforge.TinkerforgeException;
 
+@NonNullByDefault
 public class RemoteSocketTypeA implements DeviceWrapper {
     public RemoteSocketTypeA(BrickletRemoteSwitchHandler handler) {
         this.handler = handler;
@@ -77,7 +80,7 @@ public class RemoteSocketTypeA implements DeviceWrapper {
         return Arrays.asList("RemoteSocketTypeACommand");
     }
 
-    public static ChannelType getChannelType(ChannelTypeUID channelTypeUID) {
+    public static @Nullable ChannelType getChannelType(ChannelTypeUID channelTypeUID) {
         switch (channelTypeUID.getId()) {
             case "RemoteSocketTypeACommand":
                 return ChannelTypeBuilder
@@ -110,7 +113,7 @@ public class RemoteSocketTypeA implements DeviceWrapper {
                                 "tinkerforge", "RemoteSocketTypeACommand")).withLabel("Command").build())).build();
     }
 
-    public static ConfigDescription getConfigDescription(URI uri) {
+    public static @Nullable ConfigDescription getConfigDescription(URI uri) {
         switch (uri.toASCIIString()) {
             case "thing-type:tinkerforge:remotesockettypea":
                 return ConfigDescriptionBuilder
@@ -196,6 +199,6 @@ public class RemoteSocketTypeA implements DeviceWrapper {
 
     @Override
     public Identity getIdentity() throws TinkerforgeException {
-        return null;
+        return new Identity();
     }
 }

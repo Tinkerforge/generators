@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingActions;
@@ -26,6 +27,7 @@ import com.tinkerforge.BrickletRS485.ModbusMasterWriteSingleCoilResponseListener
 import com.tinkerforge.BrickletRS485.ModbusMasterWriteSingleRegisterResponseListener;
 import com.tinkerforge.TinkerforgeException;
 
+@NonNullByDefault
 @ThingActionsScope(name = "tinkerforge")
 public class BrickletRS485Actions implements ThingActions {
 
@@ -276,7 +278,7 @@ public class BrickletRS485Actions implements ThingActions {
         int modbusTimeout = ((BigDecimal) this.handler.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<Map<String, Object>>(1);
+        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterReadCoilsResponseListener listener = (int reqID, int exceptionCode, boolean[] coils) -> {
             Integer requestID = null;
@@ -335,7 +337,7 @@ public class BrickletRS485Actions implements ThingActions {
         int modbusTimeout = ((BigDecimal) this.handler.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<Map<String, Object>>(1);
+        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterReadHoldingRegistersResponseListener listener = (int reqID, int exceptionCode,
                 int[] holdingRegisters) -> {
@@ -393,7 +395,7 @@ public class BrickletRS485Actions implements ThingActions {
         int modbusTimeout = ((BigDecimal) this.handler.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<Map<String, Object>>(1);
+        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteSingleCoilResponseListener listener = (int reqID, int exceptionCode) -> {
             Integer requestID = null;
@@ -450,7 +452,7 @@ public class BrickletRS485Actions implements ThingActions {
         int modbusTimeout = ((BigDecimal) this.handler.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<Map<String, Object>>(1);
+        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteSingleRegisterResponseListener listener = (int reqID, int exceptionCode) -> {
             Integer requestID = null;
@@ -508,7 +510,7 @@ public class BrickletRS485Actions implements ThingActions {
         int modbusTimeout = ((BigDecimal) this.handler.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<Map<String, Object>>(1);
+        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteMultipleCoilsResponseListener listener = (int reqID, int exceptionCode) -> {
             Integer requestID = null;
@@ -566,7 +568,7 @@ public class BrickletRS485Actions implements ThingActions {
         int modbusTimeout = ((BigDecimal) this.handler.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<Map<String, Object>>(1);
+        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteMultipleRegistersResponseListener listener = (int reqID, int exceptionCode) -> {
             Integer requestID = null;
@@ -624,7 +626,7 @@ public class BrickletRS485Actions implements ThingActions {
         int modbusTimeout = ((BigDecimal) this.handler.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<Map<String, Object>>(1);
+        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterReadDiscreteInputsResponseListener listener = (int reqID, int exceptionCode,
                 boolean[] discreteInputs) -> {
@@ -683,7 +685,7 @@ public class BrickletRS485Actions implements ThingActions {
         int modbusTimeout = ((BigDecimal) this.handler.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<Map<String, Object>>(1);
+        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterReadInputRegistersResponseListener listener = (int reqID, int exceptionCode, int[] inputRegisters) -> {
             Integer requestID = null;

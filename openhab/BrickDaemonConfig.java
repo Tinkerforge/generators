@@ -2,6 +2,9 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
 import java.math.BigDecimal;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
+@NonNullByDefault
 public class BrickDaemonConfig {
     public String host = "localhost";
     public Integer port = 4223;

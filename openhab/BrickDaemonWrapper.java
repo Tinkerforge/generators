@@ -12,6 +12,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.config.core.ConfigDescription;
 import org.eclipse.smarthome.config.core.ConfigDescriptionBuilder;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;
@@ -32,6 +34,7 @@ import com.tinkerforge.Device.Identity;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
 
+@NonNullByDefault
 public class BrickDaemonWrapper implements DeviceWrapper {
     public final static DeviceInfo DEVICE_INFO = new DeviceInfo("Brick Daemon", "brickd", -1, BrickDaemonWrapper.class,
             DefaultActions.class, "2.0.0", false);
@@ -91,11 +94,11 @@ public class BrickDaemonWrapper implements DeviceWrapper {
                 .withConfigDescriptionURI(URI.create("thing-type:tinkerforge:brickd")).buildBridge();
     }
 
-    public static ChannelType getChannelType(ChannelTypeUID channelTypeUID) {
+    public static @Nullable ChannelType getChannelType(ChannelTypeUID channelTypeUID) {
         return null;
     }
 
-    public static ConfigDescription getConfigDescription(URI uri) {
+    public static @Nullable ConfigDescription getConfigDescription(URI uri) {
         switch (uri.toASCIIString()) {
             case "thing-type:tinkerforge:brickd":
                 return ConfigDescriptionBuilder
@@ -147,6 +150,6 @@ public class BrickDaemonWrapper implements DeviceWrapper {
 
     @Override
     public Identity getIdentity() throws TinkerforgeException {
-        return null;
+        return new Identity();
     }
 }

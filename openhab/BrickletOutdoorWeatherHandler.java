@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletOutdoorWeatherWrapper;
@@ -12,6 +13,7 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
@@ -22,13 +24,14 @@ import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 
 import com.tinkerforge.IPConnection;
 
+@NonNullByDefault
 public class BrickletOutdoorWeatherHandler extends DeviceHandler implements BridgeHandler {
     private List<ThingHandler> childHandlers = new ArrayList<>();
 
     public BrickletOutdoorWeatherHandler(Bridge bridge, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
             Class<? extends ThingHandlerService> actionsClass,
             Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
-            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier, HttpClient httpClient) {
+            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier, @Nullable HttpClient httpClient) {
         super(bridge, deviceSupplier, actionsClass, channelTypeRegistrySupplier, configDescriptionRegistrySupplier,
                 httpClient);
     }
@@ -46,8 +49,10 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
         if (this.getDevice() != null)
             this.getDevice().cancelManualUpdates();
         super.initialize();
-        for (ThingHandler handler : childHandlers)
-            handler.initialize();
+        if(this.getThing().getStatus() == ThingStatus.ONLINE) {
+            for (ThingHandler handler : childHandlers)
+                handler.initialize();
+        }
     }
 
     @Override

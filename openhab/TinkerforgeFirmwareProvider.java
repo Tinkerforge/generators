@@ -3,12 +3,14 @@ package org.eclipse.smarthome.binding.tinkerforge.internal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Result;
@@ -26,9 +28,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@NonNullByDefault
 @Component(service = FirmwareProvider.class)
 public class TinkerforgeFirmwareProvider implements FirmwareProvider {
-    private HttpClient httpClient;
+    private @Nullable HttpClient httpClient;
 
     private final Logger logger = LoggerFactory.getLogger(TinkerforgeFirmwareProvider.class);
 
@@ -48,24 +51,26 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     protected final ScheduledExecutorService scheduler = ThreadPoolManager.getScheduledPool("tinkerforge-firmware");
 
     @Override
-    public Firmware getFirmware(Thing thing, String version) {
+    public @Nullable Firmware getFirmware(Thing thing, String version) {
         return getFirmware(thing, version, null);
     }
 
-    @Nullable
     @Override
-    public Firmware getFirmware(Thing thing, String version, @Nullable Locale locale) {
-        return getFirmwares(thing, locale).stream().filter(fw -> fw.getVersion().equals(version)).findFirst()
-                .orElse(null);
+    public @Nullable Firmware getFirmware(Thing thing, String version, @Nullable Locale locale) {
+        Optional<Firmware> opt = getFirmwares(thing, locale).stream().filter(fw -> fw.getVersion().equals(version)).findFirst();
+        //.getOrDefault(null) conflicts with the null annotations.
+        if(opt.isPresent())
+            return opt.get();
+        return null;
     }
 
     @Override
-    public Set<Firmware> getFirmwares(Thing thing) {
+    public @Nullable Set<Firmware> getFirmwares(Thing thing) {
         return getFirmwares(thing, null);
     }
 
     @Override
-    public Set<Firmware> getFirmwares(Thing thing, Locale locale) {
+    public @Nullable Set<Firmware> getFirmwares(Thing thing, @Nullable Locale locale) {
         Set<Firmware> result = new HashSet<>();
         String id = thing.getThingTypeUID().getId();
         FirmwareInfo info = latestVersions.get(id);
@@ -117,7 +122,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
         this.httpClient.newRequest("https://download.tinkerforge.com/latest_versions.txt").send(
                 new BufferingResponseListener() {
                     @Override
-                    public void onComplete(Result result) {
+                    public void onComplete(@Nullable Result result) {
                         if (result.isSucceeded()) {
                             parseLatestVersions(getContentAsString());
                             scheduler.schedule(() -> getLatestVersions(), 1, TimeUnit.HOURS);
