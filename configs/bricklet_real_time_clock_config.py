@@ -269,13 +269,13 @@ Gibt die Periode zurück, wie von :func:`Set Date Time Callback Period` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Alarm',
-'elements': [('Month', 'int8', 1, 'in', {'range': [(-1, -1), (2000, 2099)], 'constant_group': 'Alarm Match'}),
-             ('Day', 'int8', 1, 'in', {'range': [(-1, -1), (1, 12)], 'constant_group': 'Alarm Match'}),
-             ('Hour', 'int8', 1, 'in', {'range': [(-1, -1), (1, 31)], 'constant_group': 'Alarm Match'}),
-             ('Minute', 'int8', 1, 'in', {'range': (-1, 23), 'constant_group': 'Alarm Match'}),
-             ('Second', 'int8', 1, 'in', {'range': (-1, 59), 'constant_group': 'Alarm Match'}),
-             ('Weekday', 'int8', 1, 'in', {'range': (-1, 59), 'constant_group': 'Alarm Match'}),
-             ('Interval', 'int32', 1, 'in', {'unit': 'Second', 'constant_group': 'Alarm Interval'})],
+'elements': [('Month', 'int8', 1, 'in', {'range': [(-1, -1), (1, 12)], 'constant_group': 'Alarm Match'}),
+             ('Day', 'int8', 1, 'in', {'range': [(-1, -1), (1, 31)], 'constant_group': 'Alarm Match'}),
+             ('Hour', 'int8', 1, 'in', {'range': [(-1, -1), (0, 23)], 'constant_group': 'Alarm Match'}),
+             ('Minute', 'int8', 1, 'in', {'range': [(-1, -1), (0, 59)], 'constant_group': 'Alarm Match'}),
+             ('Second', 'int8', 1, 'in', {'range': [(-1, -1), (0, 59)], 'constant_group': 'Alarm Match'}),
+             ('Weekday', 'int8', 1, 'in', {'range': [(-1, -1), (1, 7)], 'constant_group': 'Alarm Match'}),
+             ('Interval', 'int32', 1, 'in', {'range': [(-1, -1), (1, None)], 'unit': 'Second', 'constant_group': 'Alarm Interval'})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
@@ -343,13 +343,13 @@ wiederholt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Alarm',
-'elements': [('Month', 'int8', 1, 'out', {'range': [(-1, -1), (2000, 2099)], 'constant_group': 'Alarm Match'}),
-             ('Day', 'int8', 1, 'out', {'range': [(-1, -1), (1, 12)], 'constant_group': 'Alarm Match'}),
-             ('Hour', 'int8', 1, 'out', {'range': [(-1, -1), (1, 31)], 'constant_group': 'Alarm Match'}),
-             ('Minute', 'int8', 1, 'out', {'range': (-1, 23), 'constant_group': 'Alarm Match'}),
-             ('Second', 'int8', 1, 'out', {'range': (-1, 59), 'constant_group': 'Alarm Match'}),
-             ('Weekday', 'int8', 1, 'out', {'range': (-1, 59), 'constant_group': 'Alarm Match'}),
-             ('Interval', 'int32', 1, 'out', {'unit': 'Second', 'constant_group': 'Alarm Interval'})],
+'elements': [('Month', 'int8', 1, 'out', {'range': [(-1, -1), (1, 12)], 'constant_group': 'Alarm Match'}),
+             ('Day', 'int8', 1, 'out', {'range': [(-1, -1), (1, 31)], 'constant_group': 'Alarm Match'}),
+             ('Hour', 'int8', 1, 'out', {'range': [(-1, -1), (0, 23)], 'constant_group': 'Alarm Match'}),
+             ('Minute', 'int8', 1, 'out', {'range': [(-1, -1), (0, 59)], 'constant_group': 'Alarm Match'}),
+             ('Second', 'int8', 1, 'out', {'range': [(-1, -1), (0, 59)], 'constant_group': 'Alarm Match'}),
+             ('Weekday', 'int8', 1, 'out', {'range': [(-1, -1), (1, 7)], 'constant_group': 'Alarm Match'}),
+             ('Interval', 'int32', 1, 'out', {'range': [(-1, -1), (1, None)], 'unit': 'Second', 'constant_group': 'Alarm Interval'})],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
