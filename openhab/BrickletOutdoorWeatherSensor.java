@@ -73,8 +73,8 @@ public class BrickletOutdoorWeatherSensor implements DeviceWrapper {
     public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "outdoorweathersensor",
             DEVICE_IDENTIFIER, BrickletOutdoorWeatherSensor.class, DefaultActions.class, "1.0.0", false);
 
-    private final Logger logger = LoggerFactory.getLogger(BrickletOutdoorWeatherWrapper.class);
-    private final static Logger static_logger = LoggerFactory.getLogger(BrickletOutdoorWeatherWrapper.class);
+    private final Logger logger = LoggerFactory.getLogger(BrickletOutdoorWeatherSensor.class);
+    private final static Logger static_logger = LoggerFactory.getLogger(BrickletOutdoorWeatherSensor.class);
 
     public void initialize(Configuration config, Function<String, Configuration> getChannelConfigFn,
             BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn,

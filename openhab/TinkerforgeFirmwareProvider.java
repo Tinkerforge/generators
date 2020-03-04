@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     private HttpClient httpClient;
 
-    private final Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(TinkerforgeFirmwareProvider.class);
 
     private class FirmwareInfo {
         public FirmwareInfo(String version, String url) {

@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
 
     private static final Map<ThingTypeUID, ThingType> thingTypeCache = new HashMap<>();
-    private final static Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
+    private final static Logger logger = LoggerFactory.getLogger(TinkerforgeThingTypeProvider.class);
 
     @Override
     public Collection<ThingType> getThingTypes(@Nullable Locale locale) {

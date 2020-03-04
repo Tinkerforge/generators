@@ -73,7 +73,7 @@ import com.tinkerforge.IPConnection;
 public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
     private final Map<BrickDaemonDiscoveryService, @Nullable ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
-    private final Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(TinkerforgeHandlerFactory.class);
     private @Nullable HttpClient httpClient;
 
     @Override
