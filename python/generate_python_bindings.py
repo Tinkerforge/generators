@@ -243,6 +243,7 @@ class {0}(Device):
 
             if par != '':
                 cp = ', '
+
                 if not ',' in par:
                     ct = ','
 

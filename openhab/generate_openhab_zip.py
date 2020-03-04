@@ -61,15 +61,15 @@ class OpenHABZipGenerator(common.ZipGenerator):
             'TinkerforgeChannelTypeProvider.java':          './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
             'TinkerforgeConfigDescriptionProvider.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
             'TinkerforgeThingTypeProvider.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'TinkerforgeFirmwareProvider.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'Utils.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'TinkerforgeFirmwareProvider.java':             './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'Utils.java':                                   './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
 
             'BrickDaemonHandler.java':                      './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'BrickletOutdoorWeatherHandler.java':           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'BrickletOutdoorWeatherSensorHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'BrickletOutdoorWeatherSensorHandler.java':     './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'BrickletOutdoorWeatherStationHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'BrickletRemoteSwitchHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'RemoteSwitchDeviceHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'BrickletRemoteSwitchHandler.java':             './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'RemoteSwitchDeviceHandler.java':               './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
             'DeviceHandler.java':                           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
 
             # Reuse from java generator

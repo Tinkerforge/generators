@@ -1116,6 +1116,7 @@ class IPConnection(object):
             cb = self.registered_callbacks[IPConnection.CALLBACK_ENUMERATE]
             cb(uid, connected_uid, position, hardware_version,
                firmware_version, device_identifier, enumeration_type)
+
             return
 
         device = self.devices.get(uid)
@@ -1339,6 +1340,7 @@ class IPConnection(object):
         if sequence_number == 0 and function_id == IPConnection.CALLBACK_ENUMERATE:
             if IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
                 self.callback.queue.put((IPConnection.QUEUE_PACKET, packet))
+
             return
 
         uid = get_uid_from_data(packet)
@@ -1351,6 +1353,7 @@ class IPConnection(object):
             if function_id in device.registered_callbacks or \
                -function_id in device.high_level_callbacks:
                 self.callback.queue.put((IPConnection.QUEUE_PACKET, packet))
+
             return
 
         if device.expected_response_function_id == function_id and \
