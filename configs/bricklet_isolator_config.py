@@ -335,10 +335,46 @@ def statistics_channel(name_words, name_headless):
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
-    'params': [
+    'params': [{
+            'packet': 'Set SPITFP Baudrate Config',
+            'element': 'Enable Dynamic Baudrate',
+
+            'name': 'SPITFP Enable Dynamic Baudrate',
+            'type': 'boolean',
+            'default': 'true',
+            'label': 'SPITFP Enable Dynamic Baudrate',
+            'description': 'The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is enabled, the Brick will try to adapt the baudrate for the communication between Bricks and Bricklets according to the amount of data that is transferred.<br/><br/>The baudrate for communication config between Brick and Isolator Bricklet can be set through the configuration of the Brick.<br/><br/>The baudrate will be increased exponentially if lots of data is sent/received and decreased linearly if little data is sent/received.<br/><br/>This lowers the baudrate in applications where little data is transferred (e.g. a weather station) and increases the robustness. If there is lots of data to transfer (e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.<br/><br/>In cases where some data has to transferred as fast as possible every few seconds (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn the dynamic baudrate off to get the highest possible performance.<br/><br/>The maximum value of the baudrate can be set per port. If the dynamic baudrate is disabled, the maximum baudrate will be used statically.'
+        }, {
+            'packet': 'Set SPITFP Baudrate Config',
+            'element': 'Minimum Dynamic Baudrate',
+
+            'name': 'SPITFP Minimum Dynamic Baudrate',
+            'type': 'integer',
+            'default': 400000,
+            'min': 400000,
+            'max': 2000000,
+
+            'label': 'SPITFP Minimum Dynamic Baudrate',
+            'description': 'See SPITFP Enable Dynamic Baudrate',
+        }, {
+            'packet': 'Set SPITFP Baudrate',
+            'element': 'Baudrate',
+
+            'name': 'SPITFP Baudrate',
+            'type': 'integer',
+            'default': 1400000,
+            'min': 400000,
+            'max': 2000000,
+
+            'label': '(Maximum) SPITFP Baudrate',
+            'description': 'The baudrate used to communicate with the Bricklet.<br/><br/>If you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.<br/><br/>If the dynamic baudrate feature is enabled, this is the maximum baudrate.<br/><br/>Regulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in you applications we recommend to not change the baudrate.',
+        },
         update_interval('Set Statistics Callback Configuration', 'Period', 'Statistics', 'all statistics data')
     ],
-    'init_code': """this.setStatisticsCallbackConfiguration(cfg.statisticsUpdateInterval, true);""",
+    'init_code': """
+        this.setSPITFPBaudrateConfig(cfg.spitfpEnableDynamicBaudrate, cfg.spitfpMinimumDynamicBaudrate);
+        this.setSPITFPBaudrate(cfg.spitfpBaudrate);
+        this.setStatisticsCallbackConfiguration(cfg.statisticsUpdateInterval, true);""",
     'channels': [
         statistics_channel('Messages From Brick', 'messagesFromBrick'),
         statistics_channel('Messages From Bricklet', 'messagesFromBricklet'),
@@ -394,5 +430,5 @@ com['openhab'] = {
                     description='UID of the isolated Bricklet.',
                     read_only=True),
     ],
-    'actions': ['Get Statistics']
+    'actions': ['Get Statistics', 'Get SPITFP Baudrate Config', 'Get Isolator SPITFP Error Count', 'Get SPITFP Baudrate']
 }
