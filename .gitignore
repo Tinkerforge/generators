@@ -10,7 +10,8 @@
 */bindings/
 */bindings_*/
 */doc/
-*/beta/doc/
+openhab/beta/doc/
+openhab/openhab2-addons/
 */doc_*/
 */*_package/
 stubs/comcu/

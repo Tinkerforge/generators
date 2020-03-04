@@ -173,25 +173,31 @@ class OpenHABZipGenerator(common.ZipGenerator):
             shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'), self.generation_dir)
             shutil.copy(os.path.join(root_dir, 'custom.txt'), os.path.join(self.generation_dir, 'readme.txt'))
 
-        with common.ChangedDirectory(self.tmp_dir):
-            common.execute(['git', 'clone', '-b', '2.5.x', 'https://github.com/openhab/openhab2-addons', '--depth=1'])
+        binding_dir = os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons', 'bundles', 'org.openhab.binding.tinkerforge')
 
-        to_patch = os.path.join(self.tmp_dir, 'openhab2-addons', 'bom', 'openhab-addons', 'pom.xml')
-        common.specialize_template(to_patch, to_patch, {'</dependencies>': """
-    <dependency>
-      <groupId>org.openhab.addons.bundles</groupId>
-      <artifactId>org.openhab.binding.tinkerforge</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>"""})
+        if os.path.isdir(binding_dir):
+            print("Binding directory exists from last run, skipping clone of openhab2-addons repo.")
+            with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons')):
+                common.execute(['git', 'pull'])
+        else:
+            with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..')):
+                common.execute(['git', 'clone', '-b', '2.5.x', 'https://github.com/openhab/openhab2-addons', '--depth=1'])
 
-        to_patch = os.path.join(self.tmp_dir, 'openhab2-addons', 'bundles', 'pom.xml')
-        common.specialize_template(to_patch, to_patch, {'</modules>': """
-    <module>org.openhab.binding.tinkerforge</module>
-  </modules>"""})
+            to_patch = os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons', 'bom', 'openhab-addons', 'pom.xml')
+            common.specialize_template(to_patch, to_patch, {'</dependencies>': """
+        <dependency>
+        <groupId>org.openhab.addons.bundles</groupId>
+        <artifactId>org.openhab.binding.tinkerforge</artifactId>
+        <version>${project.version}</version>
+        </dependency>
+    </dependencies>"""})
 
-        binding_dir = os.path.join(self.tmp_dir, 'openhab2-addons', 'bundles', 'org.openhab.binding.tinkerforge')
-        os.makedirs(binding_dir)
+            to_patch = os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons', 'bundles', 'pom.xml')
+            common.specialize_template(to_patch, to_patch, {'</modules>': """
+        <module>org.openhab.binding.tinkerforge</module>
+    </modules>"""})
+
+        common.recreate_dir(binding_dir)
 
         for f in [k for (k, v) in self.relative_file_dests.items() if v == '.']:
             shutil.copy(os.path.join(self.generation_dir, f), os.path.join(binding_dir, f))
