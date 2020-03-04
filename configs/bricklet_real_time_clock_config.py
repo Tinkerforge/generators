@@ -441,17 +441,8 @@ com['examples'].append({
               ('callback_period', ('Date Time', 'date and time'), [], 5000)]
 })
 
-date_time_type = oh_generic_channel_type('Date Time', 'DateTime', 'Date Time',
-                    update_style=None,
-                    description="The real-time clock handles leap year and inserts the 29th of February accordingly. But leap seconds are not handled. The time is stored as UTC on the clock and converted into your system's timezone when accessed by OpenHAB.",)
-timestamp_type = oh_generic_channel_type('Timestamp', 'Number:Time', 'Timestamp',
-                    update_style=None,
-                    description="the current date and the time of the real-time clock converted to seconds. The timestamp has an effective resolution of hundredths of a second.",
-                    read_only=True,
-                    pattern='%.2f %unit%')
-
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['java.time.ZonedDateTime', 'java.time.ZoneId', 'org.eclipse.smarthome.core.library.types.DateTimeType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['java.time.ZonedDateTime', 'java.time.ZoneId', 'org.eclipse.smarthome.core.library.types.DateTimeType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         update_interval('Set Date Time Callback Period', 'Period', 'Date Time', 'the date time and timestamp'),
@@ -498,11 +489,27 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Date Time',
                 'transform': 'new QuantityType<>(timestamp{divisor}, {unit})'}]
-        },
+        }, {
+            'id': 'Alarm Triggered',
+            'label': 'Alarm Triggered',
+            'description': 'This listener is triggered every time the current date and time matches the configured alarm (see the setAlarm action).',
+            'type': 'system.trigger',
+            'callbacks': [{
+                'packet': 'Alarm',
+                'transform': 'CommonTriggerEvents.PRESSED'
+            }],
+            'is_trigger_channel': True
+        }
     ],
     'channel_types': [
-        date_time_type,
-        timestamp_type
+        oh_generic_channel_type('Date Time', 'DateTime', 'Date Time',
+                    update_style=None,
+                    description="The real-time clock handles leap year and inserts the 29th of February accordingly. But leap seconds are not handled. The time is stored as UTC on the clock and converted into your system's timezone when accessed by OpenHAB."),
+        oh_generic_channel_type('Timestamp', 'Number:Time', 'Timestamp',
+                    update_style=None,
+                    description="the current date and the time of the real-time clock converted to seconds. The timestamp has an effective resolution of hundredths of a second.",
+                    read_only=True,
+                    pattern='%.2f %unit%')
     ],
-    'actions': [{'fn': 'Set Date Time', 'refreshs': ['Date Time']}, 'Get Date Time', 'Get Timestamp', 'Get Offset']
+    'actions': [{'fn': 'Set Date Time', 'refreshs': ['Date Time']}, 'Get Date Time', 'Get Timestamp', 'Get Offset', 'Set Alarm', 'Get Alarm']
 }
