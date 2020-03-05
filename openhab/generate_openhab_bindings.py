@@ -1537,7 +1537,7 @@ class OpenHABBindingsGenerator(JavaBindingsGenerator):
                 f.write(config_class)
 
         if device.oh.actions == 'custom':
-            shutil.copy(class_name + 'Actions.java', os.path.join(self.get_bindings_dir(), class_name + 'Actions.java'))
+            shutil.copy(os.path.join(self.get_root_dir(), class_name + 'Actions.java'), os.path.join(self.get_bindings_dir(), class_name + 'Actions.java'))
         elif len(device.oh.actions) > 0:
             with open(os.path.join(self.get_bindings_dir(), class_name + 'Actions.java'), 'w') as f:
                 f.write(device.get_openhab_actions_class())
