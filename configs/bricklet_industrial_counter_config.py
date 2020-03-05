@@ -6,7 +6,7 @@
 
 # Industrial Counter Bricklet communication config
 
-from openhab_common import *
+from openhab_commonconfig import *
 
 # see COUNTER_{MIN,MAX}_VALUE in software/src/counter.h
 COUNTER_RANGE = (((2 ** 16) - 1) * (-(2 ** 31)), ((2 ** 16) - 1) * ((2 ** 31) - 1) + ((2 ** 16) - 1) - 1)

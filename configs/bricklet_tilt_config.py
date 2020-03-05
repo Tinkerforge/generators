@@ -6,7 +6,7 @@
 
 # Tilt Bricklet communication config
 
-from openhab_common import *
+from openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',

@@ -6,7 +6,7 @@
 
 # CAN Bricklet communication config
 
-from openhab_common import *
+from openhab_commonconfig import *
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',

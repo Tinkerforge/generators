@@ -7,7 +7,7 @@
 # Analog In Bricklet communication config
 
 from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from openhab_common import *
+from openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',

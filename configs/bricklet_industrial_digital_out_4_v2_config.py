@@ -6,7 +6,7 @@
 
 # Industrial Digital Out 4 Bricklet 2.0 communication config
 
-from openhab_common import *
+from openhab_commonconfig import *
 
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
