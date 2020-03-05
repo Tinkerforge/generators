@@ -334,14 +334,14 @@ set_spitfp_baudrate = {
     'function_id': 234,
     'name': 'Set SPITFP Baudrate',
     'elements': [('Bricklet Port', 'char', 1, 'in', {}),
-                ('Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 1400000})],
+                 ('Baudrate', 'uint32', 1, 'in', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 1400000})],
     'since_firmware': {'*': [2, 0, 0],
-                    'DC': [2, 3, 3],
-                    'IMU': [2, 3, 3],
-                    'IMU V2': [2, 0, 5],
-                    'Master': [2, 4, 3],
-                    'Servo': [2, 3, 2],
-                    'Stepper': [2, 3, 3]},
+                       'DC': [2, 3, 3],
+                       'IMU': [2, 3, 3],
+                       'IMU V2': [2, 0, 5],
+                       'Master': [2, 4, 3],
+                       'Servo': [2, 3, 2],
+                       'Stepper': [2, 3, 3]},
     'doc': ['af', {
     'en':
     """
@@ -383,7 +383,7 @@ get_spitfp_baudrate = {
     'function_id': 235,
     'name': 'Get SPITFP Baudrate',
     'elements': [('Bricklet Port', 'char', 1, 'in', {}),
-                ('Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 1400000})],
+                 ('Baudrate', 'uint32', 1, 'out', {'unit': 'Baud', 'range': (400000, 2000000), 'default': 1400000})],
     'since_firmware': {'*': [2, 0, 0],
                        'DC': [2, 3, 3],
                        'IMU': [2, 3, 3],
@@ -410,10 +410,10 @@ get_spitfp_error_count = {
     'function_id': 237,
     'name': 'Get SPITFP Error Count',
     'elements': [('Bricklet Port', 'char', 1, 'in', {}),
-                ('Error Count ACK Checksum', 'uint32', 1, 'out', {}),
-                ('Error Count Message Checksum', 'uint32', 1, 'out', {}),
-                ('Error Count Frame', 'uint32', 1, 'out', {}),
-                ('Error Count Overflow', 'uint32', 1, 'out', {})],
+                 ('Error Count ACK Checksum', 'uint32', 1, 'out', {}),
+                 ('Error Count Message Checksum', 'uint32', 1, 'out', {}),
+                 ('Error Count Frame', 'uint32', 1, 'out', {}),
+                 ('Error Count Overflow', 'uint32', 1, 'out', {})],
     'since_firmware': {'*': [2, 0, 0],
                        'DC': [2, 3, 3],
                        'IMU': [2, 3, 3],
@@ -547,7 +547,6 @@ normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
 """
 }]
 }
-
 
 for i in [2, 4]:
     for blueprint in [set_spitfp_baudrate,
@@ -703,7 +702,6 @@ Gibt den aktuellen Bootloader-Modus zurück, siehe :func:`Set Bootloader Mode`.
 """
 }]
 })
-
 
 common_packets.append({
 'feature': 'tng',
@@ -1102,7 +1100,6 @@ Funktionsaufrufe auf bestehenden führen zu undefiniertem Verhalten.
 """
 }]
 })
-
 
 common_packets.append({
 'feature': 'comcu_bricklet',
