@@ -544,8 +544,6 @@ class IPConnection(object):
 
     BROADCAST_UID = 0
 
-    PLUGIN_CHUNK_SIZE = 32
-
     # enumeration_type parameter to the enumerate callback
     ENUMERATION_TYPE_AVAILABLE = 0
     ENUMERATION_TYPE_CONNECTED = 1
