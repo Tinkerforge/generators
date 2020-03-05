@@ -847,12 +847,15 @@ def format_value_with_tooltip(element, value, scale, unit):
             break
 
     if result is None:
-        for exponent in range(10, 65):
-            if value == -2 ** (exponent - 1):
-                result = '⟨abbr title=«{0}{1}»⟩-2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent - 1)
+        for exponent in range(9, 65):
+            if value == -2 ** exponent:
+                result = '⟨abbr title=«{0}{1}»⟩-2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
                 break
-            elif value == 2 ** (exponent - 1) - 1:
-                result = '⟨abbr title=«{0}{1}»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent - 1)
+            elif value == 2 ** exponent:
+                result = '⟨abbr title=«{0}{1}»⟩2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
+                break
+            if value == -2 ** exponent + 1:
+                result = '⟨abbr title=«{0}{1}»⟩-2⟨sup⟩{2}⟨/sup⟩ + 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
                 break
             elif value == 2 ** exponent - 1:
                 result = '⟨abbr title=«{0}{1}»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
