@@ -353,6 +353,7 @@ Befehlsstruktur dargestellt.
         ccf = self.get_shell_functions('ccf')
         c = self.get_shell_callbacks()
         vf = self.get_shell_functions('vf')
+        if_ = self.get_shell_functions('if')
         api_str = ''
 
         if bf:
@@ -371,6 +372,9 @@ Befehlsstruktur dargestellt.
 
         if vf:
             api_str += common.select_lang(common.vf_str).format(vf)
+
+        if if_:
+            api_str += common.select_lang(common.if_str).format(if_)
 
         call_meta = common.format_simple_element_meta([('<uid>', 'String', 1, 'in'),
                                                        ('<function>', 'String', 1, 'in')])

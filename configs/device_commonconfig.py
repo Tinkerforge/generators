@@ -470,7 +470,7 @@ get_protocol1_bricklet_name = {
                    'Master': [2, 0, 0],
                    'Servo': [2, 0, 0],
                    'Stepper': [2, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Returns the firmware and protocol version and the name of the Bricklet for a
@@ -499,7 +499,7 @@ write_bricklet_plugin = {
              ('Offset', 'uint8', 1, 'in', {}),
              ('Chunk', 'uint8', 32, 'in', {})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Writes 32 bytes of firmware to the bricklet attached at the given port.
@@ -528,7 +528,7 @@ read_bricklet_plugin = {
              ('Offset', 'uint8', 1, 'in', {}),
              ('Chunk', 'uint8', 32, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Reads 32 bytes of firmware from the bricklet attached at the given port.
@@ -633,7 +633,7 @@ common_packets.append({
 'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'Bootloader Mode'}),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Bootloader Status'})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Sets the bootloader mode and returns the status after the requested
@@ -670,7 +670,7 @@ common_packets.append({
 'name': 'Copy Firmware',
 'elements': [('Status', 'uint8', 1, 'out', {'constant_group': 'Copy Status'})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 TODO
@@ -692,7 +692,7 @@ common_packets.append({
 'name': 'Get Bootloader Mode',
 'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'Bootloader Mode'})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
@@ -712,7 +712,7 @@ common_packets.append({
 'name': 'Set Write Firmware Pointer',
 'elements': [('Pointer', 'uint32', 1, 'in', {'unit': 'Byte'})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 TODO
@@ -731,7 +731,7 @@ common_packets.append({
 'name': 'Set Write Firmware Pointer',
 'elements': [('Pointer', 'uint32', 1, 'in', {'unit': 'Byte'})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Sets the firmware pointer for :func:`Write Firmware`. The pointer has
@@ -796,7 +796,7 @@ common_packets.append({
 'elements': [('Data', 'uint8', 64, 'in', {}),
              ('Status', 'uint8', 1, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 TODO
@@ -816,7 +816,7 @@ common_packets.append({
 'elements': [('Data', 'uint8', 64, 'in', {}),
              ('Status', 'uint8', 1, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Writes 64 Bytes of firmware at the position as written by
@@ -1111,7 +1111,7 @@ common_packets.append({
 'name': 'Write UID',
 'elements': [('UID', 'uint32', 1, 'in', {})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Writes a new UID into flash. If you want to set a new UID
@@ -1139,7 +1139,7 @@ common_packets.append({
 'name': 'Read UID',
 'elements': [('UID', 'uint32', 1, 'out', {})],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Returns the current UID as an integer. Encode as

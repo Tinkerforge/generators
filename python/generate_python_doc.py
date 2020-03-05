@@ -344,6 +344,7 @@ Konstanten
         ccf = self.get_python_functions('ccf')
         c = self.get_python_callbacks()
         vf = self.get_python_functions('vf')
+        if_ = self.get_python_functions('if')
         api_str = ''
 
         if bf:
@@ -361,6 +362,9 @@ Konstanten
 
         if vf:
             api_str += common.select_lang(common.vf_str).format(vf)
+
+        if if_:
+            api_str += common.select_lang(common.if_str).format(if_)
 
         article = 'ein'
 

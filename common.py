@@ -121,6 +121,30 @@ das dazugehörige IP Connection Objekt verbunden ist.
 """
 }
 
+if_str = {
+    'en': """
+Internal Functions
+^^^^^^^^^^^^^^^^^^
+
+Internal functions are used for maintenance tasks such as flashing a new firmware
+of changing the UID of a Bricklet. These task should be performed using
+Brick Viewer instead of using the internal functions directly.
+
+{0}
+""",
+    'de': """
+Interne Funktionen
+^^^^^^^^^^^^^^^^^^
+
+Interne Funktionen werden für Wartungsaufgaben, wie zum Beispiel das Flashen
+einer neuen Firmware oder das Ändern der UID eines Bricklets, verwendet. Diese
+Aufgaben sollten mit Brick Viewer durchgeführt werden, anstelle die internen
+Funktionen direkt zu verwenden.
+
+{0}
+"""
+}
+
 lang = 'en'
 
 html_escape_table = {
@@ -2387,7 +2411,8 @@ class Packet(object):
                            'af',
                            'ccf',
                            'c',
-                           'vf'])
+                           'vf',
+                           'if'])
 
     def __init__(self, raw_data, device):
         self.raw_data = raw_data

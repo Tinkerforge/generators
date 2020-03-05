@@ -146,6 +146,7 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
         af = self.get_tcpip_functions('af')
         ccf = self.get_tcpip_functions('ccf')
         c = self.get_tcpip_callbacks()
+        if_ = self.get_tcpip_functions('if')
         api_str = ''
 
         if bf:
@@ -160,6 +161,9 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
 
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         c)
+
+        if if_:
+            api_str += common.select_lang(common.if_str).format(if_)
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
                                               self.specialize_tcpip_doc_function_links(common.select_lang(self.get_doc())),
