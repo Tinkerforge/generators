@@ -29,8 +29,9 @@ import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import openhab_common
 
-class OpenHABZipGenerator(common.ZipGenerator):
+class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 
@@ -133,15 +134,6 @@ class OpenHABZipGenerator(common.ZipGenerator):
         self.tmp_source_meta_inf_services_dir = os.path.join(self.tmp_source_dir, 'META-INF', 'services')
         self.tmp_source_com_tinkerforge_dir   = os.path.join(self.tmp_source_dir, 'com', 'tinkerforge')
         self.tmp_examples_dir                 = os.path.join(self.generation_dir, 'examples')
-
-    def get_bindings_name(self):
-        return 'openhab'
-
-    def get_doc_null_value_name(self):
-        return 'null'
-
-    def get_doc_formatted_param(self, element):
-        return element.get_name().camel
 
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
