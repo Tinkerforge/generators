@@ -178,8 +178,12 @@ class OpenHABZipGenerator(common.ZipGenerator):
 
         if os.path.isdir(binding_dir):
             print("Binding directory exists from last run, skipping clone of openhab2-addons repo.")
-            with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons')):
-                common.execute(['git', 'pull'])
+            try:
+                with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons')):
+                    common.execute(['git', 'pull'])
+            except Exception as e:
+                print("Failed to pull: {}".format(e))
+                pass
         else:
             with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..')):
                 common.execute(['git', 'clone', '-b', '2.5.x', 'https://github.com/openhab/openhab2-addons', '--depth=1'])
