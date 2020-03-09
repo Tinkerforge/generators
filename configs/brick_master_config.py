@@ -3584,7 +3584,7 @@ Don't use this function directly.
 """,
 'de':
 """
-Diese Funktion wird Tinkerforge-Intern genutzt um initial den 
+Diese Funktion wird Tinkerforge-Intern genutzt um initial den
 Bootstrapper und Bootloader auf Bricklets zu flashen.
 
 Falls die Notwendigkeit besteht einen Bootstrapper/Bootloader
@@ -3618,7 +3618,7 @@ Don't use this function directly.
 """,
 'de':
 """
-Diese Funktion wird Tinkerforge-Intern genutzt um initial den 
+Diese Funktion wird Tinkerforge-Intern genutzt um initial den
 Bootstrapper und Bootloader auf Bricklets zu flashen.
 
 Falls die Notwendigkeit besteht einen Bootstrapper/Bootloader
@@ -3644,7 +3644,7 @@ This function is only available in Master Brick hardware version >= 3.0.
 Enables/disables all four Bricklets if set to true/false.
 
 If you disable the Bricklets the power supply to the Bricklets will be disconnected.
-The Bricklets will loose all configurations if disabled.
+The Bricklets will lose all configurations if disabled.
 """,
 'de':
 """
