@@ -12,7 +12,7 @@ from openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 9],
+    'api_version': [2, 0, 10],
     'category': 'Brick',
     'device_identifier': 13,
     'name': 'Master',
@@ -3558,6 +3558,123 @@ Gibt den Mesh-AP-Status der WIFI Extension 2.0 zurück.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Bricklet XMC Flash Config',
+'elements': [('Config', 'uint32', 1, 'in', {}),
+             ('Parameter1', 'uint32', 1, 'in', {}),
+             ('Parameter2', 'uint32', 1, 'in', {}),
+             ('Data', 'uint8', 52, 'in', {}),
+             ('Return Value', 'uint32', 1, 'out', {}),
+             ('Return Data', 'uint8', 60, 'out', {})],
+'since_firmware': [2, 5, 0],
+'doc': ['af', {
+'en':
+"""
+This function is for internal use to flash the initial
+bootstrapper and bootloader to the Bricklets.
+
+If you need to flash a boostrapper/bootloader (for exmaple
+because you made your own Bricklet from scratch) please
+take a look at our open source flash and test tool at
+`https://github.com/Tinkerforge/flash-test <https://github.com/Tinkerforge/flash-test>`__
+
+Don't use this function directly.
+""",
+'de':
+"""
+Diese Funktion wird Tinkerforge-Intern genutzt um initial den 
+Bootstrapper und Bootloader auf Bricklets zu flashen.
+
+Falls die Notwendigkeit besteht einen Bootstrapper/Bootloader
+zu flashen (zum Beispiel weil ein eigenes Bricklet entwickelet
+wurde) bitte nicht diese Funktion direkt benutzen.
+
+Dafür kann unser Open Source Flash/Test-Tool genutzt werden:
+`https://github.com/Tinkerforge/flash-test <https://github.com/Tinkerforge/flash-test>`__
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Bricklet XMC Flash Data',
+'elements': [('Data', 'uint8', 64, 'in', {}),
+             ('Return Data', 'uint32', 1, 'out', {})],
+'since_firmware': [2, 5, 0],
+'doc': ['af', {
+'en':
+"""
+This function is for internal use to flash the initial
+bootstrapper and bootloader to the Bricklets.
+
+If you need to flash a boostrapper/bootloader (for exmaple
+because you made your own Bricklet from scratch) please
+take a look at our open source flash and test tool at
+`https://github.com/Tinkerforge/flash-test <https://github.com/Tinkerforge/flash-test>`__
+
+Don't use this function directly.
+""",
+'de':
+"""
+Diese Funktion wird Tinkerforge-Intern genutzt um initial den 
+Bootstrapper und Bootloader auf Bricklets zu flashen.
+
+Falls die Notwendigkeit besteht einen Bootstrapper/Bootloader
+zu flashen (zum Beispiel weil ein eigenes Bricklet entwickelet
+wurde) bitte nicht diese Funktion direkt benutzen.
+
+Dafür kann unser Open Source Flash/Test-Tool genutzt werden:
+`https://github.com/Tinkerforge/flash-test <https://github.com/Tinkerforge/flash-test>`__
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Bricklet Enable',
+'elements': [('Enable', 'bool', 1, 'in', {})],
+'since_firmware': [2, 5, 0],
+'doc': ['af', {
+'en':
+"""
+This function is only available in Master Brick hardware version >= 3.0.
+
+Enables/disables all four Bricklets if set to true/false.
+
+If you disable the Bricklets the power supply to the Bricklets will be disconnected.
+The Bricklets will loose all configurations if disabled.
+""",
+'de':
+"""
+Diese Funktion ist nur nur Master Brick Hardware Version >= 3.0 verfügbar.
+
+Aktiviert/Deaktiviert alle vier Bricklets wenn auf *true*/*false* gesetzt.
+
+Wenn die Bricklets deaktiviert werden, wird die Stromversorgung zu den Bricklets getrennt.
+Die Bricklets verlieren dabei ihre aktuelle konfiguration.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Bricklet Enable',
+'elements': [('Enabled', 'bool', 1, 'out', {})],
+'since_firmware': [2, 5, 0],
+'doc': ['af', {
+'en':
+"""
+Returns *true* if the Bricklets are enabled, *false* otherwise.
+""",
+'de':
+"""
+Gibt *true* zurück wenn die Bricklets aktiviert sind und *false* wenn sie deaktiviert sind.
+"""
+}]
+})
+
 
 com['examples'].append({
 'name': 'Stack Status',
