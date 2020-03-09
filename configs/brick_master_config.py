@@ -3688,10 +3688,26 @@ current_channel = oh_generic_old_style_channel('Stack Current', 'Stack Current',
 current_channel['callbacks'][0]['transform'] = 'new QuantityType<>(current{divisor}, {unit})'
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports(),
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [],
-    'channels': [voltage_channel, current_channel],
+    'channels': [voltage_channel, current_channel,
+        {
+            'id': 'Enable Bricklets',
+            'type': 'Enable Bricklets',
+            'label': 'Enable Bricklets',
+
+            'setters': [{
+                'packet': 'Set Bricklet Enable',
+                'packet_params': ['cmd == OnOffType.ON'],
+                'command_type': "OnOffType"
+            }],
+
+            'getters': [{
+                'packet': 'Get Bricklet Enable',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}]
+        }
+    ],
     'channel_types': [
         oh_generic_channel_type('Stack Voltage', 'Number:ElectricPotential', 'Stack Voltage',
             update_style='Callback Period',
@@ -3703,6 +3719,9 @@ com['openhab'] = {
             description='The stack current in A. The stack current is the current that is drawn via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.',
             read_only=True,
             pattern='%.3f %unit%'),
+        oh_generic_channel_type('Enable Bricklets', 'Switch', 'Enable Bricklets',
+            update_style=None,
+            description='Enables/disables all four Bricklets. If you disable the Bricklets the power supply to the Bricklets will be disconnected.'),
     ],
     'actions': [
         'Get Stack Voltage',
@@ -3763,5 +3782,8 @@ com['openhab'] = {
         'Get Wifi2 Mesh Common Status',
         'Get Wifi2 Mesh Client Status',
         'Get Wifi2 Mesh AP Status',
+
+        {'fn': 'Set Bricklet Enable', 'refreshs': ['Enable Bricklets']},
+        'Get Bricklet Enable'
     ]
 }
