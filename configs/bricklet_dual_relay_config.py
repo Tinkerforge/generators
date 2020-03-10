@@ -221,15 +221,18 @@ def relay_channel(channel):
 
         'getters': [{
             'packet': 'Get State',
+            'element': 'Relay{}'.format(channel),
             'transform': 'value.relay{} ? OnOffType.ON : OnOffType.OFF'.format(channel)}],
 
         'callbacks': [{
             'packet': 'Monoflop Done',
+            'element': 'State',
             'filter': 'relay == {}'.format(channel),
             'transform': 'state ? OnOffType.ON : OnOffType.OFF'}],
 
         'setters': [{
             'packet': 'Set Selected State',
+            'element': 'State',
             'packet_params': ['(short){}'.format(channel), 'cmd == OnOffType.ON'],
             'command_type': "OnOffType",
         }],
@@ -244,6 +247,7 @@ def monoflop_channel(channel):
 
         'getters': [{
             'packet': 'Get Monoflop',
+            'element': 'State',
             'packet_params': ['(short) {}'.format(channel)],
             'transform': 'value.state ? OnOffType.ON : OnOffType.OFF'}],
 

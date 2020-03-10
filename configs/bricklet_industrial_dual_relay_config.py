@@ -228,15 +228,18 @@ def relay_channel(channel):
 
         'getters': [{
             'packet': 'Get Value',
+            'element': 'Channel{}'.format(channel),
             'transform': 'value.channel{} ? OnOffType.ON : OnOffType.OFF'.format(channel)}],
 
         'callbacks': [{
             'packet': 'Monoflop Done',
+            'element': 'Value',
             'filter': 'channel == {}'.format(channel),
             'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
         'setters': [{
             'packet': 'Set Selected Value',
+            'element': 'Value',
             'packet_params': [str(channel), 'cmd == OnOffType.ON'],
             'command_type': "OnOffType"
         }],
@@ -251,6 +254,7 @@ def monoflop_channel(channel):
 
         'getters': [{
             'packet': 'Get Monoflop',
+            'element': 'Value',
             'packet_params': ['{}'.format(channel)],
             'transform': 'value.value ? OnOffType.ON : OnOffType.OFF'}],
 

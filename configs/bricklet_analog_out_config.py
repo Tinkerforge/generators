@@ -140,10 +140,12 @@ com['openhab'] = {
             'type': 'Voltage',
             'getters': [{
                 'packet': 'Get {title_words}',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
             'setters':[{
                 'packet': 'Set {title_words}',
+                'element': '{title_words}',
                 'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)'],
                 'command_type': 'Number',
             }],
@@ -161,9 +163,11 @@ com['openhab'] = {
             'type': 'Mode',
             'getters': [{
                 'packet': 'Get {title_words}',
+                'element': '{title_words}',
                 'transform': 'new QuantityType<>(value, SmartHomeUnits.ONE)'}],
             'setters':[{
                 'packet': 'Set {title_words}',
+                'element': '{title_words}',
                 'packet_params': ['cmd.shortValue()'],
                 'command_type': 'Number',
             }],

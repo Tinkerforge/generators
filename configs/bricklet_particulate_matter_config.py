@@ -384,11 +384,13 @@ def concentration_channel(size):
 
         'getters': [{
             'packet': 'Get PM Concentration',
+            'element': 'PM{}'.format(size),
             'packet_params': [],
             'transform': 'new QuantityType<>(value.pm{}{{divisor}}, {{unit}})'.format(size)}],
 
         'callbacks': [{
             'packet': 'PM Concentration',
+            'element': 'PM{}'.format(size),
             'transform': 'new QuantityType<>(pm{}{{divisor}}, {{unit}})'.format(size)}],
 
         'java_unit': 'SmartHomeUnits.MICROGRAM_PER_CUBICMETRE',
@@ -410,11 +412,13 @@ def count_channel(size):
 
         'getters': [{
             'packet': 'Get PM Count',
+            'element': 'Greater{:02}um'.format(size),
             'packet_params': [],
             'transform': 'new QuantityType<>(value.greater{:02}um{{divisor}}, {{unit}})'.format(size)}],
 
         'callbacks': [{
             'packet': 'PM Count',
+            'element': 'Greater{:02}um'.format(size),
             'transform': 'new QuantityType<>(greater{:02}um{{divisor}}, {{unit}})'.format(size)}],
 
         'java_unit': 'SmartHomeUnits.ONE',
@@ -453,10 +457,12 @@ com['openhab'] = {
 
                     'getters': [{
                         'packet': 'Get Enable',
+                        'element': 'Enable',
                         'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
                     'setters': [{
                         'packet': 'Set Enable',
+                        'element': 'Enable',
                         'packet_params': ['cmd == OnOffType.ON'],
                         'command_type': "OnOffType",
                     }],

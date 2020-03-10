@@ -422,16 +422,18 @@ def voltage_channel(index):
 
             'getters': [{
                 'packet': 'Get Voltage',
+                'element': 'Voltage',
                 'packet_params': ['(short){}'.format(index)],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
             'callbacks': [{
                 'filter': 'channel == {0}'.format(index),
                 'packet': 'Voltage',
+                'element': 'Voltage',
                 'transform': 'new QuantityType<>(voltage{divisor}, {unit})'}],
 
             'java_unit': 'SmartHomeUnits.VOLT',
-            'divisor': '1000.0',
+            'divisor': 1000.0,
             'is_trigger_channel': False
         }
 

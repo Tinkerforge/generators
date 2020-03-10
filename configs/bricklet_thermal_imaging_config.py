@@ -764,6 +764,7 @@ com['openhab'] = {
 
         'getters': [{
             'packet': 'Get {title_words}',
+            'element': 'Image',
             'packet_params': [],
             'transform': 'new RawType(Helper.convertThermalHighContrastImage(value, cfg.colorPalette, logger, cfg.scaleFactor), "image/png")'}],
         'is_trigger_channel': False
@@ -775,9 +776,10 @@ com['openhab'] = {
 
         'getters': [{
             'packet': 'Get {title_words}',
+            'element': 'Image',
             'packet_params': [],
             'transform': 'new RawType(Helper.convertThermalTemperatureImage(value, cfg.colorPalette, logger, cfg.scaleFactor), "image/png")'}],
-        'is_trigger_channel': False
+        'is_trigger_channel': False,
     }, {
         'id': 'Spotmeter Mean Temperature',
         'label': 'Spotmeter Mean Temperature',
@@ -880,6 +882,7 @@ com['openhab'] = {
 
         'getters': [{
             'packet': 'Get Statistics',
+            'element': 'FFC Status',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.ffcStatus, {unit})'}],
         'java_unit': 'SmartHomeUnits.ONE',

@@ -574,6 +574,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Is Over Current',
+                'element': 'Over',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
             'callbacks': [{

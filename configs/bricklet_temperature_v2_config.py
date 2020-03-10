@@ -130,12 +130,14 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Heater Configuration',
+                'element': 'Heater Config',
                 'packet_params': ['cmd == OnOffType.ON ? BrickletTemperatureV2.HEATER_CONFIG_ENABLED : BrickletTemperatureV2.HEATER_CONFIG_DISABLED'],
                 'command_type': "OnOffType"
             }],
 
             'getters': [{
                 'packet': 'Get Heater Configuration',
+                'element': 'Heater Config',
                 'transform': 'value == BrickletTemperatureV2.HEATER_CONFIG_ENABLED ? OnOffType.ON : OnOffType.OFF'}]
         }
     ],

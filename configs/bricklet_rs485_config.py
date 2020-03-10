@@ -2042,6 +2042,7 @@ def modbus_error_channel(name_space, name_camel, desc):
 
         'getters': [{
             'packet': 'Get Modbus Common Error Count',
+            'element': '{} Error Count'.format(name_space),
             'transform': 'new DecimalType(value.{}ErrorCount)'.format(name_camel)
         }],
     }
@@ -2247,11 +2248,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Count',
+                'element': 'Overrun Error Count',
                 'transform': 'new DecimalType(value.overrunErrorCount)'
             }],
 
             'callbacks': [{
                 'packet': 'Error Count',
+                'element': 'Overrun Error Count',
                 'transform': 'new DecimalType(overrunErrorCount)'}],
         }, {
             'id': 'Parity Error Count',
@@ -2260,11 +2263,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Count',
+                'element': 'Parity Error Count',
                 'transform': 'new DecimalType(value.parityErrorCount)'
             }],
 
             'callbacks': [{
                 'packet': 'Error Count',
+                'element': 'Parity Error Count',
                 'transform': 'new DecimalType(parityErrorCount)'}],
         }]
         + modbus_common_error_channels + [
@@ -2275,8 +2280,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Buffer Status',
+                'element': 'Send Buffer Used',
                 'transform': 'new QuantityType<>(value.sendBufferUsed, SmartHomeUnits.BYTE)'
             }],
+
+            'java_unit': 'SmartHomeUnits.BYTE',
         }, {
             'id': 'Receive Buffer Used',
             'label': 'Receive Buffer Used',
@@ -2284,8 +2292,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Buffer Status',
+                'element': 'Receive Buffer Used',
                 'transform': 'new QuantityType<>(value.receiveBufferUsed, SmartHomeUnits.BYTE)'
             }],
+
+            'java_unit': 'SmartHomeUnits.BYTE',
         }],
     'channel_types': [
         oh_generic_channel_type('Overrun Error Count', 'Number', 'Overrun Error Count',

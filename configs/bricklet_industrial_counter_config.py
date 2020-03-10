@@ -614,12 +614,14 @@ def signal_data_channel(idx, data_words, data_headless, divisor, java_unit):
 
         'getters': [{
             'packet': 'Get Signal Data',
+            'element': data_words,
             'packet_params': [str(idx)],
             'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(data_headless)
         }],
         'callbacks': [{
-                'packet': 'All Signal Data',
-                'transform': 'new QuantityType<>({}[{}]{{divisor}}, {{unit}})'.format(data_headless, idx)
+            'packet': 'All Signal Data',
+            'element': data_words,
+            'transform': 'new QuantityType<>({}[{}]{{divisor}}, {{unit}})'.format(data_headless, idx)
         }],
 
         'java_unit': java_unit,
@@ -635,12 +637,14 @@ def value_channel(idx):
 
         'getters': [{
             'packet': 'Get Signal Data',
+            'element': 'Value',
             'packet_params': [str(idx)],
             'transform': 'value.value ? OnOffType.ON : OnOffType.OFF'
         }],
         'callbacks': [{
-                'packet': 'All Signal Data',
-                'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)
+            'packet': 'All Signal Data',
+            'element': 'Value',
+            'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)
         }],
     }
 
@@ -657,15 +661,18 @@ def counter_channel(idx):
 
             'getters': [{
                 'packet': 'Get Counter',
+                'element': 'Counter',
                 'packet_params': [str(idx)],
                 'transform': 'new QuantityType<>(value, {unit})'
             }],
             'callbacks': [{
                 'packet': 'All Counter',
+                'element': 'Counter',
                 'transform': 'new QuantityType<>(counter[{}], {{unit}})'.format(idx)
             }],
             'setters': [{
                 'packet': 'Set Counter',
+                'element': 'Counter',
                 'packet_params': [str(idx), 'cmd.longValue()'],
                 'command_type': 'Number',
             }],

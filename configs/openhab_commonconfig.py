@@ -5,7 +5,7 @@ def oh_generic_channel_imports():
             'org.eclipse.smarthome.core.library.unit.SmartHomeUnits']
 
 
-def oh_generic_channel(id_, type_, unit, divisor=1.0, label=None, description=None):
+def oh_generic_channel(id_, type_, unit, divisor=1.0, label=None, description=None, element_name='{title_words}'):
     return {
         'id': id_,
         'label': label,
@@ -16,11 +16,13 @@ def oh_generic_channel(id_, type_, unit, divisor=1.0, label=None, description=No
 
         'getters': [{
             'packet': 'Get {title_words}',
+            'element': element_name,
             'packet_params': [],
             'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
         'callbacks': [{
             'packet': '{title_words}',
+            'element': element_name,
             'transform': 'new QuantityType<>({headless}{divisor}, {unit})',
             'filter': 'true'}],
 
@@ -29,7 +31,7 @@ def oh_generic_channel(id_, type_, unit, divisor=1.0, label=None, description=No
         'is_trigger_channel': False
     }
 
-def oh_generic_old_style_channel(id_, type_, unit, divisor=1.0, cast_literal='', has_threshold=True):
+def oh_generic_old_style_channel(id_, type_, unit, divisor=1.0, cast_literal='', has_threshold=True, element_name='{title_words}'):
     return {
         'id': id_,
         'type': type_,
@@ -38,11 +40,13 @@ def oh_generic_old_style_channel(id_, type_, unit, divisor=1.0, cast_literal='',
         'dispose_code': """this.set{camel}CallbackPeriod(0);""",
         'getters': [{
             'packet': 'Get {title_words}',
+            'element': element_name,
             'packet_params': [],
             'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
         'callbacks': [{
             'packet': '{title_words}',
+            'element': element_name,
             'transform': 'new QuantityType<>({headless}{divisor}, {unit})',
             'filter': 'true'}],
 

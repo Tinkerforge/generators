@@ -374,6 +374,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Is Pressed',
+                'element': 'Pressed',
                 'transform': "value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED"}],
 
             'callbacks': [{

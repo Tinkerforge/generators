@@ -232,10 +232,6 @@ com['openhab'] = {
             'label': 'Motion Detected',
             'type': 'system.trigger',
 
-            'getters': [{
-                'packet': 'Get Motion Detected',
-                'transform': '""'}],
-
             'callbacks': [{
                 'packet': 'Motion Detected',
                 'transform': '""'}],
@@ -246,9 +242,6 @@ com['openhab'] = {
             'id': 'Detection Cycle Ended',
             'label': 'Detection Cycle Ended',
             'type': 'system.trigger',
-            'getters': [{
-                'packet': 'Get Motion Detected',
-                'transform': '""'}],
 
             'callbacks': [{
                 'packet': 'Detection Cycle Ended',
@@ -265,10 +258,12 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Indicator',
+                'element': 'Top Left',
                 'transform': 'new QuantityType<>(value.topLeft, {unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
+                'element': 'Top Left',
                 'packet_params': ['cmd.intValue()', 'this.getIndicator().topRight', 'this.getIndicator().bottom'],
                 'command_type': 'Number',
             }],
@@ -280,10 +275,12 @@ com['openhab'] = {
             'type': 'Indicator',
             'getters': [{
                 'packet': 'Get Indicator',
+                'element': 'Top Right',
                 'transform': 'new QuantityType<>(value.topRight, {unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
+                'element': 'Top Right',
                 'packet_params': [ 'this.getIndicator().topLeft', 'cmd.intValue()', 'this.getIndicator().bottom'],
                 'command_type': 'Number',
             }],
@@ -295,10 +292,12 @@ com['openhab'] = {
             'type': 'Indicator',
             'getters': [{
                 'packet': 'Get Indicator',
+                'element': 'Bottom',
                 'transform': 'new QuantityType<>(value.bottom, {unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
+                'element': 'Bottom',
                 'packet_params': ['this.getIndicator().topLeft', 'this.getIndicator().topRight', 'cmd.intValue()'],
                 'command_type': 'Number',
             }],

@@ -562,11 +562,13 @@ com['openhab'] = {
             'type': 'IAQ Index',
             'getters': [{
                 'packet': 'Get {title_words}',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value.iaqIndex{divisor}, {unit})'}],
 
             'callbacks': [{
                 'packet': '{title_words}',
+                'element': '{title_words}',
                 'transform': 'new QuantityType<>(iaqIndex{divisor}, {unit})'}],
 
             'java_unit': 'SmartHomeUnits.ONE',
@@ -577,11 +579,13 @@ com['openhab'] = {
             'type': 'IAQ Index Accuracy',
             'getters': [{
                 'packet': 'Get IAQ Index',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value.iaqIndexAccuracy{divisor}, {unit})'}],
 
             'callbacks': [{
                 'packet': 'IAQ Index',
+                'element': '{title_words}',
                 'transform': 'new QuantityType<>(iaqIndexAccuracy{divisor}, {unit})',
                 'filter': 'true'}],
 

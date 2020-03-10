@@ -878,11 +878,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Status',
+                'element': 'Has Fix',
                 'packet_params': [],
                 'transform': "value.hasFix ? OnOffType.ON : OnOffType.OFF"}],
 
             'callbacks': [{
                 'packet': 'Status',
+                'element': 'Has Fix',
                 'transform': "hasFix ? OnOffType.ON : OnOffType.OFF"}],
 
             'is_trigger_channel': False,
@@ -892,11 +894,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Status',
+                'element': 'Satellites View',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.satellitesView, SmartHomeUnits.ONE)"}],
 
             'callbacks': [{
                 'packet': 'Status',
+                'element': 'Satellites View',
                 'transform': "new QuantityType<>(satellitesView, SmartHomeUnits.ONE)"}],
 
             'is_trigger_channel': False
@@ -906,56 +910,68 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Altitude',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.altitude / 100.0, SIUnits.METRE)"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
+                'element': '{title_words}',
                 'transform': "new QuantityType<>(altitude / 100.0, SIUnits.METRE)"}],
 
             'is_trigger_channel': False,
+            'java_unit': 'SIUnits.METRE',
         },  {
             'id': 'Geoidal Separation',
             'type': 'Geoidal Separation',
 
             'getters': [{
                 'packet': 'Get Altitude',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.geoidalSeparation / 100.0, SIUnits.METRE)"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
+                'element': '{title_words}',
                 'transform': "new QuantityType<>(geoidalSeparation / 100.0, SIUnits.METRE)"}],
 
-            'is_trigger_channel': False
+            'is_trigger_channel': False,
+            'java_unit': 'SIUnits.METRE',
         },  {
             'id': 'Course',
             'type': 'Course',
 
             'getters': [{
                 'packet': 'Get Motion',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
 
             'callbacks': [{
                 'packet': 'Motion',
+                'element': '{title_words}',
                 'transform': "new QuantityType<>(course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
 
             'is_trigger_channel': False,
+            'java_unit': 'SmartHomeUnits.DEGREE_ANGLE'
         },  {
             'id': 'Speed',
             'type': 'Speed',
 
             'getters': [{
                 'packet': 'Get Motion',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
 
             'callbacks': [{
                 'packet': 'Motion',
+                'element': '{title_words}',
                 'transform': "new QuantityType<>(speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
 
-            'is_trigger_channel': False
+            'is_trigger_channel': False,
+            'java_unit': 'SIUnits.KILOMETRE_PER_HOUR'
         },  {
             'id': 'Date Time',
             'type': 'Date Time',

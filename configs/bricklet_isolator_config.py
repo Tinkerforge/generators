@@ -321,11 +321,13 @@ def statistics_channel(name_words, name_headless):
 
         'getters': [{
             'packet': 'Get Statistics',
+            'element': name_words,
             'packet_params': [],
             'transform': 'new QuantityType<>(value.{}, SmartHomeUnits.ONE)'.format(name_headless)}],
 
         'callbacks': [{
             'packet': 'Statistics',
+            'element': name_words,
             'transform': 'new QuantityType<>({}, SmartHomeUnits.ONE)'.format(name_headless),
             'filter': 'true'}],
 
@@ -384,11 +386,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Statistics',
+                'element': 'Connected Bricklet Device Identifier',
                 'packet_params': [],
                 'transform': 'new StringType(Helper.getDeviceName(value.connectedBrickletDeviceIdentifier))'}],
 
             'callbacks': [{
                 'packet': 'Statistics',
+                'element': 'Connected Bricklet Device Identifier',
                 'transform': 'new StringType(Helper.getDeviceName(connectedBrickletDeviceIdentifier))',
                 'filter': 'true'}],
 
@@ -399,11 +403,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Statistics',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': 'new StringType(value.connectedBrickletUID)'}],
 
             'callbacks': [{
                 'packet': 'Statistics',
+                'element': '{title_words}',
                 'transform': 'new StringType(connectedBrickletUID)',
                 'filter': 'true'}],
 

@@ -383,16 +383,18 @@ def current_channel(index):
 
             'getters': [{
                 'packet': 'Get Current',
+                'element': 'Current',
                 'packet_params': ['(short){}'.format(index)],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
             'callbacks': [{
                 'filter': 'sensor == {0}'.format(index),
                 'packet': 'Current',
+                'element': 'Current',
                 'transform': 'new QuantityType<>(current{divisor}, {unit})'}],
 
             'java_unit': 'SmartHomeUnits.AMPERE',
-            'divisor': '1000000000.0',
+            'divisor': 1000000000.0,
             'is_trigger_channel': False
         }
 

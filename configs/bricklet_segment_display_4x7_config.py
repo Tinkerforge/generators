@@ -194,9 +194,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Segments',
+                'element': 'Brightness',
                 'transform': 'new QuantityType<>(value.brightness, SmartHomeUnits.ONE)'}],
             'setters': [{
                 'packet': 'Set Segments',
+                'element': 'Brightness',
                 'packet_params': ['this.getSegments().segments', 'cmd.shortValue()', 'this.getSegments().colon'],
                 'command_type': 'Number'
             }],
@@ -207,9 +209,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Segments',
+                'element': 'Colon',
                 'transform': 'value.colon ? OnOffType.ON : OnOffType.OFF'}],
             'setters': [{
                 'packet': 'Set Segments',
+                'element': 'Colon',
                 'packet_params': ['this.getSegments().segments', 'this.getSegments().brightness', 'cmd == OnOffType.ON'],
                 'command_type': 'OnOffType'
             }],
@@ -219,10 +223,12 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Segments',
+                'element': 'Segments',
                 'transform': 'new QuantityType<>((int)value.segments[0] << 24 | (int)value.segments[1] << 16 | (int)value.segments[2] << 8 | (int)value.segments[3], SmartHomeUnits.ONE)'
             }],
             'setters': [{
                 'packet': 'Set Segments',
+                'element': 'Segments',
                 'packet_params': ['new short[]{(short)(cmd.intValue() >> 24), (short)(cmd.intValue() >> 16), (short)(cmd.intValue() >> 8), (short)(cmd.intValue())}', 'this.getSegments().brightness', 'this.getSegments().colon'],
                 'command_type': 'Number'
             }],

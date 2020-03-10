@@ -386,10 +386,12 @@ def energyDataChannel(id_, type_, unit='SmartHomeUnits.ONE', divisor=1):
         'type': type_,
         'getters': [{
             'packet': 'Get Energy Data',
+            'element': '{title_words}',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.{headless}{divisor}, {unit})'}],
         'callbacks': [{
             'packet': 'Energy Data',
+            'element': '{title_words}',
             'transform': 'new QuantityType<>({headless}{divisor}, {unit})'}],
 
         'java_unit': unit,

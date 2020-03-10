@@ -652,11 +652,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Frame Error Count',
+                'element': '{title_words}',
                 'transform': 'new DecimalType(value.overrunErrorCount)'
             }],
 
             'callbacks': [{
                 'packet': 'Frame Error Count',
+                'element': '{title_words}',
                 'transform': 'new DecimalType(overrunErrorCount)'}],
         }, {
             'id': 'Framing Error Count',
@@ -665,11 +667,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Frame Error Count',
+                'element': '{title_words}',
                 'transform': 'new DecimalType(value.framingErrorCount)'
             }],
 
             'callbacks': [{
                 'packet': 'Frame Error Count',
+                'element': '{title_words}',
                 'transform': 'new DecimalType(framingErrorCount)'}],
         }],
     'channel_types': [

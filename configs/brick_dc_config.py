@@ -857,10 +857,12 @@ com['openhab'] = {
             'type': 'Current Velocity',
             'getters': [{
                 'packet': 'Get Current Velocity',
+                'element': 'Velocity',
                 'packet_params': [],
                 'transform': 'new DecimalType(value)'}],
             'callbacks': [{
                 'packet': 'Current Velocity',
+                'element': 'Velocity',
                 'transform': 'new DecimalType(velocity)'}],
 
             'is_trigger_channel': False,

@@ -95,6 +95,7 @@ com['openhab'] = {
             'type': 'Input Voltage',
             'getters': [{
                 'packet': 'Get {title_words}',
+                'element': 'Voltage',
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
@@ -106,10 +107,12 @@ com['openhab'] = {
             'type': 'Output Voltage',
             'getters': [{
                 'packet': 'Get {title_words}',
+                'element': 'Voltage',
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
             'setters':[{
                 'packet': 'Set {title_words}',
+                'element': 'Voltage',
                 'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)'],
                 'command_type': 'Number',
             }],

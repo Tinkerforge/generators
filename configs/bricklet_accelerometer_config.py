@@ -529,13 +529,15 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Acceleration',
+                'element': axis.upper(),
                 'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis)}],
 
             'callbacks': [{
                 'packet': 'Acceleration',
+                'element': axis.upper(),
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis)}],
             'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
-            'divisor': '1000.0',
+            'divisor': 1000.0,
             'is_trigger_channel': False
         } for axis in ['x', 'y', 'z']
     ] + [{
@@ -545,6 +547,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Temperature',
+                'element': 'Temperature',
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
             'java_unit': 'SIUnits.CELSIUS',
             'is_trigger_channel': False
@@ -565,6 +568,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Is LED On',
+                'element': 'On',
                 'transform': 'value? OnOffType.ON : OnOffType.OFF'}]
         }
     ],

@@ -335,6 +335,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Is Enabled',
+                'element': '{title_words}',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'
             }]
         }, {
@@ -345,6 +346,7 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set {title_words}',
+                'element': '{title_words}',
                 'packet_params': ['(int)(cmd.doubleValue() * 1000000.0)'],
                 'command_type': "Number"
             }],
@@ -352,7 +354,10 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get {title_words}',
-                'transform': 'new QuantityType<>(value / 1000000.0, SmartHomeUnits.AMPERE)'}]
+                'element': '{title_words}',
+                'transform': 'new QuantityType<>(value / 1000000.0, SmartHomeUnits.AMPERE)'}],
+            'java_unit': 'SmartHomeUnits.AMPERE',
+            'divisor': 1000000
         },
         {
             'id': 'Voltage',
@@ -362,13 +367,17 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set {title_words}',
+                'element': '{title_words}',
                 'packet_params': ['(int)(cmd.doubleValue() * 1000.0)'],
                 'command_type': "Number"
             }],
 
             'getters': [{
                 'packet': 'Get {title_words}',
-                'transform': 'new QuantityType<>(value / 1000.0, SmartHomeUnits.VOLT)'}]
+                'element': '{title_words}',
+                'transform': 'new QuantityType<>(value / 1000.0, SmartHomeUnits.VOLT)'}],
+            'java_unit': 'SmartHomeUnits.VOLT',
+            'divisor': 1000
         }
     ],
     'channel_types': [

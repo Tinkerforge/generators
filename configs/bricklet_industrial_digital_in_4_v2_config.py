@@ -416,11 +416,13 @@ this.setChannelLEDConfig({0}, channelCfg.ledConfig);""".format(index),
 
             'getters': [{
                 'packet': 'Get Value',
+                'element': 'Value',
                 'transform': 'value[{0}] ? OnOffType.ON : OnOffType.OFF'.format(index)}],
 
             'callbacks': [{
                 'filter': 'channel == {0}'.format(index),
                 'packet': 'Value',
+                'element': 'Value',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
             'is_trigger_channel': False
@@ -436,6 +438,7 @@ def edge_count_channel(index):
 
             'getters': [{
                 'packet': 'Get Edge Count',
+                'element': 'Count',
                 'packet_params': [str(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 

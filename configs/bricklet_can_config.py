@@ -771,6 +771,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Log',
+                'element': '{title_words}',
                 'transform': 'new DecimalType(value.writeErrorLevel)'
             }],
         }, {
@@ -779,6 +780,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Log',
+                'element': '{title_words}',
                 'transform': 'new DecimalType(value.readErrorLevel)'
             }],
         }, {
@@ -787,6 +789,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Log',
+                'element': '{title_words}',
                 'transform': 'value.transceiverDisabled ? OnOffType.ON : OnOffType.OFF'
             }],
         }, {
@@ -795,6 +798,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Log',
+                'element': '{title_words}',
                 'transform': 'new DecimalType(value.writeTimeoutCount)'
             }],
         }, {
@@ -803,6 +807,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Log',
+                'element': '{title_words}',
                 'transform': 'new DecimalType(value.readRegisterOverflowCount)'
             }],
         }, {
@@ -811,6 +816,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Log',
+                'element': '{title_words}',
                 'transform': 'new DecimalType(value.readBufferOverflowCount)'
             }],
         }],

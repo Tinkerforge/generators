@@ -559,11 +559,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Count',
+                'element': 'Error Count Overrun',
                 'transform': 'new DecimalType(value.errorCountOverrun)'
             }],
 
             'callbacks': [{
                 'packet': 'Error Count',
+                'element': 'Error Count Overrun',
                 'transform': 'new DecimalType(errorCountOverrun)'}],
         }, {
             'id': 'Parity Error Count',
@@ -572,11 +574,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error Count',
+                'element': 'Error Count Parity',
                 'transform': 'new DecimalType(value.errorCountParity)'
             }],
 
             'callbacks': [{
                 'packet': 'Error Count',
+                'element': 'Error Count Parity',
                 'transform': 'new DecimalType(errorCountParity)'}],
         }, {
             'id': 'Send Buffer Used',
@@ -585,8 +589,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Buffer Status',
+                'element': 'Send Buffer Used',
                 'transform': 'new QuantityType<>(value.sendBufferUsed, SmartHomeUnits.BYTE)'
             }],
+
+            'java_unit': 'SmartHomeUnits.BYTE',
         }, {
             'id': 'Receive Buffer Used',
             'label': 'Receive Buffer Used',
@@ -594,8 +601,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Buffer Status',
+                'element': 'Receive Buffer Used',
                 'transform': 'new QuantityType<>(value.receiveBufferUsed, SmartHomeUnits.BYTE)'
             }],
+
+            'java_unit': 'SmartHomeUnits.BYTE',
         }],
     'channel_types': [
         oh_generic_channel_type('Overrun Error Count', 'Number', 'Overrun Error Count',

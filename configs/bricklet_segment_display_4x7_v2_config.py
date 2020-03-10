@@ -343,9 +343,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Brightness',
+                'element': 'Brightness',
                 'transform': 'new QuantityType<>(value, SmartHomeUnits.ONE)'}],
             'setters': [{
                 'packet': 'Set Brightness',
+                'element': 'Brightness',
                 'packet_params': ['cmd.shortValue()'],
                 'command_type': 'Number'
             }],
@@ -355,10 +357,12 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Selected Segment',
+                'element': 'Value',
                 'packet_params': ['32'],
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
             'setters': [{
                 'packet': 'Set Selected Segment',
+                'element': 'Value',
                 'packet_params': ['32', 'cmd == OnOffType.ON'],
                 'command_type': 'OnOffType'
             }],
@@ -368,10 +372,12 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Selected Segment',
+                'element': 'Value',
                 'packet_params': ['33'],
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
             'setters': [{
                 'packet': 'Set Selected Segment',
+                'element': 'Value',
                 'packet_params': ['33', 'cmd == OnOffType.ON'],
                 'command_type': 'OnOffType'
             }],
@@ -382,10 +388,12 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Selected Segment',
+                'element': 'Value',
                 'packet_params': ['34'],
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
             'setters': [{
                 'packet': 'Set Selected Segment',
+                'element': 'Value',
                 'packet_params': ['34', 'cmd == OnOffType.ON'],
                 'command_type': 'OnOffType'
             }],

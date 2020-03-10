@@ -360,10 +360,12 @@ def electrode_channel(idx):
         'type': 'Electrode',
         'getters': [{
             'packet': 'Get Touch State',
+            'element': 'State',
             'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
         'callbacks': [{
             'packet': 'Touch State',
+            'element': 'State',
             'transform': 'state[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
     }
 
@@ -423,10 +425,12 @@ com['openhab'] = {
             'type': 'Electrode',
             'getters': [{
                 'packet': 'Get Touch State',
+                'element': 'State',
                 'transform': 'value[12] ? OnOffType.ON : OnOffType.OFF'}],
 
             'callbacks': [{
                 'packet': 'Touch State',
+                'element': 'State',
                 'transform': 'state[12] ? OnOffType.ON : OnOffType.OFF'}]
         },
         {

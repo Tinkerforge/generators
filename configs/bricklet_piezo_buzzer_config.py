@@ -134,9 +134,13 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Beep',
-                'packet_params': ['cmd.longValue() * 1000'],
+                'element': 'Duration',
+                'packet_params': ['(long)(cmd.doubleValue() * 1000)'],
                 'command_type': "Number"
             }],
+
+            'java_unit': 'SmartHomeUnit.Second',
+            'divisor': 1000,
         }, {
             'id': 'Morse Code',
             'type': 'Morse Code',
@@ -144,6 +148,7 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Morse Code',
+                'element': 'Morse',
                 'packet_params': ['cmd.toString()'],
                 'command_type': "StringType"
             }],

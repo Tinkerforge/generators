@@ -180,14 +180,17 @@ com['openhab'] = {
 
         'getters': [{
             'packet': 'Get State',
+            'element': 'State',
             'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
         'callbacks': [{
             'packet': 'Monoflop Done',
+            'element': 'State',
             'transform': 'state ? OnOffType.ON : OnOffType.OFF'}],
 
         'setters': [{
             'packet': 'Set State',
+            'element': 'State',
             'packet_params': ['cmd == OnOffType.ON'],
             'command_type': "OnOffType",
         }],
@@ -198,6 +201,7 @@ com['openhab'] = {
 
         'getters': [{
             'packet': 'Get Monoflop',
+            'element': 'State',
             'transform': 'value.state ? OnOffType.ON : OnOffType.OFF'}],
 
         'setters': [{

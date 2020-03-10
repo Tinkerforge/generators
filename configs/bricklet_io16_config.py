@@ -621,12 +621,14 @@ def input_channel(idx):
 
             'getters': [{
                 'packet': 'Get Port',
+                'element': 'Value Mask',
                 'packet_params': ["\'a\'" if idx <= 7 else "\'b\'"],
                 'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx % 8)}],
 
             'callbacks': [{
                 'filter': 'port == {} && (interruptMask & (1 << {})) > 0'.format("\'a\'" if idx <= 7 else "\'b\'", idx % 8),
                 'packet': 'Interrupt',
+                'element': 'Value Mask',
                 'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx % 8)}],
 
             'init_code':"""this.setPortConfiguration({port}, (short)(1 << {idx_mod}), 'i', cfg.pinConfiguration{idx} % 2 == 1);
@@ -644,11 +646,13 @@ def output_channel(idx):
 
             'getters': [{
                 'packet': 'Get Port',
+                'element': 'Value Mask',
                 'packet_params': ["\'a\'" if idx <= 7 else "\'b\'"],
                 'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx % 8)}],
 
             'setters': [{
                 'packet': 'Set Selected Values',
+                'element': 'Value Mask',
                 'packet_params': ["\'a\'" if idx <= 7 else "\'b\'", '(short)(1 << {})'.format(idx % 8), 'cmd == OnOffType.ON ? (short)0xFF : (short)0'],
                 'command_type': "OnOffType"
             }],
@@ -656,6 +660,7 @@ def output_channel(idx):
 
             'callbacks': [{
                 'packet': 'Monoflop Done',
+                'element': 'Value Mask',
                 'filter': 'port == {} && (selectionMask & (1 << {})) > 0'.format("\'a\'" if idx <= 7 else "\'b\'", idx % 8),
                 'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx % 8)}],
 
@@ -672,6 +677,7 @@ def monoflop_channel(idx):
 
         'getters': [{
             'packet': 'Get Port Monoflop',
+            'element': 'Value',
             'packet_params': ["\'a\'" if idx <= 7 else "\'b\'", '(short){}'.format(idx % 8)],
             'transform': 'value.value > 0 ? OnOffType.ON : OnOffType.OFF'}],
 
@@ -698,6 +704,7 @@ def edge_count_channel(index):
 
             'getters': [{
                 'packet': 'Get Edge Count',
+                'element': 'Count',
                 'packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 

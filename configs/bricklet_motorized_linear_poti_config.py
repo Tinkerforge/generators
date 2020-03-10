@@ -256,11 +256,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get {title_words}',
+                'element': 'Position',
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value.position{divisor}, {unit})'}],
 
             'setters': [{
                 'packet': 'Set {title_words}',
+                'element': 'Position',
                 'packet_params': ['cmd.intValue()', 'channelCfg.smoothDriveMode ? 1 : 0', 'channelCfg.holdPosition'],
                 'command_type': 'Number',
             }],

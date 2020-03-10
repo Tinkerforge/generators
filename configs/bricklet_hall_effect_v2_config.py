@@ -293,11 +293,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Counter',
+                'element': 'Count',
                 'packet_params': ['channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 
             'callbacks': [{
                 'packet': 'Counter',
+                'element': 'Count',
                 'transform': 'new QuantityType<>(count, {unit})'
             }],
 

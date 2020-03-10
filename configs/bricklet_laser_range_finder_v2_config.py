@@ -492,6 +492,7 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Enable',
+                'element': 'Enable',
                 'packet_params': ['cmd == OnOffType.ON'],
                 'command_type': "OnOffType",
             }],
@@ -499,6 +500,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Enable',
+                'element': 'Enable',
                 'transform': 'value? OnOffType.ON : OnOffType.OFF'}]
         }
     ],

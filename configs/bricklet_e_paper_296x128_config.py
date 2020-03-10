@@ -622,10 +622,12 @@ com['openhab'] = {
         'type': 'Draw Status',
         'getters': [{
             'packet': 'Get Draw Status',
+            'element': '{title_words}',
             'transform': 'new DecimalType(value)'}],
 
         'callbacks': [{
             'packet': 'Draw Status',
+            'element': '{title_words}',
             'transform': 'new DecimalType(drawStatus)'}]
     }],
     'channel_types': [

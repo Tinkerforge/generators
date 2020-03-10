@@ -1388,26 +1388,32 @@ com['openhab'] = {
             'type': 'State',
             'callbacks': [{
                 'packet': 'Reader State Changed',
+                'element': 'State',
                 'transform': 'new DecimalType(state)'
                 }, {
                 'packet': 'Cardemu State Changed',
+                'element': 'State',
                 'transform': 'new DecimalType(state)'
                 }, {
                 'packet': 'P2P State Changed',
+                'element': 'State',
                 'transform': 'new DecimalType(state)'
                 }
             ],
             'getters': [{
                 'predicate': 'cfg.mode == 1',
                 'packet': 'Reader Get State',
+                'element': 'State',
                 'transform': 'new DecimalType(value.state)'
             }, {
                 'predicate': 'cfg.mode == 2',
                 'packet': 'Cardemu Get State',
+                'element': 'State',
                 'transform': 'new DecimalType(value.state)'
             }, {
                 'predicate': 'cfg.mode == 3',
                 'packet': 'P2P Get State',
+                'element': 'State',
                 'transform': 'new DecimalType(value.state)'
             }, ]
         }],

@@ -171,9 +171,6 @@ com['openhab'] = {
             'id': 'Motion Detected',
             'label': 'Motion Detected',
             'type': 'system.trigger',
-            'getters': [{
-                'packet': 'Get Motion Detected',
-                'transform': '""'}],
 
             'callbacks': [{
                 'packet': 'Motion Detected',
@@ -185,10 +182,6 @@ com['openhab'] = {
             'id': 'Detection Cycle Ended',
             'label': 'Detection Cycle Ended',
             'type': 'system.trigger',
-
-            'getters': [{
-                'packet': 'Get Motion Detected',
-                'transform': '""'}],
 
             'callbacks': [{
                 'packet': 'Detection Cycle Ended',

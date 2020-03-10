@@ -484,10 +484,12 @@ com['openhab'] = {
             'divisor': 1000.0,
             'getters': [{
                 'packet': 'Get Timestamp',
+                'element': 'Timestamp',
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
             'callbacks': [{
                 'packet': 'Date Time',
+                'element': 'Timestamp',
                 'transform': 'new QuantityType<>(timestamp{divisor}, {unit})'}]
         }, {
             'id': 'Alarm Triggered',

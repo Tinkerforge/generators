@@ -345,6 +345,7 @@ this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperat
 
             'getters': [{
                 'packet': 'Get Heater Configuration',
+                'element': 'Heater Config',
                 'transform': 'value == BrickletHumidityV2.HEATER_CONFIG_ENABLED ? OnOffType.ON : OnOffType.OFF'}]
         }
     ],

@@ -569,6 +569,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Is LED On',
+                'element': 'On',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'
             }]
         }

@@ -254,10 +254,12 @@ com['openhab'] = {
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Get Button State',
+                'elements': 'Button L',
                 'transform': 'value.buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{
                 'packet': 'State Changed',
+                'elements': 'Button L',
                 'transform': 'buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'is_trigger_channel': True
@@ -269,10 +271,12 @@ com['openhab'] = {
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Get Button State',
+                'elements': 'Button R',
                 'transform': 'value.buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{
                 'packet': 'State Changed',
+                'elements': 'Button R',
                 'transform': 'buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'is_trigger_channel': True
@@ -285,10 +289,12 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get LED State',
+                'element': 'LED L',
                 'transform': 'value.ledL == BrickletDualButton.LED_STATE_ON ? OnOffType.ON : OnOffType.OFF'}],
 
             'setters': [{
                 'packet': 'Set Selected LED State',
+                'element': 'LED',
                 'packet_params': ['BrickletDualButton.LED_LEFT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF'],
                 'command_type': 'OnOffType'
             }],
@@ -302,10 +308,12 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get LED State',
+                'element': 'LED R',
                 'transform': 'value.ledR == BrickletDualButton.LED_STATE_ON ? OnOffType.ON : OnOffType.OFF'}],
 
             'setters': [{
                 'packet': 'Set Selected LED State',
+                'element': 'LED',
                 'packet_params': ['BrickletDualButton.LED_RIGHT', 'cmd == OnOffType.ON? BrickletDualButton.LED_STATE_ON : BrickletDualButton.LED_STATE_OFF'],
                 'command_type': 'OnOffType'
             }],

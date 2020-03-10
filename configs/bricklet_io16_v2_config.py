@@ -629,11 +629,13 @@ def input_channel(idx):
 
             'getters': [{
                 'packet': 'Get Value',
+                'element': 'Value',
                 'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'callbacks': [{
                 'filter': 'channel == {}'.format(idx),
                 'packet': 'Input Value',
+                'element': 'Value',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'init_code':"""this.setConfiguration({0}, 'i', cfg.pinConfiguration{0} % 2 == 1);
@@ -651,10 +653,12 @@ def output_channel(idx):
 
             'getters': [{
                 'packet': 'Get Value',
+                'element': 'Value',
                 'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'setters': [{
                 'packet': 'Set Selected Value',
+                'element': 'Value',
                 'packet_params': [str(idx), 'cmd == OnOffType.ON'],
                 'command_type': "OnOffType",
             }],
@@ -662,6 +666,7 @@ def output_channel(idx):
 
             'callbacks': [{
                 'packet': 'Monoflop Done',
+                'element': 'Value',
                 'filter': 'channel == {}'.format(idx),
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
@@ -678,6 +683,7 @@ def monoflop_channel(idx):
 
         'getters': [{
             'packet': 'Get Monoflop',
+            'element': 'Value',
             'packet_params': [str(idx)],
             'transform': 'value.value ? OnOffType.ON : OnOffType.OFF'}],
 
@@ -705,6 +711,7 @@ def edge_count_channel(idx):
 
             'getters': [{
                 'packet': 'Get Edge Count',
+                'element': 'Count',
                 'packet_params': [str(idx), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 

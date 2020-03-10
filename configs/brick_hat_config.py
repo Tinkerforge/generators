@@ -312,6 +312,7 @@ com['openhab'] = {
 
             'setters': [{
                 'packet': 'Set Bricklet Power',
+                'element': 'Bricklet Power',
                 'packet_params': ['cmd == OnOffType.ON'],
                 'command_type': "OnOffType",
             }],
@@ -319,17 +320,20 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Bricklet Power',
+                'element': 'Bricklet Power',
                 'transform': 'value? OnOffType.ON : OnOffType.OFF'}]
         }, {
             'id': 'USB Voltage',
             'type': 'USB Voltage',
             'getters': [{
                 'packet': 'Get Voltages',
+                'element': 'Voltage USB',
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value.voltageUSB{divisor}, {unit})'}],
 
             'callbacks': [{
                 'packet': 'Voltages',
+                'element': 'Voltage USB',
                 'transform': 'new QuantityType<>(voltageUSB{divisor}, {unit})',
                 'filter': 'true'}],
 
@@ -344,11 +348,13 @@ com['openhab'] = {
             'type': 'DC Voltage',
             'getters': [{
                 'packet': 'Get Voltages',
+                'element': 'Voltage DC',
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value.voltageDC{divisor}, {unit})'}],
 
             'callbacks': [{
                 'packet': 'Voltages',
+                'element': 'Voltage DC',
                 'transform': 'new QuantityType<>(voltageDC{divisor}, {unit})',
                 'filter': 'true'}],
 

@@ -1069,19 +1069,23 @@ com['examples'].append({
 'incomplete': True # because of special random movement logic in callback
 })
 
-def data_channel(name_words, name_headless, type_, divisor, unit):
+def data_channel(name_words, name_headless, type_, divisor=None, unit=None):
     return {
         'id': name_words,
         'type': name_words,
         'getters': [{
             'packet': 'Get All Data',
+            'element': name_words,
             'packet_params': [],
-            'transform': 'new {type}(value.{headless}{divisor}{unit})'.format(type=type_,headless=name_headless,divisor=divisor,unit=unit)}],
+            'transform': 'new {type}(value.{headless}{divisor}{unit})'.format(type=type_,headless=name_headless,divisor=' / ' + str(divisor) if divisor is not None else '',unit=', ' + unit if unit is not None else '')}],
         'callbacks': [{
             'packet': 'All Data',
-            'transform': 'new {type}({headless}{divisor}{unit})'.format(type=type_,headless=name_headless,divisor=divisor,unit=unit)}],
+            'element': name_words,
+            'transform': 'new {type}({headless}{divisor}{unit})'.format(type=type_,headless=name_headless,divisor=' / ' + str(divisor) if divisor is not None else '',unit=', ' + unit if unit is not None else '')}],
 
-        'is_trigger_channel': False
+        'is_trigger_channel': False,
+        'java_unit': unit,
+        'divisor': divisor,
     }
 
 com['openhab'] = {
@@ -1106,12 +1110,12 @@ com['openhab'] = {
     this.setMinimumVoltage((int)(cfg.minimumVoltage.doubleValue() * 1000.0));""",
 
     'channels': [
-        data_channel('Velocity', 'currentVelocity', 'DecimalType', '', ''),
-        data_channel('Position', 'currentPosition', 'DecimalType', '', ''),
-        data_channel('Remaining Steps', 'remainingSteps', 'DecimalType', '', ''),
-        data_channel('Stack Voltage', 'stackVoltage', 'QuantityType<>', '/ 1000.0', ', SmartHomeUnits.VOLT'),
-        data_channel('External Voltage', 'externalVoltage', 'QuantityType<>', '/ 1000.0', ', SmartHomeUnits.VOLT'),
-        data_channel('Current Consumption', 'currentConsumption', 'QuantityType<>', '/ 1000.0', ', SmartHomeUnits.AMPERE'),
+        data_channel('Current Velocity', 'currentVelocity', 'DecimalType', 1, None),
+        data_channel('Current Position', 'currentPosition', 'DecimalType', 1, None),
+        data_channel('Remaining Steps', 'remainingSteps', 'DecimalType', 1, None),
+        data_channel('Stack Voltage', 'stackVoltage', 'QuantityType<>', 1000.0, 'SmartHomeUnits.VOLT'),
+        data_channel('External Voltage', 'externalVoltage', 'QuantityType<>', 1000.0, 'SmartHomeUnits.VOLT'),
+        data_channel('Current Consumption', 'currentConsumption', 'QuantityType<>', 1000.0, 'SmartHomeUnits.AMPERE'),
         {
             'id': 'State',
             'type': 'State',
@@ -1157,11 +1161,11 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Velocity', 'Number', 'Velocity',
+        oh_generic_channel_type('Current Velocity', 'Number', 'Velocity',
             update_style=None,
             description='The current velocity of the stepper motor in steps per second.',
             read_only=True),
-        oh_generic_channel_type('Position', 'Number', 'Position',
+        oh_generic_channel_type('Current Position', 'Number', 'Position',
             update_style=None,
             description='The current position of the stepper motor in steps. On startup the position is 0.',
             read_only=True),

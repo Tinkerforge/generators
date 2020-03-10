@@ -340,10 +340,12 @@ def output_channel(idx):
 
             'getters': [{
                 'packet': 'Get Value',
+                'element': 'Value',
                 'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'setters': [{
                 'packet': 'Set Selected Value',
+                'element': 'Value',
                 'packet_params': [str(idx), 'cmd == OnOffType.ON'],
                 'command_type': "OnOffType"
             }],
@@ -351,6 +353,7 @@ def output_channel(idx):
 
             'callbacks': [{
                 'packet': 'Monoflop Done',
+                'element': 'Value',
                 'filter': 'channel == {}'.format(idx),
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
@@ -365,6 +368,7 @@ def monoflop_channel(idx):
 
         'getters': [{
             'packet': 'Get Monoflop',
+            'element': 'Value',
             'packet_params': [str(idx)],
             'transform': 'value.value ? OnOffType.ON : OnOffType.OFF'}],
 

@@ -703,6 +703,7 @@ this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency.shortValue());"""
             'type': 'Sensor Connected',
             'getters': [{
                 'packet': 'Is Sensor Connected',
+                'element': 'Connected',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}]
         },
     ],

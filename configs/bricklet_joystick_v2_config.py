@@ -289,51 +289,37 @@ com['openhab'] = {
     ],
     'init_code':"""this.setPositionCallbackConfiguration(cfg.positionUpdateInterval, true);""",
     'dispose_code': """this.setPositionCallbackConfiguration(0, true);""",
-    'channels': [ {
-            'id': 'Position X',
+    'channels': [{
+            'id': 'Position {}'.format(axis),
             'type': 'Position',
-            'label': 'Position X',
+            'label': 'Position {}'.format(axis),
 
             'getters': [{
                 'packet': 'Get Position',
+                'element': axis,
                 'packet_params': [],
-                'transform': 'new QuantityType<>(value.x{divisor}, {unit})'}],
+                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Position',
-                'transform': 'new QuantityType<>(x{divisor}, {unit})'}],
+                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
 
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 1,
             'is_trigger_channel': False
-        }, {
-            'id': 'Position Y',
-            'type': 'Position',
-            'label': 'Position Y',
-
-            'getters': [{
-                'packet': 'Get Position',
-                'packet_params': [],
-                'transform': 'new QuantityType<>(value.y{divisor}, {unit})'}],
-
-            'callbacks': [{
-                'packet': 'Position',
-                'transform': 'new QuantityType<>(y{divisor}, {unit})'}],
-
-            'java_unit': 'SmartHomeUnits.ONE',
-            'divisor': 1,
-            'is_trigger_channel': False
-        }, {
+        } for axis in ['X', 'Y']] + [{
             'id': 'Pressed',
             'label': 'Pressed',
             'description': 'Triggers if the button is pressed or released',
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Is Pressed',
+                'element': 'Pressed',
                 'transform': 'value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{
                 'packet': 'Pressed',
+                'element': 'Pressed',
                 'transform': 'pressed ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'is_trigger_channel': True,

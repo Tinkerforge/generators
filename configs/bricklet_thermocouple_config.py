@@ -521,10 +521,12 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error State',
+                'element': 'Over Under',
                 'transform': 'value.overUnder ? OnOffType.ON : OnOffType.OFF'}],
 
             'callbacks': [{
                 'packet': 'Error State',
+                'element': 'Over Under',
                 'transform': 'overUnder ? OnOffType.ON : OnOffType.OFF'}],
 
             'is_trigger_channel': False
@@ -535,10 +537,12 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Error State',
+                'element': 'Open Circuit',
                 'transform': 'value.openCircuit ? OnOffType.ON : OnOffType.OFF'}],
 
             'callbacks': [{
                 'packet': 'Error State',
+                'element': 'Open Circuit',
                 'transform': 'openCircuit ? OnOffType.ON : OnOffType.OFF'}],
 
             'is_trigger_channel': False

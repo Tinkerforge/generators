@@ -362,15 +362,18 @@ def relay_channel(channel):
 
         'getters': [{
             'packet': 'Get Value',
+            'element': 'Value Mask',
             'transform': '(value & (1 << {})) == 1 ? OnOffType.ON : OnOffType.OFF'.format(channel)}],
 
         'callbacks': [{
             'packet': 'Monoflop Done',
+            'element': 'Value Mask',
             'filter': '(selectionMask & (1 << {})) == 1'.format(channel),
             'transform': '(valueMask & (1 << {})) == 1 ? OnOffType.ON : OnOffType.OFF'.format(channel)}],
 
         'setters': [{
             'packet': 'Set Value',
+            'element': 'Value Mask',
             'packet_params': ['cmd == OnOffType.ON ? (getValue() | (1 << {0})) : (getValue() & ~(1 << {0}))'.format(channel)],
             'command_type': "OnOffType",
         }],
@@ -385,11 +388,13 @@ def monoflop_channel(channel):
 
         'getters': [{
             'packet': 'Get Monoflop',
+            'element': 'Value',
             'packet_params': ['(short) {}'.format(channel)],
             'transform': 'value.value == 1 ? OnOffType.ON : OnOffType.OFF'}],
 
         'setters': [{
             'packet': 'Set Monoflop',
+            'element': 'Value Mask',
             'packet_params': ['1 << {}'.format(channel), 'channelCfg.monoflopValue.booleanValue() ? (1 << {}) : 0'.format(channel), 'channelCfg.monoflopDuration'],
             'command_type': "StringType", # Command type has to be string type to be able to use command options.
         }],

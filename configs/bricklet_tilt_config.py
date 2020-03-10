@@ -177,9 +177,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Tilt State',
+                'element': 'State',
                 'transform': 'value == 1 ? OnOffType.ON : OnOffType.OFF'}],
             'callbacks': [{
                 'packet': 'Tilt State',
+                'element': 'State',
                 'transform': 'state == 1 ? OnOffType.ON : OnOffType.OFF'}]
         }, {
             'id': 'Vibrating',
@@ -187,9 +189,11 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Tilt State',
+                'element': 'State',
                 'transform': 'value == 2 ? OnOffType.ON : OnOffType.OFF'}],
             'callbacks': [{
                 'packet': 'Tilt State',
+                'element': 'State',
                 'transform': 'state == 2 ? OnOffType.ON : OnOffType.OFF'}]
         }
     ],

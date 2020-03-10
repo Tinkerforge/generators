@@ -344,11 +344,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Edge Count',
+                'element': 'Count',
                 'packet_params': ['channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 
             'callbacks': [{
                 'packet': 'Edge Count',
+                'element': 'Count',
                 'transform': 'new QuantityType<>(count, {unit})'
             }],
 
@@ -361,6 +363,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Value',
+                'element': 'Value',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
             'is_trigger_channel': False

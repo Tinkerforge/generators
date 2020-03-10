@@ -597,11 +597,13 @@ def input_channel(idx):
 
             'getters': [{
                 'packet': 'Get Value',
+                'element': 'Value Mask',
                 'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'callbacks': [{
                 'filter': '(interruptMask & (1 << {})) > 0'.format(idx),
                 'packet': 'Interrupt',
+                'element': 'Value Mask',
                 'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'init_code':"""this.setInterrupt((short)(this.getInterrupt() | (1 << {idx})));
@@ -619,10 +621,12 @@ def output_channel(idx):
 
             'getters': [{
                 'packet': 'Get Value',
+                'element': 'Value Mask',
                 'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'setters': [{
                 'packet': 'Set Selected Values',
+                'element': 'Value Mask',
                 'packet_params': ['(short)(1 << {})'.format(idx), 'cmd == OnOffType.ON ? (short)0xFF : (short)0'],
                 'command_type': "OnOffType",
             }],
@@ -630,6 +634,7 @@ def output_channel(idx):
 
             'callbacks': [{
                 'packet': 'Monoflop Done',
+                'element': 'Value Mask',
                 'filter': '(selectionMask & (1 << {})) > 0'.format(idx),
                 'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
@@ -645,6 +650,7 @@ def monoflop_channel(idx):
 
         'getters': [{
             'packet': 'Get Monoflop',
+            'element': 'Value',
             'packet_params': ['(short){}'.format(idx)],
             'transform': 'value.value > 0 ? OnOffType.ON : OnOffType.OFF'}],
 
@@ -672,6 +678,7 @@ def edge_count_channel(index):
 
             'getters': [{
                 'packet': 'Get Edge Count',
+                'element': 'Count',
                 'packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 

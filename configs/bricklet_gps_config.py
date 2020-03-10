@@ -681,11 +681,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Status',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': "value.fix > 1 ? OnOffType.ON : OnOffType.OFF"}],
 
             'callbacks': [{
                 'packet': 'Status',
+                'element': '{title_words}',
                 'transform': "fix > 1 ? OnOffType.ON : OnOffType.OFF"}],
 
             'is_trigger_channel': False,
@@ -695,11 +697,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Status',
+                'element': 'Satellites View',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.satellitesView, SmartHomeUnits.ONE)"}],
 
             'callbacks': [{
                 'packet': 'Status',
+                'element': 'Satellites View',
                 'transform': "new QuantityType<>(satellitesView, SmartHomeUnits.ONE)"}],
 
             'is_trigger_channel': False
@@ -709,11 +713,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Status',
+                'element': 'Satellites Used',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.satellitesUsed, SmartHomeUnits.ONE)"}],
 
             'callbacks': [{
                 'packet': 'Status',
+                'element': 'Satellites Used',
                 'transform': "new QuantityType<>(satellitesUsed, SmartHomeUnits.ONE)"}],
 
             'is_trigger_channel': False
@@ -723,13 +729,16 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Altitude',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.altitude / 100.0, SIUnits.METRE)"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
+                'element': '{title_words}',
                 'transform': "new QuantityType<>(altitude / 100.0, SIUnits.METRE)"}],
 
+            'java_unit': 'SIUnits.METRE',
             'is_trigger_channel': False,
         },  {
             'id': 'Geoidal Separation',
@@ -737,13 +746,16 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Altitude',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.geoidalSeparation / 100.0, SIUnits.METRE)"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
+                'element': '{title_words}',
                 'transform': "new QuantityType<>(geoidalSeparation / 100.0, SIUnits.METRE)"}],
 
+            'java_unit': 'SIUnits.METRE',
             'is_trigger_channel': False
         },  {
             'id': 'Course',
@@ -751,13 +763,16 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Motion',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
 
             'callbacks': [{
                 'packet': 'Motion',
+                'element': '{title_words}',
                 'transform': "new QuantityType<>(course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
 
+            'java_unit': 'SmartHomeUnits.DEGREE_ANGLE',
             'is_trigger_channel': False,
         },  {
             'id': 'Speed',
@@ -765,13 +780,17 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Motion',
+                'element': '{title_words}',
                 'packet_params': [],
                 'transform': "new QuantityType<>(value.speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
 
             'callbacks': [{
                 'packet': 'Motion',
+                'element': '{title_words}',
                 'transform': "new QuantityType<>(speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
 
+
+            'java_unit': 'SIUnits.KILOMETRE_PER_HOUR',
             'is_trigger_channel': False
         },  {
             'id': 'Date Time',

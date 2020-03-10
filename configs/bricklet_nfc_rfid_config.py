@@ -508,10 +508,12 @@ com['openhab'] = {
             'type': 'State',
             'callbacks': [{
                 'packet': 'State Changed',
+                'element': 'State',
                 'transform': 'new DecimalType(state)'
             }],
             'getters': [{
                 'packet': 'Get State',
+                'element': 'State',
                 'transform': 'new DecimalType(value.state)'
             }]
         }],

@@ -64,31 +64,13 @@ com['examples'].append({
 'functions': [('getter', ('Get USB Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], [])]
 })
 
+usb_voltage_channel = oh_generic_channel('USB Voltage', 'USB Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0, element_name='Voltage')
+usb_voltage_channel['callbacks'][0]['transform'] = 'new QuantityType<>(voltage{divisor}, {unit})'
+
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
-    'channels': [
-        #oh_generic_channel('USB Voltage', 'USB Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
-        {
-            'id': 'USB Voltage',
-            'type': 'USB Voltage',
-            'init_code':"""this.set{camel}CallbackConfiguration(channelCfg.updateInterval, true, \'x\', 0, 0);""",
-            'dispose_code': """this.set{camel}CallbackConfiguration(0, true, \'x\', 0, 0);""",
-            'getters': [{
-                'packet': 'Get {title_words}',
-                'packet_params': [],
-                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
-
-            'callbacks': [{
-                'packet': 'USB Voltage',
-                'transform': 'new QuantityType<>(voltage{divisor}, {unit})',
-                'filter': 'true'}],
-
-            'java_unit': 'SmartHomeUnits.VOLT',
-            'divisor': 1000.0,
-            'is_trigger_channel': False
-    }
-    ],
+    'channels': [usb_voltage_channel],
     'channel_types': [
         oh_generic_channel_type('USB Voltage', 'Number:ElectricPotential', 'USB Voltage',
                     update_style='Callback Configuration',

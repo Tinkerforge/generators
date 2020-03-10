@@ -354,6 +354,7 @@ def button_channel(idx):
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Is Button Pressed',
+                'element': 'Pressed',
                 'packet_params': ['(short)({})'.format(idx)],
                 'transform': 'value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
@@ -435,6 +436,7 @@ com['openhab'] = {
                 ],
                 'getters': [{
                     'packet': 'Is Backlight On',
+                    'element': 'Backlight',
                     'transform': 'value ? OnOffType.ON : OnOffType.OFF'
                 }]
             }

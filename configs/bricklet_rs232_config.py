@@ -550,6 +550,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Error',
+                'element': 'Error',
                 'filter': '(error & 1 << 0) == 0',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
 
@@ -562,6 +563,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Error',
+                'element': 'Error',
                 'filter': '(error & 1 << 1) == 0',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
 
@@ -574,6 +576,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Error',
+                'element': 'Error',
                 'filter': '(error & 1 << 2) == 0',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
 

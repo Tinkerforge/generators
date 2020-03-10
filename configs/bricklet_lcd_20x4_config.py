@@ -493,6 +493,7 @@ def button_channel(idx):
             'description': 'This channel triggers if button {} is pressed or released'.format(idx),
             'getters': [{
                 'packet': 'Is Button Pressed',
+                'element': 'Pressed',
                 'packet_params': ['(short)({})'.format(idx)],
                 'transform': 'value ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
@@ -575,6 +576,7 @@ com['openhab'] = {
                 ],
                 'getters': [{
                     'packet': 'Is Backlight On',
+                    'element': 'Backlight',
                     'transform': 'value ? OnOffType.ON : OnOffType.OFF'
                 }]
             }

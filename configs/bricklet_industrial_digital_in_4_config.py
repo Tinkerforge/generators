@@ -435,11 +435,13 @@ def input_channel(idx):
 
             'getters': [{
                 'packet': 'Get Value',
+                'element': 'Value Mask',
                 'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'callbacks': [{
                 'filter': '(interruptMask & (1 << {})) > 0'.format(idx),
                 'packet': 'Interrupt',
+                'element': 'Value Mask',
                 'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
 
             'init_code':"""this.setInterrupt((short)(this.getInterrupt() | (1 << {idx})));""".format(idx=idx),
@@ -456,6 +458,7 @@ def edge_count_channel(index):
 
             'getters': [{
                 'packet': 'Get Edge Count',
+                'element': 'Count',
                 'packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 

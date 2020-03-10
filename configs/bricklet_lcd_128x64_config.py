@@ -1718,12 +1718,14 @@ def gui_slider_value_channel(index):
         'type': 'GUI Slider',
         'getters': [{
             'packet': 'Get GUI Slider Value',
+            'element': 'Value',
             'packet_params': ['{}'.format(index)],
             'transform': 'new DecimalType(value)'}],
 
         'callbacks': [{
             'filter': 'index ==  {}'.format(index),
             'packet': 'GUI Slider Value',
+            'element': 'Value',
             'transform': 'new DecimalType(value)'}],
 
         'is_trigger_channel': False
@@ -1831,11 +1833,13 @@ com['openhab'] = {
 
                 'setters': [{
                     'packet': 'Set Display Configuration',
+                    'element': 'Backlight',
                     'packet_params': ['cfg.contrast', 'cmd.intValue()', 'cfg.invert', 'cfg.automaticDraw'],
                     'command_type': "Number",
                 }],
                 'getters': [{
                     'packet': 'Get Display Configuration',
+                    'element': 'Backlight',
                     'transform': 'new QuantityType<>(value.backlight, SmartHomeUnits.ONE)'
                 }]
             }, {
@@ -1843,9 +1847,6 @@ com['openhab'] = {
                 'label': 'Touch Position',
                 'description': 'Triggers when a new touch position is available. You can then use the getTouchPosition action to query the touch position information.',
                 'type': 'system.trigger',
-                'getters': [{
-                    'packet': 'Get Touch Position',
-                    'transform': 'CommonTriggerEvents.PRESSED'}],
 
                 'callbacks': [{
                     'packet': 'Touch Position',
@@ -1860,9 +1861,6 @@ com['openhab'] = {
                 'label': 'Touch Gesture',
                 'description': 'Triggers when a new touch gesture is available. You can then use the getTouchGesture action to query the touch position information.',
                 'type': 'system.trigger',
-                'getters': [{
-                    'packet': 'Get Touch Gesture',
-                    'transform': 'CommonTriggerEvents.PRESSED'}],
 
                 'callbacks': [{
                     'packet': 'Touch Gesture',
@@ -1876,22 +1874,25 @@ com['openhab'] = {
                 'id': 'Selected GUI Tab',
                 'type': 'GUI Tab Selected',
 
-                'setters': [{
-                    'packet': 'Set GUI Tab Selected',
-                    'packet_params': ['cmd.intValue()'],
-                    'command_type': "Number",
-                }],
-
                 'init_code': """this.setGUITabSelectedCallbackConfiguration(channelCfg.updateInterval.longValue(), true);""",
                 'dispose_code': """this.setGUITabSelectedCallbackConfiguration(0, true);""",
 
                 'getters': [{
                     'packet': 'Get GUI Tab Selected',
+                    'element': 'Index',
                     'transform': 'new DecimalType(value)'
+                }],
+
+                'setters': [{
+                    'packet': 'Set GUI Tab Selected',
+                    'element': 'Index',
+                    'packet_params': ['cmd.intValue()'],
+                    'command_type': "Number",
                 }],
 
                 'callbacks': [{
                     'packet': 'GUI Tab Selected',
+                    'element': 'Index',
                     'transform': 'new DecimalType(index)'
                 }]
             }
