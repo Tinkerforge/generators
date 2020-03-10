@@ -3569,7 +3569,7 @@ com['packets'].append({
              ('Return Value', 'uint32', 1, 'out', {}),
              ('Return Data', 'uint8', 60, 'out', {})],
 'since_firmware': [2, 5, 0],
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 This function is for internal use to flash the initial
@@ -3603,7 +3603,7 @@ com['packets'].append({
 'elements': [('Data', 'uint8', 64, 'in', {}),
              ('Return Data', 'uint32', 1, 'out', {})],
 'since_firmware': [2, 5, 0],
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 This function is for internal use to flash the initial
@@ -3636,7 +3636,7 @@ com['packets'].append({
 'name': 'Set Bricklets Enabled',
 'elements': [('Bricklets Enabled', 'bool', 1, 'in', {})],
 'since_firmware': [2, 5, 0],
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 This function is only available in Master Brick hardware version >= 3.0.
@@ -3663,7 +3663,7 @@ com['packets'].append({
 'name': 'Get Bricklets Enabled',
 'elements': [('Bricklets Enabled', 'bool', 1, 'out', {})],
 'since_firmware': [2, 5, 0],
-'doc': ['af', {
+'doc': ['if', {
 'en':
 """
 Returns *true* if the Bricklets are enabled, *false* otherwise.
@@ -3674,7 +3674,6 @@ Gibt *true* zurück wenn die Bricklets aktiviert sind und *false* wenn sie deakt
 """
 }]
 })
-
 
 com['examples'].append({
 'name': 'Stack Status',
