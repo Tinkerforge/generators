@@ -109,9 +109,9 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Get Acceleration',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -255,9 +255,9 @@ Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Get Linear Acceleration',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -298,9 +298,9 @@ den :cb:`Linear Acceleration` Callback zu nutzen und die Periode mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Gravity Vector',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': (-981, 981)}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': (-981, 981)}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': (-981, 981)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -376,9 +376,9 @@ Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data',
-'elements': [('Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                  {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                  {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
+'elements': [('Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                  {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                  {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}]),
              ('Magnetic Field', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Y', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Z', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)}]),
@@ -392,12 +392,12 @@ com['packets'].append({
                                                 {'name': 'X', 'scale': (1, 16383), 'range': (-16383, 16383)},
                                                 {'name': 'Y', 'scale': (1, 16383), 'range': (-16383, 16383)},
                                                 {'name': 'Z', 'scale': (1, 16383), 'range': (-16383, 16383)}]),
-             ('Linear Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                         {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                         {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
-             ('Gravity Vector', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)},
-                                                    {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)},
-                                                    {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}]),
+             ('Linear Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                         {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                         {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}]),
+             ('Gravity Vector', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': (-981, 981)},
+                                                    {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': (-981, 981)},
+                                                    {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': (-981, 981)}]),
              ('Temperature', 'int8', 1, 'out', {'unit': 'Degree Celsius'}),
              ('Calibration Status', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
@@ -886,9 +886,9 @@ Gibt die Periode zurück, wie von :func:`Set All Data Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Acceleration',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -975,9 +975,9 @@ Temperatur.
 com['packets'].append({
 'type': 'callback',
 'name': 'Linear Acceleration',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -998,9 +998,9 @@ die linearen Beschleunigungen der X, Y und Z-Achse.
 com['packets'].append({
 'type': 'callback',
 'name': 'Gravity Vector',
-'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}),
-             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)}),
-             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second', 'range': (-981, 981)})],
+'elements': [('X', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': (-981, 981)}),
+             ('Y', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': (-981, 981)}),
+             ('Z', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': (-981, 981)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1072,9 +1072,9 @@ Orientierung (w, x, y, z) des IMU Brick in Quaternionen. Siehe
 com['packets'].append({
 'type': 'callback',
 'name': 'All Data',
-'elements': [('Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                  {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                  {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
+'elements': [('Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                  {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                  {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}]),
              ('Magnetic Field', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Y', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-1300 * 16, 1300 * 16)},
                                                     {'name': 'Z', 'scale': (1, 16*10**6), 'unit': 'Tesla', 'range': (-2500 * 16, 2500 * 16)}]),
@@ -1088,12 +1088,12 @@ com['packets'].append({
                                                 {'name': 'X', 'scale': (1, 16383), 'range': (-16383, 16383)},
                                                 {'name': 'Y', 'scale': (1, 16383), 'range': (-16383, 16383)},
                                                 {'name': 'Z', 'scale': (1, 16383), 'range': (-16383, 16383)}]),
-             ('Linear Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                         {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                         {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
-             ('Gravity Vector', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                    {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'},
-                                                    {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second', 'range': 'dynamic'}]),
+             ('Linear Acceleration', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                         {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                         {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}]),
+             ('Gravity Vector', 'int16', 3, 'out', [{'name': 'X', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                    {'name': 'Y', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'},
+                                                    {'name': 'Z', 'scale': (1, 100), 'unit': 'Meter Per Second Squared', 'range': 'dynamic'}]),
              ('Temperature', 'int8', 1, 'out', {'unit': 'Degree Celsius'}),
              ('Calibration Status', 'uint8', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
