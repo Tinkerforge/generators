@@ -135,7 +135,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Beep',
                 'element': 'Duration',
-                'packet_params': ['(long)(cmd.doubleValue() * 1000)'],
+                'packet_params': ['(long)(cmd.doubleValue(){divisor})'],
                 'command_type': "Number"
             }],
 

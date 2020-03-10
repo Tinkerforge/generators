@@ -1604,7 +1604,7 @@ com['examples'].append({
 'incomplete': True # because of special random movement logic in callback
 })
 
-def data_channel(name_words, name_headless, type_, divisor=None, unit=None):
+def data_channel(name_words, name_headless, type_, divisor=1, unit=None):
     return {
         'id': name_words,
         'type': name_words,
@@ -1612,11 +1612,11 @@ def data_channel(name_words, name_headless, type_, divisor=None, unit=None):
             'packet': 'Get All Data',
             'element': name_words,
             'packet_params': [],
-            'transform': 'new {type}(value.{headless}{divisor}{unit})'.format(type=type_,headless=name_headless,divisor=' / ' + str(divisor) if divisor is not None else '',unit=', ' + unit if unit is not None else '')}],
+            'transform': 'new {type}(value.{headless}{{divisor}}{{unit}})'.format(type=type_,headless=name_headless,unit=', ' + unit if unit is not None else '')}],
         'callbacks': [{
             'packet': 'All Data',
             'element': name_words,
-            'transform': 'new {type}({headless}{divisor}{unit})'.format(type=type_,headless=name_headless,divisor=' / ' + str(divisor) if divisor is not None else '',unit=', ' + unit if unit is not None else '')}],
+            'transform': 'new {type}({headless}{{divisor}}{{unit}})'.format(type=type_,headless=name_headless,unit=', ' + unit if unit is not None else '')}],
 
         'is_trigger_channel': False,
         'java_unit': unit,

@@ -146,7 +146,7 @@ com['openhab'] = {
             'setters':[{
                 'packet': 'Set {title_words}',
                 'element': '{title_words}',
-                'packet_params': ['(int)Math.round(cmd.doubleValue() * 1000.0)'],
+                'packet_params': ['(int)Math.round(cmd.doubleValue(){divisor})'],
                 'command_type': 'Number',
             }],
 
