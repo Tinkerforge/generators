@@ -3692,9 +3692,9 @@ com['openhab'] = {
     'params': [],
     'channels': [voltage_channel, current_channel,
         {
-            'id': 'Enable Bricklets',
-            'type': 'Enable Bricklets',
-            'label': 'Enable Bricklets',
+            'id': 'Bricklets Enabled',
+            'type': 'Bricklets Enabled',
+            'label': 'Bricklets Enabled',
 
             'setters': [{
                 'packet': 'Set Bricklets Enabled',
@@ -3720,7 +3720,7 @@ com['openhab'] = {
             description='The stack current in A. The stack current is the current that is drawn via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.',
             read_only=True,
             pattern='%.3f %unit%'),
-        oh_generic_channel_type('Enable Bricklets', 'Switch', 'Enable Bricklets',
+        oh_generic_channel_type('Bricklets Enabled', 'Switch', 'Bricklets Enabled',
             update_style=None,
             description='Enables/disables all four Bricklets. If you disable the Bricklets the power supply to the Bricklets will be disconnected.'),
     ],
@@ -3784,7 +3784,7 @@ com['openhab'] = {
         'Get Wifi2 Mesh Client Status',
         'Get Wifi2 Mesh AP Status',
 
-        {'fn': 'Set Bricklet Enable', 'refreshs': ['Enable Bricklets']},
-        'Get Bricklet Enable'
+        {'fn': 'Set Bricklets Enabled', 'refreshs': ['Bricklets Enabled']},
+        'Get Bricklets Enabled'
     ]
 }
