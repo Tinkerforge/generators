@@ -3633,8 +3633,8 @@ Dafür kann unser Open Source Flash/Test-Tool genutzt werden:
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Bricklet Enable',
-'elements': [('Enable', 'bool', 1, 'in', {})],
+'name': 'Set Bricklets Enabled',
+'elements': [('Bricklets Enabled', 'bool', 1, 'in', {})],
 'since_firmware': [2, 5, 0],
 'doc': ['af', {
 'en':
@@ -3660,8 +3660,8 @@ Die Bricklets verlieren dabei ihre aktuelle konfiguration.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Bricklet Enable',
-'elements': [('Enabled', 'bool', 1, 'out', {})],
+'name': 'Get Bricklets Enabled',
+'elements': [('Bricklets Enabled', 'bool', 1, 'out', {})],
 'since_firmware': [2, 5, 0],
 'doc': ['af', {
 'en':
@@ -3698,13 +3698,13 @@ com['openhab'] = {
             'label': 'Enable Bricklets',
 
             'setters': [{
-                'packet': 'Set Bricklet Enable',
+                'packet': 'Set Bricklets Enabled',
                 'packet_params': ['cmd == OnOffType.ON'],
                 'command_type': "OnOffType"
             }],
 
             'getters': [{
-                'packet': 'Get Bricklet Enable',
+                'packet': 'Get Bricklets Enabled',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}]
         }
     ],
