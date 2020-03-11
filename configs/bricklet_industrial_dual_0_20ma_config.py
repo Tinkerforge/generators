@@ -393,8 +393,6 @@ def current_channel(index):
                 'element': 'Current',
                 'transform': 'new QuantityType<>(current{divisor}, {unit})'}],
 
-            'java_unit': 'SmartHomeUnits.AMPERE',
-            'divisor': 1000000000.0,
             'is_trigger_channel': False
         }
 
@@ -426,7 +424,7 @@ com['openhab'] = {
         current_channel(1),
     ],
     'channel_types': [
-        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'NOT USED',
+        oh_generic_channel_type('Current', 'Number', 'NOT USED',
                     update_style='Callback Period',
                     description='Measured current between 0 and 0.022505322A (22.5mA)',
                     read_only=True,

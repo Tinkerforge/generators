@@ -496,10 +496,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Illuminance', 'Illuminance', 'SmartHomeUnits.LUX', divisor=10.0)
+        oh_generic_old_style_channel('Illuminance', 'Illuminance')
     ],
     'channel_types': [
-        oh_generic_channel_type('Illuminance', 'Number:Illuminance', 'Illuminance',
+        oh_generic_channel_type('Illuminance', 'Number', 'Illuminance',
                     update_style='Callback Period',
                     description='The illuminance of the ambient light sensor.',
                     read_only=True,

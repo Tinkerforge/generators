@@ -475,8 +475,7 @@ com['openhab'] = {
             'id': 'Timestamp',
             'label': 'Timestamp',
             'type': 'Timestamp',
-            'java_unit': 'SmartHomeUnits.SECOND',
-            'divisor': 1000.0,
+
             'getters': [{
                 'packet': 'Get Timestamp',
                 'element': 'Timestamp',
@@ -502,7 +501,7 @@ com['openhab'] = {
         oh_generic_channel_type('Date Time', 'DateTime', 'Date Time',
                     update_style=None,
                     description="The real-time clock handles leap year and inserts the 29th of February accordingly. But leap seconds are not handled. The time is stored as UTC on the clock and converted into your system's timezone when accessed by OpenHAB."),
-        oh_generic_channel_type('Timestamp', 'Number:Time', 'Timestamp',
+        oh_generic_channel_type('Timestamp', 'Number', 'Timestamp',
                     update_style=None,
                     description="the current date and the time of the real-time clock converted to seconds. The timestamp has an effective resolution of hundredths of a second.",
                     read_only=True,

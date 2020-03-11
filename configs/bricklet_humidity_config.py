@@ -495,10 +495,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Humidity', 'Humidity', 'SmartHomeUnits.PERCENT', divisor=10.0)
+        oh_generic_old_style_channel('Humidity', 'Humidity')
     ],
     'channel_types': [
-        oh_generic_channel_type('Humidity', 'Number:Dimensionless', 'Humidity',
+        oh_generic_channel_type('Humidity', 'Number', 'Humidity',
                     update_style='Callback Period',
                     description='Measured relative humidity',
                     read_only=True,

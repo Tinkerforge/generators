@@ -483,10 +483,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Position', 'Position', 'SmartHomeUnits.ONE')
+        oh_generic_old_style_channel('Position', 'Position')
     ],
     'channel_types': [
-        oh_generic_channel_type('Position', 'Number:Dimensionless', 'Position',
+        oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style='Callback Period',
                     description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).',
                     read_only=True,

@@ -325,10 +325,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_channel('Count', 'Count', 'SmartHomeUnits.ONE')
+        oh_generic_channel('Count', 'Count')
     ],
     'channel_types': [
-        oh_generic_channel_type('Count', 'Number:Dimensionless', 'Count',
+        oh_generic_channel_type('Count', 'Number', 'Count',
                     update_style='Callback Configuration',
                     description='The value of the example count (see example.c)',
                     read_only=True)

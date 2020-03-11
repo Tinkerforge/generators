@@ -376,7 +376,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Update Volume',
                 'element': 'Volume',
-                'packet_params': ['cmd.intValue()'],
+                'packet_params': ['cmd.intValue(){divisor}'],
                 'command_type': "Number"
             }],
 
@@ -385,12 +385,12 @@ com['openhab'] = {
                 'packet': 'Get Beep',
                 'element': 'Volume',
                 'predicate': 'value.durationRemaining > 0',
-                'transform': 'new DecimalType(value.volume)'
+                'transform': 'new DecimalType(value.volume{divisor})'
             }, {
                 'packet': 'Get Alarm',
                 'element': 'Volume',
                 'predicate': 'value.durationRemaining > 0',
-                'transform': 'new DecimalType(value.volume)'
+                'transform': 'new DecimalType(value.volume{divisor})'
             }]
         }, {
             'id': 'Beep Frequency',
@@ -400,7 +400,7 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Update Frequency',
                 'element': 'Frequency',
-                'packet_params': ['cmd.intValue()'],
+                'packet_params': ['cmd.intValue(){divisor}'],
                 'command_type': "Number"
             }],
 
@@ -408,10 +408,8 @@ com['openhab'] = {
                 'packet': 'Get Beep',
                 'element': 'Frequency',
                 'predicate': 'value.durationRemaining > 0',
-                'transform': 'new QuantityType<>(value.frequency, SmartHomeUnits.HERTZ)'
+                'transform': 'new QuantityType<>(value.frequency{divisor}, {unit})'
             }],
-
-            'java_unit': 'SmartHomeUnits.HERTZ',
         }
     ],
     'channel_types': [

@@ -806,10 +806,10 @@ com['examples'].append({
 'cleanups': [('setter', 'Disable Laser', [], None, 'Turn laser off')]
 })
 
-distance_channel = oh_generic_old_style_channel('Distance', 'Distance', 'SIUnits.METRE', divisor=100.0)
+distance_channel = oh_generic_old_style_channel('Distance', 'Distance')
 distance_channel['predicate'] = 'this.getSensorHardwareVersion() == 3 || cfg.mode == 0'
 
-velocity_channel = oh_generic_old_style_channel('Velocity', 'Velocity', 'SmartHomeUnits.METRE_PER_SECOND', divisor=100.0, cast_literal='(short)')
+velocity_channel = oh_generic_old_style_channel('Velocity', 'Velocity', cast_literal='(short)')
 velocity_channel['predicate'] = 'this.getSensorHardwareVersion() == 3 || cfg.mode != 0'
 
 com['openhab'] = {
@@ -962,14 +962,14 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', 'Distance',
                     update_style='Callback Period',
                     description='The measured distance. Sensor hardware version 1 cannot measure distance and velocity at the same time. Therefore, the distance mode has to be enabled. Sensor hardware version 3 can measure distance and velocity at the same time. Also the laser has to be enabled.',
                     read_only=True,
                     pattern='%.2f %unit%',
                     min_=0,
                     max_=40),
-        oh_generic_channel_type('Velocity', 'Number:Speed', 'Velocity',
+        oh_generic_channel_type('Velocity', 'Number', 'Velocity',
                     update_style='Callback Period',
                     description='The measured velocity. Sensor hardware version 1 cannot measure distance and velocity at the same time. Therefore, the velocity mode has to be enabled. Sensor hardware version 3 can measure distance and velocity at the same time, but the velocity measurement only produces stables results if a fixed measurement rateis configured. Also the laser has to be enabled.',
                     read_only=True,

@@ -179,10 +179,10 @@ com['examples'].append({
               ('callback_configuration', ('Object Temperature', 'object temperature'), [], 10000, False, '>', [(100, 0)])]
 })
 
-ambient_temp_channel = oh_generic_channel('Ambient Temperature', 'Ambient Temperature', 'SIUnits.CELSIUS', divisor=10.0, element_name='Temperature')
+ambient_temp_channel = oh_generic_channel('Ambient Temperature', 'Ambient Temperature', element_name='Temperature')
 ambient_temp_channel['callbacks'][0]['transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
 
-object_temp_channel = oh_generic_channel('Object Temperature', 'Object Temperature', 'SIUnits.CELSIUS', divisor=10.0, element_name='Temperature')
+object_temp_channel = oh_generic_channel('Object Temperature', 'Object Temperature', element_name='Temperature')
 object_temp_channel['callbacks'][0]['transform'] = 'new QuantityType<>(temperature{divisor}, {unit})'
 
 com['openhab'] = {
@@ -193,14 +193,14 @@ com['openhab'] = {
         object_temp_channel
     ],
     'channel_types': [
-        oh_generic_channel_type('Ambient Temperature', 'Number:Temperature', 'Ambient Temperature',
+        oh_generic_channel_type('Ambient Temperature', 'Number', 'Ambient Temperature',
                     update_style='Callback Configuration',
                     description='Measured ambient temperature',
                     read_only=True,
                     pattern='%.1f %unit%',
                     min_=-40,
                     max_=125),
-        oh_generic_channel_type('Object Temperature', 'Number:Temperature', 'Object Temperature',
+        oh_generic_channel_type('Object Temperature', 'Number', 'Object Temperature',
                     update_style='Callback Configuration',
                     description='Measured object temperature, i.e. the temperature of the surface of the object the sensor is aimed at. The temperature of different materials is dependent on their <a href=https://en.wikipedia.org/wiki/Emissivity>emissivity</a>.',
                     read_only=True,

@@ -335,7 +335,7 @@ com['examples'].append({
               ('callback_threshold', ('Moisture', 'moisture value'), [], '>', [(200, 0)])]
 })
 
-moisture_channel = oh_generic_old_style_channel('Moisture', 'Moisture', 'SmartHomeUnits.ONE')
+moisture_channel = oh_generic_old_style_channel('Moisture', 'Moisture')
 moisture_channel['getters'][0]['packet'] = 'Get Moisture Value'
 
 com['openhab'] = {
@@ -360,7 +360,7 @@ com['openhab'] = {
         moisture_channel
     ],
     'channel_types': [
-        oh_generic_channel_type('Moisture', 'Number:Dimensionless', 'Moisture',
+        oh_generic_channel_type('Moisture', 'Number', 'Moisture',
                     update_style='Callback Period',
                     description='The current moisture value. The value has a range of 0 to 4095. A small value corresponds to little moisture, a big value corresponds to much moisture.',
                     read_only=True,

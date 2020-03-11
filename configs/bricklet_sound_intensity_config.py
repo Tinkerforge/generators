@@ -298,10 +298,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Intensity', 'Intensity', 'SmartHomeUnits.ONE')
+        oh_generic_old_style_channel('Intensity', 'Intensity')
     ],
     'channel_types': [
-        oh_generic_channel_type('Intensity', 'Number:Dimensionless', 'Sound Intensity',
+        oh_generic_channel_type('Intensity', 'Number', 'Sound Intensity',
                     update_style='Callback Period',
                     description="""The current sound intensity. The value has a range of 0 to 4095.<br/><br/>The value corresponds to the <a href=\\\"https://en.wikipedia.org/wiki/Envelope_(waves)\\\">upper envelop</a> of the signal of the microphone capsule.""",
                     read_only=True,

@@ -699,12 +699,12 @@ com['openhab'] = {
                 'packet': 'Get Status',
                 'element': 'Satellites View',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.satellitesView, SmartHomeUnits.ONE)"}],
+                'transform': "new DecimalType(value.satellitesView)"}],
 
             'callbacks': [{
                 'packet': 'Status',
                 'element': 'Satellites View',
-                'transform': "new QuantityType<>(satellitesView, SmartHomeUnits.ONE)"}],
+                'transform': "new DecimalType(satellitesView)"}],
 
             'is_trigger_channel': False
         },  {
@@ -715,12 +715,12 @@ com['openhab'] = {
                 'packet': 'Get Status',
                 'element': 'Satellites Used',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.satellitesUsed, SmartHomeUnits.ONE)"}],
+                'transform': "new DecimalType(value.satellitesUsed)"}],
 
             'callbacks': [{
                 'packet': 'Status',
                 'element': 'Satellites Used',
-                'transform': "new QuantityType<>(satellitesUsed, SmartHomeUnits.ONE)"}],
+                'transform': "new DecimalType(satellitesUsed)"}],
 
             'is_trigger_channel': False
         }, {
@@ -731,14 +731,13 @@ com['openhab'] = {
                 'packet': 'Get Altitude',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.altitude / 100.0, SIUnits.METRE)"}],
+                'transform': "new QuantityType<>(value.altitude{divisor},{unit})"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
                 'element': '{title_words}',
-                'transform': "new QuantityType<>(altitude / 100.0, SIUnits.METRE)"}],
+                'transform': "new QuantityType<>(altitude{divisor},{unit})"}],
 
-            'java_unit': 'SIUnits.METRE',
             'is_trigger_channel': False,
         },  {
             'id': 'Geoidal Separation',
@@ -748,14 +747,13 @@ com['openhab'] = {
                 'packet': 'Get Altitude',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.geoidalSeparation / 100.0, SIUnits.METRE)"}],
+                'transform': "new QuantityType<>(value.geoidalSeparation{divisor},{unit})"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
                 'element': '{title_words}',
-                'transform': "new QuantityType<>(geoidalSeparation / 100.0, SIUnits.METRE)"}],
+                'transform': "new QuantityType<>(geoidalSeparation{divisor},{unit})"}],
 
-            'java_unit': 'SIUnits.METRE',
             'is_trigger_channel': False
         },  {
             'id': 'Course',
@@ -765,14 +763,13 @@ com['openhab'] = {
                 'packet': 'Get Motion',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
+                'transform': "new QuantityType<>(value.course{divisor}, {unit})"}],
 
             'callbacks': [{
                 'packet': 'Motion',
                 'element': '{title_words}',
-                'transform': "new QuantityType<>(course / 100.0, SmartHomeUnits.DEGREE_ANGLE)"}],
+                'transform': "new QuantityType<>(course{divisor}, {unit})"}],
 
-            'java_unit': 'SmartHomeUnits.DEGREE_ANGLE',
             'is_trigger_channel': False,
         },  {
             'id': 'Speed',
@@ -782,15 +779,13 @@ com['openhab'] = {
                 'packet': 'Get Motion',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
+                'transform': "new QuantityType<>(value.speed{divisor}, {unit})"}],
 
             'callbacks': [{
                 'packet': 'Motion',
                 'element': '{title_words}',
-                'transform': "new QuantityType<>(speed / 100.0, SIUnits.KILOMETRE_PER_HOUR)"}],
+                'transform': "new QuantityType<>(speed{divisor}, {unit})"}],
 
-
-            'java_unit': 'SIUnits.KILOMETRE_PER_HOUR',
             'is_trigger_channel': False
         },  {
             'id': 'Date Time',
@@ -829,32 +824,32 @@ com['openhab'] = {
                     update_style=None,
                     description='If enabled, a fix is currently available',
                     read_only=True),
-        oh_generic_channel_type('Satellites In View', 'Number:Dimensionless', 'Satellites In View',
+        oh_generic_channel_type('Satellites In View', 'Number', 'Satellites In View',
                     update_style=None,
                     description='The number of satellites that are in view.',
                     read_only=True,
                     pattern='%d %unit%'),
-        oh_generic_channel_type('Satellites Used', 'Number:Dimensionless', 'Satellites Used',
+        oh_generic_channel_type('Satellites Used', 'Number', 'Satellites Used',
                     update_style=None,
                     description='The number of satellites that are currently used.',
                     read_only=True,
                     pattern='%d %unit%'),
-        oh_generic_channel_type('Altitude', 'Number:Length', 'Altitude',
+        oh_generic_channel_type('Altitude', 'Number', 'Altitude',
                     update_style=None,
                     description='The current altitude',
                     read_only=True,
                     pattern='%.2f %unit%'),
-        oh_generic_channel_type('Geoidal Separation', 'Number:Length', 'Geoidal Separation',
+        oh_generic_channel_type('Geoidal Separation', 'Number', 'Geoidal Separation',
                     update_style=None,
                     description='The geoidal separation corresponding to the current altitude',
                     read_only=True,
                     pattern='%.2f %unit%'),
-        oh_generic_channel_type('Course', 'Number:Angle', 'Course',
+        oh_generic_channel_type('Course', 'Number', 'Course',
                     update_style=None,
                     description='The current course. A course of 0° means the Bricklet is traveling north bound and 90° means it is traveling east bound. Please note that this only returns useful values if an actual movement is present.',
                     read_only=True,
                     pattern='%.2f %unit%'),
-        oh_generic_channel_type('Speed', 'Number:Speed', 'Speed',
+        oh_generic_channel_type('Speed', 'Number', 'Speed',
                     update_style=None,
                     description='The current speed. Please note that this only returns useful values if an actual movement is present.',
                     read_only=True,

@@ -323,12 +323,12 @@ def statistics_channel(name_words, name_headless):
             'packet': 'Get Statistics',
             'element': name_words,
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.{}, SmartHomeUnits.ONE)'.format(name_headless)}],
+            'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(name_headless)}],
 
         'callbacks': [{
             'packet': 'Statistics',
             'element': name_words,
-            'transform': 'new QuantityType<>({}, SmartHomeUnits.ONE)'.format(name_headless),
+            'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(name_headless),
             'filter': 'true'}],
 
         'is_trigger_channel': False
@@ -417,12 +417,12 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Messages From Brick', 'Number:Dimensionless', 'Messages From Brick',
+        oh_generic_channel_type('Messages From Brick', 'Number', 'Messages From Brick',
                     update_style=None,
                     description='Messages passed through the Isolator from the controlling Brick.',
                     read_only=True,
                     pattern='%d'),
-        oh_generic_channel_type('Messages From Bricklet', 'Number:Dimensionless', 'Messages From Bricklet',
+        oh_generic_channel_type('Messages From Bricklet', 'Number', 'Messages From Bricklet',
                     update_style=None,
                     description='Messages passed through the Isolator from the isolated Bricklet.',
                     read_only=True,

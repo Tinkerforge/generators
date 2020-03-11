@@ -2281,10 +2281,8 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Buffer Status',
                 'element': 'Send Buffer Used',
-                'transform': 'new QuantityType<>(value.sendBufferUsed, SmartHomeUnits.BYTE)'
+                'transform': 'new QuantityType<>(value.sendBufferUsed{divisor}, {unit})'
             }],
-
-            'java_unit': 'SmartHomeUnits.BYTE',
         }, {
             'id': 'Receive Buffer Used',
             'label': 'Receive Buffer Used',
@@ -2293,10 +2291,8 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Buffer Status',
                 'element': 'Receive Buffer Used',
-                'transform': 'new QuantityType<>(value.receiveBufferUsed, SmartHomeUnits.BYTE)'
+                'transform': 'new QuantityType<>(value.receiveBufferUsed{divisor}, {unit})'
             }],
-
-            'java_unit': 'SmartHomeUnits.BYTE',
         }],
     'channel_types': [
         oh_generic_channel_type('Overrun Error Count', 'Number', 'Overrun Error Count',
@@ -2311,11 +2307,11 @@ com['openhab'] = {
             update_style=None,
             description='NOT USED',
             read_only=True),
-        oh_generic_channel_type('Send Buffer Used', 'Number:DataAmount', 'Send Buffer Used',
+        oh_generic_channel_type('Send Buffer Used', 'Number', 'Send Buffer Used',
             update_style=None,
             description='The number of bytes currently in the send buffer',
             read_only=True),
-        oh_generic_channel_type('Receive Buffer Used', 'Number:DataAmount', 'Receive Buffer Used',
+        oh_generic_channel_type('Receive Buffer Used', 'Number', 'Receive Buffer Used',
             update_style=None,
             description='The number of bytes currently in the receive buffer',
             read_only=True),

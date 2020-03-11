@@ -525,8 +525,6 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
-            'java_unit': 'SmartHomeUnits.AMPERE',
-            'divisor': 1000000.0
         },
         {
             'id': 'Voltage',
@@ -546,8 +544,6 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
                 'transform': 'new QuantityType<>(value {divisor}, {unit})'}],
-            'java_unit': 'SmartHomeUnits.VOLT',
-            'divisor': 1000.0
         }
     ],
     'channel_types': [
@@ -555,14 +551,14 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
                     update_style=None,
                     description='Enables/disables the output of voltage and current.',
                     read_only=False),
-        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Output Voltage',
+        oh_generic_channel_type('Voltage', 'Number', 'Output Voltage',
                     update_style=None,
                     description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.',
                     read_only=False,
                     pattern='%.3f %unit%',
                     min_=0,
                     max_=10),
-        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Output Current',
+        oh_generic_channel_type('Current', 'Number', 'Output Current',
                     update_style=None,
                     description='The output current in A. The output current and output voltage are linked. Changing the output current also changes the output voltage.',
                     read_only=False,

@@ -98,9 +98,6 @@ com['openhab'] = {
                 'element': 'Voltage',
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
-
-            'java_unit': 'SmartHomeUnits.VOLT',
-            'divisor': 1000.0,
             'is_trigger_channel': False
         }, {
             'id': 'Output Voltage',
@@ -117,21 +114,18 @@ com['openhab'] = {
                 'command_type': 'Number',
             }],
 
-
-            'java_unit': 'SmartHomeUnits.VOLT',
-            'divisor': 1000.0,
             'is_trigger_channel': False
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Input Voltage', 'Number:ElectricPotential', 'Input Voltage',
+        oh_generic_channel_type('Input Voltage', 'Number', 'Input Voltage',
                     update_style=None,
                     description='The input voltage',
                     read_only=True,
                     pattern='%.3f %unit%',
                     min_=0,
                     max_=15),
-         oh_generic_channel_type('Output Voltage', 'Number:ElectricPotential', 'Output Voltage',
+         oh_generic_channel_type('Output Voltage', 'Number', 'Output Voltage',
                     update_style=None,
                     description='The output voltage. The possible range is 0V to 12V',
                     pattern='%.3f %unit%',

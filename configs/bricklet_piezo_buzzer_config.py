@@ -138,9 +138,6 @@ com['openhab'] = {
                 'packet_params': ['(long)(cmd.doubleValue(){divisor})'],
                 'command_type': "Number"
             }],
-
-            'java_unit': 'SmartHomeUnit.Second',
-            'divisor': 1000,
         }, {
             'id': 'Morse Code',
             'type': 'Morse Code',
@@ -177,7 +174,7 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Beep', 'Number:Time', 'Beep',
+        oh_generic_channel_type('Beep', 'Number', 'Beep',
                     update_style=None,
                     description='Beeps with the duration in s.',
                     pattern='%.3f %unit%'),

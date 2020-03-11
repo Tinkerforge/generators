@@ -245,7 +245,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Counter Config',
@@ -295,21 +295,19 @@ com['openhab'] = {
                 'packet': 'Get Counter',
                 'element': 'Count',
                 'packet_params': ['channelCfg.resetOnRead'],
-                'transform': 'new QuantityType<>(value, {unit})'}],
+                'transform': 'new DecimalType(value)'}],
 
             'callbacks': [{
                 'packet': 'Counter',
                 'element': 'Count',
-                'transform': 'new QuantityType<>(count, {unit})'
+                'transform': 'new DecimalType(count)'
             }],
-
-            'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False
         },
-        oh_generic_channel('Magnetic Flux Density', 'Magnetic Flux Density', 'SmartHomeUnits.TESLA', divisor=1000000.0)
+        oh_generic_channel('Magnetic Flux Density', 'Magnetic Flux Density')
     ],
     'channel_types': [
-        oh_generic_channel_type('Counter', 'Number:Dimensionless', 'Counter',
+        oh_generic_channel_type('Counter', 'Number', 'Counter',
                     update_style='Callback Configuration',
                     description='The current value of the counter.',
                     read_only=True,
@@ -325,7 +323,7 @@ com['openhab'] = {
                         'label': 'Reset Counter On Update',
                         'description': 'Enabling this will reset the counter after OpenHAB reads its value. Use this if you want relative counts per update.',
                     }]),
-        oh_generic_channel_type('Magnetic Flux Density', 'Number:MagneticFluxDensity', 'Magnetic Flux Density',
+        oh_generic_channel_type('Magnetic Flux Density', 'Number', 'Magnetic Flux Density',
                     update_style='Callback Configuration',
                     description='Measured magnetic flux density.',
                     pattern='%.6f',

@@ -1612,11 +1612,11 @@ def data_channel(name_words, name_headless, type_, divisor=1, unit=None):
             'packet': 'Get All Data',
             'element': name_words,
             'packet_params': [],
-            'transform': 'new {type}(value.{headless}{{divisor}}{{unit}})'.format(type=type_,headless=name_headless,unit=', ' + unit if unit is not None else '')}],
+            'transform': 'new {type}(value.{headless}{{divisor}}{unit})'.format(type=type_,headless=name_headless,unit=', {unit}' if unit is not None else '')}],
         'callbacks': [{
             'packet': 'All Data',
             'element': name_words,
-            'transform': 'new {type}({headless}{{divisor}}{{unit}})'.format(type=type_,headless=name_headless,unit=', ' + unit if unit is not None else '')}],
+            'transform': 'new {type}({headless}{{divisor}}{unit})'.format(type=type_,headless=name_headless,unit=', {unit}' if unit is not None else '')}],
 
         'is_trigger_channel': False,
         'java_unit': unit,

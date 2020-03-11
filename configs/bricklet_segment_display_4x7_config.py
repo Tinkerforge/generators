@@ -195,11 +195,11 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Segments',
                 'element': 'Brightness',
-                'transform': 'new QuantityType<>(value.brightness, SmartHomeUnits.ONE)'}],
+                'transform': 'new QuantityType<>(value.brightness{divisor}, {unit})'}],
             'setters': [{
                 'packet': 'Set Segments',
                 'element': 'Brightness',
-                'packet_params': ['this.getSegments().segments', 'cmd.shortValue()', 'this.getSegments().colon'],
+                'packet_params': ['this.getSegments().segments', 'cmd.shortValue(){divisor}', 'this.getSegments().colon'],
                 'command_type': 'Number'
             }],
 
@@ -224,12 +224,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Segments',
                 'element': 'Segments',
-                'transform': 'new QuantityType<>((int)value.segments[0] << 24 | (int)value.segments[1] << 16 | (int)value.segments[2] << 8 | (int)value.segments[3], SmartHomeUnits.ONE)'
+                'transform': 'new QuantityType<>((int)value.segments[0] << 24 | (int)value.segments[1] << 16 | (int)value.segments[2] << 8 | (int)value.segments[3], {unit})'
             }],
             'setters': [{
                 'packet': 'Set Segments',
                 'element': 'Segments',
-                'packet_params': ['new short[]{(short)(cmd.intValue() >> 24), (short)(cmd.intValue() >> 16), (short)(cmd.intValue() >> 8), (short)(cmd.intValue())}', 'this.getSegments().brightness', 'this.getSegments().colon'],
+                'packet_params': ['new short[]{{(short)(cmd.intValue() >> 24), (short)(cmd.intValue() >> 16), (short)(cmd.intValue() >> 8), (short)(cmd.intValue())}}', 'this.getSegments().brightness', 'this.getSegments().colon'],
                 'command_type': 'Number'
             }],
 
@@ -251,7 +251,7 @@ com['openhab'] = {
     ],
     'channel_types': [ {
             'id': 'Brightness',
-            'item_type': 'Number:Dimensionless',
+            'item_type': 'Number',
             'label': 'Brightness',
             'description': 'The brightness can be set between 0 (dark) and 7 (bright).',
             'read_only': False,
@@ -268,7 +268,7 @@ com['openhab'] = {
                         ('6', '6'),
                         ('7', '7')]
         },
-        oh_generic_channel_type('Segments', 'Number:Dimensionless', 'Segments',
+        oh_generic_channel_type('Segments', 'Number', 'Segments',
                     update_style=None,
                     description='The seven segment display can be set with bitmaps. Every bit controls one segment as shown <a href=https://www.tinkerforge.com/en/doc/_images/bricklet_segment_display_4x7_bit_order.png>here</a>. The channel accepts an integer, that is split into 4 bytes, controlling one segment each. For example 1717263183, which is 0x665b5b4f in hex will be split into 0x66 for the first segment, 0x5b for the second, 0x5b for the third and 0x4f for the fourth.',
                     pattern='%d'),

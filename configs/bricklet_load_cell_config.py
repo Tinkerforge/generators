@@ -539,7 +539,7 @@ com['openhab'] = {
     ],
     'init_code': """this.setMovingAverage(cfg.movingAverage.shortValue());""",
     'channels': [
-        oh_generic_old_style_channel('Weight', 'Weight', 'SIUnits.GRAM', divisor=1),
+        oh_generic_old_style_channel('Weight', 'Weight'),
         {
             'id': 'Tare',
             'type': 'Tare',
@@ -575,7 +575,7 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Weight', 'Number:Mass', 'Weight',
+        oh_generic_channel_type('Weight', 'Number', 'Weight',
                     update_style='Callback Period',
                     description='The currently measured weight',
                     read_only=True,

@@ -123,7 +123,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        oh_generic_channel('Temperature', 'Temperature'),
         {
             'id': 'Heater',
             'type': 'Heater',
@@ -142,7 +142,7 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+        oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Configuration',
                     description='Measured temperature',
                     read_only=True,

@@ -605,7 +605,7 @@ com['examples'].append({
 # FIXME: all-signal-data callback example
 
 
-def signal_data_channel(idx, data_words, data_headless, divisor, java_unit):
+def signal_data_channel(idx, data_words, data_headless):
     return {
         'predicate': 'cfg.enableChannel{}'.format(idx),
         'id': '{} {}'.format(data_words, idx),
@@ -623,9 +623,6 @@ def signal_data_channel(idx, data_words, data_headless, divisor, java_unit):
             'element': data_words,
             'transform': 'new QuantityType<>({}[{}]{{divisor}}, {{unit}})'.format(data_headless, idx)
         }],
-
-        'java_unit': java_unit,
-        'divisor': divisor
     }
 
 def value_channel(idx):
@@ -663,22 +660,19 @@ def counter_channel(idx):
                 'packet': 'Get Counter',
                 'element': 'Counter',
                 'packet_params': [str(idx)],
-                'transform': 'new QuantityType<>(value, {unit})'
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'
             }],
             'callbacks': [{
                 'packet': 'All Counter',
                 'element': 'Counter',
-                'transform': 'new QuantityType<>(counter[{}], {{unit}})'.format(idx)
+                'transform': 'new QuantityType<>(counter[{}]{{divisor}}, {{unit}})'.format(idx)
             }],
             'setters': [{
                 'packet': 'Set Counter',
                 'element': 'Counter',
-                'packet_params': [str(idx), 'cmd.longValue()'],
+                'packet_params': [str(idx), 'cmd.longValue(){divisor}'],
                 'command_type': 'Number',
             }],
-
-
-            'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False
         }
 
@@ -697,9 +691,9 @@ def enable_config(idx):
         }
 
 channels = [counter_channel(i) for i in range(0, 4)]
-channels += [signal_data_channel(i, 'Duty Cycle', 'dutyCycle', 100.0, 'SmartHomeUnits.PERCENT') for i in range(0, 4)]
-channels += [signal_data_channel(i, 'Period', 'period', 1e9, 'SmartHomeUnits.SECOND') for i in range(0, 4)]
-channels += [signal_data_channel(i, 'Frequency', 'frequency', 1000.0, 'SmartHomeUnits.HERTZ') for i in range(0, 4)]
+channels += [signal_data_channel(i, 'Duty Cycle', 'dutyCycle') for i in range(0, 4)]
+channels += [signal_data_channel(i, 'Period', 'period') for i in range(0, 4)]
+channels += [signal_data_channel(i, 'Frequency', 'frequency') for i in range(0, 4)]
 channels += [value_channel(i) for i in range(0, 4)]
 
 com['openhab'] = {
@@ -714,17 +708,17 @@ com['openhab'] = {
     this.setAllSignalDataCallbackConfiguration(0, true);""",
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Duty Cycle', 'Number:Dimensionless', 'NOT USED',
+        oh_generic_channel_type('Duty Cycle', 'Number', 'NOT USED',
                     update_style=None,
                     description='The signal duty cycle.',
                     min_=0,
                     max_=100,
                     read_only=True),
-        oh_generic_channel_type('Period', 'Number:Time', 'NOT USED',
+        oh_generic_channel_type('Period', 'Number', 'NOT USED',
                     update_style=None,
                     description='The signal period',
                     read_only=False),
-        oh_generic_channel_type('Frequency', 'Number:Frequency', 'NOT USED',
+        oh_generic_channel_type('Frequency', 'Number', 'NOT USED',
                     update_style=None,
                     description='The signal frequency.',
                     read_only=True),
@@ -732,7 +726,7 @@ com['openhab'] = {
                     update_style=None,
                     description='The signal value',
                     read_only=False),
-        oh_generic_channel_type('Counter', 'Number:Dimensionless', 'Counter',
+        oh_generic_channel_type('Counter', 'Number', 'Counter',
             update_style=None,
             description='The current counter value for the given channel.',
             read_only=False,

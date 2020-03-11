@@ -697,7 +697,7 @@ com['openhab'] = {
     'init_code': """this.setWireMode(cfg.wireMode.shortValue());
 this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency.shortValue());""",
     'channels': [
-        oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        oh_generic_old_style_channel('Temperature', 'Temperature'),
         {
             'id': 'Sensor Connected',
             'type': 'Sensor Connected',
@@ -708,7 +708,7 @@ this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency.shortValue());"""
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+        oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Period',
                     description='Temperature of the connected sensor',
                     read_only=True,

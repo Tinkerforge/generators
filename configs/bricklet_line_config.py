@@ -297,10 +297,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Reflectivity', 'Reflectivity', 'SmartHomeUnits.ONE'),
+        oh_generic_old_style_channel('Reflectivity', 'Reflectivity'),
     ],
     'channel_types': [
-        oh_generic_channel_type('Reflectivity', 'Number:Dimensionless', 'Reflectivity',
+        oh_generic_channel_type('Reflectivity', 'Number', 'Reflectivity',
                     update_style='Callback Period',
                     description='The currently measured reflectivity. The reflectivity is a value between 0 (not reflective) and 4095 (very reflective).<br/><br/>Usually black has a low reflectivity while white has a high reflectivity.',
                     read_only=True,

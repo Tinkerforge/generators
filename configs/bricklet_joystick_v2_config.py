@@ -304,8 +304,6 @@ com['openhab'] = {
                 'packet': 'Position',
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
 
-            'java_unit': 'SmartHomeUnits.ONE',
-            'divisor': 1,
             'is_trigger_channel': False
         } for axis in ['X', 'Y']] + [{
             'id': 'Pressed',
@@ -327,7 +325,7 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Position', 'Number:Dimensionless', 'Position',
+        oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style=None,
                     description='The position of the joystick. The value ranges between -100 and 100 for both axis. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.',
                     read_only=True,

@@ -259,16 +259,14 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Indicator',
                 'element': 'Top Left',
-                'transform': 'new QuantityType<>(value.topLeft, {unit})'}],
+                'transform': 'new QuantityType<>(value.topLeft{divisor}, {unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
                 'element': 'Top Left',
-                'packet_params': ['cmd.intValue()', 'this.getIndicator().topRight', 'this.getIndicator().bottom'],
+                'packet_params': ['cmd.intValue(){divisor}', 'this.getIndicator().topRight', 'this.getIndicator().bottom'],
                 'command_type': 'Number',
             }],
-
-            'java_unit': 'SmartHomeUnits.ONE'
         },{
             'id': 'Top Right Indicator',
             'label': 'Top Right Indicator',
@@ -276,16 +274,14 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Indicator',
                 'element': 'Top Right',
-                'transform': 'new QuantityType<>(value.topRight, {unit})'}],
+                'transform': 'new QuantityType<>(value.topRight{divisor}, {unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
                 'element': 'Top Right',
-                'packet_params': [ 'this.getIndicator().topLeft', 'cmd.intValue()', 'this.getIndicator().bottom'],
+                'packet_params': [ 'this.getIndicator().topLeft', 'cmd.intValue(){divisor}', 'this.getIndicator().bottom'],
                 'command_type': 'Number',
             }],
-
-            'java_unit': 'SmartHomeUnits.ONE'
         },{
             'id': 'Bottom Indicator',
             'label': 'Bottom Indicator',
@@ -293,20 +289,18 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Indicator',
                 'element': 'Bottom',
-                'transform': 'new QuantityType<>(value.bottom, {unit})'}],
+                'transform': 'new QuantityType<>(value.bottom{divisor}, {unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
                 'element': 'Bottom',
-                'packet_params': ['this.getIndicator().topLeft', 'this.getIndicator().topRight', 'cmd.intValue()'],
+                'packet_params': ['this.getIndicator().topLeft', 'this.getIndicator().topRight', 'cmd.intValue(){divisor}'],
                 'command_type': 'Number',
             }],
-
-            'java_unit': 'SmartHomeUnits.ONE'
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Indicator', 'Number:Dimensionless', 'NOT USED',
+        oh_generic_channel_type('Indicator', 'Number', 'NOT USED',
                     update_style=None,
                     description='Sets one of the blue backlight LEDs of the fresnel lens. A value of 0 turns the LED off and a value of 255 turns the LED to full brightness.',
                     pattern='%d',

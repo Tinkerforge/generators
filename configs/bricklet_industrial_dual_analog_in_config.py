@@ -432,8 +432,6 @@ def voltage_channel(index):
                 'element': 'Voltage',
                 'transform': 'new QuantityType<>(voltage{divisor}, {unit})'}],
 
-            'java_unit': 'SmartHomeUnits.VOLT',
-            'divisor': 1000.0,
             'is_trigger_channel': False
         }
 
@@ -469,7 +467,7 @@ com['openhab'] = {
         voltage_channel(1),
     ],
     'channel_types': [
-        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'NOT USED',
+        oh_generic_channel_type('Voltage', 'Number', 'NOT USED',
                     update_style='Callback Period',
                     description='Measured voltage between -35 and 35 V',
                     read_only=True,

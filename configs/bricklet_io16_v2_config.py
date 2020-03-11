@@ -713,9 +713,8 @@ def edge_count_channel(idx):
                 'packet': 'Get Edge Count',
                 'element': 'Count',
                 'packet_params': [str(idx), 'channelCfg.resetOnRead'],
-                'transform': 'new QuantityType<>(value, {unit})'}],
+                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
-            'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False
         }
 
@@ -785,7 +784,7 @@ com['openhab'] = {
             'description':'Triggers a monoflop as configured',
             'command_options': [('Trigger', 'TRIGGER')]
         },
-        oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+        oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
             update_style=None,
             description='The current value of the edge counter for the selected channel',
             read_only=True,

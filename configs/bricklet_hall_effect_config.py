@@ -305,7 +305,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Edge Count Config',
@@ -346,15 +346,13 @@ com['openhab'] = {
                 'packet': 'Get Edge Count',
                 'element': 'Count',
                 'packet_params': ['channelCfg.resetOnRead'],
-                'transform': 'new QuantityType<>(value, {unit})'}],
+                'transform': 'new DecimalType(value{divisor})'}],
 
             'callbacks': [{
                 'packet': 'Edge Count',
                 'element': 'Count',
-                'transform': 'new QuantityType<>(count, {unit})'
+                'transform': 'new DecimalType(count{divisor})'
             }],
-
-            'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False
         }, {
             'id': 'Magnetic Field Detected',
@@ -370,7 +368,7 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+        oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
                     update_style=None,
                     description='The current value of the edge counter.',
                     read_only=True,

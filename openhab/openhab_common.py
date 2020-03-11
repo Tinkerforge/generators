@@ -22,6 +22,51 @@ class OpenHABGeneratorTrait:
     def get_doc_formatted_param(self, element):
         return element.get_name().camel
 
+class OpenHABUnit:
+    def __init__(self, tf_unit, java_unit, java_number_type, tf_to_oh_divisor=1):
+        self.tf_unit = tf_unit
+        self.java_unit = java_unit
+        self.java_number_type = java_number_type
+        self.tf_to_oh_divisor = tf_to_oh_divisor
+
+openHABUnits = [
+    OpenHABUnit('Ampere', 'SmartHomeUnits.AMPERE', 'ElectricCurrent'),
+    #OpenHABUnit('Bar', 'SmartHomeUnits.BAR', ''),
+    OpenHABUnit('Bit Per Second', 'SmartHomeUnits.BIT_PER_SECOND', 'DataTransferRate'),
+    OpenHABUnit('Byte', 'SmartHomeUnits.BYTE', 'DataAmount'),
+    OpenHABUnit('Degree Celsius', 'SIUnits.CELSIUS', 'Temperature'),
+    OpenHABUnit('Decibel', 'SmartHomeUnits.DECIBEL', 'Dimensionless'),
+    OpenHABUnit('Degree', 'SmartHomeUnits.DEGREE_ANGLE', 'Angle'),
+    OpenHABUnit('Degree Per Second', 'SmartHomeUnits.ONE', 'Dimensionless'),
+    OpenHABUnit('Gram Per Cubic Meter', 'SmartHomeUnits.MICROGRAM_PER_CUBICMETRE', 'Density', tf_to_oh_divisor=1/(10**6)),
+    OpenHABUnit('Gram', 'SIUnits.GRAM', 'Mass'),
+    OpenHABUnit('Hertz', 'SmartHomeUnits.HERTZ', 'Frequency'),
+    OpenHABUnit('Kelvin', 'SmartHomeUnits.KELVIN', 'Temperature'),
+    OpenHABUnit('Kilometer Per Hour', 'SIUnits.KILOMETRE_PER_HOUR', 'Speed'),
+    OpenHABUnit('Lux', 'SmartHomeUnits.LUX', 'Illuminance'),
+    OpenHABUnit('Meter Per Second Squared', 'SmartHomeUnits.METRE_PER_SQUARE_SECOND', 'Acceleration'),
+    OpenHABUnit('Meter Per Second', 'SmartHomeUnits.METRE_PER_SECOND', 'Speed'),
+    OpenHABUnit('Meter', 'SIUnits.METRE', 'Length'),
+    OpenHABUnit('Parts Per Million', 'SmartHomeUnits.PARTS_PER_MILLION', 'Dimensionless'),
+    OpenHABUnit('Particles Per Cubic Meter', 'SmartHomeUnits.ONE', 'Dimensionless'),
+    OpenHABUnit('Pascal', 'SIUnits.PASCAL', 'Pressure'),
+    OpenHABUnit('Percent Relative Humidity', 'SmartHomeUnits.PERCENT', 'Dimensionless'),
+    OpenHABUnit('Percent', 'SmartHomeUnits.PERCENT', 'Dimensionless'),
+    OpenHABUnit('Ohm', 'SmartHomeUnits.OHM', 'ElectricResistance'),
+    OpenHABUnit('Second', 'SmartHomeUnits.SECOND', 'Time'),
+    OpenHABUnit('Standard Gravity', 'SmartHomeUnits.STANDARD_GRAVITY', 'Acceleration'),
+    OpenHABUnit('Steps Per Second', 'SmartHomeUnits.ONE', 'Dimensionless'),
+    OpenHABUnit('Tesla', 'SmartHomeUnits.TESLA', 'MagneticFluxDensity'),
+    OpenHABUnit('Volt', 'SmartHomeUnits.VOLT', 'ElectricPotential'),
+    OpenHABUnit('Volt-Ampere', 'SmartHomeUnits.ONE', 'Dimensionless'),
+    OpenHABUnit('Volt-Ampere Reactive', 'SmartHomeUnits.ONE', 'Dimensionless'),
+    OpenHABUnit('Watt-Hour', 'SmartHomeUnits.WATT_HOUR', 'Energy'),
+    OpenHABUnit('Watt Per Square Meter', 'SmartHomeUnits.IRRADIANCE', 'Intensity'),
+    OpenHABUnit('Watt', 'SmartHomeUnits.WATT', 'Power'),
+    OpenHABUnit('UV Index', 'SmartHomeUnits.ONE', 'Dimensionless'),
+    OpenHABUnit('None', 'SmartHomeUnits.ONE', 'Dimensionless'),
+]
+
 class OpenHAB:
     def __init__(self, **kwargs):
         self.channels = kwargs.get('channels', [])
@@ -55,6 +100,8 @@ class Channel:
         self.label = kwargs.get('label', None)
         self.description = kwargs.get('description', None)
         self.automatic_update = kwargs.get('automatic_update', True)
+        self.packet = kwargs.get('packet', None)
+        self.element = kwargs.get('element', None)
 
     def get_builder_call(self):
         template = """new ChannelDefinitionBuilder("{channel_id}", new ChannelTypeUID("{binding}", "{channel_type_id}")){with_calls}.build()"""
@@ -149,6 +196,7 @@ class ChannelType:
 class Setter:
     def __init__(self, **kwargs):
         self.packet = kwargs.get('packet', None)
+        self.element = kwargs.get('element', None)
         self.packet_params = kwargs.get('packet_params', [])
         self.predicate = kwargs.get('predicate', 'true')
         self.command_type = kwargs.get('command_type', None)
@@ -156,6 +204,7 @@ class Setter:
 class Getter:
     def __init__(self, **kwargs):
         self.packet = kwargs.get('packet', None)
+        self.element = kwargs.get('element', None)
         self.packet_params = kwargs.get('packet_params', [])
         self.predicate = kwargs.get('predicate', 'true')
         self.transform = kwargs.get('transform', None)
@@ -163,6 +212,7 @@ class Getter:
 class Callback:
     def __init__(self, **kwargs):
         self.packet = kwargs.get('packet', None)
+        self.element = kwargs.get('element', None)
         self.filter = kwargs.get('filter', 'true')
         self.transform = kwargs.get('transform', None)
 
@@ -368,6 +418,17 @@ class OpenHABDevice(java_common.JavaDevice):
         oh = tmp
 
         for c_idx, channel in enumerate(oh['channels']):
+            if 'divisor' in channel and channel['divisor'] != 1:
+                for setter in channel.get('setters', []):
+                    if '{divisor}' not in ', '.join(setter['packet_params']):
+                        raise common.GeneratorError("Divisor not used in setter of channel {}".format(channel['id']))
+                for getter in channel.get('getters', []):
+                    if '{divisor}' not in getter['transform']:
+                        raise common.GeneratorError("Divisor not used in getter of channel {}".format(channel['id']))
+                for callback in channel.get('callbacks', []):
+                    if '{divisor}' not in callback['transform']:
+                        raise common.GeneratorError("Divisor not used in callback of channel {}".format(channel['id']))
+
             tmp_channel = channel_defaults.copy()
             tmp_channel.update(channel)
 
@@ -444,6 +505,53 @@ class OpenHABDevice(java_common.JavaDevice):
             oh['implemented_interfaces'].append('StandardFlashable')
         return oh
 
+    def find_unit_with_prefix(self, unit):
+        for openHABUnit in openHABUnits:
+            if unit.get_base_title().lower() in openHABUnit.tf_unit.lower():
+                if openHABUnit.tf_unit.lower() == unit.get_title().lower():
+                    return 1, openHABUnit
+                for prefix in unit.get_allowed_prefixes():
+                    for inv_prefix in unit.get_allowed_inverse_prefixes():
+                        result = unit.clone(prefix, inv_prefix)
+                        if openHABUnit.tf_unit.lower() == result.get_title().lower():
+                            return 10**result.get_numerator_exponent() / 10**result.get_denominator_exponent(), openHABUnit
+        return None
+
+    def apply_packet_info(self, oh):
+        # TODO: integrate add_packet_info
+        for c in oh.channels:
+            if 'Thermal Imaging' in self.get_long_display_name():
+                print("Hier")
+            elements = [x.element for x in c.getters + c.setters + c.callbacks if x.element is not None]
+
+            if len(elements) == 0:
+                continue
+
+            skip = False
+            for name, fn in [('scale', lambda x: x.get_scale()), ('unit', lambda x: x.get_unit()), ('range', lambda x: x.get_range()), ('constants', lambda x: x.get_constant_group()), ('type', lambda x: x.get_type())]:
+                if not all(fn(x) == fn(elements[0]) for x in elements):
+                    print("openhab: Not all elements had same {}! Device {} Channel {} ".format(name, self.get_long_display_name(), c.id.space))
+                    skip = True
+            if skip:
+                continue
+
+            e = elements[0]
+            # Deduce unit and divisor
+            if not c.is_trigger_channel and c.java_unit is None and (c.type.item_type is None or 'Number' in c.type.item_type):
+                if e.get_unit() is not None:
+                    _, tf_unit = self.find_unit_with_prefix(e.get_unit())
+                    c.java_unit = tf_unit.java_unit
+                    c.type.item_type = 'Number:' + tf_unit.java_number_type
+                else:
+                    c.java_unit = 'SmartHomeUnits.ONE'
+                    c.type.item_type = 'Number:Dimensionless'
+
+            if not c.is_trigger_channel and c.divisor == 1 and isinstance(e.get_scale(), tuple):
+                if e.get_unit() is not None:
+                    factor, tf_unit = self.find_unit_with_prefix(e.get_unit())
+                    c.divisor = tf_unit.tf_to_oh_divisor / factor * e.get_scale()[1] / e.get_scale()[0]
+                else:
+                    c.divisor = e.get_scale()[1] / e.get_scale()[0]
     def sanity_check_config(self, oh):
         # Channels must have a label or inherit one
         for c in oh.channels:
@@ -588,6 +696,38 @@ class OpenHABDevice(java_common.JavaDevice):
         except StopIteration:
             raise common.GeneratorError('openhab: Device "{}" Channel "{}" has type {}, but no such channel type was found.'.format(self.get_long_display_name(), channel['id'].space, channel['type']))
 
+    def format_unit_element(self):
+        def fmt(format_str, unit, divisor, is_setter):
+            if divisor == 1:
+                div = ''
+            elif is_setter:
+                div = ' * ' + str(divisor)
+            else:
+                div = ' / ' + str(divisor)
+            return format_str.format(unit=unit,
+                                    divisor=div)
+
+        def fmt_dict(d, unit, divisor, is_setter):
+            for k, v in d.items():
+                if isinstance(v, str):
+                    d[k] = fmt(v, unit, divisor, is_setter)
+
+        for c in self.oh.channels:
+            fmt_dict(c.__dict__, c.java_unit, c.divisor, False)
+            for setter in c.setters:
+                fmt_dict(setter.__dict__, c.java_unit, c.divisor, True)
+                setter.packet_params = [fmt(x, c.java_unit, c.divisor, True) for x in setter.packet_params]
+
+            for getter in c.getters:
+                fmt_dict(getter.__dict__, c.java_unit, c.divisor, False)
+            for callback in c.callbacks:
+                fmt_dict(callback.__dict__, c.java_unit, c.divisor, False)
+
+        for ct in self.oh.channel_types:
+            for param in ct.params:
+                fmt_dict(param.__dict__, param.unit, 1, False)
+
+
     def read_openhab_config(self):
         if 'openhab' in self.raw_data:
             oh = self.apply_defaults(self.raw_data['openhab'])
@@ -598,30 +738,31 @@ class OpenHABDevice(java_common.JavaDevice):
         oh = self.apply_defaults(oh)
 
         # Replace config placeholders
-        def fmt(format_str, base_name, unit, divisor):
+        def fmt(format_str, base_name):
             if not isinstance(format_str, str):
                 return format_str
             name = common.FlavoredName(base_name).get()
+
             return format_str.format(title_words=name.space,#.title(),
                                      lower_words=name.lower,
                                      camel=name.camel,
                                      headless=name.headless,
-                                     unit=unit,
-                                     divisor=' / ' + str(divisor) if divisor != 1 else '')
+                                     divisor='{divisor}',
+                                     unit='{unit}')
 
-        def fmt_dict(d, base_name, unit, divisor):
-            return {k: fmt(v, base_name, unit, divisor) for k, v in d.items()}
+        def fmt_dict(d, base_name):
+            return {k: fmt(v, base_name) for k, v in d.items()}
 
         for c_idx, channel in enumerate(oh['channels']):
-            oh['channels'][c_idx] = fmt_dict(channel, channel['id'], channel['java_unit'], channel['divisor'])
-            oh['channels'][c_idx]['getters'] = [fmt_dict(getter, channel['id'], channel['java_unit'], channel['divisor']) for getter in oh['channels'][c_idx]['getters']]
-            oh['channels'][c_idx]['setters'] = [fmt_dict(setter, channel['id'], channel['java_unit'], channel['divisor']) for setter in oh['channels'][c_idx]['setters']]
-            oh['channels'][c_idx]['callbacks'] = [fmt_dict(callback, channel['id'], channel['java_unit'], channel['divisor']) for callback in oh['channels'][c_idx]['callbacks']]
+            oh['channels'][c_idx] = fmt_dict(channel, channel['id'])
+            oh['channels'][c_idx]['getters'] = [fmt_dict(getter, channel['id']) for getter in oh['channels'][c_idx]['getters']]
+            oh['channels'][c_idx]['setters'] = [fmt_dict(setter, channel['id']) for setter in oh['channels'][c_idx]['setters']]
+            oh['channels'][c_idx]['callbacks'] = [fmt_dict(callback, channel['id']) for callback in oh['channels'][c_idx]['callbacks']]
 
         for ct_idx, channel_type in enumerate(oh['channel_types']):
             for p_idx, param in enumerate(channel_type['params']):
-                channel_type['params'][p_idx] = fmt_dict(param, channel_type['id'], param['unit'], 1)
-            oh['channel_types'][ct_idx] = fmt_dict(channel_type, channel_type['id'], None, None)
+                channel_type['params'][p_idx] = fmt_dict(param, channel_type['id'])
+            oh['channel_types'][ct_idx] = fmt_dict(channel_type, channel_type['id'])
 
         used_packets = []
 
@@ -646,6 +787,13 @@ class OpenHABDevice(java_common.JavaDevice):
                     return p
             raise common.GeneratorError('openhab: Device {}: Packet {} not found.'.format(self.get_long_display_name(), name))
 
+        def find_element(name, packet):
+            for e in packet.get_elements(high_level=True):
+                if e.get_name().space == name:
+                    return e
+            raise common.GeneratorError("Element {} not found in packet {}.".format(name, packet.get_name().space))
+
+
         # Convert from dicts to objects
         for ct_idx, channel_type in enumerate(oh['channel_types']):
             if channel_type['id'].startswith('system.'):
@@ -657,10 +805,7 @@ class OpenHABDevice(java_common.JavaDevice):
                 param['name'] = common.FlavoredName(param['name']).get()
                 if param['packet'] is not None:
                     param['packet'] = find_packet(param['packet'])
-                    try:
-                        param['element'] = [e for e in param['packet'].get_elements() if e.get_name().space == param['element']][0] # TODO: handle high-level parameters?
-                    except:
-                        raise common.GeneratorError("Element {} not found in packet {}.".format(param['element'], param['packet'].get_name().space))
+                    param['element'] = find_element(param['element'], param['packet'])
 
             channel_type['params'] = [Param(**self.add_packet_info(p)) for p in channel_type['params']]
             oh['channel_types'][ct_idx] = ChannelType(**channel_type)
@@ -673,12 +818,18 @@ class OpenHABDevice(java_common.JavaDevice):
 
             for g_idx, getter in enumerate(oh['channels'][c_idx]['getters']):
                 getter['packet'] = find_packet(getter['packet'])
+                if 'element' in getter:
+                    getter['element'] = find_element(getter['element'], getter['packet'])
                 oh['channels'][c_idx]['getters'][g_idx] = Getter(**getter)
             for s_idx, setter in enumerate(oh['channels'][c_idx]['setters']):
                 setter['packet'] = find_packet(setter['packet'])
+                if 'element' in setter:
+                    setter['element'] = find_element(setter['element'], setter['packet'])
                 oh['channels'][c_idx]['setters'][s_idx] = Setter(**setter)
             for cb_idx, callback in enumerate(oh['channels'][c_idx]['callbacks']):
                 callback['packet'] = find_packet(callback['packet'])
+                if 'element' in callback:
+                    callback['element'] = find_element(callback['element'], callback['packet'])
                 oh['channels'][c_idx]['callbacks'][cb_idx] = Callback(**callback)
 
             oh['channels'][c_idx]['setter_refreshs'] = [SetterRefresh(**{'channel':common.FlavoredName(self.get_category().space + ' ' + self.get_name().space + ' ' + r['channel']).get(), 'delay': r['delay']}) for r in oh['channels'][c_idx]['setter_refreshs']]
@@ -708,6 +859,8 @@ class OpenHABDevice(java_common.JavaDevice):
         oh['required_firmware_version'] = "{}.{}.{}".format(*req_version)
 
         self.oh = OpenHAB(**oh)
+        self.apply_packet_info(self.oh)
+        self.format_unit_element()
         self.sanity_check_config(self.oh)
 
         # Add update interval param to channels updated by the scheduler.

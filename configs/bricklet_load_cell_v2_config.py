@@ -353,7 +353,7 @@ com['openhab'] = {
 this.setMovingAverage(cfg.movingAverage);
 this.setInfoLEDConfig(cfg.infoLED);""",
     'channels': [
-        oh_generic_channel('Weight', 'Weight', 'SIUnits.GRAM', divisor=1),
+        oh_generic_channel('Weight', 'Weight'),
         {
             'id': 'Tare',
             'type': 'Tare',
@@ -370,7 +370,7 @@ this.setInfoLEDConfig(cfg.infoLED);""",
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Weight', 'Number:Mass', 'Weight',
+        oh_generic_channel_type('Weight', 'Number', 'Weight',
                     update_style='Callback Configuration',
                     description='The currently measured weight',
                     read_only=True,

@@ -247,7 +247,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_channel('Position', 'Position', 'SmartHomeUnits.ONE'),
+        oh_generic_channel('Position', 'Position'),
         {
             'id': 'Motor Position',
             'label': 'Motor Position',
@@ -263,12 +263,9 @@ com['openhab'] = {
             'setters': [{
                 'packet': 'Set {title_words}',
                 'element': 'Position',
-                'packet_params': ['cmd.intValue()', 'channelCfg.smoothDriveMode ? 1 : 0', 'channelCfg.holdPosition'],
+                'packet_params': ['cmd.intValue(){divisor}', 'channelCfg.smoothDriveMode ? 1 : 0', 'channelCfg.holdPosition'],
                 'command_type': 'Number',
             }],
-
-            'java_unit': 'SmartHomeUnits.ONE',
-            'divisor': 1.0,
             'is_trigger_channel': False,
         }, {
             'id': 'Position Reached',
@@ -285,14 +282,14 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Position', 'Number:Dimensionless', 'Position',
+        oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style='Callback Configuration',
                     description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).',
                     read_only=True,
                     pattern='%d %unit%',
                     min_=0,
                     max_=100),
-        oh_generic_channel_type('Motor Position', 'Number:Dimensionless', 'Motor Position',
+        oh_generic_channel_type('Motor Position', 'Number', 'Motor Position',
                     update_style=None,
                     description='The motor position of the potentiometer. The value is between 0 (slider down) and 100 (slider up).',
                     pattern='%d %unit%',

@@ -442,7 +442,6 @@ def edge_count_channel(index):
                 'packet_params': [str(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 
-            'java_unit': 'SmartHomeUnits.ONE',
             'is_trigger_channel': False
         }
 
@@ -472,7 +471,7 @@ com['openhab'] = {
                         'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.'
                     }],
                     update_interval_default=100),
-        oh_generic_channel_type('Edge Count', 'Number:Dimensionless', 'Edge Count',
+        oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
                     update_style=None,
                     description='The current value of the edge counter for the selected channel',
                     read_only=True,

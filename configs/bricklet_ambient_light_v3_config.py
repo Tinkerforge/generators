@@ -238,10 +238,10 @@ com['openhab'] = {
     ],
     'init_code': """this.setConfiguration(cfg.illuminanceRange.shortValue(), cfg.integrationTime.shortValue());""",
     'channels': [
-        oh_generic_channel('Illuminance', 'Illuminance', 'SmartHomeUnits.LUX', divisor=100.0)
+        oh_generic_channel('Illuminance', 'Illuminance')
     ],
     'channel_types': [
-        oh_generic_channel_type('Illuminance', 'Number:Illuminance', 'Illuminance',
+        oh_generic_channel_type('Illuminance', 'Number', 'Illuminance',
                     update_style='Callback Configuration',
                     description='The illuminance of the ambient light sensor. The measurement range goes up to about 100000lux, but above 64000lux the precision starts to drop. An illuminance of 0lux indicates that the sensor is saturated and the configuration should be modified.',
                     read_only=True,

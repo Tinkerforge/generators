@@ -346,10 +346,10 @@ com['openhab'] = {
     ],
     'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
     'channels': [
-        oh_generic_old_style_channel('Dust Density', 'Dust Density', 'SmartHomeUnits.MICROGRAM_PER_CUBICMETRE')
+        oh_generic_old_style_channel('Dust Density', 'Dust Density')
     ],
     'channel_types': [
-        oh_generic_channel_type('Dust Density', 'Number:Density', 'Dust Density',
+        oh_generic_channel_type('Dust Density', 'Number', 'Dust Density',
                     update_style='Callback Period',
                     description='The dust density.',
                     read_only=True,

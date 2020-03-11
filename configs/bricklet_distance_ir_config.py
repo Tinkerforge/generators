@@ -561,10 +561,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Distance', 'Distance', 'SIUnits.METRE', divisor=1000.0)
+        oh_generic_old_style_channel('Distance', 'Distance')
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', 'Distance',
                     update_style='Callback Period',
                     description='Measured distance',
                     read_only=True,

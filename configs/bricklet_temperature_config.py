@@ -370,10 +370,10 @@ com['openhab'] = {
     ],
     'init_code': """this.setI2CMode(cfg.i2cMode.shortValue());""",
     'channels': [
-        oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0, cast_literal='(short)'),
+        oh_generic_old_style_channel('Temperature', 'Temperature', cast_literal='(short)'),
     ],
     'channel_types': [
-        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+        oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Period',
                     description='Measured temperature',
                     read_only=True,

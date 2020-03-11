@@ -565,7 +565,7 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Current', 'Current', 'SmartHomeUnits.AMPERE', divisor=1000.0, cast_literal='(short)'),
+        oh_generic_old_style_channel('Current', 'Current', cast_literal='(short)'),
         {
             'id': 'Over Current',
             'type': 'Over Current',
@@ -581,7 +581,7 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Current',
+        oh_generic_channel_type('Current', 'Number', 'Current',
                     update_style='Callback Period',
                     description='The current of the sensor.',
                     read_only=True,

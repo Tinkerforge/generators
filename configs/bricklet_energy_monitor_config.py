@@ -380,7 +380,7 @@ com['examples'].append({
 
 integration_info = 'Integrated over 10 zero-crossings of the voltage sine wave. With a standard AC mains voltage frequecy of 50Hz this results in a 5 measurements per second (or an integration time of 200ms per measurement). If no voltage transformer is connected, the Bricklet will use the current waveform to calculate the frequency and it will use an integration time of 10 zero-crossings of the current waveform.'
 
-def energyDataChannel(id_, type_, unit='SmartHomeUnits.ONE', divisor=1):
+def energyDataChannel(id_, type_):
     return {
         'id': id_,
         'type': type_,
@@ -394,8 +394,6 @@ def energyDataChannel(id_, type_, unit='SmartHomeUnits.ONE', divisor=1):
             'element': '{title_words}',
             'transform': 'new QuantityType<>({headless}{divisor}, {unit})'}],
 
-        'java_unit': unit,
-        'divisor': divisor,
         'is_trigger_channel': False
     }
 
@@ -408,14 +406,14 @@ com['openhab'] = {
     'init_code': """this.setEnergyDataCallbackConfiguration(cfg.energyDataUpdateInterval, true);""",
     'dispose_code': """this.setEnergyDataCallbackConfiguration(0, true);""",
     'channels': [
-        energyDataChannel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', 100.0),
-        energyDataChannel('Current', 'Current', 'SmartHomeUnits.AMPERE', 100.0),
-        energyDataChannel('Energy', 'Energy', 'SmartHomeUnits.WATT_HOUR', 100.0),
-        energyDataChannel('Real Power', 'RealPower', 'SmartHomeUnits.WATT', 100.0),
-        energyDataChannel('Apparent Power', 'AppPower', divisor=100.0),
-        energyDataChannel('Reactive Power', 'ReacPower', divisor=100.0),
-        energyDataChannel('Power Factor', 'Factor', divisor=1000.0),
-        energyDataChannel('Frequency', 'Frequency', 'SmartHomeUnits.HERTZ', 100.0),
+        energyDataChannel('Voltage', 'Voltage'),
+        energyDataChannel('Current', 'Current'),
+        energyDataChannel('Energy', 'Energy'),
+        energyDataChannel('Real Power', 'RealPower'),
+        energyDataChannel('Apparent Power', 'AppPower'),
+        energyDataChannel('Reactive Power', 'ReacPower'),
+        energyDataChannel('Power Factor', 'Factor'),
+        energyDataChannel('Frequency', 'Frequency'),
         {
             'id': 'Reset Energy',
             'type': 'Reset',
@@ -427,22 +425,22 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage RMS',
+        oh_generic_channel_type('Voltage', 'Number', 'Voltage RMS',
                     update_style=None,
                     description='Voltage RMS\\n\\n'+integration_info,
                     read_only=True,
                     pattern='%.2f %unit%'),
-        oh_generic_channel_type('Current', 'Number:ElectricCurrent', 'Current RMS',
+        oh_generic_channel_type('Current', 'Number', 'Current RMS',
                     update_style=None,
                     description='Current RMS\\n\\n'+integration_info,
                     read_only=True,
                     pattern='%.2f %unit%'),
-        oh_generic_channel_type('Energy', 'Number:Energy', 'Energy',
+        oh_generic_channel_type('Energy', 'Number', 'Energy',
                     update_style=None,
                     description='Energy (integrated over time)\\n\\n'+integration_info,
                     read_only=True,
                     pattern='%.2f %unit%'),
-        oh_generic_channel_type('RealPower', 'Number:Power', 'Real Power',
+        oh_generic_channel_type('RealPower', 'Number', 'Real Power',
                     update_style=None,
                     description='Real Power\\n\\n'+integration_info,
                     read_only=True,
@@ -462,7 +460,7 @@ com['openhab'] = {
                     description='Power Factor\\n\\n'+integration_info,
                     read_only=True,
                     pattern='%.3f'),
-        oh_generic_channel_type('Frequency', 'Number:Frequency', 'Frequency',
+        oh_generic_channel_type('Frequency', 'Number', 'Frequency',
                     update_style=None,
                     description='AC Frequency of the mains voltage\\n\\nThe frequency is recalculated every 6s.',
                     read_only=True,

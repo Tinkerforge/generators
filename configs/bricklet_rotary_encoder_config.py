@@ -343,7 +343,7 @@ com['examples'].append({
               ('callback_period', ('Count', 'count'), [], 50)]
 })
 
-count_channel = oh_generic_old_style_channel('Count', 'Count', 'SmartHomeUnits.ONE')
+count_channel = oh_generic_old_style_channel('Count', 'Count')
 count_channel['getters'][0]['packet_params'] = ['false']
 
 com['openhab'] = {
@@ -388,7 +388,7 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Count', 'Number:Dimensionless', 'Count',
+        oh_generic_channel_type('Count', 'Number', 'Count',
                     update_style='Callback Period',
                     description='The current count of the encoder. The encoder has 24 steps per rotation. Turning the encoder to the left decrements the counter, so a negative count is possible.',
                     read_only=True,

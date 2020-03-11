@@ -1205,7 +1205,7 @@ com['openhab'] = {
                 'element': axis,
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.TESLA',
-            'divisor': 1000000000.0,
+            'divisor': 10000000.0,
             'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z']
     ] + [{

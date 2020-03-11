@@ -1415,9 +1415,9 @@ com['openhab'] = {
                 'packet': 'P2P Get State',
                 'element': 'State',
                 'transform': 'new DecimalType(value.state)'
-            }, ]
+            }],
         }],
-    'channel_types': [oh_generic_channel_type('State', 'Number:Dimensionless', 'State',
+    'channel_types': [oh_generic_channel_type('State', 'Number', 'State',
             update_style=None,
             description="The current state of the bricklet. The meaning of the state depends on the configured mode. Calling actions is only allowed in idle, ready and error states (e.g. all states >= 128). The following states are defined:" + state_list,
             read_only=True)],

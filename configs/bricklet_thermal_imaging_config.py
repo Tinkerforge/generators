@@ -647,7 +647,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Image Transfer Config',
@@ -760,7 +760,7 @@ com['openhab'] = {
         'label': 'High Contrast Image',
         'type': 'High Contrast Image',
 
-        'init_code': """this.setHighContrastConfig(new int[]{{channelCfg.highContrastColumnStart, channelCfg.highContrastRowStart, channelCfg.highContrastColumnEnd, channelCfg.highContrastRowEnd}}, channelCfg.dampeningFactor, new int[]{{channelCfg.clipLimitHigh, channelCfg.clipLimitLow}}, channelCfg.emptyCounts);""",
+        'init_code': """this.setHighContrastConfig(new int[]{{{{channelCfg.highContrastColumnStart, channelCfg.highContrastRowStart, channelCfg.highContrastColumnEnd, channelCfg.highContrastRowEnd}}}}, channelCfg.dampeningFactor, new int[]{{{{channelCfg.clipLimitHigh, channelCfg.clipLimitLow}}}}, channelCfg.emptyCounts);""",
 
         'getters': [{
             'packet': 'Get {title_words}',
@@ -789,8 +789,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.spotmeterStatistics[0] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
-        'java_unit': 'SmartHomeUnits.KELVIN',
+            'transform': 'new QuantityType<>(value.spotmeterStatistics[0] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
         'is_trigger_channel': False
     }, {
         'id': 'Spotmeter Maximum Temperature',
@@ -801,8 +800,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.spotmeterStatistics[1] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
-        'java_unit': 'SmartHomeUnits.KELVIN',
+            'transform': 'new QuantityType<>(value.spotmeterStatistics[1] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
         'is_trigger_channel': False
     }, {
         'id': 'Spotmeter Minimum Temperature',
@@ -813,8 +811,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.spotmeterStatistics[2] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
-        'java_unit': 'SmartHomeUnits.KELVIN',
+            'transform': 'new QuantityType<>(value.spotmeterStatistics[2] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
         'is_trigger_channel': False
     }, {
         'id': 'Spotmeter ROI Pixel Count',
@@ -824,8 +821,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.spotmeterStatistics[3], {unit})'}],
-        'java_unit': 'SmartHomeUnits.ONE',
+            'transform': 'new DecimalType(value.spotmeterStatistics[3])'}],
         'is_trigger_channel': False
     }, {
         'id': 'Focal Plain Array Temperature',
@@ -836,8 +832,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.temperatures[0] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
-        'java_unit': 'SmartHomeUnits.KELVIN',
+            'transform': 'new QuantityType<>(value.temperatures[0] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
         'is_trigger_channel': False
     }, {
         'id': 'Focal Plain Array Temperature FFC',
@@ -848,8 +843,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.temperatures[1] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
-        'java_unit': 'SmartHomeUnits.KELVIN',
+            'transform': 'new QuantityType<>(value.temperatures[1] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
         'is_trigger_channel': False
     },  {
         'id': 'Housing Temperature',
@@ -860,8 +854,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.temperatures[2] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
-        'java_unit': 'SmartHomeUnits.KELVIN',
+            'transform': 'new QuantityType<>(value.temperatures[2] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
         'is_trigger_channel': False
     }, {
         'id': 'Housing Temperature FFC',
@@ -872,8 +865,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.temperatures[3] / (cfg.resolution == 0 ? 10.0 : 100.0), {unit})'}],
-        'java_unit': 'SmartHomeUnits.KELVIN',
+            'transform': 'new QuantityType<>(value.temperatures[3] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
         'is_trigger_channel': False
     }, {
         'id': 'FFC Status',
@@ -884,8 +876,7 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'element': 'FFC Status',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.ffcStatus, {unit})'}],
-        'java_unit': 'SmartHomeUnits.ONE',
+            'transform': 'new QuantityType<>(value.ffcStatus{divisor}, {unit})'}],
         'is_trigger_channel': False
     }, {
         'id': 'Shutter Lockout',
@@ -1026,13 +1017,13 @@ com['openhab'] = {
                     update_style=None,
                     pattern='%.3f %unit%',
                     read_only=True),
-        oh_generic_channel_type('Spotmeter ROI Pixel Count', 'Number:Dimensionless', 'Spotmeter ROI Pixel Count',
+        oh_generic_channel_type('Spotmeter ROI Pixel Count', 'Number', 'Spotmeter ROI Pixel Count',
                     update_style=None,
                     pattern='%.3f %unit%',
                     read_only=True),
         {
             'id': 'FFC Status',
-            'item_type': 'Number:Dimensionless',
+            'item_type': 'Number',
             'label': 'FFC Status',
             'description': 'Flat Field Correction Status',
             'read_only': True,

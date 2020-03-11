@@ -534,11 +534,11 @@ com['openhab'] = {
             'description': 'The length of a moving averaging for the voltage.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
         }],
     'channels': [
-        oh_generic_old_style_channel('Voltage', 'Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0),
+        oh_generic_old_style_channel('Voltage', 'Voltage'),
     ],
     'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
     'channel_types': [
-        oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
+        oh_generic_channel_type('Voltage', 'Number', 'Voltage',
                     update_style='Callback Period',
                     description='Measured voltage',
                     read_only=True,

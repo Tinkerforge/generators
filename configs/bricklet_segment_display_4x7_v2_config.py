@@ -334,7 +334,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
 
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [{
@@ -344,7 +344,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Brightness',
                 'element': 'Brightness',
-                'transform': 'new QuantityType<>(value, SmartHomeUnits.ONE)'}],
+                'transform': 'new QuantityType<>(value, {unit})'}],
             'setters': [{
                 'packet': 'Set Brightness',
                 'element': 'Brightness',
@@ -403,7 +403,7 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Segments',
-                'transform': 'new QuantityType<>((Helper.bitsToLong(value.digit0) << 24) | (Helper.bitsToLong(value.digit0) << 16) | (Helper.bitsToLong(value.digit0) << 8) | Helper.bitsToLong(value.digit0), SmartHomeUnits.ONE)'
+                'transform': 'new DecimalType((Helper.bitsToLong(value.digit0) << 24) | (Helper.bitsToLong(value.digit0) << 16) | (Helper.bitsToLong(value.digit0) << 8) | Helper.bitsToLong(value.digit0))'
             }],
             'setters': [{
                 'packet': 'Set Segments',
@@ -427,7 +427,7 @@ com['openhab'] = {
                                   'Helper.parseSegmentDisplay2TextDigit(cmd.toString(), 1)',
                                   'Helper.parseSegmentDisplay2TextDigit(cmd.toString(), 2)',
                                   'Helper.parseSegmentDisplay2TextDigit(cmd.toString(), 3)',
-                                  'new boolean[]{cmd.toString().contains("`") || cmd.toString().contains(":"), cmd.toString().contains(",") || cmd.toString().contains(":")}',
+                                  'new boolean[]{{cmd.toString().contains("`") || cmd.toString().contains(":"), cmd.toString().contains(",") || cmd.toString().contains(":")}}',
                                   'cmd.toString().contains("\'")'],
                 'command_type': 'StringType',
             }],
@@ -437,12 +437,11 @@ com['openhab'] = {
                 {'channel': 'Colon Lower', 'delay': '0'},
                 {'channel': 'Tick', 'delay': '0'},
             ],
-
         }
     ],
     'channel_types': [ {
             'id': 'Brightness',
-            'item_type': 'Number:Dimensionless',
+            'item_type': 'Number',
             'label': 'Brightness',
             'description': 'The brightness can be set between 0 (dark) and 7 (bright).',
             'read_only': False,
@@ -459,7 +458,7 @@ com['openhab'] = {
                         ('6', '6'),
                         ('7', '7')]
         },
-        oh_generic_channel_type('Segments', 'Number:Dimensionless', 'Segments',
+        oh_generic_channel_type('Segments', 'Number', 'Segments',
                     update_style=None,
                     description='The seven segment display can be set with bitmaps. Every bit controls one segment as shown <a href=https://www.tinkerforge.com/en/doc/_images/bricklet_segment_display_4x7_bit_order.png>here</a>. The channel accepts an integer, that is split into 4 bytes, controlling one segment each. For example 1717263183, which is 0x665b5b4f in hex will be split into 0x66 for the first segment, 0x5b for the second, 0x5b for the third and 0x4f for the fourth.',
                     pattern='%d'),

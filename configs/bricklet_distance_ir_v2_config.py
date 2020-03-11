@@ -305,10 +305,10 @@ com['openhab'] = {
     'init_code': """this.setMovingAverageConfiguration(cfg.movingAverageLength);
 this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
     'channels': [
-        oh_generic_channel('Distance', 'Distance', 'SIUnits.METRE', divisor=1000.0)
+        oh_generic_channel('Distance', 'Distance')
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', 'Distance',
                     update_style='Callback Configuration',
                     description='Measured distance',
                     read_only=True,

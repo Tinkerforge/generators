@@ -683,7 +683,7 @@ com['openhab'] = {
 this.setAveraging(cfg.pressureMovingAverageLength.shortValue(), cfg.pressureAverageLength.shortValue(), cfg.temperatureAverageLength.shortValue());""",
     'channels': [
         oh_generic_old_style_channel('Air Pressure', 'Air Pressure', 'SmartHomeUnits.BAR', divisor=1000000.0),
-        oh_generic_old_style_channel('Altitude', 'Altitude', 'SIUnits.METRE', divisor=100.0)
+        oh_generic_old_style_channel('Altitude', 'Altitude')
     ],
     'channel_types': [
         oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
@@ -693,7 +693,7 @@ this.setAveraging(cfg.pressureMovingAverageLength.shortValue(), cfg.pressureAver
                     pattern='%.5f %unit%',
                     min_=10,
                     max_=1200),
-        oh_generic_channel_type('Altitude', 'Number:Length', 'Altitude',
+        oh_generic_channel_type('Altitude', 'Number', 'Altitude',
                     update_style='Callback Period',
                     description='Relative Altitude derived from air pressure',
                     read_only=True,

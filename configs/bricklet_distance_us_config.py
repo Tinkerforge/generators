@@ -344,7 +344,7 @@ com['examples'].append({
 })
 
 
-distance_channel = oh_generic_old_style_channel('Distance', 'Distance', 'SmartHomeUnits.ONE')
+distance_channel = oh_generic_old_style_channel('Distance', 'Distance')
 distance_channel['getters'][0]['packet'] = 'Get Distance Value'
 
 com['openhab'] = {
@@ -371,7 +371,7 @@ com['openhab'] = {
         distance_channel
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number:Dimensionless', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', 'Distance',
                     update_style='Callback Period',
                     description='The current distance value measured by the sensor. The value has a range of 0 to 4095. A small value corresponds to a small distance, a big value corresponds to a big distance. The relation between the measured distance value and the actual distance is affected by the 5V supply voltage (deviations in the supply voltage result in deviations in the distance values) and is non-linear (resolution is bigger at close range).',
                     read_only=True,

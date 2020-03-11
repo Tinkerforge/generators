@@ -392,14 +392,11 @@ def concentration_channel(size):
             'packet': 'PM Concentration',
             'element': 'PM{}'.format(size),
             'transform': 'new QuantityType<>(pm{}{{divisor}}, {{unit}})'.format(size)}],
-
-        'java_unit': 'SmartHomeUnits.MICROGRAM_PER_CUBICMETRE',
-        'divisor': 1,
         'is_trigger_channel': False
     }
 
 def concentration_channel_type(size):
-    return oh_generic_channel_type('PM{} Concentration'.format(size), 'Number:Density', 'PM {:.1f} Concentration'.format(size / 10),
+    return oh_generic_channel_type('PM{} Concentration'.format(size), 'Number', 'PM {:.1f} Concentration'.format(size / 10),
                     update_style=None,
                     description='The particulate matter {:.1f} concentration. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
                     read_only=True,
@@ -414,19 +411,20 @@ def count_channel(size):
             'packet': 'Get PM Count',
             'element': 'Greater{:02}um'.format(size),
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.greater{:02}um{{divisor}}, {{unit}})'.format(size)}],
+            # Not using the divisor placeholder here is a hack to prevent the auto-deduce-logic from converting the value to particles per cubic meter.
+            'transform': 'new QuantityType<>(value.greater{:02}um, {{unit}})'.format(size)}],
+
 
         'callbacks': [{
             'packet': 'PM Count',
             'element': 'Greater{:02}um'.format(size),
-            'transform': 'new QuantityType<>(greater{:02}um{{divisor}}, {{unit}})'.format(size)}],
+            # See above
+            'transform': 'new QuantityType<>(greater{:02}um, {{unit}})'.format(size)}],
 
-        'java_unit': 'SmartHomeUnits.ONE',
-        'divisor': 1,
         'is_trigger_channel': False
     }
 def count_channel_type(size):
-    return oh_generic_channel_type('Part Count {}'.format(size), 'Number:Dimensionless', 'Particulates Greater {:.1f}µm'.format(size / 10),
+    return oh_generic_channel_type('Part Count {}'.format(size), 'Number', 'Particulates Greater {:.1f}µm'.format(size / 10),
                     update_style=None,
                     description='The number of particulates greater than {:.1f}µm in 100 ml of air. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
                     read_only=True,

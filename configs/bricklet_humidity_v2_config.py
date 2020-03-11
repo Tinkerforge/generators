@@ -330,8 +330,8 @@ com['openhab'] = {
     'init_code': """this.setSamplesPerSecond(cfg.sampleRate);
 this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperatureMovingAverageLength);""",
     'channels': [
-        oh_generic_channel('Humidity', 'Humidity', 'SmartHomeUnits.PERCENT', divisor=100.0),
-        oh_generic_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        oh_generic_channel('Humidity', 'Humidity',),
+        oh_generic_channel('Temperature', 'Temperature'),
         {
             'id': 'Heater',
             'type': 'Heater',
@@ -350,14 +350,14 @@ this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperat
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Humidity', 'Number:Dimensionless', 'Humidity',
+        oh_generic_channel_type('Humidity', 'Number', 'Humidity',
                     update_style='Callback Configuration',
                     description='Measured relative humidity',
                     read_only=True,
                     pattern='%.2f %%',
                     min_=0,
                     max_=100),
-        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+        oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Configuration',
                     description='Measured temperature',
                     read_only=True,

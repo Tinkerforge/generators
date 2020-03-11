@@ -1834,13 +1834,13 @@ com['openhab'] = {
                 'setters': [{
                     'packet': 'Set Display Configuration',
                     'element': 'Backlight',
-                    'packet_params': ['cfg.contrast', 'cmd.intValue()', 'cfg.invert', 'cfg.automaticDraw'],
+                    'packet_params': ['cfg.contrast', 'cmd.intValue(){divisor}', 'cfg.invert', 'cfg.automaticDraw'],
                     'command_type': "Number",
                 }],
                 'getters': [{
                     'packet': 'Get Display Configuration',
                     'element': 'Backlight',
-                    'transform': 'new QuantityType<>(value.backlight, SmartHomeUnits.ONE)'
+                    'transform': 'new QuantityType<>(value.backlight{divisor}, {unit})'
                 }]
             }, {
                 'id': 'Touch Position',
@@ -1915,7 +1915,7 @@ com['openhab'] = {
             'description':'Draws the currently buffered frame.',
             'command_options': [('Draw', 'DRAW')]
         },
-        oh_generic_channel_type('Backlight', 'Number:Dimensionless', 'Backlight',
+        oh_generic_channel_type('Backlight', 'Number', 'Backlight',
             update_style=None,
             description="The backlight intensity value from 0 to 100.",
             min_=0,

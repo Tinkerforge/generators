@@ -513,7 +513,7 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': """this.setConfiguration(cfg.averageLength.shortValue(), cfg.thermocoupleType.shortValue(), cfg.frequencyFilter.shortValue());""",
     'channels': [
-        oh_generic_old_style_channel('Temperature', 'Temperature', 'SIUnits.CELSIUS', divisor=100.0),
+        oh_generic_old_style_channel('Temperature', 'Temperature'),
         {
             'id': 'Over Under Voltage',
             'type': 'Over Under Voltage',
@@ -549,7 +549,7 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+        oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Period',
                     description='The temperature of the thermocouple.',
                     read_only=True,

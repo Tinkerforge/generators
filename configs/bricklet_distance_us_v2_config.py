@@ -207,10 +207,10 @@ com['openhab'] = {
     'init_code': """this.setUpdateRate(cfg.updateRate);
 this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
     'channels': [
-        oh_generic_channel('Distance', 'Distance', 'SIUnits.METRE', divisor=1000.0)
+        oh_generic_channel('Distance', 'Distance')
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number:Length', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', 'Distance',
                     update_style='Callback Configuration',
                     description='The current distance measured by the sensor.',
                     read_only=True,

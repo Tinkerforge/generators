@@ -335,10 +335,10 @@ com['openhab'] = {
         }],
     'init_code': """this.setConfiguration(cfg.dataRate, cfg.backgroundCalibration);""",
     'channels': [
-        oh_generic_channel('Heading', 'Heading', 'SmartHomeUnits.DEGREE_ANGLE', divisor=10.0)
+        oh_generic_channel('Heading', 'Heading')
     ],
     'channel_types': [
-        oh_generic_channel_type('Heading', 'Number:Angle', 'Heading',
+        oh_generic_channel_type('Heading', 'Number', 'Heading',
                     update_style='Callback Configuration',
                     description='The heading (north = 0 degree)',
                     read_only=True,

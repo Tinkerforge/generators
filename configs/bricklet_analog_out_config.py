@@ -154,9 +154,6 @@ com['openhab'] = {
                 'channel': 'Mode',
                 'delay': 0
             }],
-
-            'java_unit': 'SmartHomeUnits.VOLT',
-            'divisor': 1000.0,
             'is_trigger_channel': False
         }, {
             'id': 'Mode',
@@ -164,7 +161,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
-                'transform': 'new QuantityType<>(value, SmartHomeUnits.ONE)'}],
+                'transform': 'new QuantityType<>(value, {unit})'}],
             'setters':[{
                 'packet': 'Set {title_words}',
                 'element': '{title_words}',
@@ -180,7 +177,7 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-         oh_generic_channel_type('Voltage', 'Number:ElectricPotential', 'Voltage',
+         oh_generic_channel_type('Voltage', 'Number', 'Voltage',
                     update_style=None,
                     description='The output voltage. The possible range is 0V to 5V. Sending a command to this channel will set the Mode to Analog Value.',
                     pattern='%.3f %unit%',
@@ -188,7 +185,7 @@ com['openhab'] = {
                     max_=5),
          {
             'id': 'Mode',
-            'item_type': 'Number:Dimensionless',
+            'item_type': 'Number',
             'label': 'Mode',
             'description': 'The mode of the output. Setting the mode to Analog Value will result in an output voltage of 0. You can jump to a higher output voltage directly by sending a command to the Voltage Channel.',
             'read_only': False,

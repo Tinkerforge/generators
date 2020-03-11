@@ -484,10 +484,10 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Position', 'Position', 'SmartHomeUnits.DEGREE_ANGLE', cast_literal='(short)')
+        oh_generic_old_style_channel('Position', 'Position', cast_literal='(short)')
     ],
     'channel_types': [
-        oh_generic_channel_type('Position', 'Number:Angle', 'Position',
+        oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style='Callback Period',
                     description='The position of the rotary potentiometer. The value is and between -150° (turned left) and 150° (turned right).',
                     read_only=True,
