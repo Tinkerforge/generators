@@ -1560,6 +1560,23 @@ class Unit(object):
                     prefix=prefix,
                     inverse_prefix=inverse_prefix)
 
+    def __eq__(self, other):
+        return isinstance(other, Unit) \
+            and self._name == other._name \
+            and self._title == other._title \
+            and self._symbol == other._symbol \
+            and self._usage == other._usage \
+            and self._allowed_prefixes == other._allowed_prefixes \
+            and self._allowed_inverse_prefixes == other._allowed_inverse_prefixes \
+            and self._sequence == other._sequence \
+            and self._numerator_exponent == other._numerator_exponent \
+            and self._denominator_exponent == other._denominator_exponent \
+            and self._prefix == other._prefix \
+            and self._inverse_prefix == other._inverse_prefix \
+
+    def __ne__(self, other):
+        return not self == other
+
 units = [
     Unit('{prefix}Ampere',
          {'en': '{prefix}Ampere', 'de': '{prefix}Ampere'},
