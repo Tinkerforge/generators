@@ -440,20 +440,7 @@ com['openhab'] = {
 
             'name': 'Baud Rate',
             'type': 'integer',
-            'options': [('300', 0),
-                        ('600', 1),
-                        ('1200', 2),
-                        ('2400', 3),
-                        ('4800', 4),
-                        ('9600', 5),
-                        ('14400', 6),
-                        ('19200', 7),
-                        ('28800', 8),
-                        ('38400', 9),
-                        ('57600', 10),
-                        ('115200', 11),
-                        ('230400', 12)],
-            'limit_to_options': 'true',
+
             'label': 'Baud Rate',
             'description': 'The baud rate to send/receive with.',
         }, {
@@ -462,12 +449,7 @@ com['openhab'] = {
 
             'name': 'Parity',
             'type': 'integer',
-            'options': [('None', 0),
-                        ('Odd', 1),
-                        ('Even', 2),
-                        ('Forced Parity 1', 3),
-                        ('Forced Parity 0', 4)],
-            'limit_to_options': 'true',
+
             'label': 'Parity',
             'description': 'The parity mode to use. See <a href=\\\"https://en.wikipedia.org/wiki/Serial_port#Parity\\\">here</a>'
         }, {
@@ -476,9 +458,7 @@ com['openhab'] = {
 
             'name': 'Stop Bits',
             'type': 'integer',
-            'options': [('1', 1),
-                        ('2', 2)],
-            'limit_to_options': 'true',
+
             'label': 'Stop Bits',
             'description': 'The number of stop bits to send/expect.'
         }, {
@@ -487,11 +467,7 @@ com['openhab'] = {
 
             'name': 'Word Length',
             'type': 'integer',
-            'options': [('5', 5),
-                        ('6', 6),
-                        ('7', 7),
-                        ('8', 8)],
-            'limit_to_options': 'true',
+
             'label': 'Word Length',
             'description': 'The length of a serial word. Typically one byte.'
         }, {

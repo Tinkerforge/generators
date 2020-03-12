@@ -420,13 +420,6 @@ com['openhab'] = {
 
             'name': 'Data Rate',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('1Hz', 1),
-                        ('10Hz', 2),
-                        ('25Hz', 3),
-                        ('50Hz', 4),
-                        ('75Hz', 5)],
-            'limit_to_options': 'true',
             'label': 'Data Rate',
             'description': "Configures the data rate. A higher data rate will result in a less precise temperature because of self-heating of the sensor. If the accuracy of the temperature reading is important to you, we would recommend the 1Hz data rate.",
         }, {

@@ -711,15 +711,7 @@ com['openhab'] = {
 
             'name': 'Baud Rate',
             'type': 'integer',
-            'options': [('10kbps', 0),
-                        ('20kbps', 1),
-                        ('50kbps', 2),
-                        ('125kbps', 3),
-                        ('250kbps', 4),
-                        ('500kbps', 5),
-                        ('800kbps', 6),
-                        ('1000kbps', 7)],
-            'limit_to_options': 'true',
+
             'label': 'Baud Rate',
             'description': 'The baud rate to send/receive with.',
         }, {
@@ -728,10 +720,6 @@ com['openhab'] = {
 
             'name': 'Transceiver Mode',
             'type': 'integer',
-            'options': [('Normal', 0),
-                        ('Loopback', 1),
-                        ('Read Only', 2)],
-            'limit_to_options': 'true',
             'label': 'Transceiver Mode',
             'description': 'The CAN transceiver has three different modes:<ul><li>Normal: Reads from and writes to the CAN bus and performs active bus error detection and acknowledgement.</li><li>Loopback: All reads and writes are performed internally. The transceiver is disconnected from the actual CAN bus.</li><li>Read-Only: Only reads from the CAN bus, but does neither active bus error detection nor acknowledgement. Only the receiving part of the transceiver is connected to the CAN bus.</li></ul>'
         }, {

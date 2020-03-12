@@ -575,10 +575,6 @@ com['openhab'] = {
 
         'name': 'Remote Type',
         'type': 'integer',
-        'options': [('A', 0),
-                    ('B', 1),
-                    ('C', 2)],
-        'limit_to_options': 'true',
         'label': 'Remote Type',
         'description': 'Type A, B or C depending on the type of remote you want to receive.',
     }, {

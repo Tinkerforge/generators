@@ -678,9 +678,6 @@ com['openhab'] = {
 
             'name': 'Resolution',
             'type': 'integer',
-            'options': [('0 To 6553 Kelvin', 0),
-                        ('0 To 655 Kelvin', 1)],
-            'limit_to_options': 'true',
             'default': 1,
 
             'label': 'Resolution',

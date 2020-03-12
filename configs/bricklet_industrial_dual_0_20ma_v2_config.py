@@ -388,11 +388,7 @@ def led_status_config():
 
             'name': 'LED Config',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('On', 1),
-                        ('Show Heartbeat', 2),
-                        ('Show Channel Status', 3)],
-            'limit_to_options': 'true',
+
             'label': 'LED Configuration',
             'description': """Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Show Channel Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the measured value.""",
         },
@@ -402,9 +398,7 @@ def led_status_config():
 
             'name': 'LED Status Mode',
             'type': 'integer',
-            'options': [('Threshold', 0),
-                        ('Intensity', 1)],
-            'limit_to_options': 'true',
+
             'label': 'LED Status Mode',
             'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
@@ -446,11 +440,7 @@ com['openhab'] = {
 
             'name': 'Sample Rate',
             'type': 'integer',
-            'options': [('240 SPS', 0),
-                        ('60 SPS', 1),
-                        ('15 SPS', 2),
-                        ('4 SPS', 3)],
-            'limit_to_options': 'true',
+
             'label': 'Sample Rate',
             'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
             'advanced': 'true'
@@ -460,11 +450,6 @@ com['openhab'] = {
 
             'name': 'Gain',
             'type': 'integer',
-            'options': [('1x', 0),
-                        ('2x', 1),
-                        ('4x', 2),
-                        ('8x', 3)],
-            'limit_to_options': 'true',
             'label': 'Gain',
             'description': "The gain between 1x and 8x. If you want to measure a very small current, you can increase the gain to get some more resolution.<br/><br/>Example: If you measure 0.5mA with a gain of 8x the return value will be 4mA.",
             'advanced': 'true'

@@ -319,12 +319,6 @@ com['openhab'] = {
 
             'name': 'FFT Size',
             'type': 'integer',
-            'options': [('128', 0),
-              ('256', 1),
-              ('512', 2),
-              ('1024', 3)],
-            'limit_to_options': 'true',
-
             'label': 'FFT Size',
             'description': 'With different FFT sizes the Bricklet has a different amount of samples per second and the size of the FFT bins changes. The higher the FFT size the more precise is the result of the dB(X) calculation.',
         },

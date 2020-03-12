@@ -289,10 +289,7 @@ com['openhab'] = {
 
             'name': 'Voltage Range',
             'type': 'integer',
-            'options': [('0 To 5V', 0),
-                        ('0 To 10V', 1)
-            ],
-            'limit_to_options': 'true',
+
             'label': 'Voltage Range',
             'description': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
         }, {
@@ -301,11 +298,6 @@ com['openhab'] = {
 
             'name': 'Current Range',
             'type': 'integer',
-            'options': [('4 To 20mA', 0),
-                        ('0 To 20mA', 1),
-                        ('0 To 24mA', 2)
-            ],
-            'limit_to_options': 'true',
             'label': 'Current Range',
             'description': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
         }

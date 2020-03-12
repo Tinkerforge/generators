@@ -270,12 +270,7 @@ com['openhab'] = {
 
             'name': 'Average Length',
             'type': 'integer',
-            'options': [('1', 1),
-                        ('2', 2),
-                        ('4', 4),
-                        ('8', 8),
-                        ('16', 16)],
-            'limit_to_options': 'true',
+
             'label': 'Average Length',
             'description': 'Available averaging sizes are 1, 2, 4, 8 and 16 samples.<br/><br/>The conversion time depends on the averaging and filter configuration, it can be calculated as follows:<ul><li>60Hz: time = 82 + (samples - 1) * 16.67</li><li>50Hz: time = 98 + (samples - 1) * 20</li></ul>'
         }, {
@@ -284,17 +279,7 @@ com['openhab'] = {
 
             'name': 'Thermocouple Type',
             'type': 'integer',
-            'options': [('B', 0),
-                        ('E', 1),
-                        ('J', 2),
-                        ('K', 3),
-                        ('N', 4),
-                        ('R', 5),
-                        ('S', 6),
-                        ('T', 7),
-                        ('G8', 8),
-                        ('G32', 9)],
-            'limit_to_options': 'true',
+
             'label': 'Thermocouple Type',
             'description': 'As thermocouple type you can use B, E, J, K, N, R, S and T. If you have a different thermocouple or a custom thermocouple you can also use G8 and G32. With these types the returned value will not be in °C/100, it will be calculated by the following formulas:<ul><li>G8: value = 8 * 1.6 * 2^17 * Vin</li><li>G32: value = 32 * 1.6 * 2^17 * Vin</li></ul>where Vin is the thermocouple input voltage.'
         }, {
@@ -303,9 +288,6 @@ com['openhab'] = {
 
             'name': 'Frequency Filter',
             'type': 'integer',
-            'options': [('50Hz', 0),
-                        ('60Hz', 1)],
-            'limit_to_options': 'true',
             'label': 'Frequency Filter',
             'description': 'The frequency filter can be either configured to 50Hz or to 60Hz. You should configure it according to your utility frequency.'
         }],

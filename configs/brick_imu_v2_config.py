@@ -1248,15 +1248,7 @@ com['openhab'] = {
 
             'name': 'Magnetometer Rate',
             'type': 'integer',
-            'options':[('2Hz', 0),
-                       ('6Hz', 1),
-                       ('8Hz', 2),
-                       ('10Hz', 3),
-                       ('15Hz', 4),
-                       ('20Hz', 5),
-                       ('25Hz', 6),
-                       ('30Hz', 7)],
-            'limit_to_options': 'true',
+
             'label': 'Magnetometer Rate',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
@@ -1279,15 +1271,7 @@ com['openhab'] = {
 
             'name': 'Gyroscope Bandwidth',
             'type': 'integer',
-            'options':[('523Hz', 0),
-                       ('230Hz', 1),
-                       ('116Hz', 2),
-                       ('47Hz', 3),
-                       ('23Hz', 4),
-                       ('12Hz', 5),
-                       ('64Hz', 6),
-                       ('32Hz', 7)],
-            'limit_to_options': 'true',
+
             'label': 'Gyroscope Bandwidth',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
@@ -1326,11 +1310,6 @@ com['openhab'] = {
 
             'name': 'Sensor Fusion Mode',
             'type': 'integer',
-            'options':[('Off', 0),
-                       ('On', 1),
-                       ('On Without Magnetometer', 2),
-                       ('On Without Fast Magnetometer Calibration', 3)],
-            'limit_to_options': 'true',
             'label': 'Sensor Fusion Mode',
             'description': "If the fusion mode is turned off, the Acceleration, Magnetic Field and Angular Velocity channels return uncalibrated and uncompensated sensor data. All other sensor channels return no data.<br/><br/>Since firmware version 2.0.6 you can also use a fusion mode without magnetometer. In this mode the calculated orientation is relative (with magnetometer it is absolute with respect to the earth). However, the calculation can't be influenced by spurious magnetic fields.<br/><br/>Since firmware version 2.0.13 you can also use a fusion mode without fast magnetometer calibration. This mode is the same as the normal fusion mode, but the fast magnetometer calibration is turned off. So to find the orientation the first time will likely take longer, but small magnetic influences might not affect the automatic calibration as much.<br/><br/>By default sensor fusion is on."
         },

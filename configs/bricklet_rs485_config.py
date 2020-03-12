@@ -2094,10 +2094,7 @@ com['openhab'] = {
 
             'name': 'Parity',
             'type': 'integer',
-            'options': [('None', 0),
-                        ('Odd', 1),
-                        ('Even', 2)],
-            'limit_to_options': 'true',
+
             'label': 'Parity',
             'description': 'The parity mode to use. See <a href=\\\"https://en.wikipedia.org/wiki/Serial_port#Parity\\\">here</a>'
         }, {
@@ -2107,9 +2104,7 @@ com['openhab'] = {
 
             'name': 'Stop Bits',
             'type': 'integer',
-            'options': [('1', 1),
-                        ('2', 2)],
-            'limit_to_options': 'true',
+
             'label': 'Stop Bits',
             'description': 'The number of stop bits to send/expect.'
         }, {
@@ -2119,11 +2114,7 @@ com['openhab'] = {
 
             'name': 'Word Length',
             'type': 'integer',
-            'options': [('5', 5),
-              ('6', 6),
-              ('7', 7),
-              ('8', 8)],
-            'limit_to_options': 'true',
+
             'label': 'Word Length',
             'description': 'The length of a serial word. Typically one byte.'
         }, {
@@ -2133,9 +2124,7 @@ com['openhab'] = {
 
             'name': 'Duplex',
             'type': 'integer',
-            'options': [('Half', 0),
-                        ('Full', 1)],
-            'limit_to_options': 'true',
+
             'label': 'Duplex',
             'description': 'The flow control mechanism to use. Software uses control characters in-band. Hardware uses the RTS and CTS lines.'
         }, {
@@ -2174,11 +2163,7 @@ com['openhab'] = {
 
             'name': 'Communication LED Config',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('On', 1),
-                        ('Show Heartbeat', 2),
-                        ('Show Communication', 3)],
-            'limit_to_options': 'true',
+
             'label': 'Communication LED Config',
             'description': "By default the LED shows RS485 communication traffic by flickering. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
@@ -2187,11 +2172,6 @@ com['openhab'] = {
 
             'name': 'Error LED Config',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('On', 1),
-                        ('Show Heartbeat', 2),
-                        ('Show Error', 3)],
-            'limit_to_options': 'true',
             'label': 'Error LED Config',
             'description': "By default the error LED turns on if there is any error (see FrameErrorCountListener callback). You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }],

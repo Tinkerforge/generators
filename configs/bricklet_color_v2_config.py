@@ -395,11 +395,7 @@ com['openhab'] = {
 
             'name': 'Gain',
             'type': 'integer',
-            'options': [('1x', 0),
-                        ('4x', 1),
-                        ('16x', 2),
-                        ('60x', 3)],
-            'limit_to_options': 'true',
+
             'label': 'Gain',
             'description': 'Increasing the gain enables the sensor to detect a color from a higher distance.',
         }, {
@@ -408,12 +404,6 @@ com['openhab'] = {
 
             'name': 'Integration Time',
             'type': 'integer',
-            'options': [('2ms', 0),
-                        ('24ms', 1),
-                        ('101ms', 2),
-                        ('154ms', 3),
-                        ('700ms', 4)],
-            'limit_to_options': 'true',
             'label': 'Integration Time',
             'description': 'The integration time provides a trade-off between conversion time and accuracy. With a longer integration time the values read will be more accurate but it will take longer time to get the conversion results.',
         }],

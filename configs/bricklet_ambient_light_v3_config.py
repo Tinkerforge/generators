@@ -203,14 +203,7 @@ com['openhab'] = {
 
             'name': 'Illuminance Range',
             'type': 'integer',
-            'options': [('Unlimited', 6),
-                        ('64000Lux', 0),
-                        ('32000Lux', 1),
-                        ('16000Lux', 2),
-                        ('8000Lux', 3),
-                        ('1300Lux', 4),
-                        ('600Lux', 5)],
-            'limit_to_options': 'true',
+
             'label': 'Illuminance Range',
             'description': 'The unlimited illuminance range allows to measure up to about 100000lux, but above 64000lux the precision starts to drop.<br/><br/>A smaller illuminance range increases the resolution of the data.<br/><br/>If the actual measure illuminance is out-of-range then the current illuminance range maximum +0.01lux is reported. For example, 800001 for the 0-8000lux range.<br/><br/>If the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
         }, {
@@ -219,15 +212,6 @@ com['openhab'] = {
 
             'name': 'Integration Time',
             'type': 'integer',
-            'options': [('50ms', 0),
-                        ('100ms', 1),
-                        ('150ms', 2),
-                        ('200ms', 3),
-                        ('250ms', 4),
-                        ('300ms', 5),
-                        ('350ms', 6),
-                        ('400ms', 7)],
-            'limit_to_options': 'true',
             'label': 'Integration Time',
             'description': 'A longer integration time will result in less noise on the data.<br/><br/>With a long integration time the sensor might be saturated before the measured value reaches the maximum of the selected illuminance range. In this case 0lux is reported.<br/><br/>If the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
         }

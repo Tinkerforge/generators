@@ -473,17 +473,7 @@ com['openhab'] = {
 
             'name': 'Data Rate',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('3Hz', 1),
-                        ('6Hz', 2),
-                        ('12Hz', 3),
-                        ('25Hz', 4),
-                        ('50Hz', 5),
-                        ('100Hz', 6),
-                        ('400Hz', 7),
-                        ('800Hz', 8),
-                        ('1600Hz', 9)],
-            'limit_to_options': 'true',
+
             'label': 'Data Rate',
             'description': 'The data rate of 0Hz to 1600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
@@ -492,12 +482,7 @@ com['openhab'] = {
 
             'name': 'Full Scale Range',
             'type': 'integer',
-            'options': [('2g', 0),
-                        ('4g', 1),
-                        ('6g', 2),
-                        ('8g', 3),
-                        ('16g', 4)],
-            'limit_to_options': 'true',
+
             'label': 'Full Scale Range',
             'description': 'Full scale range of -2g to +2g up to -16g to +16g. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
@@ -506,11 +491,6 @@ com['openhab'] = {
 
             'name': 'Filter Bandwidth',
             'type': 'integer',
-            'options': [('800Hz', 0),
-                        ('400Hz', 1),
-                        ('200Hz', 2),
-                        ('50Hz', 3)],
-            'limit_to_options': 'true',
             'label': 'Filter Bandwidth',
             'description': 'Filter bandwidth between 50Hz and 800Hz.'
         },

@@ -391,11 +391,7 @@ def led_status_config():
 
             'name': 'LED Config',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('On', 1),
-                        ('Show Heartbeat', 2),
-                        ('Show Channel Status', 3)],
-            'limit_to_options': 'true',
+
             'label': 'LED Configuration',
             'description': led_channel_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
@@ -405,9 +401,7 @@ def led_status_config():
 
             'name': 'LED Status Mode',
             'type': 'integer',
-            'options': [('Threshold', 0),
-                        ('Intensity', 1)],
-            'limit_to_options': 'true',
+
             'label': 'LED Status Mode',
             'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
@@ -450,15 +444,7 @@ com['openhab'] = {
 
             'name': 'Sample Rate',
             'type': 'integer',
-            'options': [('976 SPS', 0),
-                        ('488 SPS', 1),
-                        ('244 SPS', 2),
-                        ('122 SPS', 3),
-                        ('61 SPS', 4),
-                        ('4 SPS', 5),
-                        ('2 SPS', 6),
-                        ('1 SPS', 7)],
-            'limit_to_options': 'true',
+
             'label': 'Sample Rate',
             'description': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
             'advanced': 'true'

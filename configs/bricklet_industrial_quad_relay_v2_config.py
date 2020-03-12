@@ -337,10 +337,6 @@ relay_channel_type['params'] = [
     'type': 'integer',
     'label': 'Channel LED Config',
     'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
-    'options':  [('Off', 0),
-                ('On', 1),
-                ('Show Heartbeat', 2),
-                ('Show Channel Status', 3)],
 },
 ]
 

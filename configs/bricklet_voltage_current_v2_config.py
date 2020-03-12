@@ -259,15 +259,6 @@ com['openhab'] = {
 
             'name': 'Averaging',
             'type': 'integer',
-            'options': [('1', 0),
-                        ('4', 1),
-                        ('16', 2),
-                        ('64', 3),
-                        ('128', 4),
-                        ('256', 5),
-                        ('512', 6),
-                        ('1024', 7)],
-            'limit_to_options': 'true',
             'label': 'Averaging',
             'description': 'Configures the number of samples to average over.'
         }, {

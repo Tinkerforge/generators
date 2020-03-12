@@ -570,9 +570,7 @@ com['openhab'] = {
 
             'name': 'DMX Mode',
             'type': 'integer',
-            'options': [('Master', 0),
-                        ('Slave', 1)],
-            'limit_to_options': 'true',
+
             'label': 'DMX Mode',
             'description': "Sets the DMX mode to either master or slave.",
         }, {
@@ -581,11 +579,7 @@ com['openhab'] = {
 
             'name': 'Communication LED Config',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('On', 1),
-                        ('Show Heartbeat', 2),
-                        ('Show Communication', 3)],
-            'limit_to_options': 'true',
+
             'label': 'Communication LED Config',
             'description': "By default the LED shows communication traffic, it flickers once for every 10 received data packets. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
@@ -594,11 +588,6 @@ com['openhab'] = {
 
             'name': 'Error LED Config',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('On', 1),
-                        ('Show Heartbeat', 2),
-                        ('Show Error', 3)],
-            'limit_to_options': 'true',
             'label': 'Error LED Config',
             'description': "By default the error LED turns on if there is any error (see FrameErrorCountListener callback). If you call this function with the Show-Error option again, the LED will turn off until the next error occurs. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {

@@ -1341,11 +1341,7 @@ com['openhab'] = {
 
             'name': 'Mode',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('Cardemu', 1),
-                        ('P2P', 2),
-                        ('Reader', 3)],
-            'limit_to_options': 'true',
+
             'label': 'Mode',
             'description': 'The NFC Bricklet supports four modes:<br/><br/><ul><li>Off</li><li>Card Emulation (Cardemu): Emulates a tag for other readers</li><li>Peer to Peer (P2P): Exchange data with other readers</li><li>Reader: Reads and writes tags</li></ul><br/><br/>If you change a mode, the Bricklet will reconfigure the hardware for this mode. Therefore, you can only use functions corresponding to the current mode. For example, in Reader mode you can only use Reader functions.',
         },  {
@@ -1354,11 +1350,7 @@ com['openhab'] = {
 
             'name': 'Detection LED Config',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('On', 1),
-                        ('Show Heartbeat', 2),
-                        ('Show Detection', 3)],
-            'limit_to_options': 'true',
+
             'label': 'Detection LED Config',
             'description': "The detection LED configuration. By default the LED shows if a card/reader is detected.<br/><br/>You can also turn the LED permanently on/off or show a heartbeat.<br/><br/If the Bricklet is in bootloader mode, the LED is off.",
         }, {

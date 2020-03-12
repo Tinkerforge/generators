@@ -590,6 +590,11 @@ class OpenHABDevice(java_common.JavaDevice):
             if p.default is None:
                 p.default = new_default
 
+        def deduce_options(p):
+            if p.element.get_constant_group() is None or p.element.get_range() != 'constants' or p.options is not None or p.type != 'integer':
+                return
+            p.options = p.element.get_constant_group().raw_data['constants']
+            p.limit_to_options = 'true'
 
         for p in oh.params + [p for c in oh.channels for p in c.type.params]:
             if p.virtual and p.default is None:
@@ -605,7 +610,7 @@ class OpenHABDevice(java_common.JavaDevice):
 
             deduce_min_max(p, divisor)
             deduce_default(p, divisor)
-
+            deduce_options(p)
 
 
     def sanity_check_config(self, oh):

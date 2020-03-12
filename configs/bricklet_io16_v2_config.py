@@ -790,10 +790,6 @@ com['openhab'] = {
 
                 'name': 'Edge Type',
                 'type': 'integer',
-                'options':[('Rising', 0),
-                            ('Falling', 1),
-                            ('Both', 2)],
-                'limit_to_options': 'true',
                 'label': 'Edge Type',
                 'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
             },{

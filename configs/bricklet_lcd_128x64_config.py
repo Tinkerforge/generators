@@ -1773,11 +1773,6 @@ com['openhab'] = {
 
             'name': 'Touch LED Config',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('On', 1),
-                        ('Show Heartbeat', 2),
-                        ('Show Touch', 3)],
-            'limit_to_options': 'true',
             'label': 'Touch LED Config',
             'description': 'The touch LED configuration. By default the LED is on if the LCD is touched.<br/>You can also turn the LED permanently on/off or show a heartbeat.<br/>If the Bricklet is in bootloader mode, the LED is off.'
         },

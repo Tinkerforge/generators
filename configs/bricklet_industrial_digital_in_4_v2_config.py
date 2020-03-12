@@ -458,11 +458,7 @@ com['openhab'] = {
 
                         'name': 'LED Config',
                         'type': 'integer',
-                        'options': [('Off', 0),
-                                    ('On', 1),
-                                    ('Show Heartbeat', 2),
-                                    ('Show Channel Status', 3)],
-                        'limit_to_options': 'true',
+
                         'label': 'LED Configuration',
                         'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.'
                     }],
@@ -477,10 +473,6 @@ com['openhab'] = {
 
                             'name': 'Edge Type',
                             'type': 'integer',
-                            'options':[('Rising', 0),
-                                    ('Falling', 1),
-                                    ('Both', 2)],
-                            'limit_to_options': 'true',
                             'label': 'Edge Type',
                             'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
                         },{
