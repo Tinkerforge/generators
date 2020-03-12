@@ -1604,7 +1604,7 @@ com['examples'].append({
 'incomplete': True # because of special random movement logic in callback
 })
 
-def data_channel(name_words, name_headless, type_, divisor=1, unit=None):
+def data_channel(name_words, name_headless, type_):
     return {
         'id': name_words,
         'type': name_words,
@@ -1612,14 +1612,11 @@ def data_channel(name_words, name_headless, type_, divisor=1, unit=None):
             'packet': 'Get All Data',
             'element': name_words,
             'packet_params': [],
-            'transform': 'new {type}(value.{headless}{{divisor}}{unit})'.format(type=type_,headless=name_headless,unit=', {unit}' if unit is not None else '')}],
+            'transform': 'new {type}(value.{headless}{{divisor}}{unit})'.format(type=type_,headless=name_headless,unit=', {unit}' if type_ == 'QuantityType<>' else '')}],
         'callbacks': [{
             'packet': 'All Data',
             'element': name_words,
-            'transform': 'new {type}({headless}{{divisor}}{unit})'.format(type=type_,headless=name_headless,unit=', {unit}' if unit is not None else '')}],
-
-        'java_unit': unit,
-        'divisor': divisor,
+            'transform': 'new {type}({headless}{{divisor}}{unit})'.format(type=type_,headless=name_headless,unit=', {unit}' if type_ == 'QuantityType<>' else '')}],
     }
 
 com['openhab'] = {
@@ -1643,12 +1640,12 @@ com['openhab'] = {
     this.setMinimumVoltage((int)(cfg.minimumVoltage.doubleValue() * 1000.0));""",
 
     'channels': [
-        data_channel('Current Velocity', 'currentVelocity', 'DecimalType', 1, None),
-        data_channel('Current Position', 'currentPosition', 'DecimalType', 1, None),
-        data_channel('Remaining Steps', 'remainingSteps', 'DecimalType', 1, None),
-        data_channel('Stack Voltage', 'stackVoltage', 'QuantityType<>', 1000.0, 'SmartHomeUnits.VOLT'),
-        data_channel('External Voltage', 'externalVoltage', 'QuantityType<>', 1000.0, 'SmartHomeUnits.VOLT'),
-        data_channel('Current Consumption', 'currentConsumption', 'QuantityType<>', 1000.0, 'SmartHomeUnits.AMPERE'),
+        data_channel('Current Velocity', 'currentVelocity', 'DecimalType'),
+        data_channel('Current Position', 'currentPosition', 'DecimalType'),
+        data_channel('Remaining Steps', 'remainingSteps', 'DecimalType'),
+        data_channel('Stack Voltage', 'stackVoltage', 'QuantityType<>'),
+        data_channel('External Voltage', 'externalVoltage', 'QuantityType<>'),
+        data_channel('Current Consumption', 'currentConsumption', 'QuantityType<>'),
         {
             'id': 'State',
             'type': 'State',

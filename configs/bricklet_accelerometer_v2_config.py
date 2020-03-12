@@ -721,8 +721,6 @@ com['openhab'] = {
                 'packet': 'Acceleration',
                 'element': axis.upper(),
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis)}],
-            'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
-            'divisor': 10000.0,
         } for axis in ['x', 'y', 'z']
     ],
     'channel_types': [

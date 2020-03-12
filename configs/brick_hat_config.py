@@ -339,9 +339,6 @@ com['openhab'] = {
 
             'init_code':"""this.setVoltagesCallbackConfiguration(cfg.voltagesUpdateInterval, true);""",
             'dispose_code': """this.setVoltagesCallbackConfiguration(0, true);""",
-
-            'java_unit': 'SmartHomeUnits.VOLT',
-            'divisor': 1000.0,
         }, {
             'id': 'DC Voltage',
             'type': 'DC Voltage',
@@ -356,9 +353,6 @@ com['openhab'] = {
                 'element': 'Voltage DC',
                 'transform': 'new QuantityType<>(voltageDC{divisor}, {unit})',
                 'filter': 'true'}],
-
-            'java_unit': 'SmartHomeUnits.VOLT',
-            'divisor': 1000.0,
         }
     ],
     'channel_types': [

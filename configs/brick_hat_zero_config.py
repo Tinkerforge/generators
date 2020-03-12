@@ -64,7 +64,7 @@ com['examples'].append({
 'functions': [('getter', ('Get USB Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1, 1000.0, 'V', None)], [])]
 })
 
-usb_voltage_channel = oh_generic_channel('USB Voltage', 'USB Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0, element_name='Voltage')
+usb_voltage_channel = oh_generic_channel('USB Voltage', 'USB Voltage', element_name='Voltage')
 usb_voltage_channel['callbacks'][0]['transform'] = 'new QuantityType<>(voltage{divisor}, {unit})'
 
 com['openhab'] = {

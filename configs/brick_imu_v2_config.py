@@ -1370,8 +1370,6 @@ com['openhab'] = {
                 'packet': 'Acceleration',
                 'element': axis,
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
-            'java_unit': 'SmartHomeUnits.METRE_PER_SQUARE_SECOND',
-            'divisor': 100.0,
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Magnetic Field {}'.format(axis.upper()),
@@ -1387,8 +1385,6 @@ com['openhab'] = {
                 'packet': 'Magnetic Field',
                 'element': axis,
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
-            'java_unit': 'SmartHomeUnits.TESLA',
-            'divisor': 16000000.0,
         } for axis in ['X', 'Y', 'Z']
     ] +  [{
             'id': 'Angular Velocity {}'.format(axis.upper()),
@@ -1404,8 +1400,6 @@ com['openhab'] = {
                 'packet': 'Angular Velocity',
                 'element': axis,
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
-            'java_unit': 'SmartHomeUnits.ONE',
-            'divisor': 16.0,
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Orientation {}'.format(angle),
@@ -1421,8 +1415,6 @@ com['openhab'] = {
                 'packet': 'Orientation',
                 'element': angle,
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(angle.lower())}],
-            'java_unit': 'SmartHomeUnits.DEGREE_ANGLE',
-            'divisor': 16.0,
         } for angle in ['Heading', 'Roll', 'Pitch']
     ] + [{
             'id': 'Quaternion {}'.format(axis.upper()),
@@ -1431,13 +1423,13 @@ com['openhab'] = {
 
             'getters': [{
                 'packet': 'Get Quaternion',
+                'element': axis,
                 'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Quaternion',
+                'element': axis,
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
-            'java_unit': 'SmartHomeUnits.ONE',
-            'divisor': 16383.0,
         } for axis in ['W', 'X', 'Y', 'Z']
     ] + [{
             'id': 'Linear Acceleration {}'.format(axis.upper()),
@@ -1453,8 +1445,6 @@ com['openhab'] = {
                 'packet': 'Linear Acceleration',
                 'element': axis,
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
-            'java_unit': 'SmartHomeUnits.METRE_PER_SQUARE_SECOND',
-            'divisor': 100.0,
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Gravity Vector {}'.format(axis.upper()),
@@ -1487,8 +1477,6 @@ com['openhab'] = {
             'packet': 'Temperature',
             'element': 'Temperature',
             'transform': 'new QuantityType<>(temperature{divisor}, {unit})'}],
-        'java_unit': 'SIUnits.CELSIUS',
-        'divisor': 1.0,
     }] + [{
             'id': 'Enable LEDs',
             'type': 'Enable LEDs',

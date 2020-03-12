@@ -3681,9 +3681,9 @@ com['examples'].append({
               ('getter', ('Get Stack Current', 'stack current'), [(('Stack Current', 'Stack Current'), 'uint16', 1, 1000.0, 'A', None)], [])]
 })
 
-voltage_channel = oh_generic_old_style_channel('Stack Voltage', 'Stack Voltage', 'SmartHomeUnits.VOLT', divisor=1000.0, element_name='Voltage')
+voltage_channel = oh_generic_old_style_channel('Stack Voltage', 'Stack Voltage', element_name='Voltage')
 voltage_channel['callbacks'][0]['transform'] = 'new QuantityType<>(voltage{divisor}, {unit})'
-current_channel = oh_generic_old_style_channel('Stack Current', 'Stack Current', 'SmartHomeUnits.AMPERE', divisor=1000.0, element_name='Current')
+current_channel = oh_generic_old_style_channel('Stack Current', 'Stack Current', element_name='Current')
 current_channel['callbacks'][0]['transform'] = 'new QuantityType<>(current{divisor}, {unit})'
 
 com['openhab'] = {

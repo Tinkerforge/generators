@@ -533,8 +533,6 @@ com['openhab'] = {
                 'packet': 'Acceleration',
                 'element': axis.upper(),
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis)}],
-            'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
-            'divisor': 1000.0,
         } for axis in ['x', 'y', 'z']
     ] + [{
             'id': 'Temperature',
@@ -545,7 +543,6 @@ com['openhab'] = {
                 'packet': 'Get Temperature',
                 'element': 'Temperature',
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
-            'java_unit': 'SIUnits.CELSIUS',
         }, {
             'id': 'LED',
             'type': 'LED',
