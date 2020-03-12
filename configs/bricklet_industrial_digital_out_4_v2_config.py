@@ -405,8 +405,6 @@ com['openhab'] = {
                                 ('Show Heartbeat', 2),
                                 ('Show Channel Status', 3)],
                     'limit_to_options': 'true',
-                    'default': 3,
-
                     'label': 'LED Configuration',
                     'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to \\\"Channel Status\\\". In this mode the LED is on if the channel is high and off otherwise.',
                 }]),
@@ -420,8 +418,6 @@ com['openhab'] = {
                 'name': 'Monoflop Duration',
                 'type': 'integer',
                 'default': 1000,
-                'min': 0,
-                'max': '4294967295L',
                 'unit': 'ms',
 
                 'label': 'Monoflop Duration',

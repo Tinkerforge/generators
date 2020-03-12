@@ -820,10 +820,6 @@ com['openhab'] = {
 
             'name': 'Distance Moving Average Length',
             'type': 'integer',
-            'default': 10,
-            'min': 0,
-            'max': 30,
-
             'label': 'Distance Moving Average Length',
             'groupName': 'average'
         }, {
@@ -832,10 +828,6 @@ com['openhab'] = {
 
             'name': 'Velocity Moving Average Length',
             'type': 'integer',
-            'default': 10,
-            'min': 0,
-            'max': 30,
-
             'label': 'Velocity Moving Average Length',
             'groupName': 'average'
         }, {
@@ -850,8 +842,6 @@ com['openhab'] = {
                         ('Velocity Max 64m/s', 3),
                         ('Velocity Max 127m/s', 4)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Mode',
             'description': 'The LIDAR-Lite sensor (hardware version 1) has five different modes. One mode is for distance measurements and four modes are for velocity measurements with different ranges.<br/><br/>The following modes are available:<br/><ul><li>0: Distance is measured with resolution 1.0 cm and range 0-400 cm</li><li>1: Velocity is measured with resolution 0.1 m/s and range is 0-12.7 m/s</li><li>2: Velocity is measured with resolution 0.25 m/s and range is 0-31.75 m/s</li><li>3: Velocity is measured with resolution 0.5 m/s and range is 0-63.5 m/s</li><li>4: Velocity is measured with resolution 1.0 m/s and range is 0-127 m/s</li></ul>This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 3.',
             'groupName': 'sensor1'
@@ -861,10 +851,6 @@ com['openhab'] = {
 
             'name': 'Acquisition Count',
             'type': 'integer',
-            'min': 1,
-            'max': 255,
-            'default': 128,
-
             'label': 'Acquisition Count',
             'description': 'The Acquisition Count defines the number of times the Laser Range Finder Bricklet will integrate acquisitions to find a correlation record peak. With a higher count, the Bricklet can measure longer distances. With a lower count, the rate increases. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
             'groupName': 'sensor3'
@@ -875,7 +861,6 @@ com['openhab'] = {
 
             'name': 'Enable Quick Termination',
             'type': 'boolean',
-            'default': 'false',
 
             'label': 'Enable Quick Termination',
             'description': 'If you enable Quick Termination, the distance measurement will be terminated early if a high peak was already detected. This means that a higher measurement rate can be achieved and long distances can be measured at the same time. However, the chance of false-positive distance measurements increases. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
@@ -886,10 +871,6 @@ com['openhab'] = {
 
             'name': 'Threshold Value',
             'type': 'integer',
-            'min': 0,
-            'max': 255,
-            'default': 0,
-
             'label': 'Threshold Value',
             'description': 'Normally the distance is calculated with a detection algorithm that uses peak value, signal strength and noise. You can however also define a fixed Threshold Value. Set this to a low value if you want to measure the distance to something that has very little reflection (e.g. glass) and set it to a high value if you want to measure the distance to something with a very high reflection (e.g. mirror). Set this to 0 to use the default algorithm. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
             'groupName': 'sensor3'
@@ -909,7 +890,6 @@ com['openhab'] = {
             'name': 'Measurement Frequency',
             'type': 'integer',
             'min': 10, # Disallow 0 intentionally: controlled by "enable fixed measurement frequency"
-            'max': 500,
             'default': 10, # Disallow 0 intentionally: controlled by "enable fixed measurement frequency"
 
             'label': 'Measurement Frequency',

@@ -317,8 +317,6 @@ com['openhab'] = {
                         ('Falling', 1),
                         ('Both', 2)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Edge Type',
             'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
         }, {
@@ -327,9 +325,6 @@ com['openhab'] = {
 
             'name': 'Debounce',
             'type': 'integer',
-
-            'default': 100,
-
             'label': 'Debounce Time',
             'description': 'The debounce time in ms.',
         }],
@@ -353,7 +348,6 @@ com['openhab'] = {
                 'element': 'Count',
                 'transform': 'new DecimalType(count{divisor})'
             }],
-            'is_trigger_channel': False
         }, {
             'id': 'Magnetic Field Detected',
             'type': 'Magnetic Field Detected',
@@ -364,7 +358,6 @@ com['openhab'] = {
                 'element': 'Value',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
-            'is_trigger_channel': False
         }
     ],
     'channel_types': [

@@ -526,10 +526,6 @@ com['openhab'] = {
 
             'name': 'Moving Average Length',
             'type': 'integer',
-            'default': 50,
-            'min': 1,
-            'max': 50,
-
             'label': 'Moving Average Length',
             'description': 'The length of a moving averaging for the voltage.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
         }],

@@ -484,7 +484,6 @@ com['openhab'] = {
                         ('800Hz', 8),
                         ('1600Hz', 9)],
             'limit_to_options': 'true',
-            'default': 6,
             'label': 'Data Rate',
             'description': 'The data rate of 0Hz to 1600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
@@ -499,7 +498,6 @@ com['openhab'] = {
                         ('8g', 3),
                         ('16g', 4)],
             'limit_to_options': 'true',
-            'default': 1,
             'label': 'Full Scale Range',
             'description': 'Full scale range of -2g to +2g up to -16g to +16g. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
@@ -513,7 +511,6 @@ com['openhab'] = {
                         ('200Hz', 2),
                         ('50Hz', 3)],
             'limit_to_options': 'true',
-            'default': 2,
             'label': 'Filter Bandwidth',
             'description': 'Filter bandwidth between 50Hz and 800Hz.'
         },
@@ -538,7 +535,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis)}],
             'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
             'divisor': 1000.0,
-            'is_trigger_channel': False
         } for axis in ['x', 'y', 'z']
     ] + [{
             'id': 'Temperature',
@@ -550,7 +546,6 @@ com['openhab'] = {
                 'element': 'Temperature',
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
             'java_unit': 'SIUnits.CELSIUS',
-            'is_trigger_channel': False
         }, {
             'id': 'LED',
             'type': 'LED',

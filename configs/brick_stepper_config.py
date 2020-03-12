@@ -1083,7 +1083,6 @@ def data_channel(name_words, name_headless, type_, divisor=1, unit=None):
             'element': name_words,
             'transform': 'new {type}({headless}{{divisor}}{unit})'.format(type=type_,headless=name_headless,unit=', ' + unit if unit is not None else '')}],
 
-        'is_trigger_channel': False,
         'java_unit': unit,
         'divisor': divisor,
     }
@@ -1102,7 +1101,6 @@ com['openhab'] = {
             'unit': 'V',
             'label': 'Minimum Voltage',
             'description': 'The minimum voltage in V, below which the Unter Voltage channel is triggered. The minimum possible value that works with the Stepper Brick is 8V. You can use this function to detect the discharge of a battery that is used to drive the stepper motor. If you have a fixed power supply, you likely do not need this functionality. The default value is 8V.',
-            'default': 8,
         }
     ],
 
@@ -1125,7 +1123,6 @@ com['openhab'] = {
                 'packet': 'New State',
                 'transform': 'new DecimalType(stateNew)'}],
 
-            'is_trigger_channel': False
         }, {
             'id': 'Previous State',
             'type': 'State',
@@ -1135,7 +1132,6 @@ com['openhab'] = {
                 'packet': 'New State',
                 'transform': 'new DecimalType(statePrevious)'}],
 
-            'is_trigger_channel': False
         }, {
             'id': 'Position Reached',
             'type': 'system.trigger',

@@ -336,10 +336,6 @@ com['openhab'] = {
 
             'name': 'Moving Average Length',
             'type': 'integer',
-            'default': 100,
-            'min': 0,
-            'max': 100,
-
             'label': 'Moving Average Length',
             'description': 'The length of a moving averaging for the dust_density.<br/><br/>Setting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.'
         }

@@ -425,7 +425,6 @@ this.setChannelLEDConfig({0}, channelCfg.ledConfig);""".format(index),
                 'element': 'Value',
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
 
-            'is_trigger_channel': False
         }
 
 def edge_count_channel(index):
@@ -442,7 +441,6 @@ def edge_count_channel(index):
                 'packet_params': [str(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value, {unit})'}],
 
-            'is_trigger_channel': False
         }
 
 
@@ -465,8 +463,6 @@ com['openhab'] = {
                                     ('Show Heartbeat', 2),
                                     ('Show Channel Status', 3)],
                         'limit_to_options': 'true',
-                        'default': 3,
-
                         'label': 'LED Configuration',
                         'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.'
                     }],
@@ -485,8 +481,6 @@ com['openhab'] = {
                                     ('Falling', 1),
                                     ('Both', 2)],
                             'limit_to_options': 'true',
-                            'default': 0,
-
                             'label': 'Edge Type',
                             'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
                         },{
@@ -495,9 +489,6 @@ com['openhab'] = {
 
                             'name': 'Debounce',
                             'type': 'integer',
-
-                            'default': 100,
-
                             'label': 'Debounce Time',
                             'description': 'The debounce time in ms.',
                         },{

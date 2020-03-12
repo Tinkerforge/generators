@@ -383,7 +383,6 @@ com['openhab'] = {
 
             'name': 'Show Cursor',
             'type': 'boolean',
-            'default': 'false',
 
             'label': 'Show Cursor',
             'description': "Configures if the cursor (shown as '_') should be visible. The cursor position is one character behind the the last text written.",
@@ -394,7 +393,6 @@ com['openhab'] = {
 
             'name': 'Show Blinking Cursor',
             'type': 'boolean',
-            'default': 'false',
 
             'label': 'Show Blinking Cursor',
             'description': 'Configures if the blinking cursor (shown as a blinking block) should be visible. The cursor position is one character behind the the last text written.',

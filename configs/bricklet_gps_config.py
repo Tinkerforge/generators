@@ -672,7 +672,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Coordinates',
                 'transform': "new PointType(new DecimalType(latitude / 1000000.0 * (ns == 'N' ? 1 : -1)), new DecimalType(longitude / 1000000.0 * (ew == 'E' ? 1 : -1)))"}],
-            'is_trigger_channel': False,
             'init_code': 'this.setCoordinatesCallbackPeriod(channelCfg.updateInterval);',
             'dispose_code': 'this.setCoordinatesCallbackPeriod(0);'
         }, {
@@ -690,7 +689,6 @@ com['openhab'] = {
                 'element': '{title_words}',
                 'transform': "fix > 1 ? OnOffType.ON : OnOffType.OFF"}],
 
-            'is_trigger_channel': False,
         }, {
             'id': 'Satellites In View',
             'type': 'Satellites In View',
@@ -706,7 +704,6 @@ com['openhab'] = {
                 'element': 'Satellites View',
                 'transform': "new DecimalType(satellitesView)"}],
 
-            'is_trigger_channel': False
         },  {
             'id': 'Satellites Used',
             'type': 'Satellites Used',
@@ -722,7 +719,6 @@ com['openhab'] = {
                 'element': 'Satellites Used',
                 'transform': "new DecimalType(satellitesUsed)"}],
 
-            'is_trigger_channel': False
         }, {
             'id': 'Altitude',
             'type': 'Altitude',
@@ -738,7 +734,6 @@ com['openhab'] = {
                 'element': '{title_words}',
                 'transform': "new QuantityType<>(altitude{divisor},{unit})"}],
 
-            'is_trigger_channel': False,
         },  {
             'id': 'Geoidal Separation',
             'type': 'Geoidal Separation',
@@ -754,7 +749,6 @@ com['openhab'] = {
                 'element': '{title_words}',
                 'transform': "new QuantityType<>(geoidalSeparation{divisor},{unit})"}],
 
-            'is_trigger_channel': False
         },  {
             'id': 'Course',
             'type': 'Course',
@@ -770,7 +764,6 @@ com['openhab'] = {
                 'element': '{title_words}',
                 'transform': "new QuantityType<>(course{divisor}, {unit})"}],
 
-            'is_trigger_channel': False,
         },  {
             'id': 'Speed',
             'type': 'Speed',
@@ -786,7 +779,6 @@ com['openhab'] = {
                 'element': '{title_words}',
                 'transform': "new QuantityType<>(speed{divisor}, {unit})"}],
 
-            'is_trigger_channel': False
         },  {
             'id': 'Date Time',
             'type': 'Date Time',
@@ -800,7 +792,6 @@ com['openhab'] = {
                 'packet': 'Date Time',
                 'transform': "new DateTimeType(Helper.parseGPSDateTime(date, time).withZoneSameInstant(ZoneId.systemDefault()))"}],
 
-            'is_trigger_channel': False,
             'init_code': 'this.setDateTimeCallbackPeriod(channelCfg.updateInterval);',
             'dispose_code': 'this.setDateTimeCallbackPeriod(0);'
         }, {

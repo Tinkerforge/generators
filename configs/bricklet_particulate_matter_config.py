@@ -392,7 +392,6 @@ def concentration_channel(size):
             'packet': 'PM Concentration',
             'element': 'PM{}'.format(size),
             'transform': 'new QuantityType<>(pm{}{{divisor}}, {{unit}})'.format(size)}],
-        'is_trigger_channel': False
     }
 
 def concentration_channel_type(size):
@@ -421,7 +420,6 @@ def count_channel(size):
             # See above
             'transform': 'new QuantityType<>(greater{:02}um, {{unit}})'.format(size)}],
 
-        'is_trigger_channel': False
     }
 def count_channel_type(size):
     return oh_generic_channel_type('Part Count {}'.format(size), 'Number', 'Particulates Greater {:.1f}µm'.format(size / 10),

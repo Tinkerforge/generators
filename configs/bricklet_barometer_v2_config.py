@@ -394,10 +394,6 @@ com['openhab'] = {
 
             'name': 'Air Pressure Moving Average Length',
             'type': 'integer',
-            'default': 100,
-            'min': 1,
-            'max': 1000,
-
             'label': 'Air Pressure Moving Average Length',
             'groupName': 'average'
         }, {
@@ -406,10 +402,6 @@ com['openhab'] = {
 
             'name': 'Temperature Moving Average Length',
             'type': 'integer',
-            'default': 100,
-            'min': 1,
-            'max': 1000,
-
             'label': 'Temperature Moving Average Length',
             'groupName': 'average'
         }, {
@@ -418,9 +410,7 @@ com['openhab'] = {
 
             'name': 'Reference Air Pressure',
             'type': 'decimal',
-            'default': 1013.25,
             'min': 260, # Disallow 0 intentionally.
-            'max': 1260,
 
             'label': 'Reference Air Pressure',
             'description': 'The reference air pressure in hPa for the altitude calculation. Valid values are between 260 and 1260. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
@@ -437,8 +427,6 @@ com['openhab'] = {
                         ('50Hz', 4),
                         ('75Hz', 5)],
             'limit_to_options': 'true',
-            'default': 4,
-
             'label': 'Data Rate',
             'description': "Configures the data rate. A higher data rate will result in a less precise temperature because of self-heating of the sensor. If the accuracy of the temperature reading is important to you, we would recommend the 1Hz data rate.",
         }, {
@@ -451,8 +439,6 @@ com['openhab'] = {
                         ('1/9th', 1),
                         ('1/20th', 2)],
             'limit_to_options': 'true',
-            'default': 1,
-
             'label': 'Air Pressure Low Pass Filter',
             'description': "Configures the air pressure low pass filter. The low pass filter cut-off frequency (if enabled) can be set to 1/9th or 1/20th of the configure data rate to decrease the noise on the air pressure data.",
         },

@@ -1728,7 +1728,6 @@ def gui_slider_value_channel(index):
             'element': 'Value',
             'transform': 'new DecimalType(value)'}],
 
-        'is_trigger_channel': False
     }
 
 com['openhab'] = {
@@ -1740,10 +1739,6 @@ com['openhab'] = {
 
             'name': 'Contrast',
             'type': 'integer',
-            'default': 14,
-            'min': 0,
-            'max': 63,
-
             'label': 'Contrast',
             'description': "Sets the contrast of the display (0-63).",
         }, {
@@ -1752,10 +1747,6 @@ com['openhab'] = {
 
             'name': 'Default Backlight Intensity',
             'type': 'integer',
-            'default': 100,
-            'min': 0,
-            'max': 100,
-
             'label': 'Default Backlight Intensity',
             'description': "Sets the default backlight intensity of the display (0-100).",
         }, {
@@ -1764,7 +1755,6 @@ com['openhab'] = {
 
             'name': 'Invert',
             'type': 'boolean',
-            'default': 'false',
 
             'label': 'Invert',
             'description': 'Inverts the color (black/white) of the display.',
@@ -1774,7 +1764,6 @@ com['openhab'] = {
 
             'name': 'Automatic Draw',
             'type': 'boolean',
-            'default': 'true',
 
             'label': 'Automatic Draw',
             'description': 'If automatic draw is enabled, the display is automatically updated when writing text or clearing the display. If it is disabled, the changes are written into an internal buffer and only shown on the display after triggering the Draw Buffered Frame channel.',
@@ -1789,7 +1778,6 @@ com['openhab'] = {
                         ('Show Heartbeat', 2),
                         ('Show Touch', 3)],
             'limit_to_options': 'true',
-            'default': 3,
             'label': 'Touch LED Config',
             'description': 'The touch LED configuration. By default the LED is on if the LCD is touched.<br/>You can also turn the LED permanently on/off or show a heartbeat.<br/>If the Bricklet is in bootloader mode, the LED is off.'
         },

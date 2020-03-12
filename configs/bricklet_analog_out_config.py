@@ -154,7 +154,6 @@ com['openhab'] = {
                 'channel': 'Mode',
                 'delay': 0
             }],
-            'is_trigger_channel': False
         }, {
             'id': 'Mode',
             'type': 'Mode',
@@ -173,7 +172,6 @@ com['openhab'] = {
                 'channel': 'Voltage',
                 'delay': 0
             }],
-            'is_trigger_channel': False
         }
     ],
     'channel_types': [
@@ -190,9 +188,7 @@ com['openhab'] = {
             'description': 'The mode of the output. Setting the mode to Analog Value will result in an output voltage of 0. You can jump to a higher output voltage directly by sending a command to the Voltage Channel.',
             'read_only': False,
             'pattern': '%d',
-            'min': 0,
-            'max': 7,
-            'is_trigger_channel': False,
+            'max': 3,
             'options':[('Analog Value', 0),
                         ('1k To Ground', 1),
                         ('100k To Ground', 2),

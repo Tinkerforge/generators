@@ -579,8 +579,6 @@ com['openhab'] = {
                     ('B', 1),
                     ('C', 2)],
         'limit_to_options': 'true',
-        'default': 0,
-
         'label': 'Remote Type',
         'description': 'Type A, B or C depending on the type of remote you want to receive.',
     }, {
@@ -589,8 +587,6 @@ com['openhab'] = {
 
         'name': 'Minimum Repeats',
         'type': 'integer',
-        'default': 2,
-
         'label': 'Minimum Repeats',
         'description': 'The minimum number of repeated data packets until the Remote Status channels trigger.',
     }],

@@ -377,7 +377,6 @@ def electrode_config(idx):
 
             'name': 'Electrode {} Enabled'.format(idx),
             'type': 'boolean',
-            'default': 'true',
 
             'label': 'Electrode {} Enabled'.format(idx),
             'description': "True enables the electrode, false disables the electrode. If you don't need all electrodes you can disable the electrodes that are not needed. Disabling electrodes will also reduce power consumption.",
@@ -392,10 +391,6 @@ com['openhab'] = {
 
             'name': 'Sensitivity',
             'type': 'integer',
-            'default': 181,
-            'min': 5,
-            'max': 201,
-
             'label': 'Sensitivity',
             'description': 'The sensitivity of the electrodes. An electrode with a high sensitivity will register a touch earlier then an electrode with a low sensitivity.<br/><br/>If you build a big electrode you might need to decrease the sensitivity, since the area that can be charged will get bigger. If you want to be able to activate an electrode from further away you need to increase the sensitivity.'
         }, {
@@ -405,7 +400,6 @@ com['openhab'] = {
 
             'name': 'Proximity Enabled',
             'type': 'boolean',
-            'default': 'true',
 
             'label': 'Proximity Enabled',
             'description': "True enables the proximity feature, false disables it. It is recommended that you disable the proximity feature if not needed. This will reduce the amount of traffic that is produced.",

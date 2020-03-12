@@ -597,8 +597,6 @@ com['openhab'] = {
 
             'name': 'Average Length',
             'type': 'integer',
-            'default': 50,
-
             'label': 'Average Length',
             'description': 'The length of a averaging for the voltage value.<br/><br/>Setting the length to 0 will turn the averaging completely off. If the averaging is off, there is more noise on the data, but the data is without delay.<br/><br/>The default value is 50.'
         },{
@@ -614,8 +612,6 @@ com['openhab'] = {
                         ('Up To 45V', 4),
                         ('Up To 3V', 5)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Measurement Range',
             'description': 'The measurement range.<br/><br/>Possible ranges are: <ul><li>Automatically switched</li><li>0V - 6.05V, ~1.48mV resolution</li><li>0V - 10.32V, ~2.52mV resolution</li><li>0V - 36.30V, ~8.86mV resolution</li><li>- 45.00V, ~11.25mV resolution</li><li>0V - 3.3V, ~0.81mV resolution</li>',
         }

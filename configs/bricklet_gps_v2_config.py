@@ -840,7 +840,6 @@ com['openhab'] = {
             'limit_to_options': 'true',
             'label': 'Fix LED Config',
             'description': 'The fix LED configuration. By default the LED shows if the Bricklet got a GPS fix yet. If a fix is established the LED turns on. If there is no fix then the LED is turned off.</br></br>You can also turn the LED permanently on/off, show a heartbeat or let it blink in sync with the PPS (pulse per second) output of the GPS module.<br/><br/>If the Bricklet is in bootloader mode, the LED is off.',
-            'default': 3,
         }, {
             'packet': 'Set SBAS Config',
             'element': 'SBAS Config',
@@ -869,7 +868,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Coordinates',
                 'transform': "new PointType(new DecimalType(latitude / 1000000.0 * (ns == 'N' ? 1 : -1)), new DecimalType(longitude / 1000000.0 * (ew == 'E' ? 1 : -1)))"}],
-            'is_trigger_channel': False,
             'init_code': 'this.setCoordinatesCallbackPeriod(channelCfg.updateInterval);',
             'dispose_code': 'this.setCoordinatesCallbackPeriod(0);'
         }, {
@@ -887,7 +885,6 @@ com['openhab'] = {
                 'element': 'Has Fix',
                 'transform': "hasFix ? OnOffType.ON : OnOffType.OFF"}],
 
-            'is_trigger_channel': False,
         }, {
             'id': 'Satellites In View',
             'type': 'Satellites In View',
@@ -903,7 +900,6 @@ com['openhab'] = {
                 'element': 'Satellites View',
                 'transform': "new DecimalType(satellitesView)"}],
 
-            'is_trigger_channel': False
         },  {
             'id': 'Altitude',
             'type': 'Altitude',
@@ -919,7 +915,6 @@ com['openhab'] = {
                 'element': '{title_words}',
                 'transform': "new QuantityType<>(altitude{divisor}, {unit})"}],
 
-            'is_trigger_channel': False,
         },  {
             'id': 'Geoidal Separation',
             'type': 'Geoidal Separation',
@@ -935,7 +930,6 @@ com['openhab'] = {
                 'element': '{title_words}',
                 'transform': "new QuantityType<>(geoidalSeparation{divisor}, {unit})"}],
 
-            'is_trigger_channel': False,
         },  {
             'id': 'Course',
             'type': 'Course',
@@ -951,7 +945,6 @@ com['openhab'] = {
                 'element': '{title_words}',
                 'transform': "new QuantityType<>(course{divisor}, {unit})"}],
 
-            'is_trigger_channel': False,
         },  {
             'id': 'Speed',
             'type': 'Speed',
@@ -967,7 +960,6 @@ com['openhab'] = {
                 'element': '{title_words}',
                 'transform': "new QuantityType<>(speed{divisor}, {unit})"}],
 
-            'is_trigger_channel': False,
         },  {
             'id': 'Date Time',
             'type': 'Date Time',
@@ -981,7 +973,6 @@ com['openhab'] = {
                 'packet': 'Date Time',
                 'transform': "new DateTimeType(Helper.parseGPSDateTime(date, time).withZoneSameInstant(ZoneId.systemDefault()))"}],
 
-            'is_trigger_channel': False,
             'init_code': 'this.setDateTimeCallbackPeriod(channelCfg.updateInterval);',
             'dispose_code': 'this.setDateTimeCallbackPeriod(0);'
         }, {

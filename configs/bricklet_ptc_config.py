@@ -674,8 +674,6 @@ com['openhab'] = {
                         ('3-wire', 3),
                         ('4-wire', 4)],
             'limit_to_options': 'true',
-            'default': 2,
-
             'label': 'Wire Mode',
             'description': 'The wire mode of the sensor. Possible values are 2, 3 and 4 which correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper configuration on the Bricklet.',
         },
@@ -688,8 +686,6 @@ com['openhab'] = {
             'options': [('50 Hz', 0),
                         ('60 Hz', 1)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Noise Rejection Filter Frequency',
             'description': 'Sets the noise rejection filter to either 50 Hz or 60 Hz. Noise from 50 Hz or 60 Hz power sources (including harmonics of the AC power’s fundamental frequency) is attenuated by 82dB',
         },

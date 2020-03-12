@@ -573,8 +573,6 @@ com['openhab'] = {
             'options': [('Master', 0),
                         ('Slave', 1)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'DMX Mode',
             'description': "Sets the DMX mode to either master or slave.",
         }, {
@@ -588,8 +586,6 @@ com['openhab'] = {
                         ('Show Heartbeat', 2),
                         ('Show Communication', 3)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Communication LED Config',
             'description': "By default the LED shows communication traffic, it flickers once for every 10 received data packets. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
@@ -603,8 +599,6 @@ com['openhab'] = {
                         ('Show Heartbeat', 2),
                         ('Show Error', 3)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Error LED Config',
             'description': "By default the error LED turns on if there is any error (see FrameErrorCountListener callback). If you call this function with the Show-Error option again, the LED will turn off until the next error occurs. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
@@ -613,7 +607,6 @@ com['openhab'] = {
 
             'name': 'Frame Duration',
             'type': 'integer',
-            'default': 100,
             'label': 'Frame Duration',
             'description': 'the duration of a frame in ms. Example: If you want to achieve 20 frames per second, you should set the frame duration to 50ms (50ms * 20 = 1 second). If you always want to send a frame as fast as possible you can set this value to 0. This setting is only used in master mode.'
     }],

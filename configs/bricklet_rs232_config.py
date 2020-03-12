@@ -454,8 +454,6 @@ com['openhab'] = {
                         ('115200', 11),
                         ('230400', 12)],
             'limit_to_options': 'true',
-            'default': 11,
-
             'label': 'Baud Rate',
             'description': 'The baud rate to send/receive with.',
         }, {
@@ -470,8 +468,6 @@ com['openhab'] = {
                         ('Forced Parity 1', 3),
                         ('Forced Parity 0', 4)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Parity',
             'description': 'The parity mode to use. See <a href=\\\"https://en.wikipedia.org/wiki/Serial_port#Parity\\\">here</a>'
         }, {
@@ -483,8 +479,6 @@ com['openhab'] = {
             'options': [('1', 1),
                         ('2', 2)],
             'limit_to_options': 'true',
-            'default': 1,
-
             'label': 'Stop Bits',
             'description': 'The number of stop bits to send/expect.'
         }, {
@@ -498,8 +492,6 @@ com['openhab'] = {
                         ('7', 7),
                         ('8', 8)],
             'limit_to_options': 'true',
-            'default': 8,
-
             'label': 'Word Length',
             'description': 'The length of a serial word. Typically one byte.'
         }, {
@@ -521,8 +513,6 @@ com['openhab'] = {
 
             'name': 'Frame Size',
             'type': 'integer',
-            'min': 0,
-            'max': 100,
             'default': 1,
 
             'label': 'Frame Size',

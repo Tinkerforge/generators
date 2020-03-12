@@ -448,7 +448,6 @@ com['openhab'] = {
             'pattern': '%d',
             'min': 0,
             'max': 7,
-            'is_trigger_channel': False,
             'options': [('0', '0'),
                         ('1', '1'),
                         ('2', '2'),

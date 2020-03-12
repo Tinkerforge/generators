@@ -1346,8 +1346,6 @@ com['openhab'] = {
                         ('P2P', 2),
                         ('Reader', 3)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Mode',
             'description': 'The NFC Bricklet supports four modes:<br/><br/><ul><li>Off</li><li>Card Emulation (Cardemu): Emulates a tag for other readers</li><li>Peer to Peer (P2P): Exchange data with other readers</li><li>Reader: Reads and writes tags</li></ul><br/><br/>If you change a mode, the Bricklet will reconfigure the hardware for this mode. Therefore, you can only use functions corresponding to the current mode. For example, in Reader mode you can only use Reader functions.',
         },  {
@@ -1361,8 +1359,6 @@ com['openhab'] = {
                         ('Show Heartbeat', 2),
                         ('Show Detection', 3)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Detection LED Config',
             'description': "The detection LED configuration. By default the LED shows if a card/reader is detected.<br/><br/>You can also turn the LED permanently on/off or show a heartbeat.<br/><br/If the Bricklet is in bootloader mode, the LED is off.",
         }, {
@@ -1371,10 +1367,6 @@ com['openhab'] = {
 
             'name': 'Maximum Timeout',
             'type': 'integer',
-            'min': 0,
-            'max': 2**16 - 1,
-            'default': 2000,
-
             'label': 'Maximum Timeout',
             'description': "This is a global maximum used for all internal state timeouts. The timeouts depend heavily on the used tags etc. For example: If you use a Type 2 tag and you want to detect if it is present, you have to use the readerRequestTagID action and wait for the state to change to either the error state or the ready state.<br/><br/>With the default configuration this takes 2-3 seconds. By setting the maximum timeout to 100ms you can reduce this time to ~150-200ms. For Type 2 this would also still work with a 20ms timeout (a Type 2 tag answers usually within 10ms). A type 4 tag can take up to 500ms in our tests.<br/><br/>If you need a fast response time to discover if a tag is present or not you can find a good timeout value by trial and error for your specific tag.<br/><br/>By default we use a very conservative timeout, to be sure that any tag can always answer in time.",
         }],

@@ -520,8 +520,6 @@ class OpenHABDevice(java_common.JavaDevice):
     def apply_packet_info(self, oh):
         # TODO: integrate add_packet_info
         for c in oh.channels:
-            if 'Thermal Imaging' in self.get_long_display_name():
-                print("Hier")
             elements = [x.element for x in c.getters + c.setters + c.callbacks if x.element is not None]
 
             if len(elements) == 0:
@@ -552,6 +550,64 @@ class OpenHABDevice(java_common.JavaDevice):
                     c.divisor = tf_unit.tf_to_oh_divisor / factor * e.get_scale()[1] / e.get_scale()[0]
                 else:
                     c.divisor = e.get_scale()[1] / e.get_scale()[0]
+
+        def deduce_min_max(p, divisor):
+            if divisor is None:
+                return
+            if p.element.get_constant_group() is None:
+                if isinstance(p.element.get_range(), list):
+                    new_min = min(r[0] for r in p.element.get_range())
+                    new_max = max(r[1] for r in p.element.get_range())
+                elif p.element.get_range() == 'type':
+                    new_min, new_max = p.element.get_type_range()
+                else:
+                    return
+                new_min /= divisor
+                new_max /= divisor
+                if p.min is None:
+                    p.min = new_min
+                if p.max is None:
+                    p.max = new_max
+            else:
+                pass
+
+        def deduce_default(p, divisor):
+            if divisor is None:
+                if p.element.get_default() is not None:
+                    new_default = 'true' if p.element.get_default() else 'false'
+                else:
+                    new_default = None
+            else:
+                if p.element.get_default() is not None:
+                    new_default = p.element.get_default() / divisor
+                elif p.default is None:
+                    new_default = p.min if p.min is not None and p.min >= 0 else 0.0
+                else:
+                    return
+                if new_default.is_integer():
+                    new_default = int(new_default)
+
+            if p.default is None:
+                p.default = new_default
+
+
+        for p in oh.params + [p for c in oh.channels for p in c.type.params]:
+            if p.virtual and p.default is None:
+                raise common.GeneratorError('openhab: Device {}: Parameter "{}" is virtual but no default is set.'.format(self.get_long_display_name(), p.label))
+            if p.element is None or p.element.is_struct():
+                continue
+            if p.type == 'integer':
+                divisor = 1
+            elif p.type == 'decimal':
+                divisor = p.element.get_scale()[1] / p.element.get_scale()[0]
+            else:
+                divisor = None
+
+            deduce_min_max(p, divisor)
+            deduce_default(p, divisor)
+
+
+
     def sanity_check_config(self, oh):
         # Channels must have a label or inherit one
         for c in oh.channels:

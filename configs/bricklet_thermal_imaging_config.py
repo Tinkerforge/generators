@@ -767,7 +767,6 @@ com['openhab'] = {
             'element': 'Image',
             'packet_params': [],
             'transform': 'new RawType(Helper.convertThermalHighContrastImage(value, cfg.colorPalette, logger, cfg.scaleFactor), "image/png")'}],
-        'is_trigger_channel': False
     }, {
         'predicate': 'cfg.imageType == 1',
         'id': 'Temperature Image',
@@ -779,7 +778,6 @@ com['openhab'] = {
             'element': 'Image',
             'packet_params': [],
             'transform': 'new RawType(Helper.convertThermalTemperatureImage(value, cfg.colorPalette, logger, cfg.scaleFactor), "image/png")'}],
-        'is_trigger_channel': False,
     }, {
         'id': 'Spotmeter Mean Temperature',
         'label': 'Spotmeter Mean Temperature',
@@ -790,7 +788,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.spotmeterStatistics[0] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
-        'is_trigger_channel': False
     }, {
         'id': 'Spotmeter Maximum Temperature',
         'label': 'Spotmeter Maximum Temperature',
@@ -801,7 +798,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.spotmeterStatistics[1] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
-        'is_trigger_channel': False
     }, {
         'id': 'Spotmeter Minimum Temperature',
         'label': 'Spotmeter Minimum Temperature',
@@ -812,7 +808,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.spotmeterStatistics[2] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
-        'is_trigger_channel': False
     }, {
         'id': 'Spotmeter ROI Pixel Count',
         'type': 'Spotmeter ROI Pixel Count',
@@ -822,7 +817,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'new DecimalType(value.spotmeterStatistics[3])'}],
-        'is_trigger_channel': False
     }, {
         'id': 'Focal Plain Array Temperature',
         'label': 'Focal Plain Array Temperature',
@@ -833,7 +827,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.temperatures[0] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
-        'is_trigger_channel': False
     }, {
         'id': 'Focal Plain Array Temperature FFC',
         'label': 'Focal Plain Array Temperature (last FFC)',
@@ -844,7 +837,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.temperatures[1] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
-        'is_trigger_channel': False
     },  {
         'id': 'Housing Temperature',
         'label': 'Housing Temperature',
@@ -855,7 +847,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.temperatures[2] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
-        'is_trigger_channel': False
     }, {
         'id': 'Housing Temperature FFC',
         'label': 'Housing Temperature (last FFC)',
@@ -866,7 +857,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.temperatures[3] / (cfg.resolution == 0 ? 10.0 : 100.0), SmartHomeUnits.KELVIN)'}],
-        'is_trigger_channel': False
     }, {
         'id': 'FFC Status',
         'label': 'Flat Field Correction Status',
@@ -877,7 +867,6 @@ com['openhab'] = {
             'element': 'FFC Status',
             'packet_params': [],
             'transform': 'new QuantityType<>(value.ffcStatus{divisor}, {unit})'}],
-        'is_trigger_channel': False
     }, {
         'id': 'Shutter Lockout',
         'type': 'Shutter Lockout',
@@ -886,7 +875,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'value.temperatureWarning[0] ? OnOffType.ON : OnOffType.OFF'}],
-        'is_trigger_channel': False
     }, {
         'id': 'Overtemperature Shutdown Imminent',
         'type': 'Overtemperature Shutdown Imminent',
@@ -895,7 +883,6 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'packet_params': [],
             'transform': 'value.temperatureWarning[1] ? OnOffType.ON : OnOffType.OFF'}],
-        'is_trigger_channel': False
     },
 
 
@@ -1029,7 +1016,6 @@ com['openhab'] = {
             'read_only': True,
             'min': 0,
             'max': 3,
-            'is_trigger_channel': False,
             'options': [('Never Commanded', 0),
                         ('Imminent', 1),
                         ('In Progress', 2),

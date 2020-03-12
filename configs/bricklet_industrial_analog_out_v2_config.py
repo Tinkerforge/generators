@@ -400,7 +400,6 @@ com['openhab'] = {
             ],
             'limit_to_options': 'true',
             'default': 1,
-
             'label': 'Output Configuration',
             'description': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
         }, {
@@ -413,8 +412,6 @@ com['openhab'] = {
                         ('0 To 10V', 1)
             ],
             'limit_to_options': 'true',
-            'default': 1,
-
             'label': 'Voltage Range',
             'description': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
         }, {
@@ -428,8 +425,6 @@ com['openhab'] = {
                         ('0 To 24mA', 2)
             ],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Current Range',
             'description': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
         }, {
@@ -443,8 +438,6 @@ com['openhab'] = {
                         ('Show Heartbeat', 2),
                         ('Show Out Status', 3)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Output LED Configuration',
             'description': 'You can turn the Out LED off, on or show a heartbeat. You can also set the LED to Out Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the output value (voltage or current).',
         }, {
@@ -456,8 +449,6 @@ com['openhab'] = {
             'options': [('Threshold', 0),
                         ('Intensity', 1)],
             'limit_to_options': 'true',
-            'default': 1,
-
             'label': 'Output LED Status Mode',
             'description': out_led_status_description.replace('\n', '<br/>').replace('"', '\\\"'),
         }, {
@@ -468,8 +459,6 @@ com['openhab'] = {
             'type': 'decimal',
             'min': 0,
             'max': 10,
-            'default': 0,
-
             'label': 'Output LED Status Maximum',
             'description': 'See LED Status Mode for further explaination.',
         }, {

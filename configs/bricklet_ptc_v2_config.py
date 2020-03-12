@@ -367,8 +367,6 @@ com['openhab'] = {
                         ('3-wire', 3),
                         ('4-wire', 4)],
             'limit_to_options': 'true',
-            'default': 2,
-
             'label': 'Wire Mode',
             'description': 'The wire mode of the sensor. Possible values are 2, 3 and 4 which correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper configuration on the Bricklet.',
         },
@@ -378,10 +376,6 @@ com['openhab'] = {
 
             'name': 'Temperature Moving Average Length',
             'type': 'integer',
-            'default': 40,
-            'min': 1,
-            'max': 1000,
-
             'label': 'Temperature Moving Average Length',
             'description': 'Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\\n\\nNew data is gathered every 20ms. With a moving average of length 1000 the resulting averaging window has a length of 20s. If you want to do long term measurements the longest moving average will give the cleanest results.',
         },
@@ -394,8 +388,6 @@ com['openhab'] = {
             'options': [('50 Hz', 0),
                         ('60 Hz', 1)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Noise Rejection Filter Frequency',
             'description': 'Sets the noise rejection filter to either 50 Hz or 60 Hz. Noise from 50 Hz or 60 Hz power sources (including harmonics of the AC power’s fundamental frequency) is attenuated by 82dB',
         },

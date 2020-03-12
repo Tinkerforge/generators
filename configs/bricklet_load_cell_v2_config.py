@@ -300,10 +300,6 @@ com['openhab'] = {
 
             'name': 'Moving Average',
             'type': 'integer',
-            'default': 4,
-            'min': 1,
-            'max': 100,
-
             'label': 'Moving Average',
             'description': 'The length of a moving averaging for the weight value.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
         }, {
@@ -315,8 +311,6 @@ com['openhab'] = {
             'options': [('10Hz', 0),
                         ('80Hz', 1)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Measurement Rate',
             'description': 'The rate can be either 10Hz or 80Hz. A faster rate will produce more noise.',
         }, {
@@ -329,8 +323,6 @@ com['openhab'] = {
                         ('64x', 1),
                         ('32x', 2)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Gain',
             'description': "The gain can be 128x, 64x or 32x. It represents a measurement range of ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an excitation voltage of 5V and most load cells use an output of 2mV/V. That means the voltage range is ±15mV for most load cells (i.e. gain of 128x is best). If you don't know what all of this means you should keep it at 128x, it will most likely be correct.",
         }, {
@@ -343,8 +335,6 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Info LED',
             'description': 'Configures the info LED to be either turned off, turned on, or blink in heartbeat mode.',
         },

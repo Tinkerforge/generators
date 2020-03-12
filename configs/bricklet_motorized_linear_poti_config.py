@@ -266,7 +266,6 @@ com['openhab'] = {
                 'packet_params': ['cmd.intValue(){divisor}', 'channelCfg.smoothDriveMode ? 1 : 0', 'channelCfg.holdPosition'],
                 'command_type': 'Number',
             }],
-            'is_trigger_channel': False,
         }, {
             'id': 'Position Reached',
             'type': 'system.trigger',

@@ -279,10 +279,6 @@ com['openhab'] = {
 
             'name': 'Moving Average Length',
             'type': 'integer',
-            'default': 25,
-            'min': 1,
-            'max': 1000,
-
             'label': 'Moving Average Length',
             'description': 'Sets the length of a moving averaging for the distance.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.<br/><br/>The range for the averaging is 1-1000.<br/><br/>New data is gathered every ~10ms. With a moving average of length 1000 the resulting averaging window has a length of approximately 10s. If you want to do long term measurements the longest moving average will give the cleanest results.<br/><br/>The default value is 25.',
         },
@@ -297,8 +293,6 @@ com['openhab'] = {
                         ('Show Heartbeat', 2),
                         ('Show Distance', 3)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Distance LED Config',
             'description': "Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).",
         }],

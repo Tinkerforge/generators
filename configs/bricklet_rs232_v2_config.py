@@ -450,10 +450,6 @@ com['openhab'] = {
 
             'name': 'Baud Rate',
             'type': 'integer',
-            'min': 100,
-            'max': 2000000,
-            'default': 115200,
-
             'label': 'Baud Rate',
             'description': 'The baud rate to send/receive with.',
         }, {
@@ -466,8 +462,6 @@ com['openhab'] = {
                         ('Odd', 1),
                         ('Even', 2)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Parity',
             'description': 'The parity mode to use. See <a href=\\\"https://en.wikipedia.org/wiki/Serial_port#Parity\\\">here</a>'
         }, {
@@ -479,8 +473,6 @@ com['openhab'] = {
             'options': [('1', 1),
                         ('2', 2)],
             'limit_to_options': 'true',
-            'default': 1,
-
             'label': 'Stop Bits',
             'description': 'The number of stop bits to send/expect.'
         }, {
@@ -494,8 +486,6 @@ com['openhab'] = {
               ('7', 7),
               ('8', 8)],
             'limit_to_options': 'true',
-            'default': 8,
-
             'label': 'Word Length',
             'description': 'The length of a serial word. Typically one byte.'
         }, {
@@ -508,8 +498,6 @@ com['openhab'] = {
                         ('Software', 1),
                         ('Hardware', 2)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Flow Control',
             'description': 'The flow control mechanism to use. Software uses control characters in-band. Hardware uses the RTS and CTS lines.'
         }, {
@@ -518,10 +506,6 @@ com['openhab'] = {
 
             'name': 'Send Buffer Size',
             'type': 'integer',
-            'min': 1024,
-            'max': 9216,
-            'default': 5120,
-
             'label': 'Send Buffer Size',
             'description': 'The send buffer size in bytes. In total the send and receive buffers are 10240 byte (10 KiB) in size. The minimum buffer size is 1024 byte (1 KiB) each. The binding will configure the read buffer size accordingly. The send buffer holds data that is given by the user and can not be written to RS232 yet. The receive buffer holds data that is received through RS232 but could not yet be send to the user.'
         }, {
@@ -530,8 +514,6 @@ com['openhab'] = {
 
             'name': 'Frame Size',
             'type': 'integer',
-            'min': 0,
-            'max': 9216,
             'default': 1,
 
             'label': 'Frame Size',

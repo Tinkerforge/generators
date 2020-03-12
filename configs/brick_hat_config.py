@@ -342,7 +342,6 @@ com['openhab'] = {
 
             'java_unit': 'SmartHomeUnits.VOLT',
             'divisor': 1000.0,
-            'is_trigger_channel': False
         }, {
             'id': 'DC Voltage',
             'type': 'DC Voltage',
@@ -360,7 +359,6 @@ com['openhab'] = {
 
             'java_unit': 'SmartHomeUnits.VOLT',
             'divisor': 1000.0,
-            'is_trigger_channel': False
         }
     ],
     'channel_types': [

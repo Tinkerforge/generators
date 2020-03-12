@@ -1181,10 +1181,6 @@ com['openhab'] = {
 
             'name': 'Baud Rate',
             'type': 'integer',
-            'min': 10000,
-            'max': 1000000,
-            'default': 125000,
-
             'label': 'Baud Rate',
             'description': 'The baud rate to send/receive with.',
         }, {
@@ -1193,9 +1189,6 @@ com['openhab'] = {
 
             'name': 'Sample Point',
             'type': 'decimal',
-            'default': 62.5,
-            'min': 50,
-            'max': 90,
             'step': 0.1,
 
             'label': 'Sample Point',
@@ -1210,8 +1203,6 @@ com['openhab'] = {
                         ('Loopback', 1),
                         ('Read Only', 2)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Transceiver Mode',
             'description': 'The CAN transceiver has three different modes:<ul><li>Normal: Reads from and writes to the CAN bus and performs active bus error detection and acknowledgement.</li><li>Loopback: All reads and writes are performed internally. The transceiver is disconnected from the actual CAN bus.</li><li>Read-Only: Only reads from the CAN bus, but does neither active bus error detection nor acknowledgement. Only the receiving part of the transceiver is connected to the CAN bus.</li></ul>'
         }, {
@@ -1225,8 +1216,6 @@ com['openhab'] = {
                         ('Show Heartbeat', 2),
                         ('Show Communication', 3)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Communication LED Config',
             'description': "By default the LED shows CAN-Bus traffic, it flickers once for every 40 transmitted or received frames. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
@@ -1241,8 +1230,6 @@ com['openhab'] = {
                         ('Show Transceiver State', 3),
                         ('Show Error', 4)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Error LED Config',
             'description': "By default (show-transceiver-state) the error LED turns on if the CAN transceiver is passive or disabled state (see the getErrorLog action). If the CAN transceiver is in active state the LED turns off.<br/><br/>If the LED is configured as show-error then the error LED turns on if any error occurs. If you call this function with the show-error option again, the LED will turn off until the next error occurs.<br/><br/>You can also turn the LED permanently on/off or show a heartbeat.<br/><br/>If the Bricklet is in bootloader mode, the LED is off.",
         }],

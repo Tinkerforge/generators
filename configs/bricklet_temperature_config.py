@@ -359,7 +359,6 @@ com['openhab'] = {
 
             'name': 'I2C Mode',
             'type': 'integer',
-            'default': 0,
             'options': [('Fast (400kHz)', 0),
                         ('Slow (100kHz)', 1)],
             'limit_to_options': 'true',

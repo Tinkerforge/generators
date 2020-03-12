@@ -653,7 +653,6 @@ com['openhab'] = {
                         ('12800Hz', 14),
                         ('25600Hz', 15)],
             'limit_to_options': 'true',
-            'default': 7,
             'label': 'Data Rate',
             'description': 'The data rate of 0.781Hz to 25600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
@@ -666,7 +665,6 @@ com['openhab'] = {
                         ('4g', 1),
                         ('8g', 2)],
             'limit_to_options': 'true',
-            'default': 0,
             'label': 'Full Scale Range',
             'description': 'Full scale range of -2g to +2g up to -8g to +8g. Decreasing data rate or full scale range will also decrease the noise on the data.'
         }, {
@@ -679,7 +677,6 @@ com['openhab'] = {
                         ('On', 1),
                         ('Show Heartbeat', 2)],
             'limit_to_options': 'true',
-            'default': 0,
             'label': 'Info LED Mode',
             'description': 'Configures the info LED (marked as \\\"Force\\\" on the Bricklet) to be either turned off, turned on, or blink in heartbeat mode.'
         }, {
@@ -700,7 +697,6 @@ com['openhab'] = {
             'options': [('Ninth', 0),
                         ('Half', 1)],
             'limit_to_options': 'true',
-            'default': 0,
             'label': 'Low Pass Filter Corner Frequency',
             'description': 'The low pass filter roll off corner frequency can be half or a ninth of the output data rate.'
         },
@@ -727,7 +723,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis)}],
             'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
             'divisor': 10000.0,
-            'is_trigger_channel': False
         } for axis in ['x', 'y', 'z']
     ],
     'channel_types': [

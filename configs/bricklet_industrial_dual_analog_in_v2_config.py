@@ -382,7 +382,6 @@ this.setChannelLEDStatusConfig({0}, channelCfg.ledStatusMinimum, channelCfg.ledS
                 'element': 'Voltage',
                 'transform': 'new QuantityType<>(voltage{divisor}, {unit})'}],
 
-            'is_trigger_channel': False
         }
 
 def led_status_config():
@@ -397,8 +396,6 @@ def led_status_config():
                         ('Show Heartbeat', 2),
                         ('Show Channel Status', 3)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'LED Configuration',
             'description': led_channel_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
@@ -411,8 +408,6 @@ def led_status_config():
             'options': [('Threshold', 0),
                         ('Intensity', 1)],
             'limit_to_options': 'true',
-            'default': 1,
-
             'label': 'LED Status Mode',
             'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
         },
@@ -464,8 +459,6 @@ com['openhab'] = {
                         ('2 SPS', 6),
                         ('1 SPS', 7)],
             'limit_to_options': 'true',
-            'default': 6,
-
             'label': 'Sample Rate',
             'description': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
             'advanced': 'true'

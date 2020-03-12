@@ -288,10 +288,6 @@ com['openhab'] = {
 
             'name': 'Humidity Moving Average Length',
             'type': 'integer',
-            'default': 5,
-            'min': 1,
-            'max': 1000,
-
             'label': 'Humidity Moving Average Length',
             'groupName': 'average'
         },
@@ -301,10 +297,6 @@ com['openhab'] = {
 
             'name': 'Temperature Moving Average Length',
             'type': 'integer',
-            'default': 5,
-            'min': 1,
-            'max': 1000,
-
             'label': 'Temperature Moving Average Length',
             'groupName': 'average'
         },
@@ -321,8 +313,6 @@ com['openhab'] = {
                         ('0.2 SPS', 4),
                         ('0.1 SPS', 5)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Sample Rate',
             'description': "The samples per second that are gathered by the humidity/temperature sensor HDC1080.<br/><br/>We added this function since we found out that a high measurement frequency can lead to self-heating of the sensor. Which can distort the temperature measurement.<br/><br/>If you don't need a lot of measurements, you can use the lowest available measurement frequency of 0.1 samples per second for the least amount of self-heating.",
         }

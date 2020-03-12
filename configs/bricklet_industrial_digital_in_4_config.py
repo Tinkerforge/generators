@@ -462,7 +462,6 @@ def edge_count_channel(index):
                 'packet_params': ['(short){}'.format(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
-            'is_trigger_channel': False
         }
 
 
@@ -490,8 +489,6 @@ com['openhab'] = {
                             ('Falling', 1),
                             ('Both', 2)],
                 'limit_to_options': 'true',
-                'default': 0,
-
                 'label': 'Edge Type',
                 'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
             },{
@@ -500,9 +497,6 @@ com['openhab'] = {
 
                 'name': 'Debounce',
                 'type': 'integer',
-
-                'default': 100,
-
                 'label': 'Debounce Time',
                 'description': 'The debounce time in ms.',
             },{

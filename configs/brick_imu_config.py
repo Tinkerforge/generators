@@ -1090,9 +1090,6 @@ com['openhab'] = {
 
             'name': 'Convergence Speed',
             'type': 'integer',
-            'min': 0,
-            'max': 65535,
-            'default': 30,
             'label': 'Convergence Speed',
             'description': "Sets the convergence speed of the IMU Brick in °/s. The convergence speed determines how the different sensor measurements are fused.<br/><br/>If the orientation of the IMU Brick is off by 10° and the convergence speed is set to 20°/s, it will take 0.5s until the orientation is corrected. However, if the correct orientation is reached and the convergence speed is too high, the orientation will fluctuate with the fluctuations of the accelerometer and the magnetometer.<br/><br/>If you set the convergence speed to 0, practically only the gyroscope is used to calculate the orientation. This gives very smooth movements, but errors of the gyroscope will not be corrected. If you set the convergence speed to something above 500, practically only the magnetometer and the accelerometer are used to calculate the orientation. In this case the movements are abrupt and the values will fluctuate, but there won't be any errors that accumulate over time.<br/><br/>In an application with high angular velocities, we recommend a high convergence speed, so the errors of the gyroscope can be corrected fast. In applications with only slow movements we recommend a low convergence speed. You can change the convergence speed on the fly. So it is possible (and recommended) to increase the convergence speed before an abrupt movement and decrease it afterwards again.<br/><br/>You might want to play around with the convergence speed in the Brick Viewer to get a feeling for a good value for your application.<br/><br/>The default value is 30."
         },
@@ -1133,7 +1130,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(angle.lower())}],
             'java_unit': 'SmartHomeUnits.DEGREE_ANGLE',
             'divisor': 100.0,
-            'is_trigger_channel': False
         } for angle in ['Roll', 'Pitch', 'Yaw']
     ] + [{
             'id': 'Quaternion {}'.format(axis.upper()),
@@ -1150,7 +1146,6 @@ com['openhab'] = {
                 'element': axis,
                 'transform': 'new QuantityType<>({}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.ONE',
-            'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z', 'W']
     ] + [{
             'id': 'Enable LEDs',
@@ -1188,7 +1183,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
             'divisor': 1000.0,
-            'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Magnetic Field {}'.format(axis.upper()),
@@ -1206,7 +1200,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.TESLA',
             'divisor': 10000000.0,
-            'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Angular Velocity {}'.format(axis.upper()),
@@ -1224,7 +1217,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 14.375,
-            'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z']
     ],
     'channel_types': [

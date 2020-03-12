@@ -393,7 +393,6 @@ def current_channel(index):
                 'element': 'Current',
                 'transform': 'new QuantityType<>(current{divisor}, {unit})'}],
 
-            'is_trigger_channel': False
         }
 
 com['openhab'] = {
@@ -411,8 +410,6 @@ com['openhab'] = {
                         ('15 SPS', 2),
                         ('4 SPS', 3)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Sample Rate',
             'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
             'advanced': 'true'

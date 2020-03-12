@@ -1257,7 +1257,6 @@ com['openhab'] = {
                        ('25Hz', 6),
                        ('30Hz', 7)],
             'limit_to_options': 'true',
-            'default': 5,
             'label': 'Magnetometer Rate',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
@@ -1272,7 +1271,6 @@ com['openhab'] = {
                         ('250°/s', 3),
                         ('125°/s', 4)],
             'limit_to_options': 'true',
-            'default': 0,
             'label': 'Gyroscope Range',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
@@ -1290,7 +1288,6 @@ com['openhab'] = {
                        ('64Hz', 6),
                        ('32Hz', 7)],
             'limit_to_options': 'true',
-            'default': 7,
             'label': 'Gyroscope Bandwidth',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
@@ -1304,7 +1301,6 @@ com['openhab'] = {
                        ('±8G', 2),
                        ('±16G', 3)],
             'limit_to_options': 'true',
-            'default': 1,
             'label': 'Accelerometer Range',
             'description': 'This option is user selectable in all fusion modes.'
         }, {
@@ -1322,7 +1318,6 @@ com['openhab'] = {
                        ('500Hz', 6),
                        ('1000Hz', 7)],
             'limit_to_options': 'true',
-            'default': 3,
             'label': 'Accelerometer Bandwidth',
             'description': 'This option is auto-controlled in fusion mode.'
         }, {
@@ -1335,7 +1330,6 @@ com['openhab'] = {
                        ('On', 1),
                        ('On Without Magnetometer', 2),
                        ('On Without Fast Magnetometer Calibration', 3)],
-            'default': 1,
             'limit_to_options': 'true',
             'label': 'Sensor Fusion Mode',
             'description': "If the fusion mode is turned off, the Acceleration, Magnetic Field and Angular Velocity channels return uncalibrated and uncompensated sensor data. All other sensor channels return no data.<br/><br/>Since firmware version 2.0.6 you can also use a fusion mode without magnetometer. In this mode the calculated orientation is relative (with magnetometer it is absolute with respect to the earth). However, the calculation can't be influenced by spurious magnetic fields.<br/><br/>Since firmware version 2.0.13 you can also use a fusion mode without fast magnetometer calibration. This mode is the same as the normal fusion mode, but the fast magnetometer calibration is turned off. So to find the orientation the first time will likely take longer, but small magnetic influences might not affect the automatic calibration as much.<br/><br/>By default sensor fusion is on."
@@ -1378,7 +1372,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.METRE_PER_SQUARE_SECOND',
             'divisor': 100.0,
-            'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Magnetic Field {}'.format(axis.upper()),
@@ -1396,7 +1389,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.TESLA',
             'divisor': 16000000.0,
-            'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z']
     ] +  [{
             'id': 'Angular Velocity {}'.format(axis.upper()),
@@ -1414,7 +1406,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 16.0,
-            'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Orientation {}'.format(angle),
@@ -1432,7 +1423,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(angle.lower())}],
             'java_unit': 'SmartHomeUnits.DEGREE_ANGLE',
             'divisor': 16.0,
-            'is_trigger_channel': False
         } for angle in ['Heading', 'Roll', 'Pitch']
     ] + [{
             'id': 'Quaternion {}'.format(axis.upper()),
@@ -1448,7 +1438,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.ONE',
             'divisor': 16383.0,
-            'is_trigger_channel': False
         } for axis in ['W', 'X', 'Y', 'Z']
     ] + [{
             'id': 'Linear Acceleration {}'.format(axis.upper()),
@@ -1466,7 +1455,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.METRE_PER_SQUARE_SECOND',
             'divisor': 100.0,
-            'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Gravity Vector {}'.format(axis.upper()),
@@ -1484,7 +1472,6 @@ com['openhab'] = {
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
             'divisor': 980.665,
-            'is_trigger_channel': False
         } for axis in ['X', 'Y', 'Z']
     ] + [{
         'id': 'Temperature',
@@ -1502,7 +1489,6 @@ com['openhab'] = {
             'transform': 'new QuantityType<>(temperature{divisor}, {unit})'}],
         'java_unit': 'SIUnits.CELSIUS',
         'divisor': 1.0,
-        'is_trigger_channel': False
     }] + [{
             'id': 'Enable LEDs',
             'type': 'Enable LEDs',

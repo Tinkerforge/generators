@@ -394,7 +394,6 @@ def energyDataChannel(id_, type_):
             'element': '{title_words}',
             'transform': 'new QuantityType<>({headless}{divisor}, {unit})'}],
 
-        'is_trigger_channel': False
     }
 
 com['openhab'] = {

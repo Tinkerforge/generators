@@ -294,7 +294,6 @@ com['openhab'] = {
 
             'name': 'Frame Duration',
             'type': 'integer',
-            'default': 0,
             'label': 'Frame Duration',
             'description': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger. 0 disables the callback.'
         }],

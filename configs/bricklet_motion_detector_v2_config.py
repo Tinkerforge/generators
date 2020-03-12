@@ -218,10 +218,6 @@ com['openhab'] = {
 
             'name': 'Sensitivity',
             'type': 'integer',
-            'default': 50,
-            'min': 0,
-            'max': 100,
-
             'label': 'Sensitivity',
             'description': 'The sensitivity of the PIR sensor. The range is 0-100. At full sensitivity (100), the Bricklet can detect motion in a range of approximately 12m.<br/><br/>The actual range depends on many things in the environment (e.g. reflections) and the size of the object to be detected. While a big person might be detected in a range of 10m a cat may only be detected at 2m distance with the same setting. So you will have to find a good sensitivity for your application by trial and error.'
     }],

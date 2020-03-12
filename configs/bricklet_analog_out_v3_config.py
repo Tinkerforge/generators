@@ -100,7 +100,6 @@ com['openhab'] = {
                 'packet_params': [],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
-            'is_trigger_channel': False
         }, {
             'id': 'Output Voltage',
             'type': 'Output Voltage',
@@ -115,7 +114,6 @@ com['openhab'] = {
                 'packet_params': ['(int)Math.round(cmd.doubleValue(){divisor})'],
                 'command_type': 'Number',
             }],
-            'is_trigger_channel': False
         }
     ],
     'channel_types': [

@@ -229,8 +229,6 @@ com['openhab'] = {
                 'name': 'Monoflop Duration',
                 'type': 'integer',
                 'default': 1000,
-                'min': 0,
-                'max': '4294967295L',
                 'unit': 'ms',
 
                 'label': 'Monoflop Duration',

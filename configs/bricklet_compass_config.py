@@ -313,7 +313,6 @@ com['openhab'] = {
 
             'name': 'Data Rate',
             'type': 'integer',
-            'default': 0,
             'options': [('100Hz', 0),
                         ('200Hz', 1),
                         ('400Hz', 2),
@@ -328,7 +327,6 @@ com['openhab'] = {
 
             'name': 'Background Calibration',
             'type': 'boolean',
-            'default': 'true',
 
             'label': 'Enable Background Calibration',
             'description': 'If the background calibration is enabled the sensing polarity is flipped once per second to automatically calculate and remove offset that is caused by temperature changes. This polarity flipping takes about 20ms. This means that once a second you will not get new data for a period of 20ms. We highly recommend that you keep the background calibration enabled and only disable it if the 20ms off-time is a problem in you application.',

@@ -304,7 +304,6 @@ com['openhab'] = {
                 'packet': 'Position',
                 'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
 
-            'is_trigger_channel': False
         } for axis in ['X', 'Y']] + [{
             'id': 'Pressed',
             'label': 'Pressed',

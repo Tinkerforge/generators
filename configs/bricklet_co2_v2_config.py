@@ -397,7 +397,6 @@ com['openhab'] = {
 
             'java_unit': 'SmartHomeUnits.BAR',
             'divisor': 1000.0,
-            'is_trigger_channel': False
         }
     ],
     'channel_types': [

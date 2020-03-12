@@ -673,7 +673,6 @@ def counter_channel(idx):
                 'packet_params': [str(idx), 'cmd.longValue(){divisor}'],
                 'command_type': 'Number',
             }],
-            'is_trigger_channel': False
         }
 
 def enable_config(idx):
@@ -684,7 +683,6 @@ def enable_config(idx):
 
             'name': 'Enable Channel {}'.format(idx),
             'type': 'boolean',
-            'default': 'true',
 
             'label': 'Enable Channel {}'.format(idx),
             'description': 'Activates/deactivates the counter of channel {}.'.format(idx),
@@ -740,8 +738,6 @@ com['openhab'] = {
                             ('Falling', 1),
                             ('Both', 2)],
                 'limit_to_options': 'true',
-                'default': 0,
-
                 'label': 'Count Edge',
                 'description': 'Counter can count on rising, falling or both edges.',
             }, {
@@ -755,8 +751,6 @@ com['openhab'] = {
                             ('External Up', 2),
                             ('External Down', 3)],
                 'limit_to_options': 'true',
-                'default': 0,
-
                 'label': 'Count Direction',
                 'description': 'Counter can count up or down. You can also use another channel as direction input: Channel 0 additionally supports to use the input of channel 2 as direction. You can configure channel 0 to count up if the value of channel 2 is high and down if the value is low and the other way around. Additionally channel 3 can use channel 1 as direction input in the same manner.',
             }, {
@@ -782,8 +776,6 @@ com['openhab'] = {
                             ('16384', 14),
                             ('32768', 15)],
                 'limit_to_options': 'true',
-                'default': 0,
-
                 'label': 'Duty Cycle Prescaler',
                 'description': 'Sets a divider for the internal clock. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time\\\">here</a> for details.',
             }, {
@@ -802,8 +794,6 @@ com['openhab'] = {
                             ('16384 MS', 7),
                             ('32768 MS', 8)],
                 'limit_to_options': 'true',
-                'default': 3,
-
                 'label': 'Frequency Integration Time',
                 'description': 'Sets the integration time for the frequency measurement. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time\\\">here</a> for details.',
             }, {
@@ -817,8 +807,6 @@ com['openhab'] = {
                             ('Show Heartbeat', 2),
                             ('Show Channel Status', 3)],
                 'limit_to_options': 'true',
-                'default': 3,
-
                 'label': 'Channel LED Configuration',
                 'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to \\\"Channel Status\\\". In this mode the LED is on if the channel is high and off otherwise.',
             },])

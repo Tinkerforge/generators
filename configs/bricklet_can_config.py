@@ -720,8 +720,6 @@ com['openhab'] = {
                         ('800kbps', 6),
                         ('1000kbps', 7)],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Baud Rate',
             'description': 'The baud rate to send/receive with.',
         }, {
@@ -734,8 +732,6 @@ com['openhab'] = {
                         ('Loopback', 1),
                         ('Read Only', 2)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Transceiver Mode',
             'description': 'The CAN transceiver has three different modes:<ul><li>Normal: Reads from and writes to the CAN bus and performs active bus error detection and acknowledgement.</li><li>Loopback: All reads and writes are performed internally. The transceiver is disconnected from the actual CAN bus.</li><li>Read-Only: Only reads from the CAN bus, but does neither active bus error detection nor acknowledgement. Only the receiving part of the transceiver is connected to the CAN bus.</li></ul>'
         }, {
@@ -744,10 +740,6 @@ com['openhab'] = {
 
             'name': 'Write Timeout',
             'type': 'integer',
-            'default': 0,
-            'min': -1,
-            'max': 2**31 - 1,
-
             'label': 'Write Timeout',
             'description': 'The write timeout has three different modes that define how a failed frame transmission should be handled:<ul><li>One-Shot (= -1): Only one transmission attempt will be made. If the transmission fails then the frame is discarded.</li><li>Infinite (= 0): Infinite transmission attempts will be made. The frame will never be discarded.</li><li>Milliseconds (> 0): A limited number of transmission attempts will be made. If the frame could not be transmitted successfully after the configured number of milliseconds then the frame is discarded.</li></ul>'
         }],

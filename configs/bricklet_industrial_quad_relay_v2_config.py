@@ -335,8 +335,6 @@ relay_channel_type['params'] = [
 
     'name': 'Channel LED Config',
     'type': 'integer',
-    'default': 3,
-
     'label': 'Channel LED Config',
     'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
     'options':  [('Off', 0),
@@ -363,8 +361,6 @@ com['openhab'] = {
                 'name': 'Monoflop Duration',
                 'type': 'integer',
                 'default': 1000,
-                'min': 0,
-                'max': '4294967295L',
                 'unit': 'ms',
 
                 'label': 'Monoflop Duration',

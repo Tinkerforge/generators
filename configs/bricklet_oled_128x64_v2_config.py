@@ -339,10 +339,6 @@ com['openhab'] = {
 
             'name': 'Contrast',
             'type': 'integer',
-            'default': 143,
-            'min': 0,
-            'max': 255,
-
             'label': 'Contrast',
             'description': "Sets the contrast of the display (0-255).",
         },
@@ -352,7 +348,6 @@ com['openhab'] = {
 
             'name': 'Invert',
             'type': 'boolean',
-            'default': 'false',
 
             'label': 'Invert',
             'description': 'Inverts the color (black/white) of the display.',
@@ -363,7 +358,6 @@ com['openhab'] = {
 
             'name': 'Automatic Draw',
             'type': 'boolean',
-            'default': 'true',
 
             'label': 'Automatic Draw',
             'description': 'If automatic draw is enabled, the display is automatically updated when writing text or clearing the display. If it is disabled, the changes are written into an internal buffer and only shown on the display after triggering the Draw Buffered Frame channel.',

@@ -180,7 +180,6 @@ com['openhab'] = {
 
             'name': 'Update Rate',
             'type': 'integer',
-            'default': 0,
             'options':  [('2 Hz', 0),
                          ('10 Hz', 1)],
             'limit_to_options': 'true',
@@ -193,7 +192,6 @@ com['openhab'] = {
 
             'name': 'Distance LED Config',
             'type': 'integer',
-            'default': 3,
             'options': [('Off', 0),
                         ('On', 1),
                         ('Show Heartbeat', 2),

@@ -456,8 +456,6 @@ def custom_character_param(idx):
     return {
             'name': 'Custom Character {}'.format(idx),
             'type': 'integer',
-            'default': '-1',
-
             'label': 'Custom Character {}'.format(idx),
             'description': "Custom characters consist of 5x8 pixels and can be addressed with the index 0-7. This character ({}) is printed by writing \\\\x{:02x}. To describe the pixels, the first 5 bits of 8 bytes are used. For example, to make a custom character 'H', you should configure 1229782998376845568, which is the following in binary:<br/>00010001<br/>00010001<br/>00010001<br/>00011111<br/>00010001<br/>00010001<br/>00010001<br/>00000000<br/>.".format(idx, idx+8),
     }
@@ -523,7 +521,6 @@ com['openhab'] = {
 
             'name': 'Show Cursor',
             'type': 'boolean',
-            'default': 'false',
 
             'label': 'Show Cursor',
             'description': "Configures if the cursor (shown as '_') should be visible. The cursor position is one character behind the the last text written.",
@@ -534,7 +531,6 @@ com['openhab'] = {
 
             'name': 'Show Blinking Cursor',
             'type': 'boolean',
-            'default': 'false',
 
             'label': 'Show Blinking Cursor',
             'description': 'Configures if the blinking cursor (shown as a blinking block) should be visible. The cursor position is one character behind the the last text written.',

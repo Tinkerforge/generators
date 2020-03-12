@@ -757,7 +757,6 @@ def edge_count_channel(index):
                 'packet_params': [str(index), 'channelCfg.resetOnRead'],
                 'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
 
-            'is_trigger_channel': False
         }
 
 def pin_config(idx):
@@ -765,6 +764,7 @@ def pin_config(idx):
             'virtual': True,
             'name': 'Pin Configuration {}'.format(idx),
             'type': 'integer',
+            'default': 3,
             'options': [
                 ('Input with pull-up', 3),
                 ('Input without pull-up', 2),
@@ -772,8 +772,6 @@ def pin_config(idx):
                 ('Output (Initial low)', 0)
             ],
             'limit_to_options': 'true',
-            'default': 3,
-
             'label': 'Pin Configuration {}'.format(idx),
             'description': 'Configures the direction of pin {}. Inputs without pull-up will be floating if nothing is connected. Outputs can have an initial state of low or high.'.format(idx),
         }
@@ -804,8 +802,6 @@ com['openhab'] = {
                 'name': 'Monoflop Duration',
                 'type': 'integer',
                 'default': 1000,
-                'min': 0,
-                'max': '4294967295L',
                 'unit': 'ms',
 
                 'label': 'Monoflop Duration',
@@ -840,8 +836,6 @@ com['openhab'] = {
                         ('Falling', 1),
                         ('Both', 2)],
             'limit_to_options': 'true',
-            'default': 0,
-
             'label': 'Edge Type',
             'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
         },{
@@ -850,9 +844,6 @@ com['openhab'] = {
 
             'name': 'Debounce',
             'type': 'integer',
-
-            'default': 100,
-
             'label': 'Debounce Time',
             'description': 'The debounce time in ms.',
         },{

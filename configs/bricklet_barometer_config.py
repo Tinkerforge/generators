@@ -625,9 +625,7 @@ com['openhab'] = {
 
             'name': 'Reference Air Pressure',
             'type': 'decimal',
-            'default': 1013.25,
             'min': 10, # Disallow 0 intentionally.
-            'max': 1200,
 
             'label': 'Reference Air Pressure',
             'description': 'The reference air pressure in hPa for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
@@ -638,10 +636,6 @@ com['openhab'] = {
 
             'name': 'Pressure Moving Average Length',
             'type': 'integer',
-            'default': 25,
-            'min': 0,
-            'max': 25,
-
             'label': 'Pressure Moving Average Length',
             'groupName': 'average'
         },
@@ -651,10 +645,6 @@ com['openhab'] = {
 
             'name': 'Pressure Average Length',
             'type': 'integer',
-            'default': 10,
-            'min': 0,
-            'max': 10,
-
             'label': 'Pressure Average Length',
             'groupName': 'average'
         },
@@ -664,10 +654,6 @@ com['openhab'] = {
 
             'name': 'Temperature Average Length',
             'type': 'integer',
-            'default': 10,
-            'min': 0,
-            'max': 255,
-
             'label': 'Temperature Average Length',
             'groupName': 'average'
         }],

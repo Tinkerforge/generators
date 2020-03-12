@@ -432,7 +432,6 @@ def voltage_channel(index):
                 'element': 'Voltage',
                 'transform': 'new QuantityType<>(voltage{divisor}, {unit})'}],
 
-            'is_trigger_channel': False
         }
 
 com['openhab'] = {
@@ -454,8 +453,6 @@ com['openhab'] = {
                         ('2 SPS', 6),
                         ('1 SPS', 7)],
             'limit_to_options': 'true',
-            'default': 6,
-
             'label': 'Sample Rate',
             'description': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
             'advanced': 'true'
