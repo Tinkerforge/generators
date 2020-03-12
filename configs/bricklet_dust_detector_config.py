@@ -347,11 +347,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Dust Density', 'Number', 'Dust Density',
                     update_style='Callback Period',
-                    description='The dust density.',
-                    read_only=True,
-                    pattern='%d %unit%',
-                    min_=0,
-                    max_=500)
+                    description='The dust density.')
     ],
     'actions': ['Get Dust Density', 'Get Moving Average']
 }

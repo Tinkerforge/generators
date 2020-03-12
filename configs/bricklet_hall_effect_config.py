@@ -360,8 +360,6 @@ com['openhab'] = {
         oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
                     update_style=None,
                     description='The current value of the edge counter.',
-                    read_only=True,
-                    pattern='%d',
                     params=[{
                         'packet': 'Set Edge Interrupt',
                         'element': 'Edges',
@@ -386,8 +384,7 @@ com['openhab'] = {
                     }]),
         oh_generic_channel_type('Magnetic Field Detected', 'Switch', 'Magnetic Field Detected',
                     update_style=None,
-                    description='Enabled if a magnetic field of 3.5 millitesla or greater is detected.',
-                    read_only=True),
+                    description='Enabled if a magnetic field of 3.5 millitesla or greater is detected.'),
     ],
     'actions': ['Get Value', {'fn': 'Get Edge Count', 'refreshs': ['Edge Count']}, 'Get Edge Count Config']
 }

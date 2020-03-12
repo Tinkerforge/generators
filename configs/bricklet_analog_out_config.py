@@ -177,10 +177,7 @@ com['openhab'] = {
     'channel_types': [
          oh_generic_channel_type('Voltage', 'Number', 'Voltage',
                     update_style=None,
-                    description='The output voltage. The possible range is 0V to 5V. Sending a command to this channel will set the Mode to Analog Value.',
-                    pattern='%.3f %unit%',
-                    min_=0,
-                    max_=5),
+                    description='The output voltage. The possible range is 0V to 5V. Sending a command to this channel will set the Mode to Analog Value.'),
          {
             'id': 'Mode',
             'item_type': 'Number',

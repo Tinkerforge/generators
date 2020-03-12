@@ -451,7 +451,6 @@ com['openhab'] = {
         oh_generic_channel_type('Value', 'Switch', 'Input Value',
                     update_style='Callback Configuration',
                     description='The logic level that is currently measured on the input.',
-                    read_only=True,
                     params=[{
                         'packet': 'Set Channel LED Config',
                         'element': 'Config',
@@ -466,7 +465,6 @@ com['openhab'] = {
         oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
                     update_style=None,
                     description='The current value of the edge counter for the selected channel',
-                    read_only=True,
                     params=[{
                             'packet': 'Set Edge Count Configuration',
                             'element': 'Edge Type',

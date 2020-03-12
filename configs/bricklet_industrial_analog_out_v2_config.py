@@ -524,22 +524,13 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
     'channel_types': [
         oh_generic_channel_type('Enabled', 'Switch', 'Output Enabled',
                     update_style=None,
-                    description='Enables/disables the output of voltage and current.',
-                    read_only=False),
+                    description='Enables/disables the output of voltage and current.'),
         oh_generic_channel_type('Voltage', 'Number', 'Output Voltage',
                     update_style=None,
-                    description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.',
-                    read_only=False,
-                    pattern='%.3f %unit%',
-                    min_=0,
-                    max_=10),
+                    description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.'),
         oh_generic_channel_type('Current', 'Number', 'Output Current',
                     update_style=None,
-                    description='The output current in A. The output current and output voltage are linked. Changing the output current also changes the output voltage.',
-                    read_only=False,
-                    pattern='%.6f %unit%',
-                    min_=0,
-                    max_=0.024)
+                    description='The output current in A. The output current and output voltage are linked. Changing the output current also changes the output voltage.')
     ],
     'actions': [{'fn': 'Set Enabled', 'refreshs': ['Enabled']}, 'Get Enabled', 'Get Voltage', 'Get Current', 'Get Configuration', 'Get Out LED Config', 'Get Out LED Status Config']
 }

@@ -223,11 +223,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Illuminance', 'Number', 'Illuminance',
                     update_style='Callback Configuration',
-                    description='The illuminance of the ambient light sensor. The measurement range goes up to about 100000lux, but above 64000lux the precision starts to drop. An illuminance of 0lux indicates that the sensor is saturated and the configuration should be modified.',
-                    read_only=True,
-                    pattern='%.2f %unit%',
-                    min_=0,
-                    max_=100000)
+                    description='The illuminance of the ambient light sensor. The measurement range goes up to about 100000lux, but above 64000lux the precision starts to drop. An illuminance of 0lux indicates that the sensor is saturated and the configuration should be modified.')
     ],
     'actions': ['Get Illuminance', 'Get Configuration']
 }

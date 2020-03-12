@@ -547,16 +547,13 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
                     update_style=None,
-                    description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.',
-                    read_only=True,
-                    pattern='%.3f %unit%'),
+                    description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.'),
         oh_generic_channel_type('LED', 'Switch', 'LED',
                     update_style=None,
                     description='Enables/Disables the LED on the Bricklet.'),
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
                     update_style=None,
-                    description='The temperature of the accelerometer',
-                    read_only=True),
+                    description='The temperature of the accelerometer'),
     ],
     'actions': ['Get Acceleration', 'Get Temperature', {'fn': 'LED On', 'refreshs': ['LED']}, {'fn': 'LED Off', 'refreshs': ['LED']}, 'Is LED On', 'Get Configuration']
 }

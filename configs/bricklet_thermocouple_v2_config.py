@@ -330,19 +330,13 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Configuration',
-                    description='The temperature of the thermocouple.',
-                    read_only=True,
-                    pattern='%.2f %unit%',
-                    min_=-210,
-                    max_=1800),
+                    description='The temperature of the thermocouple.'),
         oh_generic_channel_type('Over Under Voltage', 'Switch', 'Over/Under Voltage Error',
                     update_style=None,
-                    description='Over/Under Voltage happens for voltages below 0V or above 3.3V. In this case it is very likely that your thermocouple is defective.',
-                    read_only=True),
+                    description='Over/Under Voltage happens for voltages below 0V or above 3.3V. In this case it is very likely that your thermocouple is defective.'),
         oh_generic_channel_type('Open Circuit', 'Switch', 'Open Circuit Error',
                     update_style=None,
-                    description='An Open Circuit error indicates that there is no thermocouple connected.',
-                    read_only=True),
+                    description='An Open Circuit error indicates that there is no thermocouple connected.'),
     ],
     'actions': ['Get Temperature', 'Get Configuration', 'Get Error State']
 }

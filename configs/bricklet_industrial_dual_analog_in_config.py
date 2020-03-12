@@ -458,11 +458,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number', 'NOT USED',
                     update_style='Callback Period',
-                    description='Measured voltage between -35 and 35 V',
-                    read_only=True,
-                    pattern='%.3f %unit%',
-                    min_=-35,
-                    max_=35)
+                    description='Measured voltage between -35 and 35 V')
     ],
     'actions': ['Get Voltage', 'Get Sample Rate', 'Get Calibration', 'Get ADC Values']
 }

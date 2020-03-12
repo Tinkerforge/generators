@@ -508,9 +508,7 @@ com['openhab'] = {
                     description="The real-time clock handles leap year and inserts the 29th of February accordingly. But leap seconds are not handled. The time is stored as UTC on the clock and converted into your system's timezone when accessed by OpenHAB."),
         oh_generic_channel_type('Timestamp', 'Number', 'Timestamp',
                     update_style=None,
-                    description="the current date and the time of the real-time clock converted to seconds. The timestamp has an effective resolution of hundredths of a second.",
-                    read_only=True,
-                    pattern='%.2f %unit%')
+                    description="the current date and the time of the real-time clock converted to seconds. The timestamp has an effective resolution of hundredths of a second.")
     ],
     'actions': [{'fn': 'Set Date Time', 'refreshs': ['Date Time']}, 'Get Date Time', 'Get Timestamp', 'Get Offset', 'Set Alarm', 'Get Alarm']
 }

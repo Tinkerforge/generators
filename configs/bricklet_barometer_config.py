@@ -674,16 +674,10 @@ this.setAveraging(cfg.pressureMovingAverageLength.shortValue(), cfg.pressureAver
     'channel_types': [
         oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
                     update_style='Callback Period',
-                    description='Measured air pressure',
-                    read_only=True,
-                    pattern='%.5f %unit%',
-                    min_=10,
-                    max_=1200),
+                    description='Measured air pressure'),
         oh_generic_channel_type('Altitude', 'Number', 'Altitude',
                     update_style='Callback Period',
-                    description='Relative Altitude derived from air pressure',
-                    read_only=True,
-                    pattern='%.2f %unit%')
+                    description='Relative Altitude derived from air pressure')
     ],
     'actions': ['Get Air Pressure', 'Get Altitude', 'Get Reference Air Pressure', 'Get Averaging']
 }

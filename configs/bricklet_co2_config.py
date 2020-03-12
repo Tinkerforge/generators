@@ -296,11 +296,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('CO2 Concentration', 'Number', 'CO2 Concentration',
                     update_style='Callback Period',
-                    description='The measured CO2 concentration.',
-                    read_only=True,
-                    pattern='%d %unit%',
-                    min_=0,
-                    max_=10000)
+                    description='The measured CO2 concentration.')
     ],
     'actions': ['Get CO2 Concentration']
 }

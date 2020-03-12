@@ -744,12 +744,10 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Input Value', 'Switch', 'Input Value',
                     update_style='Callback Configuration',
-                    description='The logic level that is currently measured on the pin.',
-                    read_only=True),
+                    description='The logic level that is currently measured on the pin.'),
         oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
                     update_style=None,
-                    description='The logic level that is currently set on the pin.',
-                    read_only=False),
+                    description='The logic level that is currently set on the pin.'),
         {
             'id': 'Monoflop',
             'item_type': 'String',
@@ -783,7 +781,6 @@ com['openhab'] = {
         oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
             update_style=None,
             description='The current value of the edge counter for the selected channel',
-            read_only=True,
             params=[{
                 'packet': 'Set Edge Count Configuration',
                 'element': 'Edge Type',

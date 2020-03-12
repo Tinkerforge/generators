@@ -2,6 +2,7 @@ import copy
 import os
 import re
 import sys
+import math
 
 sys.path.append(os.path.split(os.getcwd())[0])
 sys.path.append(os.path.join(os.path.split(os.getcwd())[0], 'java'))
@@ -611,6 +612,57 @@ class OpenHABDevice(java_common.JavaDevice):
             deduce_min_max(p, divisor)
             deduce_default(p, divisor)
             deduce_options(p)
+
+        def get_min(element):
+            if not isinstance(element.get_range(), list):
+                return None
+
+            return min([x[0] for x in element.get_range()])
+
+        def get_max(element):
+            if not isinstance(element.get_range(), list):
+                return None
+
+            return max([x[1] for x in element.get_range()])
+
+
+        type_to_channels = {ct: [c for c in self.oh.channels if c.type == ct] for ct in self.oh.channel_types}
+        for ct, channels in type_to_channels.items():
+            div = channels[0].divisor if isinstance(channels[0].divisor, (int, float)) else 1
+            elements = [x.element for c in channels for x in c.getters + c.setters + c.callbacks if x.element is not None]
+            if 'Number' not in ct.item_type:
+                continue
+            mins = [get_min(e) for e in elements if get_min(e) is not None]
+            maxs = [get_max(e) for e in elements if get_max(e) is not None]
+            if len(mins) > 0:
+                min_ = min(mins) / div
+                if ct.min is None:
+                    ct.min = min_
+            if len(maxs) > 0:
+                max_ = max(maxs) / div
+                if ct.max is None:
+                    ct.max = max_
+
+            if ct.read_only is None:
+                ct.read_only = len([x for c in channels for x in c.setters]) == 0
+
+            digits = math.ceil(math.log10(div))
+
+            if any(e.get_type() == 'float' for e in elements):
+                number_placeholder = "%f"
+            elif div != 1:
+                number_placeholder = "%.{}f".format(digits)
+            else:
+                number_placeholder = "%d"
+
+            if ct.item_type != 'Number:Dimensionless' or channels[0].java_unit != 'SmartHomeUnits.ONE':
+                unit = '%unit%'
+            else:
+                unit = ''
+
+            pattern = number_placeholder + common.wrap_non_empty(' ', unit, '')
+            if ct.pattern is None:
+                ct.pattern = pattern
 
 
     def sanity_check_config(self, oh):

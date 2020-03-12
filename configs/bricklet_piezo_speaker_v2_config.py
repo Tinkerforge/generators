@@ -416,7 +416,6 @@ com['openhab'] = {
         oh_generic_channel_type('Beep', 'Switch', 'Beep',
                     update_style=None,
                     description='Beeps with the configured default frequency and volume for the configured duration. Frequency and Volume can be updated using the corresponding channels.',
-                    read_only=False,
                     params=[{
                             'packet': 'Set Beep',
                             'element': 'Frequency',
@@ -447,7 +446,6 @@ com['openhab'] = {
         oh_generic_channel_type('Alarm', 'Switch', 'Alarm',
                     update_style=None,
                     description='Creates an alarm (a tone that goes back and force between two specified frequencies). The following parameters can be set:<br/><br/><ul><li>Start Frequency: Start frequency of the alarm in Hz.</li></br><li>End Frequency: End frequency of the alarm in Hz.</li></br><li>Step Size: Size of one step of the sweep between the start/end frequencies in Hz.</li></br><li>Step Delay: Delay between two steps (duration of time that one tone is used in a sweep) in ms.</li></br><li>Duration: Duration of the alarm in ms.</li></ul></br><br/>A duration of 0 stops the current alarm if any is ongoing. A duration of 4294967295 results in an infinite alarm.',
-                    read_only=False,
                     params=[{
                             'packet': 'Set Alarm',
                             'element': 'Start Frequency',
@@ -504,16 +502,10 @@ com['openhab'] = {
                     ]),
         oh_generic_channel_type('Volume', 'Number', 'Volume',
                     update_style=None,
-                    description='Volume of an ongoing beep or alarm. The range of the volume is 0 to 10.',
-                    read_only=False,
-                    min_=0,
-                    max_=10),
+                    description='Volume of an ongoing beep or alarm. The range of the volume is 0 to 10.'),
         oh_generic_channel_type('Beep Frequency', 'Number', 'Beep Frequency',
                     update_style=None,
-                    description='Frequency of an ongoing beep. The range of the frequency is 50Hz to 15000Hz.',
-                    read_only=False,
-                    min_=50,
-                    max_=15000),
+                    description='Frequency of an ongoing beep. The range of the frequency is 50Hz to 15000Hz.'),
     ],
     'actions': [{'fn': 'Set Beep', 'refreshs': ['Beep', 'Alarm']}, 'Get Beep', {'fn': 'Set Alarm', 'refreshs': ['Beep', 'Alarm']}, 'Get Alarm', 'Update Volume', 'Update Frequency']
 }

@@ -306,25 +306,13 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number', 'Measured Voltage',
                     update_style='Callback Configuration',
-                    description='The measured voltage between 0 and 36V.',
-                    read_only=True,
-                    pattern='%.3f %unit%',
-                    min_=0,
-                    max_=36),
+                    description='The measured voltage between 0 and 36V.'),
         oh_generic_channel_type('Current', 'Number', 'Measured Current',
                     update_style='Callback Configuration',
-                    description='The measured current between -20 and 20A.',
-                    read_only=True,
-                    pattern='%.3f %unit%',
-                    min_=-20,
-                    max_=20),
+                    description='The measured current between -20 and 20A.'),
         oh_generic_channel_type('Power', 'Number', 'Measured Power',
                     update_style='Callback Configuration',
-                    description='The measured power between 0 and 720W.',
-                    read_only=True,
-                    pattern='%.3f %unit%',
-                    min_=0,
-                    max_=720)
+                    description='The measured power between 0 and 720W.')
     ],
     'actions': ['Get Voltage', 'Get Current', 'Get Power', 'Get Configuration', 'Get Calibration']
 }

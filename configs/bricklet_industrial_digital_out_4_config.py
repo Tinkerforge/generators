@@ -409,8 +409,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
                     update_style=None,
-                    description='The logic level that is currently set on the pin.',
-                    read_only=False),
+                    description='The logic level that is currently set on the pin.'),
         {
             'id': 'Monoflop',
             'item_type': 'String',

@@ -97,8 +97,7 @@ com['openhab'] = {
     ],
     'channel_types': [
         oh_generic_channel_type('Color', 'Color', 'LED Color', description='The color of the LED.',
-                    update_style=None,
-                    read_only=False)
+                    update_style=None)
     ],
     'actions': [{'fn': 'Set RGB Value', 'refreshs': ['Color']}, 'Get RGB Value']
 }

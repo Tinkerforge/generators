@@ -300,8 +300,6 @@ com['openhab'] = {
         oh_generic_channel_type('Counter', 'Number', 'Counter',
                     update_style='Callback Configuration',
                     description='The current value of the counter.',
-                    read_only=True,
-                    pattern='%d',
                     params=[{
                         'packet': 'Get Counter',
                         'element': 'Reset Counter',
@@ -315,9 +313,7 @@ com['openhab'] = {
                     }]),
         oh_generic_channel_type('Magnetic Flux Density', 'Number', 'Magnetic Flux Density',
                     update_style='Callback Configuration',
-                    description='Measured magnetic flux density.',
-                    pattern='%.6f',
-                    read_only=True),
+                    description='Measured magnetic flux density.'),
     ],
     'actions': ['Get Magnetic Flux Density', 'Get Counter', 'Get Counter Config']
 }

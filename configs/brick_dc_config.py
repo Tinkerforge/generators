@@ -870,10 +870,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Current Velocity', 'Number', 'Current Velocity',
             update_style='Period',
-            description='The current velocity of the motor.',
-            read_only=True,
-            min_=-32767,
-            max_=32767),
+            description='The current velocity of the motor.'),
     ],
     'actions': [
         'Set Velocity', 'Get Velocity', 'Get Current Velocity',

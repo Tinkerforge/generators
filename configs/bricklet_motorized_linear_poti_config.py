@@ -283,17 +283,10 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style='Callback Configuration',
-                    description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).',
-                    read_only=True,
-                    pattern='%d %unit%',
-                    min_=0,
-                    max_=100),
+                    description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).'),
         oh_generic_channel_type('Motor Position', 'Number', 'Motor Position',
                     update_style=None,
                     description='The motor position of the potentiometer. The value is between 0 (slider down) and 100 (slider up).',
-                    pattern='%d %unit%',
-                    min_=0,
-                    max_=100,
                     params=[{
                         'packet': 'Set Motor Position',
                         'element': 'Drive Mode',

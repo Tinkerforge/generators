@@ -308,7 +308,6 @@ com['openhab'] = {
         oh_generic_channel_type('UV Light', 'Number:Dimensionless', 'UV Index',
                     update_style='Callback Period',
                     description='Measured UV Index',
-                    read_only=True,
                     pattern='%.3f %unit%',
                     min_=0,
                     max_=50),

@@ -330,8 +330,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Count', 'Number', 'Count',
                     update_style='Callback Configuration',
-                    description='The value of the example count (see example.c)',
-                    read_only=True)
+                    description='The value of the example count (see example.c)')
     ],
     'actions': ['Get Count']
 }

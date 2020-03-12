@@ -74,9 +74,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('USB Voltage', 'Number:ElectricPotential', 'USB Voltage',
                     update_style='Callback Configuration',
-                    description='The USB supply voltage of the Raspberry Pi.',
-                    read_only=True,
-                    pattern='%.3f %unit%')
+                    description='The USB supply voltage of the Raspberry Pi.')
     ],
     'actions': ['Get USB Voltage']
 }

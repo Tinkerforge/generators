@@ -195,18 +195,10 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Ambient Temperature', 'Number', 'Ambient Temperature',
                     update_style='Callback Configuration',
-                    description='Measured ambient temperature',
-                    read_only=True,
-                    pattern='%.1f %unit%',
-                    min_=-40,
-                    max_=125),
+                    description='Measured ambient temperature'),
         oh_generic_channel_type('Object Temperature', 'Number', 'Object Temperature',
                     update_style='Callback Configuration',
-                    description='Measured object temperature, i.e. the temperature of the surface of the object the sensor is aimed at. The temperature of different materials is dependent on their <a href=https://en.wikipedia.org/wiki/Emissivity>emissivity</a>.',
-                    read_only=True,
-                    pattern='%.1f %unit%',
-                    min_=-70,
-                    max_=380)
+                    description='Measured object temperature, i.e. the temperature of the surface of the object the sensor is aimed at. The temperature of different materials is dependent on their <a href=https://en.wikipedia.org/wiki/Emissivity>emissivity</a>.')
     ],
     'actions': ['Get Ambient Temperature', 'Get Object Temperature', 'Get Emissivity']
 }

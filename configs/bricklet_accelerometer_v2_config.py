@@ -717,9 +717,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
                     update_style=None,
-                    description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.',
-                    read_only=True,
-                    pattern='%.4f %unit%')
+                    description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.')
     ],
     'actions': ['Get Acceleration', 'Get Configuration', 'Get Info LED Config', 'Get Filter Configuration']
 }

@@ -326,11 +326,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style=None,
-                    description='The position of the joystick. The value ranges between -100 and 100 for both axis. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.',
-                    read_only=True,
-                    pattern='%d %unit%',
-                    min_=-100,
-                    max_=100)
+                    description='The position of the joystick. The value ranges between -100 and 100 for both axis. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.')
     ],
     'actions': ['Get Position', 'Is Pressed']
 }

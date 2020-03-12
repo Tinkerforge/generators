@@ -519,7 +519,6 @@ com['openhab'] = {
         }],
     'channel_types': [oh_generic_channel_type('State', 'Number', 'State',
             update_style=None,
-            description="The current state of the bricklet. Calling actions is only allowed in idle, ready and error states (e.g. all states >= 128). The following states are defined:" + state_list,
-            read_only=True)],
+            description="The current state of the bricklet. Calling actions is only allowed in idle, ready and error states (e.g. all states >= 128). The following states are defined:" + state_list)],
     'actions': ['Request Tag ID', 'Get Tag ID', 'Get State', 'Authenticate Mifare Classic Page', 'Write Page', 'Request Page', 'Get Page', ]
 }

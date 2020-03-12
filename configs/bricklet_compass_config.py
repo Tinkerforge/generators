@@ -332,11 +332,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Heading', 'Number', 'Heading',
                     update_style='Callback Configuration',
-                    description='The heading (north = 0 degree)',
-                    read_only=True,
-                    pattern='%.1f %unit%',
-                    min_=0,
-                    max_=360),
+                    description='The heading (north = 0 degree)'),
     ],
     'actions': ['Get Heading', 'Get Magnetic Flux Density', 'Get Configuration', 'Get Calibration']
 }

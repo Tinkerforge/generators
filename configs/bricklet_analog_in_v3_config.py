@@ -230,11 +230,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number', 'Voltage',
                     update_style='Callback Configuration',
-                    description='Measured voltage',
-                    read_only=True,
-                    pattern='%.2f %unit%',
-                    min_=0,
-                    max_=42)
+                    description='Measured voltage')
     ],
     'actions': ['Get Voltage', 'Get Oversampling', 'Get Calibration']
 }

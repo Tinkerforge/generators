@@ -348,9 +348,7 @@ this.setConfiguration(cfg.fftSize, cfg.weighting);""",
     'channel_types': [
         oh_generic_channel_type('Decibel', 'Number', 'Sound Pressure',
                     update_style='Callback Configuration',
-                    description='Measured Sound Pressure',
-                    read_only=True,
-                    pattern='%.1f %unit%'),
+                    description='Measured Sound Pressure'),
     ],
     'actions': ['Get Decibel', 'Get Spectrum', 'Get Configuration']
 }

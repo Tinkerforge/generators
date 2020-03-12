@@ -393,7 +393,6 @@ com['openhab'] = {
         oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
                     update_style=None,
                     description='The logic level that is currently set on the pin.',
-                    read_only=False,
                     params=[{
                     'packet': 'Set Channel LED Config',
                     'element': 'Config',

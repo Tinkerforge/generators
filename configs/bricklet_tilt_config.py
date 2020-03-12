@@ -200,12 +200,10 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Tilted', 'Switch', 'Tilted',
                     update_style=None,
-                    description='The current tilt state. Enabled if tilted, disabled if closed or vibrating.',
-                    read_only=True),
+                    description='The current tilt state. Enabled if tilted, disabled if closed or vibrating.'),
         oh_generic_channel_type('Vibrating', 'Switch', 'Vibrating',
                     update_style=None,
-                    description='The current vibration state. Enabled if vibration is detected, disabled if not. Vibration can only be detected if the bricklet is not tilted.',
-                    read_only=True)
+                    description='The current vibration state. Enabled if vibration is detected, disabled if not. Vibration can only be detected if the bricklet is not tilted.')
     ],
     'actions': ['Get Tilt State']
 }

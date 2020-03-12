@@ -573,10 +573,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Weight', 'Number', 'Weight',
                     update_style='Callback Period',
-                    description='The currently measured weight',
-                    read_only=True,
-                    pattern='%d %unit%',
-                    min_=0),
+                    description='The currently measured weight'),
         {
             'id': 'Tare',
             'item_type': 'String',
