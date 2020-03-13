@@ -519,7 +519,6 @@ class OpenHABDevice(java_common.JavaDevice):
         return None
 
     def apply_packet_info(self, oh):
-        # TODO: integrate add_packet_info
         for c in oh.channels:
             elements = [x.element for x in c.getters + c.setters + c.callbacks if x.element is not None]
 
@@ -600,8 +599,13 @@ class OpenHABDevice(java_common.JavaDevice):
         for p in oh.params + [p for c in oh.channels for p in c.type.params]:
             if p.virtual and p.default is None:
                 raise common.GeneratorError('openhab: Device {}: Parameter "{}" is virtual but no default is set.'.format(self.get_long_display_name(), p.label))
+
             if p.element is None or p.element.is_struct():
                 continue
+
+            if p.element.get_packet().get_doc_type() == 'af':
+                p.advanced = True
+
             if p.type == 'integer':
                 divisor = 1
             elif p.type == 'decimal':
@@ -789,15 +793,6 @@ class OpenHABDevice(java_common.JavaDevice):
             if ct.is_trigger_channel and "system." in ct.id:
                 raise common.GeneratorError('openhab: Device {} Channel Type {} is marked as trigger channel, but uses a custom type (not system.trigger or similar). This is theoretically supported, but the device handler currently assumes (when sending initial refreshs), that all trigger channels are of system-wide type.'.format(self.get_long_display_name(), ct.id))
 
-    def add_packet_info(self, param):
-        if param['virtual']:
-            return param
-
-        if param['element'].get_packet().get_doc_type() == 'af':
-            param['advanced'] = True
-
-        return param
-
     def find_channel_type(self, channel, channel_types):
         if channel['type'].startswith('system.'):
             system_type = ChannelType(**{'id': common.FlavoredName(channel['type']).get(), 'is_trigger_channel': True})
@@ -920,7 +915,7 @@ class OpenHABDevice(java_common.JavaDevice):
                     param['packet'] = find_packet(param['packet'])
                     param['element'] = find_element(param['element'], param['packet'])
 
-            channel_type['params'] = [Param(**self.add_packet_info(p)) for p in channel_type['params']]
+            channel_type['params'] = [Param(**p) for p in channel_type['params']]
             oh['channel_types'][ct_idx] = ChannelType(**channel_type)
 
         for c_idx, channel in enumerate(oh['channels']):
@@ -955,7 +950,7 @@ class OpenHABDevice(java_common.JavaDevice):
             if param['packet'] is not None:
                 param['packet'] = find_packet(param['packet'])
                 param['element'] = [e for e in param['packet'].get_elements() if e.get_name().space == param['element']][0] # TODO: handle high-level parameters?
-            oh['params'][p_idx] = Param(**self.add_packet_info(param))
+            oh['params'][p_idx] = Param(**param)
 
         for g_idx, group in enumerate(oh['param_groups']):
             oh['param_groups'][g_idx] = ParamGroup(**group)
