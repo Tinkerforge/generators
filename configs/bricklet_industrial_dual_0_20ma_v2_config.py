@@ -443,7 +443,6 @@ com['openhab'] = {
 
             'label': 'Sample Rate',
             'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
-            'advanced': 'true'
         }, {
             'packet': 'Set Gain',
             'element': 'Gain',
@@ -452,7 +451,6 @@ com['openhab'] = {
             'type': 'integer',
             'label': 'Gain',
             'description': "The gain between 1x and 8x. If you want to measure a very small current, you can increase the gain to get some more resolution.<br/><br/>Example: If you measure 0.5mA with a gain of 8x the return value will be 4mA.",
-            'advanced': 'true'
         }
     ],
     'init_code': """this.setSampleRate(cfg.sampleRate);

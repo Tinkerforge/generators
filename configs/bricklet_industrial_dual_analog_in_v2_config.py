@@ -447,7 +447,6 @@ com['openhab'] = {
 
             'label': 'Sample Rate',
             'description': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
-            'advanced': 'true'
         }
     ],
     'init_code': """this.setSampleRate(cfg.sampleRate);""",

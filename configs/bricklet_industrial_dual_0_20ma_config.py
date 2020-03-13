@@ -407,7 +407,6 @@ com['openhab'] = {
             'type': 'integer',
             'label': 'Sample Rate',
             'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
-            'advanced': 'true'
         }
     ],
     'init_code': """this.setSampleRate(cfg.sampleRate.shortValue());""",
