@@ -196,7 +196,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                                                 filter=callback.filter,
                                                 channel_camel=c.id.camel,
                                                 args=', '.join(e.get_name().headless for e in elements),
-                                                updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
+                                                updateFn='triggerChannelFn' if c.type.is_trigger_channel else 'updateStateFn',
                                                 i=i,
                                                 comma=', ' if len(elements) > 0 else '',
                                                 end_predicate='}' if c.predicate != 'true' else ''))
@@ -206,7 +206,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                     dispose_code += [dispose_template.format(predicate='if({}) {{\n'.format(c.predicate) if c.predicate != 'true' else '',
                                                             code=c.dispose_code,
                                                             end_predicate='}' if c.predicate != 'true' else '')]
-                lambda_transforms.append(transformation_template.format(state_or_string='String' if c.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
+                lambda_transforms.append(transformation_template.format(state_or_string='String' if c.type.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
                                                                 camel=c.id.camel,
                                                                 callback_args=common.wrap_non_empty('', ', '.join(e.get_java_type() + ' ' + e.get_name().headless for e in elements), ', '),
                                                                 transform=callback.transform,
@@ -265,7 +265,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                 elements = getter.packet.get_elements(direction='out', high_level=True)
                 _, type_ = self.get_filtered_elements_and_type(getter.packet, elements, out_of_class=True)
 
-                channel_getters.append(getter_template.format(updateFn='triggerChannelFn' if c.is_trigger_channel else 'updateStateFn',
+                channel_getters.append(getter_template.format(updateFn='triggerChannelFn' if c.type.is_trigger_channel else 'updateStateFn',
                                                               camel=c.id.camel,
                                                               getter=packet_name,
                                                               getter_params=', '.join(getter.packet_params),
@@ -276,7 +276,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
 
 
                 transforms.append(transformation_template.format(device_camel=self.get_category().camel + self.get_name().camel,
-                                                                 state_or_string='String' if c.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
+                                                                 state_or_string='String' if c.type.is_trigger_channel else 'org.eclipse.smarthome.core.types.State',
                                                                  camel=c.id.camel,
                                                                  type_=type_,
                                                                  transform=getter.transform,

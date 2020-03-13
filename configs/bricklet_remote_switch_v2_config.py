@@ -595,8 +595,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Switching Done',
                 'transform': '""'}],
-
-            'is_trigger_channel': True,
             'description': 'This channel is triggered whenever the switching state changes from busy to ready.'
         }, {
             'id': 'Remote Status A Available',
@@ -606,8 +604,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Remote Status A',
                 'transform': '""'}],
-
-            'is_trigger_channel': True,
             'description': 'This channel is triggered if at least the configured minimum of repeats of identical data packets for remote type A were received. You can get the house and receiver code, switch state and repeats with the getRemoteStatusA action.'
         }, {
             'id': 'Remote Status B Available',
@@ -617,8 +613,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Remote Status B',
                 'transform': '""'}],
-
-            'is_trigger_channel': True,
             'description': 'This channel is triggered if at least the configured minimum of repeats of identical data packets for remote type B were received. You can get the house and receiver code, switch state and repeats with the getRemoteStatusB action.'
         }, {
             'id': 'Remote Status C Available',
@@ -628,8 +622,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Remote Status C',
                 'transform': '""'}],
-
-            'is_trigger_channel': True,
             'description': 'This channel is triggered if at least the configured minimum of repeats of identical data packets for remote type C were received. You can get the house and receiver code, switch state and repeats with the getRemoteStatusC action.'
         }
     ],

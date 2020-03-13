@@ -286,8 +286,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Switching Done',
                 'transform': '""'}],
-
-            'is_trigger_channel': True,
             'description': 'This channel is triggered whenever the switching state changes from busy to ready.'
         }
     ],

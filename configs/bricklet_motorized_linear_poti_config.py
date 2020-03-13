@@ -276,8 +276,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Position Reached',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
-
-            'is_trigger_channel': True
         },
     ],
     'channel_types': [

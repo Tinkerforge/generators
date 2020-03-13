@@ -519,8 +519,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Frame Readable',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
-
-            'is_trigger_channel': True,
         }, {
             'id': 'Overrun Error Count',
             'label': 'Overrun Error Count',

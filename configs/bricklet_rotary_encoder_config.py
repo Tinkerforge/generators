@@ -384,7 +384,6 @@ com['openhab'] = {
                     'packet': 'Released',
                     'transform': 'CommonTriggerEvents.RELEASED'
                 }],
-            'is_trigger_channel': True
         }
     ],
     'channel_types': [

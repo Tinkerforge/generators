@@ -257,8 +257,6 @@ com['openhab'] = {
                 'packet': 'State Changed',
                 'elements': 'Button L',
                 'transform': 'buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
-
-            'is_trigger_channel': True
         },
         {
             'id': 'Right Button',
@@ -274,8 +272,6 @@ com['openhab'] = {
                 'packet': 'State Changed',
                 'elements': 'Button R',
                 'transform': 'buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
-
-            'is_trigger_channel': True
         }, {
             'id': 'Left LED',
             'label': 'Left LED',

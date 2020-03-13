@@ -979,8 +979,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Pulse Per Second',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
-
-            'is_trigger_channel': True
         }, {
             'id': 'Restart',
             'type': 'Restart',

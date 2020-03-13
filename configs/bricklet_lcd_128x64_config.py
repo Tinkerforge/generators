@@ -1707,8 +1707,6 @@ def gui_button_pressed_channel(index):
             'filter': 'index ==  {}'.format(index),
             'packet': 'GUI Button Pressed',
             'transform': 'pressed ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
-
-        'is_trigger_channel': True
     }
 
 def gui_slider_value_channel(index):
@@ -1837,8 +1835,6 @@ com['openhab'] = {
 
                 'init_code': """this.setTouchPositionCallbackConfiguration(cfg.touchPositionUpdateInterval, true);""",
                 'dispose_code': """this.setTouchPositionCallbackConfiguration(0, true);""",
-
-                'is_trigger_channel': True,
             }, {
                 'id': 'Touch Gesture',
                 'label': 'Touch Gesture',
@@ -1851,8 +1847,6 @@ com['openhab'] = {
 
                 'init_code': """this.setTouchGestureCallbackConfiguration(cfg.touchGestureUpdateInterval, true);""",
                 'dispose_code': """this.setTouchGestureCallbackConfiguration(0, true);""",
-
-                'is_trigger_channel': True,
             }, {
                 'id': 'Selected GUI Tab',
                 'type': 'GUI Tab Selected',

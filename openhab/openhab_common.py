@@ -92,7 +92,6 @@ class Channel:
         self.dispose_code = kwargs.get('dispose_code', '')
         self.java_unit = kwargs.get('java_unit', None)
         self.divisor = kwargs.get('divisor', 1)
-        self.is_trigger_channel = kwargs.get('is_trigger_channel', False)
         self.getters = kwargs.get('getters', [])
         self.setters = kwargs.get('setters', [])
         self.setter_refreshs = kwargs.get('setter_refreshs', [])
@@ -101,8 +100,6 @@ class Channel:
         self.label = kwargs.get('label', None)
         self.description = kwargs.get('description', None)
         self.automatic_update = kwargs.get('automatic_update', True)
-        self.packet = kwargs.get('packet', None)
-        self.element = kwargs.get('element', None)
 
     def get_builder_call(self):
         template = """new ChannelDefinitionBuilder("{channel_id}", new ChannelTypeUID("{binding}", "{channel_type_id}")){with_calls}.build()"""
@@ -535,7 +532,7 @@ class OpenHABDevice(java_common.JavaDevice):
 
             e = elements[0]
             # Deduce unit and divisor
-            if not c.is_trigger_channel and c.java_unit is None and (c.type.item_type is None or 'Number' in c.type.item_type):
+            if not c.type.is_trigger_channel and c.java_unit is None and (c.type.item_type is None or 'Number' in c.type.item_type):
                 if e.get_unit() is not None:
                     _, tf_unit = self.find_unit_with_prefix(e.get_unit())
                     c.java_unit = tf_unit.java_unit
@@ -544,7 +541,7 @@ class OpenHABDevice(java_common.JavaDevice):
                     c.java_unit = 'SmartHomeUnits.ONE'
                     c.type.item_type = 'Number:Dimensionless'
 
-            if not c.is_trigger_channel and c.divisor == 1 and isinstance(e.get_scale(), tuple):
+            if not c.type.is_trigger_channel and c.divisor == 1 and isinstance(e.get_scale(), tuple):
                 if e.get_unit() is not None:
                     factor, tf_unit = self.find_unit_with_prefix(e.get_unit())
                     c.divisor = tf_unit.tf_to_oh_divisor / factor * e.get_scale()[1] / e.get_scale()[0]

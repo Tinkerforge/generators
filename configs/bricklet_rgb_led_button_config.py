@@ -212,8 +212,6 @@ com['openhab'] = {
                 'packet': 'Button State Changed',
                 'element': 'State',
                 'transform': 'state == BrickletRGBLEDButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
-
-            'is_trigger_channel': True
         }
     ],
     'channel_types': [

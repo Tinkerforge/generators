@@ -318,8 +318,6 @@ com['openhab'] = {
                 'packet': 'Pressed',
                 'element': 'Pressed',
                 'transform': 'pressed ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
-
-            'is_trigger_channel': True,
             'init_code': """this.setPressedCallbackConfiguration(10, true);"""
         },
     ],

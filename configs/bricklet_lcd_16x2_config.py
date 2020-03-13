@@ -368,7 +368,6 @@ def button_channel(idx):
                     'transform': 'CommonTriggerEvents.RELEASED'
                 },
             ],
-            'is_trigger_channel': True
     }
 
 button_channels = [button_channel(i) for i in range(0, 3)]

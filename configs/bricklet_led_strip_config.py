@@ -773,8 +773,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Frame Rendered',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
-
-            'is_trigger_channel': True,
             'init_code': 'this.enableFrameRenderedCallback();',
             'dispose_code': 'this.disableFrameRenderedCallback();',
         },

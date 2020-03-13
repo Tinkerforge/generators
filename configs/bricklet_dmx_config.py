@@ -615,8 +615,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Frame Started',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
-
-            'is_trigger_channel': True,
         }, {
             'id': 'Frame Available',
             'label': 'Frame Available',
@@ -625,8 +623,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Frame Available',
                 'transform': 'CommonTriggerEvents.PRESSED'}],
-
-            'is_trigger_channel': True,
         }, {
             'id': 'Overrun Error Count',
             'label': 'Overrun Error Count',

@@ -157,8 +157,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Beep Finished',
                 'transform': '""'}],
-
-            'is_trigger_channel': True,
             'description': 'This channel is triggered if a beep set by the beep action is finished.'
         }, {
             'id': 'Morse Code Finished',
@@ -168,8 +166,6 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Morse Code Finished',
                 'transform': '""'}],
-
-            'is_trigger_channel': True,
             'description': 'This channel is triggered if the playback of the morse code set by the morseCode action is finished.'
         },
     ],

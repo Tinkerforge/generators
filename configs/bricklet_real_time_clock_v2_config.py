@@ -494,7 +494,6 @@ com['openhab'] = {
                 'packet': 'Alarm',
                 'transform': 'CommonTriggerEvents.PRESSED'
             }],
-            'is_trigger_channel': True
         }
     ],
     'channel_types': [
