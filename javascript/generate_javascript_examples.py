@@ -75,18 +75,22 @@ class JavaScriptConstant(common.Constant):
 
 class JavaScriptExample(common.Example):
     def get_nodejs_source(self):
+        global global_line_prefix
         global global_output_prefix
         global global_output_suffix
         global global_callback_output_suffix
         global global_last_sleep_function
         global global_sleep_duration_offset
+        global global_inside_for_loop
         global global_total_sleep_duration
 
+        global_line_prefix = ''
         global_output_prefix = 'console.log('
         global_output_suffix = ')'
         global_callback_output_suffix = ''
         global_last_sleep_function = None
         global_sleep_duration_offset = 0
+        global_inside_for_loop = False
         global_total_sleep_duration = 0
 
         template = r"""var Tinkerforge = require('tinkerforge');{incomplete}{description}
@@ -170,18 +174,22 @@ process.stdin.on('data',
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '')).replace('<<<total_sleep_duration>>>', str(global_total_sleep_duration)).replace("console.log('');", "console.log();")
 
     def get_html_source(self):
+        global global_line_prefix
         global global_output_prefix
         global global_output_suffix
         global global_callback_output_suffix
         global global_last_sleep_function
         global global_sleep_duration_offset
+        global global_inside_for_loop
         global global_total_sleep_duration
 
+        global_line_prefix = ''
         global_output_prefix = 'textArea.value += '
         global_output_suffix = " + '\\n'"
         global_callback_output_suffix = '\n        textArea.scrollTop = textArea.scrollHeight;'
         global_last_sleep_function = None
         global_sleep_duration_offset = 0
+        global_inside_for_loop = False
         global_total_sleep_duration = 0
 
         template = r"""<!DOCTYPE html>{incomplete}{description}
