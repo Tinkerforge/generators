@@ -1743,7 +1743,7 @@ units = [
 
     Unit('Percent Per Second',
          {'en': 'Percent Per Second', 'de': 'Prozent pro Sekunde'},
-         '%',
+         '%/s',
          {'en': 'Duty Cycle Change', 'de': 'Tastverhältnisänderung'},
          [],
          []),
