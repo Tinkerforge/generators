@@ -51,5 +51,5 @@ logisch 1 bzw. logisch 0 auf dem entsprechenden Kanal.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('setter', 'Set Value', [('bool', [True, False, True, False, True, False, True, False])], None, None)]
+'functions': [('setter', 'Set Value', [('uint64', 0), ('bool', [True, False, True, False, True, False, True, False])], None, None)]
 })
