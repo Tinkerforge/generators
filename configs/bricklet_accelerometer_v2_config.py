@@ -302,7 +302,7 @@ com['packets'].append({
              ('Enable Z', 'bool', 1, 'in', {'default': False}),
              ('Resolution', 'uint8', 1, 'in', {'constant_group': 'Resolution', 'default': 0})],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['ccf', {
 'en':
 """
 For high throughput of acceleration data (> 1000Hz) you have to use the
@@ -414,7 +414,7 @@ com['packets'].append({
              ('Enable Z', 'bool', 1, 'out', {'default': False}),
              ('Resolution', 'uint8', 1, 'out', {'constant_group': 'Resolution', 'default': 0})],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['ccf', {
 'en':
 """
 Returns the continuous acceleration configuration as set by
