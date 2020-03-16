@@ -4,7 +4,7 @@
 """
 MQTT Examples Generator
 Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
-Copyright (C) 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_mqtt_examples.py: Generator for MQTT examples
 
@@ -82,8 +82,8 @@ class MQTTExample(common.Example):
                                description=description,
                                device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
-                               sources='\nsetup:\n\t' + '\n\t'.join(sources).replace('\n\t\n','\n\n'),
-                               cleanups=common.wrap_non_empty('\n\ncleanup:\n\t# If you are done, run this to clean up\n\t', '\n\t'.join(cleanups), '').rstrip('\n') + '\n')
+                               sources='\nsetup:\n\t' + '\n\t'.join(sources),
+                               cleanups=common.wrap_non_empty('\n\ncleanup:\n\t# If you are done, run this to clean up\n\t', '\n\t'.join(cleanups), '').rstrip('\n') + '\n').replace('\n\t\n', '\n\n').replace('\n\t\n', '\n\n').replace('\n\n\n', '\n')
 
 class MQTTExampleArgument(common.ExampleArgument):
     def get_mqtt_bitmask_comment(self):
@@ -138,8 +138,8 @@ class MQTTExampleResult(common.ExampleResult):
 class MQTTExampleGetterFunction(common.ExampleGetterFunction, MQTTExampleArgumentsMixin):
     def get_mqtt_source(self):
         template = r"""{global_line_prefix}# Get current {function_name_comment}
-subscribe to tinkerforge/response/{device_name}_{device_category}/{uid}/{function_name_under}
-publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{function_name_under}
+{global_line_prefix}subscribe to tinkerforge/response/{device_name}_{device_category}/{uid}/{function_name_under}
+{global_line_prefix}publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{function_name_under}
 """
 
         return template.format(global_line_prefix=global_line_prefix,
@@ -152,7 +152,7 @@ publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{ui
 
 class MQTTExampleSetterFunction(common.ExampleSetterFunction, MQTTExampleArgumentsMixin):
     def get_mqtt_source(self):
-        template = "{comment1}{global_line_prefix}publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{function_name} {comment2}\n"
+        template = "{comment1}{global_line_prefix}publish '{arguments}' to tinkerforge/request/{device_name}_{device_category}/{uid}/{function_name}{comment2}\n"
         bitmask_comments = []
 
         for argument in self.get_arguments():
@@ -257,7 +257,6 @@ class MQTTExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThreshold
 
 class MQTTExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, MQTTExampleArgumentsMixin):
     def get_mqtt_source(self):
-
         callback_fn = "set_{function_name_under}_callback_threshold".format(function_name_under=self.get_name().under)
 
         template = r"""# Configure threshold for {function_name_comment} "{option_comment}"
@@ -369,7 +368,7 @@ publish '{{"debounce": {period_msec}}}' to tinkerforge/request/{device_name}_{de
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
-            template = '{comment1}{global_line_prefix}wait for {duration}s {comment2}\n'
+            template = '{comment1}{global_line_prefix}wait for {duration}s{comment2}\n'
             duration = self.get_sleep_duration()
 
             if duration % 1000 == 0:
