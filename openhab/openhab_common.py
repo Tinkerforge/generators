@@ -68,6 +68,9 @@ openHABUnits = [
     OpenHABUnit('None', 'SmartHomeUnits.ONE', 'Dimensionless'),
 ]
 
+def long_literal(x):
+    return 'L' if isinstance(x, int) and (x < -2**31 or x > 2**31 - 1) else ''
+
 class OpenHAB:
     def __init__(self, **kwargs):
         self.channels = kwargs.get('channels', [])
@@ -151,11 +154,11 @@ class ChannelType:
             with_calls = []
 
             if min_ is not None:
-                with_calls.append(".withMinimum(BigDecimal.valueOf({}))".format(min_))
+                with_calls.append(".withMinimum(BigDecimal.valueOf({}{}))".format(min_, long_literal(min_)))
             if max_ is not None:
-                with_calls.append(".withMaximum(BigDecimal.valueOf({}))".format(max_))
+                with_calls.append(".withMaximum(BigDecimal.valueOf({}{}))".format(max_, long_literal(max_)))
             if step is not None:
-                with_calls.append(".withStep(BigDecimal.valueOf({}))".format(step))
+                with_calls.append(".withStep(BigDecimal.valueOf({}{}))".format(step, long_literal(step)))
             if pattern is not None:
                 with_calls.append('.withPattern("{}")'.format(pattern))
             if readOnly is not None:
@@ -279,13 +282,13 @@ class Param:
             with_calls.append('.withLimitToOptions({val})'.format(val='true' if self.limit_to_options else 'false'))
 
         if self.min is not None:
-            with_calls.append('.withMinimum(BigDecimal.valueOf({val}))'.format(val=self.min))
+            with_calls.append('.withMinimum(BigDecimal.valueOf({}{}))'.format(self.min, long_literal(self.min)))
 
         if self.max is not None:
-            with_calls.append('.withMaximum(BigDecimal.valueOf({val}))'.format(val=self.max))
+            with_calls.append('.withMaximum(BigDecimal.valueOf({}{}))'.format(self.max, long_literal(self.max)))
 
         if self.step is not None:
-            with_calls.append('.withStepSize(BigDecimal.valueOf({val}))'.format(val=self.step))
+            with_calls.append('.withStepSize(BigDecimal.valueOf({}{}))'.format(self.step, long_literal(self.step)))
 
         if self.options is not None:
             with_calls.append('.withOptions(Arrays.asList({}))'.format(', '.join('new ParameterOption("{}", "{}")'.format(val, label) for label, val in self.options)))
@@ -561,6 +564,12 @@ class OpenHABDevice(java_common.JavaDevice):
                     return
                 new_min /= divisor
                 new_max /= divisor
+
+                if new_min.is_integer():
+                    new_min = int(new_min)
+                if new_max.is_integer():
+                    new_max = int(new_max)
+
                 if p.min is None:
                     p.min = new_min
                 if p.max is None:
@@ -581,7 +590,7 @@ class OpenHABDevice(java_common.JavaDevice):
                     new_default = p.min if p.min is not None and p.min >= 0 else 0.0
                 else:
                     return
-                if new_default.is_integer():
+                if isinstance(new_default, float) and new_default.is_integer():
                     new_default = int(new_default)
 
             if p.default is None:
@@ -635,12 +644,21 @@ class OpenHABDevice(java_common.JavaDevice):
                 continue
             mins = [get_min(e) for e in elements if get_min(e) is not None]
             maxs = [get_max(e) for e in elements if get_max(e) is not None]
+            unscaled_min = None
+            unscaled_max = None
+
             if len(mins) > 0:
-                min_ = min(mins) / div
+                unscaled_min = min(mins)
+                min_ = unscaled_min / div
+                if min_.is_integer():
+                    min_ = int(min_)
                 if ct.min is None:
                     ct.min = min_
             if len(maxs) > 0:
-                max_ = max(maxs) / div
+                unscaled_max = max(maxs)
+                max_ = unscaled_max / div
+                if max_.is_integer():
+                    max_ = int(max_)
                 if ct.max is None:
                     ct.max = max_
 
