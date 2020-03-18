@@ -30,6 +30,8 @@ import sys
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
+DELPHI_KEYWORDS = ['length', 'unit', 'type', 'message']
+
 class DelphiDevice(common.Device):
     def get_delphi_class_name(self):
         return 'T' + self.get_category().camel + self.get_name().camel

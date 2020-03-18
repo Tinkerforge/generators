@@ -1553,7 +1553,7 @@ class DelphiBindingsElement(delphi_common.DelphiElement):
         name = delphi_common.DelphiElement.get_name(self, *args, **kwargs)
 
         # avoid keywords, check as lower because Delphi is caseless
-        if name.lower in ['length', 'unit', 'type', 'message']:
+        if name.lower in delphi_common.DELPHI_KEYWORDS:
             name = delphi_common.DelphiElement.get_name(self, *args, suffix='_', **kwargs)
 
         return name

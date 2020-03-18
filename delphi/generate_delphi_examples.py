@@ -229,7 +229,7 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
 
         name = self.get_name().headless
 
-        if name == self.get_device().get_initial_name():
+        if name == self.get_device().get_initial_name() or name.lower() in delphi_common.DELPHI_KEYWORDS:
             name += '_'
 
         return template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0], 1)[0],
@@ -251,7 +251,7 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
 
             name = self.get_name().headless
 
-            if name == self.get_device().get_initial_name():
+            if name == self.get_device().get_initial_name() or name.lower() in delphi_common.DELPHI_KEYWORDS:
                 name += '_'
 
             for constant in constant_group.get_constants():
@@ -278,7 +278,7 @@ class DelphiExampleParameter(common.ExampleParameter, DelphiPrintfFormatMixin):
 
             name = self.get_name().headless
 
-            if name == self.get_device().get_initial_name():
+            if name == self.get_device().get_initial_name() or name.lower() in delphi_common.DELPHI_KEYWORDS:
                 name += '_'
 
             result = []
@@ -310,7 +310,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
 
         name = self.get_name().headless
 
-        if name == self.get_device().get_initial_name():
+        if name == self.get_device().get_initial_name() or name.lower() in delphi_common.DELPHI_KEYWORDS:
             name += '_'
 
         return template.format(type0=delphi_common.get_delphi_type(self.get_type().split(':')[0], 1)[0],
@@ -320,7 +320,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
     def get_delphi_variable_name(self):
         name = self.get_name().headless
 
-        if name == self.get_device().get_initial_name():
+        if name == self.get_device().get_initial_name() or name.lower() in delphi_common.DELPHI_KEYWORDS:
             name += '_'
 
         return name
@@ -336,7 +336,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
 
             name = self.get_name().headless
 
-            if name == self.get_device().get_initial_name():
+            if name == self.get_device().get_initial_name() or name.lower() in delphi_common.DELPHI_KEYWORDS:
                 name += '_'
 
             for constant in constant_group.get_constants():
@@ -363,7 +363,7 @@ class DelphiExampleResult(common.ExampleResult, DelphiPrintfFormatMixin):
 
             name = self.get_name().headless
 
-            if name == self.get_device().get_initial_name():
+            if name == self.get_device().get_initial_name() or name.lower() in delphi_common.DELPHI_KEYWORDS:
                 name += '_'
 
             result = []
