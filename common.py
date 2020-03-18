@@ -583,7 +583,7 @@ def merge_meta_sections(items):
         if merged:
             continue
 
-        merged_items.append((style, label, values))
+        merged_items.append((style, label, values[:]))
 
     return merged_items
 
