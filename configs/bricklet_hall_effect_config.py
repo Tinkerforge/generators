@@ -369,7 +369,8 @@ com['openhab'] = {
 
                         'default': 1,
 
-                        'label': 'Refresh Value Every N-th Edge.',
+                        'label': 'Refresh Count',
+                        'description': 'The edge count value will be refreshed every n-th edge.',
                     }, {
                         'packet': 'Get Edge Count',
                         'element': 'Reset Counter',

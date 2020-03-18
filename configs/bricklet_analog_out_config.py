@@ -185,7 +185,6 @@ com['openhab'] = {
             'description': 'The mode of the output. Setting the mode to Analog Value will result in an output voltage of 0. You can jump to a higher output voltage directly by sending a command to the Voltage Channel.',
             'read_only': False,
             'pattern': '%d',
-            'max': 3,
             'options':[('Analog Value', 0),
                         ('1k To Ground', 1),
                         ('100k To Ground', 2),
