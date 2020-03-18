@@ -1122,12 +1122,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Orientation',
                 'element': angle,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(angle.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(angle.lower())}],
 
             'callbacks': [{
                 'packet': 'Orientation',
                 'element': angle,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(angle.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(angle.lower())}],
         } for angle in ['Roll', 'Pitch', 'Yaw']
     ] + [{
             'id': 'Quaternion {}'.format(axis.upper()),
@@ -1137,12 +1137,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Quaternion',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Quaternion',
                 'element': axis,
-                'transform': 'new QuantityType<>({}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{unit}})'.format(axis.lower())}],
         } for axis in ['X', 'Y', 'Z', 'W']
     ] + [{
             'id': 'Enable LEDs',
@@ -1172,12 +1172,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Acceleration',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Acceleration',
                 'element': axis,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Magnetic Field {}'.format(axis.upper()),
@@ -1187,12 +1187,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Magnetic Field',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Magnetic Field',
                 'element': axis,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Angular Velocity {}'.format(axis.upper()),
@@ -1202,12 +1202,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Angular Velocity',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Angular Velocity',
                 'element': axis,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
         } for axis in ['X', 'Y', 'Z']
     ],
     'channel_types': [

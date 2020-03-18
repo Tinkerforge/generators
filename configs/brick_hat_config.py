@@ -329,12 +329,12 @@ com['openhab'] = {
                 'packet': 'Get Voltages',
                 'element': 'Voltage USB',
                 'packet_params': [],
-                'transform': 'new QuantityType<>(value.voltageUSB{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value.voltageUSB{divisor}{unit})'}],
 
             'callbacks': [{
                 'packet': 'Voltages',
                 'element': 'Voltage USB',
-                'transform': 'new QuantityType<>(voltageUSB{divisor}, {unit})',
+                'transform': 'new {number_type}(voltageUSB{divisor}{unit})',
                 'filter': 'true'}],
 
             'init_code':"""this.setVoltagesCallbackConfiguration(cfg.voltagesUpdateInterval, true);""",
@@ -346,12 +346,12 @@ com['openhab'] = {
                 'packet': 'Get Voltages',
                 'element': 'Voltage DC',
                 'packet_params': [],
-                'transform': 'new QuantityType<>(value.voltageDC{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value.voltageDC{divisor}{unit})'}],
 
             'callbacks': [{
                 'packet': 'Voltages',
                 'element': 'Voltage DC',
-                'transform': 'new QuantityType<>(voltageDC{divisor}, {unit})',
+                'transform': 'new {number_type}(voltageDC{divisor}{unit})',
                 'filter': 'true'}],
         }
     ],

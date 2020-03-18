@@ -562,12 +562,12 @@ com['openhab'] = {
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': 'new QuantityType<>(value.iaqIndex{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value.iaqIndex{divisor}{unit})'}],
 
             'callbacks': [{
                 'packet': '{title_words}',
                 'element': '{title_words}',
-                'transform': 'new QuantityType<>(iaqIndex{divisor}, {unit})'}],
+                'transform': 'new {number_type}(iaqIndex{divisor}{unit})'}],
         },{
             'id': 'IAQ Index Accuracy',
             'type': 'IAQ Index Accuracy',
@@ -575,12 +575,12 @@ com['openhab'] = {
                 'packet': 'Get IAQ Index',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': 'new QuantityType<>(value.iaqIndexAccuracy{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value.iaqIndexAccuracy{divisor}{unit})'}],
 
             'callbacks': [{
                 'packet': 'IAQ Index',
                 'element': '{title_words}',
-                'transform': 'new QuantityType<>(iaqIndexAccuracy{divisor}, {unit})',
+                'transform': 'new {number_type}(iaqIndexAccuracy{divisor}{unit})',
                 'filter': 'true'}],
         }
     ],

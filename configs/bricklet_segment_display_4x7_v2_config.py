@@ -334,7 +334,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
 
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [{
@@ -344,7 +344,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Brightness',
                 'element': 'Brightness',
-                'transform': 'new QuantityType<>(value, {unit})'}],
+                'transform': 'new {number_type}(value{unit})'}],
             'setters': [{
                 'packet': 'Set Brightness',
                 'element': 'Brightness',

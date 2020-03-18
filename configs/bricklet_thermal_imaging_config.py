@@ -647,7 +647,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Image Transfer Config',
@@ -863,7 +863,7 @@ com['openhab'] = {
             'packet': 'Get Statistics',
             'element': 'FFC Status',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.ffcStatus{divisor}, {unit})'}],
+            'transform': 'new {number_type}(value.ffcStatus{divisor}{unit})'}],
     }, {
         'id': 'Shutter Lockout',
         'type': 'Shutter Lockout',

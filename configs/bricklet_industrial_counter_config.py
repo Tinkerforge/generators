@@ -616,12 +616,12 @@ def signal_data_channel(idx, data_words, data_headless):
             'packet': 'Get Signal Data',
             'element': data_words,
             'packet_params': [str(idx)],
-            'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(data_headless)
+            'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(data_headless)
         }],
         'callbacks': [{
             'packet': 'All Signal Data',
             'element': data_words,
-            'transform': 'new QuantityType<>({}[{}]{{divisor}}, {{unit}})'.format(data_headless, idx)
+            'transform': 'new {{number_type}}({}[{}]{{divisor}}{{unit}})'.format(data_headless, idx)
         }],
     }
 
@@ -660,12 +660,12 @@ def counter_channel(idx):
                 'packet': 'Get Counter',
                 'element': 'Counter',
                 'packet_params': [str(idx)],
-                'transform': 'new QuantityType<>(value{divisor}, {unit})'
+                'transform': 'new {number_type}(value{divisor}{unit})'
             }],
             'callbacks': [{
                 'packet': 'All Counter',
                 'element': 'Counter',
-                'transform': 'new QuantityType<>(counter[{}]{{divisor}}, {{unit}})'.format(idx)
+                'transform': 'new {{number_type}}(counter[{}]{{divisor}}{{unit}})'.format(idx)
             }],
             'setters': [{
                 'packet': 'Set Counter',

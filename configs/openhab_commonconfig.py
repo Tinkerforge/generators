@@ -1,5 +1,6 @@
 def oh_generic_channel_imports():
-    return ['org.eclipse.smarthome.core.library.types.QuantityType',
+    return ['org.eclipse.smarthome.core.library.types.DecimalType',
+            'org.eclipse.smarthome.core.library.types.QuantityType',
             'org.eclipse.smarthome.core.library.unit.MetricPrefix',
             'org.eclipse.smarthome.core.library.unit.SIUnits',
             'org.eclipse.smarthome.core.library.unit.SmartHomeUnits']
@@ -18,12 +19,12 @@ def oh_generic_channel(id_, type_, unit=None, divisor=1, label=None, description
             'packet': 'Get {title_words}',
             'element': element_name,
             'packet_params': [],
-            'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+            'transform': 'new {number_type}(value{divisor}{unit})'}],
 
         'callbacks': [{
             'packet': '{title_words}',
             'element': element_name,
-            'transform': 'new QuantityType<>({headless}{divisor}, {unit})',
+            'transform': 'new {number_type}({headless}{divisor}{unit})',
             'filter': 'true'}],
 
         'java_unit': unit,
@@ -42,12 +43,12 @@ def oh_generic_old_style_channel(id_, type_, unit=None, divisor=1.0, cast_litera
             'packet': 'Get {title_words}',
             'element': element_name,
             'packet_params': [],
-            'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+            'transform': 'new {number_type}(value{divisor}{unit})'}],
 
         'callbacks': [{
             'packet': '{title_words}',
             'element': element_name,
-            'transform': 'new QuantityType<>({headless}{divisor}, {unit})',
+            'transform': 'new {number_type}({headless}{divisor}{unit})',
             'filter': 'true'}],
 
         'java_unit': unit,

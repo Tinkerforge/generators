@@ -142,7 +142,7 @@ com['openhab'] = {
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value{divisor}{unit})'}],
             'setters':[{
                 'packet': 'Set {title_words}',
                 'element': '{title_words}',
@@ -160,7 +160,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
-                'transform': 'new QuantityType<>(value, {unit})'}],
+                'transform': 'new {number_type}(value{unit})'}],
             'setters':[{
                 'packet': 'Set {title_words}',
                 'element': '{title_words}',

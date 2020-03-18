@@ -650,7 +650,6 @@ com['openhab'] = {
                 ['org.eclipse.smarthome.core.library.types.StringType',
                  'org.eclipse.smarthome.core.library.types.PointType',
                  'org.eclipse.smarthome.core.library.types.DateTimeType',
-                 'org.eclipse.smarthome.core.library.types.DecimalType',
                  'org.eclipse.smarthome.core.library.types.OnOffType',
                  'java.time.ZoneId'],
     'param_groups': oh_generic_channel_param_groups(),
@@ -727,12 +726,12 @@ com['openhab'] = {
                 'packet': 'Get Altitude',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.altitude{divisor},{unit})"}],
+                'transform': "new {number_type}(value.altitude{divisor}{unit})"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
                 'element': '{title_words}',
-                'transform': "new QuantityType<>(altitude{divisor},{unit})"}],
+                'transform': "new {number_type}(altitude{divisor}{unit})"}],
 
         },  {
             'id': 'Geoidal Separation',
@@ -742,12 +741,12 @@ com['openhab'] = {
                 'packet': 'Get Altitude',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.geoidalSeparation{divisor},{unit})"}],
+                'transform': "new {number_type}(value.geoidalSeparation{divisor}{unit})"}],
 
             'callbacks': [{
                 'packet': 'Altitude',
                 'element': '{title_words}',
-                'transform': "new QuantityType<>(geoidalSeparation{divisor},{unit})"}],
+                'transform': "new {number_type}(geoidalSeparation{divisor}{unit})"}],
 
         },  {
             'id': 'Course',
@@ -757,12 +756,12 @@ com['openhab'] = {
                 'packet': 'Get Motion',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.course{divisor}, {unit})"}],
+                'transform': "new {number_type}(value.course{divisor}{unit})"}],
 
             'callbacks': [{
                 'packet': 'Motion',
                 'element': '{title_words}',
-                'transform': "new QuantityType<>(course{divisor}, {unit})"}],
+                'transform': "new {number_type}(course{divisor}{unit})"}],
 
         },  {
             'id': 'Speed',
@@ -772,12 +771,12 @@ com['openhab'] = {
                 'packet': 'Get Motion',
                 'element': '{title_words}',
                 'packet_params': [],
-                'transform': "new QuantityType<>(value.speed{divisor}, {unit})"}],
+                'transform': "new {number_type}(value.speed{divisor}{unit})"}],
 
             'callbacks': [{
                 'packet': 'Motion',
                 'element': '{title_words}',
-                'transform': "new QuantityType<>(speed{divisor}, {unit})"}],
+                'transform': "new {number_type}(speed{divisor}{unit})"}],
 
         },  {
             'id': 'Date Time',

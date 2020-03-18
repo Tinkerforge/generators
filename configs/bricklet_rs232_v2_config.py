@@ -442,7 +442,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Configuration',
@@ -557,7 +557,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Buffer Status',
                 'element': 'Send Buffer Used',
-                'transform': 'new QuantityType<>(value.sendBufferUsed{divisor}, {unit})'
+                'transform': 'new {number_type}(value.sendBufferUsed{divisor}{unit})'
             }],
         }, {
             'id': 'Receive Buffer Used',
@@ -567,7 +567,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Buffer Status',
                 'element': 'Receive Buffer Used',
-                'transform': 'new QuantityType<>(value.receiveBufferUsed{divisor}, {unit})'
+                'transform': 'new {number_type}(value.receiveBufferUsed{divisor}{unit})'
             }],
         }],
     'channel_types': [

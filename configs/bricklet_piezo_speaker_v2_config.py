@@ -315,8 +315,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType',
-                                               'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
         {
@@ -408,7 +407,7 @@ com['openhab'] = {
                 'packet': 'Get Beep',
                 'element': 'Frequency',
                 'predicate': 'value.durationRemaining > 0',
-                'transform': 'new QuantityType<>(value.frequency{divisor}, {unit})'
+                'transform': 'new {number_type}(value.frequency{divisor}{unit})'
             }],
         }
     ],

@@ -251,7 +251,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Indicator',
                 'element': 'Top Left',
-                'transform': 'new QuantityType<>(value.topLeft{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value.topLeft{divisor}{unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
@@ -266,7 +266,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Indicator',
                 'element': 'Top Right',
-                'transform': 'new QuantityType<>(value.topRight{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value.topRight{divisor}{unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',
@@ -281,7 +281,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Indicator',
                 'element': 'Bottom',
-                'transform': 'new QuantityType<>(value.bottom{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value.bottom{divisor}{unit})'}],
 
             'setters': [{
                 'packet': 'Set Indicator',

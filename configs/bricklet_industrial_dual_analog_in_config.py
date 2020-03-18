@@ -424,13 +424,13 @@ def voltage_channel(index):
                 'packet': 'Get Voltage',
                 'element': 'Voltage',
                 'packet_params': ['(short){}'.format(index)],
-                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value{divisor}{unit})'}],
 
             'callbacks': [{
                 'filter': 'channel == {0}'.format(index),
                 'packet': 'Voltage',
                 'element': 'Voltage',
-                'transform': 'new QuantityType<>(voltage{divisor}, {unit})'}],
+                'transform': 'new {number_type}(voltage{divisor}{unit})'}],
 
         }
 

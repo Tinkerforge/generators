@@ -323,12 +323,12 @@ def statistics_channel(name_words, name_headless):
             'packet': 'Get Statistics',
             'element': name_words,
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(name_headless)}],
+            'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(name_headless)}],
 
         'callbacks': [{
             'packet': 'Statistics',
             'element': name_words,
-            'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(name_headless),
+            'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(name_headless),
             'filter': 'true'}],
 
     }

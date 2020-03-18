@@ -439,7 +439,7 @@ def edge_count_channel(index):
                 'packet': 'Get Edge Count',
                 'element': 'Count',
                 'packet_params': [str(index), 'channelCfg.resetOnRead'],
-                'transform': 'new QuantityType<>(value, {unit})'}],
+                'transform': 'new {number_type}(value{unit})'}],
 
         }
 

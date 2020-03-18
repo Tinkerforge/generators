@@ -298,11 +298,11 @@ com['openhab'] = {
                 'packet': 'Get Position',
                 'element': axis,
                 'packet_params': [],
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Position',
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
 
         } for axis in ['X', 'Y']] + [{
             'id': 'Pressed',

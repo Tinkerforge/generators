@@ -507,12 +507,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Acceleration',
                 'element': axis.upper(),
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis)}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis)}],
 
             'callbacks': [{
                 'packet': 'Acceleration',
                 'element': axis.upper(),
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis)}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis)}],
         } for axis in ['x', 'y', 'z']
     ] + [{
             'id': 'Temperature',
@@ -522,7 +522,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Temperature',
                 'element': 'Temperature',
-                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value{divisor}{unit})'}],
         }, {
             'id': 'LED',
             'type': 'LED',

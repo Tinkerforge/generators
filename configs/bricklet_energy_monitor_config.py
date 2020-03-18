@@ -388,11 +388,11 @@ def energyDataChannel(id_, type_):
             'packet': 'Get Energy Data',
             'element': '{title_words}',
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.{headless}{divisor}, {unit})'}],
+            'transform': 'new {number_type}(value.{headless}{divisor}{unit})'}],
         'callbacks': [{
             'packet': 'Energy Data',
             'element': '{title_words}',
-            'transform': 'new QuantityType<>({headless}{divisor}, {unit})'}],
+            'transform': 'new {number_type}({headless}{divisor}{unit})'}],
 
     }
 

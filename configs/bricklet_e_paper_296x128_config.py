@@ -615,7 +615,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [{
         'id': 'Draw Status',

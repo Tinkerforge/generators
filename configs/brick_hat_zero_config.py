@@ -65,7 +65,7 @@ com['examples'].append({
 })
 
 usb_voltage_channel = oh_generic_channel('USB Voltage', 'USB Voltage', element_name='Voltage')
-usb_voltage_channel['callbacks'][0]['transform'] = 'new QuantityType<>(voltage{divisor}, {unit})'
+usb_voltage_channel['callbacks'][0]['transform'] = 'new {number_type}(voltage{divisor}{unit})'
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),

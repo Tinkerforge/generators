@@ -371,13 +371,13 @@ def current_channel(index):
                 'packet': 'Get Current',
                 'element': 'Current',
                 'packet_params': ['{}'.format(index)],
-                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value{divisor}{unit})'}],
 
             'callbacks': [{
                 'filter': 'channel == {0}'.format(index),
                 'element': 'Current',
                 'packet': 'Current',
-                'transform': 'new QuantityType<>(current{divisor}, {unit})'}],
+                'transform': 'new {number_type}(current{divisor}{unit})'}],
 
         }
 

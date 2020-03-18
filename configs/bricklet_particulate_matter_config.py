@@ -386,12 +386,12 @@ def concentration_channel(size):
             'packet': 'Get PM Concentration',
             'element': 'PM{}'.format(size),
             'packet_params': [],
-            'transform': 'new QuantityType<>(value.pm{}{{divisor}}, {{unit}})'.format(size)}],
+            'transform': 'new {{number_type}}(value.pm{}{{divisor}}{{unit}})'.format(size)}],
 
         'callbacks': [{
             'packet': 'PM Concentration',
             'element': 'PM{}'.format(size),
-            'transform': 'new QuantityType<>(pm{}{{divisor}}, {{unit}})'.format(size)}],
+            'transform': 'new {{number_type}}(pm{}{{divisor}}{{unit}})'.format(size)}],
     }
 
 def concentration_channel_type(size):
@@ -410,14 +410,14 @@ def count_channel(size):
             'element': 'Greater{:02}um'.format(size),
             'packet_params': [],
             # Not using the divisor placeholder here is a hack to prevent the auto-deduce-logic from converting the value to particles per cubic meter.
-            'transform': 'new QuantityType<>(value.greater{:02}um, {{unit}})'.format(size)}],
+            'transform': 'new {{number_type}}(value.greater{:02}um{{unit}})'.format(size)}],
 
 
         'callbacks': [{
             'packet': 'PM Count',
             'element': 'Greater{:02}um'.format(size),
             # See above
-            'transform': 'new QuantityType<>(greater{:02}um, {{unit}})'.format(size)}],
+            'transform': 'new {{number_type}}(greater{:02}um{{unit}})'.format(size)}],
     }
 def count_channel_type(size):
     return oh_generic_channel_type('Part Count {}'.format(size), 'Number', 'Particulates Greater {:.1f}µm'.format(size / 10),

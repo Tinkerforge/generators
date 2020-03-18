@@ -1729,7 +1729,7 @@ def gui_slider_value_channel(index):
     }
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Display Configuration',
@@ -1821,7 +1821,7 @@ com['openhab'] = {
                 'getters': [{
                     'packet': 'Get Display Configuration',
                     'element': 'Backlight',
-                    'transform': 'new QuantityType<>(value.backlight{divisor}, {unit})'
+                    'transform': 'new {number_type}(value.backlight{divisor}{unit})'
                 }]
             }, {
                 'id': 'Touch Position',

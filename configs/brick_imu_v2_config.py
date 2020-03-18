@@ -1343,12 +1343,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Acceleration',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Acceleration',
                 'element': axis,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Magnetic Field {}'.format(axis.upper()),
@@ -1358,12 +1358,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Magnetic Field',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Magnetic Field',
                 'element': axis,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
         } for axis in ['X', 'Y', 'Z']
     ] +  [{
             'id': 'Angular Velocity {}'.format(axis.upper()),
@@ -1373,12 +1373,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Angular Velocity',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Angular Velocity',
                 'element': axis,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Orientation {}'.format(angle),
@@ -1388,12 +1388,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Orientation',
                 'element': angle,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(angle.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(angle.lower())}],
 
             'callbacks': [{
                 'packet': 'Orientation',
                 'element': angle,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(angle.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(angle.lower())}],
         } for angle in ['Heading', 'Roll', 'Pitch']
     ] + [{
             'id': 'Quaternion {}'.format(axis.upper()),
@@ -1403,12 +1403,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Quaternion',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Quaternion',
                 'element': axis,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
         } for axis in ['W', 'X', 'Y', 'Z']
     ] + [{
             'id': 'Linear Acceleration {}'.format(axis.upper()),
@@ -1418,12 +1418,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Linear Acceleration',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Linear Acceleration',
                 'element': axis,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
         } for axis in ['X', 'Y', 'Z']
     ] + [{
             'id': 'Gravity Vector {}'.format(axis.upper()),
@@ -1433,12 +1433,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Gravity Vector',
                 'element': axis,
-                'transform': 'new QuantityType<>(value.{}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
 
             'callbacks': [{
                 'packet': 'Gravity Vector',
                 'element': axis,
-                'transform': 'new QuantityType<>({}{{divisor}}, {{unit}})'.format(axis.lower())}],
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
             'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
             'divisor': 980.665,
         } for axis in ['X', 'Y', 'Z']
@@ -1450,12 +1450,12 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Temperature',
             'element': 'Temperature',
-            'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+            'transform': 'new {number_type}(value{divisor}{unit})'}],
 
         'callbacks': [{
             'packet': 'Temperature',
             'element': 'Temperature',
-            'transform': 'new QuantityType<>(temperature{divisor}, {unit})'}],
+            'transform': 'new {number_type}(temperature{divisor}{unit})'}],
     }] + [{
             'id': 'Enable LEDs',
             'type': 'Enable LEDs',

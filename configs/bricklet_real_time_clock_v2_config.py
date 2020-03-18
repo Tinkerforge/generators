@@ -479,12 +479,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Timestamp',
                 'element': 'Timestamp',
-                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value{divisor}{unit})'}],
 
             'callbacks': [{
                 'packet': 'Date Time',
                 'element': 'Timestamp',
-                'transform': 'new QuantityType<>(timestamp{divisor}, {unit})'}]
+                'transform': 'new {number_type}(timestamp{divisor}{unit})'}]
         }, {
             'id': 'Alarm Triggered',
             'label': 'Alarm Triggered',

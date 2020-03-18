@@ -388,7 +388,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'params': [
         {
             'virtual': True,
@@ -499,7 +499,7 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
             'getters': [{
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
-                'transform': 'new QuantityType<>(value{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value{divisor}{unit})'}],
         },
         {
             'id': 'Voltage',
@@ -518,7 +518,7 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
             'getters': [{
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
-                'transform': 'new QuantityType<>(value {divisor}, {unit})'}],
+                'transform': 'new {number_type}(value {divisor}{unit})'}],
         }
     ],
     'channel_types': [

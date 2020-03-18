@@ -499,7 +499,7 @@ state_list = """
     <li>STATE_REQUEST_PAGE_ERROR = 197</li></ul>""".replace('\n    ', '')
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [],
     'init_code': "",

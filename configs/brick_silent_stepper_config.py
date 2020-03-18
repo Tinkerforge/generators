@@ -1604,7 +1604,7 @@ com['examples'].append({
 'incomplete': True # because of special random movement logic in callback
 })
 
-def data_channel(name_words, name_headless, type_):
+def data_channel(name_words, name_headless):
     return {
         'id': name_words,
         'type': name_words,
@@ -1612,15 +1612,15 @@ def data_channel(name_words, name_headless, type_):
             'packet': 'Get All Data',
             'element': name_words,
             'packet_params': [],
-            'transform': 'new {type}(value.{headless}{{divisor}}{unit})'.format(type=type_,headless=name_headless,unit=', {unit}' if type_ == 'QuantityType<>' else '')}],
+            'transform': 'new {{number_type}}(value.{headless}{{divisor}}{{unit}})'.format(headless=name_headless)}],
         'callbacks': [{
             'packet': 'All Data',
             'element': name_words,
-            'transform': 'new {type}({headless}{{divisor}}{unit})'.format(type=type_,headless=name_headless,unit=', {unit}' if type_ == 'QuantityType<>' else '')}],
+            'transform': 'new {{number_type}}({headless}{{divisor}}{{unit}})'.format(headless=name_headless)}],
     }
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         update_interval('Set All Data Period', 'Period', "All Data", "all data"),
@@ -1640,12 +1640,12 @@ com['openhab'] = {
     this.setMinimumVoltage((int)(cfg.minimumVoltage.doubleValue() * 1000.0));""",
 
     'channels': [
-        data_channel('Current Velocity', 'currentVelocity', 'DecimalType'),
-        data_channel('Current Position', 'currentPosition', 'DecimalType'),
-        data_channel('Remaining Steps', 'remainingSteps', 'DecimalType'),
-        data_channel('Stack Voltage', 'stackVoltage', 'QuantityType<>'),
-        data_channel('External Voltage', 'externalVoltage', 'QuantityType<>'),
-        data_channel('Current Consumption', 'currentConsumption', 'QuantityType<>'),
+        data_channel('Current Velocity', 'currentVelocity'),
+        data_channel('Current Position', 'currentPosition'),
+        data_channel('Remaining Steps', 'remainingSteps'),
+        data_channel('Stack Voltage', 'stackVoltage'),
+        data_channel('External Voltage', 'externalVoltage'),
+        data_channel('Current Consumption', 'currentConsumption'),
         {
             'id': 'State',
             'type': 'State',

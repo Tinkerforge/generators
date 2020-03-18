@@ -803,14 +803,21 @@ class OpenHABDevice(java_common.JavaDevice):
 
     def format_unit_element(self):
         def fmt(format_str, unit, divisor, is_setter):
+            if unit is None or unit == 'SmartHomeUnits.ONE':
+                number_type = 'DecimalType'
+                unit = ''
+            else:
+                number_type = 'QuantityType<>'
+                unit = ', ' + unit
             if divisor == 1:
                 div = ''
             elif is_setter:
                 div = ' * ' + str(divisor)
             else:
                 div = ' / ' + str(divisor)
-            return format_str.format(unit=unit,
-                                    divisor=div)
+            return format_str.format(number_type=number_type,
+                                     unit=unit,
+                                     divisor=div)
 
         def fmt_dict(d, unit, divisor, is_setter):
             for k, v in d.items():
@@ -852,6 +859,7 @@ class OpenHABDevice(java_common.JavaDevice):
                                      lower_words=name.lower,
                                      camel=name.camel,
                                      headless=name.headless,
+                                     number_type='{number_type}',
                                      divisor='{divisor}',
                                      unit='{unit}')
 

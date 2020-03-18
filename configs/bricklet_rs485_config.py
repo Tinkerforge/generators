@@ -2057,7 +2057,7 @@ modbus_common_error_channels = [modbus_error_channel(*tup) for tup in [
     ('Slave Device Failure', 'slaveDeviceFailure', 'Number of errors occurred on the slave device which were unrecoverable. This corresponds to Modbus exception code 4.')]]
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.DecimalType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
     'param_groups': oh_generic_channel_param_groups() + [{
         'name': 'RS485',
         'label': 'RS485',
@@ -2232,7 +2232,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Buffer Status',
                 'element': 'Send Buffer Used',
-                'transform': 'new QuantityType<>(value.sendBufferUsed{divisor}, {unit})'
+                'transform': 'new {number_type}(value.sendBufferUsed{divisor}{unit})'
             }],
         }, {
             'id': 'Receive Buffer Used',
@@ -2242,7 +2242,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Buffer Status',
                 'element': 'Receive Buffer Used',
-                'transform': 'new QuantityType<>(value.receiveBufferUsed{divisor}, {unit})'
+                'transform': 'new {number_type}(value.receiveBufferUsed{divisor}{unit})'
             }],
         }],
     'channel_types': [

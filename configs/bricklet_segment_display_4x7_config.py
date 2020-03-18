@@ -195,7 +195,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Segments',
                 'element': 'Brightness',
-                'transform': 'new QuantityType<>(value.brightness{divisor}, {unit})'}],
+                'transform': 'new {number_type}(value.brightness{divisor}{unit})'}],
             'setters': [{
                 'packet': 'Set Segments',
                 'element': 'Brightness',
@@ -224,7 +224,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Segments',
                 'element': 'Segments',
-                'transform': 'new QuantityType<>((int)value.segments[0] << 24 | (int)value.segments[1] << 16 | (int)value.segments[2] << 8 | (int)value.segments[3], {unit})'
+                'transform': 'new {number_type}((int)value.segments[0] << 24 | (int)value.segments[1] << 16 | (int)value.segments[2] << 8 | (int)value.segments[3]{unit})'
             }],
             'setters': [{
                 'packet': 'Set Segments',

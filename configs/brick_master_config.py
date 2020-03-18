@@ -3682,9 +3682,9 @@ com['examples'].append({
 })
 
 voltage_channel = oh_generic_old_style_channel('Stack Voltage', 'Stack Voltage', element_name='Voltage')
-voltage_channel['callbacks'][0]['transform'] = 'new QuantityType<>(voltage{divisor}, {unit})'
+voltage_channel['callbacks'][0]['transform'] = 'new {number_type}(voltage{divisor}{unit})'
 current_channel = oh_generic_old_style_channel('Stack Current', 'Stack Current', element_name='Current')
-current_channel['callbacks'][0]['transform'] = 'new QuantityType<>(current{divisor}, {unit})'
+current_channel['callbacks'][0]['transform'] = 'new {number_type}(current{divisor}{unit})'
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
