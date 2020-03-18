@@ -662,6 +662,12 @@ class OpenHABDevice(java_common.JavaDevice):
                 if ct.max is None:
                     ct.max = max_
 
+            if ct.step is None and unscaled_min is not None and unscaled_max is not None:
+                step = (ct.max - ct.min) / (unscaled_max - unscaled_min)
+                if step.is_integer():
+                    step = int(step)
+                ct.step = step
+
             if ct.read_only is None:
                 ct.read_only = len([x for c in channels for x in c.setters]) == 0
 
