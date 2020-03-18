@@ -722,13 +722,14 @@ class OpenHABDevice(java_common.JavaDevice):
                 continue
             raise common.GeneratorError('openhab: Device {}: Config parameter {} has no associated packet and element and is not marked virtual.'.format(self.get_long_display_name(), param.name.space))
 
+        # Param must be marked virtual or have an associated element
         for c in oh.channels:
             if c.type.params is None:
                 continue
             for param in c.type.params:
                 if param.virtual or param.element is not None:
                     continue
-                raise common.GeneratorError('openhab: Device {}: Channel {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), c.name.space, param.name.space))
+                raise common.GeneratorError('openhab: Device {}: Channel {}: Config parameter {} has no associated element but is not marked virtual.'.format(self.get_long_display_name(), c.name.space, param.name.space))
 
          # Setters/Getters must have string params
         for c in oh.channels:
