@@ -358,12 +358,29 @@ com['packets'].append({
 """
 Disables the driver chip. The configurations are kept (velocity,
 acceleration, etc) but the motor is not driven until it is enabled again.
+
+.. warning::
+ Disabling the driver chip while the motor is still turning can damage the
+ driver chip. The motor should be stopped calling :func:`Set Velocity` with 0
+ before disabling the motor power. The :func:`Set Velocity` function will **not**
+ wait until the motor is actually stopped. You have to explicitly wait for the
+ appropriate time after calling the :func:`Set Velocity` function before calling
+ the :func:`Disable` function.
 """,
 'de':
 """
 Deaktiviert die Treiberstufe. Die Konfiguration (Geschwindigkeit, Beschleunigung,
 etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis eine erneute
 Aktivierung erfolgt.
+
+.. warning::
+ Die Treiberstufe zu deaktivieren während der Motor sich noch dreht kann zur
+ Beschädigung der Treiberstufe führen. Der Motor sollte durch Aufrufen von
+ :func:`Set Velocity` mit 0 gestoppt werden, bevor die Treiberstufe deaktiviert
+ wird. Die :func:`Set Velocity` Funktion wartet **nicht** bis der Motor wirklich
+ zum Stillstand gekommen ist. Dazu muss nach dem Aufruf der :func:`Set Velocity`
+ Funktion eine angemessen Zeit gewartet werden bevor die :func:`Disable` Funktion
+ aufgerufen wird.
 """
 }]
 })
@@ -784,21 +801,28 @@ ausgelöst, wenn sich die Geschwindigkeit geändert hat.
 com['examples'].append({
 'name': 'Configuration',
 'functions': [('setter', 'Set Drive Mode', [('uint8:constant', 1)], None, None),
-              ('setter', 'Set PWM Frequency', [('uint16', 10000)], None, 'Use PWM frequency of 10kHz'),
-              ('setter', 'Set Acceleration', [('uint16', 5000)], None, 'Slow acceleration'),
-              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward'),
+              ('setter', 'Set PWM Frequency', [('uint16', 10000)], None, 'Use PWM frequency of 10 kHz'),
+              ('setter', 'Set Acceleration', [('uint16', 4096)], None, 'Slow acceleration (12.5 %/s)'),
+              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward (100 %)'),
               ('setter', 'Enable', [], None, 'Enable motor power'),
               ('wait',)],
-'cleanups': [('setter', 'Disable', [], None, 'Disable motor power')]
+'cleanups': [('setter', 'Set Acceleration', [('uint16', 16384)], 'Stop motor before disabling motor power', 'Fast decceleration (50 %/s) for stopping'),
+             ('setter', 'Set Velocity', [('int16', 0)], None, 'Request motor stop'),
+             ('sleep', 2000, None, 'Wait for motor to actually stop: velocity (100 %) / decceleration (50 %/s) = 2 s'),
+             ('setter', 'Disable', [], None, 'Disable motor power')]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('setter', 'Set Acceleration', [('uint16', 5000)], 'The acceleration has to be smaller or equal to the maximum\nacceleration of the DC motor, otherwise the velocity reached\ncallback will be called too early', 'Slow acceleration'),
-              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward'),
+'functions': [('setter', 'Set Acceleration', [('uint16', 4096)], 'The acceleration has to be smaller or equal to the maximum\nacceleration of the DC motor, otherwise the velocity reached\ncallback will be called too early', 'Slow acceleration (12.5 %/s)'),
+              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward (100 %)'),
               ('callback', ('Velocity Reached', 'velocity reached'), [(('Velocity', 'Velocity'), 'int16', 1, None, None, None)], 'Use velocity reached callback to swing back and forth\nbetween full speed forward and full speed backward', None),
-              ('setter', 'Enable', [], 'Enable motor power', None)],
-'cleanups': [('setter', 'Disable', [], None, 'Disable motor power')],
+              ('setter', 'Enable', [], 'Enable motor power', None),
+              ('wait',)],
+'cleanups': [('setter', 'Set Acceleration', [('uint16', 16384)], 'Stop motor before disabling motor power', 'Fast decceleration (50 %/s) for stopping'),
+             ('setter', 'Set Velocity', [('int16', 0)], None, 'Request motor stop'),
+             ('sleep', 2000, None, 'Wait for motor to actually stop: velocity (100 %) / decceleration (50 %/s) = 2 s'),
+             ('setter', 'Disable', [], None, 'Disable motor power')],
 'incomplete': True # because of special drive logic in callback
 })
 

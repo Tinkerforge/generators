@@ -695,12 +695,29 @@ com['packets'].append({
 """
 Disables the driver chip. The configurations are kept (maximum velocity,
 acceleration, etc) but the motor is not driven until it is enabled again.
+
+.. warning::
+ Disabling the driver chip while the motor is still turning can damage the
+ driver chip. The motor should be stopped calling :func:`Stop` function
+ before disabling the motor power. The :func:`Stop` function will **not**
+ wait until the motor is actually stopped. You have to explicitly wait for the
+ appropriate time after calling the :func:`Stop` function before calling
+ the :func:`Disable` function.
 """,
 'de':
 """
 Deaktiviert die Treiberstufe. Die Konfiguration (Geschwindigkeit, Beschleunigung,
 etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis eine erneute
 Aktivierung erfolgt.
+
+.. warning::
+ Die Treiberstufe zu deaktivieren während der Motor sich noch dreht kann zur
+ Beschädigung der Treiberstufe führen. Der Motor sollte durch Aufrufen der
+ :func:`Stop` Funktion gestoppt werden, bevor die Treiberstufe deaktiviert
+ wird. Die :func:`Stop` Funktion wartet **nicht** bis der Motor wirklich
+ zum Stillstand gekommen ist. Dazu muss nach dem Aufruf der :func:`Stop`
+ Funktion eine angemessen Zeit gewartet werden bevor die :func:`Disable` Funktion
+ aufgerufen wird.
 """
 }]
 })
@@ -1582,7 +1599,7 @@ zurückgegeben.
 
 com['examples'].append({
 'name': 'Configuration',
-'functions': [('setter', 'Set Motor Current', [('uint16', 800)], None, '800mA'),
+'functions': [('setter', 'Set Motor Current', [('uint16', 800)], None, '800 mA'),
               ('setter', 'Set Step Configuration', [('uint8:constant', 5), ('bool', True)], None, '1/8 steps (interpolated)'),
               ('setter', 'Set Max Velocity', [('uint16', 2000)], None, 'Velocity 2000 steps/s'),
               ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], 'Slow acceleration (500 steps/s^2),\nFast deacceleration (5000 steps/s^2)', None),
@@ -1590,7 +1607,10 @@ com['examples'].append({
               ('setter', 'Enable', [], None, 'Enable motor power'),
               ('setter', 'Set Steps', [('int32', 60000)], None, 'Drive 60000 steps forward'),
               ('wait',)],
-'cleanups': [('setter', 'Disable', [], None, None)]
+'cleanups': [('setter', 'Stop', [], 'Stop motor before disabling motor power', 'Request motor stop'),
+             ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], None, 'Fast deacceleration (5000 steps/s^2) for stopping'),
+             ('sleep', 400, None, 'Wait for motor to actually stop: max velocity (2000 steps/s) / decceleration (5000 steps/s^2) = 0.4 s'),
+             ('setter', 'Disable', [], None, 'Disable motor power')]
 })
 
 com['examples'].append({
@@ -1600,7 +1620,10 @@ com['examples'].append({
               ('setter', 'Set Step Configuration', [('uint8:constant', 5), ('bool', True)], None, '1/8 steps (interpolated)'),
               ('setter', 'Enable', [], None, 'Enable motor power'),
               ('setter', 'Set Steps', [('int32', 1)], None, 'Drive one step forward to get things going')],
-'cleanups': [('setter', 'Disable', [], None, None)],
+'cleanups': [('setter', 'Stop', [], 'Stop motor before disabling motor power', 'Request motor stop'),
+             ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], None, 'Fast deacceleration (5000 steps/s^2) for stopping'),
+             ('sleep', 400, None, 'Wait for motor to actually stop: max velocity (2000 steps/s) / decceleration (5000 steps/s^2) = 0.4 s'),
+             ('setter', 'Disable', [], None, 'Disable motor power')],
 'incomplete': True # because of special random movement logic in callback
 })
 
