@@ -441,6 +441,7 @@ class ShellExamplesGenerator(shell_common.ShellGeneratorTrait, common.ExamplesGe
         blacklist = [
             'led-strip-bricklet/callback',
             'nfc-bricklet/emulate-ndef',
+            'nfc-bricklet/scan-for-tags',
             'nfc-bricklet/write-read-type2',
             'nfc-rfid-bricklet/write-read-type2'
         ]
