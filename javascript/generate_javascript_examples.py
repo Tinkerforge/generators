@@ -3,7 +3,7 @@
 
 """
 JavaScript Examples Generator
-Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_examples.py: Generator for JavaScript examples
 
@@ -256,7 +256,6 @@ process.stdin.on('data',
 
         functions = []
         sources = []
-        cleanups = []
 
         for function in self.get_functions():
             functions.append(function.get_javascript_function())
@@ -266,10 +265,6 @@ process.stdin.on('data',
             sources = ['        // TODO: Add example code here\n']
         else:
             sources.append(end_previous_sleep_function(None))
-
-        for cleanup in self.get_cleanups():
-            functions.append(cleanup.get_javascript_function())
-            cleanups.append(cleanup.get_javascript_source())
 
         while None in functions:
             functions.remove(None)
@@ -281,9 +276,6 @@ process.stdin.on('data',
             connected = template_connected.format(sources='\n'.join(sources).replace('\n\r', '').replace('\xFF\n', '').replace('\xFF', '').lstrip('\r'))
             functions = [connected] + functions
 
-        while None in cleanups:
-            cleanups.remove(None)
-
         return template.format(incomplete=incomplete,
                                description=description,
                                example_name=self.get_name().space,
@@ -291,8 +283,7 @@ process.stdin.on('data',
                                device_category=self.get_device().get_category().camel,
                                device_name_camel=self.get_device().get_name().camel,
                                device_name_initial=self.get_device().get_initial_name(),
-                               functions=common.wrap_non_empty('\n                ', '\n                '.join('\n'.join(functions).split('\n')), '').rstrip().replace('\n                \n', '\n\n'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '')).replace('<<<total_sleep_duration>>>', str(global_total_sleep_duration)).replace("' + '\\n';", "\\n';")
+                               functions=common.wrap_non_empty('\n                ', '\n                '.join('\n'.join(functions).split('\n')), '').rstrip().replace('\n                \n', '\n\n')).replace('<<<total_sleep_duration>>>', str(global_total_sleep_duration))
 
 class JavaScriptExampleArgument(common.ExampleArgument):
     def get_javascript_source(self):
