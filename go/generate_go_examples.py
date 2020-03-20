@@ -189,13 +189,17 @@ class GoExampleParameter(common.ExampleParameter):
 
     def get_go_write_lines(self, parameter_struct_name='', override_parameter_name=''):
         name = self.get_name().headless
+
         if parameter_struct_name != '':
             name = parameter_struct_name + "." + name
+
         if override_parameter_name != '':
             name = override_parameter_name
+
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
+
             # FIXME: need to handle multiple labels
             assert self.get_label_count() <= 1
 
@@ -241,7 +245,6 @@ class GoExampleParameter(common.ExampleParameter):
             else:
                 fmt = '%s'
 
-
             result = []
 
             unit_param = self.get_formatted_unit_name(' {0}').replace('%', '%%')
@@ -264,10 +267,11 @@ class GoExampleParameter(common.ExampleParameter):
 class GoExampleResult(common.ExampleResult):
     def get_go_name(self):
         name = self.get_name().headless
+
         if name == self.get_device().get_initial_name():
             name += '_'
-        return name
 
+        return name
 
     def get_go_write_lines(self):
         name = self.get_go_name()
@@ -282,12 +286,12 @@ class GoExampleResult(common.ExampleResult):
 
             for constant in constant_group.get_constants():
                 result += template.format(global_line_prefix=global_line_prefix,
-                                              else_='else ' if len(result) > 0 else '\n',
-                                              name=name,
-                                              label=self.get_label_name(),
-                                              constant_name=constant.get_go_source(),
-                                              constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}'))
+                                          else_='else ' if len(result) > 0 else '\n',
+                                          name=name,
+                                          label=self.get_label_name(),
+                                          constant_name=constant.get_go_source(),
+                                          constant_title=constant.get_name().space,
+                                          comment=self.get_formatted_comment(' // {0}'))
 
             result = ['\r' + result + '\r']
         else:
@@ -343,6 +347,7 @@ class GoExampleGetterFunction(common.ExampleGetterFunction, GoExampleArgumentsMi
         result_name = self.get_go_result_prefix()
 
         write_lines = []
+
         for result in self.get_results():
             write_lines += result.get_go_write_lines()
 
@@ -667,7 +672,7 @@ class GoExamplesGenerator(go_common.GoGeneratorTrait, common.ExamplesGenerator):
                 f.write(example.get_go_source())
             if not example.is_incomplete():
                 p = subprocess.Popen(["go", "fmt", filename], cwd=examples_dir, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-                out, err = p.communicate() #block unti l gofmt has finished
+                out, err = p.communicate() # block until gofmt has finished
                 if p.returncode != 0:
                     print("Got the following output from go fmt:")
                     print(out)
