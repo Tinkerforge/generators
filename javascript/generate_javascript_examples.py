@@ -111,9 +111,8 @@ ipcon.connect(HOST, PORT,
 {functions}
 console.log('Press key to exit');
 process.stdin.on('data',
-    function (data) {{{cleanups}
-        ipcon.disconnect();
-        process.exit(0);
+    function (data) {{
+{cleanups}
     }}
 );
 """
@@ -149,6 +148,10 @@ process.stdin.on('data',
         for cleanup in self.get_cleanups():
             functions.append(cleanup.get_javascript_function())
             cleanups.append(cleanup.get_javascript_source())
+
+        cleanups.append('{global_line_prefix}        ipcon.disconnect();\n\r'.format(global_line_prefix=global_line_prefix))
+        cleanups.append('{global_line_prefix}        process.exit(0);\n'.format(global_line_prefix=global_line_prefix))
+        cleanups.append(end_previous_sleep_function(None))
 
         while None in functions:
             functions.remove(None)
