@@ -105,7 +105,7 @@ ipcon.disconnect
                                device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'))
 
 class RubyExampleArgument(common.ExampleArgument):
     def get_ruby_source(self):

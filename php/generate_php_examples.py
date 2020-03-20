@@ -119,7 +119,7 @@ $ipcon->dispatchCallbacks(-1); // Dispatch callbacks forever
                                dummy_uid=self.get_dummy_uid(),
                                subroutines=common.wrap_non_empty('\n', '\n'.join(subroutines), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               footer=footer.format(cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '')))
+                               footer=footer.format(cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n')))
 
 class PHPExampleArgument(common.ExampleArgument):
     def get_php_source(self):

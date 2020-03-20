@@ -120,7 +120,7 @@ public class Example{example_name} {{
                                dummy_uid=self.get_dummy_uid(),
                                imports=common.wrap_non_empty('\n', '\n'.join(unique_imports), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''),
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'),
                                constructor_break=constructor_break)
 
 class JavaExampleArgument(common.ExampleArgument):

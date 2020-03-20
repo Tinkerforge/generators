@@ -135,7 +135,7 @@ End Module
                                imports=''.join(unique_imports),
                                subroutines=common.wrap_non_empty('\n', '\n'.join(subroutines), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'))
 
 class VBNETExampleArgument(common.ExampleArgument):
     def get_vbnet_source(self):

@@ -155,7 +155,7 @@ end{functions}
                                dummy_uid=self.get_dummy_uid(),
                                functions=common.wrap_non_empty('\n\n', '\n'.join(unique_functions), '').rstrip('\n'),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'))
 
     def get_octave_source(self):
         global global_quote
@@ -235,7 +235,7 @@ end{functions}
                                dummy_uid=self.get_dummy_uid(),
                                functions=common.wrap_non_empty('\n\n', '\n'.join(unique_functions), '').rstrip('\n'),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'))
 
 class MATLABExampleArgument(common.ExampleArgument):
     def get_matlab_source(self):

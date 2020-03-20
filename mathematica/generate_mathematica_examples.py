@@ -56,8 +56,7 @@ uid="{dummy_uid}"(*Change {dummy_uid} to the UID of your {device_name_long_displ
 ipcon=NETNew["Tinkerforge.IPConnection"]
 {device_name_initial}=NETNew["Tinkerforge.{device_category}{device_name_camel}",uid,ipcon]
 ipcon@Connect[host,port]
-{sources}
-(*Clean up*){cleanups}
+{sources}{cleanups}{cleanup_comment}
 ipcon@Disconnect[]
 ReleaseNETObject[{device_name_initial}]
 ReleaseNETObject[ipcon]
@@ -100,6 +99,11 @@ ReleaseNETObject[ipcon]
         while None in cleanups:
             cleanups.remove(None)
 
+        if len(cleanups) == 0:
+            cleanup_comment = '\n(*Clean up*)'
+        else:
+            cleanup_comment = ''
+
         return template.format(incomplete=incomplete,
                                description=description,
                                device_category=self.get_device().get_category().camel,
@@ -109,7 +113,8 @@ ReleaseNETObject[ipcon]
                                dummy_uid=self.get_dummy_uid(),
                                # FIXME: '*)\n\n\b' -> '*)\n\n' misses to remove the final semicolon before a comment inside of a loop
                                sources='\n' + '\n'.join(sources).replace('*)\n\n\b', '*)\n\n').replace(';\n\n\b', '\n\n').replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'),
+                               cleanup_comment=cleanup_comment).replace('\n\n\n', '\n\n')
 
 class MathematicaExampleArgument(common.ExampleArgument):
     def get_mathematica_source(self):

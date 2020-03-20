@@ -125,7 +125,7 @@ if __name__ == "__main__":
                                imports=common.wrap_non_empty('\n', ''.join(unique_imports), ''),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'))
 
 class PythonExampleArgument(common.ExampleArgument):
     def get_python_source(self):

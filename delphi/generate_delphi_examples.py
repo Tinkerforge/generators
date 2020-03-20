@@ -183,7 +183,7 @@ end.
                                procedures=common.wrap_non_empty('\n', '\n'.join(procedures), ''),
                                variable_declarations=common.wrap_non_empty('\n', variable_declarations, ';'),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'))
 
 class DelphiExampleArgument(common.ExampleArgument):
     def get_delphi_source(self):

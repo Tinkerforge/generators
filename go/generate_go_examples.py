@@ -130,7 +130,7 @@ func main() {{
                                imports='\n\t'.join(unique_imports),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''),
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''),
                                constructor_break=constructor_break)
 
 class GoExampleArgument(common.ExampleArgument):

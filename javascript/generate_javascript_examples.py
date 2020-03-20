@@ -171,7 +171,7 @@ process.stdin.on('data',
                                device_name_long_display=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '')).replace('<<<total_sleep_duration>>>', str(global_total_sleep_duration)).replace("console.log('');", "console.log();")
+                               cleanups='\n'.join(cleanups).replace('\n\r', '').replace('\xFF\n', '').replace('\xFF', '').lstrip('\r').rstrip('\n')).replace('<<<total_sleep_duration>>>', str(global_total_sleep_duration)).replace("console.log('');", "console.log();")
 
     def get_html_source(self):
         global global_line_prefix

@@ -113,7 +113,7 @@ $ipcon->disconnect();
                                dummy_uid=self.get_dummy_uid(),
                                subroutines=common.wrap_non_empty('\n', '\n'.join(subroutines), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'))
 
 class PerlExampleArgument(common.ExampleArgument):
     def get_perl_source(self):

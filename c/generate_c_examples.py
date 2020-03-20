@@ -200,7 +200,7 @@ int main(void) {{
                                dummy_uid=self.get_dummy_uid(),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
-                               cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
+                               cleanups=common.wrap_non_empty('\n\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '\n'))
 
 class CExampleArgument(common.ExampleArgument, CTypeMixin):
     def get_c_source(self):
