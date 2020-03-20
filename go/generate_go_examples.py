@@ -219,7 +219,7 @@ class GoExampleParameter(common.ExampleParameter):
             result = ['\r' + result + '\r']
         else:
             non_array_template = '{global_line_prefix}\t\tfmt.Printf("{label}: {fmt}{unit_param}\\n", {float_cast}{name}{index}{float_cast_end}{divisor});{comment}'
-            array_template = '{global_line_prefix}\t\tfor _, item := range {name} {{fmt.Printf("{label}: {fmt}{unit_param}\n", {float_cast}item{index}{float_cast_end}{divisor});}}{comment}'
+            array_template = '{global_line_prefix}\t\tfor _, item := range {name} {{fmt.Printf("{label}: {fmt}{unit_param}\\n", {float_cast}item{index}{float_cast_end}{divisor});}}{comment}'
 
             if self.get_label_name() == None:
                 return []
