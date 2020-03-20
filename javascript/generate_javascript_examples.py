@@ -335,7 +335,7 @@ class JavaScriptExampleParameter(common.ExampleParameter):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = "        {else_}if({name} === {constant_name}) {{\n            {global_output_prefix}'{label}: {constant_title}'{global_output_suffix};{comment}\n        }}"
+            template = "        {else_}if({name} === {constant_name}) {{\n            {global_output_prefix}'{label}: {constant_title}\xFE'{global_output_suffix};{comment}\n        }}"
             constant_group = self.get_constant_group()
             result = []
 
@@ -349,7 +349,7 @@ class JavaScriptExampleParameter(common.ExampleParameter):
                                               constant_title=constant.get_name().space,
                                               comment=self.get_formatted_comment(' // {0}')))
 
-            result = ['\r' + '\n'.join(result) + '\r']
+            result = ['\r' + '\n'.join(result).replace("\xFE' + '", '').replace('\xFE', '') + '\r']
         else:
             template = "        {global_output_prefix}'{label}: ' + {to_binary_prefix}{name}{index}{divisor}{to_binary_suffix}{unit}{global_output_suffix};{comment}"
 
@@ -383,10 +383,10 @@ class JavaScriptExampleParameter(common.ExampleParameter):
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
-                                              unit=self.get_formatted_unit_name(" + ' {0}'"),
+                                              unit=self.get_formatted_unit_name(" + ' {0}\xFE'"),
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}')).replace("\xFE' + '", '').replace("\xFE", ''))
 
         return result
 
@@ -399,7 +399,7 @@ class JavaScriptExampleResult(common.ExampleResult):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = "                {else_}if({name} === {constant_name}) {{\n                    {global_output_prefix}'{label}: {constant_title}'{global_output_suffix};{comment}\n                }}"
+            template = "                {else_}if({name} === {constant_name}) {{\n                    {global_output_prefix}'{label}: {constant_title}\xFE'{global_output_suffix};{comment}\n                }}"
             constant_group = self.get_constant_group()
             result = []
 
@@ -411,7 +411,7 @@ class JavaScriptExampleResult(common.ExampleResult):
                                               label=self.get_label_name(),
                                               constant_name=constant.get_javascript_source(),
                                               constant_title=constant.get_name().space,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}')).replace("\xFE' + '", '').replace("\xFE", ''))
 
             result = ['\r' + '\n'.join(result) + '\r']
         else:
@@ -448,10 +448,10 @@ class JavaScriptExampleResult(common.ExampleResult):
                                               label=self.get_label_name(index=index),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
-                                              unit=self.get_formatted_unit_name(" + ' {0}'"),
+                                              unit=self.get_formatted_unit_name(" + ' {0}\xFE'"),
                                               to_binary_prefix=to_binary_prefix,
                                               to_binary_suffix=to_binary_suffix,
-                                              comment=self.get_formatted_comment(' // {0}')))
+                                              comment=self.get_formatted_comment(' // {0}')).replace("\xFE' + '", '').replace("\xFE", ''))
 
         return result
 
@@ -538,11 +538,11 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
             outputs.remove(None)
 
         if len(outputs) > 1:
-            outputs.append("        {global_output_prefix}''{global_output_suffix};".format(global_output_prefix=global_output_prefix,
-                                                                                            global_output_suffix=global_output_suffix))
+            outputs.append("        {global_output_prefix}'\xFE'{global_output_suffix};".format(global_output_prefix=global_output_prefix,
+                                                                                                global_output_suffix=global_output_suffix))
 
-        extra_message = self.get_formatted_extra_message("        {global_output_prefix}'{{0}}'{global_output_suffix};".format(global_output_prefix=global_output_prefix,
-                                                                                                                               global_output_suffix=global_output_suffix))
+        extra_message = self.get_formatted_extra_message("        {global_output_prefix}'{{0}}\xFE'{global_output_suffix};".format(global_output_prefix=global_output_prefix,
+                                                                                                                                   global_output_suffix=global_output_suffix))
 
         if len(extra_message) > 0 and len(outputs) > 0:
             extra_message = '\n' + extra_message
@@ -557,7 +557,7 @@ class JavaScriptExampleCallbackFunction(common.ExampleCallbackFunction):
                  template3.format(global_callback_output_suffix=global_callback_output_suffix,
                                   parameters=',<BP>'.join(parameters),
                                   outputs='\n'.join(outputs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
-                                  extra_message=extra_message)
+                                  extra_message=extra_message).replace("\xFE' + '", '').replace("\xFE", '')
 
         return common.break_string(result, 'function (')
 
