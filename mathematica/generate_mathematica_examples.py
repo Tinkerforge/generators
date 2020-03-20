@@ -685,7 +685,9 @@ class MathematicaExamplesGenerator(common.ExamplesGenerator):
         blacklist = [
             'lcd-16x2-bricklet/unicode',
             'lcd-20x4-bricklet/unicode',
-            'nfc-bricklet/emulate-ndef'
+            'nfc-bricklet/emulate-ndef',
+            'nfc-bricklet/scan-for-tags',
+            'nfc-bricklet/write-read-type2'
         ]
 
         for example in examples:
