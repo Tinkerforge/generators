@@ -383,15 +383,15 @@ publish '{{"debounce": {period_msec}}}' to tinkerforge/request/{device_name}_{de
         elif type_ == 'wait':
             return None
         elif type_ == 'loop_header':
-            template = '{comment}for i in {limit}; do\n'
+            template = '{comment}for i in 0..{limit}\n'
             global_line_prefix = '\t'
 
-            return template.format(limit=' '.join(map(str, range(self.get_loop_header_limit()))),
+            return template.format(limit=self.get_loop_header_limit() - 1,
                                    comment=self.get_formatted_loop_header_comment('# {0}\n', '', '\n# '))
         elif type_ == 'loop_footer':
             global_line_prefix = ''
 
-            return '\rdone\n'
+            return '\rendfor\n'
 
 class MQTTExamplesGenerator(mqtt_common.MQTTGeneratorTrait, common.ExamplesGenerator):
     def get_bindings_name(self):
