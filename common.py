@@ -3461,8 +3461,10 @@ class Example(object):
             for index, raw_cleanup in enumerate(raw_data['cleanups']):
                 if raw_cleanup[0] == 'setter':
                     self.cleanups.append(self.get_generator().get_example_setter_function_class()(raw_cleanup[1:], -index, self))
+                elif raw_cleanup[0] == 'sleep':
+                    self.cleanups.append(self.get_generator().get_example_special_function_class()(raw_cleanup, -index, self))
                 else:
-                    raise GeneratorError('only setters are allowed as cleanup functions')
+                    raise GeneratorError('only setter and sleep are allowed as cleanup functions')
 
     def get_device(self): # parent
         return self.device
