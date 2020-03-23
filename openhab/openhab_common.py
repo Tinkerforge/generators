@@ -565,9 +565,10 @@ class OpenHABDevice(java_common.JavaDevice):
                 new_min /= divisor
                 new_max /= divisor
 
-                if new_min.is_integer():
+                # with python 2 these can be integers
+                if isinstance(new_min, float) and new_min.is_integer():
                     new_min = int(new_min)
-                if new_max.is_integer():
+                if isinstance(new_min, float) and new_max.is_integer():
                     new_max = int(new_max)
 
                 if p.min is None:
@@ -650,21 +651,21 @@ class OpenHABDevice(java_common.JavaDevice):
             if len(mins) > 0:
                 unscaled_min = min(mins)
                 min_ = unscaled_min / div
-                if min_.is_integer():
+                if isinstance(min_, float) and min_.is_integer():
                     min_ = int(min_)
                 if ct.min is None:
                     ct.min = min_
             if len(maxs) > 0:
                 unscaled_max = max(maxs)
                 max_ = unscaled_max / div
-                if max_.is_integer():
+                if isinstance(max_, float) and max_.is_integer():
                     max_ = int(max_)
                 if ct.max is None:
                     ct.max = max_
 
             if ct.step is None and unscaled_min is not None and unscaled_max is not None:
                 step = (ct.max - ct.min) / (unscaled_max - unscaled_min)
-                if step.is_integer():
+                if isinstance(step, float) and step.is_integer():
                     step = int(step)
                 ct.step = step
 
