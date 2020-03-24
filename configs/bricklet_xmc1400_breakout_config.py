@@ -324,13 +324,38 @@ com['examples'].append({
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
+    'params': [
+        update_interval('Set ADC Values Callback Configuration', 'Period', 'ADC Values', 'ADC values')
+    ],
+    'init_code': """this.setADCValuesCallbackConfiguration(cfg.adcValuesUpdateInterval, true);""",
+    'dispose_code': """this.setADCValuesCallbackConfiguration(0, true);""",
     'channels': [
         oh_generic_channel('Count', 'Count')
-    ],
+    ] + [
+        {
+        'id': 'ADC Value {}'.format(i),
+        'label': 'ADC Value {}'.format(i),
+        'type': 'ADC Value',
+
+        'getters': [{
+            'packet': 'Get ADC Values',
+            'element': 'Values',
+            'packet_params': [],
+            'transform': 'new {{number_type}}(value[{}]{{divisor}}{{unit}})'.format(i)}],
+
+        'callbacks': [{
+            'packet': 'ADC Values',
+            'element': 'Values',
+            'transform': 'new {{number_type}}(values[{}]{{divisor}}{{unit}})'.format(i)
+            }]
+    } for i in range(0, 8)],
     'channel_types': [
         oh_generic_channel_type('Count', 'Number', 'Count',
                     update_style='Callback Configuration',
-                    description='The value of the example count (see example.c)')
+                    description='The value of the example count (see example.c)'),
+        oh_generic_channel_type('ADC Value', 'Number', 'ADC Value',
+                    update_style=None,
+                    description='The value for one of the 8 ADC channels of the adc driver example.')
     ],
     'actions': ['Get Count']
 }
