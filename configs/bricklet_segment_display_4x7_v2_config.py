@@ -476,6 +476,7 @@ com['openhab'] = {
     'actions': [{'fn': 'Set Segments', 'refreshs': ['Segments', 'Colon Upper', 'Colon Lower', 'Tick']},'Get Segments',
                 {'fn': 'Set Selected Segment', 'refreshs': ['Segments', 'Colon Upper', 'Colon Lower', 'Tick']}, 'Get Selected Segment',
                 {'fn': 'Set Brightness', 'refreshs': ['Brightness']}, 'Get Brightness',
-                'Start Counter', 'Get Counter Value']
+                'Start Counter', 'Get Counter Value',
+                {'fn': 'Set Numeric Value', 'refreshs': ['Segments', 'Colon Upper', 'Colon Lower', 'Tick']}]
 }
 
