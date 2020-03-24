@@ -883,7 +883,15 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		disconnectProbeFlag = false;
 
 		if (sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE) {
-			handleEnumerate(packet);
+			if (hasEnumerateListeners()) {
+				try {
+					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
+					                                          (short)0, 0, packet));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
 			return;
 		}
 
@@ -1046,17 +1054,6 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 			}
 
 			disconnectProbeFlag = false;
-		}
-	}
-
-	private void handleEnumerate(byte[] packet) {
-		if (hasEnumerateListeners()) {
-			try {
-				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
-				                                          (short)0, 0, packet));
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
