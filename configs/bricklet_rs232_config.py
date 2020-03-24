@@ -147,7 +147,7 @@ new data available.
 
 Instead of polling with this function, you can also use
 callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 2 lines.
 'de':
 """
 Gibt die aktuell gespeicherte Nachricht zurück. Die maximale Länge

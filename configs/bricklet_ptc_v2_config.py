@@ -164,7 +164,7 @@ the sensor is connected incorrectly or the sensor itself is faulty.
 If you want to get the status automatically, it is recommended to use the
 :cb:`Sensor Connected` callback. You can set the callback configuration
 with :func:`Set Sensor Connected Callback Configuration`.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 2 lines.
 'de':
 """
 Gibt *true* zurück wenn ein Sensor korrekt verbunden ist.

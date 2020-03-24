@@ -47,7 +47,7 @@ The returned values are averaged and calibrated (see :func:`Calibrate`).
 If you want to get the position periodically, it is recommended to use the
 :cb:`Position` callback and set the period with
 :func:`Set Position Callback Configuration`.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 3 lines.
 'de':
 """
 Gibt die Position des Joystick zurück. Die Mittelposition des Joysticks ist x=0, y=0.

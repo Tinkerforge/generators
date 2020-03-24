@@ -59,7 +59,7 @@ markings on the IndustrialDigital In 4 Bricklet.
 If groups are used, the pins correspond to the element in the group.
 Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
 pins 8-11 and element 4 pins 12-15.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 6 lines.
 'de':
 """
 Gibt die Ausgabewerte mit einer Bitmaske zurück. Die Bitmaske ist 16Bit lang.

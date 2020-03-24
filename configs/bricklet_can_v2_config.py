@@ -198,7 +198,7 @@ received by the CAN transceiver and put into the read queue (see
 Instead of polling with this function, you can also use callbacks. See the
 :func:`Set Frame Read Callback Configuration` function and the :cb:`Frame Read`
 callback.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 3 lines.
 'de':
 """
 Versucht den nächsten Data- oder Remote-Frame aus dem Lese-Queue zu lesen und

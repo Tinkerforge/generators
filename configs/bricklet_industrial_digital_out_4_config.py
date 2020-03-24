@@ -53,7 +53,7 @@ Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
 pins 8-11 and element 4 pins 12-15.
 
 All running monoflop timers will be aborted if this function is called.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 6 lines.
 'de':
 """
 Setzt die Ausgabewerte mit einer Bitmaske (16Bit). Eine 1 in der Bitmaske
@@ -313,7 +313,7 @@ pins 8-11 and element 4 pins 12-15.
 
 Running monoflop timers for the selected pins will be aborted if this function
 is called.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 9 lines.
 'de':
 """
 Setzt die Ausgabewerte mit einer Bitmaske, entsprechend der Selektionsmaske.

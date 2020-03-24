@@ -163,7 +163,7 @@ received by the CAN transceiver and put into the read buffer (see
 
 Instead of polling with this function, you can also use callbacks. See the
 :func:`Enable Frame Read Callback` function and the :cb:`Frame Read` callback.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 3 lines.
 'de':
 """
 Versucht den nächsten Data- oder Remote-Frame aus dem Lese-Buffer zu lesen und
@@ -530,7 +530,7 @@ number of these errors:
   buffer than are removed from the read buffer using the :func:`Read Frame`
   function. Using the :cb:`Frame Read` callback ensures that the read buffer
   can not overflow.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 2 lines.
 'de':
 """
 Gibt Informationen über verschiedene Fehlerarten zurück.

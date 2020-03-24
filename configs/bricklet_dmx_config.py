@@ -187,7 +187,7 @@ You can enable it with :func:`Set Frame Callback Config`.
 The frame number starts at 0 and it is increased by one with each received frame.
 
 This function can only be called in slave mode.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 6 lines.
 'de':
 """
 Gibt das letzte Frame zurück, dass von dem DMX Master geschrieben wurde. Die Größe des

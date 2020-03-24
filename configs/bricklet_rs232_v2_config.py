@@ -115,7 +115,7 @@ Instead of polling with this function, you can also use
 callbacks. But note that this function will return available
 data only when the read callback is disabled.
 See :func:`Enable Read Callback` and :cb:`Read` callback.
-""",
+""", # Update the special case in the openHAB documentation generator if you change something the last 4 lines.
 'de':
 """
 Gibt bis zu *length* Zeichen aus dem Empfangsbuffer zurück.
