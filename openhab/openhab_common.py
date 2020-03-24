@@ -827,7 +827,7 @@ class OpenHABDevice(java_common.JavaDevice):
                             channel_getter_params_use_param,
                             channel_getter_transforms_use_param,
                             channel_predicate_uses_param]):
-                    raise common.GeneratorError('openhab: Device {}: Channel {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), c.name.space, param.name.space))
+                    raise common.GeneratorError('openhab: Device {}: Channel {}: Config parameter {} is not used in init_code or param mappings.'.format(self.get_long_display_name(), c.id.space, param.name.space))
 
 
         # Use only one of command options, state description and trigger channel per channel type
@@ -862,6 +862,10 @@ class OpenHABDevice(java_common.JavaDevice):
         for ct in self.oh.channel_types:
             if ct.is_trigger_channel and "system." in ct.id:
                 raise common.GeneratorError('openhab: Device {} Channel Type {} is marked as trigger channel, but uses a custom type (not system.trigger or similar). This is theoretically supported, but the device handler currently assumes (when sending initial refreshs), that all trigger channels are of system-wide type.'.format(self.get_long_display_name(), ct.id))
+
+        for c in self.oh.channels:
+            if c.java_unit == 'SmartHomeUnits.ONE' and any('QuantityType' in x.transform for x in c.getters + c.callbacks):
+                raise common.GeneratorError('openhab: Device {} Channel {} uses a QuantityType but with SmartHomeUnits.ONE (i.e. is dimensionless). Use a DecimalType instead!'.format(self.get_long_display_name(), c.id.space))
 
     def find_channel_type(self, channel, channel_types):
         if channel['type'].startswith('system.'):
