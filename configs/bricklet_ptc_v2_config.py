@@ -387,26 +387,47 @@ com['openhab'] = {
             'type': 'integer',
             'label': 'Noise Rejection Filter Frequency',
             'description': 'Sets the noise rejection filter to either 50 Hz or 60 Hz. Noise from 50 Hz or 60 Hz power sources (including harmonics of the AC power’s fundamental frequency) is attenuated by 82dB',
-        },
+        }, {
+            'virtual': True,
+
+            'name': 'Sensor Type',
+            'type': 'integer',
+            'options': [('Pt100', 100),
+                        ('Pt1000', 1000)],
+            'limit_to_options': 'true',
+            'default': 100,
+            'label': 'Sensor Type',
+            'description': 'The type of the sensor. The value has to match the jumper configuration on the Bricklet or else the calculated resistance will not be correct.',
+        }
     ],
     'init_code': """this.setWireMode(cfg.wireMode);
 this.setMovingAverageConfiguration(1, cfg.temperatureMovingAverageLength);
-this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency);""",
+this.setNoiseRejectionFilter(cfg.noiseRejectionFilterFrequency);
+this.setSensorConnectedCallbackConfiguration(true);""",
     'channels': [
         oh_generic_channel('Temperature', 'Temperature'),
+        oh_generic_channel('Resistance', 'Resistance', divisor='(32768 / cfg.sensorType == 100 ? 390 : 3900)'),
         {
             'id': 'Sensor Connected',
             'type': 'Sensor Connected',
             'getters': [{
                 'packet': 'Is Sensor Connected',
                 'element': 'Connected',
-                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}]
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+            'callbacks': [{
+                'packet': 'Sensor Connected',
+                'element': 'Connected',
+                'transform': 'connected ? OnOffType.ON : OnOffType.OFF'
+            }]
         },
     ],
     'channel_types': [
         oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Configuration',
                     description='Temperature of the connected sensor'),
+        oh_generic_channel_type('Resistance', 'Number', 'Resistance',
+                    update_style='Callback Configuration',
+                    description='The value as measured by the MAX31865 precision delta-sigma ADC. Configure this channel to Pt 100 or Pt 1000, to make sure the conversion is correct.'),
          oh_generic_channel_type('Sensor Connected', 'Switch', 'Sensor Connected',
                     update_style=None,
                     description='Indicates if the sensor is connected correctly. If this is disabled, there is either no Pt100 or Pt1000 sensor connected, the sensor is connected incorrectly or the sensor itself is faulty.'),
