@@ -395,8 +395,8 @@ com['openhab'] = {
             'name': 'Control Voltage',
             'type': 'integer',
             'options': [
-                ('Current', '0'),
-                ('Voltage', '1'),
+                ('Current', 0),
+                ('Voltage', 1),
             ],
             'limit_to_options': 'true',
             'default': 1,
