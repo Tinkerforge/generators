@@ -105,7 +105,9 @@ class MQTTBindings:
         self.broker_connected_event.wait()
 
     def run_config(self, config):
-        for topic, payload in config.items():
+        for topic, payload in config:
+            if isinstance(payload, list):
+                payload = dict(payload)
             self.on_message(self.mqttc, len(self.global_prefix), message_tup(topic, json.dumps(payload)))
 
     def run(self):
@@ -841,6 +843,8 @@ def terminate(signal=None, frame=None):
 
     sys.exit(0)
 
+def flatten(list_of_lists):
+    return sum(list_of_lists, [])
 
 def main():
     global bindings
@@ -891,20 +895,22 @@ def main():
     if args.init_file is not None:
         try:
             with open(args.init_file) as f:
-                initial_config = json.load(f, object_pairs_hook=OrderedDict)
+                initial_config = json.load(f, object_pairs_hook=lambda lst: lst)
         except Exception as e:
             print("Could not read init file: {}".format(str(e)))
             sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
     else:
-        initial_config = {}
+        initial_config = []
 
     bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
     bindings.connect_to_broker(args.broker_host, args.broker_port)
-    if 'pre_connect' in initial_config:
-        bindings.run_config(initial_config['pre_connect'])
+    pre_connect = flatten([tup[1] for tup in initial_config if tup[0] == 'pre_connect'])
+    post_connect = flatten([tup[1] for tup in initial_config if tup[0] == 'post_connect'])
+    if len(pre_connect) > 0:
+        bindings.run_config(pre_connect)
     bindings.connect_to_brickd(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret)
-    if 'post_connect' in initial_config:
-        bindings.run_config(initial_config['post_connect'])
+    if len(post_connect) > 0:
+        bindings.run_config(post_connect)
     else:
         bindings.run_config(initial_config)
     bindings.run()
