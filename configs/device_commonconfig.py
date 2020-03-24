@@ -1265,7 +1265,7 @@ common_openhab = {
     },
 
     'comcu_bricklet': {
-        'actions': ['Read UID', 'Get Chip Temperature', 'Get Status LED Config', 'Get Bootloader Mode', 'Get SPITFP Error Count'],
+        'actions': ['Read UID', 'Get Chip Temperature', 'Get Status LED Config', 'Get SPITFP Error Count'],
         'params': [{
             'packet': 'Set Status LED Config',
             'element': 'Config',
