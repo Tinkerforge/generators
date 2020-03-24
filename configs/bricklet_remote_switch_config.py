@@ -74,7 +74,7 @@ com['packets'].append({
 """
 Returns the current switching state. If the current state is busy, the
 Bricklet is currently sending a code to switch a socket. It will not
-accept any calls of :func:`Switch Socket` until the state changes to ready.
+accept any requests to switch sockets until the state changes to ready.
 
 How long the switching takes is dependent on the number of repeats, see
 :func:`Set Repeats`.
@@ -83,7 +83,7 @@ How long the switching takes is dependent on the number of repeats, see
 """
 Gibt den aktuellen Zustand des Schaltens zurück. Wenn der aktuell Zustand
 busy (beschäftigt) ist, sendet das Bricklet gerade einen Code um eine Steckdose
-zu schalten. Weitere Aufrufe von :func:`Switch Socket` werden ignoriert bis
+zu schalten. Weitere Schaltanforderungen werden ignoriert bis
 der Zustand auf ready (fertig) wechselt.
 
 Die Länge des Schaltvorgangs ist abhängig von der Anzahl der Wiederholungen,
@@ -119,7 +119,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the number of times the code is sent when of the :func:`Switch Socket`
+Sets the number of times the code is sent when one of the switch socket
 functions is called. The repeats basically correspond to the amount of time
 that a button of the remote is pressed.
 
@@ -129,7 +129,7 @@ this can be simulated by increasing the repeats.
 'de':
 """
 Setzt die Anzahl der Wiederholungen die verwendet werden um einen Code zu
-senden wenn eine der :func:`Switch Socket` Funktionen aufgerufen wird. Die
+senden wenn eine der Schalt-Funktionen aufgerufen wird. Die
 Wiederholungen korrespondieren zu der Zeit die eine Taste auf der Fernbedienung
 gedrückt wird.
 
