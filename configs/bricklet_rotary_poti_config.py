@@ -62,14 +62,7 @@ den :cb:`Position` Callback zu nutzen und die Periode mit
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Analog Value',
-'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4096)})],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
+analog_value_desc = """
 Returns the value as read by a 12-bit analog-to-digital converter.
 
 .. note::
@@ -77,7 +70,16 @@ Returns the value as read by a 12-bit analog-to-digital converter.
  to yield less noise, while :func:`Get Analog Value` gives back raw
  unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
  if you need the full resolution of the analog-to-digital converter.
+"""
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Analog Value',
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4096)})],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+analog_value_desc + """
 If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
@@ -484,12 +486,14 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Position', 'Position', cast_literal='(short)')
+        oh_generic_old_style_channel('Position', 'Position', cast_literal='(short)'),
+        oh_analog_value_channel()
     ],
     'channel_types': [
         oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style='Callback Period',
-                    description='The position of the rotary potentiometer. The value is and between -150° (turned left) and 150° (turned right).')
+                    description='The position of the rotary potentiometer. The value is and between -150° (turned left) and 150° (turned right).'),
+        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
     ],
     'actions': ['Get Position', 'Get Analog Value']
 }

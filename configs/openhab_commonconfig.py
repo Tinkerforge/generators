@@ -32,6 +32,47 @@ def oh_generic_channel(id_, type_, unit=None, divisor=1, label=None, description
         'is_trigger_channel': False
     }
 
+def oh_analog_value_channel():
+    return {
+        'id': 'Analog Value',
+        'type': 'Analog Value',
+        'init_code': """this.setAnalogValueCallbackPeriod(channelCfg.updateInterval);
+this.setAnalogValueCallbackThreshold(\'x\', (short)0, (short)0);""",
+        'dispose_code': """this.setAnalogValueCallbackPeriod(0);""",
+        'getters': [{
+            'packet': 'Get Analog Value',
+            'element': 'Value',
+            'packet_params': [],
+            'transform': 'new {number_type}(value{divisor}{unit})'}],
+
+        'callbacks': [{
+            'packet': '{title_words}',
+            'element': 'Value',
+            'transform': 'new {number_type}(value{divisor}{unit})',
+            'filter': 'true'}],
+    }
+
+def oh_analog_value_channel_type(desc):
+    return {
+        'id': 'Analog Value',
+        'item_type': 'Number',
+        'params': [{
+            'packet': 'Set Analog Value Callback Period',
+            'element': 'Period',
+
+            'name': 'Update Interval',
+            'type': 'integer',
+            'unit': 'ms',
+            'label': 'Update Interval',
+            'description': 'Specifies the update interval in milliseconds. A value of 0 disables automatic updates.',
+            'default': 1000,
+            'groupName': 'update_intervals'
+        }],
+        'label': 'Analog Value',
+        'description': desc,
+        'is_trigger_channel': False,
+    }
+
 def oh_generic_old_style_channel(id_, type_, unit=None, divisor=1.0, cast_literal='', has_threshold=True, element_name='{title_words}'):
     return {
         'id': id_,

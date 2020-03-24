@@ -295,12 +295,16 @@ com['openhab'] = {
     'init_code': """this.setMovingAverageConfiguration(cfg.movingAverageLength);
 this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
     'channels': [
-        oh_generic_channel('Distance', 'Distance')
+        oh_generic_channel('Distance', 'Distance'),
+        oh_generic_channel('Analog Value', 'Analog Value'),
     ],
     'channel_types': [
         oh_generic_channel_type('Distance', 'Number', 'Distance',
                     update_style='Callback Configuration',
-                    description='Measured distance')
+                    description='Measured distance'),
+        oh_generic_channel_type('Analog Value', 'Number', 'Analog Value',
+                    update_style='Callback Configuration',
+                    description='The analog value as read by a analog-to-digital converter.<br/><br/>This is unfiltered raw data. We made sure that the integration time of the ADC is shorter then the measurement interval of the sensor (10ms vs 16.5ms). So there is no information lost.<br/><br/>If you want to do your own calibration or create your own lookup table you can use this value.')
     ],
     'actions': ['Get Distance', 'Get Analog Value', 'Get Moving Average Configuration', 'Get Distance LED Config', 'Get Sensor Type']
 }

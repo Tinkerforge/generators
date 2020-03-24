@@ -63,6 +63,15 @@ den :cb:`Position` Callback zu nutzen und die Periode mit
 }]
 })
 
+analog_value_desc = """Returns the value as read by a 12-bit analog-to-digital converter.
+
+.. note::
+ The value returned by :func:`Get Position` is averaged over several samples
+ to yield less noise, while :func:`Get Analog Value` gives back raw
+ unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
+ if you need the full resolution of the analog-to-digital converter.
+"""
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get Analog Value',
@@ -70,15 +79,7 @@ com['packets'].append({
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
-"""
-Returns the value as read by a 12-bit analog-to-digital converter.
-
-.. note::
- The value returned by :func:`Get Position` is averaged over several samples
- to yield less noise, while :func:`Get Analog Value` gives back raw
- unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
- if you need the full resolution of the analog-to-digital converter.
-
+analog_value_desc + """
 If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
@@ -483,12 +484,14 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Position', 'Position')
+        oh_generic_old_style_channel('Position', 'Position'),
+        oh_analog_value_channel()
     ],
     'channel_types': [
         oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style='Callback Period',
-                    description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).')
+                    description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).'),
+        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
     ],
     'actions': ['Get Position', 'Get Analog Value']
 }

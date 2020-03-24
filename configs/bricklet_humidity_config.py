@@ -61,14 +61,7 @@ den :cb:`Humidity` Callback zu nutzen und die Periode mit
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Analog Value',
-'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
+analog_value_desc = """
 Returns the value as read by a 12-bit analog-to-digital converter.
 
 .. note::
@@ -79,7 +72,16 @@ Returns the value as read by a 12-bit analog-to-digital converter.
  warm environments, you might want to calculate the humidity from
  the analog value yourself. See the `HIH 5030 datasheet
  <https://github.com/Tinkerforge/humidity-bricklet/raw/master/datasheets/hih-5030.pdf>`__.
+"""
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Analog Value',
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+analog_value_desc + """
 If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
@@ -495,12 +497,14 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Humidity', 'Humidity')
+        oh_generic_old_style_channel('Humidity', 'Humidity'),
+        oh_analog_value_channel()
     ],
     'channel_types': [
         oh_generic_channel_type('Humidity', 'Number', 'Humidity',
                     update_style='Callback Period',
-                    description='Measured relative humidity')
+                    description='Measured relative humidity'),
+        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
     ],
     'actions': ['Get Humidity', 'Get Analog Value']
 }

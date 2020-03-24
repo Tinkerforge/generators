@@ -583,14 +583,29 @@ com['examples'].append({
 'incomplete': True # because of special print logic in callback
 })
 
+analog_value_desc = """
+Returns the {} value as read by a 12-bit analog-to-digital converter.
+
+.. note::
+ The values returned by :func:`Get Position` are averaged over several samples
+ to yield less noise, while :func:`Get Analog Value` gives back raw
+ unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
+ if you need the full resolution of the analog-to-digital converter.
+""".replace('\n', '<br/>')
+
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         update_interval('Set Position Callback Period', 'Period', 'Position', 'X and Y position'),
+        update_interval('Set Analog Value Callback Period', 'Period', 'Analog Value', 'X and Y analog value'),
     ],
-    'init_code': """this.setPositionCallbackPeriod(cfg.positionUpdateInterval);""",
-    'dispose_code': """this.setPositionCallbackPeriod(0);""",
+    'init_code': """this.setPositionCallbackPeriod(cfg.positionUpdateInterval);
+this.setAnalogValueCallbackPeriod(cfg.analogValueUpdateInterval);
+this.setAnalogValueCallbackThreshold(\'x\', 0, 0, 0, 0);
+""",
+    'dispose_code': """this.setPositionCallbackPeriod(0);
+this.setAnalogValueCallbackPeriod(0);""",
     'channels': [{
             'id': 'Position {}'.format(axis),
             'type': 'Position',
@@ -624,12 +639,54 @@ com['openhab'] = {
                 }, {
                 'packet': 'Released',
                 'transform': 'CommonTriggerEvents.RELEASED'}],
-        },
-    ],
+        }, {
+            'id': 'Analog Value X',
+            'type': 'Analog Value X',
+
+            'getters': [{
+                'packet': 'Get Analog Value',
+                'element': 'X',
+                'packet_params': [],
+                'transform': 'new {number_type}(value.x{divisor}{unit})'}],
+
+            'callbacks': [{
+                'packet': 'Analog Value',
+                'element': 'X',
+                'transform': 'new {number_type}(x{divisor}{unit})',
+                'filter': 'true'}],
+        }, {
+            'id': 'Analog Value Y',
+            'type': 'Analog Value Y',
+
+            'getters': [{
+                'packet': 'Get Analog Value',
+                'element': 'Y',
+                'packet_params': [],
+                'transform': 'new {number_type}(value.y{divisor}{unit})'}],
+
+            'callbacks': [{
+                'packet': 'Analog Value',
+                'element': 'Y',
+                'transform': 'new {number_type}(x{divisor}{unit})',
+                'filter': 'true'}],
+        }],
     'channel_types': [
         oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style=None,
-                    description='The position of the joystick. The value ranges between -100 and 100 for both axis. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.')
+                    description='The position of the joystick. The value ranges between -100 and 100 for both axis. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.'),
+        {
+            'id': 'Analog Value X',
+            'item_type': 'Number',
+            'label': 'Analog Value X',
+            'description': analog_value_desc.format('X'),
+            'is_trigger_channel': False,
+        }, {
+            'id': 'Analog Value Y',
+            'item_type': 'Number',
+            'label': 'Analog Value Y',
+            'description': analog_value_desc.format('Y'),
+            'is_trigger_channel': False,
+        }
     ],
     'actions': ['Get Position', 'Is Pressed', 'Get Analog Value']
 }

@@ -61,14 +61,7 @@ den :cb:`Illuminance` Callback zu nutzen und die Periode mit
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Analog Value',
-'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
+analog_value_desc = """
 Returns the value as read by a 12-bit analog-to-digital converter.
 
 .. note::
@@ -80,7 +73,15 @@ Returns the value as read by a 12-bit analog-to-digital converter.
  Also, the analog-to-digital converter covers three different ranges that are
  set dynamically depending on the light intensity. It is impossible to
  distinguish between these ranges with the analog value.
+"""
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Analog Value',
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en': analog_value_desc + """
 If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
@@ -496,12 +497,14 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Illuminance', 'Illuminance')
+        oh_generic_old_style_channel('Illuminance', 'Illuminance'),
+        oh_analog_value_channel()
     ],
     'channel_types': [
         oh_generic_channel_type('Illuminance', 'Number', 'Illuminance',
                     update_style='Callback Period',
-                    description='The illuminance of the ambient light sensor.')
+                    description='The illuminance of the ambient light sensor.'),
+        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
     ],
     'actions': ['Get Illuminance', 'Get Analog Value']
 }

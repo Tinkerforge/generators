@@ -65,14 +65,7 @@ den :cb:`Distance` Callback zu nutzen und die Periode mit
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Analog Value',
-'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
+analog_value_desc = """
 Returns the value as read by a 12-bit analog-to-digital converter.
 
 .. note::
@@ -80,7 +73,16 @@ Returns the value as read by a 12-bit analog-to-digital converter.
  to yield less noise, while :func:`Get Analog Value` gives back raw
  unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
  if you need the full resolution of the analog-to-digital converter.
+"""
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Analog Value',
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+analog_value_desc + """
 If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
@@ -561,12 +563,14 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
-        oh_generic_old_style_channel('Distance', 'Distance')
+        oh_generic_old_style_channel('Distance', 'Distance'),
+        oh_analog_value_channel()
     ],
     'channel_types': [
         oh_generic_channel_type('Distance', 'Number', 'Distance',
                     update_style='Callback Period',
-                    description='Measured distance')
+                    description='Measured distance'),
+        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
     ],
     'actions': ['Get Distance', 'Get Analog Value', 'Get Sampling Point']
 }

@@ -73,14 +73,7 @@ den :cb:`Voltage` Callback zu nutzen und die Periode mit
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Analog Value',
-'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
+analog_value_desc = """
 Returns the value as read by a 12-bit analog-to-digital converter.
 
 .. note::
@@ -88,7 +81,15 @@ Returns the value as read by a 12-bit analog-to-digital converter.
  to yield less noise, while :func:`Get Analog Value` gives back raw
  unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
  if you need the full resolution of the analog-to-digital converter.
+"""
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Analog Value',
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en': analog_value_desc + """
 If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
@@ -611,13 +612,15 @@ com['openhab'] = {
         ],
     'channels': [
         oh_generic_old_style_channel('Voltage', 'Voltage'),
+        oh_analog_value_channel()
     ],
     'init_code': """this.setAveraging(cfg.averageLength.shortValue());
     this.setRange(cfg.measurementRange.shortValue());""",
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number', 'Voltage',
                     update_style='Callback Period',
-                    description='Measured voltage')
+                    description='Measured voltage'),
+        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
     ],
     'actions': ['Get Voltage', 'Get Analog Value', 'Get Averaging', 'Get Range']
 }

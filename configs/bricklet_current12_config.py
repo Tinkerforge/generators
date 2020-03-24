@@ -119,14 +119,7 @@ Gibt *true* zurück wenn mehr als 12,5A gemessen wurden.
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Analog Value',
-'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
+analog_value_desc = """
 Returns the value as read by a 12-bit analog-to-digital converter.
 
 .. note::
@@ -134,7 +127,16 @@ Returns the value as read by a 12-bit analog-to-digital converter.
  to yield less noise, while :func:`Get Analog Value` gives back raw
  unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
  if you need the full resolution of the analog-to-digital converter.
+"""
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Analog Value',
+'elements': [('Value', 'uint16', 1, 'out', {'range': (0, 4095)})],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+analog_value_desc + """
 If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
@@ -581,6 +583,7 @@ com['openhab'] = {
                 'packet': 'Over Current',
                 'transform': 'OnOffType.ON'}]
         },
+        oh_analog_value_channel()
     ],
     'channel_types': [
         oh_generic_channel_type('Current', 'Number', 'Current',
@@ -589,6 +592,7 @@ com['openhab'] = {
         oh_generic_channel_type('Over Current', 'Switch', 'Over Current',
                     update_style=None,
                     description='Enabled if more than 12.5A were measured. To reset this value you have to power cycle the Bricklet.'),
+        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
     ],
     'actions': ['Get Current', 'Is Over Current', 'Get Analog Value']
 }
