@@ -3686,11 +3686,16 @@ voltage_channel['callbacks'][0]['transform'] = 'new {number_type}(voltage{diviso
 current_channel = oh_generic_old_style_channel('Stack Current', 'Stack Current', element_name='Current')
 current_channel['callbacks'][0]['transform'] = 'new {number_type}(current{divisor}{unit})'
 
+usb_voltage_channel = oh_generic_old_style_channel('USB Voltage', 'USB Voltage', element_name='Voltage')
+usb_voltage_channel['callbacks'][0]['transform'] = 'new {number_type}(voltage{divisor}{unit})'
+usb_voltage_channel['predicate'] = 'Helper.compareFWs(this.getIdentity().hardwareVersion, new short[]{{{{2, 1, 0}}}}) < 0'
+usb_voltage_channel['predicate_description'] = {'de': 'TODO', 'en': 'This channel will only be available if the Brick has a hardware version less than 2.1.0.'}
+
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [],
-    'channels': [voltage_channel, current_channel,
+    'channels': [voltage_channel, usb_voltage_channel, current_channel,
         {
             'id': 'Bricklets Enabled',
             'type': 'Bricklets Enabled',
@@ -3713,6 +3718,9 @@ com['openhab'] = {
         oh_generic_channel_type('Stack Voltage', 'Number:ElectricPotential', 'Stack Voltage',
             update_style='Callback Period',
             description='The stack voltage in V. The stack voltage is the voltage that is supplied via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.'),
+        oh_generic_channel_type('USB Voltage', 'Number:ElectricPotential', 'USB Voltage',
+            update_style='Callback Period',
+            description='The USB voltage in V.'),
         oh_generic_channel_type('Stack Current', 'Number:ElectricCurrent', 'Stack Current',
             update_style='Callback Period',
             description='The stack current in A. The stack current is the current that is drawn via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.'),
