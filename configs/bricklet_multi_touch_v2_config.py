@@ -403,12 +403,22 @@ com['openhab'] = {
 
             'label': 'Proximity Enabled',
             'description': "True enables the proximity feature, false disables it. It is recommended that you disable the proximity feature if not needed. This will reduce the amount of traffic that is produced.",
+        }, {
+            'packet': 'Set Touch LED Config',
+            'element': 'Config',
+
+            'name': 'Touch LED Mode',
+            'type': 'integer',
+
+            'label': 'Touch LED Mode',
+            'description': 'Configures the touch LED to be either turned off, turned on, blink in heartbeat mode or show the touch state (electrode touched = LED on).'
         },
         update_interval('Set Touch State Callback Configuration', 'Period', 'Electrode', 'the electrode and proximity state')
     ] + [electrode_config(i) for i in range(0, 12)],
     'init_code': """this.setElectrodeSensitivity(cfg.sensitivity.shortValue());
         this.recalibrate();
         this.setElectrodeConfig(new boolean[]{{{}, cfg.proximityEnabled}});
+        this.setTouchLEDConfig(cfg.touchLEDMode);
         this.setTouchStateCallbackConfiguration(cfg.electrodeUpdateInterval, true);""".format(', '.join(['cfg.electrode{}Enabled'.format(i) for i in range(0, 12)])),
     'channels': [electrode_channel(i) for i in range(0, 12)] + [
         {
