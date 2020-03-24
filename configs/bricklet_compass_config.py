@@ -324,14 +324,34 @@ com['openhab'] = {
 
             'label': 'Enable Background Calibration',
             'description': 'If the background calibration is enabled the sensing polarity is flipped once per second to automatically calculate and remove offset that is caused by temperature changes. This polarity flipping takes about 20ms. This means that once a second you will not get new data for a period of 20ms. We highly recommend that you keep the background calibration enabled and only disable it if the 20ms off-time is a problem in you application.',
-        }],
-    'init_code': """this.setConfiguration(cfg.dataRate, cfg.backgroundCalibration);""",
+        },
+        update_interval('Set Magnetic Flux Density Callback Configuration', 'Period', 'Magnetic Flux Density', 'the magnetic flux densities')],
+    'init_code': """this.setConfiguration(cfg.dataRate, cfg.backgroundCalibration);
+    this.setMagneticFluxDensityCallbackConfiguration(cfg.magneticFluxDensityUpdateInterval, true);""",
     'channels': [
         oh_generic_channel('Heading', 'Heading')
-    ],
+    ] + [{
+            'id': 'Magnetic Flux Density {}'.format(axis.upper()),
+            'type': 'Magnetic Flux Density',
+            'label': 'Magnetic Flux Density - {}'.format(axis.upper()),
+            'description': 'The `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__ measured in direction of the {} axis.'.format(axis.lower()),
+
+            'getters': [{
+                'packet': 'Get Magnetic Flux Density',
+                'element': axis,
+                'transform': 'new {{number_type}}(value.{}{{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Magnetic Flux Density',
+                'element': axis,
+                'transform': 'new {{number_type}}({}{{unit}})'.format(axis.lower())}],
+        } for axis in ['X', 'Y', 'Z']],
     'channel_types': [
         oh_generic_channel_type('Heading', 'Number', 'Heading',
                     update_style='Callback Configuration',
+                    description='The heading (north = 0 degree)'),
+        oh_generic_channel_type('Magnetic Flux Density', 'Number', 'Magnetic Flux Density',
+                    update_style=None,
                     description='The heading (north = 0 degree)'),
     ],
     'actions': ['Get Heading', 'Get Magnetic Flux Density', 'Get Configuration', 'Get Calibration']
