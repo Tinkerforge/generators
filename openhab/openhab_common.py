@@ -1031,7 +1031,8 @@ class OpenHABDevice(java_common.JavaDevice):
             param['name'] = common.FlavoredName(param['name']).get()
             if param['packet'] is not None:
                 param['packet'] = find_packet(param['packet'])
-                param['element'] = [e for e in param['packet'].get_elements() if e.get_name().space == param['element']][0] # TODO: handle high-level parameters?
+                if not param['virtual']: # Allow configuring packets for virtual params: The documentation generator can use the packet as link hint.
+                    param['element'] = [e for e in param['packet'].get_elements() if e.get_name().space == param['element']][0] # TODO: handle high-level parameters?
             oh['params'][p_idx] = Param(**param)
 
         for g_idx, group in enumerate(oh['param_groups']):

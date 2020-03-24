@@ -713,6 +713,7 @@ def edge_count_channel(index):
 def pin_config(idx):
     return {
             'virtual': True,
+            'packet': 'Set Port Configuration', # This is set only so that the documentation generator can link to the thing configuration from the get configuration action
             'name': 'Pin Configuration {}'.format(idx),
             'type': 'integer',
             'default': 3,
