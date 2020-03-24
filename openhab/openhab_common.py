@@ -85,6 +85,7 @@ class OpenHAB:
         self.actions = kwargs.get('actions', [])
         self.is_bridge = kwargs.get('is_bridge', False)
         self.required_firmware_version = kwargs.get('required_firmware_version', False)
+        self.firmware_update_supported = kwargs.get('firmware_update_supported', False)
         self.implemented_interfaces = kwargs.get('implemented_interfaces', [])
 
 class Channel:
@@ -503,8 +504,10 @@ class OpenHABDevice(java_common.JavaDevice):
                     oh[key] += '\n' + value
                 else:
                     oh[key] += value
-        if len(oh['implemented_interfaces']) == 0:
+        if len(oh['implemented_interfaces']) == 0 and self.get_category().space == 'Bricklet':
             oh['implemented_interfaces'].append('StandardFlashable')
+        if any('Flashable' in x for x in oh['implemented_interfaces']):
+            oh['firmware_update_supported'] = True
         return oh
 
     def find_unit_with_prefix(self, unit):
