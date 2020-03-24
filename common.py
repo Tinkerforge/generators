@@ -147,16 +147,8 @@ Funktionen direkt zu verwenden.
 
 lang = 'en'
 
-html_escape_table = {
-    "&": "&amp;",
-    '"': "&quot;",
-    "'": "&apos;",
-    ">": "&gt;",
-    "<": "&lt;"
-}
-
 def html_escape(text):
-    return ''.join(html_escape_table.get(c, c) for c in text)
+    return text.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace(">", "&gt;").replace("<", "&lt;")
 
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
@@ -169,7 +161,16 @@ def strip_trailing_whitespace(text):
 
     return '\n'.join(lines)
 
+_changelog_version_cache = {}
+
 def get_changelog_version(root_dir):
+    global _changelog_version_cache
+
+    version = _changelog_version_cache.get(root_dir)
+
+    if version != None:
+        return version
+
     r = re.compile(r'^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
     versions = []
 
@@ -204,7 +205,10 @@ def get_changelog_version(root_dir):
     if len(versions) == 0:
         raise GeneratorError('no version found in changelog: ' + root_dir)
 
-    return (str(versions[-1][0]), str(versions[-1][1]), str(versions[-1][2]))
+    version = (str(versions[-1][0]), str(versions[-1][1]), str(versions[-1][2]))
+    _changelog_version_cache[root_dir] = version
+
+    return version
 
 def get_image_size(path):
     from PIL import Image
@@ -746,14 +750,18 @@ def format_value_hint(value, scale, unit):
     else:
         # find the scale that results in a scaled value with the minimum number of leading digits
         candidate = {unit.get_symbol(): (float(value) * scale[0] / scale[1], scale)}
+        unit_allowed_prefixes = unit.get_allowed_prefixes()
+        unit_allowed_inverse_prefixes = unit.get_allowed_inverse_prefixes()
+        unit_numerator_exponent = unit.get_numerator_exponent()
+        unit_denominator_exponent = unit.get_denominator_exponent()
 
         if unit.get_prefix() == None:
             for unit_prefix in unit_prefixes:
-                if unit_prefix.symbol not in unit.get_allowed_prefixes():
+                if unit_prefix.symbol not in unit_allowed_prefixes:
                     continue
 
                 divided_scale = list(scale)
-                divided_scale[1 - unit_prefix.index] *= unit_prefix.divisor ** unit.get_numerator_exponent()
+                divided_scale[1 - unit_prefix.index] *= unit_prefix.divisor ** unit_numerator_exponent
                 prefixed_symbol = unit.get_symbol(prefix=unit_prefix)
 
                 assert prefixed_symbol not in candidate
@@ -762,11 +770,11 @@ def format_value_hint(value, scale, unit):
 
                 if unit.get_inverse_prefix() == None:
                     for unit_inverse_prefix in unit_prefixes:
-                        if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
+                        if unit_inverse_prefix.symbol not in unit_allowed_inverse_prefixes:
                             continue
 
                         divided_scale = list(divided_scale)
-                        divided_scale[unit_inverse_prefix.index] *= unit_inverse_prefix.divisor ** unit.get_denominator_exponent()
+                        divided_scale[unit_inverse_prefix.index] *= unit_inverse_prefix.divisor ** unit_denominator_exponent
                         prefixed_symbol = unit.get_symbol(prefix=unit_prefix, inverse_prefix=unit_inverse_prefix)
 
                         assert prefixed_symbol not in candidate
@@ -775,11 +783,11 @@ def format_value_hint(value, scale, unit):
 
         if unit.get_inverse_prefix() == None:
             for unit_inverse_prefix in unit_prefixes:
-                if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
+                if unit_inverse_prefix.symbol not in unit_allowed_inverse_prefixes:
                     continue
 
                 divided_scale = list(scale)
-                divided_scale[unit_inverse_prefix.index] *= unit_inverse_prefix.divisor ** unit.get_denominator_exponent()
+                divided_scale[unit_inverse_prefix.index] *= unit_inverse_prefix.divisor ** unit_denominator_exponent
                 prefixed_symbol = unit.get_symbol(inverse_prefix=unit_inverse_prefix)
 
                 assert prefixed_symbol not in candidate
@@ -830,37 +838,44 @@ def format_value_hint(value, scale, unit):
 
     return formatted_value
 
+_exponent_tooltip_format_1_cache = None
+_exponent_tooltip_format_2_cache = None
+
 def format_value_with_tooltip(element, value, scale, unit):
+    global _exponent_tooltip_format_1_cache
+    global _exponent_tooltip_format_2_cache
+
     formatted_value = element.format_value(value)
     formatted_value_hint = format_value_hint(value, scale, unit)
     result = None
 
-    for exponent in [16, 32, 64]:
-        if value == -2 ** (exponent - 1):
-            result = '⟨abbr title=«{0}{1} (Int{2} Min)»⟩-2⟨sup⟩{3}⟨/sup⟩⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent, exponent - 1)
-            break
-        elif value == 2 ** (exponent - 1) - 1:
-            result = '⟨abbr title=«{0}{1} (Int{2} Max)»⟩2⟨sup⟩{3}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent, exponent - 1)
-            break
-        elif value == 2 ** exponent - 1:
-            result = '⟨abbr title=«{0}{1} (UInt{2} Max)»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
-            break
+    if isinstance(value, int):
+        if _exponent_tooltip_format_1_cache == None:
+            _exponent_tooltip_format_1_cache = {}
 
-    if result is None:
-        for exponent in range(9, 65):
-            if value == -2 ** exponent:
-                result = '⟨abbr title=«{0}{1}»⟩-2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
-                break
-            elif value == 2 ** exponent:
-                result = '⟨abbr title=«{0}{1}»⟩2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
-                break
-            if value == -2 ** exponent + 1:
-                result = '⟨abbr title=«{0}{1}»⟩-2⟨sup⟩{2}⟨/sup⟩ + 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
-                break
-            elif value == 2 ** exponent - 1:
-                result = '⟨abbr title=«{0}{1}»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩'.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent)
-                break
+            for exponent in [16, 32, 64]:
+                _exponent_tooltip_format_1_cache[-2 ** (exponent - 1)] = ('⟨abbr title=«{0}{1} (Int{2} Min)»⟩-2⟨sup⟩{3}⟨/sup⟩⟨/abbr⟩', exponent)
+                _exponent_tooltip_format_1_cache[2 ** (exponent - 1) - 1] = ('⟨abbr title=«{0}{1} (Int{2} Max)»⟩2⟨sup⟩{3}⟨/sup⟩ - 1⟨/abbr⟩', exponent)
+                _exponent_tooltip_format_1_cache[2 ** exponent - 1] = ('⟨abbr title=«{0}{1} (UInt{2} Max)»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩', exponent)
 
+        format_, exponent = _exponent_tooltip_format_1_cache.get(value, (None, None))
+
+        if format_ != None:
+            result = format_.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent, exponent - 1)
+        else:
+            if _exponent_tooltip_format_2_cache == None:
+                _exponent_tooltip_format_2_cache = {}
+
+                for exponent in range(9, 65):
+                    _exponent_tooltip_format_2_cache[-2 ** exponent] = ('⟨abbr title=«{0}{1}»⟩-2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩', exponent)
+                    _exponent_tooltip_format_2_cache[2 ** exponent] = ('⟨abbr title=«{0}{1}»⟩2⟨sup⟩{2}⟨/sup⟩⟨/abbr⟩', exponent)
+                    _exponent_tooltip_format_2_cache[-2 ** exponent + 1] = ('⟨abbr title=«{0}{1}»⟩-2⟨sup⟩{2}⟨/sup⟩ + 1⟨/abbr⟩', exponent)
+                    _exponent_tooltip_format_2_cache[2 ** exponent - 1] = ('⟨abbr title=«{0}{1}»⟩2⟨sup⟩{2}⟨/sup⟩ - 1⟨/abbr⟩', exponent)
+
+            format_, exponent = _exponent_tooltip_format_2_cache.get(value, (None, None))
+
+            if format_ != None:
+                result = format_.format(wrap_non_empty('', formatted_value_hint, ' | '), formatted_value, exponent, exponent - 1)
 
     if result == None:
         if len(formatted_value_hint) > 0:
@@ -876,8 +891,10 @@ def normalize_scale(scale, unit):
     inverse_prefix_override = None
 
     if unit.get_prefix() == None:
+        unit_allowed_prefixes = unit.get_allowed_prefixes()
+
         for unit_prefix in unit_prefixes:
-            if unit_prefix.symbol not in unit.get_allowed_prefixes():
+            if unit_prefix.symbol not in unit_allowed_prefixes:
                 continue
 
             divisor = unit_prefix.divisor ** unit.get_numerator_exponent()
@@ -888,8 +905,10 @@ def normalize_scale(scale, unit):
                 break
 
     if unit.get_inverse_prefix() == None:
+        unit_allowed_inverse_prefixes = unit.get_allowed_inverse_prefixes()
+
         for unit_inverse_prefix in unit_prefixes:
-            if unit_inverse_prefix.symbol not in unit.get_allowed_inverse_prefixes():
+            if unit_inverse_prefix.symbol not in unit_allowed_inverse_prefixes:
                 continue
 
             divisor = unit_inverse_prefix.divisor ** unit.get_denominator_exponent()
@@ -1437,6 +1456,7 @@ class Unit(object):
         check_name(name.format(prefix='', inverse_prefix=''))
 
         self._name = name
+        self._name_cache = {}
         self._title = title
         self._symbol = symbol
         self._usage = usage
@@ -1492,7 +1512,29 @@ class Unit(object):
         return text
 
     def get_name(self, prefix=None, inverse_prefix=None):
-        return self._inject_prefix({'en': self._name}, prefix, inverse_prefix, 'en', space_case=True)
+        if prefix == None:
+            prefix_key = None
+        else:
+            prefix_key = prefix.symbol
+
+        cache = self._name_cache.get(prefix_key)
+
+        if cache == None:
+            cache = {}
+            self._name_cache[prefix_key] = cache
+
+        if inverse_prefix == None:
+            inverse_prefix_key = None
+        else:
+            inverse_prefix_key = inverse_prefix.symbol
+
+        name = cache.get(inverse_prefix_key)
+
+        if name == None:
+            name = self._inject_prefix({'en': self._name}, prefix, inverse_prefix, 'en', space_case=True)
+            cache[inverse_prefix_key] = name
+
+        return name
 
     def get_base_title(self, language=None):
         return select_lang(self._title, language=language).format(prefix='', inverse_prefix='')
@@ -2025,8 +2067,11 @@ class Element(object):
                         unit = candidate
                         break
 
+                    candidate_allowed_prefixes = candidate.get_allowed_prefixes()
+                    candidate_allowed_inverse_prefixes = candidate.get_allowed_inverse_prefixes()
+
                     for unit_prefix in unit_prefixes:
-                        if unit_prefix.symbol not in candidate.get_allowed_prefixes():
+                        if unit_prefix.symbol not in candidate_allowed_prefixes:
                             continue
 
                         if unit_name == candidate.get_name(prefix=unit_prefix):
@@ -2034,7 +2079,7 @@ class Element(object):
                             break
 
                         for unit_inverse_prefix in unit_prefixes:
-                            if unit_inverse_prefix.symbol not in candidate.get_allowed_inverse_prefixes():
+                            if unit_inverse_prefix.symbol not in candidate_allowed_inverse_prefixes:
                                 continue
 
                             if unit_name == candidate.get_name(prefix=unit_prefix, inverse_prefix=unit_inverse_prefix):
@@ -2048,7 +2093,7 @@ class Element(object):
                         break
 
                     for unit_inverse_prefix in unit_prefixes:
-                        if unit_inverse_prefix.symbol not in candidate.get_allowed_inverse_prefixes():
+                        if unit_inverse_prefix.symbol not in candidate_allowed_inverse_prefixes:
                             continue
 
                         if unit_name == candidate.get_name(inverse_prefix=unit_inverse_prefix):
@@ -2712,6 +2757,7 @@ class Packet(object):
                 if index != None:
                     meta = ['{0}: {1}'.format(type_label, bindings_type_func(element, cardinality=1))]
 
+                type_ = element.get_type()
                 scale = element.get_scale(index=index)
                 unit = element.get_unit(index=index)
 
@@ -2754,7 +2800,7 @@ class Packet(object):
 
                     meta.append('{0}: {1}'.format(unit_label, sequence.format(value=formatted_scale, unit=formatted_unit)))
 
-                if element.get_type() not in ['bool', 'string']:
+                if type_ not in ['bool', 'string']:
                     if constants_hint_override != None:
                         constants_hint = select_lang(constants_hint_override)
                     else:
@@ -2777,7 +2823,7 @@ class Packet(object):
 
                             formatted_subrange = [None, None]
 
-                            if element.get_type().startswith('int') or element.get_type().startswith('uint'):
+                            if type_.startswith('int') or type_.startswith('uint'):
                                 for i, value in enumerate(subrange):
                                     formatted_subrange[i] = format_value_with_tooltip(element, value, scale, unit)
                             else:
@@ -2797,7 +2843,7 @@ class Packet(object):
                 default = element.get_default(index=index)
 
                 if default != None:
-                    if element.get_type().startswith('int') or element.get_type().startswith('uint'):
+                    if type_.startswith('int') or type_.startswith('uint'):
                         formatted_default = format_value_with_tooltip(element, default, scale, unit)
                     else:
                         formatted_default = element.format_value(default)
@@ -3099,6 +3145,7 @@ class Device(object):
         self.all_function_packets_without_doc_only = []
         self.callback_packets = []
         self.examples = []
+        self._doc_rst_links_cache = {}
 
         check_name(raw_data['name'], display_name=raw_data['display_name'])
 
@@ -3167,28 +3214,31 @@ class Device(object):
         callback_names = set()
 
         for packet in self.all_packets:
-            if packet.get_type() == 'function':
-                if packet.get_name().lower in function_names:
-                    raise GeneratorError('Function name is not unique: ' + packet.get_name().space)
+            packet_type = packet.get_type()
+            packet_name = packet.get_name()
+
+            if packet_type == 'function':
+                if packet_name.lower in function_names:
+                    raise GeneratorError('Function name is not unique: ' + packet_name.space)
                 else:
-                    function_names.add(packet.get_name().lower)
+                    function_names.add(packet_name.lower)
 
                 self.all_function_packets.append(packet)
 
                 if packet.get_function_id() >= 0:
                     self.all_function_packets_without_doc_only.append(packet)
-            elif packet.get_type() == 'callback':
-                if 'Callback' in packet.get_name().space:
-                    raise GeneratorError("Callback name cannot contain 'Callback': " + packet.get_name().space)
+            elif packet_type == 'callback':
+                if 'Callback' in packet_name.space:
+                    raise GeneratorError("Callback name cannot contain 'Callback': " + packet_name.space)
 
-                if packet.get_name().lower in callback_names:
-                    raise GeneratorError('Callback name is not unique: ' + packet.get_name().space)
+                if packet_name.lower in callback_names:
+                    raise GeneratorError('Callback name is not unique: ' + packet_name.space)
                 else:
-                    callback_names.add(packet.get_name().lower)
+                    callback_names.add(packet_name.lower)
 
                 self.callback_packets.append(packet)
             else:
-                raise GeneratorError('Invalid packet type ' + packet.get_type())
+                raise GeneratorError('Invalid packet type ' + packet_type)
 
         for raw_example in raw_data['examples']:
             self.examples.append(generator.get_example_class()(raw_example, self))
@@ -3401,17 +3451,25 @@ class Device(object):
 
     def specialize_doc_rst_links(self, text, specializer, prefix=None):
         for keyword, type_ in [('func', 'function'), ('cb', 'callback')]:
-            for packet in self.get_packets(type_):
-                names = [packet.get_name().space]
+            if type_ not in self._doc_rst_links_cache:
+                cache = []
 
-                if packet.has_high_level():
-                    names.append(packet.get_name(skip=-2).space)
+                for packet in self.get_packets(type_):
+                    names = [packet.get_name().space]
 
-                for name in names:
-                    generic_name = ':{0}:`{1}`'.format(keyword, name)
-                    special_name = specializer(packet, packet.has_high_level() and not name.endswith(' Low Level'))
+                    if packet.has_high_level():
+                        names.append(packet.get_name(skip=-2).space)
 
-                    text = text.replace(generic_name, special_name)
+                    for name in names:
+                        generic_name = ':{0}:`{1}`'.format(keyword, name)
+                        special_name = specializer(packet, packet.has_high_level() and not name.endswith(' Low Level'))
+
+                        cache.append((generic_name, special_name))
+
+                self._doc_rst_links_cache[type_] = cache
+
+            for generic_name, special_name in self._doc_rst_links_cache[type_]:
+                text = text.replace(generic_name, special_name)
 
             if prefix != None:
                 p = '(?<!:' + prefix + ')(:' + keyword + ':`[^`]*`)'
