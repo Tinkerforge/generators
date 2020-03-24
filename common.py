@@ -2011,7 +2011,7 @@ class Element(object):
             # name:           non-empty string following the general name rules, allowed for indexed extra config only
             # scale:          2-tuple of int values representing a fraction, or 'dynamic', or 'unknown'
             # unit:           non-empty string representing an optionally prefixed unit name, or 'dynamic', or 'unknown'
-            # range:          2-tuple of int values representing an inclusive min/max range, or a list of non-overlapping 2-tuples, or 'dynamic', or 'unknown'
+            # range:          2-tuple of int values representing an inclusive min/max range, or a list of non-overlapping 2-tuples, or 'dynamic', or 'constants', or 'unknown'
             # constant_group: non-empty string representing a constant group name
             # default:        default value
             #
