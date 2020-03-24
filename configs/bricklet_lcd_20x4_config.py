@@ -509,6 +509,7 @@ def button_channel(idx):
 
 button_channels = [button_channel(i) for i in range(0, 4)]
 button_channels[3]['predicate'] = """this.getIdentity().hardwareVersion[1] >= 2"""
+button_channels[3]['predicate_description'] = {'de': 'TODO', 'en': 'This channel will only be available if the Bricklet has a hardware version of at least 2 (e.g. if it has 4 buttons)'}
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType','org.eclipse.smarthome.core.library.types.OnOffType'],

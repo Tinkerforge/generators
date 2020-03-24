@@ -100,6 +100,7 @@ class Channel:
         self.setter_refreshs = kwargs.get('setter_refreshs', [])
         self.callbacks = kwargs.get('callbacks', [])
         self.predicate = kwargs.get('predicate', 'true')
+        self.predicate_description = kwargs.get('predicate_description', None)
         self.label = kwargs.get('label', None)
         self.description = kwargs.get('description', None)
         self.automatic_update = kwargs.get('automatic_update', True)
@@ -689,6 +690,49 @@ class OpenHABDevice(java_common.JavaDevice):
             pattern = number_placeholder + common.wrap_non_empty(' ', unit, '')
             if ct.pattern is None:
                 ct.pattern = pattern
+
+        def deduce_predicate_description(c):
+            # Try to extract referenced config param
+            splt = c.predicate.split(' ')
+            cfg_param = splt[0].split('.')[1]
+            try:
+                cfg_param = next(p for p in self.oh.params if p.name.headless == cfg_param)
+            except StopIteration:
+                return None
+
+            if len(splt) == 1:
+                return {'de': 'TODO', 'en': 'This channel will only be available if {} is enabled.'.format(cfg_param.label)}
+            if len(splt) != 3:
+                return None
+
+            cmp = { '==': lambda l, r: str(l) == str(r),
+                    '!=': lambda l, r: str(l) != str(r),
+                    '<':  lambda l, r: float(l) < float(r),
+                    '>':  lambda l, r: float(l) >  float(r),
+                    '<=': lambda l, r: float(l) <= float(r),
+                    '>=': lambda l, r: float(l) >= float(r)
+                }.get(splt[1], None)
+            if cmp is None:
+                return None
+
+            rhs = [x[0] for x in cfg_param.options if cmp(x[1], splt[2])]
+            if len(rhs) == 0:
+                return None
+            rhs = rhs[0] if len(rhs) == 1 else ('one of ' + ', '.join(rhs))
+            return {
+                'de': 'TODO',
+                'en': 'This channel will only be available if {} is {}.'.format(cfg_param.label, rhs)
+            }
+
+
+        for c in self.oh.channels:
+            if c.predicate == 'true' or c.predicate_description is not None:
+                continue
+
+            desc = deduce_predicate_description(c)
+            if desc is None:
+                raise common.GeneratorError('openhab: Channel {} has a predicate, no configured predicate description and deducing a description failed!'.format(c.id.space))
+            c.predicate_description = desc
 
 
     def sanity_check_config(self, oh):

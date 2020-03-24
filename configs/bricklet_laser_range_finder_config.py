@@ -808,9 +808,11 @@ com['examples'].append({
 
 distance_channel = oh_generic_old_style_channel('Distance', 'Distance')
 distance_channel['predicate'] = 'this.getSensorHardwareVersion() == 3 || cfg.mode == 0'
+distance_channel['predicate_description'] = {'de': 'TODO', 'en': 'This channel will only be available if the sensor has a hardware version of 3 or the mode is Distance'}
 
 velocity_channel = oh_generic_old_style_channel('Velocity', 'Velocity', cast_literal='(short)')
 velocity_channel['predicate'] = 'this.getSensorHardwareVersion() == 3 || cfg.mode != 0'
+velocity_channel['predicate_description'] = {'de': 'TODO', 'en': 'This channel will only be available if the sensor has a hardware version of 3 or the mode is not Distance'}
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
