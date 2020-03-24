@@ -33,6 +33,7 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.device.CoMCUFlashable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.Helper;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashHost;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashable;
 import org.eclipse.smarthome.config.core.ConfigDescription;
@@ -207,15 +208,6 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         return getThing().getChannel(channelID).getConfiguration();
     }
 
-    private int compareFWs(short[] left, short[] right) {
-        for (int i = 0; i < 3; ++i) {
-            int cmp = Short.compare(left[i], right[i]);
-            if (cmp != 0) {
-                return cmp;
-            }
-        }
-        return 0;
-    }
 
     protected void initializeDevice() {
         String id = thing.getUID().getId();
@@ -247,7 +239,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
                     TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION, "2.0.0");
             String[] splt = minFWString.split("\\.");
             short[] minFW = { Short.parseShort(splt[0]), Short.parseShort(splt[1]), Short.parseShort(splt[2]) };
-            if (compareFWs(fw, minFW) < 0) {
+            if (Helper.compareFWs(fw, minFW) < 0) {
                 updateStatus(
                         ThingStatus.OFFLINE,
                         ThingStatusDetail.NONE,

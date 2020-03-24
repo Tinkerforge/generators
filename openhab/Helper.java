@@ -624,4 +624,14 @@ public class Helper {
 
         return result;
     }
+
+    public static int compareFWs(short[] left, short[] right) {
+        for (int i = 0; i < 3; ++i) {
+            int cmp = Short.compare(left[i], right[i]);
+            if (cmp != 0) {
+                return cmp;
+            }
+        }
+        return 0;
+    }
 }
