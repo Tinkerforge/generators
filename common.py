@@ -1087,8 +1087,14 @@ def wrap_non_empty(prefix, middle, suffix):
     return prefix + middle + suffix
 
 def execute(args, **kwargs):
-    if subprocess.call(args, **kwargs) != 0:
-        raise GeneratorError("Command '{0}' failed".format(' '.join(args) if isinstance(args, list) else args))
+    error = 'Command failed: {0}'.format(' '.join(args) if isinstance(args, list) else args)
+
+    try:
+        if subprocess.call(args, **kwargs) != 0:
+            sys.exit(1)
+    except:
+        print(error)
+        sys.exit(1)
 
 def generate(root_dir, language, generator_class):
     # default config
