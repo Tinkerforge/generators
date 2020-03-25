@@ -42,6 +42,12 @@
         <configuration>
           <target>8</target>
           <encoding>UTF-8</encoding>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+          </compilerArgs>
+          <failOnWarning>true</failOnWarning>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
       <plugin>
