@@ -863,9 +863,10 @@ class OpenHABDevice(java_common.JavaDevice):
             if ct.is_trigger_channel and "system." in ct.id:
                 raise common.GeneratorError('openhab: Device {} Channel Type {} is marked as trigger channel, but uses a custom type (not system.trigger or similar). This is theoretically supported, but the device handler currently assumes (when sending initial refreshs), that all trigger channels are of system-wide type.'.format(self.get_long_display_name(), ct.id))
 
+        # QuantityType should only be used if the value has a unit
         for c in self.oh.channels:
             if c.java_unit == 'SmartHomeUnits.ONE' and any('QuantityType' in x.transform for x in c.getters + c.callbacks):
-                raise common.GeneratorError('openhab: Device {} Channel {} uses a QuantityType but with SmartHomeUnits.ONE (i.e. is dimensionless). Use a DecimalType instead!'.format(self.get_long_display_name(), c.id.space))
+                raise common.GeneratorError('openhab: Device {} Channel {} uses a QuantityType but with SmartHomeUnits.ONE (i.e. is dimensionless). Let the generator decide which type to insert by using the {number_type} placeholder or use a DecimalType in this case.'.format(self.get_long_display_name(), c.id.space))
 
         # system.trigger channels should not use specific CommonTriggerEvents
         for c in self.oh.channels:
