@@ -250,12 +250,12 @@ com['openhab'] = {
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Get Button State',
-                'elements': 'Button L',
+                'element': 'Button L',
                 'transform': 'value.buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{
                 'packet': 'State Changed',
-                'elements': 'Button L',
+                'element': 'Button L',
                 'transform': 'buttonL == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
         },
         {
@@ -265,12 +265,12 @@ com['openhab'] = {
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Get Button State',
-                'elements': 'Button R',
+                'element': 'Button R',
                 'transform': 'value.buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
 
             'callbacks': [{
                 'packet': 'State Changed',
-                'elements': 'Button R',
+                'element': 'Button R',
                 'transform': 'buttonR == BrickletDualButton.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
         }, {
             'id': 'Left LED',

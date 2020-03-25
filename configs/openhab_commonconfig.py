@@ -29,7 +29,6 @@ def oh_generic_channel(id_, type_, unit=None, divisor=1, label=None, description
 
         'java_unit': unit,
         'divisor': divisor,
-        'is_trigger_channel': False
     }
 
 def oh_analog_value_channel():
@@ -94,7 +93,6 @@ def oh_generic_old_style_channel(id_, type_, unit=None, divisor=1.0, cast_litera
 
         'java_unit': unit,
         'divisor': divisor,
-        'is_trigger_channel': False
     }
 
 def oh_generic_channel_param_groups():

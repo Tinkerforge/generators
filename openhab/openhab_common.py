@@ -71,6 +71,11 @@ openHABUnits = [
 def long_literal(x):
     return 'L' if isinstance(x, int) and (x < -2**31 or x > 2**31 - 1) else ''
 
+def check_for_unknown_keys(obj, dictionary, name):
+    unknown_keys = [k for k in dictionary.keys() if k not in obj.__dict__.keys()]
+    if len(unknown_keys) > 0:
+        raise common.GeneratorError("Unknown openHAB {} configuration keys {}.".format(name, unknown_keys))
+
 class OpenHAB:
     def __init__(self, **kwargs):
         self.channels = kwargs.get('channels', [])
@@ -87,6 +92,8 @@ class OpenHAB:
         self.required_firmware_version = kwargs.get('required_firmware_version', False)
         self.firmware_update_supported = kwargs.get('firmware_update_supported', False)
         self.implemented_interfaces = kwargs.get('implemented_interfaces', [])
+
+        check_for_unknown_keys(self, kwargs, 'top level')
 
 class Channel:
     def __init__(self, **kwargs):
@@ -105,6 +112,8 @@ class Channel:
         self.label = kwargs.get('label', None)
         self.description = kwargs.get('description', None)
         self.automatic_update = kwargs.get('automatic_update', True)
+
+        check_for_unknown_keys(self, kwargs, 'channel')
 
     def get_builder_call(self):
         template = """new ChannelDefinitionBuilder("{channel_id}", new ChannelTypeUID("{binding}", "{channel_type_id}")){with_calls}.build()"""
@@ -146,6 +155,8 @@ class ChannelType:
         self.is_trigger_channel = kwargs.get('is_trigger_channel', False)
         self.command_options = kwargs.get('command_options', None)
         self.tags = kwargs.get('tags', [])
+
+        check_for_unknown_keys(self, kwargs, 'channel type')
 
     def is_system_type(self):
         return self.id.space.startswith('system.')
@@ -204,6 +215,8 @@ class Setter:
         self.predicate = kwargs.get('predicate', 'true')
         self.command_type = kwargs.get('command_type', None)
 
+        check_for_unknown_keys(self, kwargs, 'setter')
+
 class Getter:
     def __init__(self, **kwargs):
         self.packet = kwargs.get('packet', None)
@@ -212,6 +225,8 @@ class Getter:
         self.predicate = kwargs.get('predicate', 'true')
         self.transform = kwargs.get('transform', None)
 
+        check_for_unknown_keys(self, kwargs, 'getter')
+
 class Callback:
     def __init__(self, **kwargs):
         self.packet = kwargs.get('packet', None)
@@ -219,10 +234,14 @@ class Callback:
         self.filter = kwargs.get('filter', 'true')
         self.transform = kwargs.get('transform', None)
 
+        check_for_unknown_keys(self, kwargs, 'callback')
+
 class SetterRefresh:
     def __init__(self, **kwargs):
         self.channel = kwargs['channel']
         self.delay = kwargs['delay']
+
+        check_for_unknown_keys(self, kwargs, 'setter refresh')
 
 class Param:
     def __init__(self, **kwargs):
@@ -245,6 +264,8 @@ class Param:
         self.element = kwargs.get('element', None)
         self.element_index = kwargs.get('element_index', None)
         self.virtual = kwargs.get('virtual', False)
+
+        check_for_unknown_keys(self, kwargs, 'param')
 
     def get_builder_call(self, channel_name=None):
         template = """ConfigDescriptionParameterBuilder.create("{name}", Type.{type_upper}){with_calls}.build()"""
@@ -305,10 +326,14 @@ class ParamGroup:
         self.label = kwargs.get('label', None)
         self.description = kwargs.get('description', None)
 
+        check_for_unknown_keys(self, kwargs, 'param group')
+
 class Action:
     def __init__(self, **kwargs):
         self.fn = kwargs['fn']
         self.refreshs = kwargs.get('refreshs', [])
+
+        check_for_unknown_keys(self, kwargs, 'action')
 
 
 class OpenHABDevice(java_common.JavaDevice):
@@ -349,7 +374,6 @@ class OpenHABDevice(java_common.JavaDevice):
 
             'java_unit': None,
             'divisor': 1,
-            'is_trigger_channel': False,
             'predicate': 'true',
 
             'label': None,
