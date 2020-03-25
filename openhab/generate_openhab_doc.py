@@ -354,7 +354,7 @@ TODO TODO TODO
             meta_table_entries = []
             item_type = c.type.item_type
             if item_type == 'Color':
-                item_type += ' - Only HSBType commands are accepted. Updating the brightness without changing the hue (e.g. by sending a IncreaseDecreaseType) may fail.'
+                item_type += ' - Only HSBType commands are accepted. Updating the brightness without changing the hue (e.g. by sending a PercentType) may fail.'
 
             meta_table_entries.append(('plain', 'UID', 'tinkerforge:{device_lower}:[UID]:{channel_camel}'.format(device_lower=self.get_thing_type_name(),
                             channel_camel=c.id.camel,)))
