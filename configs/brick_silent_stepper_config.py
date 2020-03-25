@@ -1697,7 +1697,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Position Reached',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         },  {
             'id': 'Unter Voltage',
             'type': 'system.trigger',
@@ -1706,7 +1706,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Under Voltage',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }
     ],
     'channel_types': [

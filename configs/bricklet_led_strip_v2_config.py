@@ -554,7 +554,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Frame Started',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
             'init_code': 'this.setFrameStartedCallbackConfiguration(true);',
             'dispose_code': 'this.setFrameStartedCallbackConfiguration(false);',
         },

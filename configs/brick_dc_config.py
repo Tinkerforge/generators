@@ -850,7 +850,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Velocity Reached',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }, {
             'id': 'Emergency Shutdown',
             'type': 'system.trigger',
@@ -859,7 +859,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Emergency Shutdown',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         },  {
             'id': 'Under Voltage',
             'type': 'system.trigger',
@@ -868,7 +868,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Under Voltage',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }, {
             'id': 'Current Velocity',
             'type': 'Current Velocity',

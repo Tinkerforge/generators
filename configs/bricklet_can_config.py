@@ -742,7 +742,7 @@ com['openhab'] = {
             'type': 'system.trigger',
             'callbacks': [{
                 'packet': 'Frame Readable',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }, {
             'id': 'Write Error Level',
             'type': 'Write Error Level',

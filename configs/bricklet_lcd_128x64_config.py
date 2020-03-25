@@ -1831,7 +1831,7 @@ com['openhab'] = {
 
                 'callbacks': [{
                     'packet': 'Touch Position',
-                    'transform': 'CommonTriggerEvents.PRESSED'}],
+                    'transform': '""'}],
 
                 'init_code': """this.setTouchPositionCallbackConfiguration(cfg.touchPositionUpdateInterval, true);""",
                 'dispose_code': """this.setTouchPositionCallbackConfiguration(0, true);""",
@@ -1843,7 +1843,7 @@ com['openhab'] = {
 
                 'callbacks': [{
                     'packet': 'Touch Gesture',
-                    'transform': 'CommonTriggerEvents.PRESSED'}],
+                    'transform': '""'}],
 
                 'init_code': """this.setTouchGestureCallbackConfiguration(cfg.touchGestureUpdateInterval, true);""",
                 'dispose_code': """this.setTouchGestureCallbackConfiguration(0, true);""",

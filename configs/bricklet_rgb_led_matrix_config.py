@@ -305,7 +305,7 @@ com['openhab'] = {
 
             'callbacks': [{
                 'packet': 'Frame Started',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }, {
             'id': 'LED Values',
             'type': 'LED Values',

@@ -505,7 +505,7 @@ com['openhab'] = {
             'type': 'system.trigger',
             'callbacks': [{
                 'packet': 'Frame Readable',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }, {
             'id': 'Overrun Error',
             'label': 'Overrun Error',
@@ -516,7 +516,7 @@ com['openhab'] = {
                 'packet': 'Error',
                 'element': 'Error',
                 'filter': '(error & 1 << 0) == 0',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }, {
             'id': 'Parity Error',
             'label': 'Parity Error',
@@ -527,7 +527,7 @@ com['openhab'] = {
                 'packet': 'Error',
                 'element': 'Error',
                 'filter': '(error & 1 << 1) == 0',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }, {
             'id': 'Framing Error',
             'label': 'Framing Error',
@@ -538,7 +538,7 @@ com['openhab'] = {
                 'packet': 'Error',
                 'element': 'Error',
                 'filter': '(error & 1 << 2) == 0',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }],
     'channel_types': [],
     'actions': ['Write', 'Read', 'Read Frame', 'Get Configuration', 'Set Break Condition']

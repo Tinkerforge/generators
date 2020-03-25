@@ -497,7 +497,7 @@ com['openhab'] = {
             'type': 'system.trigger',
             'callbacks': [{
                 'packet': 'Alarm',
-                'transform': 'CommonTriggerEvents.PRESSED'
+                'transform': '""'
             }],
         }
     ],

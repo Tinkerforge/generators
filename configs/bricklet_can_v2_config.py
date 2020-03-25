@@ -1235,7 +1235,7 @@ com['openhab'] = {
             'type': 'system.trigger',
             'callbacks': [{
                 'packet': 'Frame Readable',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }, {
             'id': 'Error Occurred',
             'label': 'Error Occurred',
@@ -1243,7 +1243,7 @@ com['openhab'] = {
             'type': 'system.trigger',
             'callbacks': [{
                 'packet': 'Error Occurred',
-                'transform': 'CommonTriggerEvents.PRESSED'}],
+                'transform': '""'}],
         }],
     'channel_types': [],
     'actions': ['Write Frame', 'Read Frame', 'Get Transceiver Configuration', 'Set Queue Configuration', 'Get Queue Configuration', 'Set Read Filter Configuration', 'Get Read Filter Configuration', 'Get Error Log']
