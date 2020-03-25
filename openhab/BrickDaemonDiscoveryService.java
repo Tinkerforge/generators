@@ -98,7 +98,7 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
                     long scanStart = new Date().getTime();
                     logger.debug("Enumerating devices for Brick Daemon {}.", this.handler.getThing().getUID());
                     handler.enumerate();
-                    scheduler.schedule(() -> removeOlderResults(scanStart), 2500, TimeUnit.MILLISECONDS);
+                    scheduler.schedule(() -> removeOlderResults(scanStart, handler.getThing().getUID()), 2500, TimeUnit.MILLISECONDS);
                 } catch (NotConnectedException e) {
                     logger.debug("Brick Daemon {} currently not connected.", this.handler.getThing().getUID());
                 }
@@ -129,7 +129,7 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
     @Override
     protected synchronized void stopScan() {
         super.stopScan();
-        removeOlderResults(getTimestampOfLastScan());
+        removeOlderResults(getTimestampOfLastScan(), handler.getThing().getUID());
     }
 
     @Override
