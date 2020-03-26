@@ -1014,8 +1014,10 @@ module Tinkerforge
     # internal
     def dispatch_meta(function_id, parameter, socket_id)
       if function_id == CALLBACK_CONNECTED
-        if @registered_callbacks.has_key? CALLBACK_CONNECTED
-          @registered_callbacks[CALLBACK_CONNECTED].call parameter
+        cb = @registered_callbacks[CALLBACK_CONNECTED]
+
+        if cb != nil
+          cb.call parameter
         end
       elsif function_id == CALLBACK_DISCONNECTED
         if parameter != DISCONNECT_REASON_REQUEST
@@ -1043,8 +1045,10 @@ module Tinkerforge
         # socket. the first receive will then fail directly
         sleep 0.1
 
-        if @registered_callbacks.has_key? CALLBACK_DISCONNECTED
-          @registered_callbacks[CALLBACK_DISCONNECTED].call parameter
+        cb = @registered_callbacks[CALLBACK_DISCONNECTED]
+
+        if cb != nil
+          cb.call parameter
         end
 
         if parameter != DISCONNECT_REASON_REQUEST and @auto_reconnect and @auto_reconnect_allowed
@@ -1081,13 +1085,22 @@ module Tinkerforge
       uid = Packer.get_uid_from_data packet
       function_id = Packer.get_function_id_from_data packet
 
-      if function_id == CALLBACK_ENUMERATE and \
-         @registered_callbacks.has_key? CALLBACK_ENUMERATE
-        payload = Packer.unpack packet[8..-1], 'Z8 Z8 k C3 C3 S C'
-        @registered_callbacks[CALLBACK_ENUMERATE].call(*payload)
-      elsif @devices.has_key? uid
-        device = @devices[uid]
+      if function_id == CALLBACK_ENUMERATE
+        cb = @registered_callbacks[CALLBACK_ENUMERATE]
 
+        if cb == nil
+          return
+        end
+
+        payload = Packer.unpack packet[8..-1], 'Z8 Z8 k C3 C3 S C'
+
+        cb.call(*payload)
+        return
+      end
+
+      device = @devices[uid]
+
+      if device != nil
         begin
           device.check_validity
         rescue TinkerforgeException
@@ -1140,7 +1153,9 @@ module Tinkerforge
               end
             end
 
-            if has_data and device.registered_callbacks.has_key?(-function_id)
+            cb = device.registered_callbacks[-function_id]
+
+            if has_data and cb != nil
               result = []
 
               hlcb[0].zip(payload).each do |role, value|
@@ -1151,14 +1166,17 @@ module Tinkerforge
                 end
               end
 
-              device.registered_callbacks[-function_id].call(*result)
+              cb.call(*result)
             end
           end
         end
 
-        if device.registered_callbacks.has_key? function_id
+        cb = device.registered_callbacks[function_id]
+
+        if cb != nil
           payload = Packer.unpack packet[8..-1], device.callback_formats[function_id]
-          device.registered_callbacks[function_id].call(*payload)
+
+          cb.call(*payload)
         end
       end
     end
@@ -1241,7 +1259,6 @@ module Tinkerforge
     def handle_response(packet)
       @disconnect_probe_flag = false
 
-      uid = Packer.get_uid_from_data packet
       function_id = Packer.get_function_id_from_data packet
       sequence_number = Packer.get_sequence_number_from_data packet
 
@@ -1249,9 +1266,13 @@ module Tinkerforge
         if @registered_callbacks.has_key? CALLBACK_ENUMERATE
           @callback.queue.push [QUEUE_KIND_PACKET, packet]
         end
-      elsif @devices.has_key? uid
-        device = @devices[uid]
+        return
+      end
 
+      uid = Packer.get_uid_from_data packet
+      device = @devices[uid]
+
+      if device != nil
         if sequence_number == 0
           if device.registered_callbacks.has_key? function_id or \
              device.high_level_callbacks.has_key?(-function_id)
