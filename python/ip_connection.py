@@ -1272,23 +1272,9 @@ class IPConnection(object):
 
     # internal
     def send_request(self, device, function_id, data, form, form_ret):
-        patched_from = []
-
-        for f in form.split(' '):
-            if '!' in f:
-                if len(f) > 1:
-                    patched_from.append('{0}B'.format(int(math.ceil(int(f.replace('!', '')) / 8.0))))
-                else:
-                    patched_from.append('?')
-            else:
-                patched_from.append(f)
-
-        patched_from = '<' + ' '.join(patched_from)
-        length = 8 + struct.calcsize(patched_from)
-        request, response_expected, sequence_number = \
-            self.create_packet_header(device, length, function_id)
-
-        request += pack_payload(data, form)
+        payload = pack_payload(data, form)
+        header, response_expected, sequence_number = self.create_packet_header(device, 8 + len(payload), function_id)
+        request = header + payload
 
         if response_expected:
             with device.request_lock:
