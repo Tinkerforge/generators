@@ -243,10 +243,13 @@ public abstract class DeviceBase {
 			switch (errorCode) {
 				case 0:
 					break;
+
 				case 1:
 					throw new InvalidParameterException("Got invalid parameter for function ID " + functionID);
+
 				case 2:
 					throw new NotSupportedException("Function ID " + functionID + " is not supported");
+
 				default:
 					throw new UnknownErrorCodeException("Function ID " + functionID + " returned an unknown error");
 			}

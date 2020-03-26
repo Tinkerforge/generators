@@ -224,19 +224,23 @@ class CallbackThread extends Thread {
 				ByteBuffer bb = ByteBuffer.wrap(cqo.packet, 8, length - 8);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 				String uid_str = "";
+
 				for (int i = 0; i < 8; i++) {
 					char c = (char)bb.get();
 					if (c != '\0') {
 						uid_str += c;
 					}
 				}
+
 				String connectedUid_str = "";
+
 				for (int i = 0; i < 8; i++) {
 					char c = (char)bb.get();
 					if (c != '\0') {
 						connectedUid_str += c;
 					}
 				}
+
 				char position = (char)bb.get();
 				short[] hardwareVersion = new short[3];
 				hardwareVersion[0] = IPConnectionBase.unsignedByte(bb.get());

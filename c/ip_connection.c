@@ -2202,8 +2202,7 @@ static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request) {
 
 	if (ret == E_OK) {
 		if (socket_send(ipcon_p->socket, request, request->header.length) < 0) {
-			ipcon_handle_disconnect_by_peer(ipcon_p, IPCON_DISCONNECT_REASON_ERROR,
-			                                0, true);
+			ipcon_handle_disconnect_by_peer(ipcon_p, IPCON_DISCONNECT_REASON_ERROR, 0, true);
 
 			ret = E_NOT_CONNECTED;
 		} else {
