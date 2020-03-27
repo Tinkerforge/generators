@@ -65,6 +65,6 @@ $ipcon->register_callback($ipcon->CALLBACK_ENUMERATE, 'cb_enumerate');
 # Connect to brickd
 $ipcon->connect(&HOST, &PORT);
 
-print "Press any key to exit...\n";
+print "Press key to exit\n";
 <STDIN>;
 $ipcon->disconnect();
