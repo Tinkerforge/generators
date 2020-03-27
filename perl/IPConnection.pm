@@ -1959,7 +1959,7 @@ sub _dispatch_packet
 	{
 		eval
 		{
-			$self->{devices}->{$uid}->_check_device_identifier();
+			$self->{devices}->{$uid}->_check_validity();
 		}
 		or do
 		{
