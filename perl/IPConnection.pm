@@ -1658,7 +1658,7 @@ sub _dispatch_response
 
 			if(defined($fid))
 			{
-				$self->_dispatch_callback($uid, $fid, \@return_arr);
+				$self->_dispatch_callback($uid, $fid, \@return_arr, 0);
 			}
 
 			return @return_arr;
@@ -1688,7 +1688,7 @@ sub _dispatch_response
 
 			if(defined($fid))
 			{
-				$self->_dispatch_callback($uid, $fid, \@return_arr);
+				$self->_dispatch_callback($uid, $fid, \@return_arr, 0);
 			}
 
 			return @return_arr;
@@ -1717,7 +1717,7 @@ sub _dispatch_response
 
 				if(defined($fid))
 				{
-					$self->_dispatch_callback($uid, $fid, \@return_arr);
+					$self->_dispatch_callback($uid, $fid, \@return_arr, 1);
 				}
 
 				return \@return_arr;
@@ -1728,7 +1728,7 @@ sub _dispatch_response
 
 				if(defined($fid))
 				{
-					$self->_dispatch_callback($uid, $fid, \@return_arr);
+					$self->_dispatch_callback($uid, $fid, \@return_arr, 1);
 				}
 
 				return \@return_arr;
@@ -1739,7 +1739,7 @@ sub _dispatch_response
 
 				if(defined($fid))
 				{
-					$self->_dispatch_callback($uid, $fid, $return_arr[0]);
+					$self->_dispatch_callback($uid, $fid, $return_arr[0], 1);
 				}
 
 				return $return_arr[0];
@@ -1750,7 +1750,7 @@ sub _dispatch_response
 
 				if(defined($fid))
 				{
-					$self->_dispatch_callback($uid, $fid, \@return_arr);
+					$self->_dispatch_callback($uid, $fid, \@return_arr, 1);
 				}
 
 				return \@return_arr;
@@ -1762,7 +1762,7 @@ sub _dispatch_response
 
 			if(defined($fid))
 			{
-				$self->_dispatch_callback($uid, $fid, $unpack_tmp);
+				$self->_dispatch_callback($uid, $fid, $unpack_tmp, 1);
 			}
 
 			return $unpack_tmp;
@@ -1772,7 +1772,7 @@ sub _dispatch_response
 	{
 		if(defined($fid))
 		{
-			$self->_dispatch_callback($uid, $fid, undef);
+			$self->_dispatch_callback($uid, $fid, undef, 1);
 		}
 
 		return 1;
@@ -1783,7 +1783,7 @@ sub _dispatch_response
 
 sub _dispatch_callback
 {
-	my ($self, $uid, $fid, $args, $is_array) = @_;
+	my ($self, $uid, $fid, $args, $args_is_single_value) = @_;
 
 	if(defined($uid))
 	{
@@ -1893,8 +1893,17 @@ sub _dispatch_callback
 
 				if(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}))
 				{
-					# "Escape" array reference
-					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\$args)");
+					if($args_is_single_value)
+					{
+						# pass args as array reference
+						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\$args)");
+					}
+					else
+					{
+						# pass args as array value to allow for proper struct-like unpacking in the callback
+						my @array = @{$args};
+						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@array)");
+					}
 				}
 			}
 			else
@@ -1913,8 +1922,17 @@ sub _dispatch_callback
 		{
 			if(ref($args) eq "ARRAY")
 			{
-				# "Escape" array reference
-				eval("$self->{registered_callbacks}->{$fid}(\$args)");
+				if ($args_is_single_value)
+				{
+					# pass args as array reference
+					eval("$self->{registered_callbacks}->{$fid}(\$args)");
+				}
+				else
+				{
+					# pass args as array value to allow for proper struct-like unpacking in the callback
+					my @array = @{$args};
+					eval("$self->{registered_callbacks}->{$fid}(\@array)");
+				}
 			}
 			else
 			{
