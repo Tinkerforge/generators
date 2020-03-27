@@ -108,6 +108,14 @@ data only when the read callback is disabled.
 See :func:`Enable Read Callback` and :cb:`Read` callback.
 """, "")]),
 
+('RS485', ':cb:`Read`', [("""
+
+Instead of polling with this function, you can also use
+callbacks. But note that this function will return available
+data only when the read callback is disabled.
+See :func:`Enable Read Callback` and :cb:`Read` callback.
+""", '')]),
+
 ('DMX', ':cb:`Frame`', [("""
 Instead of polling this function you can also use the :cb:`Frame` callback.
 You can enable it with :func:`Set Frame Callback Config`.
@@ -335,16 +343,12 @@ with :func:`Set Sensor Connected Callback Configuration`.""", '')]),
 Channel
 -------
 
-TODO TODO TODO
-
 """,
             'en': """
 .. _{0}_openhab_channels:
 
 Channels
 --------
-
-TODO TODO TODO
 
 """
         }
@@ -444,12 +448,14 @@ TODO TODO TODO
         if self.oh.params is not None:
             meta_table_entries += self.get_openhab_param_entries(self.oh.params)
 
-        desc = """Thing
+        desc = """.. _{0}_openhab_api:
+
+Thing
 -----
 
 """
 
-        return desc + common.make_rst_meta_table(common.merge_meta_sections(meta_table_entries))
+        return desc.format(self.get_name().under + '_' + self.get_category().under) + common.make_rst_meta_table(common.merge_meta_sections(meta_table_entries))
 
     def get_openhab_actions(self, type_):
         functions = []
@@ -546,7 +552,7 @@ class OpenHABDocGenerator(openhab_common.OpenHABGeneratorTrait, common.DocGenera
         return 'openHAB'
 
     def get_doc_rst_filename_part(self):
-        return 'openhab'
+        return 'openHAB'
 
     def get_doc_example_regex(self):
         return r'^example_.*\.txt$'
