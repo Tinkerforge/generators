@@ -1914,7 +1914,7 @@ sub _dispatch_callback
 			if(ref($args) eq "ARRAY")
 			{
 				# "Escape" array reference
-				eval("$self->{registered_callbacks}->{$fid}(\$array)");
+				eval("$self->{registered_callbacks}->{$fid}(\$args)");
 			}
 			else
 			{
