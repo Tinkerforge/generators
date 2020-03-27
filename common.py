@@ -1196,6 +1196,11 @@ def subgenerate(root_dir, language, generator_class, config_name):
                 com['packets'].extend(prepare_common_packets(com, copy.deepcopy(common_packets)))
                 com['common_included'] = True
 
+            if generator.is_openhab_doc_generator:
+                com['packets'] = [x for x in com['packets'] if 'openhab_doc' not in x or x['openhab_doc']]
+            else:
+                com['packets'] = [x for x in com['packets'] if 'openhab_doc' not in x or not x['openhab_doc']]
+
             device = generator.get_device_class()(com, generator)
             device_identifier = device.get_device_identifier()
 
@@ -4326,6 +4331,7 @@ class ExampleSpecialFunction(ExampleItem):
 
 class Generator:
     check_root_dir_name = True
+    is_openhab_doc_generator = False
 
     def __init__(self, root_dir, config_name, language):
         self.root_dir = root_dir

@@ -436,13 +436,10 @@ TODO TODO TODO
         channels = [unescape('<a href="#{device}::{label}">{label}</a>'.format(label=c.get_label(), device=self.get_java_class_name())) for c in self.oh.channels]
         meta_table_entries.append(('plain', 'Channels', channels))
 
-        if self.oh.actions != 'custom':
-            actions =  [unescape('<a href="#{0}::{2}{1}">{1}</a>'.format(self.get_java_class_name(),
-                                                                a.fn.get_name().camel,
-                                                                self.get_category().headless+self.get_name().camel)) for a in self.oh.actions]
-            meta_table_entries.append(('plain', 'Actions', actions if self.oh.actions != 'custom' else 'TODO: custom actions'))
-        else:
-            meta_table_entries.append(('plain', 'Actions', 'TODO: custom actions'))
+        actions = [unescape('<a href="#{0}::{2}{1}">{1}</a>'.format(self.get_java_class_name(),
+                                                                    a.fn.get_name(skip = -2 if a.fn.has_high_level() else 0).camel,
+                                                                    self.get_category().headless+self.get_name().camel)) for a in self.oh.actions]
+        meta_table_entries.append(('plain', 'Actions', actions))
 
         if self.oh.params is not None:
             meta_table_entries += self.get_openhab_param_entries(self.oh.params)
@@ -540,6 +537,8 @@ class JavaDocPacket(java_common.JavaPacket):
         return common.shift_right(text, shift_right)
 
 class OpenHABDocGenerator(openhab_common.OpenHABGeneratorTrait, common.DocGenerator):
+    is_openhab_doc_generator = True
+
     def get_bindings_name(self):
         return 'openhab'
 

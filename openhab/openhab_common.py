@@ -88,6 +88,7 @@ class OpenHAB:
         self.category = kwargs.get('category', None)
         self.custom = kwargs.get('custom', False)
         self.actions = kwargs.get('actions', [])
+        self.doc_actions = kwargs.get('doc_actions', [])
         self.is_bridge = kwargs.get('is_bridge', False)
         self.required_firmware_version = kwargs.get('required_firmware_version', False)
         self.firmware_update_supported = kwargs.get('firmware_update_supported', False)
@@ -952,6 +953,9 @@ class OpenHABDevice(java_common.JavaDevice):
             oh = self.apply_defaults(self.raw_data['openhab'])
         else:
             oh = self.apply_defaults({})
+
+        if self.generator.is_openhab_doc_generator and 'doc_actions' in oh:
+            oh['actions'] = oh['doc_actions']
 
         oh = self.apply_features(oh)
         oh = self.apply_defaults(oh)
