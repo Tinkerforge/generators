@@ -170,12 +170,12 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
 
         if os.path.isdir(binding_dir):
             print("Binding directory exists from last run, skipping clone of openhab2-addons repo.")
-            try:
-                with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons')):
-                    common.execute(['git', 'pull'])
-            except Exception as e:
-                print("Failed to pull: {}".format(e))
-                pass
+            with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons')):
+                common.execute(['git', 'stash'])
+            with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons')):
+                common.execute(['git', 'pull'])
+            with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons')):
+                common.execute(['git', 'stash', 'pop'])
         else:
             with common.ChangedDirectory(os.path.join(self.get_bindings_dir(), '..')):
                 common.execute(['git', 'clone', '-b', '2.5.x', 'https://github.com/openhab/openhab2-addons', '--depth=1'])
@@ -212,7 +212,7 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
             shutil.copy(os.path.join(self.get_bindings_dir(), '..', 'beta', f), zip_dir)
         shutil.copytree(os.path.join(self.get_bindings_dir(), '..', 'beta', 'doc'), os.path.join(zip_dir, 'docs'))
         shutil.copytree(os.path.join(binding_dir, 'src'), os.path.join(zip_dir, 'org.openhab.binding.tinkerforge', 'src'))
-        shutil.copy(os.path.join(binding_dir, 'target', 'org.openhab.binding.tinkerforge-2.5.3-SNAPSHOT.jar'), zip_dir)
+        shutil.copy(os.path.join(binding_dir, 'target', 'org.openhab.binding.tinkerforge-2.5.4-SNAPSHOT.jar'), zip_dir)
 
         self.create_zip_file(zip_dir)
 
