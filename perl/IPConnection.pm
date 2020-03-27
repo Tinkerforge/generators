@@ -1906,17 +1906,17 @@ sub _dispatch_callback
 					}
 				}
 			}
-			else
+			elsif(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}))
 			{
 				eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}($args)");
 			}
 		}
-		else
+		elsif(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}))
 		{
 			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}()");
 		}
 	}
-	else
+	elsif(defined($self->{registered_callbacks}->{$fid}))
 	{
 		if(defined($args))
 		{
