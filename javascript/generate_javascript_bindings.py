@@ -289,21 +289,7 @@ var IPConnection = require('./IPConnection');
         methods = ''
 
         # Normal and low-level
-        for packet in self.get_packets('function'):
-            doc = packet.get_javascript_formatted_doc()
-            name_headless = packet.get_name().headless
-            name_upper = packet.get_name().upper
-            param_list = packet.get_javascript_parameter_list()
-            pack_format = packet.get_javascript_format_list('in')
-            unpack_format = packet.get_javascript_format_list('out')
-            no_param_method_code = """	this.{0} = function(returnCallback, errorCallback) {{
-		/*
-		{1}
-		*/
-		this.ipcon.sendRequest(this, {2}.FUNCTION_{3}, [{4}], '{5}', '{6}', returnCallback, errorCallback, false);
-	}};
-"""
-            param_method_code = """	this.{0} = function({1}, returnCallback, errorCallback) {{
+        template = """	this.{0} = function({1}returnCallback, errorCallback) {{
 		/*
 		{2}
 		*/
@@ -311,27 +297,26 @@ var IPConnection = require('./IPConnection');
 	}};
 """
 
-            if len(param_list) == 0:
-                methods += no_param_method_code.format(name_headless,
-                                                       doc,
-                                                       self.get_javascript_class_name(),
-                                                       name_upper,
-                                                       param_list,
-                                                       pack_format,
-                                                       unpack_format)
-            else:
-                methods += param_method_code.format(name_headless,
-                                                    param_list,
-                                                    doc,
-                                                    self.get_javascript_class_name(),
-                                                    name_upper,
-                                                    param_list,
-                                                    pack_format,
-                                                    unpack_format)
+        for packet in self.get_packets('function'):
+            doc = packet.get_javascript_formatted_doc()
+            name_headless = packet.get_name().headless
+            name_upper = packet.get_name().upper
+            param_list = packet.get_javascript_parameter_list()
+            pack_format = packet.get_javascript_format_list('in')
+            unpack_format = packet.get_javascript_format_list('out')
+
+            methods += template.format(name_headless,
+                                       common.wrap_non_empty('', param_list, ', '),
+                                       doc,
+                                       self.get_javascript_class_name(),
+                                       name_upper,
+                                       param_list,
+                                       pack_format,
+                                       unpack_format)
 
         # High-level
-        no_param_method_code = """
-	this.{name} = function(returnCallback, errorCallback) {{
+        method_code = """
+	this.{name} = function({param_list_comma}returnCallback, errorCallback) {{
 		/*
 		{doc}
 		*/
@@ -357,40 +342,7 @@ var IPConnection = require('./IPConnection');
 		}}
 		else {{
 			functionToQueue = function (device) {{
-				device.{name}.call(device, returnCallback, errorCallback);
-			}}
-			streamStateObject['responseProperties']['callQueue'].push(functionToQueue);
-		}}
-	}};
-"""
-        param_method_code = """
-	this.{name} = function({param_list}, returnCallback, errorCallback) {{
-		/*
-		{doc}
-		*/
-		var responseHandler = null;
-		var functionToQueue = null;
-		var streamStateObject = this.streamStateObjects[{fid}];
-		if (streamStateObject['responseProperties']['responseHandler'] === null) {{
-			responseHandler = {response_handler_function}
-			streamStateObject['responseProperties']['responseHandler'] = responseHandler;
-		}}
-		if (!streamStateObject['responseProperties']['running']) {{
-			streamStateObject['responseProperties']['running'] = true;
-			streamStateObject['responseProperties']['returnCB'] = returnCallback;
-			streamStateObject['responseProperties']['errorCB'] = errorCallback;
-			this.ipcon.sendRequest(this,
-			                       {device_class}.FUNCTION_{function_name},
-			                       [{param_list}],
-			                       '{pack_format}',
-			                       '{unpack_format}',
-			                       returnCallback,
-			                       errorCallback,
-			                       true);
-		}}
-		else {{
-			functionToQueue = function (device) {{
-				device.{name}.call(device, {param_list}, returnCallback, errorCallback);
+				device.{name}.call(device, {param_list_comma}returnCallback, errorCallback);
 			}}
 			streamStateObject['responseProperties']['callQueue'].push(functionToQueue);
 		}}
@@ -472,8 +424,7 @@ var IPConnection = require('./IPConnection');
 					}}
 """
 
-        template_response_handler_stream_out_body_subcall = \
-            """device.ipcon.sendRequest(device, \
+        template_response_handler_stream_out_body_subcall = """device.ipcon.sendRequest(device, \
 {device_class}.FUNCTION_{function_name}, \
 [{param_list}], \
 '{pack_format}', \
@@ -1125,26 +1076,16 @@ true);"""
                                                                     get_length = get_length,
                                                                     body = body)
 
-                if len(param_list) == 0:
-                    methods += no_param_method_code.format(name = name_headless,
-                                                           doc = doc,
-                                                           fid = fid,
-                                                           device_class = self.get_javascript_class_name(),
-                                                           function_name = name_upper,
-                                                           response_handler_function = response_handler_function,
-                                                           param_list = param_list,
-                                                           pack_format = pack_format,
-                                                           unpack_format = unpack_format)
-                else:
-                    methods += param_method_code.format(name = name_headless,
-                                                        param_list = param_list,
-                                                        doc = doc,
-                                                        fid = fid,
-                                                        device_class = self.get_javascript_class_name(),
-                                                        function_name = name_upper,
-                                                        response_handler_function = response_handler_function,
-                                                        pack_format = pack_format,
-                                                        unpack_format = unpack_format)
+                methods += method_code.format(name = name_headless,
+                                              param_list = param_list,
+                                              param_list_comma = common.wrap_non_empty('', param_list, ', '),
+                                              doc = doc,
+                                              fid = fid,
+                                              device_class = self.get_javascript_class_name(),
+                                              function_name = name_upper,
+                                              response_handler_function = response_handler_function,
+                                              pack_format = pack_format,
+                                              unpack_format = unpack_format)
 
         return methods
 
