@@ -709,6 +709,7 @@ Request ID des Callbacks aufgerufen werden.
 })
 
 com['packets'].append({
+'openhab_doc': False,
 'type': 'function',
 'name': 'Modbus Master Read Coils',
 'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
@@ -756,6 +757,48 @@ zurückgegeben Request ID überein.
 })
 
 com['packets'].append({
+'openhab_doc': True,
+'type': 'function',
+'name': 'Modbus Master Read Coils Low Level',
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'in', {'range': (1, 2000)}),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
+             ('Coils Length', 'uint16', 1, 'out', {'range': (0, 2000)}),
+             ('Coils Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Coils Chunk Data', 'bool', 464, 'out', {})],
+'high_level': {'stream_out': {'name': 'Coils'}},
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+In Modbus master mode this function can be used to read coils from a slave. This
+function creates a Modbus function code 1 request.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Number of the first coil to read. For backwards compatibility reasons this parameter is called Starting Address. It is not an address, but instead a coil number in the range of 1 to 65536.
+* Count: Number of coils to read.
+
+If sending the request fails, the function will return an empty map.
+
+Upon success the function will return the exception code of the response and the data as received by the
+response.
+
+Any non-zero exception code indicates a problem. If the exception code
+is greater than 0 then the number represents a Modbus exception code. If it is
+less than 0 then it represents other errors. For example, -1 indicates that
+the request timed out or that the master did not receive any valid response of the
+request within the master request timeout period as set by
+:func:`Set Modbus Configuration`.
+""",
+'de':
+"""
+TODO TODO TODO
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Holding Registers Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in', {}),
@@ -791,6 +834,7 @@ Request ID des Callbacks aufgerufen werden.
 })
 
 com['packets'].append({
+'openhab_doc': False,
 'type': 'function',
 'name': 'Modbus Master Read Holding Registers',
 'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
@@ -839,6 +883,48 @@ zurückgegeben Request ID überein.
 })
 
 com['packets'].append({
+'openhab_doc': True,
+'type': 'function',
+'name': 'Modbus Master Read Holding Registers Low Level',
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'in', {'range': (1, 125)}),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
+             ('Holding Registers Length', 'uint16', 1, 'out', {'range': (0, 125)}),
+             ('Holding Registers Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Holding Registers Chunk Data', 'uint16', 29, 'out', {})],
+'high_level': {'stream_out': {'name': 'Holding Registers'}},
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+In Modbus master mode this function can be used to read holding registers from a slave.
+This function creates a Modbus function code 3 request.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Number of the first holding register to read. For backwards compatibility reasons this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
+* Count: Number of holding registers to read.
+
+If sending the request fails, the function will return an empty map.
+
+Upon success the function will return the exception code of the response and the data as received
+by the response.
+
+Any non-zero exception code indicates a problem. If the exception
+code is greater than 0 then the number represents a Modbus exception code. If
+it is less than 0 then it represents other errors. For example, -1 indicates that
+the request timed out or that the master did not receive any valid response of the
+request within the master request timeout period as set by
+:func:`Set Modbus Configuration`.
+""",
+'de':
+"""
+TODO TODO TODO
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Write Single Coil Request',
 'elements': [('Request ID', 'uint8', 1, 'in', {})],
@@ -868,6 +954,7 @@ Request ID des Callbacks aufgerufen werden.
 })
 
 com['packets'].append({
+'openhab_doc': False,
 'type': 'function',
 'name': 'Modbus Master Write Single Coil',
 'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
@@ -914,6 +1001,43 @@ Im Fehlerfall ist die Request ID 0.
 })
 
 com['packets'].append({
+'openhab_doc': True,
+'type': 'function',
+'name': 'Modbus Master Write Single Coil',
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Coil Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Coil Value', 'bool', 1, 'in', {}),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+In Modbus master mode this function can be used to write a single coil of a slave.
+This function creates a Modbus function code 5 request.
+
+* Slave Address: Address of the target Modbus slave.
+* Coil Address: Number of the coil to be written. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a coil number in the range of 1 to 65536.
+* Coil Value: Value to be written.
+
+If sending the request fails, the function will return an empty map.
+
+Upon success the function will return the exception code of the response.
+
+Any non-zero exception code indicates a problem.
+If the exception code is greater than 0 then the number represents a Modbus
+exception code. If it is less than 0 then it represents other errors. For
+example, -1 indicates that the request timed out or that the master did not receive
+any valid response of the request within the master request timeout period as set
+by :func:`Set Modbus Configuration`.
+""",
+'de':
+"""
+TODO TODO TODO
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Write Single Register Request',
 'elements': [('Request ID', 'uint8', 1, 'in', {})],
@@ -944,6 +1068,7 @@ Request ID des Callbacks aufgerufen werden.
 })
 
 com['packets'].append({
+'openhab_doc': False,
 'type': 'function',
 'name': 'Modbus Master Write Single Register',
 'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
@@ -969,6 +1094,55 @@ When successful this function will also invoke the :cb:`Modbus Master Write Sing
 callback. In this callback the Request ID provided by the callback argument must be matched
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
+""",
+'de':
+"""
+Im Modbus-Master Modus kann diese Funktion genutzt werden un ein einzelnes Register eines
+Modbus-Slave zu schreiben (Modbus Funktionscode 6).
+
+* Slave Address: Addresse des anzusprechenden Modbus-Slave.
+* Register Address: Nummer des zu schreibenden Holding Registers. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Holding-Register-Nummer zwischen 1 und 65536. Die Präfixziffer 4 (für Holding Register) ist implizit und muss ausgelassen werden.
+* Register Value: Zu schreibender Wert
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Single Register Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwort auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+zurückgegeben Request ID überein.
+
+Im Fehlerfall ist die Request ID 0.
+"""
+}]
+})
+
+com['packets'].append({
+'openhab_doc': True,
+'type': 'function',
+'name': 'Modbus Master Write Single Register',
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Register Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Register Value', 'uint16', 1, 'in', {}),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+In Modbus master mode this function can be used to write a single holding register of a
+slave. This function creates a Modbus function code 6 request.
+
+* Slave Address: Address of the target Modbus slave.
+* Register Address: Number of the holding register to be written. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
+* Register Value: Value to be written.
+
+If sending the request fails, the function will return an empty map.
+
+Upon success the function will return the exception code of the response.
+
+Any non-zero exception code
+indicates a problem. If the exception code is greater than 0 then the number
+represents a Modbus exception code. If it is less than 0 then it represents
+other errors. For example, -1 indicates that the request timed out or that the
+master did not receive any valid response of the request within the master request
+timeout period as set by :func:`Set Modbus Configuration`.
 """,
 'de':
 """
@@ -1019,6 +1193,7 @@ Request ID des Callbacks aufgerufen werden.
 })
 
 com['packets'].append({
+'openhab_doc': False,
 'type': 'function',
 'name': 'Modbus Master Write Multiple Coils Low Level',
 'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
@@ -1046,6 +1221,56 @@ When successful this function will also invoke the :cb:`Modbus Master Write Mult
 callback. In this callback the Request ID provided by the callback argument must be matched
 with the Request ID returned from this function to verify that the callback is indeed for a
 particular request.
+""",
+'de':
+"""
+Im Modbus-Master Modus kann diese Funktion genutzt werden un eine mehrere Coils eines
+Modbus-Slave zu schreiben (Modbus Funktionscode 15).
+
+* Slave Address: Addresse des anzusprechenden Modbus-Slave.
+* Starting Address: Nummer der ersten zu schreibenden Coil. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
+
+Falls kein Fehler auftritt, wird auch der :cb:`Modbus Master Write Multiple Coils Response` Callback
+aufgerufen. In diesem Callback wird einer Request ID übergeben. Falls der Callback
+eine Antwort auf diese Anfrage ist, stimmt die Request ID mit der in dieser Funktion
+zurückgegeben Request ID überein.
+
+Im Fehlerfall ist die Request ID 0.
+"""
+}]
+})
+
+com['packets'].append({
+'openhab_doc': True,
+'type': 'function',
+'name': 'Modbus Master Write Multiple Coils Low Level',
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Coils Length', 'uint16', 1, 'in', {'range': (1, 1968)}),
+             ('Coils Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Coils Chunk Data', 'bool', 440, 'in', {}),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
+'high_level': {'stream_in': {'name': 'Coils'}},
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+In Modbus master mode this function can be used to write multiple coils of a slave.
+This function creates a Modbus function code 15 request.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Number of the first coil to write. For backwards compatibility reasons, this parameter is called Starting Address.It is not an address, but instead a coil number in the range of 1 to 65536.
+
+If sending the request fails, the function will return an empty map.
+
+Upon success the function will return the exception code of the response.
+
+Any non-zero exception code
+indicates a problem. If the exception code is greater than 0 then the number
+represents a Modbus exception code. If it is less than 0 then it represents
+other errors. For example, -1 indicates that the request timedout or that the
+master did not receive any valid response of the request within the master request
+timeout period as set by :func:`Set Modbus Configuration`.
 """,
 'de':
 """
@@ -1095,6 +1320,7 @@ Request ID des Callbacks aufgerufen werden.
 })
 
 com['packets'].append({
+'openhab_doc': False,
 'type': 'function',
 'name': 'Modbus Master Write Multiple Registers Low Level',
 'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
@@ -1143,6 +1369,45 @@ Im Fehlerfall ist die Request ID 0.
 })
 
 com['packets'].append({
+'openhab_doc': True,
+'type': 'function',
+'name': 'Modbus Master Write Multiple Registers Low Level',
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Registers Length', 'uint16', 1, 'in', {'range': (1, 123)}),
+             ('Registers Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Registers Chunk Data', 'uint16', 27, 'in', {}),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'})],
+'high_level': {'stream_in': {'name': 'Registers'}},
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+In Modbus master mode this function can be used to write multiple registers of a slave.
+This function creates a Modbus function code 16 request.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Number of the first holding register to write. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a holding register number in the range of 1 to 65536. The prefix digit 4 (for holding register) is implicit and must be omitted.
+
+If sending the request fails, the function will return an empty map.
+
+Upon success the function will return the exception code of the response.
+
+Any non-zero
+exception code indicates a problem. If the exception code is greater than 0 then
+the number represents a Modbus exception code. If it is less than 0 then it
+represents other errors. For example, -1 indicates that the request timedout or
+that the master did not receive any valid response of the request within the master
+request timeout period as set by :func:`Set Modbus Configuration`.
+""",
+'de':
+"""
+TODO TODO TODO
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Discrete Inputs Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in', {}),
@@ -1178,6 +1443,7 @@ Request ID des Callbacks aufgerufen werden.
 })
 
 com['packets'].append({
+'openhab_doc': False,
 'type': 'function',
 'name': 'Modbus Master Read Discrete Inputs',
 'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
@@ -1224,6 +1490,48 @@ Im Falle eines Fehlers wird eine 0 als Request ID zurückgegeben.
 })
 
 com['packets'].append({
+'openhab_doc': True,
+'type': 'function',
+'name': 'Modbus Master Read Discrete Inputs Low Level',
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'in', {'range': (1, 2000)}),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
+             ('Discrete Inputs Length', 'uint16', 1, 'out', {'range': (1, 2000)}),
+             ('Discrete Inputs Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Discrete Inputs Chunk Data', 'bool', 464, 'out', {})],
+'high_level': {'stream_out': {'name': 'Discrete Inputs'}},
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+In Modbus master mode this function can be used to read discrete inputs from a slave.
+This function creates a Modbus function code 2 request.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Number of the first discrete input to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead a discrete input number in the range of 1 to 65536. The prefix digit 1 (for discrete input) is implicit and must be omitted.
+* Count: Number of discrete inputs to read.
+
+If sending the request fails, the function will return an empty map.
+
+Upon success the function will return the exception code of the response and the data as received
+by the response.
+
+Any non-zero exception code indicates a problem. If the exception
+code is greater than 0 then the number represents a Modbus exception code. If
+it is less than 0 then it represents other errors. For example, -1 indicates that
+the request timedout or that the master did not receive any valid response of the
+request within the master request timeout period as set by
+:func:`Set Modbus Configuration`.
+""",
+'de':
+"""
+TODO TODO TODO
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'function',
 'name': 'Modbus Slave Answer Read Input Registers Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in', {}),
@@ -1259,6 +1567,7 @@ Request ID des Callbacks aufgerufen werden.
 })
 
 com['packets'].append({
+'openhab_doc': False,
 'type': 'function',
 'name': 'Modbus Master Read Input Registers',
 'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
@@ -1300,6 +1609,48 @@ eine Antwortet auf diese Anfrage ist, stimmt die Request ID mit der in dieser Fu
 zurückgegeben Request ID überein.
 
 Im Falle eines Fehlers wird eine 0 als Request ID zurückgegeben.
+"""
+}]
+})
+
+com['packets'].append({
+'openhab_doc': True,
+'type': 'function',
+'name': 'Modbus Master Read Input Registers Low Level',
+'elements': [('Slave Address', 'uint8', 1, 'in', {'range': (0, 247)}),
+             ('Starting Address', 'uint32', 1, 'in', {'range': (1, 65536)}),
+             ('Count', 'uint16', 1, 'in', {'range': (1, 125)}),
+             ('Exception Code', 'int8', 1, 'out', {'constant_group': 'Exception Code'}),
+             ('Input Registers Length', 'uint16', 1, 'out', {'range': (1, 125)}),
+             ('Input Registers Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Input Registers Chunk Data', 'uint16', 29, 'out', {})],
+'high_level': {'stream_out': {'name': 'Input Registers'}},
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+In Modbus master mode this function can be used to read input registers from a slave.
+This function creates a Modbus function code 4 request.
+
+* Slave Address: Address of the target Modbus slave.
+* Starting Address: Number of the first input register to read. For backwards compatibility reasons, this parameter is called Starting Address. It is not an address, but instead an input register number in the range of 1 to 65536. The prefix digit 3 (for input register) is implicit and must be omitted.
+* Count: Number of input registers to read.
+
+If sending the request fails, the function will return an empty map.
+
+Upon success the function will return the exception code of the response and the data as received
+by the response.
+
+Any non-zero exception code indicates a problem. If the exception
+code is greater than 0 then the number represents a Modbus exception code. If
+it is less than 0 then it represents other errors. For example, -1 indicates that
+the request timedout or that the master did not receive any valid response of the
+request within the master request timeout period as set by
+:func:`Set Modbus Configuration`.
+""",
+'de':
+"""
+TODO TODO TODO
 """
 }]
 })
@@ -2264,6 +2615,8 @@ com['openhab'] = {
     ],
     #'actions': ['Write', 'Read', 'Get RS485 Configuration', 'Get Mode', 'Get Communication LED Config', 'Get Error LED Config', 'Get Buffer Config', 'Get Buffer Status', 'Get Error Count',
     #            'Get Modbus Configuration', 'Get Modbus Common Error Count', 'Modbus Master Read Coils', 'Modbus Master Read Holding Registers', 'Modbus Master Write Single Coil', 'Modbus Master Write Single Register', 'Modbus Master Write Multiple Coils', 'Modbus Master Write Multiple Registers', 'Modbus Master Read Discrete Inputs', 'Modbus Master Read Input Registers']
-    'actions': 'custom'
+    'actions': 'custom',
+    'doc_actions': ['Write', 'Read', 'Get RS485 Configuration', 'Get Mode', 'Get Communication LED Config', 'Get Error LED Config', 'Get Buffer Config', 'Get Buffer Status', 'Get Error Count',
+                    'Get Modbus Configuration', 'Get Modbus Common Error Count', 'Modbus Master Read Coils', 'Modbus Master Read Holding Registers', 'Modbus Master Write Single Coil', 'Modbus Master Write Single Register', 'Modbus Master Write Multiple Coils', 'Modbus Master Write Multiple Registers', 'Modbus Master Read Discrete Inputs', 'Modbus Master Read Input Registers']
 }
 
