@@ -201,6 +201,7 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
         shutil.copytree(os.path.join(self.generation_dir, 'src'), os.path.join(binding_dir, 'src'))
 
         with common.ChangedDirectory(binding_dir):
+            common.execute(['mvn', 'spotless:apply'])
             common.execute(['mvn', 'clean', 'install', '-DskipChecks', '-DskipTests'])
 
         # Beta stuff
@@ -210,7 +211,7 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
         for f in ['changelog.txt', 'readme_de.txt', 'readme_en.txt']:
             shutil.copy(os.path.join(self.get_bindings_dir(), '..', 'beta', f), zip_dir)
         shutil.copytree(os.path.join(self.get_bindings_dir(), '..', 'beta', 'doc'), os.path.join(zip_dir, 'docs'))
-        shutil.copytree(self.generation_dir, os.path.join(zip_dir, 'org.openhab.binding.tinkerforge'))
+        shutil.copytree(os.path.join(binding_dir, 'src'), os.path.join(zip_dir, 'org.openhab.binding.tinkerforge', 'src'))
         shutil.copy(os.path.join(binding_dir, 'target', 'org.openhab.binding.tinkerforge-2.5.3-SNAPSHOT.jar'), zip_dir)
 
         self.create_zip_file(zip_dir)

@@ -15,6 +15,14 @@
   <name>openHAB Add-ons :: Bundles :: Tinkerforge Binding</name>
   <build>
     <plugins>
+    <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless.version}</version>
+        <configuration>
+          <removeUnusedImports />
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
