@@ -49,13 +49,14 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "message") char[] message) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
@@ -79,13 +80,14 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "length") int length) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
@@ -109,18 +111,18 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
-        BrickletRS485.RS485Configuration value = dev
-                .getRS485Configuration();
+        BrickletRS485.RS485Configuration value = dev.getRS485Configuration();
 
         result.put("baudrate", value.baudrate);
         result.put("parity", value.parity);
@@ -144,13 +146,14 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
@@ -173,13 +176,14 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
@@ -203,13 +207,14 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
@@ -233,13 +238,14 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
@@ -264,13 +270,14 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
@@ -295,13 +302,14 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
@@ -326,18 +334,18 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
-        BrickletRS485.ModbusConfiguration value = dev
-                .getModbusConfiguration();
+        BrickletRS485.ModbusConfiguration value = dev.getModbusConfiguration();
 
         result.put("slaveAddress", value.slaveAddress);
         result.put("masterRequestTimeout", value.masterRequestTimeout);
@@ -358,18 +366,18 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
-        BrickletRS485.ModbusCommonErrorCount value = dev
-                .getModbusCommonErrorCount();
+        BrickletRS485.ModbusCommonErrorCount value = dev.getModbusCommonErrorCount();
 
         result.put("timeoutErrorCount", value.timeoutErrorCount);
         result.put("checksumErrorCount", value.checksumErrorCount);
@@ -391,43 +399,46 @@ public class BrickletRS485Actions implements ThingActions {
     }
 
     @RuleAction(label = "Modbus Master Read Coils")
-    public @ActionOutput(name = "exceptionCode", type = "int") @ActionOutput(name = "coils", type = "boolean[]") @Nullable Map<String, Object> brickletRS485ModbusMasterReadCoils(
+    public @ActionOutput(name = "exceptionCode", type = "int") @ActionOutput(name = "coils", type = "boolean[]") Map<String, Object> brickletRS485ModbusMasterReadCoils(
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "startingAddress") long startingAddress, @ActionInput(name = "count") int count)
             throws TinkerforgeException {
 
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
         int modbusTimeout = ((BigDecimal) h.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
+        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterReadCoilsResponseListener listener = (int reqID, int exceptionCode, boolean[] coils) -> {
-            @Nullable Integer requestID = null;
+            Map<String, Object> _result = new HashMap<>();
+            @Nullable
+            Integer requestID = null;
             try {
                 requestID = reqIDdeque.pollFirst(modbusTimeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(null);
+                resultDeque.push(_result);
                 return;
             }
             if (requestID != reqID) {
                 reqIDdeque.push(requestID);
                 return;
             }
-            Map<String, Object> _result = new HashMap<>();
+
             _result.put("exceptionCode", exceptionCode);
             _result.put("coils", coils);
             resultDeque.push(_result);
@@ -447,7 +458,7 @@ public class BrickletRS485Actions implements ThingActions {
         return result;
     }
 
-    public static @Nullable Map<String, Object> brickletRS485ModbusMasterReadCoils(@Nullable ThingActions actions,
+    public static Map<String, Object> brickletRS485ModbusMasterReadCoils(@Nullable ThingActions actions,
             int slaveAddress, long startingAddress, int count) throws TinkerforgeException {
         if (actions instanceof BrickletRS485Actions) {
             return ((BrickletRS485Actions) actions).brickletRS485ModbusMasterReadCoils(slaveAddress, startingAddress,
@@ -458,44 +469,47 @@ public class BrickletRS485Actions implements ThingActions {
     }
 
     @RuleAction(label = "Modbus Master Read Holding Registers")
-    public @ActionOutput(name = "exceptionCode", type = "int") @ActionOutput(name = "coils", type = "boolean[]") @Nullable Map<String, Object> brickletRS485ModbusMasterReadHoldingRegisters(
+    public @ActionOutput(name = "exceptionCode", type = "int") @ActionOutput(name = "coils", type = "boolean[]") Map<String, Object> brickletRS485ModbusMasterReadHoldingRegisters(
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "startingAddress") long startingAddress, @ActionInput(name = "count") int count)
             throws TinkerforgeException {
 
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
 
         int modbusTimeout = ((BigDecimal) h.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
+        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterReadHoldingRegistersResponseListener listener = (int reqID, int exceptionCode,
                 int[] holdingRegisters) -> {
-            @Nullable Integer requestID = null;
+            Map<String, Object> _result = new HashMap<>();
+            @Nullable
+            Integer requestID = null;
             try {
                 requestID = reqIDdeque.pollFirst(modbusTimeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(null);
+                resultDeque.push(_result);
                 return;
             }
             if (requestID != reqID) {
                 reqIDdeque.push(requestID);
                 return;
             }
-            Map<String, Object> _result = new HashMap<>();
+
             _result.put("exceptionCode", exceptionCode);
             _result.put("holdingRegisters", holdingRegisters);
             resultDeque.push(_result);
@@ -515,8 +529,9 @@ public class BrickletRS485Actions implements ThingActions {
         return result;
     }
 
-    public static @Nullable Map<String, Object> brickletRS485ModbusMasterReadHoldingRegisters(@Nullable ThingActions actions,
-            int slaveAddress, long startingAddress, int count) throws TinkerforgeException {
+    public static Map<String, Object> brickletRS485ModbusMasterReadHoldingRegisters(
+            @Nullable ThingActions actions, int slaveAddress, long startingAddress, int count)
+            throws TinkerforgeException {
         if (actions instanceof BrickletRS485Actions) {
             return ((BrickletRS485Actions) actions).brickletRS485ModbusMasterReadHoldingRegisters(slaveAddress,
                     startingAddress, count);
@@ -526,40 +541,43 @@ public class BrickletRS485Actions implements ThingActions {
     }
 
     @RuleAction(label = "Modbus Master Write Single Coil")
-    public @ActionOutput(name = "exceptionCode", type = "int") @Nullable Map<String, Object> brickletRS485ModbusMasterWriteSingleCoil(
+    public @ActionOutput(name = "exceptionCode", type = "int") Map<String, Object> brickletRS485ModbusMasterWriteSingleCoil(
             @ActionInput(name = "slaveAddress") int slaveAddress, @ActionInput(name = "coilAddress") long coilAddress,
             @ActionInput(name = "coilValue") boolean coilValue) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         int modbusTimeout = ((BigDecimal) h.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
+        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteSingleCoilResponseListener listener = (int reqID, int exceptionCode) -> {
-            @Nullable Integer requestID = null;
+            Map<String, Object> _result = new HashMap<>();
+            @Nullable
+            Integer requestID = null;
             try {
                 requestID = reqIDdeque.pollFirst(modbusTimeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(null);
+                resultDeque.push(_result);
                 return;
             }
             if (requestID != reqID) {
                 reqIDdeque.push(requestID);
                 return;
             }
-            Map<String, Object> _result = new HashMap<>();
+
             _result.put("exceptionCode", exceptionCode);
             resultDeque.push(_result);
         };
@@ -578,7 +596,7 @@ public class BrickletRS485Actions implements ThingActions {
         return result;
     }
 
-    public static @Nullable Map<String, Object> brickletRS485ModbusMasterWriteSingleCoil(@Nullable ThingActions actions,
+    public static Map<String, Object> brickletRS485ModbusMasterWriteSingleCoil(@Nullable ThingActions actions,
             int slaveAddress, long coilAddress, boolean coilValue) throws TinkerforgeException {
         if (actions instanceof BrickletRS485Actions) {
             return ((BrickletRS485Actions) actions).brickletRS485ModbusMasterWriteSingleCoil(slaveAddress, coilAddress,
@@ -589,41 +607,44 @@ public class BrickletRS485Actions implements ThingActions {
     }
 
     @RuleAction(label = "Modbus Master Write Single Register")
-    public @ActionOutput(name = "exceptionCode", type = "int") @Nullable Map<String, Object> brickletRS485ModbusMasterWriteSingleRegister(
+    public @ActionOutput(name = "exceptionCode", type = "int") Map<String, Object> brickletRS485ModbusMasterWriteSingleRegister(
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "registerAddress") long registerAddress,
             @ActionInput(name = "registerValue") int registerValue) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         int modbusTimeout = ((BigDecimal) h.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
+        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteSingleRegisterResponseListener listener = (int reqID, int exceptionCode) -> {
-            @Nullable Integer requestID = null;
+            Map<String, Object> _result = new HashMap<>();
+            @Nullable
+            Integer requestID = null;
             try {
                 requestID = reqIDdeque.pollFirst(modbusTimeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(null);
+                resultDeque.push(_result);
                 return;
             }
             if (requestID != reqID) {
                 reqIDdeque.push(requestID);
                 return;
             }
-            Map<String, Object> _result = new HashMap<>();
+
             _result.put("exceptionCode", exceptionCode);
             resultDeque.push(_result);
         };
@@ -642,8 +663,9 @@ public class BrickletRS485Actions implements ThingActions {
         return result;
     }
 
-    public static @Nullable Map<String, Object> brickletRS485ModbusMasterWriteSingleRegister(@Nullable ThingActions actions,
-            int slaveAddress, long registerAddress, int registerValue) throws TinkerforgeException {
+    public static Map<String, Object> brickletRS485ModbusMasterWriteSingleRegister(
+            @Nullable ThingActions actions, int slaveAddress, long registerAddress, int registerValue)
+            throws TinkerforgeException {
         if (actions instanceof BrickletRS485Actions) {
             return ((BrickletRS485Actions) actions).brickletRS485ModbusMasterWriteSingleRegister(slaveAddress,
                     registerAddress, registerValue);
@@ -653,42 +675,45 @@ public class BrickletRS485Actions implements ThingActions {
     }
 
     @RuleAction(label = "Modbus Master Write Multiple Coils")
-    public @ActionOutput(name = "exceptionCode", type = "int") @Nullable Map<String, Object> brickletRS485ModbusMasterWriteMultipleCoils(
+    public @ActionOutput(name = "exceptionCode", type = "int") Map<String, Object> brickletRS485ModbusMasterWriteMultipleCoils(
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "startingAddress") long startingAddress, @ActionInput(name = "coils") boolean[] coils)
             throws TinkerforgeException {
 
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         int modbusTimeout = ((BigDecimal) h.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
+        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteMultipleCoilsResponseListener listener = (int reqID, int exceptionCode) -> {
-            @Nullable Integer requestID = null;
+            Map<String, Object> _result = new HashMap<>();
+            @Nullable
+            Integer requestID = null;
             try {
                 requestID = reqIDdeque.pollFirst(modbusTimeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(null);
+                resultDeque.push(_result);
                 return;
             }
             if (requestID != reqID) {
                 reqIDdeque.push(requestID);
                 return;
             }
-            Map<String, Object> _result = new HashMap<>();
+
             _result.put("exceptionCode", exceptionCode);
             resultDeque.push(_result);
         };
@@ -707,8 +732,9 @@ public class BrickletRS485Actions implements ThingActions {
         return result;
     }
 
-    public static @Nullable Map<String, Object> brickletRS485ModbusMasterWriteMultipleCoils(@Nullable ThingActions actions,
-            int slaveAddress, long startingAddress, boolean[] coils) throws TinkerforgeException {
+    public static Map<String, Object> brickletRS485ModbusMasterWriteMultipleCoils(
+            @Nullable ThingActions actions, int slaveAddress, long startingAddress, boolean[] coils)
+            throws TinkerforgeException {
         if (actions instanceof BrickletRS485Actions) {
             return ((BrickletRS485Actions) actions).brickletRS485ModbusMasterWriteMultipleCoils(slaveAddress,
                     startingAddress, coils);
@@ -718,41 +744,44 @@ public class BrickletRS485Actions implements ThingActions {
     }
 
     @RuleAction(label = "Modbus Master Write Multiple Registers")
-    public @ActionOutput(name = "exceptionCode", type = "int") @Nullable Map<String, Object> brickletRS485ModbusMasterWriteMultipleRegisters(
+    public @ActionOutput(name = "exceptionCode", type = "int") Map<String, Object> brickletRS485ModbusMasterWriteMultipleRegisters(
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "startingAddress") long startingAddress,
             @ActionInput(name = "registers") int[] registers) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         int modbusTimeout = ((BigDecimal) h.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
+        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteMultipleRegistersResponseListener listener = (int reqID, int exceptionCode) -> {
-            @Nullable Integer requestID = null;
+            Map<String, Object> _result = new HashMap<>();
+            @Nullable
+            Integer requestID = null;
             try {
                 requestID = reqIDdeque.pollFirst(modbusTimeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(null);
+                resultDeque.push(_result);
                 return;
             }
             if (requestID != reqID) {
                 reqIDdeque.push(requestID);
                 return;
             }
-            Map<String, Object> _result = new HashMap<>();
+
             _result.put("exceptionCode", exceptionCode);
             resultDeque.push(_result);
         };
@@ -771,8 +800,9 @@ public class BrickletRS485Actions implements ThingActions {
         return result;
     }
 
-    public static @Nullable Map<String, Object> brickletRS485ModbusMasterWriteMultipleRegisters(@Nullable ThingActions actions,
-            int slaveAddress, long startingAddress, int[] registers) throws TinkerforgeException {
+    public static Map<String, Object> brickletRS485ModbusMasterWriteMultipleRegisters(
+            @Nullable ThingActions actions, int slaveAddress, long startingAddress, int[] registers)
+            throws TinkerforgeException {
         if (actions instanceof BrickletRS485Actions) {
             return ((BrickletRS485Actions) actions).brickletRS485ModbusMasterWriteMultipleRegisters(slaveAddress,
                     startingAddress, registers);
@@ -782,42 +812,45 @@ public class BrickletRS485Actions implements ThingActions {
     }
 
     @RuleAction(label = "Modbus Master Read Discrete Inputs")
-    public @ActionOutput(name = "exceptionCode", type = "int") @ActionOutput(name = "discreteInputs", type = "boolean[]") @Nullable Map<String, Object> brickletRS485ModbusMasterReadDiscreteInputs(
+    public @ActionOutput(name = "exceptionCode", type = "int") @ActionOutput(name = "discreteInputs", type = "boolean[]") Map<String, Object> brickletRS485ModbusMasterReadDiscreteInputs(
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "startingAddress") long startingAddress, @ActionInput(name = "count") int count)
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         int modbusTimeout = ((BigDecimal) h.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
+        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterReadDiscreteInputsResponseListener listener = (int reqID, int exceptionCode,
                 boolean[] discreteInputs) -> {
-            @Nullable Integer requestID = null;
+            Map<String, Object> _result = new HashMap<>();
+            @Nullable
+            Integer requestID = null;
             try {
                 requestID = reqIDdeque.pollFirst(modbusTimeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(null);
+                resultDeque.push(_result);
                 return;
             }
             if (requestID != reqID) {
                 reqIDdeque.push(requestID);
                 return;
             }
-            Map<String, Object> _result = new HashMap<>();
+
             _result.put("exceptionCode", exceptionCode);
             _result.put("discreteInputs", discreteInputs);
             resultDeque.push(_result);
@@ -837,8 +870,9 @@ public class BrickletRS485Actions implements ThingActions {
         return result;
     }
 
-    public static @Nullable Map<String, Object> brickletRS485ModbusMasterReadDiscreteInputs(@Nullable ThingActions actions,
-            int slaveAddress, long startingAddress, int count) throws TinkerforgeException {
+    public static Map<String, Object> brickletRS485ModbusMasterReadDiscreteInputs(
+            @Nullable ThingActions actions, int slaveAddress, long startingAddress, int count)
+            throws TinkerforgeException {
         if (actions instanceof BrickletRS485Actions) {
             return ((BrickletRS485Actions) actions).brickletRS485ModbusMasterReadDiscreteInputs(slaveAddress,
                     startingAddress, count);
@@ -848,41 +882,45 @@ public class BrickletRS485Actions implements ThingActions {
     }
 
     @RuleAction(label = "Modbus Master Read Input Registers")
-    public @ActionOutput(name = "exceptionCode", type = "int") @ActionOutput(name = "discreteInputs", type = "int[]") @Nullable Map<String, Object> brickletRS485ModbusMasterReadInputRegisters(
+    public @ActionOutput(name = "exceptionCode", type = "int") @ActionOutput(name = "discreteInputs", type = "int[]") Map<String, Object> brickletRS485ModbusMasterReadInputRegisters(
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "startingAddress") long startingAddress, @ActionInput(name = "count") int count)
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         int modbusTimeout = ((BigDecimal) h.getConfig().get("masterRequestTimeout")).intValue();
 
         LinkedBlockingDeque<Integer> reqIDdeque = new LinkedBlockingDeque<>(1);
-        LinkedBlockingDeque<@Nullable Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
+        LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
-        ModbusMasterReadInputRegistersResponseListener listener = (int reqID, int exceptionCode, int[] inputRegisters) -> {
-            @Nullable Integer requestID = null;
+        ModbusMasterReadInputRegistersResponseListener listener = (int reqID, int exceptionCode,
+                int[] inputRegisters) -> {
+            Map<String, Object> _result = new HashMap<>();
+            @Nullable
+            Integer requestID = null;
             try {
                 requestID = reqIDdeque.pollFirst(modbusTimeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(null);
+                resultDeque.push(_result);
                 return;
             }
             if (requestID != reqID) {
                 reqIDdeque.push(requestID);
                 return;
             }
-            Map<String, Object> _result = new HashMap<>();
+
             _result.put("exceptionCode", exceptionCode);
             _result.put("inputRegisters", inputRegisters);
             resultDeque.push(_result);
@@ -902,8 +940,9 @@ public class BrickletRS485Actions implements ThingActions {
         return result;
     }
 
-    public static @Nullable Map<String, Object> brickletRS485ModbusMasterReadInputRegisters(@Nullable ThingActions actions,
-            int slaveAddress, long startingAddress, int count) throws TinkerforgeException {
+    public static Map<String, Object> brickletRS485ModbusMasterReadInputRegisters(
+            @Nullable ThingActions actions, int slaveAddress, long startingAddress, int count)
+            throws TinkerforgeException {
         if (actions instanceof BrickletRS485Actions) {
             return ((BrickletRS485Actions) actions).brickletRS485ModbusMasterReadInputRegisters(slaveAddress,
                     startingAddress, count);
@@ -917,13 +956,14 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         long value = dev.readUID();
@@ -944,13 +984,14 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "temperature", type = "int") Map<String, Object> brickletRS485GetChipTemperature()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         int value = dev.getChipTemperature();
@@ -972,13 +1013,14 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "config", type = "int") Map<String, Object> brickletRS485GetStatusLEDConfig()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         int value = dev.getStatusLEDConfig();
@@ -1000,13 +1042,14 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "mode", type = "int") Map<String, Object> brickletRS485GetBootloaderMode()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         int value = dev.getBootloaderMode();
@@ -1028,13 +1071,14 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "errorCountAckChecksum", type = "long") @ActionOutput(name = "errorCountMessageChecksum", type = "long") @ActionOutput(name = "errorCountFrame", type = "long") @ActionOutput(name = "errorCountOverflow", type = "long") Map<String, Object> brickletRS485GetSPITFPErrorCount()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         BrickletRS485.SPITFPErrorCount value = dev.getSPITFPErrorCount();
@@ -1059,13 +1103,14 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "uid", type = "String") @ActionOutput(name = "connectedUid", type = "String") @ActionOutput(name = "position", type = "char") @ActionOutput(name = "hardwareVersion", type = "int[]") @ActionOutput(name = "firmwareVersion", type = "int[]") @ActionOutput(name = "deviceIdentifier", type = "int") Map<String, Object> brickletRS485GetIdentity()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if(handler == null) {
+        if (handler == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
-        @Nullable BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper)h.getDevice());
-        if(dev == null) {
+        @Nullable
+        BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
+        if (dev == null) {
             return result;
         }
         BrickletRS485.Identity value = dev.getIdentity();
