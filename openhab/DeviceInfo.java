@@ -1,7 +1,9 @@
 package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 
+@NonNullByDefault
 public class DeviceInfo {
     public final String deviceDisplayName;
     public final String deviceThingTypeName;

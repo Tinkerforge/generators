@@ -46,7 +46,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
         String url;
     }
 
-    private final ConcurrentMap<String, FirmwareInfo> latestVersions = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, @Nullable FirmwareInfo> latestVersions = new ConcurrentHashMap<>();
 
     protected final ScheduledExecutorService scheduler = ThreadPoolManager.getScheduledPool("tinkerforge-firmware");
 
@@ -57,7 +57,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
 
     @Override
     public @Nullable Firmware getFirmware(Thing thing, String version, @Nullable Locale locale) {
-        Optional<Firmware> opt = getFirmwares(thing, locale).stream().filter(fw -> fw.getVersion().equals(version)).findFirst();
+        Optional<Firmware> opt = Utils.assertNonNull(getFirmwares(thing, locale)).stream().filter(fw -> fw.getVersion().equals(version)).findFirst();
         //.getOrDefault(null) conflicts with the null annotations.
         if(opt.isPresent())
             return opt.get();
@@ -73,7 +73,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     public @Nullable Set<Firmware> getFirmwares(Thing thing, @Nullable Locale locale) {
         Set<Firmware> result = new HashSet<>();
         String id = thing.getThingTypeUID().getId();
-        FirmwareInfo info = latestVersions.get(id);
+        @Nullable FirmwareInfo info = latestVersions.get(id);
         if (info != null)
             result.add(buildFirmware(thing.getThingTypeUID(), info.version, info.url));
         return result;
@@ -116,18 +116,19 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     }
 
     private void getLatestVersions() {
-        if (this.httpClient == null)
+        @Nullable HttpClient httpClient = this.httpClient;
+        if (httpClient == null)
             return;
 
-        this.httpClient.newRequest("https://download.tinkerforge.com/latest_versions.txt").send(
+        httpClient.newRequest("https://download.tinkerforge.com/latest_versions.txt").send(
                 new BufferingResponseListener() {
                     @Override
                     public void onComplete(@Nullable Result result) {
-                        if (result.isSucceeded()) {
+                        if (Utils.assertNonNull(result).isSucceeded()) {
                             parseLatestVersions(getContentAsString());
                             scheduler.schedule(() -> getLatestVersions(), 1, TimeUnit.HOURS);
                         } else {
-                            logger.info("Failed to download latest versions: {}", result.getFailure().toString());
+                            logger.info("Failed to download latest versions: {}", Utils.assertNonNull(result).getFailure().toString());
                             scheduler.schedule(() -> getLatestVersions(), 5, TimeUnit.MINUTES);
                         }
                     }
@@ -138,7 +139,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
     protected void setHttpClientFactory(HttpClientFactory httpClientFactory) {
         this.httpClient = httpClientFactory.createHttpClient("tinkerforge");
         try {
-            this.httpClient.start();
+            Utils.assertNonNull(this.httpClient).start();
         } catch (Exception e) {
             logger.info("Failed to start HTTP Client: {}", e.getMessage());
             return;
@@ -148,7 +149,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
 
     protected void unsetHttpClientFactory(HttpClientFactory httpClientFactory) {
         try {
-            this.httpClient.stop();
+            Utils.assertNonNull(this.httpClient).stop();
         } catch (Exception e) {
             logger.info("Failed to stop HTTP Client: {}", e.getMessage());
         }

@@ -136,7 +136,7 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     public void handleTimeout(DeviceHandler handler) {
         logger.trace("Timeout for device {}", handler.getThing().getUID());
         if (heartbeatFuture != null)
-            heartbeatFuture.cancel(false);
+            Utils.assertNonNull(heartbeatFuture).cancel(false);
         // Replace canceled heartbeat with one, that will run immediately
         heartbeatFuture = scheduler.scheduleWithFixedDelay(this::heartbeat, 0, HEARTBEAT_INTERVAL_SECS,
                 TimeUnit.SECONDS);
@@ -146,16 +146,18 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         if (discoveryService != null) {
             return;
         }
-        discoveryService = new BrickDaemonDiscoveryService(this);
+        BrickDaemonDiscoveryService discoveryService = new BrickDaemonDiscoveryService(this);
+        this.discoveryService = discoveryService;
         discoveryService.activate();
-        registerFn.accept(Utils.assertNonNull(discoveryService));
+        registerFn.accept(discoveryService);
     }
 
     private synchronized void stopDiscoveryService() {
+        BrickDaemonDiscoveryService discoveryService = this.discoveryService;
         if (discoveryService != null) {
             discoveryService.deactivate();
-            deregisterFn.accept(Utils.assertNonNull(discoveryService));
-            discoveryService = null;
+            deregisterFn.accept(discoveryService);
+            this.discoveryService = null;
         }
     }
 
@@ -287,11 +289,10 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     public void dispose() {
         try {
             if (connectFuture != null)
-                connectFuture.cancel(false);
+                Utils.assertNonNull(connectFuture).cancel(false);
             if (heartbeatFuture != null)
-                heartbeatFuture.cancel(false);
-            if (disconnectedListener != null)
-                ipcon.removeDisconnectedListener(disconnectedListener);
+                Utils.assertNonNull(heartbeatFuture).cancel(false);
+            ipcon.removeDisconnectedListener(disconnectedListener);
             this.stopDiscoveryService();
             ipcon.disconnect();
         } catch (NotConnectedException e) {

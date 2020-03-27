@@ -541,7 +541,9 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
+import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.ThingActions;
 import org.eclipse.smarthome.core.thing.binding.ThingActionsScope;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
@@ -575,7 +577,16 @@ public class {device_camel}Actions implements ThingActions {{
         input_action_template = """    @RuleAction(label = "{label}")
     public void {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
-        (({device_camel}Wrapper)this.handler.getDevice()).{packet_headless}({packet_params});
+        if(handler == null) {{
+            return;
+        }}
+        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        {thing_init}
+        @Nullable {device_camel}Wrapper dev = ((@Nullable {device_camel}Wrapper)h.getDevice());
+        if(dev == null) {{
+            return;
+        }}
+        dev.{packet_headless}({packet_params});
         {refreshs}
     }}
 
@@ -592,7 +603,17 @@ public class {device_camel}Actions implements ThingActions {{
            Map<String, Object> {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
         Map<String, Object> result = new HashMap<>();
-        {result_type} value = (({device_camel}Wrapper)this.handler.getDevice()).{packet_headless}({packet_params});
+        if(handler == null) {{
+            return result;
+        }}
+        DeviceHandler h = (@NonNull DeviceHandler)handler;
+        {thing_init}
+        @Nullable {device_camel}Wrapper dev = ((@Nullable {device_camel}Wrapper)h.getDevice());
+        if(dev == null) {{
+            return result;
+        }}
+
+        {result_type} value = dev.{packet_headless}({packet_params});
         {refreshs}
         {transforms}
         return result;
@@ -612,7 +633,7 @@ public class {device_camel}Actions implements ThingActions {{
 
         transform_template = """result.put("{id}", {transform});"""
 
-        refresh_template = """if(handler.getThing().getChannel(new ChannelUID(handler.getThing().getUID(), "{channel_name}")) != null){{\n\tthis.handler.handleCommand(new ChannelUID(handler.getThing().getUID(), "{channel_name}"), RefreshType.REFRESH);\n}}"""
+        refresh_template = """if(t.getChannel(new ChannelUID(t.getUID(), "{channel_name}")) != null){{\n\th.handleCommand(new ChannelUID(t.getUID(), "{channel_name}"), RefreshType.REFRESH);\n}}"""
 
         actions = []
         for action in self.oh.actions:
@@ -641,7 +662,8 @@ public class {device_camel}Actions implements ThingActions {{
                                                     packet_params=', '.join(input_names),
                                                     refreshs='\n'.join(refreshs),
                                                     typed_inputs=common.wrap_non_empty(', ', ', '.join(typed_inputs), ''),
-                                                    inputs=', '.join(input_names)))
+                                                    inputs=', '.join(input_names),
+                                                    thing_init='Thing t = h.getThing();' if len(refreshs) > 0 else ''))
             else:
 
                 output_annotations = [output_template.format(id=elem.get_name().headless,
@@ -667,7 +689,8 @@ public class {device_camel}Actions implements ThingActions {{
                                                     output_annotations='\n           '.join(output_annotations),
                                                     result_type=result_type,
                                                     refreshs='\n'.join(refreshs),
-                                                    transforms='\n        '.join(transforms)
+                                                    transforms='\n        '.join(transforms),
+                                                    thing_init='Thing t = h.getThing();' if len(refreshs) > 0 else ''
                                                     ))
 
         return template.format(device_camel=self.get_category().camel + self.get_name().camel,

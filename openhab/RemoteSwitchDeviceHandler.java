@@ -16,13 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeChannelTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
+import org.eclipse.smarthome.binding.tinkerforge.internal.Utils;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
+import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
@@ -34,7 +37,7 @@ import org.eclipse.smarthome.core.thing.ThingStatusInfo;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
 import org.eclipse.smarthome.core.thing.type.ChannelDefinition;
-import org.eclipse.smarthome.core.thing.type.ChannelType;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 import org.eclipse.smarthome.core.thing.type.ThingType;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
@@ -56,26 +59,37 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
     private final Logger logger = LoggerFactory.getLogger(RemoteSwitchDeviceHandler.class);
 
     private @Nullable DeviceWrapper device;
-    private Function<BrickletRemoteSwitchHandler, DeviceWrapper> deviceSupplier;
+    private Function<@NonNull BrickletRemoteSwitchHandler,@NonNull DeviceWrapper> deviceSupplier;
+    private Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier;
+    private Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier;
 
-    public RemoteSwitchDeviceHandler(Thing thing, Function<BrickletRemoteSwitchHandler, DeviceWrapper> deviceSupplier) {
+    public RemoteSwitchDeviceHandler(Thing thing, Function<BrickletRemoteSwitchHandler, DeviceWrapper> deviceSupplier,
+            Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier,
+            Supplier<ConfigDescriptionRegistry> configDescriptionRegistrySupplier) {
         super(thing);
         this.deviceSupplier = deviceSupplier;
+        this.channelTypeRegistrySupplier = channelTypeRegistrySupplier;
+        this.configDescriptionRegistrySupplier = configDescriptionRegistrySupplier;
     }
 
     @Override
     public void initialize() {
         Bridge bridge = getBridge();
         if (bridge == null) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Bridge not found.");
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED, "Bridge not found.");
             return;
         }
+
         BrickletRemoteSwitchHandler handler = ((BrickletRemoteSwitchHandler) bridge.getHandler());
+        if (handler == null) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED, "Bridge handler not found.");
+            return;
+        }
 
         device = deviceSupplier.apply(handler);
         configureChannels();
 
-        if (this.getBridge().getStatus() == ThingStatus.ONLINE) {
+        if (bridge.getStatus() == ThingStatus.ONLINE) {
             initializeDevice();
         } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
@@ -89,12 +103,16 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
             return;
         }
         BrickletRemoteSwitchHandler handler = ((BrickletRemoteSwitchHandler) bridge.getHandler());
+        if (handler == null) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_UNINITIALIZED, "Bridge handler not found.");
+            return;
+        }
 
         device = deviceSupplier.apply(handler);
 
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
 
-        this.getThing().getChannels().stream().filter(c -> !c.getChannelTypeUID().toString().startsWith("system"))
+        this.getThing().getChannels().stream().filter(c -> !Utils.assertNonNull(c.getChannelTypeUID()).toString().startsWith("system"))
                 .forEach(c -> handleCommand(c.getUID(), RefreshType.REFRESH));
     }
 
@@ -119,14 +137,32 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
         updateStatus(ThingStatus.ONLINE);
     }
 
+    private void reportTimeout() {
+        @Nullable Bridge bridge = getBridge();
+        if (bridge == null) {
+            return;
+        }
+
+        @Nullable BrickletRemoteSwitchHandler handler = (BrickletRemoteSwitchHandler) (bridge.getHandler());
+        if (handler == null) {
+            return;
+        }
+
+        handler.handleTimeout();
+    }
+
     private void refreshValue(String channelId, Configuration channelConfig) {
         try {
-            device.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
+            @Nullable DeviceWrapper dev = device;
+            if (dev == null) {
+                return;
+            }
+            dev.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
             updateStatus(ThingStatus.ONLINE);
         } catch (TinkerforgeException e) {
             if (e instanceof TimeoutException) {
                 logger.debug("Failed to refresh value for {}: {}", channelId, e.getMessage());
-                ((BrickletRemoteSwitchHandler) getBridge().getHandler()).handleTimeout();
+                reportTimeout();
             } else {
                 logger.warn("Failed to refresh value for {}: {}", channelId, e.getMessage());
             }
@@ -136,30 +172,43 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        if (this.getBridge() == null) {
+        @Nullable Channel channel = getThing().getChannel(channelUID);
+        if (channel == null) {
+            logger.info("Received command {} for unknown channel {}.", command.toFullString(),
+                        channelUID.toString());
+            return;
+        }
+
+        @Nullable Bridge bridge = getBridge();
+        if (bridge == null) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Bridge not found.");
             return;
         }
-        if (this.getBridge().getStatus() == ThingStatus.OFFLINE) {
+
+        if (bridge.getStatus() == ThingStatus.OFFLINE) {
             // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE);
             return;
         }
 
         try {
             if (command instanceof RefreshType) {
-                refreshValue(channelUID.getId(), getThing().getChannel(channelUID).getConfiguration());
+                refreshValue(channelUID.getId(), channel.getConfiguration());
             } else {
-                List<SetterRefresh> refreshs = device.handleCommand(getConfig(), getThing().getChannel(channelUID)
+                @Nullable DeviceWrapper dev = device;
+                if (dev == null) {
+                    return;
+                }
+                List<SetterRefresh> refreshs = dev.handleCommand(getConfig(), channel
                         .getConfiguration(), channelUID.getId(), command);
                 refreshs.forEach(r -> scheduler.schedule(
-                        () -> refreshValue(r.channel, getThing().getChannel(r.channel).getConfiguration()), r.delay,
+                        () -> refreshValue(r.channel, Utils.assertNonNull(getThing().getChannel(r.channel)).getConfiguration()), r.delay,
                         TimeUnit.MILLISECONDS));
             }
         } catch (TinkerforgeException e) {
             if (e instanceof TimeoutException) {
                 logger.debug("Failed to send command {} to channel {}: {}", command.toFullString(),
                         channelUID.toString(), e.getMessage());
-                ((BrickletRemoteSwitchHandler) getBridge().getHandler()).handleTimeout();
+                reportTimeout();
             } else {
                 logger.warn("Failed to send command {} to channel {}: {}", command.toFullString(),
                         channelUID.toString(), e.getMessage());
@@ -168,35 +217,15 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
         }
     }
 
-    private Channel buildChannel(ThingType tt, ChannelDefinition def) {
-        ChannelType ct = TinkerforgeChannelTypeProvider.getChannelTypeStatic(def.getChannelTypeUID(), null);
-
-        ChannelBuilder builder = ChannelBuilder
-                .create(new ChannelUID(getThing().getUID(), def.getId()), ct.getItemType())
-                .withAutoUpdatePolicy(def.getAutoUpdatePolicy()).withProperties(def.getProperties())
-                .withType(def.getChannelTypeUID());
-
-        String desc = def.getDescription();
-        if (desc != null) {
-            builder.withDescription(desc);
-        }
-        String label = def.getLabel();
-        if (label != null) {
-            builder.withLabel(label);
-        }
-
-        return builder.build();
-    }
-
     private void configureChannels() {
         List<String> enabledChannelNames = new ArrayList<>();
         try {
-            enabledChannelNames = device.getEnabledChannels(getConfig());
+            enabledChannelNames = Utils.assertNonNull(device).getEnabledChannels(getConfig());
         } catch (TinkerforgeException e) {
             if (e instanceof TimeoutException) {
                 logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
                         e.getMessage());
-                ((BrickletRemoteSwitchHandler) getBridge().getHandler()).handleTimeout();
+                reportTimeout();
             } else {
                 logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
                         e.getMessage());
@@ -205,13 +234,17 @@ public class RemoteSwitchDeviceHandler extends BaseThingHandler {
         }
 
         ThingType tt = TinkerforgeThingTypeProvider.getThingTypeStatic(this.getThing().getThingTypeUID(), null);
+        if(tt == null) {
+            logger.warn("Failed to get thing type for device {}", this.getThing().getUID().toString());
+            return;
+        }
 
         List<Channel> enabledChannels = new ArrayList<>();
         for (String s : enabledChannelNames) {
             ChannelUID cuid = new ChannelUID(getThing().getUID(), s);
             ChannelDefinition def = tt.getChannelDefinitions().stream().filter(d -> d.getId().equals(cuid.getId()))
                     .findFirst().get();
-            Channel newChannel = buildChannel(tt, def);
+            Channel newChannel = Utils.buildChannel(tt, getThing().getUID(), def, channelTypeRegistrySupplier.get(), configDescriptionRegistrySupplier.get(), logger);
 
             Channel existingChannel = this.thing.getChannel(newChannel.getUID());
             if (existingChannel != null)

@@ -26,6 +26,7 @@ import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBind
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -81,12 +82,12 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
         return TinkerforgeBindingConstants.SUPPORTED_DEVICES.contains(thingTypeUID);
     }
 
-    private @Nullable DeviceWrapper createDevice(String thingName, String uid, IPConnection ipcon) {
+    private DeviceWrapper createDevice(String thingName, String uid, IPConnection ipcon) {
         try {
-            return (DeviceWrapper) DeviceWrapperFactory.createDevice(thingName, uid, ipcon);
+            return DeviceWrapperFactory.createDevice(thingName, uid, ipcon);
         } catch (Exception e) {
-            logger.warn("Could not create device {} with uid {}: {}.", thingName, uid, e);
-            return null;
+            logger.error("Failed to create device {} (uid {}):", thingName, uid, e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -94,48 +95,50 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
     protected @Nullable ThingHandler createHandler(Thing thing) {
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
         String thingName = thingTypeUID.getId();
+
+        Supplier<ChannelTypeRegistry> ctRegSupplier = () -> this.bundleContext
+                .getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class));
+
+        Supplier<ConfigDescriptionRegistry> confDescRegSupplier = () -> this.bundleContext
+                .getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class));
+
         if (thingTypeUID.equals(THING_TYPE_BRICK_DAEMON)) {
             assert (thing instanceof Bridge);
             return new BrickDaemonHandler((Bridge) thing, this::registerBrickDaemonDiscoveryService,
                     this::deregisterBrickDaemonDiscoveryService);
         } else if (thingTypeUID.equals(THING_TYPE_BRICKLET_OUTDOOR_WEATHER)) {
             assert (thing instanceof Bridge);
-            return new BrickletOutdoorWeatherHandler((Bridge) thing, (String uid, IPConnection ipcon) -> createDevice(
-                    thingTypeUID.getId(), uid, ipcon),
-                    DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass,
-                    () -> this.bundleContext.getService(this.bundleContext
-                            .getServiceReference(ChannelTypeRegistry.class)),
-                    () -> this.bundleContext.getService(this.bundleContext
-                            .getServiceReference(ConfigDescriptionRegistry.class)), httpClient);
+            return new BrickletOutdoorWeatherHandler((Bridge) thing,
+                    (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
+                    DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass, ctRegSupplier,
+                    confDescRegSupplier, httpClient);
         } else if (thingTypeUID.equals(THING_TYPE_BRICKLET_REMOTE_SWITCH)
                 || thingTypeUID.equals(THING_TYPE_BRICKLET_REMOTE_SWITCH_V2)) {
             assert (thing instanceof Bridge);
-            return new BrickletRemoteSwitchHandler((Bridge) thing, (String uid, IPConnection ipcon) -> createDevice(
-                    thingTypeUID.getId(), uid, ipcon),
-                    DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass,
-                    () -> this.bundleContext.getService(this.bundleContext
-                            .getServiceReference(ChannelTypeRegistry.class)),
-                    () -> this.bundleContext.getService(this.bundleContext
-                            .getServiceReference(ConfigDescriptionRegistry.class)), httpClient);
+            return new BrickletRemoteSwitchHandler((Bridge) thing,
+                    (String uid, IPConnection ipcon) -> createDevice(thingTypeUID.getId(), uid, ipcon),
+                    DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass, ctRegSupplier,
+                    confDescRegSupplier, httpClient);
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_STATION)) {
-            return new BrickletOutdoorWeatherStationHandler(thing);
+            return new BrickletOutdoorWeatherStationHandler(thing, ctRegSupplier, confDescRegSupplier);
         } else if (thingTypeUID.equals(THING_TYPE_OUTDOOR_WEATHER_SENSOR)) {
-            return new BrickletOutdoorWeatherSensorHandler(thing);
+            return new BrickletOutdoorWeatherSensorHandler(thing, ctRegSupplier, confDescRegSupplier);
         } else if (thingTypeUID.equals(THING_TYPE_REMOTE_SOCKET_TYPE_A)) {
-            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteSocketTypeA(handler));
+            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteSocketTypeA(handler), ctRegSupplier, confDescRegSupplier);
         } else if (thingTypeUID.equals(THING_TYPE_REMOTE_SOCKET_TYPE_B)) {
-            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteSocketTypeB(handler));
+            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteSocketTypeB(handler), ctRegSupplier, confDescRegSupplier);
         } else if (thingTypeUID.equals(THING_TYPE_REMOTE_SOCKET_TYPE_C)) {
-            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteSocketTypeC(handler));
+            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteSocketTypeC(handler), ctRegSupplier, confDescRegSupplier);
         } else if (thingTypeUID.equals(THING_TYPE_REMOTE_DIMMER_TYPE_B)) {
-            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteDimmerTypeB(handler));
+            return new RemoteSwitchDeviceHandler(thing, (handler) -> new RemoteDimmerTypeB(handler), ctRegSupplier, confDescRegSupplier);
         }
 
         return new DeviceHandler(thing, (String uid, IPConnection ipcon) -> createDevice(thingName, uid, ipcon),
                 DeviceWrapperFactory.getDeviceInfo(thingName).deviceActionsClass,
                 () -> this.bundleContext.getService(this.bundleContext.getServiceReference(ChannelTypeRegistry.class)),
-                () -> this.bundleContext.getService(this.bundleContext
-                        .getServiceReference(ConfigDescriptionRegistry.class)), httpClient);
+                () -> this.bundleContext
+                        .getService(this.bundleContext.getServiceReference(ConfigDescriptionRegistry.class)),
+                httpClient);
     }
 
     private synchronized void registerBrickDaemonDiscoveryService(BrickDaemonDiscoveryService service) {
@@ -148,9 +151,7 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
         if (serviceReg != null) {
             // remove discovery service, if bridge handler is removed
             serviceReg.unregister();
-            if (service != null) {
-                service.stopDiscovery();
-            }
+            service.stopDiscovery();
         }
     }
 

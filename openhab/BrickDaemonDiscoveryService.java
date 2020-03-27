@@ -92,8 +92,9 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
     protected void startBackgroundDiscovery() {
         logger.debug("Start Tinkerforge device background discovery for Brick Daemon {}", this.handler.getThing()
                 .getUID());
+        @Nullable ScheduledFuture<?> job = this.job;
         if (job == null || job.isCancelled()) {
-            job = scheduler.scheduleWithFixedDelay(() -> {
+            this.job = scheduler.scheduleWithFixedDelay(() -> {
                 try {
                     long scanStart = new Date().getTime();
                     logger.debug("Enumerating devices for Brick Daemon {}.", this.handler.getThing().getUID());
@@ -110,9 +111,10 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
     protected void stopBackgroundDiscovery() {
         logger.debug("Stop Tinkerforge device background discovery for Brick Daemon "
                 + this.handler.getThing().getUID());
+        @Nullable ScheduledFuture<?> job = this.job;
         if (job != null && !job.isCancelled()) {
             job.cancel(true);
-            job = null;
+            this.job = null;
         }
     }
 

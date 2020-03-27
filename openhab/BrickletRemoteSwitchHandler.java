@@ -19,8 +19,9 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.ThingStatus;
+import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingUID;
-import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
@@ -184,7 +185,17 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
     }
 
     public void handleTimeout() {
-        ((BrickDaemonHandler) (this.getBridge().getHandler())).handleTimeout(this);
+        @Nullable Bridge bridge = getBridge();
+        if (bridge == null) {
+            return;
+        }
+
+        @Nullable BrickDaemonHandler brickd = (BrickDaemonHandler) (bridge.getHandler());
+        if (brickd == null) {
+            return;
+        }
+
+        brickd.handleTimeout(this);
     }
 
     @Override
@@ -202,6 +213,7 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
 
         if (workFuture != null)
             workFuture.cancel(false);
+        @Nullable RemoteSwitch remoteSwitch = this.remoteSwitch;
         if (remoteSwitch != null)
             remoteSwitch.removeSwitchingDoneListener();
 
@@ -209,8 +221,13 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
             remoteSwitch = new BrickletRemoteSwitchWrapperWrapper((BrickletRemoteSwitchWrapper) this.getDevice());
         } else if (this.getDevice() instanceof BrickletRemoteSwitchV2Wrapper) {
             remoteSwitch = new BrickletRemoteSwitchV2WrapperWrapper((BrickletRemoteSwitchV2Wrapper) this.getDevice());
+        } else {
+            logger.warn("Failed to initialize {}: device was of unknown type", thing.getUID().getId());
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR);
+            return;
         }
         remoteSwitch.addSwitchingDoneListener(isSwitching);
+        this.remoteSwitch = remoteSwitch;
 
         try {
             isSwitching.set(remoteSwitch.getSwitchingState() == BrickletRemoteSwitchWrapper.SWITCHING_STATE_BUSY);
@@ -218,10 +235,11 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         } catch (TinkerforgeException e) {
             if (e instanceof TimeoutException) {
                 logger.debug("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
-                ((BrickDaemonHandler) (getBridge().getHandler())).handleTimeout(this);
+                handleTimeout();
             } else {
                 logger.warn("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
             }
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR);
         }
     }
 
@@ -251,7 +269,7 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
             task.task.accept(remoteSwitch);
         } catch (TinkerforgeException e) {
             task.callback.accept(false);
-            this.handleTimeout();
+            handleTimeout();
             return;
         }
 

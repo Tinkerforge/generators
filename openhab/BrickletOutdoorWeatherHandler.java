@@ -15,7 +15,6 @@ import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingUID;
-import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.BridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
@@ -41,15 +40,28 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
     }
 
     public void handleTimeout() {
-        ((BrickDaemonHandler) (this.getBridge().getHandler())).handleTimeout(this);
+        @Nullable
+        Bridge b = this.getBridge();
+        if (b == null) {
+            return;
+        }
+
+        @Nullable
+        BrickDaemonHandler handler = (@Nullable BrickDaemonHandler) b.getHandler();
+        if (handler == null) {
+            return;
+        }
+        handler.handleTimeout(this);
     }
 
     @Override
     public void initialize() {
-        if (this.getDevice() != null)
-            this.getDevice().cancelManualUpdates();
+        @Nullable
+        BrickletOutdoorWeatherWrapper dev = this.getDevice();
+        if (dev != null)
+            dev.cancelManualUpdates();
         super.initialize();
-        if(this.getThing().getStatus() == ThingStatus.ONLINE) {
+        if (this.getThing().getStatus() == ThingStatus.ONLINE) {
             for (ThingHandler handler : childHandlers)
                 handler.initialize();
         }
@@ -57,8 +69,10 @@ public class BrickletOutdoorWeatherHandler extends DeviceHandler implements Brid
 
     @Override
     protected void initializeDevice() {
-        if (this.getDevice() != null)
-            this.getDevice().cancelManualUpdates();
+        @Nullable
+        BrickletOutdoorWeatherWrapper dev = this.getDevice();
+        if (dev != null)
+            dev.cancelManualUpdates();
         super.initializeDevice();
         for (ThingHandler handler : childHandlers)
             handler.initialize();
