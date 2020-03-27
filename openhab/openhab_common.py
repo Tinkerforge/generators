@@ -597,7 +597,7 @@ class OpenHABDevice(java_common.JavaDevice):
                 # with python 2 these can be integers
                 if isinstance(new_min, float) and new_min.is_integer():
                     new_min = int(new_min)
-                if isinstance(new_min, float) and new_max.is_integer():
+                if isinstance(new_max, float) and new_max.is_integer():
                     new_max = int(new_max)
 
                 if p.min is None:
