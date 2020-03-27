@@ -2499,7 +2499,7 @@ class Packet(object):
             raise GeneratorError('Invalid packet doc type: ' + raw_data['doc'][0])
 
         if 'high_level' in raw_data and not raw_data['name'].endswith(' Low Level'):
-            raise GeneratorError("Name of packet with high-level features has to end with 'Low Level'")
+            raise GeneratorError("Name of packet {} with high-level features has to end with 'Low Level'".format(raw_data['name']))
 
         raw_stream_in = raw_data.get('high_level', {}).get('stream_in', None)
         raw_stream_out = raw_data.get('high_level', {}).get('stream_out', None)
@@ -2548,13 +2548,13 @@ class Packet(object):
             element = device.get_generator().get_element_class()(raw_element, self, level, role)
 
             if element.get_type() not in Packet.valid_types:
-                raise GeneratorError('Invalid element type: ' + element.get_type())
+                raise GeneratorError('Invalid element type: {}'.format(element.get_type()))
 
             if element.get_cardinality() < 1:
-                raise GeneratorError('Invalid element cardinality: ' + element.get_cardinality())
+                raise GeneratorError('Invalid element cardinality: {}'.format(element.get_cardinality()))
 
             if element.get_direction() not in ['in', 'out']:
-                raise GeneratorError('Invalid element direction: ' + element.get_direction())
+                raise GeneratorError('Invalid element direction: {}'.format(element.get_direction()))
 
             if element.get_direction() == 'in' and len(self.elements) > 0 and self.elements[-1].get_direction() == 'out':
                 raise GeneratorError("'in' element cannot come after 'out' element")
