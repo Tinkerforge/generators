@@ -39,8 +39,9 @@ def unescape(s):
 
 class OpenHABDocDevice(openhab_common.OpenHABDevice):
     def __init__(self, raw_data, generator):
-        super().__init__(raw_data, generator)
-        super().read_openhab_config()
+        openhab_common.OpenHABDevice.__init__(self, raw_data, generator)
+
+        self.read_openhab_config()
 
     # Override common implementation to be able to replace text in the specializer
     def specialize_doc_rst_links(self, text, specializer, prefix=None):
