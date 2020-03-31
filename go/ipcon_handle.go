@@ -83,6 +83,13 @@ func (ipcon *IPConnection) RegisterDisconnectCallback(fn func(DisconnectReason))
 // * enumerationType EnumerationType - Type of enumeration.
 func (ipcon *IPConnection) RegisterEnumerateCallback(fn func(uid string, connectedUID string, position rune, hardwareVersion [3]uint8, firmwareVersion [3]uint8, deviceIdentifier uint16, enumerationType EnumerationType)) uint64 {
 	wrapper := func(bytes []byte) {
+		var header internal.PacketHeader
+
+		header.FillFromBytes(bytes)
+		if header.Length != 26 {{
+			return
+		}}
+
 		bytes = bytes[8:]
 		uid := internal.ByteSliceToString(bytes[0:8])
 		connectedUID := internal.ByteSliceToString(bytes[8:16])

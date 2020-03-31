@@ -243,6 +243,10 @@ func (ipcon *IPConnection) Authenticate(secret string) error {
 		return DeviceError(respHeader.ErrorCode)
 	}
 
+	if respHeader.Length != 12 {
+		return fmt.Errorf("Received packet of unexpected size %d, instead of %d", respHeader.Length, 12)
+	}
+
 	serverNonce := resp[PacketHeaderSize : PacketHeaderSize+4]
 
 	//Create client nonce
