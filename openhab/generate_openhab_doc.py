@@ -508,7 +508,18 @@ Thing
         doc += """Actions
 -------
 
-"""
+Actions can be used in rules by creating an action object. All actions return a Map<String, Object>.
+Returned values can be accessed by name, sometimes the type deduction needs some hints, as shown below:
+
+.. code-block:: none
+
+ val actions = getActions("tinkerforge", "tinkerforge:{device_lower}:[UID]")
+ val hwVersion = actions.{device_headless}GetIdentity().get("hardwareVersion") as short[]
+ logInfo("Example", "Hardware version: " + hwVersion.get(0) + "." + hwVersion.get(1) + "." + hwVersion.get(2))
+
+""".format(device_lower=self.get_category().lower + self.get_name().lower,
+           device_headless=self.get_category().headless + self.get_name().camel)
+
         for type_, caption in [ ('bf', 'Basic Actions'),
                                 ('af', 'Advanced Actions'),
                                 ('ccf', 'Trigger Channel Configuration Actions'),
