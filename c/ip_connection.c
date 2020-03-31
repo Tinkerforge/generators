@@ -1417,7 +1417,8 @@ int device_get_api_version(DevicePrivate *device_p, uint8_t ret_api_version[3]) 
 }
 
 // NOTE: assumes that device_check_validity was successful
-int device_send_request(DevicePrivate *device_p, Packet *request, Packet *response) {
+int device_send_request(DevicePrivate *device_p, Packet *request, Packet *response,
+                        int expected_response_length) {
 	int ret = E_OK;
 	uint8_t sequence_number = packet_header_get_sequence_number(&request->header);
 	uint8_t response_expected = packet_header_get_response_expected(&request->header);
@@ -1461,8 +1462,14 @@ int device_send_request(DevicePrivate *device_p, Packet *request, Packet *respon
 			    packet_header_get_sequence_number(&device_p->response_packet.header) != sequence_number) {
 				ret = E_TIMEOUT;
 			} else if (error_code == 0) {
-				// no error
-				if (response != NULL) {
+				if (expected_response_length == 0) {
+					// setter with response-expected enabled
+					expected_response_length = sizeof(PacketHeader);
+				}
+
+				if (device_p->response_packet.header.length != expected_response_length) {
+					ret = E_WRONG_RESPONSE_LENGTH;
+				} else if (response != NULL) {
 					memcpy(response, &device_p->response_packet,
 					       device_p->response_packet.header.length);
 				}
@@ -1513,7 +1520,7 @@ int device_check_validity(DevicePrivate *device_p) {
 			// uninitialized memory when accessing the device_identifier member later on
 			memset(&response, 0, sizeof(response));
 
-			ret = device_send_request(device_p, (Packet *)&request, (Packet *)&response);
+			ret = device_send_request(device_p, (Packet *)&request, (Packet *)&response, sizeof(response));
 
 			if (ret < 0) {
 				mutex_unlock(&device_p->device_identifier_mutex);
@@ -1581,7 +1588,7 @@ static int brickd_get_authentication_nonce(BrickDaemon *brickd, uint8_t ret_serv
 		return ret;
 	}
 
-	ret = device_send_request(device_p, (Packet *)&request, (Packet *)&response);
+	ret = device_send_request(device_p, (Packet *)&request, (Packet *)&response, sizeof(response));
 
 	if (ret < 0) {
 		return ret;
@@ -1606,7 +1613,7 @@ static int brickd_authenticate(BrickDaemon *brickd, uint8_t client_nonce[4], uin
 	memcpy(request.client_nonce, client_nonce, 4 * sizeof(uint8_t));
 	memcpy(request.digest, digest, 20 * sizeof(uint8_t));
 
-	ret = device_send_request(device_p, (Packet *)&request, NULL);
+	ret = device_send_request(device_p, (Packet *)&request, NULL, 0);
 
 	return ret;
 }
@@ -1738,6 +1745,10 @@ static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) 
 
 	if (packet->header.function_id == IPCON_CALLBACK_ENUMERATE) {
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
+			if (packet->header.length != sizeof(DeviceEnumerate_Callback)) {
+				return; // silently ignoring callback with wrong length
+			}
+
 			enumerate_callback_function = (EnumerateCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
 			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_ENUMERATE];
 			enumerate_callback = (DeviceEnumerate_Callback *)packet;
@@ -1769,7 +1780,7 @@ static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) 
 		if (device_check_validity(device_p) < 0) {
 			device_release(device_p);
 
-			return; // silently ignoring callbacks for invalid devices
+			return; // silently ignoring callback for invalid device
 		}
 
 		callback_wrapper_function(device_p, packet);

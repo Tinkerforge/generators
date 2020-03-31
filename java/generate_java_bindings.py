@@ -340,7 +340,11 @@ public class {0} extends Device {{
         listeners = ''
         template = """{6}
 		callbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
-			public void callback({3}byte[] packet) {{{1}{7}
+			public void callback({3}byte[] packet) {{
+				if (packet.length != {8}) {{
+					return; // silently ignoring callback with wrong length
+				}}
+{1}{7}
 				for ({4} listener: listener{2}) {{
 					{5}
 				}}
@@ -481,7 +485,7 @@ public class {0} extends Device {{
                 high_level_callback = ''
                 high_level_handling = ''
 
-            listeners += template.format(type_, cbdata, name_camel, device_param, listener_type, listener_call, high_level_callback, high_level_handling)
+            listeners += template.format(type_, cbdata, name_camel, device_param, listener_type, listener_call, high_level_callback, high_level_handling, packet.get_response_size())
 
         return listeners + '\n\t\tipcon.addDevice(this);\n\t}\n'
 
@@ -787,14 +791,14 @@ public class {0} extends Device {{
 {7}
 	}}
 """
-        template_response = """		byte[] response = sendRequest(bb.array());
+        template_response = """		byte[] response = sendRequest(bb.array(), {3});
 
 		bb = ByteBuffer.wrap(response, 8, response.length - 8);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}
 		return {2};"""
-        template_noresponse = '\t\tsendRequest(bb.array());'
+        template_noresponse = '\t\tsendRequest(bb.array(), 0);'
         plain_loop = """		for (int i = 0; i < {0}; i++) {{
 	{1}
 		}}"""
@@ -894,7 +898,8 @@ public class {0} extends Device {{
             else:
                 response = template_response.format(name_upper,
                                                     bbgets,
-                                                    bbret)
+                                                    bbret,
+                                                    packet.get_response_size())
 
             if packet.get_function_id() == 255: # <device>.getIdentity
                 check = ''

@@ -106,11 +106,12 @@ var IPConnection = require('./IPConnection');
 
     def get_javascript_callback_formats(self):
         callbacks = ''
-        template = "\tthis.callbackFormats[{0}.CALLBACK_{1}] = '{2}';\n"
+        template = "\tthis.callbackFormats[{0}.CALLBACK_{1}] = [{2}, '{3}'];\n"
 
         for packet in self.get_packets('callback'):
             callbacks += template.format(self.get_javascript_class_name(),
                                          packet.get_name().upper,
+                                         packet.get_response_size(),
                                          packet.get_javascript_format_list('out'))
 
         return callbacks + '\n'
@@ -293,7 +294,7 @@ var IPConnection = require('./IPConnection');
 		/*
 		{2}
 		*/
-		this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback, false);
+		this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', {7}, '{8}', returnCallback, errorCallback, false);
 	}};
 """
 
@@ -312,6 +313,7 @@ var IPConnection = require('./IPConnection');
                                        name_upper,
                                        param_list,
                                        pack_format,
+                                       packet.get_response_size() if len(unpack_format) > 0 else 0,
                                        unpack_format)
 
         # High-level
@@ -335,6 +337,7 @@ var IPConnection = require('./IPConnection');
 			                       {device_class}.FUNCTION_{function_name},
 			                       [{param_list}],
 			                       '{pack_format}',
+			                       {expected_response_length},
 			                       '{unpack_format}',
 			                       returnCallback,
 			                       errorCallback,
@@ -428,6 +431,7 @@ var IPConnection = require('./IPConnection');
 {device_class}.FUNCTION_{function_name}, \
 [{param_list}], \
 '{pack_format}', \
+{expected_response_length}, \
 '{unpack_format}', \
 streamStateObject['responseProperties']['returnCB'], \
 streamStateObject['responseProperties']['errorCB'], \
@@ -688,6 +692,7 @@ true);"""
 				                       {device_class}.FUNCTION_{function_name},
 				                       [{param_list_ll}],
 				                       '{pack_format}',
+				                       {expected_response_length},
 				                       '{unpack_format}',
 				                       returnCallback,
 				                       errorCallback,
@@ -702,6 +707,7 @@ true);"""
 					                       {device_class}.FUNCTION_{function_name},
 					                       [{param_list_ll}],
 					                       '{pack_format}',
+					                       {expected_response_length},
 					                       '{unpack_format}',
 					                       returnCallback,
 					                       errorCallback,
@@ -751,6 +757,7 @@ true);"""
 				                       {device_class}.FUNCTION_{function_name},
 				                       [{param_list_ll}],
 				                       '{pack_format}',
+				                       {expected_response_length},
 				                       '{unpack_format}',
 				                       returnCallback,
 				                       errorCallback,
@@ -822,6 +829,7 @@ true);"""
 						                         {device_class}.FUNCTION_{function_name},
 						                         streamStateObject['responseProperties']['streamInLLParams'],
 						                         '{pack_format}',
+						                         {expected_response_length},
 						                         '{unpack_format}',
 						                         returnCallback,
 						                         errorCallback,
@@ -961,6 +969,7 @@ true);"""
                 param_list_ll = packet.get_javascript_parameter_list()
                 pack_format = packet.get_javascript_format_list('in')
                 unpack_format = packet.get_javascript_format_list('out')
+                expected_response_length = packet.get_response_size() if len(unpack_format) > 0 else 0
                 chunk_cardinality = stream_in.get_chunk_data_element().get_cardinality()
                 stream_name_headless = stream_in.get_name().headless
 
@@ -990,6 +999,7 @@ true);"""
                                                                                        function_name = name_upper,
                                                                                        param_list_ll = param_list_ll,
                                                                                        pack_format = pack_format,
+                                                                                       expected_response_length = expected_response_length,
                                                                                        unpack_format = unpack_format,
                                                                                        chunk_cardinality = chunk_cardinality)
 
@@ -1007,6 +1017,7 @@ true);"""
                                                               function_name = name_upper,
                                                               param_list_ll = param_list_ll,
                                                               pack_format = pack_format,
+                                                              expected_response_length = expected_response_length,
                                                               unpack_format = unpack_format,
                                                               response_handler_function = response_handler_function)
 
@@ -1038,6 +1049,7 @@ true);"""
                                                                                        function_name = name_upper,
                                                                                        param_list = param_list,
                                                                                        pack_format = pack_format,
+                                                                                       expected_response_length = packet.get_response_size(),
                                                                                        unpack_format = unpack_format)
                     chunk_cardinality = stream_out.get_chunk_data_element().get_cardinality()
 
@@ -1060,6 +1072,7 @@ true);"""
                                                                                        function_name = name_upper,
                                                                                        param_list = param_list,
                                                                                        pack_format = pack_format,
+                                                                                       expected_response_length = packet.get_response_size(),
                                                                                        unpack_format = unpack_format)
                     chunk_cardinality = stream_out.get_chunk_data_element().get_cardinality()
 
@@ -1085,6 +1098,7 @@ true);"""
                                               function_name = name_upper,
                                               response_handler_function = response_handler_function,
                                               pack_format = pack_format,
+                                              expected_response_length = packet.get_response_size(),
                                               unpack_format = unpack_format)
 
         return methods

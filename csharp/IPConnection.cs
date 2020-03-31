@@ -805,6 +805,11 @@ namespace Tinkerforge
 
 				if (enumHandler != null)
 				{
+					if (cqo.packet.Length != 34)
+					{
+						return; // silently ignoring callback with wrong length
+					}
+
 					string uid_str = LEConverter.StringFrom(8, cqo.packet, 8);
 					string connectedUid_str = LEConverter.StringFrom(16, cqo.packet, 8);
 					char position = (char)LEConverter.CharFrom(24, cqo.packet);
@@ -840,7 +845,7 @@ namespace Tinkerforge
 						}
 						catch (TinkerforgeException)
 						{
-							return; // silently ignoring callbacks for invalid devices
+							return; // silently ignoring callback for invalid device
 						}
 
 						wrapper(cqo.packet);
@@ -1197,6 +1202,18 @@ namespace Tinkerforge
 	}
 
 	/// <summary>
+	///  Used to report if a response does not have the expected length.
+	/// </summary>
+	public class WrongResponseLengthException : TinkerforgeException
+	{
+		/// <summary>
+		/// </summary>
+		public WrongResponseLengthException(string message) : base(message)
+		{
+		}
+	}
+
+	/// <summary>
 	/// </summary>
 	public struct UID
 	{
@@ -1450,7 +1467,7 @@ namespace Tinkerforge
 			return packet;
 		}
 
-		internal byte[] SendRequest(byte[] request)
+		internal byte[] SendRequest(byte[] request, int expectedResponseLength)
 		{
 			byte[] response = null;
 
@@ -1495,6 +1512,17 @@ namespace Tinkerforge
 				switch (errorCode)
 				{
 					case 0:
+						if (expectedResponseLength == 0)
+						{
+							// setter with response-expected enabled
+							expectedResponseLength = 8;
+						}
+
+						if (response.Length != expectedResponseLength)
+						{
+							throw new WrongResponseLengthException("Expected response of " + expectedResponseLength + " byte for function ID " + functionID + ", got " + response.Length + " byte instead");
+						}
+
 						break;
 
 					case 1:
@@ -1532,7 +1560,7 @@ namespace Tinkerforge
 				if (deviceIdentifierCheck == DeviceIdentifierCheck.PENDING)
 				{
 					byte[] request = CreateRequestPacket(8, 255); // GetIdentity
-					byte[] response = SendRequest(request);
+					byte[] response = SendRequest(request, 33);
 					int deviceIdentifier = LEConverter.UShortFrom(31, response);
 
 					if (deviceIdentifier == this.deviceIdentifier)
@@ -1581,7 +1609,7 @@ namespace Tinkerforge
 		public byte[] GetAuthenticationNonce()
 		{
 			byte[] request = CreateRequestPacket(8, FUNCTION_GET_AUTHENTICATION_NONCE);
-			byte[] response = SendRequest(request);
+			byte[] response = SendRequest(request, 12);
 
 			return LEConverter.ByteArrayFrom(8, response, 4);
 		}
@@ -1593,7 +1621,7 @@ namespace Tinkerforge
 			LEConverter.To(clientNonce, 8, 4, request);
 			LEConverter.To(digest, 12, 20, request);
 
-			SendRequest(request);
+			SendRequest(request, 0);
 		}
 
 		public override void GetIdentity(out string uid, out string connectedUid, out char position,

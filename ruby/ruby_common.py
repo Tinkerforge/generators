@@ -60,18 +60,18 @@ class RubyElement(common.Element):
     }
 
     ruby_pack_formats = {
-        'int8':   ('c', 1),
-        'uint8':  ('C', 1),
-        'int16':  ('s', 2),
-        'uint16': ('S', 2),
-        'int32':  ('l', 4),
-        'uint32': ('L', 4),
-        'int64':  ('q', 8),
-        'uint64': ('Q', 8),
-        'float':  ('e', 4),
-        'bool':   ('?', 1),
-        'char':   ('k', 1),
-        'string': ('Z', 1)
+        'int8':   'c',
+        'uint8':  'C',
+        'int16':  's',
+        'uint16': 'S',
+        'int32':  'l',
+        'uint32': 'L',
+        'int64':  'q',
+        'uint64': 'Q',
+        'float':  'e',
+        'bool':   '?',
+        'char':   'k',
+        'string': 'Z'
     }
 
     ruby_default_item_values = {

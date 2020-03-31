@@ -172,7 +172,7 @@ public abstract class DeviceBase {
 		synchronized (deviceIdentifierMutex) {
 			if (deviceIdentifierCheck == DEVICE_IDENTIFIER_CHECK_PENDING) {
 				ByteBuffer bb = ipcon.createRequestPacket((byte)8, (byte)255, this); // getIdentity
-				byte[] response = sendRequest(bb.array());
+				byte[] response = sendRequest(bb.array(), 33);
 
 				bb = ByteBuffer.wrap(response, 31, response.length - 31);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -199,7 +199,7 @@ public abstract class DeviceBase {
 		}
 	}
 
-	byte[] sendRequest(byte[] request) throws TinkerforgeException {
+	byte[] sendRequest(byte[] request, int expectedResponseLength) throws TinkerforgeException {
 		byte[] response = null;
 
 		if (IPConnectionBase.getResponseExpectedFromData(request)) {
@@ -242,6 +242,15 @@ public abstract class DeviceBase {
 
 			switch (errorCode) {
 				case 0:
+					if (expectedResponseLength == 0) {
+						// setter with response-expected enabled
+						expectedResponseLength = 8;
+					}
+
+					if (response.length != expectedResponseLength) {
+						throw new WrongResponseLengthException("Expected response of " + expectedResponseLength + " byte for function ID " + functionID + ", got " + response.length + " byte instead");
+					}
+
 					break;
 
 				case 1:

@@ -114,7 +114,7 @@ type
                           out deviceIdentifier: word); virtual; abstract;
 
     { Internal }
-    function SendRequest(const request: TByteArray): TByteArray;
+    function SendRequest(const request: TByteArray; expectedResponseLength: byte): TByteArray;
     procedure CheckValidity;
   end;
 
@@ -248,7 +248,7 @@ begin
 end;
 
 { NOTE: assumes that CheckValidity was successful }
-function TDevice.SendRequest(const request: TByteArray): TByteArray;
+function TDevice.SendRequest(const request: TByteArray; expectedResponseLength: byte): TByteArray;
 var ipcon_: TIPConnection; kind, errorCode, functionID: byte;
 begin
   SetLength(result, 0);
@@ -281,7 +281,13 @@ begin
     end;
     errorCode := GetErrorCodeFromData(result);
     if (errorCode = 0) then begin
-      { No error }
+      if (expectedResponseLength = 0) then begin
+        { Setter with response-expected enabled }
+        expectedResponseLength := 8;
+      end;
+      if (Length(result) <> expectedResponseLength) then begin
+        raise EWrongResponseLengthException.Create('Expected response of ' + IntToStr(expectedResponseLength) + ' byte for function ID ' + IntToStr(functionID) + ', got ' + IntToStr(Length(result)) + ' byte instead');
+      end;
     end
     else if (errorCode = 1) then begin
       raise EInvalidParameterException.Create('Got invalid parameter for function ID ' + IntToStr(functionID));
@@ -314,7 +320,7 @@ begin
   try
     if (deviceIdentifierCheck = DEVICE_IDENTIFIER_CHECK_PENDING) then begin
       request := (ipcon as TIPConnection).CreateRequestPacket(self, 255, 8); // GetIdentity
-      response := SendRequest(request);
+      response := SendRequest(request, 33);
       deviceIdentifier := LEConvertUInt16From(31, response);
       if (deviceIdentifier = deviceIdentifier_) then begin
         deviceIdentifierCheck := DEVICE_IDENTIFIER_CHECK_MATCH;

@@ -181,8 +181,10 @@ sub new
 
         if len(self.get_packets('callback')) > 0:
             for packet in self.get_packets('callback'):
-                callbacks.append('\t$self->{{callback_formats}}->{{&CALLBACK_{0}}} = \'{1}\';'
-                                 .format(packet.get_name().upper, packet.get_perl_format_list('out')))
+                callbacks.append("\t$self->{{callback_formats}}->{{&CALLBACK_{0}}} = shared_clone([{1}, '{2}']);"
+                                 .format(packet.get_name().upper,
+                                         packet.get_response_size(),
+                                         packet.get_perl_format_list('out')))
 
         high_level_callbacks = []
         template2 = '\t$self->{{high_level_callbacks}}->{{&CALLBACK_{0}}} = shared_clone([shared_clone({{{3}}}), shared_clone([{4}]), shared_clone({{fixed_length => {1}, single_chunk => {2}}}), undef]);'
@@ -236,7 +238,7 @@ sub {0}
 {{
 	my ($self{2}) = @_;
 {7}
-	return $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
+	return $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', {8}, '{6}');
 }}
 """
         single_return = """
@@ -250,7 +252,7 @@ sub {0}
 {{
 	my ($self{2}) = @_;
 {7}
-	return $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
+	return $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', {8}, '{6}');
 }}
 """
         no_return = """
@@ -264,7 +266,7 @@ sub {0}
 {{
 	my ($self{2}) = @_;
 {7}
-	$self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
+	$self->_send_request(&FUNCTION_{3}, [{4}], '{5}', 0, '{6}');
 }}
 """
 
@@ -281,6 +283,7 @@ sub {0}
             doc = packet.get_perl_formatted_doc()
             device_in_format = packet.get_perl_format_list('in')
             device_out_format = packet.get_perl_format_list('out')
+            device_out_length = packet.get_response_size()
 
             elements = len(packet.get_elements(direction='out'))
 
@@ -290,9 +293,9 @@ sub {0}
                 check = '\n\t$self->_check_validity();\n'
 
             if elements > 1:
-                methods += multiple_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format, check)
+                methods += multiple_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format, check, device_out_length)
             elif elements == 1:
-                methods += single_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format, check)
+                methods += single_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format, check, device_out_length)
             else:
                 methods += no_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format, check)
 

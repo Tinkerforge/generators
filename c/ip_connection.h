@@ -56,7 +56,8 @@ enum {
 	E_INVALID_UID = -13,
 	E_NON_ASCII_CHAR_IN_SECRET = -14,
 	E_WRONG_DEVICE_TYPE = -15,
-	E_DEVICE_REPLACED = -16
+	E_DEVICE_REPLACED = -16,
+	E_WRONG_RESPONSE_LENGTH = -17
 };
 
 #ifdef IPCON_EXPOSE_MILLISLEEP
@@ -323,7 +324,8 @@ int device_get_api_version(DevicePrivate *device_p, uint8_t ret_api_version[3]);
 /**
  * \internal
  */
-int device_send_request(DevicePrivate *device_p, Packet *request, Packet *response);
+int device_send_request(DevicePrivate *device_p, Packet *request, Packet *response,
+                        int expected_response_length);
 
 /**
  * \internal

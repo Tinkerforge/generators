@@ -67,11 +67,12 @@ class {0} extends Device
     def get_php_callback_wrapper_definitions(self):
         callbacks = ''
         template = """
-        $this->callback_wrappers[self::CALLBACK_{0}] = 'callbackWrapper{1}';"""
+        $this->callback_wrappers[self::CALLBACK_{0}] = array({2}, 'callbackWrapper{1}');"""
 
         for packet in self.get_packets('callback'):
             callbacks += template.format(packet.get_name().upper,
-                                         packet.get_name().camel)
+                                         packet.get_name().camel,
+                                         packet.get_response_size())
 
         return callbacks
 
@@ -311,9 +312,9 @@ class {0} extends Device
                         collect.append('        return {1}$payload{3}\'{0}\'{4}{2};'.format(name_under, *unpack_fix))
 
             if len(unpack_formats) > 0:
-                send = '        $data = $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_name().upper)
+                send = '        $data = $this->sendRequest(self::FUNCTION_{0}, $payload, {1});\n'.format(packet.get_name().upper, packet.get_response_size())
             else:
-                send = '        $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_name().upper)
+                send = '        $this->sendRequest(self::FUNCTION_{0}, $payload, 0);\n'.format(packet.get_name().upper)
 
             final_unpack = ''
 
@@ -657,7 +658,13 @@ class {0} extends Device
      */
     public function handleCallback($header, $data)
     {
-        call_user_func(array($this, $this->callback_wrappers[$header['function_id']]), $data);
+        $wrapper = $this->callback_wrappers[$header['function_id']];
+
+        if (8 + strlen($data) !== $wrapper[0]) {
+            return; // Silently ignoring callback with wrong length
+        }
+
+        call_user_func(array($this, $wrapper[1]), $data);
     }
 """ + methods
 

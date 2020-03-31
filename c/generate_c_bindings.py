@@ -346,7 +346,7 @@ int {0}_{1}({2} *{0}{3}) {{
 		return ret;
 	}}
 {7}
-	ret = device_send_request(device_p, (Packet *)&request, {10});
+	ret = device_send_request(device_p, (Packet *)&request, {10}, {12});
 {8}
 	return ret;
 }}
@@ -378,11 +378,13 @@ int {0}_{1}({2} *{0}{3}) {{
                 rl, needs_i2 = packet.get_c_return_list()
                 i = template_ret.format(f, device_name, rl)
                 r = '(Packet *)&response'
+                rl = 'sizeof(response)'
             else:
                 g = ''
                 i = ''
                 needs_i2 = False
                 r = 'NULL'
+                rl = '0'
 
             if needs_i or needs_i2:
                 k = '\n\tint i;'
@@ -394,7 +396,7 @@ int {0}_{1}({2} *{0}{3}) {{
             else:
                 check = template_check
 
-            functions += template.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r, check)
+            functions += template.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r, check, rl)
 
         # high-level
         template_stream_in = """
@@ -861,9 +863,17 @@ static void {device_name_under}_callback_wrapper_{name_under}(DevicePrivate *dev
         template_normal = """
 static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePrivate *device_p, Packet *packet) {{
 	{packet_name_camel}_CallbackFunction callback_function;
-	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];{loop_index_decl}{bool_unpack_decls}{alignment_copies}{callback_packet_decl}
+	void *user_data;
+	{packet_name_camel}_Callback *callback;{loop_index_decl}{bool_unpack_decls}{alignment_copies}
+
+	if (packet->header.length != sizeof({packet_name_camel}_Callback)) {{
+		return; // silently ignoring callback with wrong length
+	}}
 
 	callback_function = ({packet_name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
+	user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];
+	callback = ({packet_name_camel}_Callback *)packet;
+	(void)callback; // avoid unused variable warning
 
 	if (callback_function == NULL) {{
 		return;
@@ -875,9 +885,18 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
         template_low_level = """
 static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePrivate *device_p, Packet *packet) {{
 	{packet_name_camel}_CallbackFunction callback_function;
-	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];{loop_index_decl}{bool_unpack_decls}{alignment_copies}{callback_packet_decl}
+	void *user_data;
+	{packet_name_camel}_Callback *callback;{loop_index_decl}{bool_unpack_decls}{alignment_copies}
+
+	if (packet->header.length != sizeof({packet_name_camel}_Callback)) {{
+		return; // silently ignoring callback with wrong length
+	}}
 
 	callback_function = ({packet_name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
+	user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];
+	callback = ({packet_name_camel}_Callback *)packet;
+	(void)callback; // avoid unused variable warning
+
 {endian_conversions}{bool_unpacks}
 	{device_name_under}_callback_wrapper_{ll_packet_name_under}(device_p, {callback_args});
 
@@ -927,11 +946,6 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
                     else:
                         endian_list.append('\tcallback->{0} = leconvert_{1}_from(callback->{0});'.format(element.get_name().under, element.get_type()))
 
-            if len(callback_arg_list) > 0:
-                callback_packet_decl = '\n\t{0}_Callback *callback = ({0}_Callback *)packet;'.format(packet.get_name().camel)
-            else:
-                callback_packet_decl = '\n\t(void)packet;'
-
             if packet.get_high_level('stream_out') != None:
                 template = template_low_level
                 ll_packet_name_under = packet.get_name(skip=-2).under
@@ -949,7 +963,6 @@ static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePriva
                                          callback_args_comma=', ' if len(callback_arg_list) > 0 else '',
                                          endian_conversions=common.wrap_non_empty('\n', '\n'.join(endian_list), '\n'),
                                          fid=fid,
-                                         callback_packet_decl=callback_packet_decl,
                                          loop_index_decl=loop_index_decl,
                                          bool_unpack_decls=bool_unpack_decls,
                                          bool_unpacks=bool_unpacks,

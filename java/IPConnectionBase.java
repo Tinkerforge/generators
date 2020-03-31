@@ -220,8 +220,11 @@ class CallbackThread extends Thread {
 
 		if (functionID == IPConnectionBase.CALLBACK_ENUMERATE) {
 			if (ipcon.hasEnumerateListeners()) {
-				int length = IPConnectionBase.getLengthFromData(cqo.packet);
-				ByteBuffer bb = ByteBuffer.wrap(cqo.packet, 8, length - 8);
+				if (cqo.packet.length != 34) {
+					return; // silently ignoring callback with wrong length
+				}
+
+				ByteBuffer bb = ByteBuffer.wrap(cqo.packet, 8, cqo.packet.length - 8);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 				String uid_str = "";
 
@@ -268,7 +271,7 @@ class CallbackThread extends Thread {
 			try {
 				device.checkValidity();
 			} catch (TinkerforgeException e) {
-				return; // silently ignoring callbacks for invalid devices
+				return; // silently ignoring callback for invalid device
 			}
 
 			ipcon.callDeviceListener(device, functionID, cqo.packet);

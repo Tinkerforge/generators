@@ -650,9 +650,9 @@ begin
                 offset += element.get_size()
 
             if out_count > 0:
-                method += '  response := SendRequest(request);\n'
+                method += '  response := SendRequest(request, {0});\n'.format(packet.get_response_size())
             else:
-                method += '  SendRequest(request);\n'
+                method += '  SendRequest(request, 0);\n'
 
             # Deserialize response
             offset = 8
@@ -1300,9 +1300,8 @@ end;
 
             wrapper += common.wrap_non_empty('var ', '; '.join(variables), ';\n')
             wrapper += 'begin\n'
-
-            if len(packet.get_elements(direction='out')) == 0:
-                wrapper += '  Assert(packet <> nil); { Avoid \'Parameter not used\' warning }\n'
+            wrapper += '  if (Length(packet) <> {0}) then begin\n    exit; {{ Silently ignoring callback with wrong length }}\n  end;\n' \
+                       .format(packet.get_response_size())
 
             has_high_level_callback = False
 
@@ -1451,7 +1450,7 @@ end;
 
                     wrapper += wrapper_code
 
-            wrapper += '\n  if (Assigned({0}Callback)) then begin\n  '.format(packet.get_name().headless)
+            wrapper += '  if (Assigned({0}Callback)) then begin\n  '.format(packet.get_name().headless)
             wrapper += '  {0}Callback({1});'.format(packet.get_name().headless,
                                                     ', '.join(['self'] + parameter_names))
             wrapper += '\n  end;\n'

@@ -173,11 +173,12 @@ class {0}(Device):
 
     def get_python_callback_formats(self):
         callback_formats = ''
-        template = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
+        template = "        self.callback_formats[{0}.CALLBACK_{1}] = ({2}, '{3}')\n"
 
         for packet in self.get_packets('callback'):
             callback_formats += template.format(self.get_python_class_name(),
                                                 packet.get_name().upper,
+                                                packet.get_response_size(),
                                                 packet.get_python_format_list('out'))
 
         return callback_formats + '\n'
@@ -208,25 +209,25 @@ class {0}(Device):
 
     def get_python_methods(self):
         m_tup = """
-    def {0}(self{7}{4}):
+    def {0}(self{8}{4}):
+        \"\"\"
+        {10}
+        \"\"\"{11}{12}
+        return {1}(*self.ipcon.send_request(self, {2}.FUNCTION_{3}, ({4}{9}), '{5}', {6}, '{7}'))
+"""
+        m_ret = """
+    def {0}(self{7}{3}):
         \"\"\"
         {9}
         \"\"\"{10}{11}
-        return {1}(*self.ipcon.send_request(self, {2}.FUNCTION_{3}, ({4}{8}), '{5}', '{6}'))
-"""
-        m_ret = """
-    def {0}(self{6}{3}):
-        \"\"\"
-        {8}
-        \"\"\"{9}{10}
-        return self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
+        return self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{8}), '{4}', {5}, '{6}')
 """
         m_nor = """
-    def {0}(self{6}{3}):
+    def {0}(self{5}{3}):
         \"\"\"
-        {8}
-        \"\"\"{9}{10}
-        self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
+        {7}
+        \"\"\"{8}{9}
+        self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{6}), '{4}', 0, '')
 """
         methods = ''
         cls = self.get_python_class_name()
@@ -248,6 +249,7 @@ class {0}(Device):
                     ct = ','
 
             in_f = packet.get_python_format_list('in')
+            out_l = packet.get_response_size()
             out_f = packet.get_python_format_list('out')
 
             if packet.get_function_id() == 255: # <device>.get_identity
@@ -256,14 +258,14 @@ class {0}(Device):
                 check = '\n        self.check_validity()\n'
 
             coercions = common.wrap_non_empty('\n        ', packet.get_python_parameter_coercions(), '\n')
-            elements = len(packet.get_elements(direction='out'))
+            out_c = len(packet.get_elements(direction='out'))
 
-            if elements > 1:
-                methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc, check, coercions)
-            elif elements == 1:
-                methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc, check, coercions)
+            if out_c > 1:
+                methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_l, out_f, cp, ct, doc, check, coercions)
+            elif out_c == 1:
+                methods += m_ret.format(ns, cls, nh, par, in_f, out_l, out_f, cp, ct, doc, check, coercions)
             else:
-                methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc, check, coercions)
+                methods += m_nor.format(ns, cls, nh, par, in_f, cp, ct, doc, check, coercions)
 
         # high-level
         template_stream_in = """

@@ -710,14 +710,14 @@ sub _brickd_get_authentication_nonce
 {
 	my ($self) = @_;
 
-	return $self->{brickd}->_send_request(&_BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 'C4');
+	return $self->{brickd}->_send_request(&_BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 12, 'C4');
 }
 
 sub _brickd_authenticate
 {
 	my ($self, $clientNonce, $digest) = @_;
 
-	$self->{brickd}->_send_request(&_BRICK_DAEMON_FUNCTION_AUTHENTICATE, [$clientNonce, $digest], 'C4 C20', '');
+	$self->{brickd}->_send_request(&_BRICK_DAEMON_FUNCTION_AUTHENTICATE, [$clientNonce, $digest], 'C4 C20', 0, '');
 }
 
 =item authenticate()
@@ -1961,6 +1961,11 @@ sub _dispatch_packet
 	{
 		if(defined($self->{registered_callbacks}->{&CALLBACK_ENUMERATE}))
 		{
+			if (length($packet) != 34)
+			{
+				return 1; # silently ignoring callback with wrong length
+			}
+
 			$self->_dispatch_response($payload, 'Z8 Z8 Z C3 C3 S C', undef, &CALLBACK_ENUMERATE);
 		}
 
@@ -1984,7 +1989,14 @@ sub _dispatch_packet
 			return 1; # silently ignoring callbacks from mismatching devices
 		};
 
-		$self->_dispatch_response($payload, $self->{devices}->{$uid}->{callback_formats}->{$fid}, $uid, $fid);
+		my $format = $self->{devices}->{$uid}->{callback_formats}->{$fid};
+
+		if (length($packet) != @{$format}[0])
+		{
+			return 1; # silently ignoring callback with wrong length
+		}
+
+		$self->_dispatch_response($payload, @{$format}[1], $uid, $fid);
 	}
 
 	return 1;

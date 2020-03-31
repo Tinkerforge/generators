@@ -131,7 +131,7 @@ sub _base58_decode
 
 sub _send_request
 {
-	my ($self, $function_id, $data, $form_data, $form_return) = @_;
+	my ($self, $function_id, $data, $form_data, $length_return, $form_return) = @_;
 
 	lock(${$self->{request_lock_ref}});
 
@@ -228,7 +228,7 @@ sub _send_request
 
 	if($length > 8) # means there is data in payload
 	{
-		$packet = $packet_header.$packed_data;
+		$packet = $packet_header . $packed_data;
 	}
 	else # means no data in payload
 	{
@@ -247,29 +247,36 @@ sub _send_request
 		{
 			if(defined($form_return))
 			{
-				if(length($response_packet) >= 8)
+				if(length($response_packet) >= 8) # FIXME
 				{
 					my $_err_code = $self->{ipcon}->_get_err_from_data($response_packet);
 
-					if($_err_code != 0)
+					if($_err_code == 0)
 					{
-						my $_fid = $self->{ipcon}->_get_fid_from_data($response_packet);
+						if ($length_return == 0)
+						{
+							# Setter with response-expected enabled
+							$length_return = 8;
+						}
 
-						if($_err_code == 1)
+						my $response_packet_length = length($response_packet);
+
+						if ($response_packet_length != $length_return)
 						{
-							croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, "Got invalid parameter for function $_fid"));
-							return 1;
+							croak(Tinkerforge::Error->_new(Tinkerforge::Error->WRONG_RESPONSE_LENGTH, "Expected response of $length_return byte for function ID $function_id, got $response_packet_length byte instead"));
 						}
-						elsif($_err_code == 2)
-						{
-							croak(Tinkerforge::Error->_new(Tinkerforge::Error->FUNCTION_NOT_SUPPORTED, "Function $_fid is not supported"));
-							return 1;
-						}
-						else
-						{
-							croak(Tinkerforge::Error->_new(Tinkerforge::Error->UNKNOWN_ERROR, "Function $_fid returned an unknown error"));
-							return 1;
-						}
+					}
+					elsif($_err_code == 1)
+					{
+						croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, "Got invalid parameter for function $function_id"));
+					}
+					elsif($_err_code == 2)
+					{
+						croak(Tinkerforge::Error->_new(Tinkerforge::Error->FUNCTION_NOT_SUPPORTED, "Function $function_id is not supported"));
+					}
+					else
+					{
+						croak(Tinkerforge::Error->_new(Tinkerforge::Error->UNKNOWN_ERROR, "Function $function_id returned an unknown error"));
 					}
 
 					my $response_packet_payload = $self->{ipcon}->_get_payload_from_data($response_packet);
@@ -306,7 +313,7 @@ sub _check_validity
 	if($self->{device_identifier_check} == &_DEVICE_IDENTIFIER_CHECK_PENDING)
 	{
 		my ($uid, $connected_uid, $position, $hardware_version, $firmware_version, $device_identifier, $enumeration_type) =
-		    $self->_send_request(255, [], '', 'Z8 Z8 a C3 C3 S'); # get_identity
+		    $self->_send_request(255, [], '', 33, 'Z8 Z8 a C3 C3 S'); # get_identity
 
 		if($device_identifier == $self->{device_identifier})
 		{

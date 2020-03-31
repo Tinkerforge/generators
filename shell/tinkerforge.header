@@ -273,7 +273,7 @@ def dispatch_generic(ctx, name, callbacks, argv):
 
 	callbacks[args.callback](ctx, args.args)
 
-def device_call(ctx, device_class, function_id, request_data, format_in,
+def device_call(ctx, device_class, function_id, request_data, format_in, length_out,
                 format_out, command, expect_response, names, symbols):
 	if dry_run:
 		return
@@ -293,7 +293,7 @@ def device_call(ctx, device_class, function_id, request_data, format_in,
 		if expect_response:
 			device.set_response_expected(function_id, True)
 
-		response = ipcon.send_request(device, function_id, request_data, format_in, format_out)
+		response = ipcon.send_request(device, function_id, request_data, format_in, length_out, format_out)
 
 		if response != None:
 			if len(names) == 1:
@@ -309,7 +309,7 @@ def device_call(ctx, device_class, function_id, request_data, format_in,
 
 def device_stream_call(ctx, device_class, function_id, direction, request_data,
                        high_level_roles_in, high_level_roles_out, low_level_roles_in,
-                       low_level_roles_out, format_in, format_out, command,
+                       low_level_roles_out, format_in, length_out, format_out, command,
                        expect_response, names, symbols, chunk_padding, chunk_cardinality,
                        chunk_max_offset, short_write, single_read, fixed_length):
 	if dry_run:
@@ -360,7 +360,8 @@ def device_stream_call(ctx, device_class, function_id, direction, request_data,
 				stream_chunk_data = [chunk_padding] * chunk_cardinality
 				low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
 
-				response = ipcon.send_request(device, function_id, low_level_request_data, format_in, format_out)
+				response = ipcon.send_request(device, function_id, low_level_request_data,
+				                              format_in, length_out, format_out)
 
 				if short_write:
 					if stream_chunk_written_index == None:
@@ -372,7 +373,8 @@ def device_stream_call(ctx, device_class, function_id, direction, request_data,
 					stream_chunk_data = create_chunk_data(stream_data, stream_chunk_offset, chunk_cardinality, chunk_padding)
 					low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
 
-					response = ipcon.send_request(device, function_id, low_level_request_data, format_in, format_out)
+					response = ipcon.send_request(device, function_id, low_level_request_data,
+					                              format_in, length_out, format_out)
 
 					if short_write:
 						if stream_chunk_written_index == None:
@@ -405,7 +407,8 @@ def device_stream_call(ctx, device_class, function_id, direction, request_data,
 				else:
 					response = tuple(high_level_response)
 		else: # out
-			low_level_response = ipcon.send_request(device, function_id, normal_level_request_data, format_in, format_out)
+			low_level_response = ipcon.send_request(device, function_id, normal_level_request_data,
+			                                        format_in, length_out, format_out)
 
 			if fixed_length == None:
 				stream_length_index = low_level_roles_out.index('stream_length')
@@ -433,7 +436,8 @@ def device_stream_call(ctx, device_class, function_id, direction, request_data,
 				stream_data = stream_chunk_data
 
 			while not stream_out_of_sync and len(stream_data) < stream_length:
-				low_level_response = ipcon.send_request(device, function_id, normal_level_request_data, format_in, format_out)
+				low_level_response = ipcon.send_request(device, function_id, normal_level_request_data,
+				                                        format_in, length_out, format_out)
 
 				if stream_length_index != None:
 					stream_length = low_level_response[stream_length_index]
@@ -447,7 +451,8 @@ def device_stream_call(ctx, device_class, function_id, direction, request_data,
 
 			if stream_out_of_sync: # discard remaining stream to bring it back in-sync
 				while stream_chunk_offset + chunk_cardinality < stream_length:
-					low_level_response = ipcon.send_request(device, function_id, normal_level_request_data, format_in, format_out)
+					low_level_response = ipcon.send_request(device, function_id, normal_level_request_data,
+					                                        format_in, length_out, format_out)
 
 					if stream_length_index != None:
 						stream_length = low_level_response[stream_length_index]

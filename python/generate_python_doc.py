@@ -240,6 +240,7 @@ Generally, every function of the Python bindings can throw an
 * Error.NON_ASCII_CHAR_IN_SECRET = -14
 * Error.WRONG_DEVICE_TYPE = -15
 * Error.DEVICE_REPLACED = -16
+* Error.WRONG_RESPONSE_LENGTH = -17
 
 All functions listed below are thread-safe.
 
@@ -269,6 +270,7 @@ eine ``description`` Property hat. ``value`` kann verschiende Werte haben:
 * Error.NON_ASCII_CHAR_IN_SECRET = -14
 * Error.WRONG_DEVICE_TYPE = -15
 * Error.DEVICE_REPLACED = -16
+* Error.WRONG_RESPONSE_LENGTH = -17
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 

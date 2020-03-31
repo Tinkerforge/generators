@@ -32,7 +32,7 @@ class BrickDaemon extends Device {
 	public byte[] getAuthenticationNonce() throws TinkerforgeException {
 		ByteBuffer bb = ipcon.createRequestPacket((byte)8, FUNCTION_GET_AUTHENTICATION_NONCE, this);
 
-		byte[] response = sendRequest(bb.array());
+		byte[] response = sendRequest(bb.array(), 12);
 
 		bb = ByteBuffer.wrap(response, 8, response.length - 8);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -57,7 +57,7 @@ class BrickDaemon extends Device {
 			bb.put(digest[i]);
 		}
 
-		sendRequest(bb.array());
+		sendRequest(bb.array(), 0);
 	}
 
 	public Identity getIdentity() throws TinkerforgeException {

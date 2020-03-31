@@ -53,7 +53,7 @@ function TBrickDaemon.GetAuthenticationNonce: TArray0To3OfUInt8;
 var request, response: TByteArray; i: longint;
 begin
   request := (ipcon as TIPConnection).CreateRequestPacket(self, BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE, 8);
-  response := SendRequest(request);
+  response := SendRequest(request, 12);
   for i := 0 to 3 do result[i] := LEConvertUInt8From(8 + i, response);
 end;
 
@@ -63,7 +63,7 @@ begin
   request := (ipcon as TIPConnection).CreateRequestPacket(self, BRICK_DAEMON_FUNCTION_AUTHENTICATE, 32);
   for i := 0 to Length(clientNonce) - 1 do LEConvertUInt8To(clientNonce[i], 8 + i, request);
   for i := 0 to Length(digest) - 1 do LEConvertUInt8To(digest[i], 12 + i, request);
-  SendRequest(request);
+  SendRequest(request, 0);
 end;
 
 procedure TBrickDaemon.GetIdentity(out uid: string; out connectedUid: string; out position: char;

@@ -307,7 +307,12 @@ namespace Tinkerforge
 		/// <summary>
 		/// </summary>
 		protected void On{0}Callback(byte[] response)
-		{{{1}{3}			var handler = {0}Callback;
+		{{
+			if (response.Length != {4})
+			{{
+				return; // silently ignoring callback with wrong length
+			}}
+{1}{3}			var handler = {0}Callback;
 
 			if (handler != null)
 			{{
@@ -457,7 +462,7 @@ namespace Tinkerforge
             else:
                 high_level_handling = ''
 
-            callbacks += template.format(name, convs, params, high_level_handling)
+            callbacks += template.format(name, convs, params, high_level_handling, packet.get_response_size())
 
         return callbacks + "\t}\n}\n"
 
@@ -477,10 +482,10 @@ namespace Tinkerforge
 		}}
 """
 
-        template_noresponse = """			SendRequest(request);
+        template_noresponse = """			SendRequest(request, 0);
 """
 
-        template_response = """			byte[] response = SendRequest(request);
+        template_response = """			byte[] response = SendRequest(request, {1});
 {0}"""
 
         template_check = """
@@ -489,7 +494,8 @@ namespace Tinkerforge
 
         for packet in self.get_packets('function'):
             ret_count = len(packet.get_elements(direction='out'))
-            size = str(packet.get_request_size())
+            request_size = packet.get_request_size()
+            response_size = packet.get_response_size()
             name_upper = packet.get_name().upper
             doc = packet.get_csharp_formatted_doc()
 
@@ -578,7 +584,7 @@ namespace Tinkerforge
                 pos += element.get_size()
 
             if ret_count > 0:
-                method_tail = template_response.format(read_convs)
+                method_tail = template_response.format(read_convs, response_size)
             else:
                 method_tail = template_noresponse
 
@@ -588,7 +594,7 @@ namespace Tinkerforge
                 check = template_check
 
             methods += template.format(packet.get_csharp_function_signature(),
-                                       size,
+                                       request_size,
                                        name_upper,
                                        write_convs,
                                        method_tail,

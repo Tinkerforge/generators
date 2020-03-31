@@ -185,7 +185,7 @@ function Device(deviceRegistering, uid, ipcon, deviceIdentifier, deviceDisplayNa
                 }
             }
             else { // Device.DEVICE_IDENTIFIER_CHECK_PENDING
-                this.ipcon.sendRequest(this, 255, [], '', 's8 s8 c B3 B3 H', // getIdentity
+                this.ipcon.sendRequest(this, 255, [], '', 33, 's8 s8 c B3 B3 H', // getIdentity
                     function (uid, connectedUid, position, hardwareVersion, firmwareVersion, deviceIdentifier) {
                         if (deviceIdentifier == this.deviceIdentifier) {
                             this.deviceIdentifierCheck = Device.DEVICE_IDENTIFIER_CHECK_MATCH;

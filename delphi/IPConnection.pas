@@ -125,6 +125,10 @@ type
   EDeviceReplacedException = class(ETinkerforgeException)
   end;
 
+  { EWrongResponseLengthException }
+  EWrongResponseLengthException = class(ETinkerforgeException)
+  end;
+
   { TThreadWrapper }
   TThreadWrapper = class;
   TThreadProcedure = procedure(thread: TThreadWrapper; opaque: pointer) of object;
@@ -1220,6 +1224,9 @@ begin
   functionID := GetFunctionIDFromData(packet);
   if (functionID = IPCON_CALLBACK_ENUMERATE) then begin
     if (Assigned(enumerateCallback)) then begin
+      if (Length(packet) <> 34) then begin
+        exit; { Silently ignoring callback with wrong length }
+      end;
       uid := LEConvertStringFrom(8, 8, packet);
       connectedUid := LEConvertStringFrom(16, 8, packet);
       position := LEConvertCharFrom(24, packet);
@@ -1251,7 +1258,7 @@ begin
         device.CheckValidity;
       except
         on ETinkerforgeException do begin
-          exit; { Silently ignoring callbacks for invalid devices }
+          exit; { Silently ignoring callback for invalid device }
         end;
       end;
       try

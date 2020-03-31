@@ -51,6 +51,7 @@ IPConnection.ERROR_STREAM_OUT_OF_SYNC = 51;
 IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET = 71;
 IPConnection.ERROR_WRONG_DEVICE_TYPE = 81; // keep in sync with Device.ERROR_WRONG_DEVICE_TYPE
 IPConnection.ERROR_DEVICE_REPLACED = 82; // keep in sync with Device.ERROR_DEVICE_REPLACED
+IPConnection.ERROR_WRONG_RESPONSE_LENGTH = 83;
 
 IPConnection.TASK_KIND_CONNECT = 0;
 IPConnection.TASK_KIND_DISCONNECT = 1;
@@ -189,11 +190,11 @@ function BrickDaemon(uid, ipcon) {
     this.responseExpected[BrickDaemon.FUNCTION_AUTHENTICATE] = Device.RESPONSE_EXPECTED_TRUE;
 
     this.getAuthenticationNonce = function(returnCallback, errorCallback) {
-        this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 'B4', returnCallback, errorCallback);
+        this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 12, 'B4', returnCallback, errorCallback);
     };
 
     this.authenticate = function(clientNonce, digest, returnCallback, errorCallback) {
-        this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_AUTHENTICATE, [clientNonce, digest], 'B4 B20', '', returnCallback, errorCallback);
+        this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_AUTHENTICATE, [clientNonce, digest], 'B4 B20', 0, '', returnCallback, errorCallback);
     };
 }
 
@@ -924,6 +925,7 @@ function IPConnection() {
                                  sendRequestFID,
                                  sendRequestData,
                                  sendRequestPackFormat,
+                                 sendRequestExpectedResponseLength,
                                  sendRequestUnpackFormat,
                                  sendRequestReturnCB,
                                  sendRequestErrorCB,
@@ -941,6 +943,7 @@ function IPConnection() {
                                      sendRequestFID,
                                      sendRequestData,
                                      sendRequestPackFormat,
+                                     sendRequestExpectedResponseLength,
                                      sendRequestUnpackFormat,
                                      sendRequestReturnCB,
                                      sendRequestErrorCB,
@@ -952,6 +955,7 @@ function IPConnection() {
                                          sendRequestFID,
                                          sendRequestData,
                                          sendRequestPackFormat,
+                                         sendRequestExpectedResponseLength,
                                          sendRequestUnpackFormat,
                                          sendRequestReturnCB,
                                          sendRequestErrorCB,
@@ -965,6 +969,7 @@ function IPConnection() {
                                          sendRequestFID,
                                          sendRequestData,
                                          sendRequestPackFormat,
+                                         sendRequestExpectedResponseLength,
                                          sendRequestUnpackFormat,
                                          sendRequestReturnCB,
                                          sendRequestErrorCB,
@@ -994,6 +999,7 @@ function IPConnection() {
                     FID:sendRequestFID,
                     SEQ:sendRequestSEQ,
                     unpackFormat:sendRequestUnpackFormat,
+                    expectedResponseLength:sendRequestExpectedResponseLength,
                     timeout:setTimeout(this.sendRequestTimeout.bind(this,
                                                                     sendRequestDevice,
                                                                     sendRequestDeviceOID,
@@ -1118,6 +1124,19 @@ function IPConnection() {
                         return;
                     }
 
+                    if (expectedResponse.expectedResponseLength === 0) {
+                        // setter with response-expected enabled
+                        expectedResponse.expectedResponseLength = 8;
+                    }
+
+                    if (packetResponse.length != expectedResponse.expectedResponseLength) {
+                        if (expectedResponse.errorCB !== undefined) {
+                            eval('expectedResponse.errorCB(IPConnection.ERROR_WRONG_RESPONSE_LENGTH);');
+                        }
+
+                        handleResponseDevice.expectedResponses.splice(i, 1);
+                        return;
+                    }
 
                     if (expectedResponse.returnCB !== undefined) {
                         var retArgs = this.unpack(this.getPayloadFromPacket(packetResponse),
@@ -1173,6 +1192,10 @@ function IPConnection() {
             var registeredCallback = this.registeredCallbacks[IPConnection.CALLBACK_ENUMERATE];
 
             if (registeredCallback !== undefined) {
+                if (packetCallback.length != 34) {
+                    return; // silently ignoring callback with wrong length
+                }
+
                 var args = this.unpack(this.getPayloadFromPacket(packetCallback), 's8 s8 c B3 B3 H B');
                 var evalCBString = 'registeredCallback(';
 
@@ -1205,23 +1228,27 @@ function IPConnection() {
         }
 
         var cbFunction = undefined;
-        var cbUnpackString = undefined;
+        var cbUnpack = undefined;
 
         if (device.registeredCallbacks[functionID] !== undefined) {
             cbFunction = device.registeredCallbacks[functionID];
-            cbUnpackString = device.callbackFormats[functionID];
+            cbUnpack = device.callbackFormats[functionID];
         }
         else if (device.registeredCallbacks[-functionID] !== undefined) {
             cbFunction = device.registeredCallbacks[-functionID];
-            cbUnpackString = device.callbackFormats[functionID];
+            cbUnpack = device.callbackFormats[functionID];
         }
 
-        if (cbFunction === undefined || cbUnpackString === undefined) {
+        if (cbFunction === undefined || cbUnpack === undefined) {
             return;
         }
 
+        if (packetCallback.length != cbUnpack[0]) {
+            return; // silently ignoring callback with wrong length
+        }
+
         // llvalues is an array with unpacked values
-        var llvalues = this.unpack(this.getPayloadFromPacket(packetCallback), cbUnpackString);
+        var llvalues = this.unpack(this.getPayloadFromPacket(packetCallback), cbUnpack[1]);
 
         // Process high-level callback
         if (-functionID in device.registeredCallbacks) {
@@ -1229,7 +1256,7 @@ function IPConnection() {
             var chunkOffset = 0;
             var chunkData = null;
             var hlcb = device.highLevelCallbacks[-functionID];
-            // FIXME: currently assuming that cbUnpackString is longer than 1
+            // FIXME: currently assuming that cbUnpack is longer than 1
             var data = null;
             var hasData = false;
 

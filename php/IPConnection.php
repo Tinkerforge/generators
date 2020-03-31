@@ -211,6 +211,12 @@ class DeviceReplacedException extends TinkerforgeException
 }
 
 
+class WrongResponseLengthException extends TinkerforgeException
+{
+
+}
+
+
 abstract class Device
 {
     /**
@@ -438,7 +444,7 @@ abstract class Device
     /**
      * @internal
      */
-    protected function sendRequest($function_id, $payload)
+    protected function sendRequest($function_id, $payload, $expected_response_length)
     {
         if ($this->ipcon->socket === FALSE) {
             throw new NotConnectedException('Not connected');
@@ -473,7 +479,16 @@ abstract class Device
             $error_code = ($response[0]['error_code_and_future_use'] >> 6) & 0x03;
 
             if ($error_code === 0) {
-                // no error
+                if ($expected_response_length === 0) {
+                    // Setter with response-expected enabled
+                    $expected_response_length = 8;
+                }
+
+                $actual_response_length = 8 + strlen($response[1]);
+
+                if ($actual_response_length !== $expected_response_length) {
+                    throw new WrongResponseLengthException("Expected response of $expected_response_length byte for function ID $function_id, got $actual_response_length byte instead");
+                }
             } else if ($error_code === 1) {
                 throw new InvalidParameterException("Got invalid parameter for function ID $function_id");
             } else if ($error_code === 2) {
@@ -518,7 +533,7 @@ abstract class Device
         }
 
         if ($this->device_identifier_check === self::DEVICE_IDENTIFIER_CHECK_PENDING) {
-            $payload = $this->sendRequest(255, ''); # getIdentity
+            $payload = $this->sendRequest(255, '', 33); # getIdentity
             $response = unpack('c8uid/c8connected_uid/c1position/C3hardware_version/C3firmware_version/v1device_identifier', $payload);
             $device_identifier = $response['device_identifier'];
 
@@ -562,7 +577,7 @@ class BrickDaemon extends Device
     {
         $payload = '';
 
-        $data = $this->sendRequest(self::FUNCTION_GET_AUTHENTICATION_NONCE, $payload);
+        $data = $this->sendRequest(self::FUNCTION_GET_AUTHENTICATION_NONCE, $payload, 12);
 
         $payload = unpack('C4nonce', $data);
 
@@ -581,7 +596,7 @@ class BrickDaemon extends Device
             $payload .= pack('C', $digest[$i]);
         }
 
-        $this->sendRequest(self::FUNCTION_AUTHENTICATE, $payload);
+        $this->sendRequest(self::FUNCTION_AUTHENTICATE, $payload, 0);
     }
 }
 
@@ -1302,6 +1317,10 @@ class IPConnection
     {
         if (!array_key_exists(self::CALLBACK_ENUMERATE, $this->registered_callbacks)) {
             return;
+        }
+
+        if (8 + strlen($payload) !== 34) {
+            return; // Silently ignoring callback with wrong length
         }
 
         $payload = unpack('c8uid/c8connected_uid/cposition/C3hardware_version/C3firmware_version/vdevice_identifier/Cenumeration_type', $payload);

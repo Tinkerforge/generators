@@ -150,6 +150,17 @@ use constant DEVICE_REPLACED => 82;
 =back
 =cut
 
+=item WRONG_RESPONSE_LENGTH
+
+Possible return value of the get_code() subroutine.
+
+=cut
+
+use constant WRONG_RESPONSE_LENGTH => 83;
+
+=back
+=cut
+
 # overloading function stringify()
 use overload ('""' => '_stringify');
 

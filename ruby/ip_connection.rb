@@ -72,6 +72,9 @@ module Tinkerforge
   class DeviceReplacedException < TinkerforgeException
   end
 
+  class WrongResponseLengthException < TinkerforgeException
+  end
+
   # internal
   class Packer
     def self.pack(unpacked, format)
@@ -380,7 +383,7 @@ module Tinkerforge
 
     # internal
     def send_request(function_id, request_data, request_format,
-                     response_length, response_format)
+                     expected_response_length, response_format)
       response = nil
 
       if request_data.length > 0
@@ -422,7 +425,13 @@ module Tinkerforge
         error_code = Packer.get_error_code_from_data packet
 
         if error_code == 0
-          # no error
+          if expected_response_length == 0
+            expected_response_length = 8 # setter with response-expected enabled
+          end
+
+          if packet.length != expected_response_length
+            raise WrongResponseLengthException, "Expected response of #{expected_response_length} byte for function ID #{function_id}, got #{packet.length} byte instead"
+          end
         elsif error_code == 1
           raise InvalidParameterException, "Got invalid parameter for function ID #{function_id}"
         elsif error_code == 2
@@ -431,7 +440,7 @@ module Tinkerforge
           raise UnknownErrorCodeException, "Function ID #{function_id} returned an unknown error"
         end
 
-        if response_length > 0
+        if response_format.length > 0
           response = Packer.unpack packet[8..-1], response_format
 
           if response.length == 1
@@ -482,7 +491,7 @@ module Tinkerforge
 
       @device_identifier_lock.synchronize {
         if @device_identifier_check == DEVICE_IDENTIFIER_CHECK_PENDING
-          device_identifier = send_request(255, [], '', 25, 'Z8 Z8 k C3 C3 S')[5] # <device>.get_identity
+          device_identifier = send_request(255, [], '', 33, 'Z8 Z8 k C3 C3 S')[5] # <device>.get_identity
 
           if device_identifier == @device_identifier
             @device_identifier_check = DEVICE_IDENTIFIER_CHECK_MATCH
@@ -533,7 +542,7 @@ module Tinkerforge
     end
 
     def get_authentication_nonce
-      send_request FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 4, 'C4'
+      send_request FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 12, 'C4'
     end
 
     def authenticate(client_nonce, digest)
@@ -1092,6 +1101,10 @@ module Tinkerforge
           return
         end
 
+        if packet.length != 34
+          return # silently ignoring callback with wrong length
+        end
+
         payload = Packer.unpack packet[8..-1], 'Z8 Z8 k C3 C3 S C'
 
         cb.call(*payload)
@@ -1104,12 +1117,18 @@ module Tinkerforge
         begin
           device.check_validity
         rescue TinkerforgeException
-          return # silently ignoring callbacks for invalid devices
+          return # silently ignoring callback for invalid device
         end
 
         if device.high_level_callbacks.has_key?(-function_id)
           hlcb = device.high_level_callbacks[-function_id] # [roles, options, data]
-          payload = Packer.unpack packet[8..-1], device.callback_formats[function_id]
+          format = device.callback_formats[function_id] # FIXME: currently assuming that low-level callback has more than one element
+
+          if packet.length != format[0]
+            return # silently ignoring callback with wrong length
+          end
+
+          payload = Packer.unpack packet[8..-1], format[1]
           has_data = false
           data = nil
 
@@ -1174,7 +1193,17 @@ module Tinkerforge
         cb = device.registered_callbacks[function_id]
 
         if cb != nil
-          payload = Packer.unpack packet[8..-1], device.callback_formats[function_id]
+          format = device.callback_formats[function_id]
+
+          if format == nil
+            return # silently ignore registered but unknown callback
+          end
+
+          if packet.length != format[0]
+            return # silently ignoring callback with wrong length
+          end
+
+          payload = Packer.unpack packet[8..-1], format[1]
 
           cb.call(*payload)
         end

@@ -73,10 +73,11 @@ class {0}(Device):"""
 
     def get_shell_callback_formats(self):
         callbacks = []
-        template = "cf[{0}] = '{1}'"
+        template = "cf[{0}] = ({1}, '{2}')"
 
         for packet in self.get_packets('callback'):
             callbacks.append(template.format(packet.get_function_id(),
+                                             packet.get_response_size(),
                                              packet.get_shell_format_list('out')))
 
         if len(callbacks) > 0:
@@ -130,14 +131,14 @@ def call_{0}_{1}(ctx, argv):
 {2}
 		args = parser.parse_args(argv)
 
-		device_call(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', None, args.expect_response, [], [])
+		device_call(ctx, {7}{8}, {3}, ({4}), '{5}', {9}, '{6}', None, args.expect_response, [], [])
 """
         template_getter = """	def {0}(ctx, argv):
 		parser = ParserWithExecute(ctx, prog_prefix + ' {1}')
 {2}
 		args = parser.parse_args(argv)
 
-		device_call(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}], [{10}])
+		device_call(ctx, {7}{8}, {3}, ({4}), '{5}', {11}, '{6}', args.execute, False, [{9}], [{10}])
 """
         template_get_identity = """	def get_identity(ctx, argv):
 		common_get_identity(ctx, prog_prefix, {0}, argv)
@@ -147,14 +148,14 @@ def call_{0}_{1}(ctx, argv):
 {params}
 		args = parser.parse_args(argv)
 
-		device_stream_call(ctx, {class_name}, {function_id}, '{direction}', ({request_data}), {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, '{format_in}', '{format_out}', None, args.expect_response, [], [], {chunk_padding}, {chunk_cardinality}, {chunk_max_offset}, {short_write}, {single_read}, {fixed_length})
+		device_stream_call(ctx, {class_name}, {function_id}, '{direction}', ({request_data}), {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, '{format_in}', {length_out}, '{format_out}', None, args.expect_response, [], [], {chunk_padding}, {chunk_cardinality}, {chunk_max_offset}, {short_write}, {single_read}, {fixed_length})
 """
         template_stream_getter = """	def {name_under}(ctx, argv):
 		parser = ParserWithExecute(ctx, prog_prefix + ' {name_dash}')
 {params}
 		args = parser.parse_args(argv)
 
-		device_stream_call(ctx, {class_name}, {function_id}, '{direction}', ({request_data}), {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, '{format_in}', '{format_out}', args.execute, False, [{output_names}], [{output_symbols}], {chunk_padding}, {chunk_cardinality}, {chunk_max_offset}, {short_write}, {single_read}, {fixed_length})
+		device_stream_call(ctx, {class_name}, {function_id}, '{direction}', ({request_data}), {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, '{format_in}', {length_out}, '{format_out}', args.execute, False, [{output_names}], [{output_symbols}], {chunk_padding}, {chunk_cardinality}, {chunk_max_offset}, {short_write}, {single_read}, {fixed_length})
 """
 
         for packet in self.get_packets('function'):
@@ -220,7 +221,8 @@ def call_{0}_{1}(ctx, argv):
                                                       self.get_name().camel,
                                                       self.get_category().camel,
                                                       ', '.join(output_names),
-                                                      ', '.join(output_symbols))
+                                                      ', '.join(output_symbols),
+                                                      packet.get_response_size())
                 else:
                     if not name_under.startswith('set_'):
                         setter_patterns.append(name_dash)
@@ -233,7 +235,8 @@ def call_{0}_{1}(ctx, argv):
                                                       packet.get_shell_format_list('in'),
                                                       packet.get_shell_format_list('out'),
                                                       self.get_name().camel,
-                                                      self.get_category().camel)
+                                                      self.get_category().camel,
+                                                      packet.get_response_size())
 
             functions.append(function)
             entries.append("'{0}': {1}".format(name_dash, name_under))
@@ -346,6 +349,7 @@ def call_{0}_{1}(ctx, argv):
                                                          low_level_roles_in=repr(tuple(low_level_roles_in)),
                                                          low_level_roles_out=repr(tuple(low_level_roles_out)),
                                                          format_in=packet.get_shell_format_list('in'),
+                                                         length_out=packet.get_response_size(),
                                                          format_out=packet.get_shell_format_list('out'),
                                                          class_name=self.get_name().camel + self.get_category().camel,
                                                          output_names=', '.join(output_names),
@@ -371,6 +375,7 @@ def call_{0}_{1}(ctx, argv):
                                                          low_level_roles_in=repr(tuple(low_level_roles_in)),
                                                          low_level_roles_out=repr(tuple(low_level_roles_out)),
                                                          format_in=packet.get_shell_format_list('in'),
+                                                         length_out=packet.get_response_size(),
                                                          format_out=packet.get_shell_format_list('out'),
                                                          class_name=self.get_name().camel + self.get_category().camel,
                                                          chunk_padding=chunk_padding,

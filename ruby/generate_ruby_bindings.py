@@ -131,11 +131,11 @@ module Tinkerforge
 
     def get_ruby_callback_formats(self):
         callback_formats = ''
-        template = "      @callback_formats[CALLBACK_{0}] = '{1}'\n"
+        template = "      @callback_formats[CALLBACK_{0}] = [{1}, '{2}']\n"
 
         for packet in self.get_packets('callback'):
-            form, _ = packet.get_ruby_format_list('out')
-            callback_formats += template.format(packet.get_name().upper, form)
+            form = packet.get_ruby_format_list('out')
+            callback_formats += template.format(packet.get_name().upper, packet.get_response_size(), form)
 
         return callback_formats
 
@@ -181,8 +181,9 @@ module Tinkerforge
             fid = packet.get_name().upper
             parms = packet.get_ruby_parameters()
             doc = packet.get_ruby_formatted_doc()
-            in_format, _ = packet.get_ruby_format_list('in')
-            out_format, out_size = packet.get_ruby_format_list('out')
+            in_format = packet.get_ruby_format_list('in')
+            out_size = packet.get_response_size()
+            out_format = packet.get_ruby_format_list('out')
 
             if packet.get_function_id() == 255: # <device>.get_identity
                 check = ''
@@ -621,21 +622,16 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
 
     def get_ruby_format_list(self, direction):
         forms = []
-        total_size = 0
 
         for element in self.get_elements(direction=direction):
-            if element.get_cardinality() > 1:
-                num_str = element.get_cardinality()
-                num_int = element.get_cardinality()
-            else:
-                num_str = ''
-                num_int = 1
+            cardinality = element.get_cardinality()
 
-            form, size = element.get_ruby_pack_format()
-            forms.append('{0}{1}'.format(form, num_str))
-            total_size += size * num_int
+            if cardinality == 1:
+                cardinality = ''
 
-        return ' '.join(forms), total_size
+            forms.append('{0}{1}'.format(element.get_ruby_pack_format(), cardinality))
+
+        return ' '.join(forms)
 
 class RubyBindingsGenerator(ruby_common.RubyGeneratorTrait, common.BindingsGenerator):
     def get_device_class(self):
