@@ -64,6 +64,7 @@ package {device}
 import (
 	"encoding/binary"
 	"bytes"
+	"fmt"
 	. "github.com/Tinkerforge/go-api-bindings/internal"
 	"github.com/Tinkerforge/go-api-bindings/ipconnection"
 )
@@ -243,6 +244,12 @@ func (device *{name}) GetAPIVersion() [3]uint8 {{
         callback_template = """{description}
 func (device *{device_name}) Register{name}Callback(fn func({type})) uint64 {{
 	wrapper := func(byteSlice []byte) {{
+		var header PacketHeader
+
+		header.FillFromBytes(byteSlice)
+		if header.Length != {response_size} {{
+			return
+		}}
 		{buf_decl}
 		{param_decls}
 		{param_reads}
@@ -309,7 +316,8 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
                                                       description=doc,
                                                       type=", ".join(ret.get_go_type() for ret in params),
                                                       fun_enum="Function",
-                                                      fn_id=packet.get_name().camel))
+                                                      fn_id=packet.get_name().camel,
+                                                      response_size=packet.get_response_size()))
 
             if packet.has_high_level():
                 high_level_params = list(p for p in params if p.get_level() != 'low')
@@ -340,17 +348,21 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
 	if err != nil {{
 		return {return_results}err
 	}}
-	if len(resultBytes) > 0 {{
-		var header PacketHeader
 
-		header.FillFromBytes(resultBytes)
-		if header.ErrorCode != 0 {{
-			return {return_results}DeviceError(header.ErrorCode)
-		}}
+	var header PacketHeader
+	header.FillFromBytes(resultBytes)
 
-		{resultBufAssignment}bytes.NewBuffer(resultBytes[8:])
-		{read_results}
+	if header.Length != {response_size} {{
+		return {return_results}fmt.Errorf("Received packet of unexpected size %d, instead of %d", header.Length, {response_size})
 	}}
+
+
+	if header.ErrorCode != 0 {{
+		return {return_results}DeviceError(header.ErrorCode)
+	}}
+
+	{resultBufAssignment}bytes.NewBuffer(resultBytes[8:])
+	{read_results}
 
 	return {return_results}nil
 }}"""
@@ -447,7 +459,8 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
                                      return_results = return_results,
                                      fn = fn,
                                      fun_enum = "Function",
-                                     fn_id=packet.get_name().camel))
+                                     fn_id=packet.get_name().camel,
+                                     response_size=packet.get_response_size()))
 
             if packet.get_high_level('stream_in') != None:
                 high_level_function_counter += 1
