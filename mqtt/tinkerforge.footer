@@ -770,7 +770,7 @@ class MQTTBindings:
 
         def wrapper(ipcon):
             device.check_validity()
-            return ipcon.send_request(device, fnInfo.id, tuple(args), fnInfo.payload_fmt, fnInfo.response_fmt)
+            return ipcon.send_request(device, fnInfo.id, tuple(args), fnInfo.payload_fmt, fnInfo.response_size, fnInfo.response_fmt)
 
         response = self.handle_ipcon_exceptions(wrapper, dict([(name, None) for name in fnInfo.result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
         if isinstance(response, dict) and "_ERROR" in response:

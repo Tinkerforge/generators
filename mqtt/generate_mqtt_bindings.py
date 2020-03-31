@@ -75,7 +75,7 @@ class {0}(MQTTCallbackDevice):
         template = "\tfunctions = {{\n\t\t{entries}\n\t}}\n"
         entries = []
         for packet in self.get_packets('function'):
-            entries.append("'{mqtt_name}': FunctionInfo({id}, {arg_names}, {arg_types}, [{arg_symbols}], '{payload_fmt}', {result_names}, [{result_symbols}], '{response_fmt}')".format(
+            entries.append("'{mqtt_name}': FunctionInfo({id}, {arg_names}, {arg_types}, [{arg_symbols}], '{payload_fmt}', {result_names}, [{result_symbols}], {response_size}, '{response_fmt}')".format(
                  mqtt_name=packet.get_mqtt_name(),
                  id=packet.get_function_id(),
                  arg_names=[elem.get_name().under for elem in packet.get_elements(direction='in')],
@@ -84,6 +84,7 @@ class {0}(MQTTCallbackDevice):
                  result_names=[elem.get_name().under for elem in packet.get_elements(direction='out')],
                  result_symbols=', '.join([elem.get_symbols() for elem in packet.get_elements(direction='out')]),
                  payload_fmt=packet.get_mqtt_format_list('in'),
+                 response_size=packet.get_response_size(),
                  response_fmt=packet.get_mqtt_format_list('out')))
 
             if packet.has_high_level():
@@ -193,7 +194,7 @@ class {0}(MQTTCallbackDevice):
 
     def get_mqtt_callback_map(self):
         template = "\tcallbacks = {{\n\t\t{entries}\n\t}}\n"
-        entry_template = "'{mqtt_name}': CallbackInfo({id}, {names}, [{symbols}], '{fmt}', {hl_info})"
+        entry_template = "'{mqtt_name}': CallbackInfo({id}, {names}, [{symbols}], ({response_size}, '{fmt}'), {hl_info})"
         hl_template = "[{2}, {{'fixed_length': {0}, 'single_chunk': {1}}}, None]"
 
         entries = []
@@ -217,6 +218,7 @@ class {0}(MQTTCallbackDevice):
                                                 names=[elem.get_name().under for elem in packet.get_elements(direction='out', high_level=True)],
                                                 symbols=', '.join([elem.get_symbols() for elem in packet.get_elements(direction='out', high_level=True)]),
                                                 fmt=packet.get_mqtt_format_list('out'),
+                                                response_size=packet.get_response_size(),
                                                 hl_info=hl_info))
         return template.format(entries=",\n\t\t".join(entries))
 
