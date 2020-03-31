@@ -39,7 +39,7 @@ openHABUnits = [
     OpenHABUnit('Decibel', 'SmartHomeUnits.DECIBEL', 'Dimensionless'),
     OpenHABUnit('Degree', 'SmartHomeUnits.DEGREE_ANGLE', 'Angle'),
     OpenHABUnit('Degree Per Second', 'SmartHomeUnits.ONE', 'Dimensionless'),
-    OpenHABUnit('Gram Per Cubic Meter', 'SmartHomeUnits.MICROGRAM_PER_CUBICMETRE', 'Density', tf_to_oh_divisor=1/(10**6)),
+    OpenHABUnit('Gram Per Cubic Meter', 'SmartHomeUnits.MICROGRAM_PER_CUBICMETRE', 'Density', tf_to_oh_divisor=1/(1e6)),
     OpenHABUnit('Gram', 'SIUnits.GRAM', 'Mass'),
     OpenHABUnit('Hertz', 'SmartHomeUnits.HERTZ', 'Frequency'),
     OpenHABUnit('Kelvin', 'SmartHomeUnits.KELVIN', 'Temperature'),
@@ -576,7 +576,7 @@ class OpenHABDevice(java_common.JavaDevice):
             if not c.type.is_trigger_channel and c.divisor == 1 and isinstance(e.get_scale(), tuple):
                 if e.get_unit() is not None:
                     factor, tf_unit = self.find_unit_with_prefix(e.get_unit())
-                    c.divisor = tf_unit.tf_to_oh_divisor / factor * e.get_scale()[1] / e.get_scale()[0]
+                    c.divisor = tf_unit.tf_to_oh_divisor / factor * e.get_scale()[1] / float(e.get_scale()[0])
                 else:
                     c.divisor = e.get_scale()[1] / e.get_scale()[0]
 
