@@ -489,9 +489,17 @@ Thing
 
         return ''.join(functions)
 
-    def get_java_doc(self):
+    def get_openhab_examples(self):
+        def title_from_filename(filename):
+            filename = filename.replace('Example', '').replace('.rules', '')
+            return common.camel_to_space(filename)
+
+        return common.make_rst_examples(title_from_filename, self)
+
+    def get_openhab_doc(self):
         doc  = common.make_rst_header(self)
         doc += common.make_rst_summary(self)
+        doc += self.get_openhab_examples()
         doc += '\n\n'
         doc += self.get_openhab_configuration()
         doc += '\n\n'
@@ -556,7 +564,7 @@ class OpenHABDocGenerator(openhab_common.OpenHABGeneratorTrait, common.DocGenera
         return 'openHAB'
 
     def get_doc_example_regex(self):
-        return r'^example_.*\.txt$'
+        return r'^Example.*\.rules$'
 
     def get_device_class(self):
         return OpenHABDocDevice
@@ -569,7 +577,7 @@ class OpenHABDocGenerator(openhab_common.OpenHABGeneratorTrait, common.DocGenera
 
     def generate(self, device):
         with open(device.get_doc_rst_path(), 'w') as f:
-            f.write(device.get_java_doc())
+            f.write(device.get_openhab_doc())
 
     def is_matlab(self):
         return False
