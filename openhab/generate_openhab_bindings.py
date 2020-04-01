@@ -35,6 +35,21 @@ import common
 from java.generate_java_bindings import JavaBindingsGenerator, JavaBindingsDevice
 import openhab_common
 
+openhab_header = """/**
+ * Copyright (c) 2010-2020 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
+ """
+
 class OpenHABBindingsDevice(openhab_common.OpenHABDevice, JavaBindingsDevice):
     def __init__(self, *args, **kwargs):
         JavaBindingsDevice.__init__(self, *args, **kwargs)
@@ -128,7 +143,9 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                                             version=self.oh.required_firmware_version,
                                             isCoMCU='true' if self.has_comcu() else 'false')
 
-        return template.format(header=self.get_generator().get_header_comment('asterisk'),
+
+
+        return template.format(header=openhab_header + self.get_generator().get_header_comment('asterisk'),
                                imports=self.get_openhab_imports(),
                                device_camel=self.get_category().camel + self.get_name().camel,
                                interfaces=common.wrap_non_empty('implements ', ', '.join(self.oh.implemented_interfaces + ['DeviceWrapper']), ' '),
@@ -537,7 +554,8 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         return template.format(cases='\n            '.join(cases))
 
     def get_openhab_actions_class(self):
-        template = """package org.eclipse.smarthome.binding.tinkerforge.internal.device;
+        template = """{header}
+package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -693,11 +711,13 @@ public class {device_camel}Actions implements ThingActions {{
                                                     thing_init='Thing t = h.getThing();' if len(refreshs) > 0 else ''
                                                     ))
 
-        return template.format(device_camel=self.get_category().camel + self.get_name().camel,
+        return template.format(header=openhab_header + self.get_generator().get_header_comment('asterisk'),
+                               device_camel=self.get_category().camel + self.get_name().camel,
                                actions='\n\n'.join(actions))
 
     def get_openhab_config_classes(self):
-        template = """package org.eclipse.smarthome.binding.tinkerforge.internal.device;{imports}
+        template = """{header}
+package org.eclipse.smarthome.binding.tinkerforge.internal.device;{imports}
 
 public class {name_camel} {{
     {parameters}
@@ -719,7 +739,9 @@ public class {name_camel} {{
         imports = '\n\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in self.oh.params] else ''
         class_name = self.get_category().camel + self.get_name().camel + 'Config'
         classes.append((class_name,
-                        template.format(imports=imports,
+                        template.format(
+                               header=openhab_header + self.get_generator().get_header_comment('asterisk'),
+                               imports=imports,
                                name_camel=class_name,
                                parameters="\n\t".join(parameter_template.format(type=param_types[p.type],
                                                                                 name=p.name.headless,
@@ -730,7 +752,9 @@ public class {name_camel} {{
             imports = '\n\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in ct.params] else ''
             class_name = ct.id.camel + 'Config'
             classes.append((class_name,
-                            template.format(imports=imports,
+                            template.format(
+                               header=openhab_header + self.get_generator().get_header_comment('asterisk'),
+                               imports=imports,
                                name_camel=class_name,
                                parameters="\n\t".join(parameter_template.format(type=param_types[p.type],
                                                                                 name=p.name.headless,
@@ -867,6 +891,7 @@ class OpenHABBindingsGenerator(openhab_common.OpenHABGeneratorTrait, JavaBinding
         common.specialize_template(os.path.join(self.get_root_dir(), 'TinkerforgeBindingConstants.java.template'),
                                     os.path.join(self.get_bindings_dir(), 'TinkerforgeBindingConstants.java'),
                                     {
+                                        '{header}': self.get_header_comment('asterisk'),
                                         '{thing_type_decls}': '\n\t'.join(thing_type_decls),
                                         '{thing_types}': ',\n\t\t'.join(thing_types),
                                         '{channel_type_decls}': '\n\t'.join(channel_type_decls),
@@ -877,6 +902,7 @@ class OpenHABBindingsGenerator(openhab_common.OpenHABGeneratorTrait, JavaBinding
         common.specialize_template(os.path.join(self.get_root_dir(), 'DeviceWrapperFactory.java.template'),
                                     os.path.join(self.get_bindings_dir(), 'DeviceWrapperFactory.java'),
                                     {
+                                        '{header}': self.get_header_comment('asterisk'),
                                         '{devices}': ',\n\t\t\t'.join(d.get_java_class_name() + 'Wrapper.DEVICE_INFO' for d in self.released_devices)
                                     })
 
