@@ -86,7 +86,7 @@ func (ipcon *IPConnection) RegisterEnumerateCallback(fn func(uid string, connect
 		var header internal.PacketHeader
 
 		header.FillFromBytes(bytes)
-		if header.Length != 26 {{
+		if header.Length != 34 {{
 			return
 		}}
 
