@@ -782,7 +782,7 @@ com['openhab'] = {
             'setters': [{
                     'predicate': 'Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)',
                     'packet': 'Set RGB Values',
-                    'packet_params': ['Helper.parseLEDValueIndex(cmd.toString(), logger)',
+                    'packet_params': ['Helper.parseLEDValueIndex(cmd.toString(), false, logger)',
                                     'Helper.parseLED1ValueLength(cmd.toString(), false, logger)',
                                     'Helper.parseLED1Values(cmd.toString(), 0, false, logger)',
                                     'Helper.parseLED1Values(cmd.toString(), 1, false, logger)',
@@ -791,7 +791,7 @@ com['openhab'] = {
                 }, {
                     'predicate': '!Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)',
                     'packet': 'Set RGBW Values',
-                    'packet_params': ['Helper.parseLEDValueIndex(cmd.toString(), logger)',
+                    'packet_params': ['Helper.parseLEDValueIndex(cmd.toString(), true, logger)',
                                     'Helper.parseLED1ValueLength(cmd.toString(), true, logger)',
                                     'Helper.parseLED1Values(cmd.toString(), 0, true, logger)',
                                     'Helper.parseLED1Values(cmd.toString(), 1, true, logger)',

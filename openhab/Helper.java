@@ -315,9 +315,9 @@ public class Helper {
         return ks0066u;
     }
 
-    public static int parseLEDValueIndex(String string, Logger logger) {
+    public static int parseLEDValueIndex(String string, boolean usesFourChannels, Logger logger) {
         try {
-            return Integer.valueOf(string.split(",")[0]);
+            return Integer.valueOf(string.split(",")[0]) * (usesFourChannels ? 4 : 3);
         } catch (Exception e) {
             logger.warn("Could not parse LED Value command: {}", e.getMessage());
             return 0;
