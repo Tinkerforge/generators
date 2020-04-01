@@ -517,7 +517,7 @@ Returned values can be accessed by name, sometimes the type deduction needs some
  val hwVersion = actions.{device_headless}GetIdentity().get("hardwareVersion") as short[]
  logInfo("Example", "Hardware version: " + hwVersion.get(0) + "." + hwVersion.get(1) + "." + hwVersion.get(2))
 
-""".format(device_lower=self.get_category().lower + self.get_name().lower,
+""".format(device_lower=self.get_category().lower_no_space + self.get_name().lower_no_space,
            device_headless=self.get_category().headless + self.get_name().camel)
 
         for type_, caption in [ ('bf', 'Basic Actions'),
