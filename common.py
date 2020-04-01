@@ -475,8 +475,13 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
     ref = '.. _{0}_{1}_examples:\n'.format(device.get_doc_rst_ref_name(),
                                            bindings_name)
-    examples = select_lang(ex).format(ref)
+
     files = find_device_examples(device, filename_regex)
+    if len(files) == 0:
+        print('   \033[01;31m! No examples\033[0m')
+        return ''
+
+    examples = select_lang(ex).format(ref)
     copy_files = []
     include_name = device.get_generator().get_doc_rst_filename_part()
 
