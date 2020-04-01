@@ -366,6 +366,18 @@ com['examples'].append({
 })
 
 com['openhab'] = {
+    'doc': {'de': 'TODO',
+    'en':
+"""
+Usage
+^^^^^
+
+The outdoor weather bricklet functions as bridge for WS-6147 stations and TH-6148 sensors.
+Sensors/stations must be added as things to openHAB manually with the Paper UI, as each
+sensor/station gives itself a random identifier on startup. The Outdoor Weather Bricklet
+reports seen IDs. If you have to restart a sensor/station for example to change it's batteries,
+you can keep the configured thing and only have to change the ID of the sensor/station thing.
+"""},
     'is_bridge': True,
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),

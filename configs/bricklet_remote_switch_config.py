@@ -274,6 +274,16 @@ com['examples'].append({
 })
 
 com['openhab'] = {
+    'doc': {'de': 'TODO',
+    'en':
+"""
+Usage
+^^^^^
+
+The remote switch Bricklet functions as bridge for remote controlled mains switches and dimmers.
+Switches/dimmers must be added as things to openHAB manually with the Paper UI. The switch/dimmer thing
+can then be configured depending on the addressing type. (See hardware documentation)
+"""},
     'is_bridge': True,
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),

@@ -499,6 +499,9 @@ Thing
     def get_openhab_doc(self):
         doc  = common.make_rst_header(self)
         doc += common.make_rst_summary(self)
+        if self.oh.doc is not None:
+            doc += common.select_lang(self.oh.doc)
+            doc += '\n\n'
         doc += self.get_openhab_examples()
         doc += '\n\n'
         doc += self.get_openhab_configuration()
