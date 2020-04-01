@@ -491,8 +491,8 @@ com['openhab'] = {
                 'element': 'Timestamp',
                 'transform': 'new {number_type}(timestamp{divisor}{unit})'}]
         }, {
-            'id': 'Alarm Triggered',
-            'label': 'Alarm Triggered',
+            'id': 'Alarm',
+            'label': 'Alarm',
             'description': 'This listener is triggered every time the current date and time matches the configured alarm (see the setAlarm action).',
             'type': 'system.trigger',
             'callbacks': [{
