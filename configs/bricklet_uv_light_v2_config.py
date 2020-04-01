@@ -88,7 +88,7 @@ add_callback_value_function(
     doc       = uva_doc,
     scale     = (1, 10000),
     unit      = 'Watt Per Square Meter',
-    range_    = (-1, 32800000)
+    range_    = (-1, None)
 )
 
 uvb_doc = {
@@ -132,7 +132,7 @@ add_callback_value_function(
     doc       = uvb_doc,
     scale     = (1, 10000),
     unit      = 'Watt Per Square Meter',
-    range_    = (-1, 32800000)
+    range_    = (-1, None)
 )
 
 uvi_doc = {

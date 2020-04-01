@@ -38,7 +38,7 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get UV Light',
-'elements': [('UV Light', 'uint32', 1, 'out', {'scale': (1, 10000), 'unit': 'Watt Per Square Meter', 'range': (0, 32800000)})],
+'elements': [('UV Light', 'uint32', 1, 'out', {'scale': (1, 10000), 'unit': 'Watt Per Square Meter', 'range': (0, 3280)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
