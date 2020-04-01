@@ -27,6 +27,10 @@ import javax.imageio.ImageIO;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.slf4j.Logger;
 
+/**
+ * Helper functions used typically directly by device wrappers. But complicated logic here instead of into the generator config.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class Helper {
 
@@ -114,7 +118,7 @@ public class Helper {
                 cmd = cmd.substring(1);
                 result.append(backslash_pattern.charAt(0));
             } else {
-                logger.warn("Could not parse display command {}: Found unknown command \\{}.", copy, cmd.charAt(0));
+                logger.warn("Could not parse display command {}: Found unknown command \\ {}.", copy, cmd.charAt(0));
             }
 
             backslash_idx = cmd.indexOf(backslash_pattern);

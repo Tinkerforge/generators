@@ -15,6 +15,10 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 
+/**
+ * DTO containing information about a brick or bricklet
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class DeviceInfo {
     public final String deviceDisplayName;

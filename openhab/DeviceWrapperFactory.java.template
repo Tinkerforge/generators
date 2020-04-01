@@ -22,6 +22,10 @@ import com.tinkerforge.IPConnection;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
+/**
+ * Builds device wrappers based on their device identifier or thing name.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class DeviceWrapperFactory {
     private final static List<DeviceInfo> deviceInfos;

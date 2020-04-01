@@ -66,9 +66,7 @@ import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
 
 /**
- * The {@link DeviceHandler} is responsible for handling commands, which are
- * sent to one of the channels.
- *
+ * Handles communication with a brick or bricklet.
  * @author Erik Fleckstein - Initial contribution
  */
 @NonNullByDefault
@@ -79,7 +77,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
 
     private @Nullable DeviceWrapper device;
 
-    private final BiFunction<@NonNull String, @NonNull IPConnection, @NonNull DeviceWrapper> deviceSupplier;
+    private final BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier;
 
     private Class<? extends ThingHandlerService> actionsClass;
     private Supplier<ChannelTypeRegistry> channelTypeRegistrySupplier;
@@ -235,7 +233,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             logger.debug("Removing old manual update handler for {}", thing.getUID().getId());
             Utils.assertNonNull(device).cancelManualUpdates();
         }
-        @NonNull DeviceWrapper dev = deviceSupplier.apply(id, ipcon);
+        DeviceWrapper dev = deviceSupplier.apply(id, ipcon);
         this.device = dev;
 
         try {
@@ -265,15 +263,14 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             dev.initialize(getConfig(), this::getChannelConfiguration, this::updateState, this::triggerChannel,
                     scheduler, this);
             logger.debug("Initialized {}", thing.getUID().getId());
-        } catch (TinkerforgeException e) {
+        } catch (TimeoutException e) {
             logger.debug("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
-            if (e instanceof TimeoutException) {
-                logger.debug("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
-                reportTimeout();
-            } else {
-                logger.warn("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, e.getMessage());
-            }
+            reportTimeout();
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, e.getMessage());
+            return;
+        } catch (TinkerforgeException e) {
+            logger.warn("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR, e.getMessage());
             return;
         }
         updateStatus(ThingStatus.ONLINE, ThingStatusDetail.NONE);
@@ -305,13 +302,11 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
                 return;
             }
             dev.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
+        } catch (TimeoutException e) {
+            logger.debug("Failed to refresh value for {}: {}", channelId, e.getMessage());
+            reportTimeout();
         } catch (TinkerforgeException e) {
-            if (e instanceof TimeoutException) {
-                logger.debug("Failed to refresh value for {}: {}", channelId, e.getMessage());
-                reportTimeout();
-            } else {
-                logger.warn("Failed to refresh value for {}: {}", channelId, e.getMessage());
-            }
+            logger.warn("Failed to refresh value for {}: {}", channelId, e.getMessage());
         }
     }
 
@@ -336,16 +331,11 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
                         () -> refreshValue(r.channel, Utils.assertNonNull(getThing().getChannel(r.channel)).getConfiguration()), r.delay,
                         TimeUnit.MILLISECONDS));
             }
+        } catch (TimeoutException e) {
+            logger.debug("Failed to send command {} to channel {}: {}", command.toFullString(), channelUID.toString(), e.getMessage());
+            reportTimeout();
         } catch (TinkerforgeException e) {
-            if (e instanceof TimeoutException) {
-                logger.debug("Failed to send command {} to channel {}: {}", command.toFullString(),
-                        channelUID.toString(), e.getMessage());
-
-                reportTimeout();
-            } else {
-                logger.warn("Failed to send command {} to channel {}: {}", command.toFullString(),
-                        channelUID.toString(), e.getMessage());
-            }
+            logger.warn("Failed to send command {} to channel {}: {}", command.toFullString(), channelUID.toString(), e.getMessage());
         }
     }
 
@@ -391,15 +381,12 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
         List<String> enabledChannelNames = new ArrayList<>();
         try {
             enabledChannelNames = Utils.assertNonNull(device).getEnabledChannels(getConfig());
+        } catch (TimeoutException e) {
+            logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
+            reportTimeout();
+            return false;
         } catch (TinkerforgeException e) {
-            if (e instanceof TimeoutException) {
-                logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
-                        e.getMessage());
-                reportTimeout();
-            } else {
-                logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
-                        e.getMessage());
-            }
+            logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
             return false;
         }
 

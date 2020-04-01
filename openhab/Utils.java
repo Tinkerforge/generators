@@ -33,9 +33,12 @@ import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 import org.eclipse.smarthome.core.thing.type.ThingType;
 import org.slf4j.Logger;
 
+/**
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class Utils {
-    public static @NonNull <T> T assertNonNull(@Nullable T value) {
+    public static <T> T assertNonNull(@Nullable T value) {
         StackTraceElement e = Thread.currentThread().getStackTrace()[1];
         if (value == null) throw new AssertionError(String.format("Value was asserted to be non-null, but was null: %s:%s", e.getFileName(), e.getLineNumber()));
         return value;

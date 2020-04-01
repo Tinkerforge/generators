@@ -27,8 +27,13 @@ import org.eclipse.smarthome.core.types.State;
 import com.tinkerforge.Device.Identity;
 import com.tinkerforge.TinkerforgeException;
 
+/**
+ * Implemented by classes to wrap a device of the Java Bindings.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public interface DeviceWrapper {
+    @NonNullByDefault
     public class SetterRefresh {
         public final String channel;
         public final long delay;
@@ -39,6 +44,7 @@ public interface DeviceWrapper {
         }
     }
 
+    @NonNullByDefault
     public class ListenerReg<T> {
         public final T listener;
         public final Consumer<T> toRemove;

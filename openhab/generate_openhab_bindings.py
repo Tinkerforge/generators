@@ -112,6 +112,10 @@ import com.tinkerforge.TinkerforgeException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
+/**
+ * Wraps the Java Bindings of the {configured_item}.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     {device_info}
@@ -146,6 +150,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
 
 
         return template.format(header=openhab_header + self.get_generator().get_header_comment('asterisk'),
+                               configured_item=self.get_long_display_name(),
                                imports=self.get_openhab_imports(),
                                device_camel=self.get_category().camel + self.get_name().camel,
                                interfaces=common.wrap_non_empty('implements ', ', '.join(self.oh.implemented_interfaces + ['DeviceWrapper']), ' '),
@@ -577,6 +582,10 @@ import java.util.HashMap;
 import com.tinkerforge.TinkerforgeException;
 import com.tinkerforge.{device_camel};
 
+/**
+ * Passes through actions of the {configured_item}.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @ThingActionsScope(name = "tinkerforge")
 @NonNullByDefault
 public class {device_camel}Actions implements ThingActions {{
@@ -595,10 +604,10 @@ public class {device_camel}Actions implements ThingActions {{
         input_action_template = """    @RuleAction(label = "{label}")
     public void {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
-        if(handler == null) {{
+        DeviceHandler h = handler;
+        if(h == null) {{
             return;
         }}
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
         {thing_init}
         @Nullable {device_camel}Wrapper dev = ((@Nullable {device_camel}Wrapper)h.getDevice());
         if(dev == null) {{
@@ -621,10 +630,10 @@ public class {device_camel}Actions implements ThingActions {{
            Map<String, Object> {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
         Map<String, Object> result = new HashMap<>();
-        if(handler == null) {{
+        DeviceHandler h = handler;
+        if(h == null) {{
             return result;
         }}
-        DeviceHandler h = (@NonNull DeviceHandler)handler;
         {thing_init}
         @Nullable {device_camel}Wrapper dev = ((@Nullable {device_camel}Wrapper)h.getDevice());
         if(dev == null) {{
@@ -712,13 +721,21 @@ public class {device_camel}Actions implements ThingActions {{
                                                     ))
 
         return template.format(header=openhab_header + self.get_generator().get_header_comment('asterisk'),
+                               configured_item=self.get_long_display_name(),
                                device_camel=self.get_category().camel + self.get_name().camel,
                                actions='\n\n'.join(actions))
 
     def get_openhab_config_classes(self):
         template = """{header}
-package org.eclipse.smarthome.binding.tinkerforge.internal.device;{imports}
+package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;{imports}
+
+/**
+ * Configuration DTO for the {configured_item} {category}.
+ * @author Erik Fleckstein - Initial contribution
+ */
+@NonNullByDefault
 public class {name_camel} {{
     {parameters}
 
@@ -736,10 +753,12 @@ public class {name_camel} {{
 
 
         classes = []
-        imports = '\n\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in self.oh.params] else ''
+        imports = '\nimport java.math.BigDecimal;' if 'decimal' in [p.type for p in self.oh.params] else ''
         class_name = self.get_category().camel + self.get_name().camel + 'Config'
         classes.append((class_name,
                         template.format(
+                               configured_item=self.get_long_display_name(),
+                               category='thing',
                                header=openhab_header + self.get_generator().get_header_comment('asterisk'),
                                imports=imports,
                                name_camel=class_name,
@@ -753,6 +772,8 @@ public class {name_camel} {{
             class_name = ct.id.camel + 'Config'
             classes.append((class_name,
                             template.format(
+                               configured_item=ct.id.space,
+                               category='channel type',
                                header=openhab_header + self.get_generator().get_header_comment('asterisk'),
                                imports=imports,
                                name_camel=class_name,

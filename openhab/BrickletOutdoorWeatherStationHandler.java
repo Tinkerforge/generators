@@ -47,9 +47,7 @@ import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
 
 /**
- * The {@link BrickletOutdoorWeatherStationHandler} is responsible for handling
- * commands, which are sent to one of the channels.
- *
+ * Handles communication with an outdoor weather station.
  * @author Erik Fleckstein - Initial contribution
  */
 @NonNullByDefault
@@ -179,13 +177,12 @@ public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
             }
             dev.refreshValue(channelId, getConfig(), channelConfig, this::updateState, this::triggerChannel);
             updateStatus(ThingStatus.ONLINE);
+        } catch (TimeoutException e) {
+            logger.debug("Failed to refresh value for {}: {}", channelId, e.getMessage());
+            reportTimeout();
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         } catch (TinkerforgeException e) {
-            if (e instanceof TimeoutException) {
-                logger.debug("Failed to refresh value for {}: {}", channelId, e.getMessage());
-                reportTimeout();
-            } else {
-                logger.warn("Failed to refresh value for {}: {}", channelId, e.getMessage());
-            }
+            logger.warn("Failed to refresh value for {}: {}", channelId, e.getMessage());
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
@@ -222,15 +219,12 @@ public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
                         () -> refreshValue(r.channel, Utils.assertNonNull(getThing().getChannel(r.channel)).getConfiguration()), r.delay,
                         TimeUnit.MILLISECONDS));
             }
+        } catch (TimeoutException e) {
+            logger.debug("Failed to send command {} to channel {}: {}", command.toFullString(), channelUID.toString(), e.getMessage());
+            reportTimeout();
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         } catch (TinkerforgeException e) {
-            if (e instanceof TimeoutException) {
-                logger.debug("Failed to send command {} to channel {}: {}", command.toFullString(),
-                        channelUID.toString(), e.getMessage());
-                reportTimeout();
-            } else {
-                logger.warn("Failed to send command {} to channel {}: {}", command.toFullString(),
-                        channelUID.toString(), e.getMessage());
-            }
+            logger.warn("Failed to send command {} to channel {}: {}", command.toFullString(), channelUID.toString(), e.getMessage());
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
     }
@@ -239,15 +233,12 @@ public class BrickletOutdoorWeatherStationHandler extends BaseThingHandler {
         List<String> enabledChannelNames = new ArrayList<>();
         try {
             enabledChannelNames = Utils.assertNonNull(device).getEnabledChannels(getConfig());
+        } catch (TimeoutException e) {
+            logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
+            reportTimeout();
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         } catch (TinkerforgeException e) {
-            if (e instanceof TimeoutException) {
-                logger.debug("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
-                        e.getMessage());
-                reportTimeout();
-            } else {
-                logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(),
-                        e.getMessage());
-            }
+            logger.warn("Failed to get enabled channels for device {}: {}", this.getThing().getUID().toString(), e.getMessage());
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR);
         }
 

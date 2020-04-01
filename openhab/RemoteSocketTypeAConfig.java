@@ -14,6 +14,10 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
+/**
+ * Configuration DTO for the remote socket type A.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class RemoteSocketTypeAConfig {
     Integer houseCode = 0;

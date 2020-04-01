@@ -30,6 +30,10 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Dynamically provides thing types based on the generated device wrappers.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 @Component(service = ThingTypeProvider.class, immediate = true)
 public class TinkerforgeThingTypeProvider implements ThingTypeProvider {

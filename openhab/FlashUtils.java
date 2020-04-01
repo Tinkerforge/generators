@@ -17,7 +17,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Response;
@@ -27,8 +27,13 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingCons
 import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
 import org.eclipse.smarthome.core.thing.binding.firmware.ProgressCallback;
 
+/**
+ * Helper functions used for downloading and flashing devices.
+ * @author Erik Fleckstein - Initial contribution
+ */
+@NonNullByDefault
 public class FlashUtils {
-    public static byte @Nullable [] downloadFirmware(@NonNull Firmware firmware, @NonNull ProgressCallback progressCallback, @NonNull HttpClient httpClient) {
+    public static byte @Nullable [] downloadFirmware(Firmware firmware, ProgressCallback progressCallback, HttpClient httpClient) {
         String url = firmware.getProperties().getOrDefault(TinkerforgeBindingConstants.PROPERTY_FIRMWARE_URL, "");
         if (url == "") {
             progressCallback.failed("Failed to update: firmware download URL missing");
@@ -39,7 +44,7 @@ public class FlashUtils {
 
         httpClient.newRequest(url).send(new BufferingResponseListener() {
             @Override
-            public void onHeaders(Response response) {
+            public void onHeaders(@Nullable Response response) {
                 super.onHeaders(response);
                 if (response.getHeaders().containsKey("Content-Length")) {
                     try {
@@ -50,7 +55,7 @@ public class FlashUtils {
             }
 
             @Override
-            public void onContent(Response response, ByteBuffer content) {
+            public void onContent(@Nullable Response response, @Nullable ByteBuffer content) {
                 int cLength = contentLength.get();
                 if (cLength > 0) {
                     double have = (cLength - content.remaining()) / ((double) cLength);
@@ -60,7 +65,7 @@ public class FlashUtils {
             }
 
             @Override
-            public void onComplete(Result result) {
+            public void onComplete(@Nullable Result result) {
                 if (result.isSucceeded()) {
                     try {
                         queue.put(getContent());

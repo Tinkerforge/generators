@@ -14,6 +14,10 @@ package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
+/**
+ * Configuration DTO for the outdoor weather station.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class BrickletOutdoorWeatherStationConfig {
     Integer stationID = 0;

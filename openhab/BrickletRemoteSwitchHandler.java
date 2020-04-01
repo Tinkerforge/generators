@@ -23,6 +23,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletRemoteSwitchV2Wrapper;
@@ -46,12 +47,20 @@ import com.tinkerforge.IPConnection;
 import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
 
+/**
+ * Custom handler to act as bridge to remote sockets and dimmers.
+ * @author Erik Fleckstein - Initial contribution
+ */
+@NonNullByDefault
 public class BrickletRemoteSwitchHandler extends DeviceHandler implements BridgeHandler {
+
+    @NonNullByDefault
     @FunctionalInterface
     public interface CheckedConsumer<T> {
         void accept(T t) throws TinkerforgeException;
     }
 
+    @NonNullByDefault
     public interface RemoteSwitch {
         void switchSocketA(int houseCode, int receiverCode, int switchTo) throws TinkerforgeException;
 
@@ -70,9 +79,10 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         void removeSwitchingDoneListener();
     }
 
+    @NonNullByDefault
     class BrickletRemoteSwitchWrapperWrapper implements RemoteSwitch {
         BrickletRemoteSwitchWrapper rs;
-        BrickletRemoteSwitch.SwitchingDoneListener listener;
+        BrickletRemoteSwitch.SwitchingDoneListener listener = () -> {};
 
         public BrickletRemoteSwitchWrapperWrapper(BrickletRemoteSwitchWrapper rs) {
             this.rs = rs;
@@ -120,9 +130,10 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         }
     }
 
+    @NonNullByDefault
     class BrickletRemoteSwitchV2WrapperWrapper implements RemoteSwitch {
         BrickletRemoteSwitchV2Wrapper rs;
-        BrickletRemoteSwitchV2.SwitchingDoneListener listener;
+        BrickletRemoteSwitchV2.SwitchingDoneListener listener = () -> {};
 
         public BrickletRemoteSwitchV2WrapperWrapper(BrickletRemoteSwitchV2Wrapper rs) {
             this.rs = rs;
@@ -172,6 +183,7 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
 
     private @Nullable RemoteSwitch remoteSwitch = null;
 
+    @NonNullByDefault
     public static class Task {
         CheckedConsumer<RemoteSwitch> task;
         Consumer<Boolean> callback;
@@ -186,7 +198,7 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
 
     private Queue<Task> tasks = new ConcurrentLinkedQueue<>();
     private AtomicBoolean isSwitching = new AtomicBoolean(true);
-    private ScheduledFuture<?> workFuture = null;
+    @Nullable private ScheduledFuture<?> workFuture = null;
 
     public BrickletRemoteSwitchHandler(Bridge bridge, BiFunction<String, IPConnection, DeviceWrapper> deviceSupplier,
             Class<? extends ThingHandlerService> actionsClass,
@@ -244,13 +256,12 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         try {
             isSwitching.set(remoteSwitch.getSwitchingState() == BrickletRemoteSwitchWrapper.SWITCHING_STATE_BUSY);
             workFuture = scheduler.scheduleWithFixedDelay(this::work, 500, 500, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            logger.debug("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
+            handleTimeout();
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR);
         } catch (TinkerforgeException e) {
-            if (e instanceof TimeoutException) {
-                logger.debug("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
-                handleTimeout();
-            } else {
-                logger.warn("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
-            }
+            logger.warn("Failed to initialize {}: {}", thing.getUID().getId(), e.getMessage());
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR);
         }
     }
@@ -270,12 +281,16 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
         if (isSwitching.get())
             return;
 
-        Task task = tasks.peek();
+        @Nullable Task task = tasks.peek();
         if (task == null)
             return;
 
         isSwitching.set(true);
         tasks.poll(); // Remove peeked task.
+
+        @Nullable RemoteSwitch remoteSwitch = this.remoteSwitch;
+        if (remoteSwitch == null)
+            return;
 
         try {
             task.task.accept(remoteSwitch);

@@ -52,6 +52,10 @@ import com.tinkerforge.NotConnectedException;
 import com.tinkerforge.TimeoutException;
 import com.tinkerforge.TinkerforgeException;
 
+/**
+ * Handles communication with Brick Daemons.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class BrickDaemonHandler extends BaseBridgeHandler {
     public IPConnection ipcon;
@@ -89,10 +93,11 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     }
 
     @Override
-    public void handleCommand(@NonNull ChannelUID channelUID, @NonNull Command command) {
+    public void handleCommand(ChannelUID channelUID, Command command) {
 
     }
 
+    @NonNullByDefault
     private class ReachabilityResult {
         Boolean reachable;
         DeviceHandler handler;
@@ -227,19 +232,14 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         if (cfg.auth) {
             try {
                 ipcon.authenticate(cfg.password);
+            } catch (TimeoutException e) {
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Could not authenticate (maybe the password was wrong?): " + e.getLocalizedMessage());
+                return;
             } catch (TinkerforgeException e) {
-                if (e instanceof TimeoutException) {
-                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                            "Could not authenticate (maybe the password was wrong?): " + e.getLocalizedMessage());
-                } else {
-                    updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Could not authenticate: "
-                            + e.getLocalizedMessage());
-                }
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, "Could not authenticate: " + e.getLocalizedMessage());
                 return;
             }
         }
-
-
 
         ipcon.addDisconnectedListener(disconnectedListener);
 

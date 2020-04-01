@@ -19,6 +19,10 @@ import org.eclipse.smarthome.core.thing.binding.ThingActions;
 import org.eclipse.smarthome.core.thing.binding.ThingActionsScope;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 
+/**
+ * Empty actions class used for devices that export no actions.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @ThingActionsScope(name = "tinkerforge")
 @NonNullByDefault
 public class DefaultActions implements ThingActions {

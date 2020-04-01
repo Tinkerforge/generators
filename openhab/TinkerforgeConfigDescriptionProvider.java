@@ -31,6 +31,10 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Dynamically provides config descriptions based on the generated device wrappers.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 @Component(service = { TinkerforgeConfigDescriptionProvider.class, ConfigDescriptionProvider.class }, immediate = true)
 public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionProvider {

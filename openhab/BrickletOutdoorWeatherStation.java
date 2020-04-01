@@ -58,6 +58,10 @@ import com.tinkerforge.BrickletOutdoorWeather.StationDataListener;
 import com.tinkerforge.Device.Identity;
 import com.tinkerforge.TinkerforgeException;
 
+/**
+ * Fake device modelling an outdoor weather station.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class BrickletOutdoorWeatherStation implements DeviceWrapper {
     public BrickletOutdoorWeatherStation(BrickletOutdoorWeatherWrapper bricklet) {

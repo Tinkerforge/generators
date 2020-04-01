@@ -12,5 +12,12 @@
  */
 package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
+/**
+ * Marker interface for non-CoMCU bricklets.
+ * @author Erik Fleckstein - Initial contribution
+ */
+@NonNullByDefault
 public interface StandardFlashable {
 }

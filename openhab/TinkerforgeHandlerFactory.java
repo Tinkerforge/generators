@@ -87,7 +87,7 @@ public class TinkerforgeHandlerFactory extends BaseThingHandlerFactory {
             return DeviceWrapperFactory.createDevice(thingName, uid, ipcon);
         } catch (Exception e) {
             logger.error("Failed to create device {} (uid {}):", thingName, uid, e);
-            throw new RuntimeException(e);
+            throw new AssertionError("Failed to create device %s (uid %s).", e);
         }
     }
 

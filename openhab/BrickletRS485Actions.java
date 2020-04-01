@@ -40,6 +40,11 @@ import com.tinkerforge.BrickletRS485.ModbusMasterWriteSingleCoilResponseListener
 import com.tinkerforge.BrickletRS485.ModbusMasterWriteSingleRegisterResponseListener;
 import com.tinkerforge.TinkerforgeException;
 
+/**
+ * Passes through actions of the RS485 actions.
+ * Has custom implementation of Modbus Master actions to convert them to blocking function calls.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 @ThingActionsScope(name = "tinkerforge")
 public class BrickletRS485Actions implements ThingActions {
@@ -61,10 +66,10 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "message") char[] message) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -92,10 +97,10 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "length") int length) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -123,10 +128,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -158,10 +163,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -188,10 +193,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -219,10 +224,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -250,10 +255,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -282,10 +287,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -314,10 +319,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -346,10 +351,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -378,10 +383,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -418,10 +423,10 @@ public class BrickletRS485Actions implements ThingActions {
 
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -488,10 +493,10 @@ public class BrickletRS485Actions implements ThingActions {
 
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -558,10 +563,10 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "coilValue") boolean coilValue) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -625,10 +630,10 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "registerValue") int registerValue) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -694,10 +699,10 @@ public class BrickletRS485Actions implements ThingActions {
 
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -762,10 +767,10 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "registers") int[] registers) throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -830,10 +835,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -900,10 +905,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -968,10 +973,10 @@ public class BrickletRS485Actions implements ThingActions {
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
 
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -996,10 +1001,10 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "temperature", type = "int") Map<String, Object> brickletRS485GetChipTemperature()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -1025,10 +1030,10 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "config", type = "int") Map<String, Object> brickletRS485GetStatusLEDConfig()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -1054,10 +1059,10 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "mode", type = "int") Map<String, Object> brickletRS485GetBootloaderMode()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -1083,10 +1088,10 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "errorCountAckChecksum", type = "long") @ActionOutput(name = "errorCountMessageChecksum", type = "long") @ActionOutput(name = "errorCountFrame", type = "long") @ActionOutput(name = "errorCountOverflow", type = "long") Map<String, Object> brickletRS485GetSPITFPErrorCount()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());
@@ -1115,10 +1120,10 @@ public class BrickletRS485Actions implements ThingActions {
     public @ActionOutput(name = "uid", type = "String") @ActionOutput(name = "connectedUid", type = "String") @ActionOutput(name = "position", type = "char") @ActionOutput(name = "hardwareVersion", type = "int[]") @ActionOutput(name = "firmwareVersion", type = "int[]") @ActionOutput(name = "deviceIdentifier", type = "int") Map<String, Object> brickletRS485GetIdentity()
             throws TinkerforgeException {
         Map<String, Object> result = new HashMap<>();
-        if (handler == null) {
+        DeviceHandler h = handler;
+        if (h == null) {
             return result;
         }
-        DeviceHandler h = (@NonNull DeviceHandler) handler;
 
         @Nullable
         BrickletRS485Wrapper dev = ((@Nullable BrickletRS485Wrapper) h.getDevice());

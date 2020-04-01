@@ -27,6 +27,10 @@ import org.eclipse.smarthome.core.thing.binding.firmware.ProgressStep;
 
 import com.tinkerforge.TinkerforgeException;
 
+/**
+ * Used to flash CoMCU bricklets.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public interface CoMCUFlashable {
     public final static int BOOTLOADER_MODE_BOOTLOADER = 0;
@@ -140,6 +144,10 @@ public interface CoMCUFlashable {
     }
 }
 
+/**
+ * Helper functions for CoMCU flashing
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 class CoMCUHelper {
     static void waitForBootloaderMode(CoMCUFlashable bricklet, int mode) throws TinkerforgeException {

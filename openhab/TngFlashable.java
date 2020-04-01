@@ -12,5 +12,12 @@
  */
 package org.eclipse.smarthome.binding.tinkerforge.internal.device;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
+/**
+ * Marker interface for TNG devices.
+ * @author Erik Fleckstein - Initial contribution
+ */
+@NonNullByDefault
 public interface TngFlashable {
 }

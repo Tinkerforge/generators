@@ -37,6 +37,10 @@ import com.tinkerforge.IPConnection.EnumerateListener;
 import com.tinkerforge.IPConnectionBase;
 import com.tinkerforge.NotConnectedException;
 
+/**
+ * Discovers Bricks and Bricklets.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
     private BrickDaemonHandler handler;
@@ -121,8 +125,7 @@ public class BrickDaemonDiscoveryService extends AbstractDiscoveryService {
 
     @Override
     protected void stopBackgroundDiscovery() {
-        logger.debug("Stop Tinkerforge device background discovery for Brick Daemon "
-                + this.handler.getThing().getUID());
+        logger.debug("Stop Tinkerforge device background discovery for Brick Daemon {}", this.handler.getThing().getUID());
         @Nullable ScheduledFuture<?> job = this.job;
         if (job != null && !job.isCancelled()) {
             job.cancel(true);

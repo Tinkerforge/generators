@@ -33,6 +33,10 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Dynamically provides channel types based on the generated device wrappers.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 @Component(service = ChannelTypeProvider.class, immediate = true)
 public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {

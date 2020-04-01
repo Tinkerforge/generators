@@ -35,6 +35,10 @@ import org.eclipse.smarthome.core.thing.type.ChannelTypeRegistry;
 
 import com.tinkerforge.IPConnection;
 
+/**
+ * Custom handler to act as bridge to outdoor weather stations and sensors.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class BrickletOutdoorWeatherHandler extends DeviceHandler implements BridgeHandler {
     private List<ThingHandler> childHandlers = new ArrayList<>();

@@ -46,6 +46,10 @@ import com.tinkerforge.Device.Identity;
 import com.tinkerforge.IPConnection;
 import com.tinkerforge.TinkerforgeException;
 
+/**
+ * Fake device modelling a connection to a Brick Daemon.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class BrickDaemonWrapper implements DeviceWrapper {
     public final static DeviceInfo DEVICE_INFO = new DeviceInfo("Brick Daemon", "brickd", -1, BrickDaemonWrapper.class,

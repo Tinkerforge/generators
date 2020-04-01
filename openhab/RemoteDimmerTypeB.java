@@ -51,6 +51,10 @@ import org.slf4j.LoggerFactory;
 import com.tinkerforge.Device.Identity;
 import com.tinkerforge.TinkerforgeException;
 
+/**
+ * Fake device modelling a remote dimmer type B controlled by a remote switch bricklet.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class RemoteDimmerTypeB implements DeviceWrapper {
     public RemoteDimmerTypeB(BrickletRemoteSwitchHandler handler) {

@@ -23,6 +23,10 @@ import org.eclipse.smarthome.core.thing.binding.firmware.ProgressStep;
 
 import com.tinkerforge.TinkerforgeException;
 
+/**
+ * Implemented by bricks that support flashing standard (i.e. non-CoMCU) bricklets.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public interface StandardFlashHost {
     public abstract void writeBrickletPlugin(char port, short chunkOffset, short[] chunk) throws TinkerforgeException;

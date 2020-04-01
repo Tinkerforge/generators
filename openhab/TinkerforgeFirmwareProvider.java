@@ -40,6 +40,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Searches firmware updates for bricklets.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 @Component(service = FirmwareProvider.class)
 public class TinkerforgeFirmwareProvider implements FirmwareProvider {
@@ -47,6 +51,7 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
 
     private final Logger logger = LoggerFactory.getLogger(TinkerforgeFirmwareProvider.class);
 
+    @NonNullByDefault
     private class FirmwareInfo {
         public FirmwareInfo(String version, String url) {
             this.version = version;

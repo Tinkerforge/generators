@@ -16,6 +16,10 @@ import java.math.BigDecimal;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
+/**
+ * Configuration DTO for the Brick Daemon.
+ * @author Erik Fleckstein - Initial contribution
+ */
 @NonNullByDefault
 public class BrickDaemonConfig {
     public String host = "localhost";
