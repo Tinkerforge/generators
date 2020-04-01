@@ -597,14 +597,21 @@ com['openhab'] = {
             'name': 'Frame Duration',
             'type': 'integer',
             'label': 'Frame Duration',
-            'description': 'the duration of a frame in ms. Example: If you want to achieve 20 frames per second, you should set the frame duration to 50ms (50ms * 20 = 1 second). If you always want to send a frame as fast as possible you can set this value to 0. This setting is only used in master mode.'
+            'default': -1,
+            'min': -1,
+
+            'description': 'The duration of a frame in ms. Example: If you want to achieve 20 frames per second, you should set the frame duration to 50ms (50ms * 20 = 1 second). If you always want to send a frame as fast as possible you can set this value to 0. To disable the frame started channel set this value to -1. This setting is only used in master mode.'
     }],
 
     'init_code': """this.setDMXMode(cfg.dmxMode);
         this.setCommunicationLEDConfig(cfg.communicationLEDConfig);
         this.setErrorLEDConfig(cfg.errorLEDConfig);
-        this.setFrameDuration(cfg.frameDuration);
-        this.setFrameCallbackConfig(true, true, false, true);""",
+        if (cfg.frameDuration >= 0) {
+            this.setFrameDuration(cfg.frameDuration);
+            this.setFrameCallbackConfig(true, true, false, true);
+        } else {
+            this.setFrameCallbackConfig(false, true, false, true);
+        }""",
 
     'channels': [{
             'id': 'Frame Started',
