@@ -29,7 +29,7 @@ if '--prepare' in args:
         if not os.path.isdir(d):
             continue
 
-        if d in ['configs', 'stubs', 'json', 'tvpl', '.git', '__pycache__', '.vscode', 'openhab']:
+        if d in ['configs', 'stubs', 'json', 'tvpl', '.git', '__pycache__', '.vscode']:
             continue
 
         doc_path = os.path.join(d, 'doc')
