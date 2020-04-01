@@ -93,6 +93,7 @@ class OpenHAB:
         self.required_firmware_version = kwargs.get('required_firmware_version', False)
         self.firmware_update_supported = kwargs.get('firmware_update_supported', False)
         self.implemented_interfaces = kwargs.get('implemented_interfaces', [])
+        self.doc = kwargs.get('doc', None)
 
         check_for_unknown_keys(self, kwargs, 'top level')
 

@@ -552,7 +552,7 @@ class JavaDocPacket(java_common.JavaPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = self.get_device().get_java_class_name() + '.'
+        prefix = 'val '
 
         def format_element_name(element, index):
             if index == None:
