@@ -41,7 +41,7 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
 
     private final Map<URI, ConfigDescription> configDescriptionCache = new HashMap<>();
 
-    private final static Logger logger = LoggerFactory.getLogger(TinkerforgeConfigDescriptionProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(TinkerforgeConfigDescriptionProvider.class);
 
     @Override
     public Collection<ConfigDescription> getConfigDescriptions(@Nullable Locale locale) {

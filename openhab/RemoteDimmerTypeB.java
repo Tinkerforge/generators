@@ -80,14 +80,14 @@ public class RemoteDimmerTypeB implements DeviceWrapper {
 
     private final BrickletRemoteSwitchHandler handler;
 
-    public final static int DEVICE_IDENTIFIER = -235;
-    public final static String DEVICE_DISPLAY_NAME = "Remote Dimmer Type B";
+    public static final int DEVICE_IDENTIFIER = -235;
+    public static final String DEVICE_DISPLAY_NAME = "Remote Dimmer Type B";
 
-    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "remotedimmertypeb",
+    public static final DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "remotedimmertypeb",
             DEVICE_IDENTIFIER, RemoteDimmerTypeB.class, DefaultActions.class, "1.0.0", false);
 
     private final Logger logger = LoggerFactory.getLogger(RemoteDimmerTypeB.class);
-    private final static Logger static_logger = LoggerFactory.getLogger(RemoteDimmerTypeB.class);
+    private static final Logger static_logger = LoggerFactory.getLogger(RemoteDimmerTypeB.class);
 
     public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config)
             throws TinkerforgeException {

@@ -28,7 +28,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public class DeviceWrapperFactory {
-    private final static List<DeviceInfo> deviceInfos;
+    private static final List<DeviceInfo> deviceInfos;
 
     static {
         deviceInfos = Arrays.asList(

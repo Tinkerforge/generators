@@ -84,12 +84,12 @@ public class Helper {
         }
 
         StringBuilder result = new StringBuilder();
-        String backslash_pattern = oldCharset ? Character.toString((char) 0xa4) : "\\";
-        int backslash_idx = cmd.indexOf(backslash_pattern);
+        String backslashPattern = oldCharset ? Character.toString((char) 0xa4) : "\\";
+        int backslashIdx = cmd.indexOf(backslashPattern);
 
-        while (backslash_idx >= 0) {
-            result.append(cmd.substring(0, backslash_idx));
-            cmd = cmd.substring(backslash_idx + 1);
+        while (backslashIdx >= 0) {
+            result.append(cmd.substring(0, backslashIdx));
+            cmd = cmd.substring(backslashIdx + 1);
 
             if (cmd.isEmpty()) {
                 logger.warn("Could not parse display command {}: Found \\ as last character.", copy);
@@ -104,24 +104,24 @@ public class Helper {
                             copy, cmd, cmd.length());
                     break;
                 }
-                String char_code = cmd.substring(0, 2);
+                String charCode = cmd.substring(0, 2);
 
                 cmd = cmd.substring(2);
                 try {
-                    result.append(Character.toString((char) Integer.parseInt(char_code, 16)));
+                    result.append(Character.toString((char) Integer.parseInt(charCode, 16)));
                 } catch (NumberFormatException e) {
                     logger.warn(
                             "Could not parse display command {}: Found hex command that could not be parsed as hexadecimal number:{}",
                             copy, e.getMessage());
                 }
-            } else if (cmd.charAt(0) == backslash_pattern.charAt(0)) {
+            } else if (cmd.charAt(0) == backslashPattern.charAt(0)) {
                 cmd = cmd.substring(1);
-                result.append(backslash_pattern.charAt(0));
+                result.append(backslashPattern.charAt(0));
             } else {
                 logger.warn("Could not parse display command {}: Found unknown command \\ {}.", copy, cmd.charAt(0));
             }
 
-            backslash_idx = cmd.indexOf(backslash_pattern);
+            backslashIdx = cmd.indexOf(backslashPattern);
         }
         result.append(cmd);
 
@@ -428,18 +428,18 @@ public class Helper {
                 0x6d, 0x78, 0x1c, 0x62, 0x2a, 0x76, // s-x
                 0x6E, 0x5b, // y-z
         };
-        Map<Character, Short> special_characters = new HashMap<>();
-        special_characters.put((char) '"', (short) 0x22);
-        special_characters.put((char) '(', (short) 0x39);
-        special_characters.put((char) ')', (short) 0x0F);
-        special_characters.put((char) '+', (short) 0x70);
-        special_characters.put((char) '-', (short) 0x40);
-        special_characters.put((char) '=', (short) 0x09);
-        special_characters.put((char) '[', (short) 0x39);
-        special_characters.put((char) ']', (short) 0x0F);
-        special_characters.put((char) '^', (short) 0x23);
-        special_characters.put((char) '_', (short) 0x08);
-        special_characters.put((char) '|', (short) 0x06);
+        Map<Character, Short> specialCharacters = new HashMap<>();
+        specialCharacters.put((char) '"', (short) 0x22);
+        specialCharacters.put((char) '(', (short) 0x39);
+        specialCharacters.put((char) ')', (short) 0x0F);
+        specialCharacters.put((char) '+', (short) 0x70);
+        specialCharacters.put((char) '-', (short) 0x40);
+        specialCharacters.put((char) '=', (short) 0x09);
+        specialCharacters.put((char) '[', (short) 0x39);
+        specialCharacters.put((char) ']', (short) 0x0F);
+        specialCharacters.put((char) '^', (short) 0x23);
+        specialCharacters.put((char) '_', (short) 0x08);
+        specialCharacters.put((char) '|', (short) 0x06);
 
         short digit = 0;
         if (c >= 48 && c <= 57) {
@@ -449,7 +449,7 @@ public class Helper {
         } else if (c >= 97 && c <= 122) {
             digit = minuscules[c - 97];
         } else {
-            digit = special_characters.getOrDefault(c, (short) 0);
+            digit = specialCharacters.getOrDefault(c, (short) 0);
         }
 
         return digit;

@@ -67,13 +67,13 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
     private DisconnectedListener disconnectedListener;
 
     private final Logger logger = LoggerFactory.getLogger(BrickDaemonHandler.class);
-    private final int FIRST_RECONNECT_INTERVAL_SECS = 10;
-    private final int MAX_RECONNECT_INTERVAL_SECS = 600;
+    private static final int FIRST_RECONNECT_INTERVAL_SECS = 10;
+    private static final int MAX_RECONNECT_INTERVAL_SECS = 600;
 
-    private final int FIRST_HEARTBEAT_INTERVAL_SECS = 10;
-    private final int HEARTBEAT_INTERVAL_SECS = 90;
+    private static final int FIRST_HEARTBEAT_INTERVAL_SECS = 10;
+    private static final int HEARTBEAT_INTERVAL_SECS = 90;
 
-    private final int ALL_PACKETS_LOST_THRESHOLD = 5;
+    private static final int ALL_PACKETS_LOST_THRESHOLD = 5;
     private final Map<String, ThingHandler> childHandlers = new ConcurrentHashMap<>();
 
     public BrickDaemonHandler(Bridge bridge, Consumer<BrickDaemonDiscoveryService> registerFn,
@@ -94,7 +94,6 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-
     }
 
     private List<ReachabilityResult> checkReachability(Predicate<? super Thing> filter) {

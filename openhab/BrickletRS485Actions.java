@@ -420,7 +420,6 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "startingAddress") long startingAddress, @ActionInput(name = "count") int count)
             throws TinkerforgeException {
-
         Map<String, Object> result = new HashMap<>();
 
         DeviceHandler h = handler;
@@ -440,7 +439,7 @@ public class BrickletRS485Actions implements ThingActions {
         LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterReadCoilsResponseListener listener = (int reqID, int exceptionCode, boolean[] coils) -> {
-            Map<String, Object> _result = new HashMap<>();
+            Map<String, Object> innerResult = new HashMap<>();
             @Nullable
             Integer requestID = null;
             try {
@@ -448,7 +447,7 @@ public class BrickletRS485Actions implements ThingActions {
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(_result);
+                resultDeque.push(innerResult);
                 return;
             }
             if (requestID != reqID) {
@@ -456,9 +455,9 @@ public class BrickletRS485Actions implements ThingActions {
                 return;
             }
 
-            _result.put("exceptionCode", exceptionCode);
-            _result.put("coils", coils);
-            resultDeque.push(_result);
+            innerResult.put("exceptionCode", exceptionCode);
+            innerResult.put("coils", coils);
+            resultDeque.push(innerResult);
         };
         dev.addModbusMasterReadCoilsResponseListener(listener);
         int requestID = dev.modbusMasterReadCoils(slaveAddress, startingAddress, count);
@@ -490,7 +489,6 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "startingAddress") long startingAddress, @ActionInput(name = "count") int count)
             throws TinkerforgeException {
-
         Map<String, Object> result = new HashMap<>();
 
         DeviceHandler h = handler;
@@ -511,7 +509,7 @@ public class BrickletRS485Actions implements ThingActions {
 
         ModbusMasterReadHoldingRegistersResponseListener listener = (int reqID, int exceptionCode,
                 int[] holdingRegisters) -> {
-            Map<String, Object> _result = new HashMap<>();
+            Map<String, Object> innerResult = new HashMap<>();
             @Nullable
             Integer requestID = null;
             try {
@@ -519,7 +517,7 @@ public class BrickletRS485Actions implements ThingActions {
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(_result);
+                resultDeque.push(innerResult);
                 return;
             }
             if (requestID != reqID) {
@@ -527,9 +525,9 @@ public class BrickletRS485Actions implements ThingActions {
                 return;
             }
 
-            _result.put("exceptionCode", exceptionCode);
-            _result.put("holdingRegisters", holdingRegisters);
-            resultDeque.push(_result);
+            innerResult.put("exceptionCode", exceptionCode);
+            innerResult.put("holdingRegisters", holdingRegisters);
+            resultDeque.push(innerResult);
         };
         dev.addModbusMasterReadHoldingRegistersResponseListener(listener);
         int requestID = dev.modbusMasterReadHoldingRegisters(slaveAddress, startingAddress, count);
@@ -579,7 +577,7 @@ public class BrickletRS485Actions implements ThingActions {
         LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteSingleCoilResponseListener listener = (int reqID, int exceptionCode) -> {
-            Map<String, Object> _result = new HashMap<>();
+            Map<String, Object> innerResult = new HashMap<>();
             @Nullable
             Integer requestID = null;
             try {
@@ -587,7 +585,7 @@ public class BrickletRS485Actions implements ThingActions {
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(_result);
+                resultDeque.push(innerResult);
                 return;
             }
             if (requestID != reqID) {
@@ -595,8 +593,8 @@ public class BrickletRS485Actions implements ThingActions {
                 return;
             }
 
-            _result.put("exceptionCode", exceptionCode);
-            resultDeque.push(_result);
+            innerResult.put("exceptionCode", exceptionCode);
+            resultDeque.push(innerResult);
         };
         dev.addModbusMasterWriteSingleCoilResponseListener(listener);
         int requestID = dev.modbusMasterWriteSingleCoil(slaveAddress, coilAddress, coilValue);
@@ -646,7 +644,7 @@ public class BrickletRS485Actions implements ThingActions {
         LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteSingleRegisterResponseListener listener = (int reqID, int exceptionCode) -> {
-            Map<String, Object> _result = new HashMap<>();
+            Map<String, Object> innerResult = new HashMap<>();
             @Nullable
             Integer requestID = null;
             try {
@@ -654,7 +652,7 @@ public class BrickletRS485Actions implements ThingActions {
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(_result);
+                resultDeque.push(innerResult);
                 return;
             }
             if (requestID != reqID) {
@@ -662,8 +660,8 @@ public class BrickletRS485Actions implements ThingActions {
                 return;
             }
 
-            _result.put("exceptionCode", exceptionCode);
-            resultDeque.push(_result);
+            innerResult.put("exceptionCode", exceptionCode);
+            resultDeque.push(innerResult);
         };
         dev.addModbusMasterWriteSingleRegisterResponseListener(listener);
         int requestID = dev.modbusMasterWriteSingleRegister(slaveAddress, registerAddress, registerValue);
@@ -696,7 +694,6 @@ public class BrickletRS485Actions implements ThingActions {
             @ActionInput(name = "slaveAddress") int slaveAddress,
             @ActionInput(name = "startingAddress") long startingAddress, @ActionInput(name = "coils") boolean[] coils)
             throws TinkerforgeException {
-
         Map<String, Object> result = new HashMap<>();
 
         DeviceHandler h = handler;
@@ -715,7 +712,7 @@ public class BrickletRS485Actions implements ThingActions {
         LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteMultipleCoilsResponseListener listener = (int reqID, int exceptionCode) -> {
-            Map<String, Object> _result = new HashMap<>();
+            Map<String, Object> innerResult = new HashMap<>();
             @Nullable
             Integer requestID = null;
             try {
@@ -723,7 +720,7 @@ public class BrickletRS485Actions implements ThingActions {
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(_result);
+                resultDeque.push(innerResult);
                 return;
             }
             if (requestID != reqID) {
@@ -731,8 +728,8 @@ public class BrickletRS485Actions implements ThingActions {
                 return;
             }
 
-            _result.put("exceptionCode", exceptionCode);
-            resultDeque.push(_result);
+            innerResult.put("exceptionCode", exceptionCode);
+            resultDeque.push(innerResult);
         };
         dev.addModbusMasterWriteMultipleCoilsResponseListener(listener);
         int requestID = dev.modbusMasterWriteMultipleCoils(slaveAddress, startingAddress, coils);
@@ -783,7 +780,7 @@ public class BrickletRS485Actions implements ThingActions {
         LinkedBlockingDeque<Map<String, Object>> resultDeque = new LinkedBlockingDeque<>(1);
 
         ModbusMasterWriteMultipleRegistersResponseListener listener = (int reqID, int exceptionCode) -> {
-            Map<String, Object> _result = new HashMap<>();
+            Map<String, Object> innerResult = new HashMap<>();
             @Nullable
             Integer requestID = null;
             try {
@@ -791,7 +788,7 @@ public class BrickletRS485Actions implements ThingActions {
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(_result);
+                resultDeque.push(innerResult);
                 return;
             }
             if (requestID != reqID) {
@@ -799,8 +796,8 @@ public class BrickletRS485Actions implements ThingActions {
                 return;
             }
 
-            _result.put("exceptionCode", exceptionCode);
-            resultDeque.push(_result);
+            innerResult.put("exceptionCode", exceptionCode);
+            resultDeque.push(innerResult);
         };
         dev.addModbusMasterWriteMultipleRegistersResponseListener(listener);
         int requestID = dev.modbusMasterWriteMultipleRegisters(slaveAddress, startingAddress, registers);
@@ -852,7 +849,7 @@ public class BrickletRS485Actions implements ThingActions {
 
         ModbusMasterReadDiscreteInputsResponseListener listener = (int reqID, int exceptionCode,
                 boolean[] discreteInputs) -> {
-            Map<String, Object> _result = new HashMap<>();
+            Map<String, Object> innerResult = new HashMap<>();
             @Nullable
             Integer requestID = null;
             try {
@@ -860,7 +857,7 @@ public class BrickletRS485Actions implements ThingActions {
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(_result);
+                resultDeque.push(innerResult);
                 return;
             }
             if (requestID != reqID) {
@@ -868,9 +865,9 @@ public class BrickletRS485Actions implements ThingActions {
                 return;
             }
 
-            _result.put("exceptionCode", exceptionCode);
-            _result.put("discreteInputs", discreteInputs);
-            resultDeque.push(_result);
+            innerResult.put("exceptionCode", exceptionCode);
+            innerResult.put("discreteInputs", discreteInputs);
+            resultDeque.push(innerResult);
         };
         dev.addModbusMasterReadDiscreteInputsResponseListener(listener);
         int requestID = dev.modbusMasterReadDiscreteInputs(slaveAddress, startingAddress, count);
@@ -922,7 +919,7 @@ public class BrickletRS485Actions implements ThingActions {
 
         ModbusMasterReadInputRegistersResponseListener listener = (int reqID, int exceptionCode,
                 int[] inputRegisters) -> {
-            Map<String, Object> _result = new HashMap<>();
+            Map<String, Object> innerResult = new HashMap<>();
             @Nullable
             Integer requestID = null;
             try {
@@ -930,7 +927,7 @@ public class BrickletRS485Actions implements ThingActions {
             } catch (InterruptedException e) {
             }
             if (requestID == null) {
-                resultDeque.push(_result);
+                resultDeque.push(innerResult);
                 return;
             }
             if (requestID != reqID) {
@@ -938,9 +935,9 @@ public class BrickletRS485Actions implements ThingActions {
                 return;
             }
 
-            _result.put("exceptionCode", exceptionCode);
-            _result.put("inputRegisters", inputRegisters);
-            resultDeque.push(_result);
+            innerResult.put("exceptionCode", exceptionCode);
+            innerResult.put("inputRegisters", inputRegisters);
+            resultDeque.push(innerResult);
         };
         dev.addModbusMasterReadInputRegistersResponseListener(listener);
         int requestID = dev.modbusMasterReadInputRegisters(slaveAddress, startingAddress, count);

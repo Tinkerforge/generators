@@ -139,7 +139,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     {device_impl}
 }}"""
 
-        dev_info_template = 'public final static DeviceInfo DEVICE_INFO = new DeviceInfo({device_camel}.DEVICE_DISPLAY_NAME, "{device_lower}", {device_camel}.DEVICE_IDENTIFIER, {device_camel}Wrapper.class, {actions}Actions.class, "{version}", {isCoMCU});'
+        dev_info_template = 'public static final DeviceInfo DEVICE_INFO = new DeviceInfo({device_camel}.DEVICE_DISPLAY_NAME, "{device_lower}", {device_camel}.DEVICE_IDENTIFIER, {device_camel}Wrapper.class, {actions}Actions.class, "{version}", {isCoMCU});'
 
         dev_info = dev_info_template.format(device_lower=self.get_thing_type_name(),
                                             device_camel=self.get_java_class_name(),
@@ -240,10 +240,8 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     def get_openhab_getter_impl(self):
         func_template = """    @Override
     public void refreshValue(String channel, org.eclipse.smarthome.config.core.Configuration config, org.eclipse.smarthome.config.core.Configuration channelConfig, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn) throws TinkerforgeException {{
-        {config}
-        switch(channel) {{
-            {channel_cases}
-            default:
+        {config}switch(channel) {{
+            {channel_cases}default:
                 logger.warn("Refresh for unknown channel {{}}", channel);
                 break;
         }}
@@ -310,8 +308,8 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                                                  getters=getters))
 
         return (func_template.format(name_camel=self.get_category().camel + self.get_name().camel,
-                                     config=config,
-                                     channel_cases='\n            '.join(channel_cases)), transforms)
+                                     config=common.wrap_non_empty('', config, '\n'),
+                                     channel_cases=common.wrap_non_empty('', '\n            '.join(channel_cases), '\n')), transforms)
 
 
     def get_openhab_setter_impl(self):
@@ -320,8 +318,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         List<SetterRefresh> result = {refresh_init};
         {config}
         switch(channel) {{
-            {channel_cases}
-            default:
+            {channel_cases}default:
                 logger.warn("Command for unknown channel {{}}", channel);
         }}
         return result;
@@ -334,12 +331,10 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     this.{setter}({setter_params});
 }}"""
         command_template = """if (command instanceof {command_type}) {{
-                    {channel_config}
-                    {command}
-                    {setter}
+                    {channel_config}{command}{setter}
                 }}
         """
-        channel_config_template = "{0}Config channelCfg = channelConfig.as({0}Config.class);"
+        channel_config_template = "{0}Config channelCfg = channelConfig.as({0}Config.class);\n"
         case_template = """case "{camel}":
                 {commands}
                 else {{
@@ -370,7 +365,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                 commands.append(command_template.format(channel_type_camel=c.type.id.camel,
                                                         channel_config=channel_config_template.format(c.type.id.camel) if 'channelCfg.' in setter else '',
                                                         command_type=s.command_type,
-                                                        command=command,
+                                                        command=common.wrap_non_empty('', command, '\n'),
                                                         setter=setter))
                 first = False
 
@@ -388,7 +383,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         return template.format(refresh_init=refresh_init,
                                name_camel=self.get_category().camel + self.get_name().camel,
                                config=config if 'cfg.' in channel_cases else '',
-                               channel_cases=channel_cases)
+                               channel_cases=common.wrap_non_empty('', channel_cases, '\n'))
 
     def get_openhab_channel_enablers(self):
         template = """if ({pred}) {{
@@ -408,7 +403,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     def get_openhab_device_impl(self):
         template = """
     private final Logger logger = LoggerFactory.getLogger({name_camel}Wrapper.class);
-    private final static Logger static_logger = LoggerFactory.getLogger({name_camel}Wrapper.class);
+    private static final Logger static_logger = LoggerFactory.getLogger({name_camel}Wrapper.class);
 
     @Override
     public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException {{
@@ -428,8 +423,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
 
     @Override
     public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config) throws TinkerforgeException{{
-        {enabled_channels_config}
-        List<String> result = new ArrayList<String>();
+        {enabled_channels_config}List<String> result = new ArrayList<String>();
         {channel_enablers}
         return result;
     }}
@@ -467,7 +461,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
                                callback_registrations=callback_regs,
                                dispose_config=config if 'cfg.' in dispose_code else '',
                                dispose_code=dispose_code,
-                               enabled_channels_config=config if 'cfg.' in channel_enablers else '',
+                               enabled_channels_config=config + '\n' if 'cfg.' in channel_enablers else '',
                                channel_enablers=channel_enablers,
                                get_channel_type=self.get_openhab_get_channel_type_impl(),
                                get_thing_type=self.get_openhab_get_thing_type_impl(),
@@ -479,8 +473,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     def get_openhab_get_channel_type_impl(self):
         template = """public static @Nullable ChannelType getChannelType(ChannelTypeUID channelTypeUID) {{
         switch(channelTypeUID.getId()) {{
-            {}
-            default:
+            {}default:
                 static_logger.debug("Unknown channel type ID {{}}", channelTypeUID.getId());
                 break;
         }}
@@ -494,7 +487,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         cases = [case_template.format(channel_type_id=ct.id.camel,
                                       channel_type_builder_call=ct.get_builder_call())
                  for ct in self.oh.channel_types]
-        return template.format('\n            '.join(cases))
+        return template.format(common.wrap_non_empty('', '\n            '.join(cases), '\n'))
 
 
 
@@ -517,7 +510,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         return """public static ThingType getThingType(ThingTypeUID thingTypeUID) {{
              Map<String, String> thingTypeProperties = ThingTypeBuilder.instance(thingTypeUID, "unused").build().getProperties();
              Map<String, String> props = new HashMap<String, String>(thingTypeProperties);
-             props.putIfAbsent(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION, DEVICE_INFO.minimum_fw_version);
+             props.putIfAbsent(TinkerforgeBindingConstants.PROPERTY_MINIMUM_FIRMWARE_VERSION, DEVICE_INFO.minimumFWVersion);
         return {};
     }}""".format(builder_call)
 

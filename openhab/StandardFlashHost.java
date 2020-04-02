@@ -45,20 +45,20 @@ public interface StandardFlashHost {
 
         progressCallback.next();
 
-        List<short[]> plugin_chunks = new ArrayList<>();
+        List<short[]> pluginChunks = new ArrayList<>();
         int offset = 0;
 
-        int PLUGIN_CHUNK_SIZE = 32; // IPConnection.PLUGIN_CHUNK_SIZE
+        final int pluginChunkSize = 32;
         while (offset < plugin.length) {
-            short[] chunk = new short[PLUGIN_CHUNK_SIZE];
-            for (int i = 0; i < Math.min(plugin.length - offset, PLUGIN_CHUNK_SIZE); ++i)
+            short[] chunk = new short[pluginChunkSize];
+            for (int i = 0; i < Math.min(plugin.length - offset, pluginChunkSize); ++i)
                 chunk[i] = plugin[offset + i];
-            plugin_chunks.add(chunk);
-            offset += PLUGIN_CHUNK_SIZE;
+            pluginChunks.add(chunk);
+            offset += pluginChunkSize;
         }
 
         short position = 0;
-        for (short[] chunk : plugin_chunks) {
+        for (short[] chunk : pluginChunks) {
             try {
                 this.writeBrickletPlugin(port, position, chunk);
             } catch (TinkerforgeException e) {
@@ -66,14 +66,14 @@ public interface StandardFlashHost {
                 return;
             }
             ++position;
-            int progress = (int) (((double) position / plugin_chunks.size()) / 4);
+            int progress = (int) (((double) position / pluginChunks.size()) / 4);
             progressCallback.update(25 + progress);
         }
 
         progressCallback.next();
 
         position = 0;
-        for (short[] chunk : plugin_chunks) {
+        for (short[] chunk : pluginChunks) {
             short[] actual;
             try {
                 actual = this.readBrickletPlugin(port, position);
@@ -90,7 +90,7 @@ public interface StandardFlashHost {
                 }
 
             ++position;
-            int progress = (int) (((double) position / plugin_chunks.size()) / 4);
+            int progress = (int) (((double) position / pluginChunks.size()) / 4);
             progressCallback.update(25 + progress);
         }
         progressCallback.next();

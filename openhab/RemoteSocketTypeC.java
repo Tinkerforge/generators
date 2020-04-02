@@ -83,14 +83,14 @@ public class RemoteSocketTypeC implements DeviceWrapper {
 
     private final BrickletRemoteSwitchHandler handler;
 
-    public final static int DEVICE_IDENTIFIER = -235;
-    public final static String DEVICE_DISPLAY_NAME = "Remote Socket Type C";
+    public static final int DEVICE_IDENTIFIER = -235;
+    public static final String DEVICE_DISPLAY_NAME = "Remote Socket Type C";
 
-    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "remotesockettypec",
+    public static final DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "remotesockettypec",
             DEVICE_IDENTIFIER, RemoteSocketTypeC.class, DefaultActions.class, "1.0.0", false);
 
     private final Logger logger = LoggerFactory.getLogger(RemoteSocketTypeC.class);
-    private final static Logger static_logger = LoggerFactory.getLogger(RemoteSocketTypeC.class);
+    private static final Logger static_logger = LoggerFactory.getLogger(RemoteSocketTypeC.class);
 
     public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config)
             throws TinkerforgeException {

@@ -82,14 +82,14 @@ public class RemoteSocketTypeB implements DeviceWrapper {
 
     private final BrickletRemoteSwitchHandler handler;
 
-    public final static int DEVICE_IDENTIFIER = -235;
-    public final static String DEVICE_DISPLAY_NAME = "Remote Socket Type B";
+    public static final int DEVICE_IDENTIFIER = -235;
+    public static final String DEVICE_DISPLAY_NAME = "Remote Socket Type B";
 
-    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "remotesockettypeb",
+    public static final DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "remotesockettypeb",
             DEVICE_IDENTIFIER, RemoteSocketTypeB.class, DefaultActions.class, "1.0.0", false);
 
     private final Logger logger = LoggerFactory.getLogger(RemoteSocketTypeB.class);
-    private final static Logger static_logger = LoggerFactory.getLogger(RemoteSocketTypeB.class);
+    private static final Logger static_logger = LoggerFactory.getLogger(RemoteSocketTypeB.class);
 
     public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config)
             throws TinkerforgeException {

@@ -52,10 +52,10 @@ import com.tinkerforge.TinkerforgeException;
  */
 @NonNullByDefault
 public class BrickDaemonWrapper implements DeviceWrapper {
-    public final static DeviceInfo DEVICE_INFO = new DeviceInfo("Brick Daemon", "brickd", -1, BrickDaemonWrapper.class,
+    public static final DeviceInfo DEVICE_INFO = new DeviceInfo("Brick Daemon", "brickd", -1, BrickDaemonWrapper.class,
             DefaultActions.class, "2.0.0", false);
 
-    private final static Logger logger = LoggerFactory.getLogger(BrickDaemonWrapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(BrickDaemonWrapper.class);
 
     public BrickDaemonWrapper(String uid, IPConnection ipcon) {
         super();

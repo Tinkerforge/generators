@@ -86,14 +86,14 @@ public class BrickletOutdoorWeatherSensor implements DeviceWrapper {
     private final BrickletOutdoorWeatherWrapper bricklet;
     public @Nullable SensorDataListener listener = null;
 
-    public final static int DEVICE_IDENTIFIER = -288;
-    public final static String DEVICE_DISPLAY_NAME = "Outdoor Weather Sensor";
+    public static final int DEVICE_IDENTIFIER = -288;
+    public static final String DEVICE_DISPLAY_NAME = "Outdoor Weather Sensor";
 
-    public final static DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "outdoorweathersensor",
+    public static final DeviceInfo DEVICE_INFO = new DeviceInfo(DEVICE_DISPLAY_NAME, "outdoorweathersensor",
             DEVICE_IDENTIFIER, BrickletOutdoorWeatherSensor.class, DefaultActions.class, "1.0.0", false);
 
     private final Logger logger = LoggerFactory.getLogger(BrickletOutdoorWeatherSensor.class);
-    private final static Logger static_logger = LoggerFactory.getLogger(BrickletOutdoorWeatherSensor.class);
+    private static final Logger static_logger = LoggerFactory.getLogger(BrickletOutdoorWeatherSensor.class);
 
     public void initialize(Configuration config, Function<String, Configuration> getChannelConfigFn,
             BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn,
@@ -234,7 +234,6 @@ public class BrickletOutdoorWeatherSensor implements DeviceWrapper {
             throws TinkerforgeException {
         List<SetterRefresh> result = Collections.emptyList();
         switch (channel) {
-
             default:
                 logger.warn("Command for unknown channel {}", channel);
         }

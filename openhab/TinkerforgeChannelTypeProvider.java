@@ -43,7 +43,7 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
 
     private static final Map<ChannelTypeUID, ChannelType> channelTypeCache = new HashMap<>();
 
-    private final static Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
 
     @Activate
     protected void activate(ComponentContext componentContext) {
