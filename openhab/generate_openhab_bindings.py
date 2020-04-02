@@ -403,7 +403,6 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
     def get_openhab_device_impl(self):
         template = """
     private final Logger logger = LoggerFactory.getLogger({name_camel}Wrapper.class);
-    private static final Logger static_logger = LoggerFactory.getLogger({name_camel}Wrapper.class);
 
     @Override
     public void initialize(org.eclipse.smarthome.config.core.Configuration config, Function<String, org.eclipse.smarthome.config.core.Configuration> getChannelConfigFn, BiConsumer<String, org.eclipse.smarthome.core.types.State> updateStateFn, BiConsumer<String, String> triggerChannelFn, ScheduledExecutorService scheduler, BaseThingHandler handler) throws TinkerforgeException {{
@@ -474,7 +473,6 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         template = """public static @Nullable ChannelType getChannelType(ChannelTypeUID channelTypeUID) {{
         switch(channelTypeUID.getId()) {{
             {}default:
-                static_logger.debug("Unknown channel type ID {{}}", channelTypeUID.getId());
                 break;
         }}
 
@@ -531,7 +529,6 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         switch(uri.toASCIIString()) {{
             {cases}
             default:
-                static_logger.debug("Unknown config description URI {{}}", uri.toASCIIString());
                 break;
         }}
         return null;

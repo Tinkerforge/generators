@@ -128,7 +128,7 @@ public class Helper {
         return result.toString();
     }
 
-    static final List<Integer> cp437 = Arrays.asList(0x0000, 0x263A, 0x263B, 0x2665, 0x2666, 0x2663, 0x2660, 0x2022,
+    static final List<Integer> CP437 = Arrays.asList(0x0000, 0x263A, 0x263B, 0x2665, 0x2666, 0x2663, 0x2660, 0x2022,
             0x25D8, 0x25CB, 0x25D9, 0x2642, 0x2640, 0x266A, 0x266B, 0x263C, 0x25BA, 0x25C4, 0x2195, 0x203C, 0x00B6,
             0x00A7, 0x25AC, 0x21A8, 0x2191, 0x2193, 0x2192, 0x2190, 0x221F, 0x2194, 0x25B2, 0x25BC, 0x0020, 0x0021,
             0x0022, 0x0023, 0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002A, 0x002B, 0x002C, 0x002D, 0x002E,
@@ -152,7 +152,7 @@ public class Helper {
 
     public static String utf16ToCP437(String utf16) {
         StringBuilder result = new StringBuilder();
-        utf16.codePoints().map(c -> cp437.indexOf(c)).map(i -> i == -1 ? 0xDB : i)
+        utf16.codePoints().map(c -> CP437.indexOf(c)).map(i -> i == -1 ? 0xDB : i)
                 .forEach(c -> result.append((char) c));
         return result.toString();
     }
@@ -498,7 +498,7 @@ public class Helper {
         return DeviceWrapperFactory.getDeviceInfo(deviceID).deviceDisplayName;
     }
 
-    private static final int[] thermalColorStandard = new int[] { 0xff000000, 0xff100006, 0xff17000d, 0xff1c0013,
+    private static final int[] THERMAL_COLOR_STANDARD = new int[] { 0xff000000, 0xff100006, 0xff17000d, 0xff1c0013,
             0xff200019, 0xff24001f, 0xff270026, 0xff2a002c, 0xff2d0032, 0xff300038, 0xff32003e, 0xff350044, 0xff37004a,
             0xff3a0050, 0xff3c0056, 0xff3e005c, 0xff400062, 0xff420068, 0xff44006d, 0xff460073, 0xff470079, 0xff49007e,
             0xff4b0084, 0xff4d0089, 0xff4e008e, 0xff500093, 0xff510098, 0xff53009d, 0xff5400a2, 0xff5600a7, 0xff5700ac,
@@ -528,7 +528,7 @@ public class Helper {
             0xfff6cf00, 0xfff7d200, 0xfff7d500, 0xfff8d700, 0xfff8da00, 0xfff9dd00, 0xfff9df00, 0xfffae200, 0xfffae500,
             0xfffbe800, 0xfffbeb00, 0xfffced00, 0xfffcf000, 0xfffdf300, 0xfffdf600, 0xfffef900, 0xfffefc00, 0xffffff00, };
 
-    private static final int[] thermalColorGreyscale = new int[] { 0xff000000, 0xff010101, 0xff020202, 0xff030303,
+    private static final int[] THERMAL_COLOR_GREYSCALE = new int[] { 0xff000000, 0xff010101, 0xff020202, 0xff030303,
             0xff040404, 0xff050505, 0xff060606, 0xff070707, 0xff080808, 0xff090909, 0xff0a0a0a, 0xff0b0b0b, 0xff0c0c0c,
             0xff0d0d0d, 0xff0e0e0e, 0xff0f0f0f, 0xff101010, 0xff111111, 0xff121212, 0xff131313, 0xff141414, 0xff151515,
             0xff161616, 0xff171717, 0xff181818, 0xff191919, 0xff1a1a1a, 0xff1b1b1b, 0xff1c1c1c, 0xff1d1d1d, 0xff1e1e1e,
@@ -558,7 +558,7 @@ public class Helper {
             0xffeeeeee, 0xffefefef, 0xfff0f0f0, 0xfff1f1f1, 0xfff2f2f2, 0xfff3f3f3, 0xfff4f4f4, 0xfff5f5f5, 0xfff6f6f6,
             0xfff7f7f7, 0xfff8f8f8, 0xfff9f9f9, 0xfffafafa, 0xfffbfbfb, 0xfffcfcfc, 0xfffdfdfd, 0xfffefefe, 0xffffffff, };
 
-    private static final int[] thermalColorHotCold = new int[] { 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff,
+    private static final int[] THERMAL_COLOR_HOT_COLD = new int[] { 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff,
             0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff,
             0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff,
             0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff,
@@ -593,11 +593,11 @@ public class Helper {
         int[] rgbArray = new int[80 * scaleFactor * 60 * scaleFactor];
         int[] palette;
         if (colorPalette == 0) {
-            palette = thermalColorStandard;
+            palette = THERMAL_COLOR_STANDARD;
         } else if (colorPalette == 1) {
-            palette = thermalColorGreyscale;
+            palette = THERMAL_COLOR_GREYSCALE;
         } else {
-            palette = thermalColorHotCold;
+            palette = THERMAL_COLOR_HOT_COLD;
         }
         for (int y = 0; y < 60; ++y) {
             for (int x = 0; x < 80; ++x) {

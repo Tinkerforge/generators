@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 @Component(service = { TinkerforgeConfigDescriptionProvider.class, ConfigDescriptionProvider.class }, immediate = true)
 public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionProvider {
 
-    private final Map<URI, ConfigDescription> configDescriptionCache = new HashMap<>();
+    private static final Map<URI, ConfigDescription> CONFIG_DESCRIPTION_CACHE = new HashMap<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(TinkerforgeConfigDescriptionProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinkerforgeConfigDescriptionProvider.class);
 
     @Override
     public Collection<ConfigDescription> getConfigDescriptions(@Nullable Locale locale) {
@@ -52,8 +52,8 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
 
     @Override
     public @Nullable ConfigDescription getConfigDescription(URI uri, @Nullable Locale locale) {
-        if (configDescriptionCache.containsKey(uri)) {
-            return configDescriptionCache.get(uri);
+        if (CONFIG_DESCRIPTION_CACHE.containsKey(uri)) {
+            return CONFIG_DESCRIPTION_CACHE.get(uri);
         }
 
         ThingTypeUID thingTypeUID = null;
@@ -64,7 +64,7 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
             thingTypeUID = TinkerforgeBindingConstants.SUPPORTED_CONFIG_DESCRIPTIONS.get(uri);
             info = DeviceWrapperFactory.getDeviceInfo(thingTypeUID.getId());
         } catch (Exception e) {
-            logger.debug("Could not find device info for configDescriptionURI {}: {}.", uri, e.getMessage());
+            LOGGER.debug("Could not find device info for configDescriptionURI {}: {}.", uri, e.getMessage());
             return null;
         }
 
@@ -72,12 +72,17 @@ public class TinkerforgeConfigDescriptionProvider implements ConfigDescriptionPr
             Method m = info.deviceClass.getMethod("getConfigDescription", URI.class);
             result = (ConfigDescription) m.invoke(null, uri);
         } catch (Exception e) {
-            logger.debug("Could not find config description for configDescriptionURI {} of device {}: {}.", uri,
+            LOGGER.debug("Could not find config description for configDescriptionURI {} of device {}: {}.", uri,
                     info.deviceDisplayName, e.getMessage());
             return null;
         }
 
-        configDescriptionCache.put(uri, result);
+        if (result == null)  {
+            LOGGER.debug("Could not find config description for configDescriptionURI {} of device {}: Unknown config description URI.", uri, info.deviceDisplayName);
+            return null;
+        }
+
+        CONFIG_DESCRIPTION_CACHE.put(uri, result);
         return result;
     }
 

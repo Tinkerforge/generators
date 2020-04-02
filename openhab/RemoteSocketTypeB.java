@@ -89,7 +89,6 @@ public class RemoteSocketTypeB implements DeviceWrapper {
             DEVICE_IDENTIFIER, RemoteSocketTypeB.class, DefaultActions.class, "1.0.0", false);
 
     private final Logger logger = LoggerFactory.getLogger(RemoteSocketTypeB.class);
-    private static final Logger static_logger = LoggerFactory.getLogger(RemoteSocketTypeB.class);
 
     public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config)
             throws TinkerforgeException {
@@ -107,7 +106,6 @@ public class RemoteSocketTypeB implements DeviceWrapper {
                                         .withCommandOption(new CommandOption("ON", "Switch On"))
                                         .withCommandOption(new CommandOption("OFF", "Switch Off")).build()).build();
             default:
-                static_logger.debug("Unknown channel type ID {}", channelTypeUID.getId());
                 break;
         }
 
@@ -155,7 +153,6 @@ public class RemoteSocketTypeB implements DeviceWrapper {
             case "channel-type:tinkerforge:RemoteSocketTypeBCommand":
                 return ConfigDescriptionBuilder.create(uri).build();
             default:
-                static_logger.debug("Unknown config description URI {}", uri.toASCIIString());
                 break;
         }
         return null;

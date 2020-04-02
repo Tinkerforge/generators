@@ -93,7 +93,6 @@ public class BrickletOutdoorWeatherSensor implements DeviceWrapper {
             DEVICE_IDENTIFIER, BrickletOutdoorWeatherSensor.class, DefaultActions.class, "1.0.0", false);
 
     private final Logger logger = LoggerFactory.getLogger(BrickletOutdoorWeatherSensor.class);
-    private static final Logger static_logger = LoggerFactory.getLogger(BrickletOutdoorWeatherSensor.class);
 
     public void initialize(Configuration config, Function<String, Configuration> getChannelConfigFn,
             BiConsumer<String, State> updateStateFn, BiConsumer<String, String> triggerChannelFn,
@@ -149,7 +148,6 @@ public class BrickletOutdoorWeatherSensor implements DeviceWrapper {
                                 StateDescriptionFragmentBuilder.create().withReadOnly(true).build()
                                         .toStateDescription()).build();
             default:
-                static_logger.debug("Unknown channel type ID {}", channelTypeUID.getId());
                 break;
         }
 
@@ -194,7 +192,6 @@ public class BrickletOutdoorWeatherSensor implements DeviceWrapper {
             case "channel-type:tinkerforge:OutdoorWeatherSensorLastChange":
                 return ConfigDescriptionBuilder.create(uri).build();
             default:
-                static_logger.debug("Unknown config description URI {}", uri.toASCIIString());
                 break;
         }
         return null;

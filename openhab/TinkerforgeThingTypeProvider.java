@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
 @Component(service = ThingTypeProvider.class, immediate = true)
 public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
 
-    private static final Map<ThingTypeUID, ThingType> thingTypeCache = new HashMap<>();
-    private static final Logger logger = LoggerFactory.getLogger(TinkerforgeThingTypeProvider.class);
+    private static final Map<ThingTypeUID, ThingType> THING_TYPE_CACHE = new HashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinkerforgeThingTypeProvider.class);
 
     @Override
     public Collection<ThingType> getThingTypes(@Nullable Locale locale) {
@@ -53,15 +53,15 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
     }
 
     public static @Nullable ThingType getThingTypeStatic(ThingTypeUID thingTypeUID, @Nullable Locale locale) {
-        if (thingTypeCache.containsKey(thingTypeUID)) {
-            return thingTypeCache.get(thingTypeUID);
+        if (THING_TYPE_CACHE.containsKey(thingTypeUID)) {
+            return THING_TYPE_CACHE.get(thingTypeUID);
         }
 
         DeviceInfo info = null;
         try {
             info = DeviceWrapperFactory.getDeviceInfo(thingTypeUID.getId());
         } catch (Exception e) {
-            logger.debug("Could not find device info for thingTypeUID {}: {}.", thingTypeUID, e.getMessage());
+            LOGGER.debug("Could not find device info for thingTypeUID {}: {}.", thingTypeUID, e.getMessage());
             return null;
         }
         ThingType result;
@@ -69,12 +69,12 @@ public class TinkerforgeThingTypeProvider implements ThingTypeProvider {
             Method m = info.deviceClass.getMethod("getThingType", ThingTypeUID.class);
             result = (ThingType) m.invoke(null, thingTypeUID);
         } catch (Exception e) {
-            logger.debug("Could not find thing type for thingTypeUID {} of device {}: {}.", thingTypeUID,
+            LOGGER.debug("Could not find thing type for thingTypeUID {} of device {}: {}.", thingTypeUID,
                     info.deviceDisplayName, e.getMessage());
             return null;
         }
 
-        thingTypeCache.put(thingTypeUID, result);
+        THING_TYPE_CACHE.put(thingTypeUID, result);
         return result;
     }
 }

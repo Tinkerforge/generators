@@ -55,8 +55,6 @@ public class BrickDaemonWrapper implements DeviceWrapper {
     public static final DeviceInfo DEVICE_INFO = new DeviceInfo("Brick Daemon", "brickd", -1, BrickDaemonWrapper.class,
             DefaultActions.class, "2.0.0", false);
 
-    private static final Logger logger = LoggerFactory.getLogger(BrickDaemonWrapper.class);
-
     public BrickDaemonWrapper(String uid, IPConnection ipcon) {
         super();
     }
@@ -160,7 +158,6 @@ public class BrickDaemonWrapper implements DeviceWrapper {
                                                 .withAdvanced(true).withDefault("10.0").withUnit("min").build()))
                         .build();
         }
-        logger.debug("Unknown config description URI {}", uri);
         return null;
     }
 

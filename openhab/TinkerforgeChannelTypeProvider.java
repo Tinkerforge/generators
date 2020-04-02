@@ -41,18 +41,18 @@ import org.slf4j.LoggerFactory;
 @Component(service = ChannelTypeProvider.class, immediate = true)
 public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
 
-    private static final Map<ChannelTypeUID, ChannelType> channelTypeCache = new HashMap<>();
+    private static final Map<ChannelTypeUID, ChannelType> CHANNEL_TYPE_CACHE = new HashMap<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinkerforgeChannelTypeProvider.class);
 
     @Activate
     protected void activate(ComponentContext componentContext) {
-        logger.trace("Activate");
+        LOGGER.trace("Activate");
     }
 
     @Deactivate
     protected void deactivate(ComponentContext componentContext) {
-        logger.trace("Deactivate");
+        LOGGER.trace("Deactivate");
     }
 
     @Override
@@ -68,8 +68,8 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
     }
 
     public static @Nullable ChannelType getChannelTypeStatic(ChannelTypeUID channelTypeUID, @Nullable Locale locale) {
-        if (channelTypeCache.containsKey(channelTypeUID)) {
-            return channelTypeCache.get(channelTypeUID);
+        if (CHANNEL_TYPE_CACHE.containsKey(channelTypeUID)) {
+            return CHANNEL_TYPE_CACHE.get(channelTypeUID);
         }
 
         ThingTypeUID thingTypeUID = null;
@@ -78,7 +78,7 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
             thingTypeUID = TinkerforgeBindingConstants.SUPPORTED_CHANNELS.get(channelTypeUID);
             info = DeviceWrapperFactory.getDeviceInfo(thingTypeUID.getId());
         } catch (Exception e) {
-            logger.debug("Could not find device info for channelTypeUID {}: {}.", channelTypeUID, e.getMessage());
+            LOGGER.debug("Could not find device info for channelTypeUID {}: {}.", channelTypeUID, e.getMessage());
             return null;
         }
         ChannelType result = null;
@@ -86,12 +86,18 @@ public class TinkerforgeChannelTypeProvider implements ChannelTypeProvider {
             result = (ChannelType) info.deviceClass.getMethod("getChannelType", ChannelTypeUID.class).invoke(null,
                     channelTypeUID);
         } catch (Exception e) {
-            logger.debug("Could not find channel type for channelTypeUID {} of device {}: {}.", channelTypeUID,
+            LOGGER.debug("Could not find channel type for channelTypeUID {} of device {}: {}.", channelTypeUID,
                     info.deviceDisplayName, e.getMessage());
             return null;
         }
 
-        channelTypeCache.put(channelTypeUID, result);
+        if (result == null) {
+            LOGGER.debug("Could not find channel type for channelTypeUID {} of device {}: unknown channel type ID.", channelTypeUID,
+                    info.deviceDisplayName);
+            return null;
+        }
+
+        CHANNEL_TYPE_CACHE.put(channelTypeUID, result);
         return result;
     }
 }

@@ -87,7 +87,6 @@ public class RemoteDimmerTypeB implements DeviceWrapper {
             DEVICE_IDENTIFIER, RemoteDimmerTypeB.class, DefaultActions.class, "1.0.0", false);
 
     private final Logger logger = LoggerFactory.getLogger(RemoteDimmerTypeB.class);
-    private static final Logger static_logger = LoggerFactory.getLogger(RemoteDimmerTypeB.class);
 
     public List<String> getEnabledChannels(org.eclipse.smarthome.config.core.Configuration config)
             throws TinkerforgeException {
@@ -107,7 +106,6 @@ public class RemoteDimmerTypeB implements DeviceWrapper {
                                         .withMaximum(BigDecimal.valueOf(15)).withStep(BigDecimal.valueOf(1)).build()
                                         .toStateDescription()).build();
             default:
-                static_logger.debug("Unknown channel type ID {}", channelTypeUID.getId());
                 break;
         }
 
@@ -155,7 +153,6 @@ public class RemoteDimmerTypeB implements DeviceWrapper {
             case "channel-type:tinkerforge:RemoteDimmerTypeBValue":
                 return ConfigDescriptionBuilder.create(uri).build();
             default:
-                static_logger.debug("Unknown config description URI {}", uri.toASCIIString());
                 break;
         }
         return null;
