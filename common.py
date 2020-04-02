@@ -2370,6 +2370,9 @@ class Element(object):
         return self._get_extra(index).get('default')
 
     def get_item_size(self):
+        if self.level == 'high':
+            raise GeneratorError('Invalid call for high-level element')
+
         item_sizes = {
             'int8':   1,
             'uint8':  1,
@@ -2388,7 +2391,8 @@ class Element(object):
         return item_sizes[self.get_type()]
 
     def get_size(self):
-        assert self.get_level() in ['low', 'normal']
+        if self.get_level() == 'high':
+            raise GeneratorError('Invalid call for high-level element')
 
         cardinality = self.get_cardinality()
 
