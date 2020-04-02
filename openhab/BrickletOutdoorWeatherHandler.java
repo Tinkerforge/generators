@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
+package org.openhab.binding.tinkerforge.internal.handler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +20,8 @@ import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletOutdoorWeatherWrapper;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
+import org.openhab.binding.tinkerforge.internal.device.BrickletOutdoorWeatherWrapper;
+import org.openhab.binding.tinkerforge.internal.device.DeviceWrapper;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;

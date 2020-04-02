@@ -12,7 +12,7 @@
  */
 
 {header}
-package org.eclipse.smarthome.binding.tinkerforge.internal;
+package org.openhab.binding.tinkerforge.internal;
 
 import java.net.URI;
 import java.util.Arrays;

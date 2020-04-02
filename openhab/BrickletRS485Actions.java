@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.internal.device;
+package org.openhab.binding.tinkerforge.internal.device;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
+import org.openhab.binding.tinkerforge.internal.handler.DeviceHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingActions;
 import org.eclipse.smarthome.core.thing.binding.ThingActionsScope;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;

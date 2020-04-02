@@ -10,18 +10,18 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.internal;
+package org.openhab.binding.tinkerforge.internal;
 
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_BRICKLET_OUTDOOR_WEATHER;
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_BRICKLET_REMOTE_SWITCH;
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_BRICKLET_REMOTE_SWITCH_V2;
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_BRICK_DAEMON;
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_OUTDOOR_WEATHER_SENSOR;
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_OUTDOOR_WEATHER_STATION;
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_REMOTE_DIMMER_TYPE_B;
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_REMOTE_SOCKET_TYPE_A;
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_REMOTE_SOCKET_TYPE_B;
-import static org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_REMOTE_SOCKET_TYPE_C;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_BRICKLET_OUTDOOR_WEATHER;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_BRICKLET_REMOTE_SWITCH;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_BRICKLET_REMOTE_SWITCH_V2;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_BRICK_DAEMON;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_OUTDOOR_WEATHER_SENSOR;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_OUTDOOR_WEATHER_STATION;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_REMOTE_DIMMER_TYPE_B;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_REMOTE_SOCKET_TYPE_A;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_REMOTE_SOCKET_TYPE_B;
+import static org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants.THING_TYPE_REMOTE_SOCKET_TYPE_C;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -31,20 +31,20 @@ import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.smarthome.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteDimmerTypeB;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeA;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeB;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.RemoteSocketTypeC;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickDaemonHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherSensorHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherStationHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletRemoteSwitchHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.RemoteSwitchDeviceHandler;
+import org.openhab.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
+import org.openhab.binding.tinkerforge.internal.device.DeviceWrapper;
+import org.openhab.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.openhab.binding.tinkerforge.internal.device.RemoteDimmerTypeB;
+import org.openhab.binding.tinkerforge.internal.device.RemoteSocketTypeA;
+import org.openhab.binding.tinkerforge.internal.device.RemoteSocketTypeB;
+import org.openhab.binding.tinkerforge.internal.device.RemoteSocketTypeC;
+import org.openhab.binding.tinkerforge.internal.handler.BrickDaemonHandler;
+import org.openhab.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherHandler;
+import org.openhab.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherSensorHandler;
+import org.openhab.binding.tinkerforge.internal.handler.BrickletOutdoorWeatherStationHandler;
+import org.openhab.binding.tinkerforge.internal.handler.BrickletRemoteSwitchHandler;
+import org.openhab.binding.tinkerforge.internal.handler.DeviceHandler;
+import org.openhab.binding.tinkerforge.internal.handler.RemoteSwitchDeviceHandler;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;

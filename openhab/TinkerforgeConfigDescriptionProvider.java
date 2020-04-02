@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.internal;
+package org.openhab.binding.tinkerforge.internal;
 
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceInfo;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.openhab.binding.tinkerforge.internal.device.DeviceInfo;
+import org.openhab.binding.tinkerforge.internal.device.DeviceWrapperFactory;
 import org.eclipse.smarthome.config.core.ConfigDescription;
 import org.eclipse.smarthome.config.core.ConfigDescriptionProvider;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;

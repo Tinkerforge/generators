@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.internal.device;
+package org.openhab.binding.tinkerforge.internal.device;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -26,9 +26,9 @@ import java.util.function.Function;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickletRemoteSwitchHandler;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.Task;
+import org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants;
+import org.openhab.binding.tinkerforge.internal.handler.BrickletRemoteSwitchHandler;
+import org.openhab.binding.tinkerforge.internal.handler.Task;
 import org.eclipse.smarthome.config.core.ConfigDescription;
 import org.eclipse.smarthome.config.core.ConfigDescriptionBuilder;
 import org.eclipse.smarthome.config.core.ConfigDescriptionParameter.Type;

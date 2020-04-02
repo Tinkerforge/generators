@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.discovery;
+package org.openhab.binding.tinkerforge.discovery;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.BrickDaemonHandler;
+import org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants;
+import org.openhab.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.openhab.binding.tinkerforge.internal.handler.BrickDaemonHandler;
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResult;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;

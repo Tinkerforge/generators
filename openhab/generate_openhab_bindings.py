@@ -94,7 +94,7 @@ class OpenHABBindingsDevice(openhab_common.OpenHABDevice, JavaBindingsDevice):
                       'org.eclipse.smarthome.core.thing.type.ThingType',
                       'org.eclipse.smarthome.core.thing.type.ThingTypeBuilder',
                       'org.eclipse.smarthome.core.types.StateDescriptionFragmentBuilder',
-                      'org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants',
+                      'org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants',
                       'org.slf4j.Logger',
                       'org.slf4j.LoggerFactory'] + self.oh.imports
 
@@ -102,7 +102,7 @@ class OpenHABBindingsDevice(openhab_common.OpenHABDevice, JavaBindingsDevice):
 
     def get_openhab_device_wrapper(self):
         template = """{header}
-package org.eclipse.smarthome.binding.tinkerforge.internal.device;
+package org.openhab.binding.tinkerforge.internal.device;
 
 {imports}
 import com.tinkerforge.{device_camel};
@@ -550,12 +550,12 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
 
     def get_openhab_actions_class(self):
         template = """{header}
-package org.eclipse.smarthome.binding.tinkerforge.internal.device;
+package org.openhab.binding.tinkerforge.internal.device;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.smarthome.binding.tinkerforge.internal.handler.DeviceHandler;
+import org.openhab.binding.tinkerforge.internal.handler.DeviceHandler;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.ThingActions;
 import org.eclipse.smarthome.core.thing.binding.ThingActionsScope;
@@ -717,7 +717,7 @@ public class {device_camel}Actions implements ThingActions {{
 
     def get_openhab_config_classes(self):
         template = """{header}
-package org.eclipse.smarthome.binding.tinkerforge.internal.device;
+package org.openhab.binding.tinkerforge.internal.device;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;{imports}
 

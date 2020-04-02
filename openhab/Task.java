@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
+package org.openhab.binding.tinkerforge.internal.handler;
 
 import java.util.function.Consumer;
 

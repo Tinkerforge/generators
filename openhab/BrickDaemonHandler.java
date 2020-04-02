@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
+package org.openhab.binding.tinkerforge.internal.handler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
-import org.eclipse.smarthome.binding.tinkerforge.internal.Utils;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickDaemonConfig;
+import org.openhab.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
+import org.openhab.binding.tinkerforge.internal.Utils;
+import org.openhab.binding.tinkerforge.internal.device.BrickDaemonConfig;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;

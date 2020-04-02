@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
+package org.openhab.binding.tinkerforge.internal.handler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -18,7 +18,7 @@ import com.tinkerforge.BrickletRemoteSwitchV2;
 import com.tinkerforge.TinkerforgeException;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletRemoteSwitchV2Wrapper;
+import org.openhab.binding.tinkerforge.internal.device.BrickletRemoteSwitchV2Wrapper;
 
 
 /**

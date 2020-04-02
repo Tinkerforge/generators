@@ -39,7 +39,7 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
         self.generation_dir = os.path.join(self.tmp_dir, 'generated')
 
         self.tmp_bindings_dir = os.path.join(self.generation_dir, 'src', 'main', 'java', 'com', 'tinkerforge')
-        self.tmp_oh_dir = os.path.join(self.generation_dir, 'src', 'main', 'java', 'org', 'eclipse', 'smarthome', 'binding', 'tinkerforge', 'internal', 'device')
+        self.tmp_oh_dir = os.path.join(self.generation_dir, 'src', 'main', 'java', 'org', 'openhab', 'binding', 'tinkerforge', 'internal', 'device')
         self.tmp_xml_dir = os.path.join(self.generation_dir, 'src', 'main', 'resources', 'ESH-INF', 'thing')
 
         #TODO: use os.path.join
@@ -56,29 +56,29 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
             'binding.xml':                  './src/main/resources/ESH-INF/binding',
             'tinkerforge_xx_XX.properties': './src/main/resources/ESH-INF/i18n',
 
-            'BrickDaemonDiscoveryService.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/discovery',
+            'BrickDaemonDiscoveryService.java': './src/main/java/org/openhab/binding/tinkerforge/discovery',
 
-            'TinkerforgeHandlerFactory.java':               './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'TinkerforgeChannelTypeProvider.java':          './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'TinkerforgeConfigDescriptionProvider.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'TinkerforgeThingTypeProvider.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'TinkerforgeFirmwareProvider.java':             './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'FirmwareInfo.java':                            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
-            'Utils.java':                                   './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal',
+            'TinkerforgeHandlerFactory.java':               './src/main/java/org/openhab/binding/tinkerforge/internal',
+            'TinkerforgeChannelTypeProvider.java':          './src/main/java/org/openhab/binding/tinkerforge/internal',
+            'TinkerforgeConfigDescriptionProvider.java':    './src/main/java/org/openhab/binding/tinkerforge/internal',
+            'TinkerforgeThingTypeProvider.java':            './src/main/java/org/openhab/binding/tinkerforge/internal',
+            'TinkerforgeFirmwareProvider.java':             './src/main/java/org/openhab/binding/tinkerforge/internal',
+            'FirmwareInfo.java':                            './src/main/java/org/openhab/binding/tinkerforge/internal',
+            'Utils.java':                                   './src/main/java/org/openhab/binding/tinkerforge/internal',
 
-            'BrickDaemonHandler.java':                      './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'ReachabilityResult.java':                      './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'BrickletOutdoorWeatherHandler.java':           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'BrickletOutdoorWeatherSensorHandler.java':     './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'BrickletOutdoorWeatherStationHandler.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'BrickletRemoteSwitchHandler.java':             './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'CheckedConsumer.java':                         './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'RemoteSwitch.java':                            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'BrickletRemoteSwitchWrapperWrapper.java':      './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'BrickletRemoteSwitchV2WrapperWrapper.java':    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'Task.java':                                    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'RemoteSwitchDeviceHandler.java':               './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
-            'DeviceHandler.java':                           './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/handler',
+            'BrickDaemonHandler.java':                      './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'ReachabilityResult.java':                      './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'BrickletOutdoorWeatherHandler.java':           './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'BrickletOutdoorWeatherSensorHandler.java':     './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'BrickletOutdoorWeatherStationHandler.java':    './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'BrickletRemoteSwitchHandler.java':             './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'CheckedConsumer.java':                         './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'RemoteSwitch.java':                            './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'BrickletRemoteSwitchWrapperWrapper.java':      './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'BrickletRemoteSwitchV2WrapperWrapper.java':    './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'Task.java':                                    './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'RemoteSwitchDeviceHandler.java':               './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
+            'DeviceHandler.java':                           './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
 
             # Reuse from java generator
             '../java/AlreadyConnectedException.java':    './src/main/java/com/tinkerforge',
@@ -105,36 +105,36 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
             '../java/DeviceReplacedException.java':      './src/main/java/com/tinkerforge',
             '../java/WrongResponseLengthException.java': './src/main/java/com/tinkerforge',
 
-            'BrickDaemonWrapper.java':        './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'BrickDaemonConfig.java':         './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'DefaultActions.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'DeviceWrapper.java':             './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'SetterRefresh.java':             './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'ListenerReg.java':               './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'DeviceInfo.java':                './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'Helper.java':                    './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'CoMCUFlashable.java':            './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'FlashUtils.java':                './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'StandardFlashable.java':         './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'TngFlashable.java':              './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'StandardFlashHost.java':         './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'BrickDaemonWrapper.java':        './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'BrickDaemonConfig.java':         './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'DefaultActions.java':            './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'DeviceWrapper.java':             './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'SetterRefresh.java':             './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'ListenerReg.java':               './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'DeviceInfo.java':                './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'Helper.java':                    './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'CoMCUFlashable.java':            './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'FlashUtils.java':                './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'StandardFlashable.java':         './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'TngFlashable.java':              './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'StandardFlashHost.java':         './src/main/java/org/openhab/binding/tinkerforge/internal/device',
 
-            'BrickletOutdoorWeatherSensor.java':        './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'BrickletOutdoorWeatherSensorConfig.java':  './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'BrickletOutdoorWeatherStation.java':       './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'BrickletOutdoorWeatherStationConfig.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'BrickletOutdoorWeatherSensor.java':        './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'BrickletOutdoorWeatherSensorConfig.java':  './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'BrickletOutdoorWeatherStation.java':       './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'BrickletOutdoorWeatherStationConfig.java': './src/main/java/org/openhab/binding/tinkerforge/internal/device',
 
-            'RemoteSocketTypeA.java':       './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'RemoteSocketTypeAConfig.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'RemoteSocketTypeB.java':       './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'RemoteSocketTypeBConfig.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'RemoteSocketTypeC.java':       './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'RemoteSocketTypeCConfig.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'RemoteDimmerTypeB.java':       './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            'RemoteDimmerTypeBConfig.java': './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeA.java':       './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeAConfig.java': './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeB.java':       './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeBConfig.java': './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeC.java':       './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'RemoteSocketTypeCConfig.java': './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'RemoteDimmerTypeB.java':       './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            'RemoteDimmerTypeBConfig.java': './src/main/java/org/openhab/binding/tinkerforge/internal/device',
 
-            os.path.join(self.get_bindings_dir(), 'DeviceWrapperFactory.java'): './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal/device',
-            os.path.join(self.get_bindings_dir(), 'TinkerforgeBindingConstants.java'): './src/main/java/org/eclipse/smarthome/binding/tinkerforge/internal'
+            os.path.join(self.get_bindings_dir(), 'DeviceWrapperFactory.java'): './src/main/java/org/openhab/binding/tinkerforge/internal/device',
+            os.path.join(self.get_bindings_dir(), 'TinkerforgeBindingConstants.java'): './src/main/java/org/openhab/binding/tinkerforge/internal'
         }
         self.file_dests = {os.path.join(self.get_bindings_dir(), '..', k): os.path.normpath(os.path.join(self.generation_dir, *v.split('/'))) for k, v in self.relative_file_dests.items()}
 

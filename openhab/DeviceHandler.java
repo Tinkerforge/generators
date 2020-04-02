@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.eclipse.smarthome.binding.tinkerforge.internal.handler;
+package org.openhab.binding.tinkerforge.internal.handler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,16 +24,16 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeBindingConstants;
-import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
-import org.eclipse.smarthome.binding.tinkerforge.internal.Utils;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.CoMCUFlashable;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.SetterRefresh;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.Helper;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashHost;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashable;
+import org.openhab.binding.tinkerforge.internal.TinkerforgeBindingConstants;
+import org.openhab.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
+import org.openhab.binding.tinkerforge.internal.Utils;
+import org.openhab.binding.tinkerforge.internal.device.CoMCUFlashable;
+import org.openhab.binding.tinkerforge.internal.device.DeviceWrapper;
+import org.openhab.binding.tinkerforge.internal.device.SetterRefresh;
+import org.openhab.binding.tinkerforge.internal.device.DeviceWrapperFactory;
+import org.openhab.binding.tinkerforge.internal.device.Helper;
+import org.openhab.binding.tinkerforge.internal.device.StandardFlashHost;
+import org.openhab.binding.tinkerforge.internal.device.StandardFlashable;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
