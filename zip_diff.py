@@ -51,7 +51,7 @@ if os.system('bash -cex "cp {0}/tinkerforge_{1}_bindings_{3}_{4}_{5}.zip {2} && 
     print('copy/unzip current.zip failed')
     sys.exit(1)
 
-if os.system('bash -cx "pushd {0} && diff -ur latest/ {1}_{2}_{3}/ > diff1.diff; popd"'.format(tmp, *version)) != 0:
+if os.system('bash -cx "pushd {0} && diff -ru6 latest/ {1}_{2}_{3}/ > diff1.diff; popd"'.format(tmp, *version)) != 0:
     print('diff latest vs current failed')
     sys.exit(1)
 
@@ -259,7 +259,7 @@ for diff in diffs:
         continue
 
     if len(filtered_lines) == 4 and \
-       filtered_lines[0].startswith('diff -ur ') and \
+       filtered_lines[0].startswith('diff -ru6 ') and \
        filtered_lines[1].startswith('--- ') and \
        filtered_lines[2].startswith('+++ ') and \
        filtered_lines[3].endswith('// dropped header hunk\n'):
