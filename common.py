@@ -2388,10 +2388,14 @@ class Element(object):
         return item_sizes[self.get_type()]
 
     def get_size(self):
-        if self.get_type() == 'bool':
-            return int(math.ceil(self.get_cardinality() / 8.0))
+        assert self.get_level() in ['low', 'normal']
 
-        return self.get_item_size() * self.get_cardinality()
+        cardinality = self.get_cardinality()
+
+        if self.get_type() == 'bool':
+            return int(math.ceil(cardinality / 8.0))
+
+        return self.get_item_size() * cardinality
 
     def format_value(self, value):
         raise GeneratorError("format_value() not implemented")
