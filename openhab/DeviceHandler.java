@@ -29,7 +29,7 @@ import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypePr
 import org.eclipse.smarthome.binding.tinkerforge.internal.Utils;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.CoMCUFlashable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.SetterRefresh;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapperFactory;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.Helper;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.StandardFlashHost;

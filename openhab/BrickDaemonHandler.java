@@ -97,17 +97,6 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
     }
 
-    @NonNullByDefault
-    private class ReachabilityResult {
-        Boolean reachable;
-        DeviceHandler handler;
-
-        ReachabilityResult(Boolean reachable, DeviceHandler handler) {
-            this.reachable = reachable;
-            this.handler = handler;
-        }
-    }
-
     private List<ReachabilityResult> checkReachability(Predicate<? super Thing> filter) {
         List<DeviceHandler> handlers = getThing().getThings().stream().filter(filter)
                 .map(t -> (DeviceHandler) t.getHandler()).filter(h -> h != null) // If checkReachability is called fast

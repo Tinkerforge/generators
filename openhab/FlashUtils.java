@@ -46,6 +46,8 @@ public class FlashUtils {
             @Override
             public void onHeaders(@Nullable Response response) {
                 super.onHeaders(response);
+                if(response == null)
+                    return;
                 if (response.getHeaders().containsKey("Content-Length")) {
                     try {
                         contentLength.set(Integer.parseInt(response.getHeaders().getField("Content-Length").getValue()));
@@ -56,6 +58,8 @@ public class FlashUtils {
 
             @Override
             public void onContent(@Nullable Response response, @Nullable ByteBuffer content) {
+                if(response == null || content == null)
+                    return;
                 int cLength = contentLength.get();
                 if (cLength > 0) {
                     double have = (cLength - content.remaining()) / ((double) cLength);
@@ -66,6 +70,8 @@ public class FlashUtils {
 
             @Override
             public void onComplete(@Nullable Result result) {
+                if(result == null)
+                    return;
                 if (result.isSucceeded()) {
                     try {
                         queue.put(getContent());

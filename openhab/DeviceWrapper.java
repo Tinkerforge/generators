@@ -33,32 +33,6 @@ import com.tinkerforge.TinkerforgeException;
  */
 @NonNullByDefault
 public interface DeviceWrapper {
-    @NonNullByDefault
-    public class SetterRefresh {
-        public final String channel;
-        public final long delay;
-
-        public SetterRefresh(String channel, long delay) {
-            this.channel = channel;
-            this.delay = delay;
-        }
-    }
-
-    @NonNullByDefault
-    public class ListenerReg<T> {
-        public final T listener;
-        public final Consumer<T> toRemove;
-
-        public ListenerReg(T listener, Consumer<T> toRemove) {
-            this.listener = listener;
-            this.toRemove = toRemove;
-        }
-
-        public void deregister() {
-            toRemove.accept(listener);
-        }
-    }
-
     public abstract void cancelManualUpdates();
 
     public abstract <T> T reg(T listener, Consumer<T> toRemove);

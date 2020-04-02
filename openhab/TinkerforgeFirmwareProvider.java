@@ -51,18 +51,6 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
 
     private final Logger logger = LoggerFactory.getLogger(TinkerforgeFirmwareProvider.class);
 
-    @NonNullByDefault
-    private class FirmwareInfo {
-        public FirmwareInfo(String version, String url) {
-            this.version = version;
-            this.url = url;
-
-        }
-
-        String version;
-        String url;
-    }
-
     private final ConcurrentMap<String, @Nullable FirmwareInfo> latestVersions = new ConcurrentHashMap<>();
 
     protected final ScheduledExecutorService scheduler = ThreadPoolManager.getScheduledPool("tinkerforge-firmware");

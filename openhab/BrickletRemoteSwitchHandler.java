@@ -53,150 +53,12 @@ import com.tinkerforge.TinkerforgeException;
  */
 @NonNullByDefault
 public class BrickletRemoteSwitchHandler extends DeviceHandler implements BridgeHandler {
-
-    @NonNullByDefault
-    @FunctionalInterface
-    public interface CheckedConsumer<T> {
-        void accept(T t) throws TinkerforgeException;
-    }
-
-    @NonNullByDefault
-    public interface RemoteSwitch {
-        void switchSocketA(int houseCode, int receiverCode, int switchTo) throws TinkerforgeException;
-
-        void switchSocketB(int address, int unit, int switchTo) throws TinkerforgeException;
-
-        void dimSocketB(int address, int unit, int dimValue) throws TinkerforgeException;
-
-        void switchSocketC(char systemCode, int deviceCode, int switchTo) throws TinkerforgeException;
-
-        void setRepeats(int repeats) throws TinkerforgeException;
-
-        int getSwitchingState() throws TinkerforgeException;
-
-        void addSwitchingDoneListener(AtomicBoolean isSwitching);
-
-        void removeSwitchingDoneListener();
-    }
-
-    @NonNullByDefault
-    class BrickletRemoteSwitchWrapperWrapper implements RemoteSwitch {
-        BrickletRemoteSwitchWrapper rs;
-        BrickletRemoteSwitch.SwitchingDoneListener listener = () -> {};
-
-        public BrickletRemoteSwitchWrapperWrapper(BrickletRemoteSwitchWrapper rs) {
-            this.rs = rs;
-        }
-
-        @Override
-        public void switchSocketA(int houseCode, int receiverCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketA((short) houseCode, (short) receiverCode, (short) switchTo);
-        }
-
-        @Override
-        public void switchSocketB(int address, int unit, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketB((long) address, (short) unit, (short) switchTo);
-        }
-
-        @Override
-        public void dimSocketB(int address, int unit, int dimValue) throws TinkerforgeException {
-            this.rs.dimSocketB((int) address, (short) unit, (short) dimValue);
-        }
-
-        @Override
-        public void switchSocketC(char systemCode, int deviceCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketC(systemCode, (short) deviceCode, (short) switchTo);
-        }
-
-        @Override
-        public void setRepeats(int repeats) throws TinkerforgeException {
-            this.rs.setRepeats((short) repeats);
-        }
-
-        @Override
-        public int getSwitchingState() throws TinkerforgeException {
-            return this.rs.getSwitchingState();
-        }
-
-        @Override
-        public void addSwitchingDoneListener(AtomicBoolean isSwitching) {
-            listener = () -> isSwitching.set(false);
-            this.rs.addSwitchingDoneListener(listener);
-        }
-
-        @Override
-        public void removeSwitchingDoneListener() {
-            this.rs.removeSwitchingDoneListener(listener);
-        }
-    }
-
-    @NonNullByDefault
-    class BrickletRemoteSwitchV2WrapperWrapper implements RemoteSwitch {
-        BrickletRemoteSwitchV2Wrapper rs;
-        BrickletRemoteSwitchV2.SwitchingDoneListener listener = () -> {};
-
-        public BrickletRemoteSwitchV2WrapperWrapper(BrickletRemoteSwitchV2Wrapper rs) {
-            this.rs = rs;
-        }
-
-        @Override
-        public void switchSocketA(int houseCode, int receiverCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketA(houseCode, receiverCode, switchTo);
-        }
-
-        @Override
-        public void switchSocketB(int address, int unit, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketB((long) address, unit, switchTo);
-        }
-
-        @Override
-        public void dimSocketB(int address, int unit, int dimValue) throws TinkerforgeException {
-            this.rs.dimSocketB((int) address, unit, dimValue);
-        }
-
-        @Override
-        public void switchSocketC(char systemCode, int deviceCode, int switchTo) throws TinkerforgeException {
-            this.rs.switchSocketC(systemCode, deviceCode, switchTo);
-        }
-
-        @Override
-        public void setRepeats(int repeats) throws TinkerforgeException {
-            this.rs.setRepeats(repeats);
-        }
-
-        @Override
-        public int getSwitchingState() throws TinkerforgeException {
-            return this.rs.getSwitchingState();
-        }
-
-        @Override
-        public void addSwitchingDoneListener(AtomicBoolean isSwitching) {
-            listener = () -> isSwitching.set(false);
-            this.rs.addSwitchingDoneListener(listener);
-        }
-
-        @Override
-        public void removeSwitchingDoneListener() {
-            this.rs.removeSwitchingDoneListener(listener);
-        }
-    }
-
     private @Nullable RemoteSwitch remoteSwitch = null;
-
-    @NonNullByDefault
-    public static class Task {
-        CheckedConsumer<RemoteSwitch> task;
-        Consumer<Boolean> callback;
-
-        public Task(CheckedConsumer<RemoteSwitch> task, Consumer<Boolean> callback) {
-            this.task = task;
-            this.callback = callback;
-        }
-    }
 
     private List<ThingHandler> childHandlers = new ArrayList<>();
 
-    private Queue<Task> tasks = new ConcurrentLinkedQueue<>();
+    // Inserted tasks are never null, but annotating @Nullable here fixes the wrong assumption, that tasks.peek() will never return null.
+    private Queue<@Nullable Task> tasks = new ConcurrentLinkedQueue<>();
     private AtomicBoolean isSwitching = new AtomicBoolean(true);
     @Nullable private ScheduledFuture<?> workFuture = null;
 
@@ -232,19 +94,28 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
     @Override
     protected void initializeDevice() {
         super.initializeDevice();
+        DeviceWrapper dev = this.getDevice();
+        if (dev == null) {
+            return;
+        }
+
         for (ThingHandler handler : childHandlers)
             handler.initialize();
 
+        @Nullable ScheduledFuture<?> workFuture = this.workFuture;
         if (workFuture != null)
             workFuture.cancel(false);
+
         @Nullable RemoteSwitch remoteSwitch = this.remoteSwitch;
         if (remoteSwitch != null)
             remoteSwitch.removeSwitchingDoneListener();
 
-        if (this.getDevice() instanceof BrickletRemoteSwitchWrapper) {
-            remoteSwitch = new BrickletRemoteSwitchWrapperWrapper((BrickletRemoteSwitchWrapper) this.getDevice());
-        } else if (this.getDevice() instanceof BrickletRemoteSwitchV2Wrapper) {
-            remoteSwitch = new BrickletRemoteSwitchV2WrapperWrapper((BrickletRemoteSwitchV2Wrapper) this.getDevice());
+
+
+        if (dev instanceof BrickletRemoteSwitchWrapper) {
+            remoteSwitch = new BrickletRemoteSwitchWrapperWrapper((BrickletRemoteSwitchWrapper) dev);
+        } else if (dev instanceof BrickletRemoteSwitchV2Wrapper) {
+            remoteSwitch = new BrickletRemoteSwitchV2WrapperWrapper((BrickletRemoteSwitchV2Wrapper) dev);
         } else {
             logger.warn("Failed to initialize {}: device was of unknown type", thing.getUID().getId());
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_INITIALIZING_ERROR);
@@ -268,8 +139,9 @@ public class BrickletRemoteSwitchHandler extends DeviceHandler implements Bridge
 
     @Override
     public void handleRemoval() {
+        @Nullable ScheduledFuture<?> workFuture = this.workFuture;
         if (workFuture != null)
-            workFuture.cancel(true);
+            workFuture.cancel(false);
         super.handleRemoval();
     }
 

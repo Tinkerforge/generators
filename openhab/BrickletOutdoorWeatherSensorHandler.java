@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.binding.tinkerforge.internal.TinkerforgeThingTypeProvider;
 import org.eclipse.smarthome.binding.tinkerforge.internal.Utils;
 import org.eclipse.smarthome.binding.tinkerforge.internal.device.BrickletOutdoorWeatherSensor;
-import org.eclipse.smarthome.binding.tinkerforge.internal.device.DeviceWrapper.SetterRefresh;
+import org.eclipse.smarthome.binding.tinkerforge.internal.device.SetterRefresh;
 import org.eclipse.smarthome.config.core.ConfigDescriptionRegistry;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.thing.Bridge;
