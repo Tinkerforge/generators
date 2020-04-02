@@ -402,6 +402,7 @@ com['openhab'] = {
             'name': 'Distance Moving Average Length',
             'type': 'integer',
             'label': 'Distance Moving Average Length',
+            'description': 'The length of a moving averaging for the distance.',
             'groupName': 'average'
         }, {
             'packet': 'Set Moving Average',
@@ -410,6 +411,7 @@ com['openhab'] = {
             'name': 'Velocity Moving Average Length',
             'type': 'integer',
             'label': 'Velocity Moving Average Length',
+            'description': 'The length of a moving averaging for the velocity.',
             'groupName': 'average'
         }, {
             'packet': 'Set Configuration',

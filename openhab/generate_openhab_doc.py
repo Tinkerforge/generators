@@ -419,8 +419,7 @@ Channels
                     param_meta.append('{}: {}'.format(l, r))
 
             if p.description is None:
-                entry_tup = ('plain', 'Parameters', [('plain', p.label, ', '.join(param_meta)), "TODO: missing description"])
-                print("Missing description for param {}".format(p.label))
+                raise common.GeneratorError("Parameter {} has no description.".format(p.label))
             else:
                 entry_tup = ('plain', 'Parameters', [('plain', p.label, ', '.join(param_meta)), unescape(p.description)])
             if p.options is not None:

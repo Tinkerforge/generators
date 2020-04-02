@@ -637,6 +637,7 @@ com['openhab'] = {
             'name': 'Pressure Moving Average Length',
             'type': 'integer',
             'label': 'Pressure Moving Average Length',
+            'description': 'The length of the moving average for the air pressure. The moving average is calculated over the normal averages.',
             'groupName': 'average'
         },
         {
@@ -646,6 +647,7 @@ com['openhab'] = {
             'name': 'Pressure Average Length',
             'type': 'integer',
             'label': 'Pressure Average Length',
+            'description': 'The number of samples to average over for the air pressure.',
             'groupName': 'average'
         },
         {
@@ -655,6 +657,7 @@ com['openhab'] = {
             'name': 'Temperature Average Length',
             'type': 'integer',
             'label': 'Temperature Average Length',
+            'description': 'The number of samples to average over for the temperature.',
             'groupName': 'average'
         }],
     'param_groups': oh_generic_channel_param_groups() + [

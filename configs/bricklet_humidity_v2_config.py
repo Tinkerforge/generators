@@ -289,6 +289,7 @@ com['openhab'] = {
             'name': 'Humidity Moving Average Length',
             'type': 'integer',
             'label': 'Humidity Moving Average Length',
+            'description': 'The length of a moving averaging for the humidity.',
             'groupName': 'average'
         },
         {
@@ -298,6 +299,7 @@ com['openhab'] = {
             'name': 'Temperature Moving Average Length',
             'type': 'integer',
             'label': 'Temperature Moving Average Length',
+            'description': 'The length of a moving averaging for the temperature.',
             'groupName': 'average'
         },
         {

@@ -395,6 +395,7 @@ com['openhab'] = {
             'name': 'Air Pressure Moving Average Length',
             'type': 'integer',
             'label': 'Air Pressure Moving Average Length',
+            'description': 'The length of a moving averaging for the air pressure.',
             'groupName': 'average'
         }, {
             'packet':'Set Moving Average Configuration',
@@ -403,6 +404,7 @@ com['openhab'] = {
             'name': 'Temperature Moving Average Length',
             'type': 'integer',
             'label': 'Temperature Moving Average Length',
+            'description': 'The length of a moving averaging for the temperature.',
             'groupName': 'average'
         }, {
             'packet': 'Set Reference Air Pressure',
