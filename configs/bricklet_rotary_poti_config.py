@@ -493,7 +493,7 @@ com['openhab'] = {
         oh_generic_channel_type('Position', 'Number', 'Position',
                     update_style='Callback Period',
                     description='The position of the rotary potentiometer. The value is and between -150° (turned left) and 150° (turned right).'),
-        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
+        oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Position', 'Get Analog Value']
 }

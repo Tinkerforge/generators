@@ -393,7 +393,7 @@ def led_status_config():
             'type': 'integer',
 
             'label': 'LED Configuration',
-            'description': led_channel_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
+            'description': led_channel_config_description.replace('"', '\\\"'),
         },
         {
             'packet': 'Set Channel LED Status Config',
@@ -403,7 +403,7 @@ def led_status_config():
             'type': 'integer',
 
             'label': 'LED Status Mode',
-            'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
+            'description': led_status_config_description.replace('"', '\\\"'),
         },
         {
             'packet': 'Set Channel LED Status Config',

@@ -832,7 +832,7 @@ com['openhab'] = {
             'name': 'Fix LED Config',
             'type': 'integer',
             'label': 'Fix LED Config',
-            'description': 'The fix LED configuration. By default the LED shows if the Bricklet got a GPS fix yet. If a fix is established the LED turns on. If there is no fix then the LED is turned off.</br></br>You can also turn the LED permanently on/off, show a heartbeat or let it blink in sync with the PPS (pulse per second) output of the GPS module.<br/><br/>If the Bricklet is in bootloader mode, the LED is off.',
+            'description': 'The fix LED configuration. By default the LED shows if the Bricklet got a GPS fix yet. If a fix is established the LED turns on. If there is no fix then the LED is turned off.</br></br>You can also turn the LED permanently on/off, show a heartbeat or let it blink in sync with the PPS (pulse per second) output of the GPS module.\n\nIf the Bricklet is in bootloader mode, the LED is off.',
         }, {
             'packet': 'Set SBAS Config',
             'element': 'SBAS Config',
@@ -841,7 +841,7 @@ com['openhab'] = {
             'type': 'boolean',
             'default': 'true',
             'label': 'Enable SBAS',
-            'description': 'If <a href=\\\"https://en.wikipedia.org/wiki/GNSS_augmentation#Satellite-based_augmentation_system\\\">SBAS</a> is enabled, the position accuracy increases (if SBAS satellites are in view), but the update rate is limited to 5Hz. With SBAS disabled the update rate is increased to 10Hz.</br></br>By default SBAS is enabled and the update rate is 5Hz.'
+            'description': 'If `SBAS <https://en.wikipedia.org/wiki/GNSS_augmentation#Satellite-based_augmentation_system>`__ is enabled, the position accuracy increases (if SBAS satellites are in view), but the update rate is limited to 5Hz. With SBAS disabled the update rate is increased to 10Hz.</br></br>By default SBAS is enabled and the update rate is 5Hz.'
         },
         update_interval('Set Status Callback Period', 'Period', 'Status', 'the status'),
         update_interval('Set Altitude Callback Period', 'Period', 'Altitude', 'the altitude and geodial separation'),
@@ -973,7 +973,7 @@ com['openhab'] = {
             'type': 'system.trigger',
 
             'label': 'Pulse Per Second',
-            'description': 'This channel is triggered precisely once per second, see <a href=https://en.wikipedia.org/wiki/Pulse-per-second_signal>PPS</a>.<br/><br/>The precision of two subsequent pulses will be skewed because of the latency in the USB/RS485/Ethernet connection. But in the long run this will be very precise. For example a count of 3600 pulses will take exactly 1 hour.',
+            'description': 'This channel is triggered precisely once per second, see `PPS <https://en.wikipedia.org/wiki/Pulse-per-second_signal>`__.\n\nThe precision of two subsequent pulses will be skewed because of the latency in the USB/RS485/Ethernet connection. But in the long run this will be very precise. For example a count of 3600 pulses will take exactly 1 hour.',
 
             'callbacks': [{
                 'packet': 'Pulse Per Second',

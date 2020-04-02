@@ -278,7 +278,7 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups() +  [{
         'name': 'average',
         'label': 'Averaging',
-        'description': 'Sets the length of a moving averaging for the humidity and temperature.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.<br/><br/>The range for the averaging is 1-1000.<br/><br/>New data is gathered every 50ms*. With a moving average of length 1000 the resulting averaging window has a length of 50s. If you want to do long term measurements the longest moving average will give the cleanest results.<br/><br/>The default value is 5.<br/><br/>* In firmware version 2.0.3 we added the setSamplesPerSecond() function. It configures the measurement frequency. Since high frequencies can result in self-heating of th IC, changed the default value from 20 samples per second to 1. With 1 sample per second a moving average length of 1000 would result in an averaging window of 1000 seconds!',
+        'description': 'Sets the length of a moving averaging for the humidity and temperature.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nThe range for the averaging is 1-1000.\n\nNew data is gathered every 50ms*. With a moving average of length 1000 the resulting averaging window has a length of 50s. If you want to do long term measurements the longest moving average will give the cleanest results.\n\nThe default value is 5.\n\n* In firmware version 2.0.3 we added the setSamplesPerSecond() function. It configures the measurement frequency. Since high frequencies can result in self-heating of th IC, changed the default value from 20 samples per second to 1. With 1 sample per second a moving average length of 1000 would result in an averaging window of 1000 seconds!',
         'advanced': 'true'
     }],
     'params': [
@@ -316,7 +316,7 @@ com['openhab'] = {
                         ('0.1 SPS', 5)],
             'limit_to_options': 'true',
             'label': 'Sample Rate',
-            'description': "The samples per second that are gathered by the humidity/temperature sensor HDC1080.<br/><br/>We added this function since we found out that a high measurement frequency can lead to self-heating of the sensor. Which can distort the temperature measurement.<br/><br/>If you don't need a lot of measurements, you can use the lowest available measurement frequency of 0.1 samples per second for the least amount of self-heating.",
+            'description': "The samples per second that are gathered by the humidity/temperature sensor HDC1080.\n\nWe added this function since we found out that a high measurement frequency can lead to self-heating of the sensor. Which can distort the temperature measurement.\n\nIf you don't need a lot of measurements, you can use the lowest available measurement frequency of 0.1 samples per second for the least amount of self-heating.",
         }
     ],
     'init_code': """this.setSamplesPerSecond(cfg.sampleRate);

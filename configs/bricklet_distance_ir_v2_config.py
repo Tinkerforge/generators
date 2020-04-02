@@ -280,7 +280,7 @@ com['openhab'] = {
             'name': 'Moving Average Length',
             'type': 'integer',
             'label': 'Moving Average Length',
-            'description': 'Sets the length of a moving averaging for the distance.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.<br/><br/>The range for the averaging is 1-1000.<br/><br/>New data is gathered every ~10ms. With a moving average of length 1000 the resulting averaging window has a length of approximately 10s. If you want to do long term measurements the longest moving average will give the cleanest results.<br/><br/>The default value is 25.',
+            'description': 'Sets the length of a moving averaging for the distance.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nThe range for the averaging is 1-1000.\n\nNew data is gathered every ~10ms. With a moving average of length 1000 the resulting averaging window has a length of approximately 10s. If you want to do long term measurements the longest moving average will give the cleanest results.\n\nThe default value is 25.',
         },
         {
             'packet': 'Set Distance LED Config',
@@ -304,7 +304,7 @@ this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
                     description='Measured distance'),
         oh_generic_channel_type('Analog Value', 'Number', 'Analog Value',
                     update_style='Callback Configuration',
-                    description='The analog value as read by a analog-to-digital converter.<br/><br/>This is unfiltered raw data. We made sure that the integration time of the ADC is shorter then the measurement interval of the sensor (10ms vs 16.5ms). So there is no information lost.<br/><br/>If you want to do your own calibration or create your own lookup table you can use this value.')
+                    description='The analog value as read by a analog-to-digital converter.\n\nThis is unfiltered raw data. We made sure that the integration time of the ADC is shorter then the measurement interval of the sensor (10ms vs 16.5ms). So there is no information lost.\n\nIf you want to do your own calibration or create your own lookup table you can use this value.')
     ],
     'actions': ['Get Distance', 'Get Analog Value', 'Get Moving Average Configuration', 'Get Distance LED Config', 'Get Sensor Type']
 }

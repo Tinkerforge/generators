@@ -384,7 +384,7 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups() +  [{
         'name': 'average',
         'label': 'Averaging',
-        'description': 'Sets the length of a moving averaging for the air pressure and temperature.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.<br/><br/>The range for the averaging is 1-1000.<br/><br/>If you want to do long term measurements the longest moving average will give the cleanest results.<br/><br/>The default value is 100.',
+        'description': 'Sets the length of a moving averaging for the air pressure and temperature.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nThe range for the averaging is 1-1000.\n\nIf you want to do long term measurements the longest moving average will give the cleanest results.\n\nThe default value is 100.',
         'advanced': 'true'
     }],
     'params': [

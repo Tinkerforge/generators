@@ -444,7 +444,7 @@ com['openhab'] = {
                 {
                     'id': 'Sensor Enabled',
                     'label': 'Sensor Enabled',
-                    'description': 'Enables/Disables the fan and the laser diode of the sensors.<br/><br/>The sensor takes about 30 seconds after it is enabled to settle and produce stable values.<br/><br/>The laser diode has a lifetime of about 8000 hours. If you want to measure in an interval with a long idle time (e.g. hourly) you should turn the laser diode off between the measurements.',
+                    'description': 'Enables/Disables the fan and the laser diode of the sensors.\n\nThe sensor takes about 30 seconds after it is enabled to settle and produce stable values.\n\nThe laser diode has a lifetime of about 8000 hours. If you want to measure in an interval with a long idle time (e.g. hourly) you should turn the laser diode off between the measurements.',
 
                     'type': 'Sensor Enabled',
 

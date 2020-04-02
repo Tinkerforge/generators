@@ -251,7 +251,7 @@ com['openhab'] = {
         {
             'id': 'Motor Position',
             'label': 'Motor Position',
-            'description': 'The motor position of the potentiometer. The motorized potentiometer will immediately start to approach the position. Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.<br/><br/>The position has to be between 0 (slider down) and 100 (slider up).',
+            'description': 'The motor position of the potentiometer. The motorized potentiometer will immediately start to approach the position. Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.\n\nThe position has to be between 0 (slider down) and 100 (slider up).',
             'type': 'Motor Position',
 
             'getters': [{
@@ -304,7 +304,7 @@ com['openhab'] = {
                         'default': 'false',
 
                         'label': 'Hold Position',
-                        'description': 'If you enable the hold position flag, the position will automatically be retained. If a user changes the position of the potentiometer, it will automatically drive back to the original set point.<br/><br/>If the hold position flag disabled, the potentiometer can be changed again by the user as soon as the set point was reached once.',
+                        'description': 'If you enable the hold position flag, the position will automatically be retained. If a user changes the position of the potentiometer, it will automatically drive back to the original set point.\n\nIf the hold position flag disabled, the potentiometer can be changed again by the user as soon as the set point was reached once.',
                     }])
     ],
     'actions': ['Get Position', {'fn': 'Set Motor Position', 'refreshs': ['Motor Position']}, 'Get Motor Position']

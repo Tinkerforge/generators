@@ -747,7 +747,7 @@ com['openhab'] = {
                 'type': 'integer',
 
                 'label': 'Duty Cycle Prescaler',
-                'description': 'Sets a divider for the internal clock. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time\\\">here</a> for details.',
+                'description': 'Sets a divider for the internal clock. See `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__ for details.',
             }, {
                 'packet': 'Set Counter Configuration',
                 'element': 'Frequency Integration Time',
@@ -756,7 +756,7 @@ com['openhab'] = {
                 'type': 'integer',
 
                 'label': 'Frequency Integration Time',
-                'description': 'Sets the integration time for the frequency measurement. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time\\\">here</a> for details.',
+                'description': 'Sets the integration time for the frequency measurement. See `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__ for details.',
             }, {
                 'packet': 'Set Channel LED Config',
                 'element': 'Config',

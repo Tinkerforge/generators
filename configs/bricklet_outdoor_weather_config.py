@@ -392,7 +392,7 @@ you can keep the configured thing and only have to change the ID of the sensor/s
     'channels': [ {
             'id': 'Sensor Identifiers',
             'label': 'Sensor Identifiers',
-            'description': 'The identifiers (number between 0 and 255) of all sensors that have been seen since the startup of the Bricklet.<br/><br/>Each sensor gives itself a random identifier on first startup.<br/><br/>Since firmware version 2.0.2 a sensor is removed from the list if no data was received for 12 hours.',
+            'description': 'The identifiers (number between 0 and 255) of all sensors that have been seen since the startup of the Bricklet.\n\nEach sensor gives itself a random identifier on first startup.\n\nSince firmware version 2.0.2 a sensor is removed from the list if no data was received for 12 hours.',
 
             'type': 'Sensor Identifiers',
 
@@ -402,7 +402,7 @@ you can keep the configured thing and only have to change the ID of the sensor/s
         }, {
             'id': 'Station Identifiers',
             'label': 'Station Identifiers',
-            'description': 'The identifiers (number between 0 and 255) of all stations that have been seen since the startup of the Bricklet.<br/><br/>Each station gives itself a random identifier on first startup.<br/><br/>Since firmware version 2.0.2 a station is removed from the list if no data was received for 12 hours.',
+            'description': 'The identifiers (number between 0 and 255) of all stations that have been seen since the startup of the Bricklet.\n\nEach station gives itself a random identifier on first startup.\n\nSince firmware version 2.0.2 a station is removed from the list if no data was received for 12 hours.',
 
             'type': 'Station Identifiers',
 

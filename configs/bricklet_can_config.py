@@ -801,10 +801,10 @@ com['openhab'] = {
     'channel_types': [
          oh_generic_channel_type('Write Error Level', 'Number', 'Write Error Level',
             update_style=None,
-            description='The write error level indicates the current level of checksum, acknowledgement, form, bit and stuffing errors during CAN bus write operations.<br/><br/>When the write error level extends 255 then the CAN transceiver gets disabled and no frames can be transmitted or received anymore. The CAN transceiver will automatically be activated again after the CAN bus is idle for a while.<br/><br/>The write error level is not available in read-only transceiver mode and is reset to 0 as a side effect of changing the configuration or the read filter.'),
+            description='The write error level indicates the current level of checksum, acknowledgement, form, bit and stuffing errors during CAN bus write operations.\n\nWhen the write error level extends 255 then the CAN transceiver gets disabled and no frames can be transmitted or received anymore. The CAN transceiver will automatically be activated again after the CAN bus is idle for a while.\n\nThe write error level is not available in read-only transceiver mode and is reset to 0 as a side effect of changing the configuration or the read filter.'),
         oh_generic_channel_type('Read Error Level', 'Number', 'Read Error Level',
             update_style=None,
-            description='The read error level indicates the current level of checksum, acknowledgement, form, bit and stuffing errors during CAN bus read operations.<br/><br/>The read error level is not available in read-only transceiver mode and is reset to 0 as a side effect of changing the configuration or the read filter.'),
+            description='The read error level indicates the current level of checksum, acknowledgement, form, bit and stuffing errors during CAN bus read operations.\n\nThe read error level is not available in read-only transceiver mode and is reset to 0 as a side effect of changing the configuration or the read filter.'),
         oh_generic_channel_type('Transceiver Disabled', 'Switch', 'Transceiver Disabled',
             update_style=None,
             description='When the write error level extends 255 then the CAN transceiver gets disabled and no frames can be transmitted or received anymore. The CAN transceiver will automatically be activated again after the CAN bus is idle for a while.'),

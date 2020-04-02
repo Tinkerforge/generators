@@ -681,7 +681,7 @@ com['openhab'] = {
             'default': 1,
 
             'label': 'Resolution',
-            'description': 'The Thermal Imaging Bricklet can either measure<ul><li>from 0 to 6553 Kelvin (-273.15°C to +6279.85°C) with 0.1°C resolution or</li><li>from 0 to 655 Kelvin (-273.15°C to +381.85°C) with 0.01°C resolution.</li></ul><br/>The accuracy is specified for -10°C to 450°C in the first range and -10°C and 140°C in the second range.',
+            'description': 'The Thermal Imaging Bricklet can either measure<ul><li>from 0 to 6553 Kelvin (-273.15°C to +6279.85°C) with 0.1°C resolution or</li><li>from 0 to 655 Kelvin (-273.15°C to +381.85°C) with 0.01°C resolution.</li></ul>\nThe accuracy is specified for -10°C to 450°C in the first range and -10°C and 140°C in the second range.',
         }, {
             'virtual': True,
 
@@ -887,7 +887,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('High Contrast Image', 'Image', 'High Contrast Image',
                     update_style=None,
-                    description="The current high contrast image. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Thermal_Imaging.html#high-contrast-image-vs-temperature-image\\\">here</a> for the difference between High Contrast and Temperature Image. If you don't know what to use the High Contrast Image is probably right for you.",
+                    description="The current high contrast image. See `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Thermal_Imaging.html#high-contrast-image-vs-temperature-image>`__ for the difference between High Contrast and Temperature Image. If you don't know what to use the High Contrast Image is probably right for you.",
                     params=[{
                             'packet': 'Set High Contrast Config',
                             'element': 'Region Of Interest',
@@ -994,7 +994,7 @@ com['openhab'] = {
                     ]),
         oh_generic_channel_type('Temperature Image', 'Image', 'Temperature Image',
                     update_style=None,
-                    description="The current temperature image. See <a href=\\\"https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Thermal_Imaging.html#high-contrast-image-vs-temperature-image\\\">here</a> for the difference between High Contrast and Temperature Image. If you don't know what to use the High Contrast Image is probably right for you."),
+                    description="The current temperature image. See `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Thermal_Imaging.html#high-contrast-image-vs-temperature-image>`__ for the difference between High Contrast and Temperature Image. If you don't know what to use the High Contrast Image is probably right for you."),
         oh_generic_channel_type('Temperature', 'Number:Temperature', 'NOT USED',
                     update_style=None,
                     pattern='%.3f %unit%'),

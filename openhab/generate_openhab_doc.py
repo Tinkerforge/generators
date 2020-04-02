@@ -379,6 +379,10 @@ Channels
             meta_table_entries.insert(0, ('plain', 'Type', item_type))
 
             desc = c.get_description()
+
+            if '<ul>' in desc:
+                desc = desc.replace('<ul>', '\n\n').replace('<li>', '* ').replace('</li>', '\n').replace('</ul>', '')
+
             if not c.automatic_update:
                 desc += '\n\nThis channel will only update after the configured update interval, not on changed values.'
 
@@ -400,7 +404,7 @@ Channels
             channels.append(template.format(device=self.get_java_class_name(),
                                 label=c.get_label(),
                                 meta_table=common.make_rst_meta_table(common.merge_meta_sections(meta_table_entries)),
-                                desc=unescape(desc)))
+                                desc=desc))
         return common.select_lang(description).format(self.get_doc_rst_ref_name()) + '\n\n'.join(channels)
 
     def get_openhab_param_entries(self, params):
@@ -421,7 +425,7 @@ Channels
             if p.description is None:
                 raise common.GeneratorError("Parameter {} has no description.".format(p.label))
             else:
-                entry_tup = ('plain', 'Parameters', [('plain', p.label, ', '.join(param_meta)), unescape(p.description)])
+                entry_tup = ('plain', 'Parameters', [('plain', p.label, ', '.join(param_meta)), common.shift_right(unescape(p.description), 2)])
             if p.options is not None:
                 entry_tup[2].append('{}: {}'.format('Options', ', '.join([x[0] for x in p.options])))
             if i != len(params) - 1:

@@ -979,7 +979,7 @@ com['openhab'] = {
             'id': 'Velocity Reached',
             'type': 'system.trigger',
             'label': 'Velocity Reached',
-            'description': "This channel is triggered when a velocity set by the setVelocity action is reached.<br/><br/>Note<br/><br/>Since we can't get any feedback from the servo, this only works if the acceleration is set smaller or equal to the maximum acceleration of the servo. Otherwise the servo will lag behind the control value and the listener will be triggered too early.",
+            'description': "This channel is triggered when a velocity set by the setVelocity action is reached.\n\nNote\n\nSince we can't get any feedback from the servo, this only works if the acceleration is set smaller or equal to the maximum acceleration of the servo. Otherwise the servo will lag behind the control value and the listener will be triggered too early.",
 
             'callbacks': [{
                 'packet': 'Velocity Reached',
@@ -988,7 +988,7 @@ com['openhab'] = {
             'id': 'Position Reached',
             'type': 'system.trigger',
             'label': 'Position Reached',
-            'description': "This listener is triggered when a position set by the setPosition action is reached. If the new position matches the current position then the listener is not triggered, because the servo didn't move.<br/><br/>Note<br/><br/>Since we can't get any feedback from the servo, this only works if the velocity is set smaller or equal to the maximum velocity of the servo. Otherwise the servo will lag behind the control value and the listener will be triggered too early.",
+            'description': "This listener is triggered when a position set by the setPosition action is reached. If the new position matches the current position then the listener is not triggered, because the servo didn't move.\n\nNote\n\nSince we can't get any feedback from the servo, this only works if the velocity is set smaller or equal to the maximum velocity of the servo. Otherwise the servo will lag behind the control value and the listener will be triggered too early.",
 
             'callbacks': [{
                 'packet': 'Position Reached',

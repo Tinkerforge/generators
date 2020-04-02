@@ -846,7 +846,7 @@ com['openhab'] = {
             'id': 'Velocity Reached',
             'type': 'system.trigger',
             'label': 'Velocity Reached',
-            'description': "This channel is triggered whenever a set velocity is reached. For example: If a velocity of 0 is present, acceleration is set to 5000 and velocity to 10000, the channel will be triggered after about 2 seconds, when the set velocity is actually reached.<br/><br/>Note<br/><br/>Since we can't get any feedback from the DC motor, this only works if the acceleration is set smaller or equal to the maximum acceleration of the motor. Otherwise the motor will lag behind the control value and the listener will be triggered too early.",
+            'description': "This channel is triggered whenever a set velocity is reached. For example: If a velocity of 0 is present, acceleration is set to 5000 and velocity to 10000, the channel will be triggered after about 2 seconds, when the set velocity is actually reached.\n\nNote\n\nSince we can't get any feedback from the DC motor, this only works if the acceleration is set smaller or equal to the maximum acceleration of the motor. Otherwise the motor will lag behind the control value and the listener will be triggered too early.",
 
             'callbacks': [{
                 'packet': 'Velocity Reached',
@@ -855,7 +855,7 @@ com['openhab'] = {
             'id': 'Emergency Shutdown',
             'type': 'system.trigger',
             'label': 'Emergency Shutdown',
-            'description': 'This channel is triggered if either the current consumption is too high (above 5A) or the temperature of the driver chip is too high (above 175°C). These two possibilities are essentially the same, since the temperature will reach this threshold immediately if the motor consumes too much current. In case of a voltage below 3.3V (external or stack) this listener is triggered as well.<br/><br/>If this listener is triggered, the driver chip gets disabled at the same time. That means, the enable-action has to be called to drive the motor again.<br/><br/>Note<br/><br/>This listener only works in Drive/Brake mode. In Drive/Coast mode it is unfortunately impossible to reliably read the overcurrent/overtemperature signal from the driver chip.',
+            'description': 'This channel is triggered if either the current consumption is too high (above 5A) or the temperature of the driver chip is too high (above 175°C). These two possibilities are essentially the same, since the temperature will reach this threshold immediately if the motor consumes too much current. In case of a voltage below 3.3V (external or stack) this listener is triggered as well.\n\nIf this listener is triggered, the driver chip gets disabled at the same time. That means, the enable-action has to be called to drive the motor again.\n\nNote\n\nThis listener only works in Drive/Brake mode. In Drive/Coast mode it is unfortunately impossible to reliably read the overcurrent/overtemperature signal from the driver chip.',
 
             'callbacks': [{
                 'packet': 'Emergency Shutdown',

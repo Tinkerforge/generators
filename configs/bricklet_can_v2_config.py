@@ -1219,7 +1219,7 @@ com['openhab'] = {
             'type': 'integer',
 
             'label': 'Error LED Config',
-            'description': "By default (show-transceiver-state) the error LED turns on if the CAN transceiver is passive or disabled state (see the getErrorLog action). If the CAN transceiver is in active state the LED turns off.<br/><br/>If the LED is configured as show-error then the error LED turns on if any error occurs. If you call this function with the show-error option again, the LED will turn off until the next error occurs.<br/><br/>You can also turn the LED permanently on/off or show a heartbeat.<br/><br/>If the Bricklet is in bootloader mode, the LED is off.",
+            'description': "By default (show-transceiver-state) the error LED turns on if the CAN transceiver is passive or disabled state (see the getErrorLog action). If the CAN transceiver is in active state the LED turns off.\n\nIf the LED is configured as show-error then the error LED turns on if any error occurs. If you call this function with the show-error option again, the LED will turn off until the next error occurs.\n\nYou can also turn the LED permanently on/off or show a heartbeat.\n\nIf the Bricklet is in bootloader mode, the LED is off.",
         }],
 
     'init_code': """this.setTransceiverConfiguration(cfg.baudRate, (int)(cfg.samplePoint.doubleValue() * 10), cfg.transceiverMode);

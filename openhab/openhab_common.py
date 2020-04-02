@@ -30,6 +30,11 @@ class OpenHABUnit:
         self.java_number_type = java_number_type
         self.tf_to_oh_divisor = tf_to_oh_divisor
 
+def fix_desc(s):
+    result = re.sub("`([^<]*)\s+<([^>]*)>`__", "\g<1>: \g<2>", s, flags=re.MULTILINE)
+    result = result.replace("\n", "<br/>")
+    return result
+
 openHABUnits = [
     OpenHABUnit('Ampere', 'SmartHomeUnits.AMPERE', 'ElectricCurrent'),
     #OpenHABUnit('Bar', 'SmartHomeUnits.BAR', ''),
@@ -122,7 +127,7 @@ class Channel:
         with_calls = ['.withLabel("{}")'.format(self.get_label())]
 
         if self.description is not None:
-            with_calls.append('.withDescription("{}")'.format(self.description))
+            with_calls.append('.withDescription("{}")'.format(fix_desc(self.description)))
 
         if self.type.is_system_type():
             binding = 'system'
@@ -193,7 +198,7 @@ class ChannelType:
             with_calls.append('.withCategory("{}")'.format(self.category))
 
         if self.description is not None:
-            with_calls.append('.withDescription("{}")'.format(self.description))
+            with_calls.append('.withDescription("{}")'.format(fix_desc(self.description)))
 
         with_calls += ['.withTag("{}")'.format(tag) for tag in self.tags]
 
@@ -286,7 +291,7 @@ class Param:
             with_calls.append('.withDefault("{val}")'.format(val=self.default))
 
         if self.description is not None:
-            with_calls.append('.withDescription("{val}")'.format(val=self.description))
+            with_calls.append('.withDescription("{val}")'.format(val=fix_desc(self.description)))
 
         if self.groupName is not None:
             with_calls.append('.withGroupName("{val}")'.format(val=self.groupName))

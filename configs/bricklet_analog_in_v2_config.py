@@ -529,7 +529,7 @@ com['openhab'] = {
             'name': 'Moving Average Length',
             'type': 'integer',
             'label': 'Moving Average Length',
-            'description': 'The length of a moving averaging for the voltage.<br/><br/>Setting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
+            'description': 'The length of a moving averaging for the voltage.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
         }],
     'channels': [
         oh_generic_old_style_channel('Voltage', 'Voltage'),
@@ -540,7 +540,7 @@ com['openhab'] = {
         oh_generic_channel_type('Voltage', 'Number', 'Voltage',
                     update_style='Callback Period',
                     description='Measured voltage'),
-        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
+        oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Voltage', 'Get Analog Value', 'Get Moving Average']
 }

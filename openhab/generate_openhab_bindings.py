@@ -495,7 +495,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
         with_calls = []
         if self.oh.category is not None:
             with_calls.append('.withCategory("{}")'.format(self.oh.category))
-        with_calls.append('.withDescription("{}")'.format(common.select_lang(self.get_description()).replace('"', '\\"')))
+        with_calls.append('.withDescription("{}")'.format(openhab_common.fix_desc(common.select_lang(self.get_description())).replace('"', '\\"')))
         with_calls.append('.withChannelDefinitions(Arrays.asList({}))'.format(', '.join(c.get_builder_call() for c in self.oh.channels)))
         with_calls.append('.withProperties(props)')
         label = 'Tinkerforge ' + self.get_long_display_name()
@@ -519,7 +519,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
 
         ctors = []
         for pg in param_groups:
-            ctor_params = (item if item is not None else 'null' for item in [pg.name, pg.context, pg.advanced, pg.label, pg.description])
+            ctor_params = (item if item is not None else 'null' for item in [pg.name, pg.context, pg.advanced, pg.label, openhab_common.fix_desc(pg.description)])
             ctors.append(ctor_template.format(*ctor_params))
 
         return ', '.join(ctors)
@@ -844,7 +844,7 @@ public class {name_camel} {{
                                                     type=c.type.item_type if c.type.item_type is not None else 'trigger channel'))
 
         return template.format(device=self.get_long_display_name(),
-                               description=self.get_description()['en'],
+                               description=openhab_common.fix_desc(common.select_lang(self.get_description())),
                                cfg='\n\n    '.join(cfg),
                                channels='\n\n    '.join(channels),
                                actions=', '.join(self.get_category().headless + self.get_name().camel + a.fn.get_name().camel for a in self.oh.actions) if self.oh.actions != 'custom' else 'custom')

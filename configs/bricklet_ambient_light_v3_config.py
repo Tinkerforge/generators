@@ -205,7 +205,7 @@ com['openhab'] = {
             'type': 'integer',
 
             'label': 'Illuminance Range',
-            'description': 'The unlimited illuminance range allows to measure up to about 100000lux, but above 64000lux the precision starts to drop.<br/><br/>A smaller illuminance range increases the resolution of the data.<br/><br/>If the actual measure illuminance is out-of-range then the current illuminance range maximum +0.01lux is reported. For example, 800001 for the 0-8000lux range.<br/><br/>If the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
+            'description': 'The unlimited illuminance range allows to measure up to about 100000lux, but above 64000lux the precision starts to drop.\n\nA smaller illuminance range increases the resolution of the data.\n\nIf the actual measure illuminance is out-of-range then the current illuminance range maximum +0.01lux is reported. For example, 800001 for the 0-8000lux range.\n\nIf the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
         }, {
             'packet': 'Set Configuration',
             'element': 'Integration Time',
@@ -213,7 +213,7 @@ com['openhab'] = {
             'name': 'Integration Time',
             'type': 'integer',
             'label': 'Integration Time',
-            'description': 'A longer integration time will result in less noise on the data.<br/><br/>With a long integration time the sensor might be saturated before the measured value reaches the maximum of the selected illuminance range. In this case 0lux is reported.<br/><br/>If the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
+            'description': 'A longer integration time will result in less noise on the data.\n\nWith a long integration time the sensor might be saturated before the measured value reaches the maximum of the selected illuminance range. In this case 0lux is reported.\n\nIf the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
         }
     ],
     'init_code': """this.setConfiguration(cfg.illuminanceRange.shortValue(), cfg.integrationTime.shortValue());""",

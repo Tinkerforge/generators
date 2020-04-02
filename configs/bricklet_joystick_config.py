@@ -591,7 +591,7 @@ Returns the {} value as read by a 12-bit analog-to-digital converter.
  to yield less noise, while :func:`Get Analog Value` gives back raw
  unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
  if you need the full resolution of the analog-to-digital converter.
-""".replace('\n', '<br/>')
+"""
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),

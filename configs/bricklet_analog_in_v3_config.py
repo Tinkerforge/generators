@@ -221,7 +221,7 @@ com['openhab'] = {
                         ('16384x', 9)],
             'limit_to_options': 'true',
             'label': 'Oversampling',
-            'description': """Sets the oversampling between 32x and 16384x. The Bricklet takes one 12bit sample every 17.5µs. Thus an oversampling of 32x is equivalent to an integration time of 0.56ms and a oversampling of 16384x is equivalent to an integration time of 286ms.<br/><br/>The oversampling uses the moving average principle. A new value is always calculated once per millisecond.<br/><br/>With increased oversampling the noise decreases. With decreased oversampling the reaction time increases (changes in voltage will be measured faster).<br/><br/>The default value is 4096x.""",
+            'description': """Sets the oversampling between 32x and 16384x. The Bricklet takes one 12bit sample every 17.5µs. Thus an oversampling of 32x is equivalent to an integration time of 0.56ms and a oversampling of 16384x is equivalent to an integration time of 286ms.\n\nThe oversampling uses the moving average principle. A new value is always calculated once per millisecond.\n\nWith increased oversampling the noise decreases. With decreased oversampling the reaction time increases (changes in voltage will be measured faster).\n\nThe default value is 4096x.""",
         }],
     'channels': [
         oh_generic_channel('Voltage', 'Voltage'),

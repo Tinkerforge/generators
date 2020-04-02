@@ -444,7 +444,7 @@ com['openhab'] = {
                     }]),
         oh_generic_channel_type('Alarm', 'Switch', 'Alarm',
                     update_style=None,
-                    description='Creates an alarm (a tone that goes back and force between two specified frequencies). The following parameters can be set:<br/><br/><ul><li>Start Frequency: Start frequency of the alarm in Hz.</li></br><li>End Frequency: End frequency of the alarm in Hz.</li></br><li>Step Size: Size of one step of the sweep between the start/end frequencies in Hz.</li></br><li>Step Delay: Delay between two steps (duration of time that one tone is used in a sweep) in ms.</li></br><li>Duration: Duration of the alarm in ms.</li></ul></br><br/>A duration of 0 stops the current alarm if any is ongoing. A duration of 4294967295 results in an infinite alarm.',
+                    description='Creates an alarm (a tone that goes back and force between two specified frequencies). The following parameters can be set:\n\n<ul><li>Start Frequency: Start frequency of the alarm in Hz.</li></br><li>End Frequency: End frequency of the alarm in Hz.</li></br><li>Step Size: Size of one step of the sweep between the start/end frequencies in Hz.</li></br><li>Step Delay: Delay between two steps (duration of time that one tone is used in a sweep) in ms.</li></br><li>Duration: Duration of the alarm in ms.</li></ul></br>\nA duration of 0 stops the current alarm if any is ongoing. A duration of 4294967295 results in an infinite alarm.',
                     params=[{
                             'packet': 'Set Alarm',
                             'element': 'Start Frequency',

@@ -1251,7 +1251,7 @@ def openhab_spitfp_baudrate(port):
         'max': 2000000,
 
         'label': '(Maximum) SPITFP Baudrate Port {}'.format(port),
-        'description': 'The baudrate for Bricklet port {}.<br/><br/>If you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.<br/><br/>If the dynamic baudrate feature is enabled, this is the maximum baudrate.<br/><br/>Regulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in you applications we recommend to not change the baudrate.'.format(port),
+        'description': 'The baudrate for Bricklet port {}.\n\nIf you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.\n\nIf the dynamic baudrate feature is enabled, this is the maximum baudrate.\n\nRegulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in you applications we recommend to not change the baudrate.'.format(port),
     }
 
 
@@ -1279,7 +1279,7 @@ common_openhab = {
             'limit_to_options': 'true',
             'default': 3,
             'label': 'Status LED Config',
-            'description': 'The status LED configuration. By default the LED shows communication traffic between Brick and Bricklet, it flickers once for every 10 received data packets.<br/><br/>You can also turn the LED permanently on/off or show a heartbeat.<br/><br/>If the Bricklet is in bootloader mode, the LED is will show heartbeat by default.'
+            'description': 'The status LED configuration. By default the LED shows communication traffic between Brick and Bricklet, it flickers once for every 10 received data packets.\n\nYou can also turn the LED permanently on/off or show a heartbeat.\n\nIf the Bricklet is in bootloader mode, the LED is will show heartbeat by default.'
         }],
         'init_code': 'this.setStatusLEDConfig(cfg.statusLEDConfig);'
     },
@@ -1344,7 +1344,7 @@ common_openhab = {
             'type': 'boolean',
             'default': 'true',
             'label': 'SPITFP Enable Dynamic Baudrate',
-            'description': 'The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is enabled, the Brick will try to adapt the baudrate for the communication between Bricks and Bricklets according to the amount of data that is transferred.<br/><br/>The baudrate will be increased exponentially if lots of data is sent/received and decreased linearly if little data is sent/received.<br/><br/>This lowers the baudrate in applications where little data is transferred (e.g. a weather station) and increases the robustness. If there is lots of data to transfer (e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.<br/><br/>In cases where some data has to transferred as fast as possible every few seconds (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn the dynamic baudrate off to get the highest possible performance.<br/><br/>The maximum value of the baudrate can be set per port. If the dynamic baudrate is disabled, the maximum baudrate will be used statically.'
+            'description': 'The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is enabled, the Brick will try to adapt the baudrate for the communication between Bricks and Bricklets according to the amount of data that is transferred.\n\nThe baudrate will be increased exponentially if lots of data is sent/received and decreased linearly if little data is sent/received.\n\nThis lowers the baudrate in applications where little data is transferred (e.g. a weather station) and increases the robustness. If there is lots of data to transfer (e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.\n\nIn cases where some data has to transferred as fast as possible every few seconds (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn the dynamic baudrate off to get the highest possible performance.\n\nThe maximum value of the baudrate can be set per port. If the dynamic baudrate is disabled, the maximum baudrate will be used statically.'
         }, {
             'packet': 'Set SPITFP Baudrate Config',
             'element': 'Minimum Dynamic Baudrate',

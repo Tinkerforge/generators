@@ -736,7 +736,7 @@ com['openhab'] = {
             'type': 'integer',
 
             'label': 'LED Driver Chip Type',
-            'description': 'The type of the LED driver chip. We currently support the chips<br/><br/><ul><li>WS2801</li><li>WS2811</li><li>WS2812 / SK6812 / NeoPixel RGB</li><li>SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812)</li><li>LPD8806</li><li>APA102 / DotStar</li></ul>'
+            'description': 'The type of the LED driver chip. We currently support the chips\n\n<ul><li>WS2801</li><li>WS2811</li><li>WS2812 / SK6812 / NeoPixel RGB</li><li>SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812)</li><li>LPD8806</li><li>APA102 / DotStar</li></ul>'
         }, {
             'packet': 'Set Channel Mapping',
             'element': 'Mapping',
@@ -744,7 +744,7 @@ com['openhab'] = {
             'name': 'Channel Mapping',
             'type': 'integer',
             'label': 'LED Channel Mapping',
-            'description': 'The channel mapping for the connected LEDs.<br><br>If the mapping has 4 colors, the LED Values channel expects 4 values per pixel and if the mapping has 3 colors it expects 3 values per pixel.<br/><br/>The LED Values channel always expects the order RGB(W). The connected LED driver chips might have their 3 or 4 channels in a different order. For example, the WS2801 chips typically use BGR order, then WS2812 chips typically use GRB order and the APA102 chips typically use WBGR order.<br/><br/>The APA102 chips are special. They have three 8-bit channels for RGB and an additional 5-bit channel for the overall brightness of the RGB LED making them 4-channel chips. Internally the brightness channel is the first channel, therefore one of the Wxyz channel mappings should be used. Then the W channel controls the brightness.'
+            'description': 'The channel mapping for the connected LEDs.\n\nIf the mapping has 4 colors, the LED Values channel expects 4 values per pixel and if the mapping has 3 colors it expects 3 values per pixel.\n\nThe LED Values channel always expects the order RGB(W). The connected LED driver chips might have their 3 or 4 channels in a different order. For example, the WS2801 chips typically use BGR order, then WS2812 chips typically use GRB order and the APA102 chips typically use WBGR order.\n\nThe APA102 chips are special. They have three 8-bit channels for RGB and an additional 5-bit channel for the overall brightness of the RGB LED making them 4-channel chips. Internally the brightness channel is the first channel, therefore one of the Wxyz channel mappings should be used. Then the W channel controls the brightness.'
         }, {
             'packet': 'Set Frame Duration',
             'element': 'Duration',
@@ -760,7 +760,7 @@ com['openhab'] = {
             'name': 'Clock Frequency',
             'type': 'integer',
             'label': 'Clock Frequency',
-            'description': 'The frequency of the clock in Hz. The Bricklet will choose the nearest achievable frequency, which may be off by a few Hz.<br/><br/>If you have problems with flickering LEDs, they may be bits flipping. You can fix this by either making the connection between the LEDs and the Bricklet shorter or by reducing the frequency.<br/><br/>With a decreasing frequency your maximum frames per second will decrease too.<br/><br/>The default value is 1.66MHz (1660000Hz).'
+            'description': 'The frequency of the clock in Hz. The Bricklet will choose the nearest achievable frequency, which may be off by a few Hz.\n\nIf you have problems with flickering LEDs, they may be bits flipping. You can fix this by either making the connection between the LEDs and the Bricklet shorter or by reducing the frequency.\n\nWith a decreasing frequency your maximum frames per second will decrease too.\n\nThe default value is 1.66MHz (1660000Hz).'
         },
         ],
     'channels': [
@@ -806,7 +806,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('LED Values', 'String', 'LED Values',
                     update_style=None,
-                    description="The RGB(W) values for the LEDs.<br/><br/>Command format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...<br/><br/>The data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.<br/><br/> For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue.")
+                    description="The RGB(W) values for the LEDs.\n\nCommand format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...\n\nThe data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.\n\n For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue.")
     ],
     'actions': ['Set RGB Values', 'Get RGB Values', 'Get Frame Duration', 'Get Supply Voltage', 'Get Clock Frequency', 'Get Chip Type', 'Set RGBW Values', 'Get RGBW Values', 'Get Channel Mapping']
 }

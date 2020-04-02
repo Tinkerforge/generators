@@ -303,7 +303,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Intensity', 'Number', 'Sound Intensity',
                     update_style='Callback Period',
-                    description="""The current sound intensity. The value has a range of 0 to 4095.<br/><br/>The value corresponds to the <a href=\\\"https://en.wikipedia.org/wiki/Envelope_(waves)\\\">upper envelop</a> of the signal of the microphone capsule.""")
+                    description="""The current sound intensity. The value has a range of 0 to 4095.\n\nThe value corresponds to the `upper envelop <https://en.wikipedia.org/wiki/Envelope_(waves)>`__ of the signal of the microphone capsule.""")
     ],
     'actions': ['Get Intensity']
 }

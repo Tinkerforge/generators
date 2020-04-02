@@ -392,7 +392,7 @@ com['openhab'] = {
             'name': 'Sensitivity',
             'type': 'integer',
             'label': 'Sensitivity',
-            'description': 'The sensitivity of the electrodes. An electrode with a high sensitivity will register a touch earlier then an electrode with a low sensitivity.<br/><br/>If you build a big electrode you might need to decrease the sensitivity, since the area that can be charged will get bigger. If you want to be able to activate an electrode from further away you need to increase the sensitivity.'
+            'description': 'The sensitivity of the electrodes. An electrode with a high sensitivity will register a touch earlier then an electrode with a low sensitivity.\n\nIf you build a big electrode you might need to decrease the sensitivity, since the area that can be charged will get bigger. If you want to be able to activate an electrode from further away you need to increase the sensitivity.'
         }, {
             'packet': 'Set Electrode Config',
             'element': 'Enabled Electrodes',

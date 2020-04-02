@@ -451,7 +451,7 @@ com['openhab'] = {
             'type': 'integer',
 
             'label': 'Parity',
-            'description': 'The parity mode to use. See <a href=\\\"https://en.wikipedia.org/wiki/Serial_port#Parity\\\">here</a>'
+            'description': 'The parity mode to use. See `here <https://en.wikipedia.org/wiki/Serial_port#Parity>`__.'
         }, {
             'packet': 'Set Configuration',
             'element': 'Stopbits',

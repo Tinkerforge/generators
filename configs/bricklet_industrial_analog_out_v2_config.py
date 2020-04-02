@@ -436,7 +436,7 @@ com['openhab'] = {
             'name': 'Out LED Status Mode',
             'type': 'integer',
             'label': 'Output LED Status Mode',
-            'description': out_led_status_description.replace('\n', '<br/>').replace('"', '\\\"'),
+            'description': out_led_status_description.replace('"', '\\\"'),
         }, {
             'packet': 'Set Out LED Status Config',
             'element': 'Min',

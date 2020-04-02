@@ -1156,7 +1156,7 @@ com['openhab'] = {
             'id': 'Position Reached',
             'type': 'system.trigger',
             'label': 'Position Reached',
-            'description': "This channel is triggered when a position set by the setSteps or setTargetPosition action is reached.<br/><br/>Note<br/><br/>Since we can't get any feedback from the stepper motor, this only works if the acceleration is set smaller or equal to the maximum acceleration of the motor. Otherwise the motor will lag behind the control value and the listener will be triggered too early.",
+            'description': "This channel is triggered when a position set by the setSteps or setTargetPosition action is reached.\n\nNote\n\nSince we can't get any feedback from the stepper motor, this only works if the acceleration is set smaller or equal to the maximum acceleration of the motor. Otherwise the motor will lag behind the control value and the listener will be triggered too early.",
 
             'callbacks': [{
                 'packet': 'Position Reached',
@@ -1187,7 +1187,7 @@ com['openhab'] = {
             description='The stack input voltage in V. The stack input voltage is the voltage that is supplied via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.'),
         oh_generic_channel_type('External Voltage', 'Number:ElectricPotential', 'External Voltage',
             update_style=None,
-            description='The external input voltage in mV. The external input voltage is given via the black power input connector on the Stepper Brick.<br/><br/>If there is an external input voltage and a stack input voltage, the motor will be driven by the external input voltage. If there is only a stack voltage present, the motor will be driven by this voltage.<br/><br/><b>Warning: This means, if you have a high stack voltage and a low external voltage, the motor will be driven with the low external voltage. If you then remove the external connection, it will immediately be driven by the high stack voltage</b>'),
+            description='The external input voltage in mV. The external input voltage is given via the black power input connector on the Stepper Brick.\n\nIf there is an external input voltage and a stack input voltage, the motor will be driven by the external input voltage. If there is only a stack voltage present, the motor will be driven by this voltage.\n\n<b>Warning: This means, if you have a high stack voltage and a low external voltage, the motor will be driven with the low external voltage. If you then remove the external connection, it will immediately be driven by the high stack voltage</b>'),
         oh_generic_channel_type('Current Consumption', 'Number:ElectricCurrent', 'Current Consumption',
             update_style=None,
             description='The current consumption of the motor in A.'),

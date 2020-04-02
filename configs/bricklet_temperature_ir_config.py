@@ -569,7 +569,7 @@ com['openhab'] = {
                     description='Measured ambient temperature'),
         oh_generic_channel_type('Object Temperature', 'Number', 'Object Temperature',
                     update_style='Callback Period',
-                    description='Measured object temperature, i.e. the temperature of the surface of the object the sensor is aimed at. The temperature of different materials is dependent on their <a href=https://en.wikipedia.org/wiki/Emissivity>emissivity</a>.')
+                    description='Measured object temperature, i.e. the temperature of the surface of the object the sensor is aimed at. The temperature of different materials is dependent on their `emissivity <https://en.wikipedia.org/wiki/Emissivity>`__.')
     ],
     'actions': ['Get Ambient Temperature', 'Get Object Temperature', 'Get Emissivity']
 }

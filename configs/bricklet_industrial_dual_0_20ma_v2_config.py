@@ -400,7 +400,7 @@ def led_status_config():
             'type': 'integer',
 
             'label': 'LED Status Mode',
-            'description': led_status_config_description.replace('\n', '<br/>').replace('"', '\\\"'),
+            'description': led_status_config_description.replace('"', '\\\"'),
         },
         {
             'packet': 'Set Channel LED Status Config',
@@ -450,7 +450,7 @@ com['openhab'] = {
             'name': 'Gain',
             'type': 'integer',
             'label': 'Gain',
-            'description': "The gain between 1x and 8x. If you want to measure a very small current, you can increase the gain to get some more resolution.<br/><br/>Example: If you measure 0.5mA with a gain of 8x the return value will be 4mA.",
+            'description': "The gain between 1x and 8x. If you want to measure a very small current, you can increase the gain to get some more resolution.\n\nExample: If you measure 0.5mA with a gain of 8x the return value will be 4mA.",
         }
     ],
     'init_code': """this.setSampleRate(cfg.sampleRate);

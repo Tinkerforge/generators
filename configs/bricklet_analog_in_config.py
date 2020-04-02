@@ -599,7 +599,7 @@ com['openhab'] = {
             'name': 'Average Length',
             'type': 'integer',
             'label': 'Average Length',
-            'description': 'The length of a averaging for the voltage value.<br/><br/>Setting the length to 0 will turn the averaging completely off. If the averaging is off, there is more noise on the data, but the data is without delay.<br/><br/>The default value is 50.'
+            'description': 'The length of a averaging for the voltage value.\n\nSetting the length to 0 will turn the averaging completely off. If the averaging is off, there is more noise on the data, but the data is without delay.\n\nThe default value is 50.'
         },{
             'packet': 'Set Range',
             'element': 'Range',
@@ -607,7 +607,7 @@ com['openhab'] = {
             'name': 'Measurement Range',
             'type': 'integer',
             'label': 'Measurement Range',
-            'description': 'The measurement range.<br/><br/>Possible ranges are: <ul><li>Automatically switched</li><li>0V - 6.05V, ~1.48mV resolution</li><li>0V - 10.32V, ~2.52mV resolution</li><li>0V - 36.30V, ~8.86mV resolution</li><li>- 45.00V, ~11.25mV resolution</li><li>0V - 3.3V, ~0.81mV resolution</li>',
+            'description': 'The measurement range.\n\nPossible ranges are: <ul><li>Automatically switched</li><li>0V - 6.05V, ~1.48mV resolution</li><li>0V - 10.32V, ~2.52mV resolution</li><li>0V - 36.30V, ~8.86mV resolution</li><li>- 45.00V, ~11.25mV resolution</li><li>0V - 3.3V, ~0.81mV resolution</li>',
         }
         ],
     'channels': [
@@ -620,7 +620,7 @@ com['openhab'] = {
         oh_generic_channel_type('Voltage', 'Number', 'Voltage',
                     update_style='Callback Period',
                     description='Measured voltage'),
-        oh_analog_value_channel_type(analog_value_desc.replace('\n', '<br/>'))
+        oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Voltage', 'Get Analog Value', 'Get Averaging', 'Get Range']
 }

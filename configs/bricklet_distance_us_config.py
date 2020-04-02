@@ -358,7 +358,7 @@ com['openhab'] = {
             'name': 'Moving Average Length',
             'type': 'integer',
             'label': 'Moving Average Length',
-            'description': 'Sets the length of a moving averaging for the distance value.<br/><br/>Setting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.'
+            'description': 'Sets the length of a moving averaging for the distance value.\n\nSetting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.'
         }
     ],
     'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
