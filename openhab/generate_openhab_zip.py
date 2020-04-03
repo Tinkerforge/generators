@@ -38,7 +38,6 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
         self.tmp_dir                          = self.get_tmp_dir()
         self.generation_dir = os.path.join(self.tmp_dir, 'generated')
 
-        self.tmp_bindings_dir = os.path.join(self.generation_dir, 'src', 'main', 'java', 'com', 'tinkerforge')
         self.tmp_oh_dir = os.path.join(self.generation_dir, 'src', 'main', 'java', 'org', 'openhab', 'binding', 'tinkerforge', 'internal', 'device')
         self.tmp_xml_dir = os.path.join(self.generation_dir, 'src', 'main', 'resources', 'ESH-INF', 'thing')
 
@@ -52,7 +51,6 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
             'readme.txt':   '.',
 
             'feature.xml':                  './src/main/feature',
-            'dependencies.xml':             './src/main/history',
             'binding.xml':                  './src/main/resources/ESH-INF/binding',
             'tinkerforge_xx_XX.properties': './src/main/resources/ESH-INF/i18n',
 
@@ -79,31 +77,6 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
             'Task.java':                                    './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
             'RemoteSwitchDeviceHandler.java':               './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
             'DeviceHandler.java':                           './src/main/java/org/openhab/binding/tinkerforge/internal/handler',
-
-            # Reuse from java generator
-            '../java/AlreadyConnectedException.java':    './src/main/java/com/tinkerforge',
-            '../java/CryptoException.java':              './src/main/java/com/tinkerforge',
-            '../java/BrickDaemon.java':                  './src/main/java/com/tinkerforge',
-            '../java/Device.java':                       './src/main/java/com/tinkerforge',
-            '../java/Device.java':                       './src/main/java/com/tinkerforge',
-            '../java/DeviceBase.java':                   './src/main/java/com/tinkerforge',
-            '../java/DeviceFactory.java':                './src/main/java/com/tinkerforge',
-            '../java/DeviceListener.java':               './src/main/java/com/tinkerforge',
-            '../java/DeviceProvider.java':               './src/main/java/com/tinkerforge',
-            '../java/InvalidParameterException.java':    './src/main/java/com/tinkerforge',
-            '../java/IPConnectionBase.java':             './src/main/java/com/tinkerforge',
-            '../java/IPConnection.java':                 './src/main/java/com/tinkerforge',
-            '../java/NetworkException.java':             './src/main/java/com/tinkerforge',
-            '../java/NotConnectedException.java':        './src/main/java/com/tinkerforge',
-            '../java/NotSupportedException.java':        './src/main/java/com/tinkerforge',
-            '../java/StreamOutOfSyncException.java':     './src/main/java/com/tinkerforge',
-            '../java/TimeoutException.java':             './src/main/java/com/tinkerforge',
-            '../java/TinkerforgeException.java':         './src/main/java/com/tinkerforge',
-            '../java/TinkerforgeListener.java':          './src/main/java/com/tinkerforge',
-            '../java/UnknownErrorCodeException.java':    './src/main/java/com/tinkerforge',
-            '../java/WrongDeviceTypeException.java':     './src/main/java/com/tinkerforge',
-            '../java/DeviceReplacedException.java':      './src/main/java/com/tinkerforge',
-            '../java/WrongResponseLengthException.java': './src/main/java/com/tinkerforge',
 
             'BrickDaemonWrapper.java':        './src/main/java/org/openhab/binding/tinkerforge/internal/device',
             'BrickDaemonConfig.java':         './src/main/java/org/openhab/binding/tinkerforge/internal/device',
@@ -140,7 +113,6 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
 
         self.tmp_source_dir                   = os.path.join(self.generation_dir, 'source')
         self.tmp_source_meta_inf_services_dir = os.path.join(self.tmp_source_dir, 'META-INF', 'services')
-        self.tmp_source_com_tinkerforge_dir   = os.path.join(self.tmp_source_dir, 'com', 'tinkerforge')
         self.tmp_examples_dir                 = os.path.join(self.generation_dir, 'examples')
 
     def prepare(self):
@@ -155,10 +127,6 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
     def generate(self, device):
         if not device.is_released():
             return
-
-        device_file = os.path.join(self.get_bindings_dir(), device.get_category().camel+device.get_name().camel + '.java')
-        if os.path.exists(device_file):
-            shutil.copy(device_file, self.tmp_bindings_dir)
 
         for file in os.listdir(self.get_bindings_dir()):
             if device.get_category().camel+device.get_name().camel in file and (file.endswith('Config.java') or file.endswith('Actions.java') or file.endswith('Wrapper.java')):

@@ -4,6 +4,7 @@
 
 	<feature name="openhab-binding-tinkerforge" description="Tinkerforge Binding" version="${project.version}">
 		<feature>openhab-runtime-base</feature>
+		<bundle dependency="true">mvn:com.tinkerforge/tinkerforge/2.1.26</bundle>
 		<bundle start-level="80">mvn:org.openhab.addons.bundles/org.openhab.binding.tinkerforge/${project.version}</bundle>
 	</feature>
 </features>
