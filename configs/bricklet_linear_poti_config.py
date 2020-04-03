@@ -63,7 +63,8 @@ den :cb:`Position` Callback zu nutzen und die Periode mit
 }]
 })
 
-analog_value_desc = """Returns the value as read by a 12-bit analog-to-digital converter.
+analog_value_desc = """
+Returns the value as read by a 12-bit analog-to-digital converter.
 
 .. note::
  The value returned by :func:`Get Position` is averaged over several samples

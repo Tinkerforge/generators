@@ -1877,7 +1877,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Text', 'String', 'Text',
                     update_style=None,
-                    description="Text to display on the LCD. Command format is [line],[position],[text].\n\nAdditional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly."),
+                    description="Text to display on the LCD. Command format is [line],[position],[text].\n\nAdditional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly.\n\nPaperUI truncates whitespace at the start and end of commands. So to clear (parts of) a line, you can not use f.e. 1,2,[spaces]. Instead you can use the empty character like this 1,2,\\\\xFE\\\\xFE\\\\xFE to delete three characters at Line 1, Column 2."),
         {
             'id': 'Clear Display',
             'item_type': 'String',

@@ -835,7 +835,7 @@ com['openhab'] = {
                     description='The current date and time.'),
         oh_generic_channel_type('Restart', 'String', 'Restart',
                     update_style=None,
-                    description="Restarts the GPS Bricklet, the following restart types are available:<ul><li>Hot start (use all available data in the NV store)</li> <li>Warm start (don't use ephemeris at restart)</li> <li>Cold start (don't use time, position, almanacs and ephemeris at restart)</li> <li>Factory reset (clear all system/user configurations at restart)</li></ul>",
+                    description="Restarts the GPS Bricklet, the following restart types are available:<ul><li>Hot start (use all available data in the NV store)</li><li>Warm start (don't use ephemeris at restart)</li><li>Cold start (don't use time, position, almanacs and ephemeris at restart)</li><li>Factory reset (clear all system/user configurations at restart)</li></ul>",
                     command_options=[('Hot Start', '0'),
                                      ('Warm Start', '1'),
                                      ('Cold Start', '2'),

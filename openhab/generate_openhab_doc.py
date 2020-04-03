@@ -117,8 +117,7 @@ data only when the read callback is disabled.
 See :func:`Enable Read Callback` and :cb:`Read` callback.
 """, '')]),
 
-('DMX', ':cb:`Frame`', [("""
-Instead of polling this function you can also use the :cb:`Frame` callback.
+('DMX', ':cb:`Frame`', [("""Instead of polling this function you can also use the :cb:`Frame` callback.
 You can enable it with :func:`Set Frame Callback Config`.
 
 """, '')]),
@@ -378,7 +377,7 @@ Channels
 
             meta_table_entries.insert(0, ('plain', 'Type', item_type))
 
-            desc = c.get_description()
+            desc = c.get_description().replace('|', '\|')
 
             if '<ul>' in desc:
                 desc = desc.replace('<ul>', '\n\n').replace('<li>', '* ').replace('</li>', '\n').replace('</ul>', '')
@@ -500,7 +499,7 @@ Thing
         return common.make_rst_examples(title_from_filename, self)
 
     def get_openhab_doc(self):
-        doc  = common.make_rst_header(self)
+        doc  = common.make_rst_header(self, has_device_identifier_constant=False)
         doc += common.make_rst_summary(self)
         if self.oh.doc is not None:
             doc += common.select_lang(self.oh.doc)

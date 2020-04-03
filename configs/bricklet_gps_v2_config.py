@@ -832,7 +832,7 @@ com['openhab'] = {
             'name': 'Fix LED Config',
             'type': 'integer',
             'label': 'Fix LED Config',
-            'description': 'The fix LED configuration. By default the LED shows if the Bricklet got a GPS fix yet. If a fix is established the LED turns on. If there is no fix then the LED is turned off.</br></br>You can also turn the LED permanently on/off, show a heartbeat or let it blink in sync with the PPS (pulse per second) output of the GPS module.\n\nIf the Bricklet is in bootloader mode, the LED is off.',
+            'description': 'The fix LED configuration. By default the LED shows if the Bricklet got a GPS fix yet. If a fix is established the LED turns on. If there is no fix then the LED is turned off.\n\nYou can also turn the LED permanently on/off, show a heartbeat or let it blink in sync with the PPS (pulse per second) output of the GPS module.\n\nIf the Bricklet is in bootloader mode, the LED is off.',
         }, {
             'packet': 'Set SBAS Config',
             'element': 'SBAS Config',
@@ -841,7 +841,7 @@ com['openhab'] = {
             'type': 'boolean',
             'default': 'true',
             'label': 'Enable SBAS',
-            'description': 'If `SBAS <https://en.wikipedia.org/wiki/GNSS_augmentation#Satellite-based_augmentation_system>`__ is enabled, the position accuracy increases (if SBAS satellites are in view), but the update rate is limited to 5Hz. With SBAS disabled the update rate is increased to 10Hz.</br></br>By default SBAS is enabled and the update rate is 5Hz.'
+            'description': 'If `SBAS <https://en.wikipedia.org/wiki/GNSS_augmentation#Satellite-based_augmentation_system>`__ is enabled, the position accuracy increases (if SBAS satellites are in view), but the update rate is limited to 5Hz. With SBAS disabled the update rate is increased to 10Hz.\n\nBy default SBAS is enabled and the update rate is 5Hz.'
         },
         update_interval('Set Status Callback Period', 'Period', 'Status', 'the status'),
         update_interval('Set Altitude Callback Period', 'Period', 'Altitude', 'the altitude and geodial separation'),
@@ -1017,7 +1017,7 @@ com['openhab'] = {
                     description='The current date and time.'),
         oh_generic_channel_type('Restart', 'String', 'Restart',
                     update_style=None,
-                    description="Restarts the GPS Bricklet, the following restart types are available:<ul><li>Hot start (use all available data in the NV store)</li> <li>Warm start (don't use ephemeris at restart)</li> <li>Cold start (don't use time, position, almanacs and ephemeris at restart)</li> <li>Factory reset (clear all system/user configurations at restart)</li></ul>",
+                    description="Restarts the GPS Bricklet, the following restart types are available:<ul><li>Hot start (use all available data in the NV store)</li><li>Warm start (don't use ephemeris at restart)</li><li>Cold start (don't use time, position, almanacs and ephemeris at restart)</li><li>Factory reset (clear all system/user configurations at restart)</li></ul>",
                     command_options=[('Hot Start', '0'),
                                      ('Warm Start', '1'),
                                      ('Cold Start', '2'),
