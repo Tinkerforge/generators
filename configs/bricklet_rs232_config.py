@@ -142,8 +142,7 @@ com['packets'].append({
 'en':
 """
 Returns the currently buffered message. The maximum length
-of message is 60. If the length is given as 0, there was no
-new data available.
+of message is 60. If the returned length is 0, no new data was available.
 
 Instead of polling with this function, you can also use
 callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
@@ -151,7 +150,7 @@ callbacks. See :func:`Enable Read Callback` and :cb:`Read` callback.
 'de':
 """
 Gibt die aktuell gespeicherte Nachricht zurück. Die maximale Länge
-beträgt 60. Wenn die Länge als 0 gegeben wird, waren keine
+beträgt 60. Wenn die zurückgegebene Länge 0 ist, waren keine
 neuen Daten verfügbar.
 
 Anstatt mit dieser Funktion zu pollen, ist es auch möglich
@@ -410,14 +409,13 @@ com['packets'].append({
 """
 Returns up to one frame of bytes from the read buffer.
 The frame size is configured with :func:`Set Frame Readable Callback Configuration`.
-If the length is given as 0, there was no
-new data available.
+If the returned length is 0, no new data was available.
 """,
 'de':
 """
 Gibt bis zu einem Frame an Daten aus dem Lesebuffer zurück.
 Die Größe eines Frames kann mit :func:`Set Frame Readable Callback Configuration` konfiguriert werden.
-Wenn die Länge als 0 gegeben wird, waren keine
+Wenn die zurückgegebene Länge 0 ist, waren keine
 neuen Daten verfügbar.
 """
 }]
