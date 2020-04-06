@@ -491,7 +491,7 @@ v1.x.y Plugins zu ermöglichen.
 }
 
 write_bricklet_plugin = {
-'feature': 'standard_bricklet_host',
+'feature': 'eeprom_bricklet_host',
 'type': 'function',
 'function_id': 246,
 'name': 'Write Bricklet Plugin',
@@ -520,7 +520,7 @@ normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
 }
 
 read_bricklet_plugin = {
-'feature': 'standard_bricklet_host',
+'feature': 'eeprom_bricklet_host',
 'type': 'function',
 'function_id': 247,
 'name': 'Read Bricklet Plugin',

@@ -31,8 +31,7 @@ com = {
         'send_timeout_count',
         'eeprom_bricklet_host_2_ports',
         'comcu_bricklet_host',
-        'comcu_bricklet_host_2_ports',
-        'standard_bricklet_host_2_ports'
+        'comcu_bricklet_host_2_ports'
     ],
     'constant_groups': [],
     'packets': [],
