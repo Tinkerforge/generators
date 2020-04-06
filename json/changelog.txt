@@ -2,10 +2,10 @@
 - Initial version
 
 2019-12-03: 2.0.1 (3cec123)
-- Add "Set/Get Voltages Callback Configuration" functions and "Voltages" callback
-  to HAT Brick API
+- Add "Set/Get Voltages Callback Configuration" functions and "Voltages"
+  callback to HAT Brick API
 - Add "Set/Get USB Voltage Callback Configuration" functions and "USB Voltage"
   callback to HAT Zero Brick API
 - Add "Set/Get Statistics Callback Configuration" functions and "Statistics"
   callback to Isolator Bricklet API
-- Expose all extra element config values, packet level and element level and role
+- Expose all extra element config values, packet level, element level and role

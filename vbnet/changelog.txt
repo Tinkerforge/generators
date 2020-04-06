@@ -92,7 +92,7 @@
 2016-02-09: 2.1.8 (5552d2c)
 - Add support for Real-Time Clock Bricklet
 - Break GPS Bricklet API to fix types of altitude and geoidal separation values
-  (GetAltitude function and Altitude callback)
+  (GetAltitude method and Altitude callback)
 
 2016-06-29: 2.1.9 (9db7daa)
 - Add support for WIFI Extension 2.0 to Master Brick API
@@ -106,7 +106,7 @@
 2017-01-25: 2.1.11 (7aeee37)
 - Add support for WIFI Extension 2.0 Mesh mode to Master Brick API
 - Add Get/SetStatusLEDConfig methods to Motion Detector Bricklet API
-- Add sensor and fusion mode configuration functions to IMU Brick 2.0 API
+- Add sensor and fusion mode configuration methods to IMU Brick 2.0 API
 
 2017-04-21: 2.1.12 (044bd9b)
 - Add support for Silent Stepper Brick
@@ -124,14 +124,14 @@
 2017-07-26: 2.1.14 (fb903dc)
 - Add support for RS485 Bricklet
 - Add general streaming support
-- Add SPITFP configuration and diagnostics functions to all Brick APIs to
+- Add SPITFP configuration and diagnostics methods to all Brick APIs to
   configure and debug the communication between Bricks and Co-MCU Bricklets
-- Remove unused GetCurrentConsumption function from Silent Stepper Brick API
+- Remove unused GetCurrentConsumption method from Silent Stepper Brick API
 
 2017-11-20: 2.1.15 (f235e3f)
 - Add support for DMX, Humidity 2.0, Motorized Linear Poti, RGB LED Button,
   RGB LED Matrix and Thermal Imaging Bricklet
-- Add Get/SetSBASConfig functions to GPS Bricklet 2.0 API
+- Add Get/SetSBASConfig methods to GPS Bricklet 2.0 API
 
 2018-02-28: 2.1.16 (da741b9)
 - Add support for Analog In 3.0, Remote Switch 2.0, Motion Detector 2.0, NFC,
@@ -143,8 +143,8 @@
   Industrial Dual Relay, Industrial Quad Relay 2.0, IO-4 2.0, LED Strip 2.0,
   Load Cell 2.0, Particulate Matter, PTC 2.0, Real-Time Clock 2.0, RS232 2.0,
   Sound Pressure Level, Thermocouple 2.0 and Voltage/Current 2.0 Bricklet
-- Add Get/SetMaximumTimeout functions to NFC Bricklet API
-- Add (Is)SensorConnected function and callback to PTC Bricklet API
+- Add Get/SetMaximumTimeout methods to NFC Bricklet API
+- Add (Is)SensorConnected method and callback to PTC Bricklet API
 - Break Humidity 2.0, Rotary Encoder 2.0 and Temperature IR 2.0 Bricklet API to
   fix types for callback threshold min/max configuration
 
@@ -158,8 +158,8 @@
 - Break API to fix moving-average-length type in Distance IR Bricklet 2.0 API
 
 2018-11-28: 2.1.20 (0e3b130)
-- Add Get/SetSamplesPerSecond functions to Humidity Bricklet 2.0 API
-- Add button, slider, graph and tab functions to LCD 128x64 Bricklet API
+- Add Get/SetSamplesPerSecond methods to Humidity Bricklet 2.0 API
+- Add button, slider, graph and tab methods to LCD 128x64 Bricklet API
 
 2019-01-29: 2.1.21 (2617875)
 - Add support for Accelerometer 2.0 and Ambient Light 3.0 Bricklet
@@ -168,14 +168,14 @@
 - Add support for CO2 2.0, E-Paper 296x128, Hall Effect 2.0, Joystick 2.0,
   Laser Range Finder 2.0, Linear Poti 2.0, Piezo Speaker 2.0, RGB LED 2.0 and
   Segment Display 4x7 2.0 Bricklet and HAT and HAT Zero Brick
-- Add RemoveCalibration and Get/SetBackgroundCalibrationDuration functions to
+- Add RemoveCalibration and Get/SetBackgroundCalibrationDuration methods to
   Air Quality Bricklet API
 - Properly check UIDs and report invalid UIDs
 
 2019-08-23: 2.1.23 (59d9363)
 - Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
   Multi Touch 2.0, Rotary Poti 2.0 and XMC1400 Breakout Bricklet
-- Add Get/SetFilterConfiguration functions to Accelerometer Bricklet 2.0 API
+- Add Get/SetFilterConfiguration methods to Accelerometer Bricklet 2.0 API
 - Add CONVERSION_TIME constants to Voltage/Current Bricklet 2.0 API
 
 2019-11-25: 2.1.24 (b1270ba)
