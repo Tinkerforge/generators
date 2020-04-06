@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-MQTT Bindings Tester
-Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+Modbus Bindings Tester
+Copyright (C) 2020 Matthias bolte <matthias@tinkerforge.com>
 
-test_mqtt_bindings.py: Tests the MQTT bindings
+test_modbus_bindings.py: Tests the Modbus bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
