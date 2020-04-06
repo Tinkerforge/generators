@@ -653,8 +653,9 @@ com['openhab'] = {
                         ('12800Hz', 14),
                         ('25600Hz', 15)],
             'limit_to_options': 'true',
-            'label': 'Data Rate',
-            'description': 'The data rate of 0.781Hz to 25600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
+            'label': {'en': 'Data Rate', 'de': 'Datenrate'},
+            'description': {'en': 'The data rate of 0.781Hz to 25600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.',
+                            'de': 'Die Datenrate zwischen 0,781Hz und 25600Hz. Eine Verringerung der Datenrate oder des Wertebereichs verringert auch automatisch das Rauschen auf den Daten.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Full Scale',
@@ -662,8 +663,9 @@ com['openhab'] = {
             'name': 'Full Scale Range',
             'type': 'integer',
 
-            'label': 'Full Scale Range',
-            'description': 'Full scale range of -2g to +2g up to -8g to +8g. Decreasing data rate or full scale range will also decrease the noise on the data.'
+            'label': {'en': 'Full Scale Range', 'de': 'Wertebereich'},
+            'description': {'en': 'Full scale range of ±2g up to ±8g. Decreasing data rate or full scale range will also decrease the noise on the data.',
+                            'de': 'Wertebereich von ±2g bis zu ±8g. Eine Verringerung der Datenrate oder des Wertebereichs verringert auch automatisch das Rauschen auf den Daten.'}
         }, {
             'packet': 'Set Info LED Config',
             'element': 'Config',
@@ -671,8 +673,9 @@ com['openhab'] = {
             'name': 'Info LED Mode',
             'type': 'integer',
 
-            'label': 'Info LED Mode',
-            'description': 'Configures the info LED (marked as \\\"Force\\\" on the Bricklet) to be either turned off, turned on, or blink in heartbeat mode.'
+            'label': {'en': 'Info LED Mode', 'de': 'Info-LED-Modus'},
+            'description': {'en': 'Configures the info LED (marked as \\\"Force\\\" on the Bricklet) to be either turned off, turned on, or blink in heartbeat mode.',
+                            'de': 'Konfiguriert die Info-LED (als \\\"Force\\\" auf dem Bricklet gekennzeichnet). Die LED kann ausgeschaltet, eingeschaltet oder im Herzschlagmodus betrieben werden.'},
         }, {
             'packet': 'Set Filter Configuration',
             'element': 'IIR Bypass',
@@ -680,16 +683,17 @@ com['openhab'] = {
             'name': 'IIR Filter',
             'type': 'boolean',
             'default': 'true',
-            'label': 'IIR Filter',
-            'description': 'Enable to apply the IIR filter.'
+            'label': {'en': 'IIR Filter', 'de': 'IIR-Filter'},
+            'description': {'en': 'Enables/Disables the IIR filter.', 'de': 'Aktiviert/Deaktiviert den IIR-Filter.'}
         }, {
             'packet': 'Set Filter Configuration',
             'element': 'Low Pass Filter',
 
             'name': 'Low Pass Filter',
             'type': 'integer',
-            'label': 'Low Pass Filter Corner Frequency',
-            'description': 'The low pass filter roll off corner frequency can be half or a ninth of the output data rate.'
+            'label': {'en': 'Low Pass Filter Corner Frequency', 'de': 'Tiefpassfilter-Grenzfrequenz'},
+            'description': {'en': 'The low pass filter roll off corner frequency can be half or a ninth of the output data rate.',
+                            'de': 'Die Grenzfrequenz des Tiefpassfilters kann die halbe oder ein Neuntel der Ausgabe-Datenrate sein.'}
         },
         update_interval('Set Acceleration Callback Configuration', 'Period', 'Acceleration', 'the acceleration')],
     'param_groups': oh_generic_channel_param_groups(),
@@ -701,7 +705,7 @@ com['openhab'] = {
         {
             'id': 'Acceleration {}'.format(axis.upper()),
             'type': 'Acceleration',
-            'label': 'Acceleration {}'.format(axis.upper()),
+            'label': {'en': 'Acceleration {}'.format(axis.upper()), 'de': 'Beschleunigung {}'.format(axis.upper())},
 
             'getters': [{
                 'packet': 'Get Acceleration',
@@ -717,7 +721,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
                     update_style=None,
-                    description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.')
+                    description={'en': 'The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.', 'de': 'Die Beschleunigung in g (1g = 9,80665m/s²), nicht zu verwechseln mit Gramm.'})
     ],
     'actions': ['Get Acceleration', 'Get Configuration', 'Get Info LED Config', 'Get Filter Configuration']
 }

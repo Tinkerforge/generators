@@ -474,8 +474,9 @@ com['openhab'] = {
             'name': 'Data Rate',
             'type': 'integer',
 
-            'label': 'Data Rate',
-            'description': 'The data rate of 0Hz to 1600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.'
+            'label': {'en': 'Data Rate', 'de': 'Datenrate'},
+            'description': {'en': 'The data rate of 0Hz to 1600Hz. Decreasing data rate or full scale range will also decrease the noise on the data.',
+                            'de': 'Die Datenrate zwischen 0Hz und 1600Hz. Eine Verringerung der Datenrate oder des Wertebereichs verringert auch automatisch das Rauschen auf den Daten.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Full Scale',
@@ -483,16 +484,17 @@ com['openhab'] = {
             'name': 'Full Scale Range',
             'type': 'integer',
 
-            'label': 'Full Scale Range',
-            'description': 'Full scale range of -2g to +2g up to -16g to +16g. Decreasing data rate or full scale range will also decrease the noise on the data.'
+            'label': {'en': 'Full Scale Range', 'de': 'Wertebereich'},
+            'description': {'en': 'Full scale range of ±2gₙ up to ±16gₙ. Decreasing data rate or full scale range will also decrease the noise on the data.',
+                            'de': 'Wertebereich von ±2gₙ bis zu ±16gₙ. Eine Verringerung der Datenrate oder des Wertebereichs verringert auch automatisch das Rauschen auf den Daten.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Filter Bandwidth',
 
             'name': 'Filter Bandwidth',
             'type': 'integer',
-            'label': 'Filter Bandwidth',
-            'description': 'Filter bandwidth between 50Hz and 800Hz.'
+            'label': {'en': 'Filter Bandwidth', 'de': 'Filterbandbreite'},
+            'description': {'en': 'Filter bandwidth between 50Hz and 800Hz.', 'de': 'Filterbandbreite zwischen 50Hz und 800Hz.'}
         },
         update_interval('Set Acceleration Callback Period', 'Period', 'Acceleration', 'the acceleration')],
     'param_groups': oh_generic_channel_param_groups(),
@@ -502,7 +504,7 @@ com['openhab'] = {
         {
             'id': 'Acceleration {}'.format(axis.upper()),
             'type': 'Acceleration',
-            'label': 'Acceleration {}'.format(axis.upper()),
+            'label': {'en': 'Acceleration {}'.format(axis.upper()), 'de': 'Beschleunigung {}'.format(axis.upper())},
 
             'getters': [{
                 'packet': 'Get Acceleration',
@@ -517,7 +519,7 @@ com['openhab'] = {
     ] + [{
             'id': 'Temperature',
             'type': 'Temperature',
-            'label': 'Temperature',
+            'label': {'en': 'Temperature', 'de': 'Temperatur'},
 
             'getters': [{
                 'packet': 'Get Temperature',
@@ -547,13 +549,13 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
                     update_style=None,
-                    description='The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.'),
-        oh_generic_channel_type('LED', 'Switch', 'LED',
+                    description={'en': 'The acceleration in g (1g = 9.80665m/s²), not to be confused with grams.', 'de': 'Die Beschleunigung in g (1g = 9,80665m/s²), nicht zu verwechseln mit Gramm.'}),
+        oh_generic_channel_type('LED', 'Switch', {'en': 'LED', 'de': 'LED'},
                     update_style=None,
-                    description='Enables/Disables the LED on the Bricklet.'),
-        oh_generic_channel_type('Temperature', 'Number:Temperature', 'Temperature',
+                    description={'en': 'Enables/Disables the LED on the Bricklet.', 'de': 'Aktiviert/Deaktiviert die LED des Bricklets'}),
+        oh_generic_channel_type('Temperature', 'Number:Temperature', {'en': 'Temperature', 'de': 'Temperatur'},
                     update_style=None,
-                    description='The temperature of the accelerometer'),
+                    description={'en': 'The temperature of the accelerometer', 'de': 'Die Temperatur des Beschleunigungssensors'}),
     ],
     'actions': ['Get Acceleration', 'Get Temperature', {'fn': 'LED On', 'refreshs': ['LED']}, {'fn': 'LED Off', 'refreshs': ['LED']}, 'Is LED On', 'Get Configuration']
 }
