@@ -35,6 +35,12 @@ def fix_desc(s):
     result = result.replace("\n", "<br/>")
     return result
 
+def doc_dict_workaround(d):
+    if isinstance(d, dict):
+        return d['en']
+    return d
+
+
 openHABUnits = [
     OpenHABUnit('Ampere', 'SmartHomeUnits.AMPERE', 'ElectricCurrent'),
     #OpenHABUnit('Bar', 'SmartHomeUnits.BAR', ''),
@@ -98,7 +104,7 @@ class OpenHAB:
         self.required_firmware_version = kwargs.get('required_firmware_version', False)
         self.firmware_update_supported = kwargs.get('firmware_update_supported', False)
         self.implemented_interfaces = kwargs.get('implemented_interfaces', [])
-        self.doc = kwargs.get('doc', None)
+        self.doc = doc_dict_workaround(kwargs.get('doc', None))
 
         check_for_unknown_keys(self, kwargs, 'top level')
 
@@ -116,8 +122,8 @@ class Channel:
         self.callbacks = kwargs.get('callbacks', [])
         self.predicate = kwargs.get('predicate', 'true')
         self.predicate_description = kwargs.get('predicate_description', None)
-        self.label = kwargs.get('label', None)
-        self.description = kwargs.get('description', None)
+        self.label = doc_dict_workaround(kwargs.get('label', None))
+        self.description = doc_dict_workaround(kwargs.get('description', None))
         self.automatic_update = kwargs.get('automatic_update', True)
 
         check_for_unknown_keys(self, kwargs, 'channel')
@@ -147,8 +153,8 @@ class Channel:
 class ChannelType:
     def __init__(self, **kwargs):
         self.id = kwargs['id']
-        self.label = kwargs.get('label', None)
-        self.description = kwargs.get('description', None)
+        self.label = doc_dict_workaround(kwargs.get('label', None))
+        self.description = doc_dict_workaround(kwargs.get('description', None))
         self.params = kwargs.get('params', [])
         self.param_groups = kwargs.get('param_groups', [])
         self.item_type = kwargs.get('item_type', None)
@@ -159,6 +165,8 @@ class ChannelType:
         self.max = kwargs.get('max', None)
         self.step = kwargs.get('step', None)
         self.options = kwargs.get('options', None)
+        if self.options is not None:
+            self.options = [(doc_dict_workaround(label), val) for label, val in self.options]
         self.is_trigger_channel = kwargs.get('is_trigger_channel', False)
         self.command_options = kwargs.get('command_options', None)
         self.tags = kwargs.get('tags', [])
@@ -256,17 +264,19 @@ class Param:
         self.type = kwargs['type']
         self.context = kwargs.get('context', None)
         self.default = kwargs.get('default', None)
-        self.description = kwargs.get('description', None)
+        self.description = doc_dict_workaround(kwargs.get('description', None))
         self.groupName = kwargs.get('groupName', None)
-        self.label = kwargs.get('label', None)
+        self.label = doc_dict_workaround(kwargs.get('label', None))
         self.unit = kwargs.get('unit', None)
-        self.unitLabel = kwargs.get('unitLabel', None)
+        self.unitLabel = doc_dict_workaround(kwargs.get('unitLabel', None))
         self.advanced = kwargs.get('advanced', None)
         self.limit_to_options = {None: None, 'true': True, 'false': False}[kwargs.get('limit_to_options', None)]
         self.min = kwargs.get('min', None)
         self.max = kwargs.get('max', None)
         self.step = kwargs.get('step', None)
         self.options = kwargs.get('options', None)
+        if self.options is not None:
+            self.options = [(doc_dict_workaround(label), val) for label, val in self.options]
         self.packet = kwargs.get('packet', None)
         self.element = kwargs.get('element', None)
         self.element_index = kwargs.get('element_index', None)
@@ -330,8 +340,8 @@ class ParamGroup:
         self.name = kwargs['name']
         self.context = kwargs.get('context', None)
         self.advanced = kwargs.get('advanced', 'false')
-        self.label = kwargs.get('label', None)
-        self.description = kwargs.get('description', None)
+        self.label = doc_dict_workaround(kwargs.get('label', None))
+        self.description = doc_dict_workaround(kwargs.get('description', None))
 
         check_for_unknown_keys(self, kwargs, 'param group')
 
