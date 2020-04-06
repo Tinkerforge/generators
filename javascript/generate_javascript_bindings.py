@@ -1104,7 +1104,9 @@ true);"""
         return methods
 
     def get_javascript_class_closing(self):
-        template = """}}
+        template = """
+	this.ipcon.addDevice(this);
+}}
 
 module.exports = {0};
 """

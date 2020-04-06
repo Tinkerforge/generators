@@ -218,6 +218,16 @@ function IPConnection() {
     this.mergeBuffer = Buffer.concat([]); //See https://nodejs.org/en/docs/guides/buffer-constructor-deprecation/#buffer-0
     this.brickd = new BrickDaemon('2', this);
 
+    this.addDevice = function (device) {
+        var replacedDevice = this.devices[device.uid];
+
+        if (replacedDevice !== undefined) {
+            replacedDevice.replaced = true;
+        }
+
+        this.devices[device.uid] = device;
+    };
+
     this.disconnectProbe = function () {
         if (this.socket !== undefined) {
             try {

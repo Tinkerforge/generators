@@ -38,9 +38,8 @@ function base58Decode(str) {
     return num;
 }
 
-function Device(deviceRegistering, uid, ipcon, deviceIdentifier, deviceDisplayName) {
-    if (deviceRegistering !== undefined && uid !== undefined && ipcon !== undefined &&
-        deviceIdentifier !== undefined && deviceDisplayName !== undefined) {
+function Device(that, uid, ipcon, deviceIdentifier, deviceDisplayName) {
+    if (uid !== undefined && ipcon !== undefined && deviceIdentifier !== undefined && deviceDisplayName !== undefined) {
         this.replaced = false;
         this.uid = base58Decode(uid);
         if (this.uid === 0) {
@@ -69,15 +68,6 @@ function Device(deviceRegistering, uid, ipcon, deviceIdentifier, deviceDisplayNa
                                         errorCB:
                                     }
                                     */
-        // Creates the device object with the unique device ID *uid* and adds
-        // it to the IPConnection *ipcon*.
-        var replacedDevice = this.ipcon.devices[this.uid];
-
-        if (replacedDevice !== undefined) {
-            replacedDevice.replaced = true;
-        }
-
-        this.ipcon.devices[this.uid] = deviceRegistering;
 
         this.getDeviceOID = function () {
             return this.deviceOID++;
