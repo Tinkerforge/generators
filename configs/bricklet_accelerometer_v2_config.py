@@ -584,7 +584,7 @@ half or a ninth of the output data rate.
 """,
 'de':
 """
-Konfiguriert den IIR Bypass Filter Modus und die Low Pass Filter Roll Off Corner Frequenz.
+Konfiguriert den IIR Bypass Filter Modus und die Grenzfrequenz des Tiefpassfilters.
 
 Der Filter kann angewendet oder umgangen werden und die Frequenz kann die halbe oder ein Neuntel
 der Ausgabe-Datenrate sein.

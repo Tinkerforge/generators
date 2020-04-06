@@ -110,7 +110,7 @@ the temperature directly outside of enclosure and set the difference as offset.
 
 This temperature offset is used to calculate the relative humidity and
 IAQ index measurements. In case the Bricklet is installed in an enclosure, we
-recommend to measure and set the temperature offset to imporve the accuracy of
+recommend to measure and set the temperature offset to improve the accuracy of
 the measurements.
 """,
 'de':
