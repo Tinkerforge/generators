@@ -259,7 +259,7 @@
   to Isolator Bricklet API
 - Report error if authentication secret contains non-ASCII chars
 
-2020-04-07: 2.1.25 (<unknown>)
+2020-04-07: 2.1.25 (3dff30a)
 - Properly check device-identifier and report mismatch between used API bindings
   device type and actual hardware device type
 - Fully initialize device before adding it to an IP Connection

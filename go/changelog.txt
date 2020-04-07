@@ -37,7 +37,7 @@
 - Don't silently ignore stream-out-of-sync errors in callbacks
 - Replace BrickletError with DeviceError
 
-2020-04-07: 2.0.6 (<unknown>)
+2020-04-07: 2.0.6 (3dff30a)
 - Properly check device-identifier and report mismatch between used API bindings
   device type and actual hardware device type
 - Add Set/GetFluxLinearParameters functions to Thermal Imaging Bricklet API

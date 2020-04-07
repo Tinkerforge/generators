@@ -59,7 +59,7 @@
 - Fix names of high-level-callback members
 - Add systemd service file
 
-2020-04-07: 2.0.9 (<unknown>)
+2020-04-07: 2.0.9 (3dff30a)
 - Properly check device-identifier and report mismatch between used API bindings
   device type and actual hardware device type
 - Fix race condition between device constructor and callback thread

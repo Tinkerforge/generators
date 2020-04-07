@@ -310,7 +310,7 @@
   Isolator Bricklet API
 - Report error if authentication secret contains non-ASCII chars
 
-2020-04-07: 2.1.26 (<unknown>)
+2020-04-07: 2.1.26 (3dff30a)
 - Properly check device-identifier and report mismatch between used API bindings
   device type and actual hardware device type
 - Fix race condition between device constructor and callback thread

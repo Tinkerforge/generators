@@ -61,7 +61,7 @@
   callback to Isolator Bricklet API
 - Report error if authentication secret contains non-ASCII chars
 
-2020-04-07: 2.0.14 (<unknown>)
+2020-04-07: 2.0.14 (3dff30a)
 - Add set/get_flux_linear_parameters functions to Thermal Imaging Bricklet API
 - Add set/get_frame_readable_callback_configuration functions and frame_readable
   callback to CAN (2.0), RS232 (2.0) and RS485 Bricklet API
