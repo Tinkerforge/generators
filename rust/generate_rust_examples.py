@@ -673,7 +673,7 @@ class RustExamplesGenerator(rust_common.RustGeneratorTrait, common.ExamplesGener
         return RustExampleSpecialFunction
 
     def generate(self, device):
-        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel_abbrv) != device.get_name().camel_abbrv:
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
             print('  \033[01;31m- skipped\033[0m')
             return
 
