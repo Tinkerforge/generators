@@ -90,7 +90,7 @@ fn main() -> Result<(), Box<dyn Error>> {{
             sources.append(function.get_rust_source())
 
         for cleanup in self.get_cleanups():
-            imports += function.get_rust_imports()
+            imports += cleanup.get_rust_imports()
             functions.append(cleanup.get_rust_function())
             cleanups.append(cleanup.get_rust_source())
 

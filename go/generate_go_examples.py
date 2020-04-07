@@ -92,7 +92,7 @@ func main() {{
             sources.append(function.get_go_source())
 
         for cleanup in self.get_cleanups():
-            imports += function.get_go_imports()
+            imports += cleanup.get_go_imports()
             functions.append(cleanup.get_go_function())
             cleanups.append(cleanup.get_go_source())
 

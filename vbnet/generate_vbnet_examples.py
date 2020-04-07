@@ -102,7 +102,7 @@ End Module
             sources.append(function.get_vbnet_source())
 
         for cleanup in self.get_cleanups():
-            imports += function.get_vbnet_imports()
+            imports += cleanup.get_vbnet_imports()
             subroutines.append(cleanup.get_vbnet_subroutine())
             cleanups.append(cleanup.get_vbnet_source())
 

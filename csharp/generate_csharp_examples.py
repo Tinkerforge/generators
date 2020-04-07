@@ -87,7 +87,7 @@ class Example
             sources.append(function.get_csharp_source())
 
         for cleanup in self.get_cleanups():
-            imports += function.get_csharp_imports()
+            imports += cleanup.get_csharp_imports()
             functions.append(cleanup.get_csharp_function())
             cleanups.append(cleanup.get_csharp_source())
 
