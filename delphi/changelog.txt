@@ -29,7 +29,7 @@
   air pressure
 
 2012-10-12: 1.0.7 (5884dd5)
-- Add get_usb_voltage function to Master Brick API
+- Add GetUSBVoltage function to Master Brick API
 - Add Barometer Bricklet examples
 
 2012-12-20: 1.0.8 (2b39606)
