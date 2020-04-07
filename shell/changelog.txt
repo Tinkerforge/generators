@@ -166,3 +166,20 @@
   callback to Isolator Bricklet API
 - Report error if authentication secret contains non-ASCII chars
 - Fix Python 3 compatibility
+
+2020-04-07: 2.1.25 (<unknown>)
+- Properly check device-identifier and report mismatch between used API bindings
+  device type and actual hardware device type
+- Fix race condition between device constructor and callback thread
+- Add set/get-flux-linear-parameters functions to Thermal Imaging Bricklet API
+- Add set/get-frame-readable-callback-configuration functions and frame-readable
+  callback to CAN (2.0), RS232 (2.0) and RS485 Bricklet API
+- Add set/get-error-occurred-callback-configuration functions and error-occurred
+  callback to CAN Bricklet 2.0 API
+- Add read-frame function to RS232 Bricklet API
+- Add write/read-bricklet-plugin functions to all Brick APIs for internal EEPROM
+  Bricklet flashing
+- Add set-bricklet-xmc-flash-config/data and set/get-bricklets-enabled functions
+  to Master Brick 3.0 API for internal Co-MCU Bricklet bootloader flashing
+- Validate response length before unpacking response
+- Properly report replaced device objects as non-functional

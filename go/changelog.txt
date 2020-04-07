@@ -36,3 +36,18 @@
 - Report error if authentication secret contains non-ASCII chars
 - Don't silently ignore stream-out-of-sync errors in callbacks
 - Replace BrickletError with DeviceError
+
+2020-04-07: 2.0.6 (<unknown>)
+- Properly check device-identifier and report mismatch between used API bindings
+  device type and actual hardware device type
+- Add Set/GetFluxLinearParameters functions to Thermal Imaging Bricklet API
+- Add Set/GetFrameReadableCallbackConfiguration functions and FrameReadable
+  callback to CAN (2.0), RS232 (2.0) and RS485 Bricklet API
+- Add Set/GetErrorOccurredCallbackConfiguration functions and ErrorOccurred
+  callback to CAN Bricklet 2.0 API
+- Add ReadFrame function to RS232 Bricklet API
+- Add Write/ReadBrickletPlugin functions to all Brick APIs for internal EEPROM
+  Bricklet flashing
+- Add SetBrickletXMCFlashConfig/Data and Set/GetBrickletsEnabled functions to
+  Master Brick 3.0 API for internal Co-MCU Bricklet bootloader flashing
+- Validate response length before unpacking response

@@ -9,3 +9,18 @@
 - Add "Set/Get Statistics Callback Configuration" functions and "Statistics"
   callback to Isolator Bricklet API
 - Expose all extra element config values, packet level, element level and role
+
+2020-04-07: 2.0.2 (<unknown>)
+- Add "Set/Get Flux Linear Parameters" functions to Thermal Imaging Bricklet API
+- Add "Set/Get Frame Readable Callback Configuration" functions and
+  "Frame Readable" callback to CAN (2.0), RS232 (2.0) and RS485 Bricklet API
+- Add "Set/Get Error Occurred Callback Configuration" functions and
+  "Error Occurred" callback to CAN Bricklet 2.0 API
+- Add "Read Frame" function to RS232 Bricklet API
+- Add "Write/Read Bricklet Plugin" functions to all Brick APIs for internal
+  EEPROM Bricklet flashing
+- Add "Set Bricklet XMC Flash Config/Data" and "Set/Get Bricklets Enabled"
+  functions to Master Brick 3.0 API for internal Co-MCU Bricklet bootloader
+  flashing
+- Replace '"scale": null' with '"scale": {"numerator": 1, "denominator": 1}'
+- Add new documentation category "if" (internal functions)

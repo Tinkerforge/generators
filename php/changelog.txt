@@ -258,3 +258,20 @@
 - Add set/getStatisticsCallbackConfiguration functions and STATISTICS callback
   to Isolator Bricklet API
 - Report error if authentication secret contains non-ASCII chars
+
+2020-04-07: 2.1.25 (<unknown>)
+- Properly check device-identifier and report mismatch between used API bindings
+  device type and actual hardware device type
+- Fully initialize device before adding it to an IP Connection
+- Add set/getFluxLinearParameters functions to Thermal Imaging Bricklet API
+- Add set/getFrameReadableCallbackConfiguration functions and FRAME_READABLE
+  callback to CAN (2.0), RS232 (2.0) and RS485 Bricklet API
+- Add set/getErrorOccurredCallbackConfiguration functions and ERROR_OCCURRED
+  callback to CAN Bricklet 2.0 API
+- Add readFrame function to RS232 Bricklet API
+- Add write/readBrickletPlugin functions to all Brick APIs for internal EEPROM
+  Bricklet flashing
+- Add setBrickletXMCFlashConfig/Data and set/getBrickletsEnabled functions to
+  Master Brick 3.0 API for internal Co-MCU Bricklet bootloader flashing
+- Validate response length before unpacking response
+- Properly report replaced device objects as non-functional

@@ -58,3 +58,23 @@
 - Fix handling of character arrays
 - Fix names of high-level-callback members
 - Add systemd service file
+
+2020-04-07: 2.0.9 (<unknown>)
+- Properly check device-identifier and report mismatch between used API bindings
+  device type and actual hardware device type
+- Fix race condition between device constructor and callback thread
+- Add set/get_flux_linear_parameters functions to Thermal Imaging Bricklet API
+- Add set/get_frame_readable_callback_configuration functions and frame_readable
+  callback to CAN (2.0), RS232 (2.0) and RS485 Bricklet API
+- Add set/get_error_occurred_callback_configuration functions and error_occurred
+  callback to CAN Bricklet 2.0 API
+- Add read_frame function to RS232 Bricklet API
+- Add write/read_bricklet_plugin functions to all Brick APIs for internal EEPROM
+  Bricklet flashing
+- Add set_bricklet_xmc_flash_config/data and set/get_bricklets_enabled functions
+  to Master Brick 3.0 API for internal Co-MCU Bricklet bootloader flashing
+- Validate response length before unpacking response
+- Properly report replaced device objects as non-functional
+- Don't use signal SIGQUIT, not supported on Windows
+- Warn about device replacement because of conflicting UIDs
+- Add support for duplicate topics in init file
