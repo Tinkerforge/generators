@@ -670,13 +670,13 @@ class GoExamplesGenerator(go_common.GoGeneratorTrait, common.ExamplesGenerator):
 
             with open(filepath, 'w') as f:
                 f.write(example.get_go_source())
-            if not example.is_incomplete():
-                p = subprocess.Popen(["go", "fmt", filename], cwd=examples_dir, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-                out, err = p.communicate() # block until gofmt has finished
-                if p.returncode != 0:
-                    print("Got the following output from go fmt:")
-                    print(out)
-                    print(err)
+
+            p = subprocess.Popen(["go", "fmt", filename], cwd=examples_dir, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+            out, err = p.communicate() # block until gofmt has finished
+            if p.returncode != 0:
+                print("Got the following output from go fmt:")
+                print(out)
+                print(err)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', GoExamplesGenerator)
