@@ -98,6 +98,7 @@ class MathematicaZipGenerator(common.ZipGenerator):
             common.execute(['mcs',
                             '/optimize+',
                             '/warn:4',
+                            '/warnaserror',
                             '/sdk:2',
                             '/target:library',
                             '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),

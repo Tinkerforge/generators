@@ -116,6 +116,7 @@ class CSharpZipGenerator(csharp_common.CSharpGeneratorTrait, common.ZipGenerator
                             '/debug:full',
                             '/optimize+',
                             '/warn:4',
+                            '/warnaserror',
                             '/sdk:2',
                             '/target:library',
                             '/doc:' + os.path.join(self.tmp_dir, 'Tinkerforge.xml'),

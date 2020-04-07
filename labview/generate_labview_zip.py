@@ -117,6 +117,7 @@ class LabVIEWZipGenerator(common.ZipGenerator):
                 common.execute(['mcs',
                                 '/optimize+',
                                 '/warn:4',
+                                '/warnaserror',
                                 '/sdk:{0}'.format(sdk),
                                 '/target:library',
                                 '/out:' + os.path.join(self.tmp_dir, 'net{0}0'.format(sdk), 'Tinkerforge.dll'),
