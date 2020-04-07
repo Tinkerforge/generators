@@ -371,7 +371,7 @@ com['examples'].append({
 'name': 'Simple',
 'functions': [('setter', 'Set Enable', [('bool', True)], 'Turn laser on and wait 250ms for very first measurement to be ready', None),
               ('sleep', 250, None, None),
-              ('getter', ('Get Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, None, 'cm', None)], [])],
+              ('getter', ('Get Distance', 'distance'), [(('Distance', 'Distance'), 'int16', 1, None, 'cm', None)], [])],
 'cleanups': [('setter', 'Set Enable', [('bool', False)], 'Turn laser off', None)]
 })
 
@@ -379,7 +379,7 @@ com['examples'].append({
 'name': 'Callback',
 'functions': [('setter', 'Set Enable', [('bool', True)], 'Turn laser on and wait 250ms for very first measurement to be ready', None),
               ('sleep', 250, None, None),
-              ('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, None, 'cm', None)], None, None),
+              ('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'int16', 1, None, 'cm', None)], None, None),
               ('callback_configuration', ('Distance', 'distance'), [], 200, False, 'x', [(0, 0)])],
 'cleanups': [('setter', 'Set Enable', [('bool', False)], 'Turn laser off', None)]
 })
@@ -388,7 +388,7 @@ com['examples'].append({
 'name': 'Threshold',
 'functions': [('setter', 'Set Enable', [('bool', True)], 'Turn laser on and wait 250ms for very first measurement to be ready', None),
               ('sleep', 250, None, None),
-              ('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 1, None, 'cm', None)], None, None),
+              ('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'int16', 1, None, 'cm', None)], None, None),
               ('callback_configuration', ('Distance', 'distance'), [], 1000, False, '>', [(20, 0)])],
 'cleanups': [('setter', 'Set Enable', [('bool', False)], 'Turn laser off', None)]
 })
