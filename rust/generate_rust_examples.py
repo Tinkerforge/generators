@@ -398,7 +398,7 @@ class RustExampleSetterFunction(common.ExampleSetterFunction, RustExampleArgumen
                                  device_category_under = self.get_device().get_category().under,
                                  function_name=self.get_name().under,
                                  arguments=',<BP>'.join(self.get_rust_arguments()),
-                                 propagate_errors = '?' if has_high_level else '',
+                                 propagate_errors = '?' if has_high_level else '.recv()?',
                                  comment1=self.get_formatted_comment1(global_line_prefix + '\t\t// {0}\n', '\r', '\n' + global_line_prefix + '\t\t// '),
                                  comment2=self.get_formatted_comment2(' // {0}', ''))
 
