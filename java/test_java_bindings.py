@@ -76,6 +76,7 @@ class JavaDocTester(common.Tester):
 
         args = ['javadoc',
                 '-quiet',
+                '-html4',
                 '-d',
                 '/tmp/tester/java/javadoc',
                 '-classpath',
@@ -99,6 +100,9 @@ class JavaDocTester(common.Tester):
                 path]
 
         self.execute(cookie, args)
+
+    def check_success(self, exit_code, output):
+        return exit_code == 0 and len(output.strip('\r\n')) == 0
 
 def run(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/examples/GuitarStation.java'),
