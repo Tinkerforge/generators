@@ -502,7 +502,7 @@ Thing
         doc  = common.make_rst_header(self, has_device_identifier_constant=False)
         doc += common.make_rst_summary(self)
         if self.oh.doc is not None:
-            doc += common.select_lang(self.oh.doc)
+            doc += self.oh.doc
             doc += '\n\n'
         doc += self.get_openhab_examples()
         doc += '\n\n'
