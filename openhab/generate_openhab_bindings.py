@@ -794,60 +794,6 @@ public class {name_camel} {{
 
         return (thing_type_caps, thing_type_decl, channel_types_caps, channel_type_decls, config_description_types_caps, config_description_type_decls)
 
-    def get_openhab_docs(self):
-        not_supported = len(self.oh.channels) == 0
-        if not_supported:
-            return None
-
-        template = """{device}: {description}
-    Configuration
-    {cfg}
-    Channels
-    {channels}
-    Actions
-    {actions}
-"""
-        param_template = """        {name} ({type}):
-                {description}"""
-        cfg = []
-        for p in self.oh.params:
-            if p.description is not None:
-                desc = p.description
-            else:
-                try:
-                    group = [g for g in self.oh.param_groups if g.name == p.groupName][0]
-                except:
-                    print(self.get_long_display_name())
-                    print(p.name.space)
-                desc = group.description
-            desc = desc.replace('<br/>', '\n                ').replace('\\\\', '\\')
-
-            cfg.append(param_template.format(name=p.label, type=p.type if not p.limit_to_options else 'choice', description=desc))
-
-        channel_template = """        {name} ({type})
-                {description}"""
-        channels = []
-        for c in self.oh.channels:
-            if c.description is not None:
-                desc = c.description
-            elif c.type.description is not None:
-                desc = c.type.description
-            elif c.type.is_system_type():
-                desc = 'Default ' + c.type.id.under.replace('system.', '') + ' channel.'
-            else:
-                print(self.get_long_display_name())
-                print(c.id.space)
-
-            desc = desc.replace('<br/>', '\n                ').replace('\\\\', '\\')
-            channels.append(channel_template.format(name=c.get_label(),
-                                                    description=desc,
-                                                    type=c.type.item_type if c.type.item_type is not None else 'trigger channel'))
-
-        return template.format(device=self.get_long_display_name(),
-                               description=openhab_common.fix_desc(common.select_lang(self.get_description())),
-                               cfg='\n\n    '.join(cfg),
-                               channels='\n\n    '.join(channels),
-                               actions=', '.join(self.get_category().headless + self.get_name().camel + a.fn.get_name().camel for a in self.oh.actions) if self.oh.actions != 'custom' else 'custom')
 
 class OpenHABBindingsGenerator(openhab_common.OpenHABGeneratorTrait, JavaBindingsGenerator):
     def get_device_class(self):
@@ -916,15 +862,6 @@ class OpenHABBindingsGenerator(openhab_common.OpenHABGeneratorTrait, JavaBinding
                                         '{header}': self.get_header_comment('asterisk'),
                                         '{devices}': ',\n\t\t\t'.join(d.get_java_class_name() + 'Wrapper.DEVICE_INFO' for d in self.released_devices)
                                     })
-
-        docs = [(d.get_name().under + '_' + d.get_category().under, d.get_openhab_docs()) for d in self.released_devices if d.get_openhab_docs() is not None]
-        doc_folder = os.path.join(self.get_bindings_dir(), '..', 'beta', 'doc')
-        shutil.rmtree(doc_folder, ignore_errors=True)
-        os.makedirs(doc_folder)
-
-        for file, content in docs:
-            with open(os.path.join(doc_folder, file + '.txt'), 'w') as f:
-                f.write(content)
 
 def generate(root_dir):
     common.generate(root_dir, 'en', OpenHABBindingsGenerator)

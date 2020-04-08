@@ -186,7 +186,6 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
 
         for f in ['changelog.txt', 'readme_de.txt', 'readme_en.txt']:
             shutil.copy(os.path.join(self.get_bindings_dir(), '..', 'beta', f), zip_dir)
-        shutil.copytree(os.path.join(self.get_bindings_dir(), '..', 'beta', 'doc'), os.path.join(zip_dir, 'docs'))
         shutil.copytree(os.path.join(binding_dir, 'src'), os.path.join(zip_dir, 'org.openhab.binding.tinkerforge', 'src'))
         shutil.copy(os.path.join(binding_dir, 'target', 'org.openhab.binding.tinkerforge-2.5.4-SNAPSHOT.jar'), zip_dir)
 
