@@ -204,16 +204,18 @@ com['openhab'] = {
             'name': 'Illuminance Range',
             'type': 'integer',
 
-            'label': 'Illuminance Range',
-            'description': 'The unlimited illuminance range allows to measure up to about 100000lux, but above 64000lux the precision starts to drop.\n\nA smaller illuminance range increases the resolution of the data.\n\nIf the actual measure illuminance is out-of-range then the current illuminance range maximum +0.01lux is reported. For example, 800001 for the 0-8000lux range.\n\nIf the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
+            'label': {'en': 'Illuminance Range', 'de': 'Helligkeitswertebereich'},
+            'description':  {'en': 'The unlimited illuminance range allows to measure up to about 100000lux, but above 64000lux the precision starts to drop.\n\nA smaller illuminance range increases the resolution of the data.\n\nIf the actual measure illuminance is out-of-range then the current illuminance range maximum +0.01lux is reported. For example, 8000.01 for the 0-8000lux range.\n\nIf the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
+                             'de': 'Der unbeschränkt (unlimited) Helligkeitswertebereich ermöglicht es bis über 100000Lux zu messen, aber ab 64000Lux nimmt die Messgenauigkeit ab.\n\nEin kleinerer Helligkeitswertebereich erhöht die Auflösung der Daten. \n\nWenn der eigentliche Messwert außerhalb des eingestellten Helligkeitswertebereichs liegt, dann gibt der Channel das Maximum des eingestellten Helligkeitswertebereichs +0,01Lux zurück. Also z.B. 8000,01 für den 0-8000Lux Bereich.\n\nWenn der Messwert außerhalb des eingestellten Helligkeitswertebereichs liegt oder der Sensor gesättigt ist, dann sollte der nächst höhere Helligkeitswertebereich eingestellt werden. Wenn der höchste Helligkeitswertebereich schon erreicht ist, dann kann noch die Integrationszeit verringert werden.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Integration Time',
 
             'name': 'Integration Time',
             'type': 'integer',
-            'label': 'Integration Time',
-            'description': 'A longer integration time will result in less noise on the data.\n\nWith a long integration time the sensor might be saturated before the measured value reaches the maximum of the selected illuminance range. In this case 0lux is reported.\n\nIf the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
+            'label': {'en': 'Integration Time', 'de': 'Integrationszeit'},
+            'description': {'en': 'A longer integration time will result in less noise on the data.\n\nWith a long integration time the sensor might be saturated before the measured value reaches the maximum of the selected illuminance range. In this case 0lux is reported.\n\nIf the measurement is out-of-range or the sensor is saturated then you should configure the next higher illuminance range. If the highest range is already in use, then start to reduce the integration time.',
+                            'de': 'Eine längere Integrationszeit verringert das Rauschen auf den Daten.\n\nBei einer langen Integrationszeit kann es sein, dass der Sensor gesättigt (saturated) ist bevor der Messwert das Maximum des ausgewählten Helligkeitswertebereichs erreicht hat. In diesem Fall gibt der Channel 0Lux zurück.\n\nWenn der Messwert außerhalb des eingestellten Helligkeitswertebereichs liegt oder der Sensor gesättigt ist, dann sollte der nächst höhere Helligkeitswertebereich eingestellt werden. Wenn der höchste Helligkeitswertebereich schon erreicht ist, dann kann noch die Integrationszeit verringert werden.'},
         }
     ],
     'init_code': """this.setConfiguration(cfg.illuminanceRange.shortValue(), cfg.integrationTime.shortValue());""",
@@ -221,9 +223,10 @@ com['openhab'] = {
         oh_generic_channel('Illuminance', 'Illuminance')
     ],
     'channel_types': [
-        oh_generic_channel_type('Illuminance', 'Number', 'Illuminance',
+        oh_generic_channel_type('Illuminance', 'Number', {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},
                     update_style='Callback Configuration',
-                    description='The illuminance of the ambient light sensor. The measurement range goes up to about 100000lux, but above 64000lux the precision starts to drop. An illuminance of 0lux indicates that the sensor is saturated and the configuration should be modified.')
+                    description={'en': 'The illuminance of the ambient light sensor. The measurement range goes up to about 100000lux, but above 64000lux the precision starts to drop. An illuminance of 0lux indicates that the sensor is saturated and the configuration should be modified.',
+                                 'de': 'Gibt die Beleuchtungsstärke des Umgebungslichtsensors zurück. Der Messbereich erstreckt sich bis über 100000 Lux, aber ab 64000 Lux nimmt die Messgenauigkeit ab.\n\nEine Beleuchtungsstärke von 0 Lux bedeutet, dass der Sensor gesättigt (saturated) ist und die Konfiguration angepasst werden sollte.'})
     ],
     'actions': ['Get Illuminance', 'Get Configuration']
 }

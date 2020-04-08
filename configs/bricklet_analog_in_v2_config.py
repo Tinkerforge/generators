@@ -528,8 +528,9 @@ com['openhab'] = {
 
             'name': 'Moving Average Length',
             'type': 'integer',
-            'label': 'Moving Average Length',
-            'description': 'The length of a moving averaging for the voltage.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
+            'label': {'en': 'Moving Average Length', 'de': 'Länge des gleitenden Mittelwerts'},
+            'description': {'en': 'The length of a moving averaging for the voltage.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.',
+                            'de': 'Setzt die Länge eines `gleitenden Mittelwerts für die Spannung.\n\nWenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.'}
         }],
     'channels': [
         oh_generic_old_style_channel('Voltage', 'Voltage'),
@@ -537,9 +538,9 @@ com['openhab'] = {
     ],
     'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
     'channel_types': [
-        oh_generic_channel_type('Voltage', 'Number', 'Voltage',
+        oh_generic_channel_type('Voltage', 'Number', {'en': 'Voltage', 'de': 'Spannung'},
                     update_style='Callback Period',
-                    description='Measured voltage'),
+                    description={'en': 'Measured voltage', 'de': 'Gemessene Spannung'}),
         oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Voltage', 'Get Analog Value', 'Get Moving Average']

@@ -108,7 +108,7 @@ Die Überabtastung arbeitet mit einem gleidenden Mittelwert. Ein neuer Messwert
 wird jede Millisekunden bestimmt.
 
 Je höher die Überabtastung desto geringer das Rauschen. Je geringer die
-Überabtastung steigt die Reaktionszeit (Änderugen der Eingangsspannung werden
+Überabtastung steigt die Reaktionszeit (Änderungen der Eingangsspannung werden
 schneller erkannt).
 """
 }]
@@ -220,17 +220,18 @@ com['openhab'] = {
                         ('8192x', 8),
                         ('16384x', 9)],
             'limit_to_options': 'true',
-            'label': 'Oversampling',
-            'description': """Sets the oversampling between 32x and 16384x. The Bricklet takes one 12bit sample every 17.5µs. Thus an oversampling of 32x is equivalent to an integration time of 0.56ms and a oversampling of 16384x is equivalent to an integration time of 286ms.\n\nThe oversampling uses the moving average principle. A new value is always calculated once per millisecond.\n\nWith increased oversampling the noise decreases. With decreased oversampling the reaction time increases (changes in voltage will be measured faster).\n\nThe default value is 4096x.""",
+            'label': {'en': 'Oversampling', 'de': 'Überabtastung'},
+            'description': {'en': 'Sets the oversampling between 32x and 16384x. The Bricklet takes one 12bit sample every 17.5µs. Thus an oversampling of 32x is equivalent to an integration time of 0.56ms and a oversampling of 16384x is equivalent to an integration time of 286ms.\n\nThe oversampling uses the moving average principle. A new value is always calculated once per millisecond.\n\nWith increased oversampling the noise decreases. With decreased oversampling the reaction time increases (changes in voltage will be measured faster).\n\nThe default value is 4096x.',
+                            'de': 'Stellt die Überabtastung zwischen 32x und 16384x ein. Das Bricklet misst einen 12-Bit Wert alle 17,5µs. Daher entspricht eine Überabtastung von 32x einer Integrationszeit von 0,56ms und eine Überabtastung von 16384x einer Integrationszeit von 286ms.\n\nDie Überabtastung arbeitet mit einem gleidenden Mittelwert. Ein neuer Messwert wird jede Millisekunden bestimmt.\n\nJe höher die Überabtastung desto geringer das Rauschen. Je geringer die Überabtastung steigt die Reaktionszeit (Änderungen der Eingangsspannung werden schneller erkannt).'}
         }],
     'channels': [
         oh_generic_channel('Voltage', 'Voltage'),
     ],
-    'init_code': """this.setOversampling(cfg.oversampling);""",
+    'init_code': 'this.setOversampling(cfg.oversampling);',
     'channel_types': [
-        oh_generic_channel_type('Voltage', 'Number', 'Voltage',
+        oh_generic_channel_type('Voltage', 'Number', {'en': 'Voltage', 'de': 'Spannung'},
                     update_style='Callback Configuration',
-                    description='Measured voltage')
+                    description={'en': 'Measured voltage', 'de': 'Gemessene Spannung'}),
     ],
     'actions': ['Get Voltage', 'Get Oversampling', 'Get Calibration']
 }

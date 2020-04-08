@@ -501,9 +501,10 @@ com['openhab'] = {
         oh_analog_value_channel()
     ],
     'channel_types': [
-        oh_generic_channel_type('Illuminance', 'Number', 'Illuminance',
+        oh_generic_channel_type('Illuminance', 'Number', {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},
                     update_style='Callback Period',
-                    description='The illuminance of the ambient light sensor.'),
+                    description={'en': 'The illuminance of the ambient light sensor.',
+                                 'de': 'Die Beleuchtungsstärke des Umgebungslichtsensors.'}),
         oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Illuminance', 'Get Analog Value']

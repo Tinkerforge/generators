@@ -598,18 +598,19 @@ com['openhab'] = {
 
             'name': 'Average Length',
             'type': 'integer',
-            'label': 'Average Length',
-            'description': 'The length of a averaging for the voltage value.\n\nSetting the length to 0 will turn the averaging completely off. If the averaging is off, there is more noise on the data, but the data is without delay.\n\nThe default value is 50.'
+            'label': {'en': 'Average Length', 'de': 'Mittelwertlänge'},
+            'description': {'en': 'The length of a averaging for the voltage value.\n\nSetting the length to 0 will turn the averaging completely off. If the averaging is off, there is more noise on the data, but the data is without delay.',
+                            'de': 'Setzt die Länge des Mittelwerts für die Spannung.\n\nWenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. In diesem Fall gibt es mehr Rauschen auf den Daten, allerdings sind die Daten dann ohne Verzögerung.'}
         },{
             'packet': 'Set Range',
             'element': 'Range',
 
             'name': 'Measurement Range',
             'type': 'integer',
-            'label': 'Measurement Range',
-            'description': 'The measurement range.\n\nPossible ranges are: <ul><li>Automatically switched</li><li>0V - 6.05V, ~1.48mV resolution</li><li>0V - 10.32V, ~2.52mV resolution</li><li>0V - 36.30V, ~8.86mV resolution</li><li>- 45.00V, ~11.25mV resolution</li><li>0V - 3.3V, ~0.81mV resolution</li>',
-        }
-        ],
+            'label': {'en': 'Measurement Range', 'de': 'Messbereich'},
+            'description': {'en': 'The measurement range.\n\nPossible ranges are: <ul><li>Automatically switched</li><li>0V - 6.05V, ~1.48mV resolution</li><li>0V - 10.32V, ~2.52mV resolution</li><li>0V - 36.30V, ~8.86mV resolution</li><li>- 45.00V, ~11.25mV resolution</li><li>0V - 3.3V, ~0.81mV resolution</li>',
+                            'de': 'Setzt den Messbereich. Mögliche Bereiche:\n\n<ul><li>0: Automatisch geschaltet</li><li>1: 0V - 6,05V, ~1,48mV Auflösung</li><li>2: 0V - 10,32V, ~2,52mV Auflösung</li><li>3: 0V - 36,30V, ~8,86mV Auflösung</li><li>4: 0V - 45,00V, ~11,25mV Auflösung</li><li>5: 0V - 3,3V, ~0,81mV Auflösung</li></ul>'}
+        }],
     'channels': [
         oh_generic_old_style_channel('Voltage', 'Voltage'),
         oh_analog_value_channel()
@@ -617,9 +618,9 @@ com['openhab'] = {
     'init_code': """this.setAveraging(cfg.averageLength.shortValue());
     this.setRange(cfg.measurementRange.shortValue());""",
     'channel_types': [
-        oh_generic_channel_type('Voltage', 'Number', 'Voltage',
+        oh_generic_channel_type('Voltage', 'Number', {'en': 'Voltage', 'de': 'Spannung'},
                     update_style='Callback Period',
-                    description='Measured voltage'),
+                    description={'en': 'Measured voltage', 'de': 'Gemessene Spannung'}),
         oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Voltage', 'Get Analog Value', 'Get Averaging', 'Get Range']
