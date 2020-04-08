@@ -395,9 +395,9 @@ def concentration_channel(size):
     }
 
 def concentration_channel_type(size):
-    return oh_generic_channel_type('PM{} Concentration'.format(size), 'Number', 'PM {:.1f} Concentration'.format(size / 10),
+    return oh_generic_channel_type('PM{} Concentration'.format(size), 'Number', 'PM {:.1f} Concentration'.format(size / 10.0),
                     update_style=None,
-                    description='The particulate matter {:.1f} concentration. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
+                    description='The particulate matter {:.1f} concentration. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10.0),
                     pattern='%d %unit%')
 
 def count_channel(size):
@@ -419,10 +419,11 @@ def count_channel(size):
             # See above
             'transform': 'new {{number_type}}(greater{:02}um{{unit}})'.format(size)}],
     }
+
 def count_channel_type(size):
-    return oh_generic_channel_type('Part Count {}'.format(size), 'Number', 'Particulates Greater {:.1f}µm'.format(size / 10),
+    return oh_generic_channel_type('Part Count {}'.format(size), 'Number', 'Particulates Greater {:.1f}µm'.format(size / 10.0),
                     update_style=None,
-                    description='The number of particulates greater than {:.1f}µm in 100 ml of air. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10),
+                    description='The number of particulates greater than {:.1f}µm in 100 ml of air. If the sensor is disabled then the last known good values from the sensor are returned.'.format(size / 10.0),
                     pattern='%d')
 
 com['openhab'] = {
@@ -469,4 +470,3 @@ com['openhab'] = {
                         description='NOT USED')],
     'actions': ['Get PM Concentration', 'Get PM Count', 'Get Sensor Info', {'fn': 'Set Enable', 'refreshs': ['Sensor Enabled']}, 'Get Enable']
 }
-
