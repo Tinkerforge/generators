@@ -12,6 +12,7 @@
 */doc/
 openhab/beta/doc/
 openhab/openhab2-addons/
+openhab/*.jar
 */doc_*/
 */*_package/
 stubs/comcu/

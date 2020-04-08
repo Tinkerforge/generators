@@ -190,6 +190,18 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
         shutil.copytree(os.path.join(binding_dir, 'src'), os.path.join(zip_dir, 'org.openhab.binding.tinkerforge', 'src'))
         shutil.copy(os.path.join(binding_dir, 'target', 'org.openhab.binding.tinkerforge-2.5.4-SNAPSHOT.jar'), zip_dir)
 
+        java_bindings = os.path.join(self.get_root_dir(), 'tinkerforge-2.1.26.jar')
+
+        if not os.path.exists(java_bindings):
+            try:
+                from urllib.request import urlretrieve
+                downloaded_file, _ = urlretrieve('https://search.maven.org/remotecontent?filepath=com/tinkerforge/tinkerforge/2.1.26/tinkerforge-2.1.26.jar')
+                shutil.copy(downloaded_file, java_bindings)
+            except Exception as e:
+                raise common.GeneratorError("Failed to download java bindings.") from e
+
+        shutil.copy(java_bindings, zip_dir)
+
         self.create_zip_file(zip_dir)
 
 def generate(root_dir):
