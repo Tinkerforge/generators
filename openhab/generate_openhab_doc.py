@@ -504,13 +504,14 @@ Thing
         if self.oh.doc is not None:
             doc += self.oh.doc
             doc += '\n\n'
-        doc += self.get_openhab_examples()
+        examples = self.get_openhab_examples()
+        doc += examples
         doc += '\n\n'
         doc += self.get_openhab_configuration()
         doc += '\n\n'
         doc += self.get_openhab_channels()
         doc += '\n\n'
-        doc += """Actions
+        doc += """{example_marker}Actions
 -------
 
 Actions can be used in rules by creating an action object. All actions return a Map<String, Object>.
@@ -522,7 +523,8 @@ Returned values can be accessed by name, sometimes the type deduction needs some
  val hwVersion = actions.{device_headless}GetIdentity().get("hardwareVersion") as short[]
  logInfo("Example", "Hardware version: " + hwVersion.get(0) + "." + hwVersion.get(1) + "." + hwVersion.get(2))
 
-""".format(device_lower=self.get_category().lower_no_space + self.get_name().lower_no_space,
+""".format(example_marker='' if len(examples) > 0 else '.. _{0}_{1}_examples:\n\n'.format(self.get_doc_rst_ref_name(), self.get_generator().get_bindings_name()),
+           device_lower=self.get_category().lower_no_space + self.get_name().lower_no_space,
            device_headless=self.get_category().headless + self.get_name().camel)
 
         for type_, caption in [ ('bf', 'Basic Actions'),
