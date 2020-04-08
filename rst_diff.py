@@ -35,6 +35,9 @@ if '--prepare' in args:
         doc_path = os.path.join(d, 'doc')
         doc_old_path = os.path.join(d, 'doc_old')
 
+        if not os.path.isdir(doc_path):
+            continue
+
         if os.path.isdir(doc_old_path):
             shutil.rmtree(doc_old_path)
 
