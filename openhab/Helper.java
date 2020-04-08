@@ -374,6 +374,7 @@ public class Helper {
 
             for (int i = 1 + channel; i < splt.length; i += (usesFourChannels ? 4 : 3)) {
                 result[nextInsert] = Short.valueOf(splt[i]);
+                ++nextInsert;
             }
             return result;
         } catch (Exception e) {

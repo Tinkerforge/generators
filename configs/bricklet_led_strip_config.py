@@ -752,7 +752,8 @@ com['openhab'] = {
             'name': 'Frame Duration',
             'type': 'integer',
             'label': 'Frame Duration',
-            'description': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger.'
+            'description': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger.',
+            'default': 1000, # Override default to reduce openhab log spam
         }, {
             'packet': 'Set Clock Frequency',
             'element': 'Frequency',
