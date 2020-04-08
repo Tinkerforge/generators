@@ -45,7 +45,7 @@ bindings = sorted(bindings)
 # bindings
 if 'bindings' in actions and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
-        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl', 'openhab']:
+        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
             continue
 
         module = __import__('generate_{0}_bindings'.format(binding))
@@ -55,7 +55,7 @@ if 'bindings' in actions and socket.gethostname() != 'tinkerforge.com':
 # examples
 if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
-        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl', 'openhab']:
+        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
             continue
 
         try:
@@ -70,7 +70,7 @@ if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
 # doc
 if 'doc' in actions:
     for binding in bindings:
-        if binding in ['json', 'stubs', 'tvpl', 'openhab']:
+        if binding in ['json', 'stubs', 'tvpl']:
             continue
 
         module = __import__('generate_{0}_doc'.format(binding))
@@ -82,7 +82,7 @@ if 'doc' in actions:
 # zip
 if 'zip' in actions and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
-        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl', 'openhab']:
+        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
             continue
 
         module = __import__('generate_{0}_zip'.format(binding))
