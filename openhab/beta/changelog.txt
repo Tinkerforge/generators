@@ -191,3 +191,21 @@
 - Fix order of discovery and removal of old discovery results
 - Fix IO-16 edge counter
 - Fix race condition in reachability check
+
+2020-04-08: 2.0.0 Beta 21
+- Compile against Java bindings
+- Add online documentation
+- Add more meta information to channels and parameters
+- Use DecimalType if no unit is used
+- Fix discovery clean up if more than one Brick Daemon is used
+- Let RS485 actions return empty map instead of null on request errors
+- Fix LED Strip channels
+- Fix HAT Brick sleep command and label
+- Add missing channels and actions:
+    - Master Brick USB voltage channel
+    - Analog value channel for old Bricklets
+    - Compass Bricklet magnetic flux density channel
+    - Multi Touch 2.0 Bricklet touch LED configuration
+    - PTC resistance channels
+    - Segment Display 2.0 Bricklet set numeric value action
+- Remove get bootloader mode action

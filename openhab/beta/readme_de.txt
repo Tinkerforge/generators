@@ -1,14 +1,12 @@
 Installation:
     Die Bindings benötigen eine openHAB 2.5.0 Installation.
-    Zum Installieren reicht es, die JAR in das addons-Verzeichnis zu kopieren.
+    Zum Installieren reicht es, die beiden JARs in das addons-Verzeichnis zu kopieren.
     Nachdem openHAB das Addon geladen hat (das kann einen Moment dauern), kann
     über die Inbox ein Brick Daemon hinzugefügt werden.
 
 Konfiguration:
     Nachdem der Brick Daemon hinzugefügt wurde, werden angeschlossene Geräte
-    automagisch in die Inbox gelegt. Nicht unterstützte Geräte haben "This
-    device is not supported yet." in der Beschreibung. Zwecks Übersicht können
-    diese versteckt werden.
+    automagisch in die Inbox gelegt.
 
     Sowohl Geräte als auch Channels können Konfiguration haben: Channels
     typischerweise die Aktualisierungsrate (Default: 1s). Die 
@@ -24,9 +22,9 @@ Konfiguration:
     wurde usw. Das kostet zu viele Flash-Schreibzyklen.
 
 Weitere Dokumentation:
-    Findet sich im doc-Unterordner der Bindings. Dort sind pro Gerät die
-    unterstützten Konfigurationsparameter und Channel mit Beschreibung
-    aufgelistet.
+    Findet sich hier:
+    https://www.tinkerforge.com/en/doc/Software/API_Bindings_openHAB.html#api-bindings-openhab
+    (vorerst nur auf Englisch)
 
 Actions in Rules:
     Es werden für alle unterstützten Geräte Actions zur Verwendung in Rules
@@ -53,9 +51,7 @@ Actions in Rules:
         lcdActions.brickletLCD128x64SetGUITabText(1, "Tab B");
     end
     
-    Die Parameter und Rückgabewerte der Actions entsprechen denen der jeweiligen Funktionen der
-    Java-Bindings https://www.tinkerforge.com/de/doc/Software/API_Bindings_Java.html
-    Java-Bindings-Funktionen, die Arrays erwarten, können in openHAB-Regeln auch mit Listen
+    Funktionen, die Arrays erwarten, können in openHAB-Regeln auch mit Listen
     verwendet werden, wie dies im Beispiel von setGUIGraphData gezeigt wurde. Rückgabewerte
     werden als eine Map<String, Object> zurückgeben, diese kann wie folgt verwendet werden:
     
@@ -73,13 +69,10 @@ Actions in Rules:
     RGB LED Button losgelassen wird). Sie liest gesamten Pixel des LCD Bricklets aus, invertiert diese
     und zeichnet die invertierten Pixel wieder auf das LCD.
     
-    Über Actions kann fast die gesamte API der Geräte genutzt werden. Ausgenommen sind nur Operationen,
-    die den Zustand von Channel stören, hierfür müssen dem Channel zugeordnete Items mit .sendCommand
-    verwendet werden. Außerdem nicht unterstützt werden Operationen, die EEPROM- oder Flash-Speicher
+    Über Actions kann fast die gesamte API der Geräte genutzt werden.
+    Actions die den Zustand von Channels ändern, aktualisieren diese automatisch.
+    Nicht unterstützt werden Operationen, die EEPROM- oder Flash-Speicher
     der Geräte schreiben würden. Auch hier sollen unnötige Schreibzyklen vermieden werden.
-    
-    Die verfügbaren Actions pro Gerät werden im doc-Verzeichnis der Bindings aufgelistet,
-    die Namen entsprechen denen der Java-Bindings, in denen sich genauere Dokumentation findet.
     
 Display-Bricklets:
     Text wird auf folgende Weise gesetzt: [line],[position],[text].
@@ -109,16 +102,7 @@ Bekannte Bugs:
     gesendet wurde, '-' als Text an, wenn darauf geklickt wird NULL.
     
     PaperUI zeigt die Description von Channel(Typen) und
-    Konfigurationsparameter-Gruppen nicht an. -> Sind im docs-Unterorder pro
-    Gerät aufgeführt.
-
-    Löschen von nicht angeschlossenen Geräten funktioniert nur manchmal: Der
-    DeviceHandler versucht aufzuräumen, z.b. Callbacks zu deaktivieren. Falls
-    das Gerät nicht erreicht wird, fliegen hier Timeouts. Das wird aktuell
-    nicht korrekt behandelt.
-
-    Generierter Code muss noch verbessert werden. Kompilieren erzeugt viele
-    Warnungen, Listener(de)registrierungen werden teilweise dupliziert.
+    Konfigurationsparameter-Gruppen nicht an.
 
 Unbekannte Bugs:
     Falls ein anderer Bug auftritt, bitte das openHAB-Log mit anhängen. Das Log
