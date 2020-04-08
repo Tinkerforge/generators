@@ -2835,7 +2835,7 @@ class Packet(object):
                     if range_ == 'constants':
                         meta.append('{0}: {1}'.format(range_label, constants_hint[0]))
                     elif range_ == 'dynamic':
-                        meta.append('{0}: ?'.format(range_label))
+                        meta.append('{0}: ⟨abbr title=«{1}»⟩?⟨/abbr⟩'.format(range_label, select_lang({'en': 'Dynamic, see documentation', 'de': 'Dynamisch, siehe Dokumentation'})))
                     elif range_ != None:
                         if range_ == 'type':
                             range_ = [element.get_type_range()]
