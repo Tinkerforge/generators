@@ -606,8 +606,20 @@ class OpenHABDocGenerator(openhab_common.OpenHABGeneratorTrait, common.DocGenera
 def generate(root_dir, language):
     if language != 'en':
         print("Generating {} is not implemented yet.".format(language))
+        import shutil
+
+        de_docs = os.path.join(root_dir, 'doc', 'de')
+        shutil.rmtree(de_docs, ignore_errors=True)
+        shutil.copytree(os.path.join(root_dir, 'doc', 'en'), de_docs)
+        for file in os.listdir(de_docs):
+            with open(os.path.join(de_docs, file), 'r') as f:
+                content = f.read()
+            content = content.replace('This is the description of the :ref:`openHAB API bindings <api_bindings_openhab>` for the', '.. note::\n Zur Zeit ist nur die englische openHAB-Dokumentation verfügbar.\n\nThis is the description of the :ref:`openHAB API bindings <api_bindings_openhab>` for the')
+            with open(os.path.join(de_docs, file), 'w') as f:
+                f.write(content)
+
         return
-    common.generate(root_dir, language, OpenHABDocGenerator)
+    common.generate(root_dir, 'en', OpenHABDocGenerator)
 
 if __name__ == '__main__':
     for language in ['en', 'de']:
