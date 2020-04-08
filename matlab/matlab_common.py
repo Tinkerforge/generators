@@ -255,8 +255,15 @@ class MATLABElement(common.Element):
         if cardinality == None:
             cardinality = self.get_cardinality()
 
+        is_virtual = self.get_packet().is_virtual()
+
+        if is_virtual and \
+           self.get_name().space == 'Function Id' and \
+           self.get_packet().get_name().space in ['Set Response Expected', 'Get Response Expected']:
+            return 'byte'
+
         return get_matlab_type(self.get_type(), cardinality,
-                               legacy=self.get_device().has_matlab_legacy_types())
+                               legacy=self.get_device().has_matlab_legacy_types() or is_virtual or self.get_packet().get_function_id() == 255)
 
     def get_matlab_byte_buffer_method_suffix(self):
         return MATLABElement.matlab_byte_buffer_method_suffix[self.get_type()]
