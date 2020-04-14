@@ -1227,6 +1227,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
                         firmware_url_part = None
 
                     device_info = (device.get_device_identifier(),
+                                   'Brick',
                                    device.get_long_display_name(),
                                    device.get_short_display_name(),
                                    ref_name,
@@ -1249,6 +1250,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
                     firmware_url_part = device.get_name().under
 
                     device_info = (device.get_device_identifier(),
+                                   'TNG',
                                    device.get_long_display_name(),
                                    device.get_short_display_name(),
                                    ref_name,
@@ -1271,6 +1273,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
                     firmware_url_part = device.get_name().under
 
                     device_info = (device.get_device_identifier(),
+                                   'Bricklet',
                                    device.get_long_display_name(),
                                    device.get_short_display_name(),
                                    ref_name,
@@ -1293,11 +1296,11 @@ def subgenerate(root_dir, language, generator_class, config_name):
 
     # only update device_infos.py for default config
     if config_name == 'tinkerforge':
-        brick_infos.append((None, 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, False, True, True, False, False,
+        brick_infos.append((None, 'Brick', 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, False, True, True, False, False,
                             {'en': 'For Firmware Developers: JTAG and serial console',
                              'de': 'Für Firmware Entwickler: JTAG und serielle Konsole'}))
 
-        bricklet_infos.append((None, 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, False, True, True, False, False,
+        bricklet_infos.append((None, 'Bricklet', 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, False, True, True, False, False,
                                {'en': 'Makes all Bricklet signals available',
                                 'de': 'Macht alle Bricklet Signale zugänglich'}))
 
@@ -1305,7 +1308,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
             f.write('# -*- coding: utf-8 -*-\n')
             f.write('from collections import namedtuple\n')
             f.write('\n')
-            f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part has_comcu is_released is_documented is_discontinued has_bindings description')\n")
+            f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier category long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part has_comcu is_released is_documented is_discontinued has_bindings description')\n")
             f.write('\n')
             f.write('brick_infos = \\\n')
             f.write('[\n')
