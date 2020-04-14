@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,7 @@ Shell Generator
 Copyright (C) 2012-2013, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
-shell_common.py: Common Library for generation of Shell bindings and documentation
+shell_common.py: Common library for generation of Shell bindings and documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

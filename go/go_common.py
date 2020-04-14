@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,7 @@ Go Generator
 Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
 Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
-go_common.py: Common Library for generation of Go bindings and documentation
+go_common.py: Common library for generation of Go bindings and documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

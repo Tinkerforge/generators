@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
 Tinkerforge Visual Programming Language (TVPL) Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
-tvpl_common.py: Common Library for generation of TVPL bindings and documentation
+tvpl_common.py: Common library for generation of TVPL bindings and documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

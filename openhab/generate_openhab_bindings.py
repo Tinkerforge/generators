@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-MATLAB/Octave Bindings Generator
+openHAB Bindings Generator
 Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
 
-generate_openhab_bindings.py: Generator for OpenHAB bindings
+generate_openhab_bindings.py: Generator for openHAB bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

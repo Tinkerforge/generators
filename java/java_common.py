@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,7 @@ Java Generator
 Copyright (C) 2012-2015, 2017, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
-java_common.py: Common Library for generation of Java bindings and documentation
+java_common.py: Common library for generation of Java bindings and documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

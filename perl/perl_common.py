@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,7 @@ Perl Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
-perl_common.py: Common Library for generation of Perl bindings and documentation
+perl_common.py: Common library for generation of Perl bindings and documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

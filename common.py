@@ -5,7 +5,7 @@ Common Generator Library
 Copyright (C) 2012-2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2012-2015, 2019 Olaf Lüke <olaf@tinkerforge.com>
 
-common.py: Common Library for generation of bindings and documentation
+common.py: Common library for generation of bindings and documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

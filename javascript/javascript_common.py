@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -6,7 +5,7 @@ JavaScript Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014-2015, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
-javascript_common.py: Common Library for generation of JavaScript bindings and documentation
+javascript_common.py: Common library for generation of JavaScript bindings and documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
