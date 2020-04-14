@@ -24,6 +24,11 @@ Boston, MA 02111-1307, USA.
 """
 
 import sys
+
+if sys.hexversion < 0x3040000:
+    print('Python >= 3.4 required')
+    sys.exit(1)
+
 import os
 
 def run(root_dir):

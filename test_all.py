@@ -2,6 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import sys
+
+if sys.hexversion < 0x3040000:
+    print('Python >= 3.4 required')
+    sys.exit(1)
+
 import os
 
 path = os.getcwd()
