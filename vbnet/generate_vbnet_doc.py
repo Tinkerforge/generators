@@ -120,28 +120,26 @@ class VBNETDocDevice(common.Device):
     def get_vbnet_api(self):
         create_str = {
             'en': """
-.. vbnet:function:: Class {1}(ByVal uid As String, ByVal ipcon As IPConnection)
+.. vbnet:function:: Class {0}(ByVal uid As String, ByVal ipcon As IPConnection)
 
  Creates an object with the unique device ID ``uid``:
 
  .. code-block:: vbnet
 
-    Dim {2} As New {1}("YOUR_DEVICE_UID", ipcon)
+    Dim {1} As New {0}("YOUR_DEVICE_UID", ipcon)
 
- This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_vbnet_examples>`).
+ This object can then be used after the IP Connection is connected.
 """,
             'de': """
-.. vbnet:function:: Class {1}(ByVal uid As String, ByVal ipcon As IPConnection)
+.. vbnet:function:: Class {0}(ByVal uid As String, ByVal ipcon As IPConnection)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: vbnet
 
-    Dim {2} As New {1}("YOUR_DEVICE_UID", ipcon)
+    Dim {1} As New {0}("YOUR_DEVICE_UID", ipcon)
 
- Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_vbnet_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist.
 """
         }
 
@@ -278,8 +276,7 @@ Konstanten
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_vbnet_class_name(),
+        cre = common.select_lang(create_str).format(self.get_vbnet_class_name(),
                                                     self.get_name().headless)
 
         bf = self.get_vbnet_functions('bf')

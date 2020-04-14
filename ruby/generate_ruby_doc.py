@@ -110,32 +110,30 @@ class RubyDocDevice(ruby_common.RubyDevice):
     def get_ruby_api(self):
         create_str = {
             'en': """
-.. rb:function:: {1}::new(uid, ipcon) -> {2}
+.. rb:function:: {0}::new(uid, ipcon) -> {1}
 
-{3}
+{2}
 
  Creates an object with the unique device ID ``uid``:
 
  .. code-block:: ruby
 
-    {2} = {1}.new 'YOUR_DEVICE_UID', ipcon
+    {1} = {0}.new 'YOUR_DEVICE_UID', ipcon
 
- This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_ruby_examples>`).
+ This object can then be used after the IP Connection is connected.
 """,
             'de': """
-.. rb:function:: {1}::new(uid, ipcon) -> {2}
+.. rb:function:: {0}::new(uid, ipcon) -> {1}
 
-{3}
+{2}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: ruby
 
-    {2} = {1}.new 'YOUR_DEVICE_UID', ipcon
+    {1} = {0}.new 'YOUR_DEVICE_UID', ipcon
 
- Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_ruby_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist.
 """
         }
 
@@ -295,8 +293,7 @@ Konstanten
                                                          (self.get_name().under, self.get_ruby_class_name(), 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_ruby_class_name(),
+        cre = common.select_lang(create_str).format(self.get_ruby_class_name(),
                                                     self.get_name().under,
                                                     create_meta_table)
 

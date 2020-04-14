@@ -161,8 +161,7 @@ class RustDocDevice(rust_common.RustDevice):
 
     let {device_under} = {device_camel}::new("YOUR_DEVICE_UID", &ip_connection);
 
- This device object can be used after the IP connection has been connected
- (see examples :ref:`above <{rst_ref_name}_rust_examples>`).
+ This device object can be used after the IP connection has been connected.
 """,
             'de': """
 .. rust:function:: {device_camel}::new(uid: &str, ip_connection: &IpConnection) -> {device_camel}
@@ -176,8 +175,7 @@ class RustDocDevice(rust_common.RustDevice):
 
     let {device_under} = {device_camel}::new("YOUR_DEVICE_UID", &ip_connection);
 
- Dieses Geräteobjekt kann benutzt werden, nachdem die IP-Connection verbunden
- wurde (siehe Beispiele :ref:`oben <{rst_ref_name}_rust_examples>`).
+ Dieses Geräteobjekt kann benutzt werden, nachdem die IP-Connection verbunden.
 """
         }
 
@@ -308,8 +306,7 @@ Konstanten
                                                          (self.get_name().under, self.get_rust_name(), 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
-        cre = common.select_lang(create_str).format(rst_ref_name=self.get_doc_rst_ref_name(),
-                                                    device_camel=self.get_rust_name(),
+        cre = common.select_lang(create_str).format(device_camel=self.get_rust_name(),
                                                     device_under=self.get_name().under,
                                                     meta_table=create_meta_table)
         bf = self.get_rust_functions('bf')

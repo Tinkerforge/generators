@@ -159,9 +159,9 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
     def get_matlab_api(self):
         create_str = {
             'en': """
-.. matlab:function:: class {1}(String uid, IPConnection ipcon)
+.. matlab:function:: class {0}(String uid, IPConnection ipcon)
 
-{3}
+{2}
 
  Creates an object with the unique device ID ``uid``.
 
@@ -169,23 +169,22 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
  .. code-block:: matlab
 
-  import com.tinkerforge.{1};
+  import com.tinkerforge.{0};
 
-  {2} = {1}('YOUR_DEVICE_UID', ipcon);
+  {1} = {0}('YOUR_DEVICE_UID', ipcon);
 
  In Octave:
 
  .. code-block:: octave_fixed
 
-  {2} = java_new("com.tinkerforge.{1}", "YOUR_DEVICE_UID", ipcon);
+  {1} = java_new("com.tinkerforge.{0}", "YOUR_DEVICE_UID", ipcon);
 
- This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_matlab_examples>`).
+ This object can then be used after the IP Connection is connected.
 """,
             'de': """
-.. matlab:function:: class {1}(String uid, IPConnection ipcon)
+.. matlab:function:: class {0}(String uid, IPConnection ipcon)
 
-{3}
+{2}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``.
 
@@ -193,18 +192,17 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
  .. code-block:: matlab
 
-  import com.tinkerforge.{1};
+  import com.tinkerforge.{0};
 
-  {2} = {1}("YOUR_DEVICE_UID", ipcon);
+  {1} = {0}("YOUR_DEVICE_UID", ipcon);
 
  In Octave:
 
  .. code-block:: octave_fixed
 
-  {2} = java_new("com.tinkerforge.{1}", "YOUR_DEVICE_UID", ipcon);
+  {1} = java_new("com.tinkerforge.{0}", "YOUR_DEVICE_UID", ipcon);
 
- Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_matlab_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist.
 """
         }
 
@@ -434,8 +432,7 @@ Konstanten
                                                          (self.get_name().headless, self.get_matlab_class_name(), 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta, index_format_func=lambda index: str(index + 1))
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_matlab_class_name(),
+        cre = common.select_lang(create_str).format(self.get_matlab_class_name(),
                                                     self.get_name().headless,
                                                     create_meta_table)
 

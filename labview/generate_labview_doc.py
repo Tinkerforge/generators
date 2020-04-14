@@ -136,22 +136,20 @@ class LabVIEWDocDevice(common.Device):
     def get_labview_api(self):
         create_str = {
         'en': """
-.. labview:function:: {1}(uid, ipcon) -> {2}
+.. labview:function:: {0}(uid, ipcon) -> {1}
 
-{3}
+{2}
 
  Creates an object with the unique device ID ``uid``.
- This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_labview_examples>`).
+ This object can then be used after the IP Connection is connected.
 """,
         'de': """
-.. labview:function:: {1}(uid, ipcon) -> {2}
+.. labview:function:: {0}(uid, ipcon) -> {1}
 
-{3}
+{2}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``.
- Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_labview_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist.
 """
         }
 
@@ -288,8 +286,7 @@ Konstanten
                                                         return_label_override={'en': 'Output', 'de': 'Ausgabe'})
         create_meta_table = common.make_rst_meta_table(create_meta)
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_labview_class_name(),
+        cre = common.select_lang(create_str).format(self.get_labview_class_name(),
                                                     self.get_name().headless,
                                                     create_meta_table)
 

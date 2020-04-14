@@ -119,32 +119,30 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
     def get_delphi_api(self):
         create_str = {
             'en': """
-.. delphi:function:: constructor {1}.Create(const uid: string; ipcon: TIPConnection)
+.. delphi:function:: constructor {0}.Create(const uid: string; ipcon: TIPConnection)
 
-{3}
+{2}
 
  Creates an object with the unique device ID ``uid``:
 
  .. code-block:: delphi
 
-    {2} := {1}.Create('YOUR_DEVICE_UID', ipcon);
+    {1} := {0}.Create('YOUR_DEVICE_UID', ipcon);
 
- This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_delphi_examples>`).
+ This object can then be used after the IP Connection is connected.
 """,
             'de': """
-.. delphi:function:: constructor {1}.Create(const uid: string; ipcon: TIPConnection)
+.. delphi:function:: constructor {0}.Create(const uid: string; ipcon: TIPConnection)
 
-{3}
+{2}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: delphi
 
-    {2} := {1}.Create('YOUR_DEVICE_UID', ipcon);
+    {1} := {0}.Create('YOUR_DEVICE_UID', ipcon);
 
- Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_delphi_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist.
 """
         }
 
@@ -288,8 +286,7 @@ Konstanten
                                                          (self.get_name().headless, self.get_delphi_class_name(), 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_delphi_class_name(),
+        cre = common.select_lang(create_str).format(self.get_delphi_class_name(),
                                                     self.get_name().headless,
                                                     create_meta_table)
 

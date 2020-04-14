@@ -142,32 +142,30 @@ class JavaDocDevice(java_common.JavaDevice):
     def get_java_api(self):
         create_str = {
             'en': """
-.. java:function:: class {1}(String uid, IPConnection ipcon)
+.. java:function:: class {0}(String uid, IPConnection ipcon)
 
-{3}
+{2}
 
  Creates an object with the unique device ID ``uid``:
 
  .. code-block:: java
 
-  {1} {2} = new {1}("YOUR_DEVICE_UID", ipcon);
+  {0} {1} = new {0}("YOUR_DEVICE_UID", ipcon);
 
- This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_java_examples>`).
+ This object can then be used after the IP Connection is connected.
 """,
             'de': """
-.. java:function:: class {1}(String uid, IPConnection ipcon)
+.. java:function:: class {0}(String uid, IPConnection ipcon)
 
-{3}
+{2}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: java
 
-  {1} {2} = new {1}("YOUR_DEVICE_UID", ipcon);
+  {0} {1} = new {0}("YOUR_DEVICE_UID", ipcon);
 
- Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_java_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist.
 """
         }
 
@@ -365,8 +363,7 @@ Konstanten
                                                          (self.get_name().headless, self.get_java_class_name(), 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_java_class_name(),
+        cre = common.select_lang(create_str).format(self.get_java_class_name(),
                                                     self.get_name().headless,
                                                     create_meta_table)
 

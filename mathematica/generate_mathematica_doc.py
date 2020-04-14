@@ -115,18 +115,17 @@ class MathematicaDocDevice(common.Device):
     def get_mathematica_api(self):
         create_str = {
             'en': """
-.. mathematica:function:: {1}[uid, ipcon] -> {2}
+.. mathematica:function:: {0}[uid, ipcon] -> {1}
 
-{3}
+{2}
 
  Creates an object with the unique device ID ``uid``:
 
  .. code-block:: mathematica
 
-    {2}=NETNew["Tinkerforge.{1}","YOUR_DEVICE_UID",ipcon]
+    {1}=NETNew["Tinkerforge.{0}","YOUR_DEVICE_UID",ipcon]
 
- This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_mathematica_examples>`).
+ This object can then be used after the IP Connection is connected.
 
  The .NET runtime has built-in garbage collection that frees objects that are
  no longer in use by a program. But because Mathematica can not automatically
@@ -140,18 +139,17 @@ class MathematicaDocDevice(common.Device):
  <https://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromTheWolframLanguage.html#14400>`__.
 """,
             'de': """
-.. mathematica:function:: {1}[uid, ipcon] -> {2}
+.. mathematica:function:: {0}[uid, ipcon] -> {1}
 
-{3}
+{2}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: mathematica
 
-    {2}=NETNew["Tinkerforge.{1}","YOUR_DEVICE_UID",ipcon]
+    {1}=NETNew["Tinkerforge.{0}","YOUR_DEVICE_UID",ipcon]
 
- Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_mathematica_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist.
 
  Die .NET Runtime hat eingebauten Garbage Collection welche Objekte wieder
  freigibt, wenn sie vom Programm nicht mehr verwendet werden. Da Mathematica
@@ -335,8 +333,7 @@ Konstanten
                                                          (self.get_name().headless, 'NETObject[{0}]'.format(self.get_mathematica_class_name()), 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta, index_format_func=lambda index: str(index + 1))
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_mathematica_class_name(),
+        cre = common.select_lang(create_str).format(self.get_mathematica_class_name(),
                                                     self.get_name().headless,
                                                     create_meta_table)
 

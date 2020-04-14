@@ -145,32 +145,30 @@ class PHPDocDevice(php_common.PHPDevice):
     def get_php_api(self):
         create_str = {
             'en': """
-.. php:function:: class {1}(string $uid, IPConnection $ipcon)
+.. php:function:: class {0}(string $uid, IPConnection $ipcon)
 
-{3}
+{2}
 
  Creates an object with the unique device ID ``$uid``:
 
  .. code-block:: php
 
-    <?php   ${2} = new {1}('YOUR_DEVICE_UID', $ipcon);   ?>
+    <?php   ${1} = new {0}('YOUR_DEVICE_UID', $ipcon);   ?>
 
- This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_php_examples>`).
+ This object can then be used after the IP Connection is connected.
 """,
             'de': """
-.. php:function:: class {1}(string $uid, IPConnection $ipcon)
+.. php:function:: class {0}(string $uid, IPConnection $ipcon)
 
-{3}
+{2}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``$uid``:
 
  .. code-block:: php
 
-    <?php   ${2} = new {1}('YOUR_DEVICE_UID', $ipcon);   ?>
+    <?php   ${1} = new {0}('YOUR_DEVICE_UID', $ipcon);   ?>
 
- Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_php_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist.
 """
         }
 
@@ -347,8 +345,7 @@ Konstanten
                                                          ('$' + self.get_name().under, self.get_php_class_name(), 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_php_class_name(),
+        cre = common.select_lang(create_str).format(self.get_php_class_name(),
                                                     self.get_name().under,
                                                     create_meta_table)
 

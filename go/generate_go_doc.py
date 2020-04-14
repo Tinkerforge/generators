@@ -129,8 +129,7 @@ class GoDocDevice(go_common.GoDevice):
 
     device, err := {device_name_under}.New("YOUR_DEVICE_UID", &ipcon)
 
- This device object can be used after the IPConnection has been connected
- (see examples :ref:`above <{rst_ref_name}_go_examples>`).
+ This device object can be used after the IPConnection has been connected.
 """,
             'de': """
 .. go:function:: func {device_name_under}.New{device_name_camel}(uid string, ipcon *IPConnection) (device {device_name_camel}, err error)
@@ -144,8 +143,7 @@ class GoDocDevice(go_common.GoDevice):
 
     device, err := {device_name_under}.New("YOUR_DEVICE_UID", &ipcon)
 
- Dieses Geräteobjekt kann benutzt werden, nachdem die IPConnection verbunden
- wurde (siehe Beispiele :ref:`oben <{rst_ref_name}_go_examples>`).
+ Dieses Geräteobjekt kann benutzt werden, nachdem die IPConnection verbunden.
 """
         }
 
@@ -289,8 +287,7 @@ Konstanten
                                                          ('err', 'error', 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
-        cre = common.select_lang(create_str).format(rst_ref_name=self.get_doc_rst_ref_name(),
-                                                    device_name_under=self.get_go_package(),
+        cre = common.select_lang(create_str).format(device_name_under=self.get_go_package(),
                                                     device_name_camel=self.get_go_name(),
                                                     meta=create_meta_table)
         bf = self.get_go_functions('bf')

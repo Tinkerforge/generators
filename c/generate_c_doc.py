@@ -126,36 +126,34 @@ class CDocDevice(common.Device):
     def get_c_api(self):
         create_str = {
             'en': """
-.. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
+.. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
 
-{3}
+{2}
 
- Creates the device object ``{1}`` with the unique device ID ``uid`` and adds
+ Creates the device object ``{0}`` with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
 
  .. code-block:: c
 
-    {2} {1};
-    {1}_create(&{1}, "YOUR_DEVICE_UID", &ipcon);
+    {1} {0};
+    {0}_create(&{0}, "YOUR_DEVICE_UID", &ipcon);
 
- This device object can be used after the IP connection has been connected
- (see examples :ref:`above <{0}_c_examples>`).
+ This device object can be used after the IP connection has been connected.
 """,
             'de': """
-.. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
+.. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
 
-{3}
+{2}
 
- Erzeugt ein Geräteobjekt ``{1}`` mit der eindeutigen Geräte ID ``uid`` und
+ Erzeugt ein Geräteobjekt ``{0}`` mit der eindeutigen Geräte ID ``uid`` und
  fügt es der IP Connection ``ipcon`` hinzu:
 
  .. code-block:: c
 
-    {2} {1};
-    {1}_create(&{1}, "YOUR_DEVICE_UID", &ipcon);
+    {1} {0};
+    {0}_create(&{0}, "YOUR_DEVICE_UID", &ipcon);
 
- Dieses Geräteobjekt kann benutzt werden, nachdem die IP Connection verbunden
- wurde (siehe Beispiele :ref:`oben <{0}_c_examples>`).
+ Dieses Geräteobjekt kann benutzt werden, nachdem die IP Connection verbunden.
 """
         }
 
@@ -394,8 +392,7 @@ Konstanten
                                                          ('ipcon', 'IPConnection *', 1, 'in')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
-        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_name().under,
+        cre = common.select_lang(create_str).format(self.get_name().under,
                                                     self.get_name().camel,
                                                     create_meta_table)
 
