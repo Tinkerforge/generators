@@ -362,9 +362,9 @@ publish '{{"debounce": {period_msec}}}' to tinkerforge/request/{device_name}_{de
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
-            return template.format(device_name=self.get_device().get_name().dash,
+            return template.format(device_name=self.get_device().get_name().under,
                                    uid=self.get_example().get_dummy_uid(),
-                                   device_category=self.get_device().get_category().dash,
+                                   device_category=self.get_device().get_category().under,
                                    period_msec=period_msec,
                                    period_sec=period_sec)
         elif type_ == 'sleep':
