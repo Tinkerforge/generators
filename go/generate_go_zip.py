@@ -118,12 +118,11 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
             shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'custom.txt'),                   os.path.join(self.tmp_dir, 'readme.txt'))
 
-        p = subprocess.Popen(["go", "fmt"], cwd=self.tmp_bindings_dir, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-        out, err = p.communicate() #block until cargo fmt has finished
-        if out != "" or err is not None:
+        output = subprocess.check_output(["go", "fmt"], cwd=self.tmp_bindings_dir, stderr=subprocess.STDOUT).decode('utf-8').strip()
+
+        if len(output) > 0:
             print("Got the following output from go fmt:")
-            print(out)
-            print(err)
+            print(output)
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
