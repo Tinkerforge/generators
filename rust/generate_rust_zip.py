@@ -121,12 +121,11 @@ class RustZipGenerator(rust_common.RustGeneratorTrait, common.ZipGenerator):
             shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'custom.txt'),                   os.path.join(self.tmp_dir, 'readme.txt'))
 
-        p = subprocess.Popen(["cargo", "fmt"], cwd=self.tmp_dir, stdout = subprocess.PIPE)
-        out, err = p.communicate() #block until cargo fmt has finished
-        if out != "" or err is not None:
+        output = subprocess.check_output(["cargo", "fmt"], cwd=self.tmp_dir, stderr=subprocess.STDOUT).decode('utf-8').strip()
+
+        if len(output) > 0:
             print("Got the following output from cargo fmt:")
-            print(out)
-            print(err)
+            print(output)
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
