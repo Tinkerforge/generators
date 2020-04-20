@@ -997,9 +997,10 @@ function IPConnection() {
 
         var sendRequestPacket = bufferConcat([sendRequestHeader, sendRequestPayload]);
         var sendRequestSEQ = this.getSequenceNumberFromPacket(sendRequestHeader);
+        var responseExpected = sendRequestDevice.getResponseExpected(sendRequestFID);
 
         // Sending the created packet
-        if (sendRequestDevice.getResponseExpected(sendRequestFID)) {
+        if (responseExpected) {
             // Setting the requesting current device's current request
             var sendRequestDeviceOID = sendRequestDevice.getDeviceOID();
 
@@ -1039,6 +1040,10 @@ function IPConnection() {
         }
 
         this.socket.write(sendRequestPacket, reset_disconnect_probe = true);
+
+        if (!responseExpected && sendRequestReturnCB !== undefined) {
+            eval('sendRequestReturnCB();');
+        }
     };
 
     this.sendRequestTimeout = function (timeoutDevice, timeoutDeviceOID, timeoutErrorCB) {
