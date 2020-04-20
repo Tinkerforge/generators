@@ -156,3 +156,6 @@
 - Validate response length before unpacking response
 - Properly report replaced device objects as non-functional
 - Fix bool array unpacking
+
+2020-04-20: 2.1.27 (<unknown>)
+- Also call return-callbacks for pure setters
