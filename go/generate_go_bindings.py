@@ -461,7 +461,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
                                      device_name = self.get_go_name(),
                                      resultBufAssignment = "resultBuf := " if len(return_results) > 0 else "",
                                      fill_payload = "\n\t".join(fill_payload) + ("\n" if len(fill_payload) > 0 else ""),
-                                     read_results = "\n\t".join(read_results) + ("\n" if len(read_results) > 0 else ""),
+                                     read_results = "\n\t\t".join(read_results) + ("\n" if len(read_results) > 0 else ""),
                                      return_results = return_results,
                                      fn = fn,
                                      fun_enum = "Function",
