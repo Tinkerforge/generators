@@ -157,5 +157,5 @@
 - Properly report replaced device objects as non-functional
 - Fix bool array unpacking
 
-2020-04-20: 2.1.27 (<unknown>)
+2020-04-20: 2.1.27 (5f50677)
 - Also call return-callbacks for pure setters
