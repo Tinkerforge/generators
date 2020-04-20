@@ -52,5 +52,5 @@
   Master Brick 3.0 API for internal Co-MCU Bricklet bootloader flashing
 - Validate response length before unpacking response
 
-2020-04-20: 2.0.7 (<unknown>)
+2020-04-20: 2.0.7 (a3e9fdd)
 - Fix response length validation for empty responses
