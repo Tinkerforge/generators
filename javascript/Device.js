@@ -23,18 +23,24 @@ function base58Decode(str) {
     var alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
     var base = alphabet.length;
     var char, char_index, index, num, i, len, ref;
+
     num = 0;
     ref = str.split(/(?:)/).reverse();
+
     for (index = i = 0, len = ref.length; i < len; index = ++i) {
         char = ref[index];
+
         if ((char_index = alphabet.indexOf(char)) === -1) {
             throw new Error('UID "' + str + '" contains invalid character');
         }
+
         num += char_index * Math.pow(base, index);
+
         if (!Number.isSafeInteger(num) || num > 0xFFFFFFFF) {
             throw new Error('UID "' + str + '" is too big');
         }
     }
+
     return num;
 }
 
@@ -42,9 +48,11 @@ function Device(that, uid, ipcon, deviceIdentifier, deviceDisplayName) {
     if (uid !== undefined && ipcon !== undefined && deviceIdentifier !== undefined && deviceDisplayName !== undefined) {
         this.replaced = false;
         this.uid = base58Decode(uid);
+
         if (this.uid === 0) {
             throw new Error('UID "' + uid + '" is empty or maps to zero');
         }
+
         this.deviceIdentifier = deviceIdentifier;
         this.deviceDisplayName = deviceDisplayName;
         this.deviceIdentifierCheck = Device.DEVICE_IDENTIFIER_CHECK_PENDING;
@@ -129,8 +137,7 @@ function Device(that, uid, ipcon, deviceIdentifier, deviceDisplayName) {
                         this.responseExpected[fid] === Device.RESPONSE_EXPECTED_FALSE) {
                         if (responseBoolean) {
                             this.responseExpected[fid] = Device.RESPONSE_EXPECTED_TRUE;
-                        }
-                        else {
+                        } else {
                             this.responseExpected[fid] = Device.RESPONSE_EXPECTED_FALSE;
                         }
                     }
@@ -163,18 +170,15 @@ function Device(that, uid, ipcon, deviceIdentifier, deviceDisplayName) {
                 if (errorCallback !== undefined) {
                     errorCallback(Device.ERROR_DEVICE_REPLACED);
                 }
-            }
-            else if (this.deviceIdentifierCheck === Device.DEVICE_IDENTIFIER_CHECK_MATCH) {
+            } else if (this.deviceIdentifierCheck === Device.DEVICE_IDENTIFIER_CHECK_MATCH) {
                 if (returnCallback !== undefined) {
                     returnCallback();
                 }
-            }
-            else if (this.deviceIdentifierCheck === Device.DEVICE_IDENTIFIER_CHECK_MISMATCH) {
+            } else if (this.deviceIdentifierCheck === Device.DEVICE_IDENTIFIER_CHECK_MISMATCH) {
                 if (errorCallback !== undefined) {
                     errorCallback(Device.ERROR_WRONG_DEVICE_TYPE);
                 }
-            }
-            else { // Device.DEVICE_IDENTIFIER_CHECK_PENDING
+            } else { // Device.DEVICE_IDENTIFIER_CHECK_PENDING
                 this.ipcon.sendRequest(this, 255, [], '', 33, 's8 s8 c B3 B3 H', // getIdentity
                     function (uid, connectedUid, position, hardwareVersion, firmwareVersion, deviceIdentifier) {
                         if (deviceIdentifier == this.deviceIdentifier) {
@@ -183,8 +187,7 @@ function Device(that, uid, ipcon, deviceIdentifier, deviceDisplayName) {
                             if (returnCallback !== undefined) {
                                 returnCallback();
                             }
-                        }
-                        else {
+                        } else {
                             this.deviceIdentifierCheck = Device.DEVICE_IDENTIFIER_CHECK_MISMATCH;
 
                             if (errorCallback !== undefined) {

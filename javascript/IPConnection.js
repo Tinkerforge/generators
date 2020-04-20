@@ -67,16 +67,17 @@ function TFSocket(PORT, HOST, ipcon) {
 
     if (process.browser) {
         var webSocketURL = "ws://" + this.host + ":" + this.port + "/";
+
         if (typeof MozWebSocket != "undefined") {
             this.socket = new MozWebSocket(webSocketURL, "tfp");
-        }
-        else {
+        } else {
             this.socket = new WebSocket(webSocketURL, "tfp");
         }
+
         this.socket.binaryType = 'arraybuffer';
-    }
-    else {
+    } else {
         var net = require('net');
+
         this.socket = new net.Socket();
     }
 
@@ -110,8 +111,7 @@ function TFSocket(PORT, HOST, ipcon) {
                 this.socket.onclose = func;
                 break;
             }
-        }
-        else {
+        } else {
             this.socket.on(str, func);
         }
     };
@@ -119,8 +119,7 @@ function TFSocket(PORT, HOST, ipcon) {
     this.connect = function () {
         if (process.browser) {
             // In the browser we already connected by creating a WebSocket object
-        }
-        else {
+        } else {
             this.socket.connect(this.port, this.host, null);
         }
     };
@@ -129,8 +128,7 @@ function TFSocket(PORT, HOST, ipcon) {
         if (process.browser) {
             // Currently no API available in browsers
             // But Nagle algorithm seems te be turned off in most browsers by default anyway
-        }
-        else {
+        } else {
             this.socket.setNoDelay(value);
         }
     };
@@ -146,12 +144,10 @@ function TFSocket(PORT, HOST, ipcon) {
             if (reset_disconnect_probe) {
                 ipcon.resetDisconnectProbe();
             }
-        }
-        else {
+        } else {
             if (reset_disconnect_probe) {
                 this.socket.write(data, ipcon.resetDisconnectProbe);
-            }
-            else {
+            } else {
                 this.socket.write(data);
             }
         }
@@ -160,8 +156,7 @@ function TFSocket(PORT, HOST, ipcon) {
     this.end = function () {
         if (process.browser) {
             this.socket.close();
-        }
-        else {
+        } else {
             this.socket.end();
         }
     };
@@ -170,8 +165,7 @@ function TFSocket(PORT, HOST, ipcon) {
         if (process.browser) {
             // There is no end/destroy in browser socket, so we close in end
             // and do nothing in destroy
-        }
-        else {
+        } else {
             this.socket.destroy();
         }
     };
@@ -304,6 +298,7 @@ function IPConnection() {
                 // we want to call what user provided not the saved one
                 errorCallback(IPConnection.ERROR_NOT_CONNECTED);
             }
+
             this.popTask();
             return;
         }
@@ -369,6 +364,7 @@ function IPConnection() {
 
     this.handleIncomingData = function (data) {
         this.resetDisconnectProbe();
+
         if (data.length === 0) {
             return;
         }
@@ -413,6 +409,7 @@ function IPConnection() {
         if (this.getCurrentTaskKind() === IPConnection.TASK_KIND_DISCONNECT) {
             // This disconnect was requested
             var uid;
+
             for (uid in this.devices) {
                 for (var i=0;i<this.devices[uid].expectedResponses.length;i++) {
                     clearTimeout(this.devices[uid].expectedResponses[i].timeout);
@@ -618,15 +615,13 @@ function IPConnection() {
                     var buffer_value = 0;
                     var count = parseInt(singleFormatArray.slice(1, singleFormatArray.length).join(''));
                     var count_bits = Math.ceil(count / 8);
-
                     var tmpPackedBuffer = buffer_wrapper(count_bits);
 
                     for(var _i = 0; _i < count; _i++) {
                         if(data[i][_i] === 0 || data[i][_i] === false || data[i][_i] === undefined ||
                             data[i][_i] === null || data[i][_i] === NaN || data[i][_i] === -0) {
                             continue;
-                        }
-                        else {
+                        } else {
                             buffer_value = tmpPackedBuffer.readUInt8(Math.floor(_i / 8));
                             buffer_value |= 1 << (_i % 8);
                             tmpPackedBuffer.writeUInt8(buffer_value, Math.floor(_i / 8));
@@ -637,14 +632,13 @@ function IPConnection() {
                     continue;
                 }
 
-                for(var j=0; j<parseInt(formatArray[i].match(/\d/g).join('')); j++) {
-                    if(singleFormatArray[0] === 's') {
-                        if(!isNaN(data[i].charCodeAt(j))) {
+                for (var j = 0; j < parseInt(formatArray[i].match(/\d/g).join('')); j++) {
+                    if (singleFormatArray[0] === 's') {
+                        if (!isNaN(data[i].charCodeAt(j))) {
                             var tmpPackedBuffer = buffer_wrapper(1);
                             tmpPackedBuffer.writeUInt8(data[i].charCodeAt(j), 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
-                        }
-                        else {
+                        } else {
                             var tmpPackedBuffer = buffer_wrapper(1);
                             tmpPackedBuffer.writeUInt8(0x00, 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
@@ -653,7 +647,7 @@ function IPConnection() {
                         continue;
                     }
 
-                    switch(singleFormatArray[0]) {
+                    switch (singleFormatArray[0]) {
                         case 'c':
                             var tmpPackedBuffer = buffer_wrapper(1);
                             tmpPackedBuffer.writeUInt8(data[i][j].charCodeAt(0), 0);
@@ -712,11 +706,10 @@ function IPConnection() {
                         case '?':
                             var tmpPackedBuffer = buffer_wrapper(1);
 
-                            if(data[i][j] === 0 || data[i][j] === false || data[i][j] === undefined ||
-                               data[i][j] === null || data[i][j] === NaN || data[i][j] === -0) {
+                            if (data[i][j] === 0 || data[i][j] === false || data[i][j] === undefined ||
+                                data[i][j] === null || data[i][j] === NaN || data[i][j] === -0) {
                                 tmpPackedBuffer.writeUInt8(0x00, 0);
-                            }
-                            else {
+                            } else {
                                 tmpPackedBuffer.writeUInt8(0x01, 0);
                             }
 
@@ -751,7 +744,7 @@ function IPConnection() {
                     continue;
                 }
 
-                switch(formatArray[i]) {
+                switch (formatArray[i]) {
                     case 'c':
                         returnArguments.push(String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset)));
                         payloadReadOffset += 1;
@@ -822,12 +815,12 @@ function IPConnection() {
                     payloadBoolArray.fill(0x00);
                     extractedBoolArray.fill(false);
 
-                    for(var j = 0; j < Math.ceil(count / 8); j++) {
+                    for (var j = 0; j < Math.ceil(count / 8); j++) {
                         payloadBoolArray[j] = unpackPayload.readUInt8(payloadReadOffset);
                         payloadReadOffset++;
                     }
 
-                    for(var j = 0; j < count; j++) {
+                    for (var j = 0; j < count; j++) {
                         extractedBoolArray[j] = ((payloadBoolArray[Math.floor(j / 8)] & (1 << (j % 8))) != 0);
                     }
 
@@ -840,10 +833,10 @@ function IPConnection() {
                     constructedString = '';
                     skip = false;
 
-                    for(var j=0; j<parseInt(formatArray[i].match(/\d/g).join('')); j++) {
+                    for (var j = 0; j < parseInt(formatArray[i].match(/\d/g).join('')); j++) {
                         c = String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset));
 
-                        if(c === '\0' || skip) {
+                        if (c === '\0' || skip) {
                             skip = true;
                         } else {
                             constructedString += c;
@@ -860,8 +853,8 @@ function IPConnection() {
 
                 returnSubArray = [];
 
-                for (var k=0; k<parseInt(formatArray[i].match(/\d/g).join('')); k++) {
-                    switch(singleFormatArray[0]) {
+                for (var k = 0; k < parseInt(formatArray[i].match(/\d/g).join('')); k++) {
+                    switch (singleFormatArray[0]) {
                         case 'c':
                             returnSubArray.push(String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset)));
                             payloadReadOffset += 1;
@@ -958,8 +951,7 @@ function IPConnection() {
                                      sendRequestReturnCB,
                                      sendRequestErrorCB,
                                      startStreamResponseTimer);
-        }
-        else {
+        } else {
             sendRequestDevice.checkValidity(function () {
                 this.sendRequestInternal(sendRequestDevice,
                                          sendRequestFID,
@@ -1004,7 +996,7 @@ function IPConnection() {
             // Setting the requesting current device's current request
             var sendRequestDeviceOID = sendRequestDevice.getDeviceOID();
 
-            if(!startStreamResponseTimer) {
+            if (!startStreamResponseTimer) {
                 sendRequestDevice.expectedResponses.push({
                     DeviceOID:sendRequestDeviceOID,
                     FID:sendRequestFID,
@@ -1019,8 +1011,7 @@ function IPConnection() {
                     returnCB:sendRequestReturnCB,
                     errorCB:sendRequestErrorCB
                 });
-            }
-            else {
+            } else {
                 // Setup streaming timer
                 if (sendRequestFID in sendRequestDevice.streamStateObjects) {
                     if (sendRequestDevice.streamStateObjects[sendRequestFID]['responseProperties']['timeout'] !== null) {
@@ -1047,7 +1038,7 @@ function IPConnection() {
     };
 
     this.sendRequestTimeout = function (timeoutDevice, timeoutDeviceOID, timeoutErrorCB) {
-        for (var i=0; i<timeoutDevice.expectedResponses.length; ++i) {
+        for (var i = 0; i < timeoutDevice.expectedResponses.length; ++i) {
             if (timeoutDevice.expectedResponses[i].DeviceOID === timeoutDeviceOID) {
                 clearTimeout(timeoutDevice.expectedResponses[i].timeout);
                 timeoutDevice.expectedResponses.splice(i, 1);
@@ -1248,8 +1239,7 @@ function IPConnection() {
         if (device.registeredCallbacks[functionID] !== undefined) {
             cbFunction = device.registeredCallbacks[functionID];
             cbUnpack = device.callbackFormats[functionID];
-        }
-        else if (device.registeredCallbacks[-functionID] !== undefined) {
+        } else if (device.registeredCallbacks[-functionID] !== undefined) {
             cbFunction = device.registeredCallbacks[-functionID];
             cbUnpack = device.callbackFormats[functionID];
         }
@@ -1277,15 +1267,13 @@ function IPConnection() {
 
             if (hlcb[1]['fixedLength'] !== null) {
                 length = hlcb[1]['fixedLength'];
-            }
-            else {
+            } else {
                 length = llvalues[hlcb[0].indexOf('streamLength')];
             }
 
             if (!hlcb[1]['singleChunk']) {
                 chunkOffset = llvalues[hlcb[0].indexOf('streamChunkOffset')];
-            }
-            else {
+            } else {
                 chunkOffset = 0;
             }
 
@@ -1299,17 +1287,14 @@ function IPConnection() {
                         hasData = true;
                         data = hlcb[2].splice(0, length);
                     }
-                }
-                else {
+                } else {
                     // Ignore tail of current stream, wait for next stream start
                 }
-            }
-            else { // Stream in-progress
+            } else { // Stream in-progress
                 if (chunkOffset !== hlcb[2].length) { // Stream out-of-sync
                     hasData = true;
                     data = null;
-                }
-                else { // Stream in-sync
+                } else { // Stream in-sync
                     hlcb[2] = hlcb[2].concat(chunkData);
 
                     if (hlcb[2].length >= length) { // Stream complete
@@ -1333,8 +1318,7 @@ function IPConnection() {
                 for (var i = 0; i < rolesMappedData.length; i++) {
                     if (rolesMappedData[i]['role'] === 'streamChunkData') {
                         result.push(data);
-                    }
-                    else if (rolesMappedData[i]['role'] === null) {
+                    } else if (rolesMappedData[i]['role'] === null) {
                         result.push(rolesMappedData[i]['llvalue']);
                     }
                 }
@@ -1379,6 +1363,7 @@ function IPConnection() {
         if (this.getSequenceNumberFromPacket(packet) === 0) {
             this.handleCallback(packet);
         }
+
         if (this.getSequenceNumberFromPacket(packet) > 0) {
             this.handleResponse(packet);
         }
@@ -1430,18 +1415,15 @@ function IPConnection() {
                 var r = new Uint32Array(1);
                 window.crypto.getRandomValues(r);
                 returnCallback(r[0]);
-            }
-            else if (typeof window !== 'undefined' && window.msCrypto && window.msCrypto.getRandomValues) {
+            } else if (typeof window !== 'undefined' && window.msCrypto && window.msCrypto.getRandomValues) {
                 var r = new Uint32Array(1);
                 window.msCrypto.getRandomValues(r);
                 returnCallback(r[0]);
-            }
-            else {
+            } else {
                 // fallback to non-crypto random numbers
                 returnCallback(Math.ceil(Math.random() * 4294967295));
             }
-        }
-        else {
+        } else {
             var crypto = require('crypto');
 
             crypto.randomBytes(4, function(error, buffer) {
@@ -1449,14 +1431,12 @@ function IPConnection() {
                     crypto.pseudoRandomBytes(4, function(error, buffer) {
                         if (error) {
                             returnCallback(Math.ceil(Math.random() * 4294967295));
-                        }
-                        else {
+                        } else {
                             var data = buffer_wrapper(buffer);
                             returnCallback(data.readUInt32LE(0));
                         }
                     });
-                }
-                else {
+                } else {
                     var data = buffer_wrapper(buffer);
                     returnCallback(data.readUInt32LE(0));
                 }
@@ -1477,6 +1457,7 @@ function IPConnection() {
         if (!isASCII(secret)) {
             errorCallback(IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET);
         }
+
         this.brickd.getAuthenticationNonce(function (serverNonce) {
             var serverNonceBytes = this.pack([serverNonce], 'B4');
             var clientNonceNumber = this.nextAuthenticationNonce++;
@@ -1526,8 +1507,7 @@ function IPConnection() {
                     this.nextAuthenticationNonce = r;
                     this.authenticateInternal(secret, returnCallback, errorCallback);
                 }.bind(this));
-            }
-            else {
+            } else {
                 this.authenticateInternal(secret, returnCallback, errorCallback);
             }
         }.bind(this), IPConnection.TASK_KIND_AUTHENTICATE);
@@ -1610,13 +1590,13 @@ function IPConnection() {
         var newBufferSize = 0;
         var targetStart = 0;
 
-        for (var i = 0; i<arrayOfBuffers.length; i++) {
+        for (var i = 0; i < arrayOfBuffers.length; i++) {
             newBufferSize += arrayOfBuffers[i].length;
         }
 
         var returnBufferConcat = buffer_wrapper(newBufferSize);
 
-        for (var j=0; j<arrayOfBuffers.length; j++) {
+        for (var j = 0; j < arrayOfBuffers.length; j++) {
             arrayOfBuffers[j].copy(returnBufferConcat, targetStart);
             targetStart += arrayOfBuffers[j].length;
         }
