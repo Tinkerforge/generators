@@ -1436,7 +1436,7 @@ function IPConnection() {
             }
         }
         return true;
-    };
+    }
 
     this.authenticateInternal = function (secret, returnCallback, errorCallback) {
         if (!isASCII(secret)) {
