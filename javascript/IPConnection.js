@@ -517,6 +517,10 @@ function IPConnection() {
         return buffer_wrapper(payloadReturn);
     };
 
+    function mapsToFalse(value) {
+        return value === 0 || value === false || value === undefined || value === null || isNaN(value);
+    }
+
     this.pack = function (data, format) {
         var formatArray = format.split(' ');
 
@@ -594,8 +598,7 @@ function IPConnection() {
                     case '?':
                         var tmpPackedBuffer = buffer_wrapper(1);
 
-                        if(data[i] === 0 || data[i] === false || data[i] === undefined ||
-                           data[i] === null || data[i] === NaN || data[i] === -0) {
+                        if (mapsToFalse(data[i])) {
                             tmpPackedBuffer.writeUInt8(0x00, 0);
                         } else {
                             tmpPackedBuffer.writeUInt8(0x01, 0);
@@ -617,8 +620,7 @@ function IPConnection() {
                     var tmpPackedBuffer = buffer_wrapper(count_bits);
 
                     for(var _i = 0; _i < count; _i++) {
-                        if(data[i][_i] === 0 || data[i][_i] === false || data[i][_i] === undefined ||
-                            data[i][_i] === null || data[i][_i] === NaN || data[i][_i] === -0) {
+                        if (mapsToFalse(data[i][_i])) {
                             continue;
                         } else {
                             buffer_value = tmpPackedBuffer.readUInt8(Math.floor(_i / 8));
@@ -705,8 +707,7 @@ function IPConnection() {
                         case '?':
                             var tmpPackedBuffer = buffer_wrapper(1);
 
-                            if (data[i][j] === 0 || data[i][j] === false || data[i][j] === undefined ||
-                                data[i][j] === null || data[i][j] === NaN || data[i][j] === -0) {
+                            if (mapsToFalse(data[i][j])) {
                                 tmpPackedBuffer.writeUInt8(0x00, 0);
                             } else {
                                 tmpPackedBuffer.writeUInt8(0x01, 0);
