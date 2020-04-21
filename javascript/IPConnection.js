@@ -1445,7 +1445,6 @@ function IPConnection() {
         }
 
         this.brickd.getAuthenticationNonce(function (serverNonce) {
-            var serverNonceBytes = this.pack([serverNonce], 'B4');
             var clientNonceNumber = this.nextAuthenticationNonce++;
             var clientNonceBytes = this.pack([clientNonceNumber], 'I');
             var clientNonce = this.unpack(clientNonceBytes, 'B4')[0];
