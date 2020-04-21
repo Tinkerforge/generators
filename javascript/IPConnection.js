@@ -597,8 +597,7 @@ function IPConnection() {
                         if(data[i] === 0 || data[i] === false || data[i] === undefined ||
                            data[i] === null || data[i] === NaN || data[i] === -0) {
                             tmpPackedBuffer.writeUInt8(0x00, 0);
-                        }
-                        else {
+                        } else {
                             tmpPackedBuffer.writeUInt8(0x01, 0);
                         }
 
@@ -607,11 +606,11 @@ function IPConnection() {
                 }
             }
 
-            if(formatArray[i].split('').length > 1) {
+            if (formatArray[i].split('').length > 1) {
                 var singleFormatArray = formatArray[i].split('');
 
                 // Boolean type with cardinality greater than 1
-                if(singleFormatArray[0] === '?') {
+                if (singleFormatArray[0] === '?') {
                     var buffer_value = 0;
                     var count = parseInt(singleFormatArray.slice(1, singleFormatArray.length).join(''));
                     var count_bits = Math.ceil(count / 8);
@@ -734,7 +733,7 @@ function IPConnection() {
             return returnArguments;
         }
 
-        for (var i=0; i<formatArray.length; i++) {
+        for (var i = 0; i < formatArray.length; i++) {
             if (formatArray[i].split('').length === 1) {
                 if (formatArray[i] === 's') {
                     constructedString += String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset));
