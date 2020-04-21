@@ -72,15 +72,18 @@ with open(os.path.join(tmp, 'diff1.diff'), 'r') as f:
 
         diffs[-1][-1].append(line)
 
-c_like_header1 = re.compile(r'^@@ -1,5 \+1,5 @@\n' + \
+c_like_header1 = re.compile(r'^@@ -1,8 \+1,8 @@\n' + \
 ' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n' + \
 '- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
 '\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
 '  \*                                                           \*\n' + \
 '  \* .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
-'  \*                                                           \*\n$')
+'  \*                                                           \*\n' + \
+'  \* If you have a bugfix for this file and want to commit it, \*\n' + \
+'  \* please fix the bug in the generator\. You can find a link  \*\n' + \
+'  \* to the generators git repository on tinkerforge\.com       \*\n$')
 
-c_like_header2 = re.compile(r'^@@ -1,7 \+1,7 @@\n' + \
+c_like_header2 = re.compile(r'^@@ -1,10 \+1,10 @@\n' + \
 ' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n' + \
 '- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
 '\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
@@ -89,9 +92,23 @@ c_like_header2 = re.compile(r'^@@ -1,7 \+1,7 @@\n' + \
 '\+ \* .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
 '  \*                                                           \*\n' + \
 '  \* If you have a bugfix for this file and want to commit it, \*\n' + \
-'  \* please fix the bug in the generator\. You can find a link  \*\n$')
+'  \* please fix the bug in the generator\. You can find a link  \*\n' + \
+'  \* to the generators git repository on tinkerforge\.com       \*\n' + \
+'  \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*/\n' + \
+' \n$')
 
-delphi_header1 = re.compile(r'^@@ -1,7 \+1,7 @@\n' + \
+delphi_header1 = re.compile(r'^@@ -1,8 \+1,8 @@\n' + \
+' {\n' + \
+'-  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
+'\+  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
+' \n' + \
+'   Delphi/Lazarus Bindings Version 2\.[0-9]+\.[0-9]+\n' + \
+' \n' + \
+'   If you have a bugfix for this file and want to commit it,\n' + \
+'   please fix the bug in the generator\. You can find a link\n' + \
+'   to the generators git on tinkerforge\.com\n$')
+
+delphi_header2 = re.compile(r'^@@ -1,10 \+1,10 @@\n' + \
 ' {\n' + \
 '-  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
 '\+  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
@@ -100,40 +117,56 @@ delphi_header1 = re.compile(r'^@@ -1,7 \+1,7 @@\n' + \
 '\+  Delphi/Lazarus Bindings Version 2\.[0-9]+\.[0-9]+\n' + \
 ' \n' + \
 '   If you have a bugfix for this file and want to commit it,\n' + \
-'   please fix the bug in the generator\. You can find a link\n$')
-
-delphi_header2 = re.compile(r'^@@ -1,5 \+1,5 @@\n' + \
-' {\n' + \
-'-  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
-'\+  This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.\n' + \
-' \n' + \
-'   Delphi/Lazarus Bindings Version 2\.[0-9]+\.[0-9]+\n' + \
+'   please fix the bug in the generator\. You can find a link\n' + \
+'   to the generators git on tinkerforge\.com\n' + \
+' }\n' + \
 ' \n$')
 
-javascript_header1 = re.compile(r'^@@ -[0-9]+,7 \+[0-9]+,7 @@\n' + \
-' \n' + \
-' },{"\./Device":[0-9]+}\],[0-9]+:\[function\(require,module,exports\){\n' + \
+javascript_header1 = re.compile(r'^@@ -[0-9]+,8 \+[0-9]+,8 @@\n' + \
 ' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n' + \
 '- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
 '\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
 '  \*                                                           \*\n' + \
 '  \* JavaScript Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
-'  \*                                                           \*\n$')
+'  \*                                                           \*\n' + \
+'  \* If you have a bugfix for this file and want to commit it, \*\n' + \
+'  \* please fix the bug in the generator\. You can find a link  \*\n' + \
+'  \* to the generators git repository on tinkerforge\.com       \*\n$')
 
-javascript_header2 = re.compile(r'^@@ -[0-9]+,9 \+[0-9]+,9 @@\n' + \
+javascript_header2 = re.compile(r'^@@ -[0-9]+,10 \+[0-9]+,10 @@\n' + \
+' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n' + \
+'- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'  \*                                                           \*\n' + \
+'- \* JavaScript Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
+'\+ \* JavaScript Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
+'  \*                                                           \*\n' + \
+'  \* If you have a bugfix for this file and want to commit it, \*\n' + \
+'  \* please fix the bug in the generator\. You can find a link  \*\n' + \
+'  \* to the generators git repository on tinkerforge\.com       \*\n' + \
+'  \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*/\n' + \
+' \n$')
+
+javascript_header3 = re.compile(r'^@@ -[0-9]+,13 \+[0-9]+,13 @@\n' + \
+' }\n' + \
 ' \n' + \
 ' module\.exports = Brick[A-Za-z0-9]+;\n' + \
 ' \n' + \
-'-},{"\./Device":[0-9]+}\],[0-9]+:\[function\(require,module,exports\){\n' + \
-'\+},{"\./Device":[0-9]+}\],[0-9]+:\[function\(require,module,exports\){\n' + \
+' },{"\./Device":[0-9]+,"\./IPConnection":[0-9]+}\],[0-9]+:\[function\(require,module,exports\){\n' + \
 ' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n' + \
 '- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
 '\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
 '  \*                                                           \*\n' + \
 '  \* JavaScript Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
-'  \*                                                           \*\n$')
+'  \*                                                           \*\n' + \
+'  \* If you have a bugfix for this file and want to commit it, \*\n' + \
+'  \* please fix the bug in the generator\. You can find a link  \*\n' + \
+'  \* to the generators git repository on tinkerforge\.com       \*\n$')
 
-javascript_header3 = re.compile(r'^@@ -[0-9]+,9 \+[0-9]+,9 @@\n' + \
+javascript_header4 = re.compile(r'^@@ -[0-9]+,15 \+[0-9]+,15 @@\n' + \
+' }\n' + \
+' \n' + \
+' module\.exports = Brick[A-Za-z0-9]+;\n' + \
 ' \n' + \
 ' },{"\./Device":[0-9]+,"\./IPConnection":[0-9]+}\],[0-9]+:\[function\(require,module,exports\){\n' + \
 ' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\n' + \
@@ -144,91 +177,118 @@ javascript_header3 = re.compile(r'^@@ -[0-9]+,9 \+[0-9]+,9 @@\n' + \
 '\+ \* JavaScript Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
 '  \*                                                           \*\n' + \
 '  \* If you have a bugfix for this file and want to commit it, \*\n' + \
-'  \* please fix the bug in the generator\. You can find a link  \*\n$')
+'  \* please fix the bug in the generator\. You can find a link  \*\n' + \
+'  \* to the generators git repository on tinkerforge\.com       \*\n' + \
+'  \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*/\n' + \
+' \n$')
 
-perl_header1 = re.compile(r'^@@ -1,5 \+1,5 @@\n' + \
+perl_header1 = re.compile(r'^@@ -1,8 \+1,8 @@\n' + \
 ' #############################################################\n' + \
 '-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 '\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 ' #                                                           #\n' + \
-' # .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
-' #                                                           #\n$')
-
-perl_header2 = re.compile(r'^@@ -1,7 \+1,7 @@\n' + \
-' #############################################################\n' + \
-'-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
-'\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
-' #                                                           #\n' + \
-'-# .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
-'\+# .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+' # Perl Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
 ' #                                                           #\n' + \
 ' # If you have a bugfix for this file and want to commit it, #\n' + \
-' # please fix the bug in the generator. You can find a link  #\n$')
+' # please fix the bug in the generator\. You can find a link  #\n' + \
+' # to the generators git repository on tinkerforge\.com       #\n$')
 
-php_header1 = re.compile(r'^@@ -1,7 \+1,7 @@\n' + \
+perl_header2 = re.compile(r'^@@ -1,10 \+1,10 @@\n' + \
+' #############################################################\n' + \
+'-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
+'\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
+' #                                                           #\n' + \
+'-# Perl Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+'\+# Perl Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+' #                                                           #\n' + \
+' # If you have a bugfix for this file and want to commit it, #\n' + \
+' # please fix the bug in the generator\. You can find a link  #\n' + \
+' # to the generators git repository on tinkerforge\.com       #\n' + \
+' #############################################################\n' + \
+' \n$')
+
+php_header1 = re.compile(r'^@@ -1,10 \+1,10 @@\n' + \
 ' <\?php\n' + \
 ' \n' + \
 ' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\\n' + \
 '- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
 '\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
 '  \*                                                           \*\n' + \
-'  \* .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
-'  \*                                                           \*\n$')
-
-php_header2 = re.compile(r'^@@ -1,9 \+1,9 @@\n' + \
-' <\?php\n' + \
-' \n' + \
-' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\\n' + \
-'- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
-'\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
-'  \*                                                           \*\n' + \
-'- \* .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
-'\+ \* .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
+'  \* PHP Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
 '  \*                                                           \*\n' + \
 '  \* If you have a bugfix for this file and want to commit it, \*\n' + \
-'  \* please fix the bug in the generator\. You can find a link  \*\n$')
+'  \* please fix the bug in the generator\. You can find a link  \*\n' + \
+'  \* to the generators git repository on tinkerforge\.com       \*\n$')
 
-python_header1 = re.compile(r'^@@ -1,6 \+1,6 @@\n' + \
+php_header2 = re.compile(r'^@@ -1,12 \+1,12 @@\n' + \
+' <\?php\n' + \
+' \n' + \
+' /\* \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\\n' + \
+'- \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'\+ \* This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      \*\n' + \
+'  \*                                                           \*\n' + \
+'- \* PHP Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
+'\+ \* PHP Bindings Version 2\.[0-9]+\.[0-9]+[ ]+\*\n' + \
+'  \*                                                           \*\n' + \
+'  \* If you have a bugfix for this file and want to commit it, \*\n' + \
+'  \* please fix the bug in the generator\. You can find a link  \*\n' + \
+'  \* to the generators git repository on tinkerforge\.com       \*\n' + \
+'  \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*/\n' + \
+' \n$')
+
+python_header1 = re.compile(r'^@@ -1,9 \+1,9 @@\n' + \
 ' # -\*- coding: utf-8 -\*-\n' + \
 ' #############################################################\n' + \
 '-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 '\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 ' #                                                           #\n' + \
-' # .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
-' #                                                           #\n$')
+' # Python Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+' #                                                           #\n' + \
+' # If you have a bugfix for this file and want to commit it, #\n' + \
+' # please fix the bug in the generator\. You can find a link  #\n' + \
+' # to the generators git repository on tinkerforge\.com       #\n$')
 
-python_header2 = re.compile(r'^@@ -1,8 \+1,8 @@\n' + \
+python_header2 = re.compile(r'^@@ -1,11 \+1,11 @@\n' + \
 ' # -\*- coding: utf-8 -\*-\n' + \
 ' #############################################################\n' + \
 '-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 '\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 ' #                                                           #\n' + \
-'-# .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
-'\+# .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+'-# Python Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+'\+# Python Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
 ' #                                                           #\n' + \
 ' # If you have a bugfix for this file and want to commit it, #\n' + \
-' # please fix the bug in the generator. You can find a link  #\n$')
+' # please fix the bug in the generator\. You can find a link  #\n' + \
+' # to the generators git repository on tinkerforge\.com       #\n' + \
+' #############################################################\n' + \
+' \n$')
 
-ruby_header1 = re.compile(r'^@@ -1,6 \+1,6 @@\n' + \
+ruby_header1 = re.compile(r'^@@ -1,9 \+1,9 @@\n' + \
 ' # -\*- ruby encoding: utf-8 -\*-\n' + \
 ' #############################################################\n' + \
 '-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 '\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 ' #                                                           #\n' + \
-' # .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
-' #                                                           #\n$')
+' # Ruby Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+' #                                                           #\n' + \
+' # If you have a bugfix for this file and want to commit it, #\n' + \
+' # please fix the bug in the generator\. You can find a link  #\n' + \
+' # to the generators git repository on tinkerforge\.com       #\n$')
 
-ruby_header2 = re.compile(r'^@@ -1,8 \+1,8 @@\n' + \
+ruby_header2 = re.compile(r'^@@ -1,11 \+1,11 @@\n' + \
 ' # -\*- ruby encoding: utf-8 -\*-\n' + \
 ' #############################################################\n' + \
 '-# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 '\+# This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #\n' + \
 ' #                                                           #\n' + \
-'-# .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
-'\+# .+ Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+'-# Ruby Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
+'\+# Ruby Bindings Version 2\.[0-9]+\.[0-9]+[ ]+#\n' + \
 ' #                                                           #\n' + \
 ' # If you have a bugfix for this file and want to commit it, #\n' + \
-' # please fix the bug in the generator. You can find a link  #\n$')
+' # please fix the bug in the generator\. You can find a link  #\n' + \
+' # to the generators git repository on tinkerforge\.com       #\n' + \
+' #############################################################\n' + \
+' \n$')
 
 filtered = []
 
@@ -248,6 +308,7 @@ for diff in diffs:
            not javascript_header1.match(hunk) and \
            not javascript_header2.match(hunk) and \
            not javascript_header3.match(hunk) and \
+           not javascript_header4.match(hunk) and \
            not perl_header1.match(hunk) and \
            not perl_header2.match(hunk) and \
            not php_header1.match(hunk) and \
