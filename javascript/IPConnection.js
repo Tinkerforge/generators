@@ -790,15 +790,8 @@ function IPConnection() {
                         payloadReadOffset += 8;
                         continue;
                     case '?':
-                        if (unpackPayload.readUInt8(payloadReadOffset) === 0x01) {
-                            returnArguments.push(true);
-                        }
-
-                        if (unpackPayload.readUInt8(payloadReadOffset) === 0x00) {
-                            returnArguments.push(false);
-                        }
-
-                        payloadReadOffset++;
+                        returnArguments.push(unpackPayload.readUInt8(payloadReadOffset) !== 0);
+                        payloadReadOffset += 1;
                         continue;
                 }
             }
@@ -900,15 +893,8 @@ function IPConnection() {
                             payloadReadOffset += 8;
                             continue;
                         case '?':
-                            if (unpackPayload.readUInt8(payloadReadOffset) === 0x01) {
-                                returnSubArray.push(true);
-                            }
-
-                            if (unpackPayload.readUInt8(payloadReadOffset) === 0x00) {
-                                returnSubArray.push(false);
-                            }
-
-                            payloadReadOffset++;
+                            returnSubArray.push(unpackPayload.readUInt8(payloadReadOffset) !== 0);
+                            payloadReadOffset += 1;
                             continue;
                     }
                 }
