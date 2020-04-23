@@ -171,36 +171,48 @@ def get_changelog_version(root_dir):
     if version != None:
         return version
 
-    r = re.compile(r'^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
     versions = []
 
     with open(os.path.join(root_dir, 'changelog.txt'), 'r') as f:
-        for line in f.readlines():
-            m = r.match(line)
+        for i, line in enumerate(f.readlines()):
+            line = line.rstrip()
 
-            if m is not None:
-                version = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+            if len(line) == 0:
+                continue
 
-                if version[0] not in [1, 2]:
-                    raise GeneratorError('invalid major version in changelog {0}: {1}'.format(root_dir, version))
+            if re.match(r'^(?:- [A-Z0-9\(]|  [A-Za-z0-9\(]).*$', line) != None:
+                continue
 
-                if len(versions) > 0:
-                    if versions[-1] >= version:
-                        raise GeneratorError('invalid version order in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
+            m = re.match(r'^(?:<unknown>|20[0-9]{2}-[0-9]{2}-[0-9]{2}): ([1-9][0-9]*)\.([0-9]+)\.([0-9]+) \((?:<unknown>|[a-f0-9]+)\)$', line)
 
-                    if versions[-1][0] == version[0] and versions[-1][1] == version[1] and versions[-1][2] + 1 != version[2]:
+            if m == None:
+                raise GeneratorError('invalid line {0} in changelog {1}: {2}'.format(i + 1, root_dir, line))
+
+            version = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+
+            if version[0] not in [1, 2]:
+                raise GeneratorError('invalid major version in changelog {0}: {1}'.format(root_dir, version))
+
+            if len(versions) > 0:
+                if versions[-1] >= version:
+                    raise GeneratorError('invalid version order in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
+
+                if versions[-1][0] == version[0] and versions[-1][1] == version[1] and versions[-1][2] + 1 != version[2]:
+                    raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
+
+                if versions[-1][0] == version[0] and versions[-1][1] != version[1] and versions[-1][1] + 1 != version[1]:
+                    raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
+
+                if versions[-1][1] != version[1] and version[2] != 0:
+                    if (root_dir == 'javascript' or root_dir.endswith('/javascript')) and versions[-1] == (2, 0, 18) and version == (2, 1, 19):
+                        pass # ignore historical glitch
+                    else:
                         raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
 
-                    if versions[-1][1] != version[1] and version[2] != 0:
-                        if (root_dir == 'javascript' or root_dir.endswith('/javascript')) and versions[-1] == (2, 0, 18) and version == (2, 1, 19):
-                            pass # ignore historical glitch
-                        else:
-                            raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
+                if versions[-1][0] != version[0] and (version[1] != 0 or version[2] != 0):
+                    raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
 
-                    if versions[-1][0] != version[0] and (version[1] != 0 or version[2] != 0):
-                        raise GeneratorError('invalid version jump in changelog {0}: {1} -> {2}'.format(root_dir, versions[-1], version))
-
-                versions.append(version)
+            versions.append(version)
 
     if len(versions) == 0:
         raise GeneratorError('no version found in changelog: ' + root_dir)
