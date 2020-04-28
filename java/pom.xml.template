@@ -59,6 +59,7 @@
         <configuration>
           <instructions>
             <Export-Package>com.tinkerforge</Export-Package>
+            <Automatic-Module-Name>com.tinkerforge</Automatic-Module-Name>
           </instructions>
         </configuration>
       </plugin>
