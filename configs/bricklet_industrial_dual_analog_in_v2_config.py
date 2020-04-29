@@ -13,7 +13,7 @@ from openhab_commonconfig import *
 
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2121,
     'name': 'Industrial Dual Analog In V2',
