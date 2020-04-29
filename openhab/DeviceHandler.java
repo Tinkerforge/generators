@@ -404,6 +404,7 @@ public class DeviceHandler extends BaseThingHandler implements FirmwareUpdateHan
             Channel newChannel = Utils.buildChannel(tt, getThing().getUID(), def, channelTypeRegistrySupplier.get(), configDescriptionRegistrySupplier.get(), logger);
 
             Channel existingChannel = this.thing.getChannel(newChannel.getUID());
+            // Can be null if the thing has dynamic channels based on config (i.e. the IO-16 Bricklet).
             if (existingChannel != null)
                 newChannel = ChannelBuilder.create(newChannel).withConfiguration(existingChannel.getConfiguration()).build();
 
