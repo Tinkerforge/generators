@@ -182,8 +182,8 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
         shutil.copytree(os.path.join(self.generation_dir, 'src'), os.path.join(binding_dir, 'src'))
 
         with common.ChangedDirectory(binding_dir):
-            common.execute(['mvn', 'spotless:apply'])
-            common.execute(['mvn', 'clean', 'install', '-DskipChecks', '-DskipTests'])
+            common.execute(['mvn', 'spotless:apply', '-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN'])
+            common.execute(['mvn', 'clean', 'install', '-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN'])
 
         # Beta stuff
         zip_dir = os.path.join(self.tmp_dir, 'zip')
