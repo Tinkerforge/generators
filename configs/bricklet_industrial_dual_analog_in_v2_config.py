@@ -342,6 +342,109 @@ Gibt die Kanal-LED-Status-Konfiguration zurück, wie von
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Voltages',
+'elements': [('Voltages', 'int32', 2, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (-35000, 35000)})],
+'since_firmware': [2, 0, 6],
+'doc': ['af', {
+'en':
+"""
+Returns the voltages for all channels.
+
+If you want to get the value periodically, it is recommended to use the
+:cb:`All Voltages` callback. You can set the callback configuration
+with :func:`Set All Voltages Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Spannung aller Kanäle zurück.
+
+Wenn der Wert periodisch benötigt wird, kann auch der :cb:`All Voltages` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`Set All Voltages Callback Configuration` konfiguriert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set All Voltages Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
+             ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [2, 0, 6],
+'doc': ['ccf', {
+'en':
+"""
+The period is the period with which the :cb:`All Voltages`
+callback is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after at least one of the values has changed. If the values didn't
+change within the period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+""",
+'de':
+"""
+Die Periode ist die Periode mit der der :cb:`All Voltages`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn sich mindestens ein Wert im Vergleich zum letzten mal geändert
+hat. Ändert sich kein Wert innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn ein Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen der Werte.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Voltages Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
+             ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
+'since_firmware': [2, 0, 6],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set All Voltages Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set All Voltages Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'All Voltages',
+'elements': [('Voltages', 'int32', 2, 'out', {'scale': (1, 1000), 'unit': 'Volt', 'range': (-35000, 35000)})],
+'since_firmware': [2, 0, 6],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically according to the configuration set by
+:func:`Set All Voltages Callback Configuration`.
+
+The :word:`parameters` are the same as :func:`Get All Voltages`.
+""",
+'de':
+"""
+Dieser Callback wird periodisch ausgelöst abhängig von der mittels
+:func:`Set All Voltages Callback Configuration` gesetzten Konfiguration
+
+Die :word:`parameters` sind der gleiche wie :func:`Get All Voltages`.
+"""
+}]
+})
+
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Voltage', 'voltage from channel 0'), [(('Voltage', 'Voltage (Channel 0)'), 'int32', 1, 1000.0, 'V', None)], [('uint8', 0)])]
