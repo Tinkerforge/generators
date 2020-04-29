@@ -116,13 +116,14 @@ com['openhab'] = {
             }],
         }
     ],
-    'channel_types': [
-        oh_generic_channel_type('Input Voltage', 'Number', 'Input Voltage',
+   'channel_types': [
+        oh_generic_channel_type('Input Voltage', 'Number', {'en': 'Input Voltage', 'de': 'Eingangspannung'},
                     update_style=None,
-                    description='The input voltage'),
-         oh_generic_channel_type('Output Voltage', 'Number', 'Output Voltage',
+                    description={'en': 'The input voltage', 'de': 'Die Ausgangsspannung'}),
+         oh_generic_channel_type('Output Voltage', 'Number', {'en': 'Output Voltage', 'de': 'Ausgangspannung'},
                     update_style=None,
-                    description='The output voltage. The possible range is 0V to 12V')
+                    description={'en': 'The output voltage. The possible range is 0V to 12V',
+                                 'de': 'Die Ausgangsspannung. Der mögliche Wertebereich ist 0V bis 12V.'})
     ],
     'actions': [{'fn': 'Set Output Voltage', 'refreshs': ['Output Voltage']}, 'Get Output Voltage', 'Get Input Voltage']
 }

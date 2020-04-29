@@ -175,20 +175,22 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-         oh_generic_channel_type('Voltage', 'Number', 'Voltage',
+         oh_generic_channel_type('Voltage', 'Number', {'en': 'Voltage', 'de': 'Spannung'},
                     update_style=None,
-                    description='The output voltage. The possible range is 0V to 5V. Sending a command to this channel will set the Mode to Analog Value.'),
+                    description={'en': 'The output voltage. The possible range is 0V to 5V. Sending a command to this channel will set the Mode to Analog Value.',
+                                 'de': 'Die Ausgabespannung. Wenn ein Befehl an diesen Channel geschickt wird, wird der Modus automatisch auf Analog-Wert gesetzt.'}),
          {
             'id': 'Mode',
             'item_type': 'Number',
-            'label': 'Mode',
-            'description': 'The mode of the output. Setting the mode to Analog Value will result in an output voltage of 0. You can jump to a higher output voltage directly by sending a command to the Voltage Channel.',
+            'label': {'en': 'Mode', 'de': 'Modus'},
+            'description': {'en': 'The mode of the output. Setting the mode to Analog Value will result in an output voltage of 0. You can jump to a higher output voltage directly by sending a command to the Voltage Channel.',
+                            'de': 'Der Ausgabemodus. Wenn der Modus auf Analog-Wert gesetzt wird, wird die Ausgabespannung automatisch auf 0 gesetzt. Es kann direkt auf eine höhere Ausgangsspannung gesprungen werden, indem ein Kommando an den Spannungs-Channel geschickt wird.'},
             'read_only': False,
             'pattern': '%d',
-            'options':[('Analog Value', 0),
-                        ('1k To Ground', 1),
-                        ('100k To Ground', 2),
-                        ('500k To Ground', 3)]
+            'options':[({'en': 'Analog Value', 'de': 'Analog-Wert'}, 0),
+                        ({'en': '1k To Ground', 'de': '1k gegen Masse'}, 1),
+                        ({'en': '100k To Ground', 'de': '100k gegen Masse'}, 2),
+                        ({'en': '500k To Ground', 'de': '500k gegen Masse'}, 3)]
         },
     ],
     'actions': [{'fn': 'Set Voltage', 'refreshs': ['Voltage']}, 'Get Voltage', {'fn': 'Set Mode', 'refreshs': ['Mode']}, 'Get Mode']

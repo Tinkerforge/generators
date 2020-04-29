@@ -627,8 +627,9 @@ com['openhab'] = {
             'type': 'decimal',
             'min': 10, # Disallow 0 intentionally.
 
-            'label': 'Reference Air Pressure',
-            'description': 'The reference air pressure in hPa for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+            'label': {'en': 'Reference Air Pressure', 'de': 'Referenzluftdruck'},
+            'description': {'en': 'The reference air pressure in hPa for the altitude calculation. Valid values are between 10 and 1200. Setting the reference to the current air pressure results in a calculated altitude of 0 cm.',
+                            'de': 'Der Referenzluftdruck für die Höhenberechnung. Wenn der aktuelle Luftdruckwert als Referenz übergeben wird dann gibt die Höhenberechnung 0cm aus.'}
         },
         {
             'packet': 'Set Averaging',
@@ -636,8 +637,9 @@ com['openhab'] = {
 
             'name': 'Pressure Moving Average Length',
             'type': 'integer',
-            'label': 'Pressure Moving Average Length',
-            'description': 'The length of the moving average for the air pressure. The moving average is calculated over the normal averages.',
+            'label': {'en': 'Pressure Moving Average Length', 'de': 'Länge des gleitenden Druck-Mittelwerts'},
+            'description': {'en': 'The length of the moving average for the air pressure. The moving average is calculated over the normal averages.',
+                            'de': 'Die Länge des gleitenden Mittelwerts für den Luftdruck. Der gleitende Mittelwert wird mit den Werten des normalen Mittelwerts berechnet.'},
             'groupName': 'average'
         },
         {
@@ -646,8 +648,9 @@ com['openhab'] = {
 
             'name': 'Pressure Average Length',
             'type': 'integer',
-            'label': 'Pressure Average Length',
-            'description': 'The number of samples to average over for the air pressure.',
+            'label': {'en': 'Pressure Average Length', 'de': 'Druck-Mittelwertlänge'},
+            'description': {'en': 'The number of samples to average over for the air pressure.',
+                            'de': 'Die Anzahl an Messungen über die der Mittelwert für den Luftdruck gebildet wird.'},
             'groupName': 'average'
         },
         {
@@ -656,15 +659,17 @@ com['openhab'] = {
 
             'name': 'Temperature Average Length',
             'type': 'integer',
-            'label': 'Temperature Average Length',
-            'description': 'The number of samples to average over for the temperature.',
+            'label': {'en': 'Temperature Average Length', 'de': 'Temperatur-Mittelwertlänge'},
+            'description': {'en': 'The number of samples to average over for the temperature.',
+                            'de': 'Die Anzahl an Messungen über die der Mittelwert für die Temperatur gebildet wird.'},
             'groupName': 'average'
         }],
     'param_groups': oh_generic_channel_param_groups() + [
      {
         'name': 'average',
-        'label': 'Averaging',
-        'description': 'Sets the different averaging parameters. It is possible to set the length of a normal averaging for the temperature and pressure, as well as an additional length of a moving average for the pressure. The moving average is calculated from the normal averages. There is no moving average for the temperature.\n\nThe maximum length for the pressure average is 10, for the temperature average is 255 and for the moving average is 25.\n\nSetting the all three parameters to 0 will turn the averaging completely off. If the averaging is off, there is lots of noise on the data, but the data is without delay. Thus we recommend to turn the averaging off if the Barometer Bricklet data is to be used for sensor fusion with other sensors.\n\nThe default values are 10 for the normal averages and 25 for the moving average.',
+        'label': {'en': 'Averaging', 'de': 'Mittelwertbildung'},
+        'description': {'en': 'The different averaging parameters. It is possible to set the length of a normal averaging for the temperature and pressure, as well as an additional length of a moving average for the pressure. The moving average is calculated from the normal averages. There is no moving average for the temperature.\n\nThe maximum length for the pressure average is 10, for the temperature average is 255 and for the moving average is 25.\n\nSetting the all three parameters to 0 will turn the averaging completely off. If the averaging is off, there is lots of noise on the data, but the data is without delay. Thus we recommend to turn the averaging off if the Barometer Bricklet data is to be used for sensor fusion with other sensors.\n\nThe default values are 10 for the normal averages and 25 for the moving average.',
+                        'de': 'Die unterschiedlichen Averaging-Parameter (Mittelwertbildung). Es ist möglich die Länge des Mittelwerts für Temperatur und Luftdruck anzugeben. Zusätzlich gibt kann die Länge für einen `gleitenden Mittelwert <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__ für den Luftdruck angegeben werden. Der gleitende Mittelwert wird mit den Werten des normalen Mittelwerts berechnet. Es gibt keinen gleitenden Mittelwert für die Temperatur.\n\nWenn alle drei Parameter auf 0 gesetzt werden, ist das Averaging komplett aus. In diesem Fall gibt es viel Rauschen auf den Daten, allerdings sind die Daten dann ohne Verzögerung. Wir empfehlen das Averaging auszustellen wenn die Daten des Barometer Bricklets zusammen mit anderen Sensordaten fusioniert werden sollen.\n\nDie Standardwerte sind 10 für die normalen und 25 für den gleitenden Mittelwert.'},
         'advanced': 'true'
     }
     ],
@@ -675,12 +680,13 @@ this.setAveraging(cfg.pressureMovingAverageLength.shortValue(), cfg.pressureAver
         oh_generic_old_style_channel('Altitude', 'Altitude')
     ],
     'channel_types': [
-        oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
+        oh_generic_channel_type('Air Pressure', 'Number:Pressure', {'en': 'Air Pressure', 'de': 'Luftdruck'},
                     update_style='Callback Period',
-                    description='Measured air pressure'),
-        oh_generic_channel_type('Altitude', 'Number', 'Altitude',
+                    description={'en': 'Measured air pressure', 'de': 'Gemessener Luftdruck'}),
+        oh_generic_channel_type('Altitude', 'Number', {'en': 'Altitude', 'de': 'Höhe'},
                     update_style='Callback Period',
-                    description='Relative Altitude derived from air pressure')
+                    description={'en': 'The relative altitude. The value is calculated based on the difference between the current air pressure and the reference air pressure.',
+                                 'de': 'Die relative Höhe. Der Wert wird auf Basis der Differenz zwischen dem aktuellen Luftdruck und dem Referenzluftdruck berechnet.'})
     ],
     'actions': ['Get Air Pressure', 'Get Altitude', 'Get Reference Air Pressure', 'Get Averaging']
 }

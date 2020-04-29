@@ -327,8 +327,8 @@ important to you, we would recommend the 1Hz data rate.
 """,
 'de':
 """
-Konfiguriert die Datenrate und des Luftdrucktiefpassfilter. Die Grenzfrequenz des
-Tiefpassfilters (falls aktiviert) kann auf 1/9tel oder 1/20stel der eingestellten
+Konfiguriert die Datenrate und den Luftdrucktiefpassfilter. Die Grenzfrequenz des
+Tiefpassfilters (falls aktiviert) kann auf 1/9 oder 1/20 der eingestellten
 Datenrate gesetzt werden, um das Rauschen auf den Luftdruckdaten zu verringert.
 
 Die Tiefpassfiltereinstellung gilt nur für die Luftdruckmessung. Es gibt keinen
@@ -384,7 +384,8 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups() +  [{
         'name': 'average',
         'label': 'Averaging',
-        'description': 'Sets the length of a moving averaging for the air pressure and temperature.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nThe range for the averaging is 1-1000.\n\nIf you want to do long term measurements the longest moving average will give the cleanest results.\n\nThe default value is 100.',
+        'description': {'en': 'The length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__ for the air pressure and temperature measurements.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nIf you want to do long term measurements the longest moving average will give the cleanest results.',
+                        'de': 'Die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__ für die Luftdruck- und Temperaturmessung.\n\nWenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert. Je kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.\n\nBei Langzeitmessungen gibt ein langer Mittelwert die saubersten Resultate.'},
         'advanced': 'true'
     }],
     'params': [
@@ -395,7 +396,8 @@ com['openhab'] = {
             'name': 'Air Pressure Moving Average Length',
             'type': 'integer',
             'label': 'Air Pressure Moving Average Length',
-            'description': 'The length of a moving averaging for the air pressure.',
+            'description': {'en': 'The length of a moving averaging for the air pressure.',
+                            'de': 'Die Länge eines gleitenden Mittelwerts für den Luftdruck.'},
             'groupName': 'average'
         }, {
             'packet':'Set Moving Average Configuration',
@@ -404,7 +406,8 @@ com['openhab'] = {
             'name': 'Temperature Moving Average Length',
             'type': 'integer',
             'label': 'Temperature Moving Average Length',
-            'description': 'The length of a moving averaging for the temperature.',
+            'description': {'en': 'The length of a moving averaging for the temperature.',
+                            'de': 'Die Länge eines gleitenden Mittelwerts für die Temperatur.'},
             'groupName': 'average'
         }, {
             'packet': 'Set Reference Air Pressure',
@@ -415,7 +418,8 @@ com['openhab'] = {
             'min': 260, # Disallow 0 intentionally.
 
             'label': 'Reference Air Pressure',
-            'description': 'The reference air pressure in hPa for the altitude calculation. Valid values are between 260 and 1260. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+            'description': {'en': 'The reference air pressure in hPa for the altitude calculation. Setting the reference to the current air pressure results in a calculated altitude of 0 m.',
+                            'de': 'Der Referenzluftdruck für die Höhenberechnung. Wenn der aktuelle Luftdruckwert als Referenz übergeben wird, dann gibt die Höhenberechnung 0m aus.'}
         }, {
             'packet': 'Set Sensor Configuration',
             'element': 'Data Rate',
@@ -423,19 +427,21 @@ com['openhab'] = {
             'name': 'Data Rate',
             'type': 'integer',
             'label': 'Data Rate',
-            'description': "Configures the data rate. A higher data rate will result in a less precise temperature because of self-heating of the sensor. If the accuracy of the temperature reading is important to you, we would recommend the 1Hz data rate.",
+            'description': {'en': "Configures the data rate. A higher data rate will result in a less precise temperature because of self-heating of the sensor. If the accuracy of the temperature reading is important to you, we would recommend the 1Hz data rate.",
+                            'de': 'Konfiguriert die Datenrate. Eine Verringerung der Datenrate oder des Wertebereichs verringert auch automatisch das Rauschen auf den Daten. Eine hohe Datenrate erhöht zusätzlich die Selbsterhitzung des Sensors. Wenn eine hohe Temperaturgenauigkeit wichtig ist empfehlen wir eine Datenrate von 1Hz.'},
         }, {
             'packet': 'Set Sensor Configuration',
             'element': 'Air Pressure Low Pass Filter',
 
             'name': 'Air Pressure Low Pass Filter',
             'type': 'integer',
-            'options': [('Off', 0),
-                        ('1/9th', 1),
-                        ('1/20th', 2)],
+            'options': [({'en': 'Off', 'de': 'Aus'}, 0),
+                        ({'en': '1/9th', 'de': '1/9'}, 1),
+                        ({'en': '1/20th', 'de': '1/20'}, 2)],
             'limit_to_options': 'true',
             'label': 'Air Pressure Low Pass Filter',
-            'description': "Configures the air pressure low pass filter. The low pass filter cut-off frequency (if enabled) can be set to 1/9th or 1/20th of the configure data rate to decrease the noise on the air pressure data.",
+            'description': {'en': "Configures the air pressure low pass filter. The low pass filter cut-off frequency (if enabled) can be set to 1/9th or 1/20th of the configure data rate to decrease the noise on the air pressure data.",
+                            'de': "Konfiguriert den Luftdrucktiefpassfilter. Die Grenzfrequenz des Tiefpassfilters (falls aktiviert) kann auf 1/9 oder 1/20 der eingestellten Datenrate gesetzt werden, um das Rauschen auf den Luftdruckdaten zu verringert.\n\nDie Tiefpassfiltereinstellung gilt nur für die Luftdruckmessung. Es gibt keinen Tiefpassfilter für die Temperaturmessung."}
         },
     ],
     'init_code': """this.setReferenceAirPressure(cfg.referenceAirPressure.multiply(new BigDecimal(1000)).intValue());
@@ -447,15 +453,16 @@ this.setSensorConfiguration(cfg.dataRate, cfg.airPressureLowPassFilter);""",
         oh_generic_channel('Temperature', 'Temperature'),
     ],
     'channel_types': [
-        oh_generic_channel_type('Air Pressure', 'Number:Pressure', 'Air Pressure',
+        oh_generic_channel_type('Air Pressure', 'Number:Pressure', {'en': 'Air Pressure', 'de': 'Luftdruck'},
                     update_style='Callback Configuration',
-                    description='Measured air pressure'),
-        oh_generic_channel_type('Altitude', 'Number', 'Altitude',
+                    description={'en': 'Measured air pressure', 'de': 'Gemessener Luftdruck'}),
+        oh_generic_channel_type('Altitude', 'Number', {'en': 'Altitude', 'de': 'Höhe'},
                     update_style='Callback Configuration',
-                    description='Relative Altitude derived from air pressure'),
+                    description={'en': 'The relative altitude. The value is calculated based on the difference between the current air pressure and the reference air pressure.',
+                                 'de': 'Die relative Höhe. Der Wert wird auf Basis der Differenz zwischen dem aktuellen Luftdruck und dem Referenzluftdruck berechnet.'}),
         oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Configuration',
-                    description='Measured temperature'),
+                    description={'en': 'Measured temperature', 'de': 'Gemessene Temperatur'}),
     ],
     'actions': ['Get Air Pressure', 'Get Altitude', 'Get Temperature', 'Get Moving Average Configuration', 'Get Reference Air Pressure']
 }

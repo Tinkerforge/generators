@@ -1181,18 +1181,19 @@ com['openhab'] = {
 
             'name': 'Baud Rate',
             'type': 'integer',
-            'label': 'Baud Rate',
-            'description': 'The baud rate to send/receive with.',
+            'label': {'en': 'Baud Rate', 'de': 'Baudrate'},
+            'description': {'en': 'The baud rate to send/receive with.', 'de': 'Die Baudrate mit der gesendet/empfangen wird.'}
         }, {
             'packet': 'Set Transceiver Configuration',
             'element': 'Sample Point',
 
-            'name': 'Sample Point',
+            'name': {'en': 'Sample Point', 'de': 'Messpunkt'},
             'type': 'decimal',
             'step': 0.1,
 
             'label': 'Sample Point',
-            'description': 'Configures when to sample a bit during each bit period.'
+            'description': {'en': 'Configures when to sample a bit during each bit period.',
+                            'de': 'Konfiguriert wann in der Bit-Periode ein Bit gesamplet wird.'}
         }, {
             'packet': 'Set Transceiver Configuration',
             'element': 'Transceiver Mode',
@@ -1200,8 +1201,9 @@ com['openhab'] = {
             'name': 'Transceiver Mode',
             'type': 'integer',
 
-            'label': 'Transceiver Mode',
-            'description': 'The CAN transceiver has three different modes:<ul><li>Normal: Reads from and writes to the CAN bus and performs active bus error detection and acknowledgement.</li><li>Loopback: All reads and writes are performed internally. The transceiver is disconnected from the actual CAN bus.</li><li>Read-Only: Only reads from the CAN bus, but does neither active bus error detection nor acknowledgement. Only the receiving part of the transceiver is connected to the CAN bus.</li></ul>'
+            'label': {'en': 'Transceiver Mode', 'de': 'Transceiver-Modus'},
+            'description': {'en': 'The CAN transceiver has three different modes:<ul><li>Normal: Reads from and writes to the CAN bus and performs active bus error detection and acknowledgement.</li><li>Loopback: All reads and writes are performed internally. The transceiver is disconnected from the actual CAN bus.</li><li>Read-Only: Only reads from the CAN bus, but does neither active bus error detection nor acknowledgement. Only the receiving part of the transceiver is connected to the CAN bus.</li></ul>',
+                            'de': 'Der CAN-Transceiver hat drei verschiedene Modi: <ul><li>Normal: Es wird vom CAN-Bus gelesen und auf den CAN-Bus geschrieben und aktiv an der Bus-Fehlererkennung und dem Acknowledgement mitgewirkt.</li><li>Loopback: Alle Lese- und Schreiboperationen werden intern durchgeführt. Der Transceiver ist nicht mit dem eigentlichen CAN-Bus verbunden.</li><li>Read-Only: Es wird nur vom CAN-Bus gelesen, allerdings ohne aktiv an der Bus-Fehlererkennung oder dem Acknowledgement mitzuwirken. Nur der empfangende Teil des Transceivers ist mit dem CAN-Bus verbunden.</li></ul>'}
         }, {
             'packet': 'Set Communication LED Config',
             'element': 'Config',
@@ -1209,7 +1211,7 @@ com['openhab'] = {
             'name': 'Communication LED Config',
             'type': 'integer',
 
-            'label': 'Communication LED Config',
+            'label': {'en': 'Communication LED Config', 'de': 'Kommunikations-LED-Modus'},
             'description': "By default the LED shows CAN-Bus traffic, it flickers once for every 40 transmitted or received frames. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
             'packet': 'Set Error LED Config',
@@ -1218,8 +1220,9 @@ com['openhab'] = {
             'name': 'Error LED Config',
             'type': 'integer',
 
-            'label': 'Error LED Config',
-            'description': "By default (show-transceiver-state) the error LED turns on if the CAN transceiver is passive or disabled state (see the getErrorLog action). If the CAN transceiver is in active state the LED turns off.\n\nIf the LED is configured as show-error then the error LED turns on if any error occurs. If you call this function with the show-error option again, the LED will turn off until the next error occurs.\n\nYou can also turn the LED permanently on/off or show a heartbeat.\n\nIf the Bricklet is in bootloader mode, the LED is off.",
+            'label': {'en': 'Error LED Config', 'de': 'Fehler-LED-Modus'},
+            'description': {'en': "By default (show-transceiver-state) the error LED turns on if the CAN transceiver is passive or disabled state (see the getErrorLog action). If the CAN transceiver is in active state the LED turns off.\n\nIf the LED is configured as show-error then the error LED turns on if any error occurs. If you call this function with the show-error option again, the LED will turn off until the next error occurs.\n\nYou can also turn the LED permanently on/off or show a heartbeat.\n\nIf the Bricklet is in bootloader mode, the LED is off.",
+                            'de': 'Standardmäßig zeigt die LED die Kommunikationsdatenmenge an. Sie blinkt einmal pro 40 empfangenen oder gesendeten Frames.\n\nDie LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.\n\nWenn das Bricklet sich im Bootloadermodus befindet ist die LED aus.'}
         }],
 
     'init_code': """this.setTransceiverConfiguration(cfg.baudRate, (int)(cfg.samplePoint.doubleValue() * 10), cfg.transceiverMode);
@@ -1230,16 +1233,18 @@ com['openhab'] = {
 
     'channels': [{
             'id': 'Frame Readable',
-            'label': 'Frame Readable',
-            'description': "This channel is triggered when a new frame was received and can be read out. The channel will only trigger again if the frame was read.",
+            'label': {'en': 'Frame Readable', 'de': 'Frame lesbar'},
+            'description': {'en': "This channel is triggered when a new frame was received and can be read out. The channel will only trigger again if the frame was read.",
+                            'de': 'Dieser Channel wird getriggert, wenn ein neuer Frame empfangen wurde und gelesen werden kann. Der Channel triggert nur erneut, wenn der Frame gelesen wurde.'},
             'type': 'system.trigger',
             'callbacks': [{
                 'packet': 'Frame Readable',
                 'transform': '""'}],
         }, {
             'id': 'Error Occurred',
-            'label': 'Error Occurred',
-            'description': "This channel is triggered if any error occurred while writing, reading or transmitting CAN frames. The channel will trigger only once until the getErrorLog action is called.",
+            'label':  {'en': 'Error Occurred', 'de': 'Fehler aufgetreten'},
+            'description': {'en': "This channel is triggered if any error occurred while writing, reading or transmitting CAN frames. The channel will trigger only once until the getErrorLog action is called.",
+                            'de': 'Dieser Channel wird getriggert, wenn beim Schreiben, Lesen oder Übertragen eines CAN-Frames ein Fehler auftritt. Der Channel wird nur einmal getriggert, bis die getErrorLog-Action aufgerufen wird.'},
             'type': 'system.trigger',
             'callbacks': [{
                 'packet': 'Error Occurred',
