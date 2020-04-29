@@ -3694,11 +3694,14 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [],
+    'required_firmware_version': '2.4.2', # Required here: oh_common can't deduce that the firmware 2.5.0 functions are guarded by the hardware version predicate.
     'channels': [voltage_channel, usb_voltage_channel, current_channel,
         {
             'id': 'Bricklets Enabled',
             'type': 'Bricklets Enabled',
             'label': 'Bricklets Enabled',
+            'predicate': 'Helper.compareFWs(this.getIdentity().hardwareVersion, new short[]{{{{3, 0, 0}}}}) >= 0',
+            'predicate_description': {'de': 'TODO', 'en': 'This channel will only be available if the Brick has a hardware version of at least 3.0.0.'},
 
             'setters': [{
                 'packet': 'Set Bricklets Enabled',

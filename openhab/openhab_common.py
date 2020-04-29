@@ -1118,10 +1118,8 @@ class OpenHABDevice(java_common.JavaDevice):
                 oh['actions'][a_idx] = Action(**action)
 
         if 'required_firmware_version' not in oh:
-            oh['required_firmware_version'] = [2, 0, 0]
-
-        req_version = max([packet.get_since_firmware() for packet in used_packets] + [oh['required_firmware_version']])
-        oh['required_firmware_version'] = "{}.{}.{}".format(*req_version)
+            req_version = max([packet.get_since_firmware() for packet in used_packets] + [[2, 0, 0]])
+            oh['required_firmware_version'] = "{}.{}.{}".format(*req_version)
 
         self.oh = OpenHAB(**oh)
         self.apply_packet_info(self.oh)
