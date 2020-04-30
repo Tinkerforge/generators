@@ -1187,11 +1187,11 @@ com['openhab'] = {
             'packet': 'Set Transceiver Configuration',
             'element': 'Sample Point',
 
-            'name': {'en': 'Sample Point', 'de': 'Messpunkt'},
+            'name': 'Sample Point',
             'type': 'decimal',
             'step': 0.1,
 
-            'label': 'Sample Point',
+            'label': {'en': 'Sample Point', 'de': 'Messpunkt'},
             'description': {'en': 'Configures when to sample a bit during each bit period.',
                             'de': 'Konfiguriert wann in der Bit-Periode ein Bit gesamplet wird.'}
         }, {

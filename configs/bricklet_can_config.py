@@ -720,10 +720,6 @@ com['openhab'] = {
 
             'name': 'Transceiver Mode',
             'type': 'integer',
-            'options': [({'en': 'Normal', 'de': 'Normal'}, 0),
-                        ({'en': 'Loopback', 'de': 'Loopback'}, 1),
-                        ({'en': 'Read Only', 'de': 'Nur Lesen'}, 2)],
-            'limitToOptions': 'true',
             'label': {'en': 'Transceiver Mode', 'de': 'Transceiver-Modus'},
             'description': {'en': 'The CAN transceiver has three different modes:<ul><li>Normal: Reads from and writes to the CAN bus and performs active bus error detection and acknowledgement.</li><li>Loopback: All reads and writes are performed internally. The transceiver is disconnected from the actual CAN bus.</li><li>Read-Only: Only reads from the CAN bus, but does neither active bus error detection nor acknowledgement. Only the receiving part of the transceiver is connected to the CAN bus.</li></ul>',
                             'de': 'Der CAN-Transceiver hat drei verschiedene Modi: <ul><li>Normal: Es wird vom CAN-Bus gelesen und auf den CAN-Bus geschrieben und aktiv an der Bus-Fehlererkennung und dem Acknowledgement mitgewirkt.</li><li>Loopback: Alle Lese- und Schreiboperationen werden intern durchgeführt. Der Transceiver ist nicht mit dem eigentlichen CAN-Bus verbunden.</li><li>Nur Lesen: Es wird nur vom CAN-Bus gelesen, allerdings ohne aktiv an der Bus-Fehlererkennung oder dem Acknowledgement mitzuwirken. Nur der empfangende Teil des Transceivers ist mit dem CAN-Bus verbunden.</li></ul>'}
