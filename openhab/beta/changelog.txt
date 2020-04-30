@@ -209,3 +209,8 @@
     - PTC resistance channels
     - Segment Display 2.0 Bricklet set numeric value action
 - Remove get bootloader mode action
+
+2020-04-29: 2.0.0 Beta 22
+- Fix channel reconfiguration logic
+- Fix Master Brick required firmware version
+- Fix LED strip index parsing
