@@ -12,7 +12,7 @@ from openhab_commonconfig import *
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 2],
     'category': 'Bricklet',
     'device_identifier': 221,
     'name': 'Barometer',
@@ -34,6 +34,14 @@ com = {
 }
 
 com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
+
+com['constant_groups'].append({
+'name': 'I2C Mode',
+'type': 'uint8',
+'constants': [('Fast', 0),
+              ('Slow', 1)]
+})
+
 
 com['packets'].append({
 'type': 'function',
@@ -594,6 +602,61 @@ Returns the averaging configuration as set by :func:`Set Averaging`.
 'de':
 """
 Gibt die Averaging-Konfiguration zurück, wie von :func:`Set Averaging` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set I2C Mode',
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'I2C Mode', 'default': 0})],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Sets the I2C mode. Possible modes are:
+
+* 0: Fast (400kHz)
+* 1: Slow (100kHz)
+
+If you have problems with obvious outliers in the
+Barometer Bricklet measurements, they may be caused by EMI issues.
+In this case it may be helpful to lower the I2C speed.
+
+It is however not recommended to lower the I2C speed in applications where
+a high throughput needs to be achieved.
+""",
+'de':
+"""
+Setzt den I2C Modus. Mögliche Modi sind:
+
+* 0: Fast (400kHz)
+* 1: Slow (100kHz)
+
+Wenn Probleme mit offensichtlichen Ausreißern in den
+Barometer Bricklet Messungen auftreten, können diese eventuell aufgrund
+von elektromagnetischen Störungen sein. In diesem Fall kann es helfen
+die I2C Geschwindigkeit zu verringern.
+
+Falls in einem System ein hoher Durchsatz an Nachrichten erwünscht ist,
+sollte die I2C Geschwindigkeit allerdings nicht verringert werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get I2C Mode',
+'elements': [('Mode', 'uint8', 1, 'out', {'constant_group': 'I2C Mode', 'default': 0})],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Returns the I2C mode as set by :func:`Set I2C Mode`.
+""",
+'de':
+"""
+Gibt den I2C Modus zurück, wie von :func:`Set I2C Mode` gesetzt.
 """
 }]
 })
