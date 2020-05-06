@@ -560,7 +560,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number', 'NOT USED',
                     update_style='Callback Configuration',
-                    description='Measured voltage between -35 and 35 V',
+                    description='The measured voltage between -35 and 35 V',
                     params=led_status_config())
     ],
     'actions': ['Get Voltage', 'Get Channel LED Config', 'Get Channel LED Status Config', 'Get Sample Rate', 'Get Calibration', 'Get ADC Values']

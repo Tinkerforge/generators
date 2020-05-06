@@ -584,12 +584,13 @@ com['openhab'] = {
         oh_analog_value_channel()
     ],
     'channel_types': [
-        oh_generic_channel_type('Current', 'Number', 'Current',
+        oh_generic_channel_type('Current', 'Number', {'en': 'Current', 'de': 'Stromstärke'},
                     update_style='Callback Period',
-                    description='The current of the sensor.'),
-        oh_generic_channel_type('Over Current', 'Switch', 'Over Current',
+                    description={'en': 'The measured current.', 'de': 'Die gemessene Stromstärke.'}),
+        oh_generic_channel_type('Over Current', 'Switch', {'en': 'Over Current', 'de': 'Überstrom'},
                     update_style=None,
-                    description='Enabled if more than 25A were measured. To reset this value you have to power cycle the Bricklet.'),
+                    description={'en': 'Enabled if more than 25A were measured. To reset this value you have to power cycle the Bricklet.',
+                                 'de': 'Aktiviert, wenn mehr als 25A gemessen wurden. Um diesen Wert zurückzusetzen ist ein Aus- und Wiedereinschalten des Bricklet notwendig.'}),
         oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Current', 'Is Over Current', 'Get Analog Value']

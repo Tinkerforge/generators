@@ -417,7 +417,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Current', 'Number', 'NOT USED',
                     update_style='Callback Period',
-                    description='Measured current between 0 and 0.022505322A (22.5mA)')
+                    description='The measured current between 0 and 0.022505322A (22.5mA)')
     ],
     'actions': ['Get Current', 'Get Sample Rate']
 }

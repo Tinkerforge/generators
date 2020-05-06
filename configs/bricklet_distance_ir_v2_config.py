@@ -301,7 +301,7 @@ this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
     'channel_types': [
         oh_generic_channel_type('Distance', 'Number', 'Distance',
                     update_style='Callback Configuration',
-                    description='Measured distance'),
+                    description='The measured distance'),
         oh_generic_channel_type('Analog Value', 'Number', 'Analog Value',
                     update_style='Callback Configuration',
                     description='The analog value as read by a analog-to-digital converter.\n\nThis is unfiltered raw data. We made sure that the integration time of the ADC is shorter then the measurement interval of the sensor (10ms vs 16.5ms). So there is no information lost.\n\nIf you want to do your own calibration or create your own lookup table you can use this value.')

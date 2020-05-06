@@ -745,7 +745,7 @@ this.setAveraging(cfg.pressureMovingAverageLength.shortValue(), cfg.pressureAver
     'channel_types': [
         oh_generic_channel_type('Air Pressure', 'Number:Pressure', {'en': 'Air Pressure', 'de': 'Luftdruck'},
                     update_style='Callback Period',
-                    description={'en': 'Measured air pressure', 'de': 'Gemessener Luftdruck'}),
+                    description={'en': 'The measured air pressure', 'de': 'Der gemessene Luftdruck'}),
         oh_generic_channel_type('Altitude', 'Number', {'en': 'Altitude', 'de': 'Höhe'},
                     update_style='Callback Period',
                     description={'en': 'The relative altitude. The value is calculated based on the difference between the current air pressure and the reference air pressure.',

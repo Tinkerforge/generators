@@ -344,10 +344,10 @@ this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperat
     'channel_types': [
         oh_generic_channel_type('Humidity', 'Number', 'Humidity',
                     update_style='Callback Configuration',
-                    description='Measured relative humidity'),
+                    description='The measured relative humidity'),
         oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Configuration',
-                    description='Measured temperature'),
+                    description='The measured temperature'),
         oh_generic_channel_type('Heater', 'Switch', 'Heater',
                     update_style=None,
                     description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),

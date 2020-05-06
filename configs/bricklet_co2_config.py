@@ -294,9 +294,10 @@ com['openhab'] = {
         oh_generic_old_style_channel('CO2 Concentration', 'CO2 Concentration')
     ],
     'channel_types': [
-        oh_generic_channel_type('CO2 Concentration', 'Number', 'CO2 Concentration',
+        oh_generic_channel_type('CO2 Concentration', 'Number', {'en': 'CO2 Concentration', 'de': 'CO2-Konzentration'},
                     update_style='Callback Period',
-                    description='The measured CO2 concentration.')
+                    description={'en': 'The measured CO2 concentration.',
+                                 'de': 'Die gemessene CO2-Konzentration.'})
     ],
     'actions': ['Get CO2 Concentration']
 }

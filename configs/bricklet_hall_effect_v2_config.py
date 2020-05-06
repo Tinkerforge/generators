@@ -313,7 +313,7 @@ com['openhab'] = {
                     }]),
         oh_generic_channel_type('Magnetic Flux Density', 'Number', 'Magnetic Flux Density',
                     update_style='Callback Configuration',
-                    description='Measured magnetic flux density.'),
+                    description='The measured magnetic flux density.'),
     ],
     'actions': ['Get Magnetic Flux Density', 'Get Counter', 'Get Counter Config']
 }

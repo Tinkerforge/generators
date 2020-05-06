@@ -455,14 +455,14 @@ this.setSensorConfiguration(cfg.dataRate, cfg.airPressureLowPassFilter);""",
     'channel_types': [
         oh_generic_channel_type('Air Pressure', 'Number:Pressure', {'en': 'Air Pressure', 'de': 'Luftdruck'},
                     update_style='Callback Configuration',
-                    description={'en': 'Measured air pressure', 'de': 'Gemessener Luftdruck'}),
+                    description={'en': 'The measured air pressure', 'de': 'Der gemessene Luftdruck'}),
         oh_generic_channel_type('Altitude', 'Number', {'en': 'Altitude', 'de': 'Höhe'},
                     update_style='Callback Configuration',
                     description={'en': 'The relative altitude. The value is calculated based on the difference between the current air pressure and the reference air pressure.',
                                  'de': 'Die relative Höhe. Der Wert wird auf Basis der Differenz zwischen dem aktuellen Luftdruck und dem Referenzluftdruck berechnet.'}),
         oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Configuration',
-                    description={'en': 'Measured temperature', 'de': 'Gemessene Temperatur'}),
+                    description={'en': 'The measured temperature', 'de': 'Die gemessene Temperatur'}),
     ],
     'actions': ['Get Air Pressure', 'Get Altitude', 'Get Temperature', 'Get Moving Average Configuration', 'Get Reference Air Pressure']
 }

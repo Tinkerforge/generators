@@ -462,7 +462,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Current', 'Number', 'NOT USED',
                     update_style='Callback Configuration',
-                    description='Measured current between 0 and 0.022505322A (22.5mA)',
+                    description='The measured current between 0 and 0.022505322A (22.5mA)',
                     params=led_status_config())
     ],
     'actions': ['Get Current', 'Get Channel LED Config', 'Get Channel LED Status Config', 'Get Sample Rate', 'Get Gain']

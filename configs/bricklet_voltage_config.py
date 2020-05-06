@@ -497,7 +497,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number', 'Voltage',
                     update_style='Callback Period',
-                    description='Measured voltage'),
+                    description='The measured voltage'),
         oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Voltage', 'Get Analog Value']

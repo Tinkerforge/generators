@@ -313,8 +313,9 @@ com['openhab'] = {
 
             'name': 'Data Rate',
             'type': 'integer',
-            'label': 'Data Rate',
-            'description': 'The data rate that is used by the magnetometer. The lower the data rate, the lower is the noise on the data.',
+            'label': {'en': 'Data Rate', 'de': 'Datenrate'},
+            'description': {'en': 'The data rate that is used by the magnetometer. The lower the data rate, the lower is the noise on the data.',
+                            'de': 'Die Datenrate des eingesetzten Magnetometers. Je niedriger die Datenrate ist, desto weniger Rauschen befindet sich auf den Daten.'},
         }, {
             'packet': 'Set Configuration',
             'element': 'Background Calibration',
@@ -322,8 +323,9 @@ com['openhab'] = {
             'name': 'Background Calibration',
             'type': 'boolean',
 
-            'label': 'Enable Background Calibration',
-            'description': 'If the background calibration is enabled the sensing polarity is flipped once per second to automatically calculate and remove offset that is caused by temperature changes. This polarity flipping takes about 20ms. This means that once a second you will not get new data for a period of 20ms. We highly recommend that you keep the background calibration enabled and only disable it if the 20ms off-time is a problem in you application.',
+            'label': {'en': 'Enable Background Calibration', 'de': 'Hintergrundkalibrierung aktivieren'},
+            'description': {'en': 'If the background calibration is enabled the sensing polarity is flipped once per second to automatically calculate and remove offset that is caused by temperature changes. This polarity flipping takes about 20ms. This means that once a second you will not get new data for a period of 20ms. We highly recommend that you keep the background calibration enabled and only disable it if the 20ms off-time is a problem in you application.',
+                            'de': 'Wenn die Hintergrundkalibrierung aktiviert ist, ändert das Bricklet einmal pro Sekunde die Erfassungspolarität, um damit automatisch temperaturabhängige Offsets zu entfernen. Das Ändern der Polarität dauert ungefähr 20ms. Daher werden einmal pro Sekunde für 20ms keine neuen Daten generiert, wenn die Kalibrierung aktiviert ist. Wir empfehlen die Kalibrierung nur zu deaktivieren, falls diese 20ms Auszeit ein großes Problem in der Anwendung des Bricklets darstellen.'}
         },
         update_interval('Set Magnetic Flux Density Callback Configuration', 'Period', 'Magnetic Flux Density', 'the magnetic flux densities')],
     'init_code': """this.setConfiguration(cfg.dataRate, cfg.backgroundCalibration);
@@ -333,8 +335,10 @@ com['openhab'] = {
     ] + [{
             'id': 'Magnetic Flux Density {}'.format(axis.upper()),
             'type': 'Magnetic Flux Density',
-            'label': 'Magnetic Flux Density - {}'.format(axis.upper()),
-            'description': 'The `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__ measured in direction of the {} axis.'.format(axis.lower()),
+            'label': {'en': 'Magnetic Flux Density - {}'.format(axis.upper()),
+                      'de': 'Magnetische Flussdichte - {}'.format(axis.upper())},
+            'description': {'en': 'The `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__ measured in direction of the {} axis.'.format(axis.lower()),
+                            'de': 'Die `magnetische Flussdichte (magnetische Induktion) <https://de.wikipedia.org/wiki/Magnetische_Flussdichte>`__ gemessen in Richtung der {}-Achse.'.format(axis.lower())},
 
             'getters': [{
                 'packet': 'Get Magnetic Flux Density',
@@ -347,12 +351,14 @@ com['openhab'] = {
                 'transform': 'new {{number_type}}({}{{unit}})'.format(axis.lower())}],
         } for axis in ['X', 'Y', 'Z']],
     'channel_types': [
-        oh_generic_channel_type('Heading', 'Number', 'Heading',
+        oh_generic_channel_type('Heading', 'Number', {'en': 'Heading', 'de': 'Richtung'},
                     update_style='Callback Configuration',
-                    description='The heading (north = 0 degree)'),
-        oh_generic_channel_type('Magnetic Flux Density', 'Number', 'Magnetic Flux Density',
+                    description={'en': 'The heading (north = 0 degree, east = 90 degree)',
+                                 'de': 'Die Richtung (Norden = 0 Grad, Osten = 90 Grad).'}),
+        oh_generic_channel_type('Magnetic Flux Density', 'Number', {'en': 'Magnetic Flux Density', 'de': 'Magnetische Flussdichte'},
                     update_style=None,
-                    description='The heading (north = 0 degree)'),
+                    description={'en': 'The measured `magnetic flux density (magnetic induction) <https://en.wikipedia.org/wiki/Magnetic_flux>`__',
+                                 'de': 'Die gemessene `magnetische Flussdichte (magnetische Induktion) <https://de.wikipedia.org/wiki/Magnetische_Flussdichte>`__'}),
     ],
     'actions': ['Get Heading', 'Get Magnetic Flux Density', 'Get Configuration', 'Get Calibration']
 }

@@ -503,7 +503,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Humidity', 'Number', 'Humidity',
                     update_style='Callback Period',
-                    description='Measured relative humidity'),
+                    description='The measured relative humidity'),
         oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Humidity', 'Get Analog Value']

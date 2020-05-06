@@ -396,16 +396,18 @@ com['openhab'] = {
             'name': 'Gain',
             'type': 'integer',
 
-            'label': 'Gain',
-            'description': 'Increasing the gain enables the sensor to detect a color from a higher distance.',
+            'label': {'en': 'Gain', 'de': 'Verstärkung'},
+            'description': {'en': 'Increasing the gain enables the sensor to detect a color from a higher distance.',
+                            'de': 'Eine Erhöhung der Verstärkung ermöglicht es dem Sensor Farben aus größeren Entfernungen zu erkennen.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Integration Time',
 
             'name': 'Integration Time',
             'type': 'integer',
-            'label': 'Integration Time',
-            'description': 'The integration time provides a trade-off between conversion time and accuracy. With a longer integration time the values read will be more accurate but it will take longer time to get the conversion results.',
+            'label': {'en': 'Integration Time', 'de': 'Integrationszeit'},
+            'description': {'en': 'The integration time provides a trade-off between conversion time and accuracy. With a longer integration time the values read will be more accurate but it will take longer time to get the conversion results.',
+                            'de': 'Die Integrationszeit ist ein Trade-off zwischen Konvertierungszeit und Genauigkeit. Mit einer höheren Integrationszeit werden die Werte genauer, es dauert allerdings länger bis ein Resultat bereitsteht.'}
         }],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': """this.setConfiguration(cfg.gain, cfg.integrationTime);""",
@@ -440,18 +442,21 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Color', 'Color', 'Color',
+        oh_generic_channel_type('Color', 'Color', {'en': 'Color', 'de': 'Farbe'},
                     update_style='Callback Configuration',
-                    description='Measured color'),
-        oh_generic_channel_type('Illuminance', 'Number', 'Illuminance',
+                    description={'en': 'The measured color', 'de': 'Die gemessene Farbe'}),
+        oh_generic_channel_type('Illuminance', 'Number', {'en': 'Illuminance', 'de': 'Beleuchtungsstärke'},
                     update_style='Callback Configuration',
-                    description='Measured illuminance. To get a correct illuminance measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.'),
-        oh_generic_channel_type('Color Temperature', 'Number', 'Color Temperature',
+                    description={'en': 'The measured illuminance. To get a correct illuminance measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.',
+                                 'de': 'Die gemessene Beleuchtungsstärke. Für eine korrekte Messung der Beleuchtungsstärke muss sichergestellt sein, dass die Farbwerte (R, G oder B) nicht saturiert sind. Ein Farbwert ist saturiert wenn der Wert 255 beträgt. In diesem Fall muss die Verstärkung reduziert werden.'}),
+        oh_generic_channel_type('Color Temperature', 'Number', {'en': 'Color Temperature', 'de': 'Farbtemperatur'},
                     update_style='Callback Configuration',
-                    description='To get a correct color temperature measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.'),
-        oh_generic_channel_type('Light', 'Switch', 'Enable Light',
+                    description={'en': 'To get a correct color temperature measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.',
+                                 'de': 'Für eine korrekte Messung der Farbtemperatur muss sichergestellt sein das die Farbwerte (R, G oder B) nicht saturiert sind. Ein Farbwert ist saturiert wenn der Wert 255 beträgt. In diesem Fall muss die Verstärkung reduziert werden.'}),
+        oh_generic_channel_type('Light', 'Switch', {'en': 'Enable Light', 'de': 'TODO'},
                     update_style=None,
-                    description='Turns the white LED on the Bricklet on/off.'),
+                    description={'en': 'Turns the white LED on the Bricklet on/off.',
+                                 'de': 'Schaltet die weiße LED am Bricklet an/aus.'}),
     ],
     'actions': ['Get Color', 'Get Illuminance', 'Get Color Temperature', {'fn': 'Set Light', 'refreshs': ['Light']}, 'Get Light', 'Get Configuration']
 }

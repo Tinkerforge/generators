@@ -620,7 +620,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number', {'en': 'Voltage', 'de': 'Spannung'},
                     update_style='Callback Period',
-                    description={'en': 'Measured voltage', 'de': 'Gemessene Spannung'}),
+                    description={'en': 'The measured voltage', 'de': 'Die gemessene Spannung'}),
         oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Voltage', 'Get Analog Value', 'Get Averaging', 'Get Range']
