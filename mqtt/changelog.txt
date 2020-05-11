@@ -28,7 +28,7 @@
 - Add -v/--version parameter
 
 2019-06-11: 2.0.6 (6ec2351)
-- Fix JSON parsing in Python < 3.6
+- Fix JSON parsing for Python < 3.6
 
 2019-08-23: 2.0.7 (59d9363)
 - Add support for Color 2.0, Compass, Distance US 2.0, Energy Monitor,
@@ -78,3 +78,9 @@
 - Don't use signal SIGQUIT, not supported on Windows
 - Warn about device replacement because of conflicting UIDs
 - Add support for duplicate topics in init file
+
+2020-05-11: 2.0.10 (<unknown>)
+- Add all_voltages callback to Industrial Dual Analog In Bricklet 2.0 API
+- Add set/get_i2c_mode to Barometer Bricklet API
+- Fix _device_name lookup for get_identity and enumerate callbacks
+- Fix string handling for Python 2
