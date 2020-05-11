@@ -81,6 +81,6 @@
 
 2020-05-11: 2.0.10 (<unknown>)
 - Add all_voltages callback to Industrial Dual Analog In Bricklet 2.0 API
-- Add set/get_i2c_mode to Barometer Bricklet API
-- Fix _device_name lookup for get_identity and enumerate callbacks
+- Add set/get_i2c_mode function to Barometer Bricklet API
+- Fix _device_name lookup for get_identity function and enumerate callback
 - Fix string handling for Python 2
