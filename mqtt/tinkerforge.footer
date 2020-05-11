@@ -455,6 +455,9 @@ class MQTTBindings:
         reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
         normal_level_request_data = self.translate_symbols(reversed_symbols, normal_level_request_data)
 
+        args = [arg if not fnInfo.arg_types[i] == 'string' and not fnInfo.arg_types[i] == 'char' else create_string(arg)
+                for i, arg in enumerate(args) ]
+
         type_error = MQTTBindings.type_check_args(request_data, arg_names, arg_types)
         if type_error is not None:
             return json_error("Call {} of {} {}: {}".format(fnName, device_name, uid, type_error),  dict([(name, None) for name in result_names]))
@@ -756,6 +759,9 @@ class MQTTBindings:
 
         reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
         args = self.translate_symbols(reversed_symbols, args)
+
+        args = [arg if not fnInfo.arg_types[i] == 'string' and not fnInfo.arg_types[i] == 'char' else create_string(arg)
+                for i, arg in enumerate(args) ]
 
         type_error = MQTTBindings.type_check_args(args, fnInfo.arg_names, fnInfo.arg_types)
         if type_error is not None:
