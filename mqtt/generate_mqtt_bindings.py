@@ -284,6 +284,7 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
         template = """
 
 device_names = {{
+    0: '',
 	{entries}
 }}
 
