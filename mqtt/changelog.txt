@@ -79,7 +79,7 @@
 - Warn about device replacement because of conflicting UIDs
 - Add support for duplicate topics in init file
 
-2020-05-11: 2.0.10 (<unknown>)
+2020-05-11: 2.0.10 (7d1ce6f)
 - Add all_voltages callback to Industrial Dual Analog In Bricklet 2.0 API
 - Add set/get_i2c_mode function to Barometer Bricklet API
 - Fix _device_name lookup for get_identity function and enumerate callback
