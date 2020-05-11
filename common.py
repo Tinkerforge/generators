@@ -180,7 +180,7 @@ def get_changelog_version(root_dir):
             if len(line) == 0:
                 continue
 
-            if re.match(r'^(?:- [A-Z0-9\(]|  [A-Za-z0-9\(]).*$', line) != None:
+            if re.match(r'^(?:- [A-Z0-9\(]|  [A-Za-z0-9\(\"]).*$', line) != None:
                 continue
 
             m = re.match(r'^(?:<unknown>|20[0-9]{2}-[0-9]{2}-[0-9]{2}): ([1-9][0-9]*)\.([0-9]+)\.([0-9]+) \((?:<unknown>|[a-f0-9]+)\)$', line)
