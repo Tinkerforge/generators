@@ -172,7 +172,7 @@ class MQTTBindings:
         d = dict(zip(self.ip_connection_callback_names[callback_id], args))
 
         if "enumeration_type" in d and d["enumeration_type"] != 2 and "device_identifier" in d:
-            d["_display_name"] = display_names[dev_id]
+            d["_display_name"] = device_names[dev_id]
 
         payload = json.dumps(d)
         for path in self.ip_connection_response_paths[callback_id]:
@@ -787,7 +787,7 @@ class MQTTBindings:
             d = dict(zip(fnInfo.result_names, response))
             if fnName == "get_identity" and "device_identifier" in d:
                 dev_id = d["device_identifier"]
-                d["_display_name"] = display_names[dev_id]
+                d["_display_name"] = device_names[dev_id]
                 if not self.no_symbolic_response:
                     d["device_identifier"] = mqtt_names[dev_id]
             response = json.dumps(d)
