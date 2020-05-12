@@ -1,2 +1,2 @@
-<unknown>: 2.0.0 (<unknown>)
+2020-05-12: 2.0.0 (<unknown>)
 - Initial release
