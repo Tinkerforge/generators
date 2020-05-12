@@ -60,7 +60,7 @@ if 'bindings' in actions and socket.gethostname() != 'tinkerforge.com':
 # examples
 if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
-        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
+        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl', 'saleae']:
             continue
 
         try:
@@ -75,7 +75,7 @@ if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
 # doc
 if 'doc' in actions:
     for binding in bindings:
-        if binding in ['json', 'stubs', 'tvpl']:
+        if binding in ['json', 'stubs', 'tvpl', 'saleae']:
             continue
 
         module = __import__('generate_{0}_doc'.format(binding))

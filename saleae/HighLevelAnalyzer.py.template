@@ -1,0 +1,275 @@
+{{header}}
+
+import json
+import os
+import sys
+import struct
+import re
+
+{{unpack_payload}}
+
+device_infos = {
+    {{infos}}
+}
+
+pearson = [1, 87, 49, 12, 176, 178, 102, 166, 121, 193, 6, 84, 249, 230, 44, 163,
+	14, 197, 213, 181, 161, 85, 218, 80, 64, 239, 24, 226, 236, 142, 38, 200,
+	110, 177, 104, 103, 141, 253, 255, 50, 77, 101, 81, 18, 45, 96, 31, 222,
+	25, 107, 190, 70, 86, 237, 240, 34, 72, 242, 20, 214, 244, 227, 149, 235,
+	97, 234, 57, 22, 60, 250, 82, 175, 208, 5, 127, 199, 111, 62, 135, 248,
+	174, 169, 211, 58, 66, 154, 106, 195, 245, 171, 17, 187, 182, 179, 0, 243,
+	132, 56, 148, 75, 128, 133, 158, 100, 130, 126, 91, 13, 153, 246, 216, 219,
+	119, 68, 223, 78, 83, 88, 201, 99, 122, 11, 92, 32, 136, 114, 52, 10,
+	138, 30, 48, 183, 156, 35, 61, 26, 143, 74, 251, 94, 129, 162, 63, 152,
+	170, 7, 115, 167, 241, 206, 3, 150, 55, 59, 151, 220, 90, 53, 23, 131,
+	125, 173, 15, 238, 79, 95, 89, 16, 105, 137, 225, 224, 217, 160, 37, 123,
+	118, 73, 2, 157, 46, 116, 9, 145, 134, 228, 207, 212, 202, 215, 69, 229,
+	27, 188, 67, 124, 168, 252, 42, 4, 29, 108, 21, 247, 19, 205, 39, 203,
+	233, 40, 186, 147, 198, 192, 155, 33, 164, 191, 98, 204, 165, 180, 117, 76,
+	140, 36, 210, 172, 41, 54, 159, 8, 185, 232, 113, 196, 231, 47, 146, 120,
+	51, 65, 28, 144, 254, 221, 93, 189, 194, 139, 112, 43, 71, 109, 184, 209]
+
+#checksum = 0
+#packet = [0x0B, # Paketlänge
+          #0x01, # Sequenznummer
+          #0x98, 0x83, 0x00, 0x00, 0x08, 0x01, 0x18, 0x00 # Payload
+          #]
+#packet = [0x03, 0x10, 0x00]
+#for byte in packet:
+    #checksum = pearson[checksum ^ byte]
+#print("{:x}".format(checksum))
+
+
+def get_uid_from_data(data):
+    return struct.unpack('<I', data[0:4])[0]
+
+def get_length_from_data(data):
+    return struct.unpack('<B', data[4:5])[0]
+
+def get_function_id_from_data(data):
+    return struct.unpack('<B', data[5:6])[0]
+
+def get_sequence_number_from_data(data):
+    return (struct.unpack('<B', data[6:7])[0] >> 4) & 0x0F
+
+def get_response_expected_from_data(data):
+    return ((struct.unpack('<B', data[6:7])[0]) & 0x04) != 0
+
+def get_error_code_from_data(data):
+    return (struct.unpack('<B', data[7:8])[0] >> 6) & 0x03
+
+BASE58 = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+
+# internal
+def base58encode(value):
+    encoded = ''
+
+    while value >= 58:
+        div, mod = divmod(value, 58)
+        encoded = BASE58[mod] + encoded
+        value = div
+
+    return BASE58[value] + encoded
+
+
+class PacketBuffer():
+    def __init__(self, is_master, dev_info, format):
+        self.is_master = is_master
+        self.data = []
+        self.frame_start_times = []
+        self.frame_end_times = []
+        self.device_info = dev_info
+        self.format = format
+
+    def add_frame(self, frame):
+        try:
+            self.data.append(frame['data']['mosi' if self.is_master else 'miso'])
+            self.frame_start_times.append(frame['start_time'])
+            self.frame_end_times.append(frame['end_time'])
+        except:
+            pass
+
+    def remove(self, n):
+        self.data = self.data[n:]
+        self.frame_start_times = self.frame_start_times[n:]
+        self.frame_end_times = self.frame_end_times[n:]
+
+    def find_packet(self, frame_type):
+        while len(self.data) > 0:
+            packet_len = self.data[0]
+            if packet_len < 3 or packet_len > 83:
+                self.remove(1)
+                continue
+
+            if packet_len > len(self.data):
+                return None
+
+            packet_checksum = self.data[-1]
+
+            real_checksum = 0
+            for byte in self.data[:-1]:
+                real_checksum = pearson[real_checksum ^ byte]
+
+            if real_checksum != packet_checksum:
+                self.remove(1)
+                continue
+
+            seq_num = self.data[1] & 0x0F
+            seq_num_acked = (self.data[1] & 0xF0) >> 4
+
+            tfp_header = bytes(self.data[2:10])
+
+            uid = base58encode(get_uid_from_data(tfp_header))
+            tfp_length = get_length_from_data(tfp_header)
+            fid = get_function_id_from_data(tfp_header)
+
+            payload = 'unknown payload'
+
+            try:
+                packet = self.device_info['packets'][fid]
+
+                fid = '{} ({})'.format(packet['name'], fid)
+                struct_format = packet['in_struct_format'] if self.is_master else packet['out_struct_format']
+
+                if len(struct_format) == 0:
+                    payload = 'Empty'
+                else:
+                    payload = unpack_payload(bytes(self.data[10:-1]), struct_format)
+                    if len(struct_format) == 1:
+                        payload = [payload]
+                    payload = [str(p) for p in payload]
+
+                    direction = 'in' if self.is_master else 'out'
+                    payload_names = [e['name'] for e in packet['elements'] if e['direction'] == direction]
+                    payload = zip(payload_names, payload)
+                    payload = '[' + ', '.join('{}: {}'.format(name, val) for name, val in payload) + ']'
+            except:
+                pass
+
+            tfp_seq_num = get_sequence_number_from_data(tfp_header)
+            error_code = get_error_code_from_data(tfp_header)
+            response_expected = get_response_expected_from_data(tfp_header)
+
+            return {
+                'type': self.format,
+                'start_time': self.frame_start_times[0],
+                'end_time': self.frame_end_times[-1],
+                'data': {
+                    'input_type': frame_type,
+                    'length': packet_len,
+                    'checksum': packet_checksum,
+                    'seq_num': seq_num,
+                    'seq_num_acked': seq_num_acked,
+                    'uid': uid,
+                    'tfp_length': tfp_length,
+                    'fid': fid,
+                    'tfp_seq_num': tfp_seq_num,
+                    'error_code': error_code,
+                    'response_expected': response_expected,
+                    'payload': payload,
+                }
+            }
+
+        return None
+
+
+class Hla():
+
+    def __init__(self):
+        '''
+        Initialize this HLA.
+
+        If you have any initialization to do before any methods are called, you can do it here.
+        '''
+        self.packet_buffer = PacketBuffer(False, None, 'long')
+
+
+    def get_capabilities(self):
+        '''
+        Return the settings that a user can set for this High Level Analyzer. The settings that a user selects will later be passed into `set_settings`.
+
+        This method will be called first, before `set_settings` and `decode`
+        '''
+
+        devices = sorted(['{} ({})'.format(info['name'], info['device_identifier']) for info in device_infos.values()])
+
+
+        return {
+            'settings': {
+                'Direction': {
+                    'type': 'choices',
+                    'choices': ('MOSI', 'MISO')
+                },
+                'Device': {
+                    'type': 'choices',
+                    'choices': tuple(devices)
+                },
+                'Output Format': {
+                    'type': 'choices',
+                    'choices': ('Everything', 'Payload', 'Headers')
+                },
+            }
+        }
+
+    def set_settings(self, settings):
+        '''
+        Handle the settings values chosen by the user, and return information about how to display the results that `decode` will return.
+
+        This method will be called second, after `get_capbilities` and before `decode`.
+        '''
+
+        if 'Direction' in settings and 'Device' in settings and 'Output Format' in settings:
+            dev_id = int(re.findall('[^\(]*\((\d*)\)', settings['Device'])[0])
+            self.packet_buffer = PacketBuffer(settings['Direction'] == 'MOSI', device_infos[dev_id], settings['Output Format'])
+
+
+        # Here you can specify how output frames will be formatted in the Logic 2 UI
+        # If no format is given for a type, a default formatting will be used
+        # You can include the values from your frame data (as returned by `decode`) by wrapping their name in double braces, as shown below.
+        return {
+            'result_types': {
+                'Everything': {
+                    'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}] TFP [UID: {{data.uid}}, Len: {{data.tfp_length}}, FID: {{data.fid}}, SeqNum: {{data.tfp_seq_num}}, Error: {{data.error_code}}, RespExpected: {{data.response_expected}}, Payload: {{data.payload}}], Checksum: {{data.checksum}}'
+                },
+                'Payload': {
+                    'format': 'TFP[FID: {{data.fid}}, Error: {{data.error_code}}, Payload: {{data.payload}}]'
+                },
+                'Headers': {
+                    'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}] TFP [UID: {{data.uid}}, Len: {{data.tfp_length}}, FID: {{data.fid}}, SeqNum: {{data.tfp_seq_num}}, Error: {{data.error_code}}, RespExpected: {{data.response_expected}}], Checksum: {{data.checksum}}'
+                }
+            }
+        }
+
+    def decode(self, frame):
+        '''
+        Handle data frame from input analyzer.
+
+        `frame` will always be of the form:
+
+        {
+            'type': 'FRAME_TYPE'
+            'start_time': ...,
+            'end_time': ...,
+            'data': {
+                ...
+            }
+        }
+
+        The `type` and contents of the `data` field will depend on the input analyzer.
+        '''
+        self.packet_buffer.add_frame(frame)
+
+        return self.packet_buffer.find_packet(frame['type'])
+
+        #Return the data frame itself
+        #return {
+            #'type': 'mytype',  # This type matches up with the type returned from `set_settings`
+            #'start_time': frame['start_time'],
+            #'end_time': frame['end_time'],
+            #'data': {
+                #'input_type': frame['type'],
+                #'mosi': frame['data']['mosi'],
+                #'miso': frame['data']['miso']
+            #}
+        #}
+
