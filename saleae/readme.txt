@@ -10,4 +10,5 @@ This ZIP file contains:
 For more information about the high level analyzer (including setup instructions)
 go to:
 
- TODO: Insert links
+ https://www.tinkerforge.com/en/doc/Low_Level_Protocols/Saleae_High_Level_Analyzer.html (English)
+ https://www.tinkerforge.com/de/doc/Low_Level_Protocols/Saleae_High_Level_Analyzer.html (German)
