@@ -1,6 +1,6 @@
 2020-05-12: 2.0.0 (517a2a7)
 - Initial release
 
-2020-05-13: 2.0.1 (<unknown>)
+2020-05-13: 2.0.1 (12a028d)
 - Fix parsing of TFP response expected flag
 - Fix parsing of SPITFP acknowledgements
