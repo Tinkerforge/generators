@@ -53,7 +53,7 @@ def get_sequence_number_from_data(data):
     return (struct.unpack('<B', data[6:7])[0] >> 4) & 0x0F
 
 def get_response_expected_from_data(data):
-    return ((struct.unpack('<B', data[6:7])[0]) & 0x04) != 0
+    return ((struct.unpack('<B', data[6:7])[0]) & 0x08) != 0
 
 def get_error_code_from_data(data):
     return (struct.unpack('<B', data[7:8])[0] >> 6) & 0x03
