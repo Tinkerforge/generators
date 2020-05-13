@@ -116,6 +116,40 @@ class PacketBuffer():
 
             seq_num = self.data[1] & 0x0F
             seq_num_acked = (self.data[1] & 0xF0) >> 4
+            start_time = self.frame_start_times[0]
+            end_time = self.frame_end_times[packet_len - 1]
+
+            if packet_len == 3:
+                self.remove(packet_len)
+                return {
+                    'type': 'Ack',
+                    'start_time': start_time,
+                    'end_time': end_time,
+                    'data': {
+                        'input_type': frame_type,
+                        'length': packet_len,
+                        'checksum': packet_checksum,
+                        'seq_num': seq_num,
+                        'seq_num_acked': seq_num_acked,
+                    }
+                }
+
+            if packet_len < 11:
+                payload = str(self.data[2:-1])
+                self.remove(packet_len)
+                return {
+                    'type': 'Invalid',
+                    'start_time': start_time,
+                    'end_time': end_time,
+                    'data': {
+                        'input_type': frame_type,
+                        'length': packet_len,
+                        'checksum': packet_checksum,
+                        'seq_num': seq_num,
+                        'seq_num_acked': seq_num_acked,
+                        'payload': payload
+                    }
+                }
 
             tfp_header = bytes(self.data[2:10])
 
@@ -150,10 +184,11 @@ class PacketBuffer():
             error_code = get_error_code_from_data(tfp_header)
             response_expected = get_response_expected_from_data(tfp_header)
 
+            self.remove(packet_len)
             return {
                 'type': self.format,
-                'start_time': self.frame_start_times[0],
-                'end_time': self.frame_end_times[-1],
+                'start_time': start_time,
+                'end_time': end_time,
                 'data': {
                     'input_type': frame_type,
                     'length': packet_len,
@@ -236,6 +271,12 @@ class Hla():
                 },
                 'Headers': {
                     'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}] TFP [UID: {{data.uid}}, Len: {{data.tfp_length}}, FID: {{data.fid}}, SeqNum: {{data.tfp_seq_num}}, Error: {{data.error_code}}, RespExpected: {{data.response_expected}}], Checksum: {{data.checksum}}'
+                },
+                'Ack': {
+                    'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}], Checksum: {{data.checksum}}'
+                },
+                'Invalid': {
+                    'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}], (Invalid!) SPITFP payload[{{data.payload}}] Checksum: {{data.checksum}}'
                 }
             }
         }
