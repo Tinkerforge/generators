@@ -88,6 +88,7 @@ openHABUnits = [
     OpenHABUnit('Pascal', 'SIUnits.PASCAL', 'Pressure'),
     OpenHABUnit('Percent Relative Humidity', 'SmartHomeUnits.PERCENT', 'Dimensionless'),
     OpenHABUnit('Percent', 'SmartHomeUnits.PERCENT', 'Dimensionless'),
+    OpenHABUnit('Percent Per Second', 'SmartHomeUnits.ONE', 'Dimensionless'),
     OpenHABUnit('Ohm', 'SmartHomeUnits.OHM', 'ElectricResistance'),
     OpenHABUnit('Second', 'SmartHomeUnits.SECOND', 'Time'),
     OpenHABUnit('Standard Gravity', 'SmartHomeUnits.STANDARD_GRAVITY', 'Acceleration'),
