@@ -826,7 +826,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
@@ -845,7 +845,7 @@ com['openhab'] = {
             'id': 'Velocity Reached',
             'type': 'system.trigger',
             'label': 'Velocity Reached',
-            'description': "This channel is triggered whenever a set velocity is reached. For example: If a velocity of 0 is present, acceleration is set to 5000 and velocity to 10000, the channel will be triggered after about 2 seconds, when the set velocity is actually reached.\n\nNote\n\nSince we can't get any feedback from the DC motor, this only works if the acceleration is set smaller or equal to the maximum acceleration of the motor. Otherwise the motor will lag behind the control value and the listener will be triggered too early.",
+            'description': "This channel is triggered whenever a set velocity is reached. For example: If a velocity of 0 is present, acceleration is set to 50%/s and velocity to 100%, the channel will be triggered after about 2 seconds, when the set velocity is actually reached.\n\nNote\n\nSince we can't get any feedback from the DC motor, this only works if the acceleration is set smaller or equal to the maximum acceleration of the motor. Otherwise the motor will lag behind the control value and the listener will be triggered too early.",
 
             'callbacks': [{
                 'packet': 'Velocity Reached',
@@ -875,29 +875,174 @@ com['openhab'] = {
                 'packet': 'Get Current Velocity',
                 'element': 'Velocity',
                 'packet_params': [],
-                'transform': 'new DecimalType(value)'}],
+                'transform': 'new {number_type}(value{divisor}{unit})'}],
             'callbacks': [{
                 'packet': 'Current Velocity',
                 'element': 'Velocity',
-                'transform': 'new DecimalType(velocity)'}],
+                'transform': 'new {number_type}(velocity{divisor}{unit})'}],
 
             'init_code': """this.setCurrentVelocityPeriod(channelCfg.updateInterval);"""
-        }
+        }, {
+            'id': 'Velocity',
+            'type': 'Velocity',
+            'getters': [{
+                'packet': 'Get Velocity',
+                'element': 'Velocity',
+                'transform': 'new {number_type}(value{divisor}{unit})'
+            }],
+            'setters': [{
+                'packet': 'Set Velocity',
+                'element': 'Velocity',
+                'packet_params': ['(short)(cmd.doubleValue(){divisor})'],
+                'command_type': "Number"
+            }]
+        }, {
+            'id': 'Acceleration',
+            'type': 'Acceleration',
+            'getters': [{
+                'packet': 'Get Acceleration',
+                'element': 'Acceleration',
+                'transform': 'new {number_type}(value{divisor}{unit})'
+            }],
+            'setters': [{
+                'packet': 'Set Acceleration',
+                'element': 'Acceleration',
+                'packet_params': ['(int)(cmd.intValue(){divisor})'],
+                'command_type': "Number"
+            }]
+        }, {
+            'id': 'PWM Frequency',
+            'type': 'PWM Frequency',
+            'getters': [{
+                'packet': 'Get PWM Frequency',
+                'element': 'Frequency',
+                'transform': 'new {number_type}(value{divisor}{unit})'
+            }],
+            'setters': [{
+                'packet': 'Set PWM Frequency',
+                'element': 'Frequency',
+                'packet_params': ['(int)(cmd.intValue(){divisor})'],
+                'command_type': "Number"
+            }]
+        }, {
+            'id': 'Enabled',
+            'type': 'Enabled',
+
+            'setters': [{
+                    'predicate': 'cmd == OnOffType.ON',
+                    'packet': 'Enable',
+                    'packet_params': [],
+                    'command_type': "OnOffType",
+                }, {
+                    'predicate': 'cmd == OnOffType.OFF',
+                    'packet': 'Disable',
+                    'packet_params': [],
+                    'command_type': "OnOffType",
+                }
+            ],
+
+
+            'getters': [{
+                'packet': 'Is Enabled',
+                'element': '{title_words}',
+                'transform': 'value ? OnOffType.ON : OnOffType.OFF'
+            }]
+        }, {
+            'id': 'Full Brake',
+            'type': 'Full Brake',
+
+            'setters': [{
+                'packet': 'Full Brake',
+                'packet_params': [],
+                'command_type': "StringType", # Command type has to be string type to be able to use command options.
+            }],
+        }, {
+            'id': 'Stack Input Voltage',
+            'type': 'Stack Input Voltage',
+            'getters': [{
+                'packet': 'Get Stack Input Voltage',
+                'element': 'Voltage',
+                'transform': 'new {number_type}(value{divisor}{unit})'
+            }],
+        }, {
+            'id': 'External Input Voltage',
+            'type': 'External Input Voltage',
+            'getters': [{
+                'packet': 'Get External Input Voltage',
+                'element': 'Voltage',
+                'transform': 'new {number_type}(value{divisor}{unit})'
+            }],
+        }, {
+            'id': 'Current Consumption',
+            'type': 'Current Consumption',
+            'getters': [{
+                'packet': 'Get Current Consumption',
+                'element': 'Voltage',
+                'transform': 'new {number_type}(value{divisor}{unit})'
+            }],
+        }, {
+            'id': 'Freewheeling',
+            'type': 'Freewheeling',
+            'setters': [{
+                    'packet': 'Set Drive Mode',
+                    'element': 'Mode',
+                    'packet_params': ['cmd == OnOffType.ON ? (short)1 : (short)0'],
+                    'command_type': "OnOffType",
+                }
+            ],
+            'getters': [{
+                'packet': 'Get Drive Mode',
+                'element': 'Mode',
+                'transform': 'value == 1 ? OnOffType.ON : OnOffType.OFF'
+            }]
+        },
     ],
     'channel_types': [
         oh_generic_channel_type('Current Velocity', 'Number', 'Current Velocity',
             update_style='Period',
-            description='The current velocity of the motor.'),
+            description='The current velocity of the motor. This value is different from the target velocity whenever the motor is currently accelerating to a goal set by the target velocity channel.'),
+        oh_generic_channel_type('Velocity', 'Number', 'Target Velocity',
+            update_style=None,
+            description='The target velocity of the motor. Depending on the acceleration, the motor is not immediately brought to the velocity but smoothly accelerated.\n\nThe velocity describes the duty cycle of the PWM with which the motor is controlled, e.g. a velocity of 10% sets a PWM with a 10% duty cycle. You can not only control the duty cycle of the PWM but also the frequency.'),
+        oh_generic_channel_type('Acceleration', 'Number', 'Acceleration',
+            update_style=None,
+            description='The acceleration of the motor. It is given in velocity/s. An acceleration of 30%/s means, that every second the velocity is increased by 30% duty cycle.\n\nFor example: If the current velocity is 0 and you want to accelerate to a velocity of 50% in 10 seconds, you should set an acceleration of 5%/s.\n\nIf acceleration is set to 0, there is no speed ramping, i.e. a new velocity is immediately given to the motor.',
+            pattern='%.3f %%/s'),
+        oh_generic_channel_type('PWM Frequency', 'Number', 'PWM Frequency',
+            update_style=None,
+            description='The frequency of the PWM with which the motor is driven. Often a high frequency is less noisy and the motor runs smoother. However, with a low frequency there are less switches and therefore fewer switching losses. Also with most motors lower frequencies enable higher torque.\n\nIf you have no idea what all this means, just ignore this function and use the default frequency of 15000Hz, it will very likely work fine.'),
+        oh_generic_channel_type('Enabled', 'Switch', 'Enabled',
+            update_style=None,
+            description='Enables/Disables the driver chip. The driver parameters can be configured (velocity, acceleration, etc) before it is enabled. When disabled, the configuration is kept (velocity, acceleration, etc) but the motor is not driven until it is enabled again.\n\nWarning\n\nDisabling the driver chip while the motor is still turning can damage the driver chip. The motor should be stopped by setting the velocity to 0 before disabling the motor power. You have to explicitly wait for the appropriate time after setting the velocity before disabling the driver chip function.'),
+        {
+            'id': 'Full Brake',
+            'item_type': 'String',
+            'label': 'Full Brake',
+            'description':'Executes an active full brake.\n\nWarning\n\nThis function is for emergency purposes, where an immediate brake is necessary. Depending on the current velocity and the strength of the motor, a full brake can be quite violent.\n\nSet the velocity to 0 if you just want to stop the motor.',
+            'command_options': [('Full Brake', 'FULL BRAKE')]
+        },
+        oh_generic_channel_type('Stack Input Voltage', 'Number', 'Stack Input Voltage',
+            update_style=None,
+            description='The stack input voltage is the voltage that is supplied via the stack, i.e. it is given by a Step-Down or Step-Up Power Supply.'),
+        oh_generic_channel_type('External Input Voltage', 'Number', 'External Input Voltage',
+            update_style=None,
+            description='The external input voltage is given via the black power input connector on the DC Brick.\n\nIf there is an external input voltage and a stack input voltage, the motor will be driven by the external input voltage. If there is only a stack voltage present, the motor will be driven by this voltage.\n\nWarning\n\nThis means, if you have a high stack voltage and a low external voltage, the motor will be driven with the low external voltage. If you then remove the external connection, it will immediately be driven by the high stack voltage.'),
+        oh_generic_channel_type('Current Consumption', 'Number', 'Current Consumption',
+            update_style=None,
+            description='The current consumption of the motor'),
+        oh_generic_channel_type('Freewheeling', 'Switch', 'Free-wheeling',
+            update_style=None,
+            description='Enables/disables free-wheeling: If disabled, the motor is always either driving or braking. There is no freewheeling. Advantages are: A more linear correlation between PWM and velocity, more exact accelerations and the possibility to drive with slower velocities. If enabled, the motor is always either driving or freewheeling. Advantages are: Less current consumption and less demands on the motor and driver chip.'),
     ],
     'actions': [
-        'Set Velocity', 'Get Velocity', 'Get Current Velocity',
-        'Set Acceleration', 'Get Acceleration',
-        'Full Brake',
-        'Enable', 'Disable', 'Is Enabled',
-        'Set PWM Frequency', 'Get PWM Frequency',
+        {'fn': 'Set Velocity', 'refreshs': ['Velocity']}, 'Get Velocity', 'Get Current Velocity',
+        {'fn': 'Set Acceleration', 'refreshs': ['Acceleration']}, 'Get Acceleration',
+        {'fn': 'Full Brake', 'refreshs': ['Velocity']},
+        {'fn': 'Enable', 'refreshs': ['Enabled']}, {'fn': 'Disable', 'refreshs': ['Enabled']}, 'Is Enabled',
+        {'fn': 'Set PWM Frequency', 'refreshs': ['PWM Frequency']}, 'Get PWM Frequency',
         'Get Stack Input Voltage', 'Get External Input Voltage',
         'Get Current Consumption',
-        'Set Drive Mode', 'Get Drive Mode',
+        {'fn': 'Set Drive Mode', 'refreshs': ['Freewheeling']}, 'Get Drive Mode',
         'Get Minimum Voltage'
     ]
 }
