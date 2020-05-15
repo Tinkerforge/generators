@@ -148,6 +148,8 @@ class SaleaeBindingsGenerator(saleae_common.SaleaeGeneratorTrait, common.Binding
         return SaleaeBindingsElement
 
     def generate(self, device):
+        if not device.has_comcu():
+            return
         filename = '{0}_{1}.txt'.format(device.get_category().under, device.get_name().under)
 
         with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
