@@ -153,3 +153,8 @@
   Master Brick 3.0 API for internal Co-MCU Bricklet bootloader flashing
 - Validate response length before unpacking response
 - Properly report replaced device objects as non-functional
+
+2020-05-18: 2.1.26 (<unknown>)
+- Add GetAllVoltages and Set/GetAllVoltagesCallbackConfiguration functions and
+  AllVoltages callback to Industrial Dual Analog In Bricklet 2.0 API
+- Add Set/GetI2CMode functions to Barometer Bricklet API

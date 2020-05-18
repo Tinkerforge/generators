@@ -54,3 +54,8 @@
 
 2020-04-20: 2.0.7 (a3e9fdd)
 - Fix response length validation for empty responses
+
+2020-05-18: 2.0.8 (<unknown>)
+- Add GetAllVoltages and Set/GetAllVoltagesCallbackConfiguration functions and
+  AllVoltages callback to Industrial Dual Analog In Bricklet 2.0 API
+- Add Set/GetI2CMode functions to Barometer Bricklet API

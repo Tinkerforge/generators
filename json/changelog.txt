@@ -24,3 +24,9 @@
   flashing
 - Replace '"scale": null' with '"scale": {"numerator": 1, "denominator": 1}'
 - Add new documentation category "if" (internal functions)
+
+2020-05-18: 2.0.3 (<unknown>)
+- Add "Get All Voltages" and "Set/Get All Voltages Callback Configuration"
+  functions and "All Voltages" callback to Industrial Dual Analog In Bricklet 2.0
+  API
+- Add "Set/Get I2C Mode" functions to Barometer Bricklet API

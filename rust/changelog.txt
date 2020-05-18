@@ -72,3 +72,8 @@
   Bricklet flashing
 - Add set_bricklet_xmc_flash_config/data and set/get_bricklets_enabled functions
   to Master Brick 3.0 API for internal Co-MCU Bricklet bootloader flashing
+
+2020-05-18: 2.0.15 (<unknown>)
+- Add get_all_voltages and set/get_all_voltages_callback_configuration functions
+  and ALL_VOLTAGES callback to Industrial Dual Analog In Bricklet 2.0 API
+- Add set/get_i2c_mode functions to Barometer Bricklet API
