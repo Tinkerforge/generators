@@ -174,7 +174,7 @@
 - Fix bool array unpacking
 - Fix callbacks with one array parameter
 
-2020-05-18: 2.1.27 (<unknown>)
+2020-05-19: 2.1.27 (<unknown>)
 - Add get_all_voltages and set/get_all_voltages_callback_configuration functions
   and ALL_VOLTAGES callback to Industrial Dual Analog In Bricklet 2.0 API
 - Add set/get_i2c_mode functions to Barometer Bricklet API
