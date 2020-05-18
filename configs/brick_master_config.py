@@ -202,12 +202,18 @@ com['packets'].append({
 Returns the stack voltage. The stack voltage is the
 voltage that is supplied via the stack, i.e. it is given by a
 Step-Down or Step-Up Power Supply.
+
+.. note::
+ It is not possible to measure voltages supplied per PoE or USB with this function.
 """,
 'de':
 """
 Gibt die Spannung des Stapels zurück. Diese Spannung wird über
 den Stapel verteilt und kann zum Beispiel über eine Step-Down oder
 Step-Up Power Supply eingespeist werden.
+
+.. note::
+ Es ist mit dieser Funktion nicht möglich, Spannungen, die per PoE oder USB eingespeist werden, zu messen.
 """
 }]
 })
@@ -223,12 +229,18 @@ com['packets'].append({
 Returns the stack current. The stack current is the
 current that is drawn via the stack, i.e. it is given by a
 Step-Down or Step-Up Power Supply.
+
+.. note::
+ It is not possible to measure the current drawn via PoE or USB with this function.
 """,
 'de':
 """
 Gibt den Stromverbrauch des Stapels zurück. Der angegebene Strom
 bezieht sich auf den Stromverbrauch der am Stapel angeschlossenen Verbraucher.
 Die Speisung kann z.B. über eine Step-Down oder Step-Up Power Supply erfolgen.
+
+.. note::
+ Es ist mit dieser Funktion nicht möglich, den Stromverbrauch über PoE oder USB zu messen.
 """
 }]
 })
