@@ -105,18 +105,16 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
             'LICENSE',
         ]
 
-        if self.get_config_name().space == 'Tinkerforge':
-            for f in top_level_files:
-                shutil.copy(os.path.join(root_dir, f), self.tmp_dir)
-            for dir, files in copy_map.items():
-                path = os.path.join(self.tmp_bindings_dir, dir)
-                if not os.path.exists(path):
-                    os.makedirs(path)
-                for f in files:
-                    shutil.copy(os.path.join(root_dir, f), path)
-        else:
-            shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, 'custom.txt'),                   os.path.join(self.tmp_dir, 'readme.txt'))
+        for f in top_level_files:
+            shutil.copy(os.path.join(root_dir, f), self.tmp_dir)
+
+        for dir, files in copy_map.items():
+            path = os.path.join(self.tmp_bindings_dir, dir)
+
+            if not os.path.exists(path):
+                os.makedirs(path)
+            for f in files:
+                shutil.copy(os.path.join(root_dir, f), path)
 
         output = subprocess.check_output(["go", "fmt"], cwd=self.tmp_bindings_dir, stderr=subprocess.STDOUT).decode('utf-8').strip()
 
