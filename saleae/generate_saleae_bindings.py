@@ -5,7 +5,7 @@
 Saleae High Level Analyzer Generator
 Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
-generate_json_bindings.py: Generator for Saleae bindings
+generate_saleae_bindings.py: Generator for Saleae bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

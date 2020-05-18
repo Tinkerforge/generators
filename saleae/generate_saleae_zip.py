@@ -3,7 +3,7 @@
 
 """
 Saleae ZIP Generator
-Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_saleae_zip.py: Generator for Saleae ZIP
 
