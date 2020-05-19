@@ -721,8 +721,33 @@ com['examples'].append({
 })
 
 
+def rgb_setter(offset):
+    return {
+        'predicate': 'channelCfg.ledCount > {} && Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)'.format(offset),
+        'packet': 'Set RGB Values',
+        'packet_params': [str(offset),
+                        '(short)(channelCfg.ledCount >= {} + 16 ? 16 : (channelCfg.ledCount % 16))'.format(offset),
+                        'Helper.createLED1ColorComponentList(cmd, false, channelCfg.ledCount, 0)',
+                        'Helper.createLED1ColorComponentList(cmd, false, channelCfg.ledCount, 1)',
+                        'Helper.createLED1ColorComponentList(cmd, false, channelCfg.ledCount, 2)'],
+        'command_type': "HSBType",
+    }
+
+def rgbw_setter(offset):
+    return {
+        'predicate': 'channelCfg.ledCount > {} && !Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)'.format(offset),
+        'packet': 'Set RGBW Values',
+        'packet_params': [str(offset),
+                        '(short)(channelCfg.ledCount >= {} + 12 ? 12 : (channelCfg.ledCount % 12))'.format(offset),
+                        'Helper.createLED1ColorComponentList(cmd, true, channelCfg.ledCount, 0)',
+                        'Helper.createLED1ColorComponentList(cmd, true, channelCfg.ledCount, 1)',
+                        'Helper.createLED1ColorComponentList(cmd, true, channelCfg.ledCount, 2)',
+                        'Helper.createLED1ColorComponentList(cmd, true, channelCfg.ledCount, 3)'],
+        'command_type': "HSBType",
+    }
+
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.HSBType'],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': """this.setChipType(cfg.chipType);
     this.setChannelMapping(cfg.channelMapping.shortValue());
@@ -762,7 +787,7 @@ com['openhab'] = {
             'type': 'integer',
             'label': 'Clock Frequency',
             'description': 'The frequency of the clock in Hz. The Bricklet will choose the nearest achievable frequency, which may be off by a few Hz.\n\nIf you have problems with flickering LEDs, they may be bits flipping. You can fix this by either making the connection between the LEDs and the Bricklet shorter or by reducing the frequency.\n\nWith a decreasing frequency your maximum frames per second will decrease too.\n\nThe default value is 1.66MHz (1660000Hz).'
-        },
+        }
         ],
     'channels': [
         {
@@ -801,13 +826,31 @@ com['openhab'] = {
                     'command_type': "StringType",
                 }
             ],
-
         },
+         {
+            'id': 'All LEDs',
+            'type': 'All LEDs',
+            # The LED Strip 1.0 does not support streaming, so we have to set more than 12/16 leds manually
+            'setters': [rgb_setter(offset) for offset in range(0, 320, 16)] + [rgbw_setter(offset) for offset in range(0, 240, 12)]
+        }
     ],
     'channel_types': [
         oh_generic_channel_type('LED Values', 'String', 'LED Values',
                     update_style=None,
-                    description="The RGB(W) values for the LEDs. Changes will be applied the next time the Frame Started Channel triggers.\n\nCommand format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...\n\nThe data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.\n\n For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue.")
+                    description="The RGB(W) values for the LEDs. Changes will be applied the next time the Frame Started Channel triggers.\n\nCommand format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...\n\nThe data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.\n\n For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue."),
+        oh_generic_channel_type('All LEDs', 'Color', 'All LEDs',
+                    params=[{
+                        'packet': 'Set RGB Values',
+                        'element': 'Index',
+
+                        'name': 'LED Count',
+                        'type': 'integer',
+
+                        'label': 'LED Count',
+                        'description': 'The number of LEDs to control.'
+                    }],
+                    update_style=None,
+                    description="This channel allows you to set a configurable amount of LEDs (up to 240 RGBW LEDs or 320 RGB LEDs) to the same color. If you want more fine-grained control over the LEDs, use the LED Values channel or the actions.")
     ],
     'actions': ['Set RGB Values', 'Get RGB Values', 'Get Frame Duration', 'Get Supply Voltage', 'Get Clock Frequency', 'Get Chip Type', 'Set RGBW Values', 'Get RGBW Values', 'Get Channel Mapping']
 }

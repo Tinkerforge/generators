@@ -25,6 +25,8 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.smarthome.core.library.types.HSBType;
+import org.eclipse.smarthome.core.library.types.PercentType;
 import org.slf4j.Logger;
 
 /**
@@ -389,6 +391,76 @@ public class Helper {
         } catch (Exception e) {
             logger.warn("Could not parse LED Value command: {}", e.getMessage());
             return new short[] {};
+        }
+    }
+
+    private static int[] HSBToRGB(HSBType cmd) {
+        int argb = cmd.getRGB();
+        int red = (argb & 0x00FF0000) >> 16;
+        int green = (argb & 0x0000FF00) >> 8;
+        int blue = (argb & 0x000000FF) >> 0;
+        return new int[] { red, green, blue };
+    }
+
+    private static int[] HSBToRGBW(HSBType cmd) {
+        // To get a non-saturated hue, use the fully saturated hue and lerp with white,
+        // as described here: https://blog.saikoled.com/post/44677718712/how-to-convert-from-hsi-to-rgb-white
+        HSBType fullySaturated = new HSBType(cmd.getHue(), PercentType.HUNDRED, PercentType.HUNDRED);
+
+        int white = 255;
+
+        int argb = fullySaturated.getRGB();
+        int red = (argb & 0x00FF0000) >> 16;
+        int green = (argb & 0x0000FF00) >> 8;
+        int blue = (argb & 0x000000FF) >> 0;
+
+        double colorWeight = (cmd.getSaturation().doubleValue() / 100.0);
+        double whiteWeight = 1 - colorWeight;
+
+        colorWeight *= cmd.getBrightness().doubleValue() / 100.0;
+        whiteWeight *= cmd.getBrightness().doubleValue() / 100.0;
+
+        red *= colorWeight;
+        green *= colorWeight;
+        blue *= colorWeight;
+
+        white *= whiteWeight;
+        return new int[] { red, green, blue, white };
+    }
+
+    public static short[] createLED1ColorComponentList(HSBType cmd, boolean isRGBW, int ledCount, int component) {
+        int[] color = isRGBW ? HSBToRGBW(cmd) : HSBToRGB(cmd);
+
+        double stride = isRGBW ? 12 : 16;
+        int arrayLen = (int)(stride * Math.ceil(ledCount / stride));
+
+        short[] result = new short[arrayLen];
+        Arrays.fill(result, (short) color[component]);
+        return result;
+    }
+
+    public static int[] createLED2ColorComponentList(HSBType cmd, boolean isRGBW, int ledCount) {
+        if (!isRGBW) {
+            int[] rgb = HSBToRGB(cmd);
+
+            int[] result = new int[ledCount * 3];
+            for (int i = 0; i < ledCount; ++i) {
+                result[3 * i + 0] = rgb[0];
+                result[3 * i + 1] = rgb[1];
+                result[3 * i + 2] = rgb[2];
+            }
+            return result;
+        } else {
+            int[] rgbw = HSBToRGBW(cmd);
+
+            int[] result = new int[ledCount * 4];
+            for (int i = 0; i < ledCount; ++i) {
+                result[4 * i + 0] = rgbw[0];
+                result[4 * i + 1] = rgbw[1];
+                result[4 * i + 2] = rgbw[2];
+                result[4 * i + 3] = rgbw[3];
+            }
+            return result;
         }
     }
 

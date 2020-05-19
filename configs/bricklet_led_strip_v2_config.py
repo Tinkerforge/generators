@@ -504,7 +504,7 @@ com['examples'].append({
 
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.HSBType'],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code': """this.setChipType(cfg.chipType);
     this.setChannelMapping(cfg.channelMapping);
@@ -568,12 +568,41 @@ com['openhab'] = {
                 'command_type': "StringType",
             }],
 
-        },
+        }, {
+            'id': 'All LEDs',
+            'type': 'All LEDs',
+            'setters': [{
+                'predicate': 'Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)',
+                    'packet': 'Set LED Values',
+                    'packet_params': ['0',
+                                    'Helper.createLED2ColorComponentList(cmd, false, Math.min(channelCfg.ledCount, 2048))',],
+                    'command_type': "HSBType",
+                }, {
+                    'predicate': '!Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)',
+                    'packet': 'Set LED Values',
+                    'packet_params': ['0',
+                                    'Helper.createLED2ColorComponentList(cmd, true, Math.min(channelCfg.ledCount, 1536))'],
+                    'command_type': "HSBType",
+            }]
+        }
     ],
     'channel_types': [
         oh_generic_channel_type('LED Values', 'String', 'LED Values',
                     update_style=None,
-                    description="The RGB(W) values for the LEDs. Changes will be applied the next time the Frame Started Channel triggers.\n\nCommand format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...\n\nThe data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.\n\n For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue.")
+                    description="The RGB(W) values for the LEDs. Changes will be applied the next time the Frame Started Channel triggers.\n\nCommand format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...\n\nThe data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.\n\n For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue."),
+        oh_generic_channel_type('All LEDs', 'Color', 'All LEDs',
+                    params=[{
+                        'packet': 'Set LED Values Low Level',
+                        'element': 'Index',
+
+                        'name': 'LED Count',
+                        'type': 'integer',
+
+                        'label': 'LED Count',
+                        'description': 'The number of LEDs to control.'
+                    }],
+                    update_style=None,
+                    description="This channel allows you to set a configurable amount of LEDs (up to 1536 RGBW LEDs or 2048 RGB LEDs) to the same color. If you want more fine-grained control over the LEDs, use the LED Values channel or the actions.")
     ],
     'actions': ['Set LED Values', 'Get LED Values', 'Get Frame Duration', 'Get Supply Voltage', 'Get Clock Frequency', 'Get Chip Type', 'Get Channel Mapping']
 }
