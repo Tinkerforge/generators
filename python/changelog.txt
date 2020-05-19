@@ -321,7 +321,7 @@
 - Validate response length before unpacking response
 - Properly report replaced device objects as non-functional
 
-2020-05-19: 2.1.26 (<unknown>)
+2020-05-19: 2.1.26 (9c76b18)
 - Add get_all_voltages and set/get_all_voltages_callback_configuration functions
   and ALL_VOLTAGES callback to Industrial Dual Analog In Bricklet 2.0 API
 - Add set/get_i2c_mode functions to Barometer Bricklet API

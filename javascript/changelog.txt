@@ -160,7 +160,7 @@
 2020-04-20: 2.1.27 (5f50677)
 - Also call return-callbacks for pure setters
 
-2020-05-19: 2.1.28 (<unknown>)
+2020-05-19: 2.1.28 (9c76b18)
 - Add getAllVoltages and set/getAllVoltagesCallbackConfiguration functions and
   ALL_VOLTAGES callback to Industrial Dual Analog In Bricklet 2.0 API
 - Add set/getI2CMode functions to Barometer Bricklet API
