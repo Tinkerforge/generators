@@ -26,11 +26,12 @@ DISPLAY_NAMES = {
 'python':      'Python',
 'ruby':        'Ruby',
 'rust':        'Rust',
+'saleae':      'Saleae',
 'shell':       'Shell',
 'vbnet':       'Visual Basic .NET'
 }
 
-def download_links(base_path):
+def main(base_path):
     bindings = []
 
     for d in sorted(os.listdir(base_path)):
@@ -52,13 +53,16 @@ def download_links(base_path):
         downloads.append('<a href="https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_{2}_{3}_{4}.zip">{1}</a>'
                          .format(binding, DISPLAY_NAMES[binding], *version))
  
-    print("""<p><strong>Bindings: {0}</strong></p>
-
+    print("""<p><strong>Bindings:
+{0}
+</strong></p>
 <ul>
 <li>...</li>
 </ul>
-<p>Download: {1}</p>
-""".format(', '.join(display_names), ', '.join(downloads)))
+<p>Download:
+{1}
+</p>
+""".format(',\n'.join(display_names), ',\n'.join(downloads)))
 
 if __name__ == "__main__":
-    download_links(os.getcwd())
+    main(os.getcwd())
