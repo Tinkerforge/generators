@@ -214,3 +214,7 @@
 - Fix channel reconfiguration logic
 - Fix Master Brick required firmware version
 - Fix LED strip index parsing
+
+2020-05-19: 2.0.0 Beta 23
+- Add control channels to DC Brick
+- Add All LEDs channel to LED Strip Bricklets
