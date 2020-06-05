@@ -417,7 +417,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set GPIO Configuration',
 'elements': [('Debounce', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 200}),
-             ('Stop Deceleration', 'int32', 1, 'in', {'range': (0, 0xFFFF), 'default': 0xFFFF, 'unit': 'Steps Per Second Squared'})],
+             ('Stop Deceleration', 'uint16', 1, 'in', {'default': 0xFFFF, 'unit': 'Steps Per Second Squared'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -435,7 +435,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get GPIO Configuration',
 'elements': [('Debounce', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 200}),
-             ('Stop Deceleration', 'int32', 1, 'out', {'range': (0, 0xFFFF), 'default': 0xFFFF, 'unit': 'Steps Per Second Squared'})],
+             ('Stop Deceleration', 'uint16', 1, 'out', {'default': 0xFFFF, 'unit': 'Steps Per Second Squared'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
