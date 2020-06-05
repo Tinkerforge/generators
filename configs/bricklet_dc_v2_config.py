@@ -43,8 +43,8 @@ com['constant_groups'].append({
 'constants': [('None', 0),
               ('Normal Stop Rising Edge', 1 << 0),   
               ('Normal Stop Falling Edge', 1 << 1),
-              ('Full Break Rising Edge', 1 << 2),
-              ('Full Break Falling Edge', 1 << 3),
+              ('Full Brake Rising Edge', 1 << 2),
+              ('Full Brake Falling Edge', 1 << 3),
               ('Callback Rising Edge', 1 << 4),
               ('Callback Falling Edge', 1 << 5)]
 })
