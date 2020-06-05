@@ -184,12 +184,14 @@ function BrickDaemon(uid, ipcon) {
     this.responseExpected[BrickDaemon.FUNCTION_AUTHENTICATE] = Device.RESPONSE_EXPECTED_TRUE;
 
     this.getAuthenticationNonce = function(returnCallback, errorCallback) {
-        this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 12, 'B4', returnCallback, errorCallback);
+        this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 12, 'B4', returnCallback, errorCallback, false, false);
     };
 
     this.authenticate = function(clientNonce, digest, returnCallback, errorCallback) {
-        this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_AUTHENTICATE, [clientNonce, digest], 'B4 B20', 0, '', returnCallback, errorCallback);
+        this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_AUTHENTICATE, [clientNonce, digest], 'B4 B20', 0, '', returnCallback, errorCallback, false, false);
     };
+
+    this.ipcon.addDevice(this);
 }
 
 // the IPConnection class and constructor
@@ -210,7 +212,6 @@ function IPConnection() {
     this.isConnected = false;
     this.connectErrorCallback = undefined;
     this.mergeBuffer = Buffer.concat([]); //See https://nodejs.org/en/docs/guides/buffer-constructor-deprecation/#buffer-0
-    this.brickd = new BrickDaemon('2', this);
 
     this.addDevice = function (device) {
         var replacedDevice = this.devices[device.uid];
@@ -221,6 +222,8 @@ function IPConnection() {
 
         this.devices[device.uid] = device;
     };
+
+    this.brickd = new BrickDaemon('2', this);
 
     this.disconnectProbe = function () {
         if (this.socket !== undefined) {
@@ -918,7 +921,8 @@ function IPConnection() {
                                  sendRequestUnpackFormat,
                                  sendRequestReturnCB,
                                  sendRequestErrorCB,
-                                 startStreamResponseTimer) {
+                                 startStreamResponseTimer,
+                                 checkValidity) {
         if (this.getConnectionState() !== IPConnection.CONNECTION_STATE_CONNECTED) {
             if (sendRequestErrorCB !== undefined) {
                 sendRequestErrorCB(IPConnection.ERROR_NOT_CONNECTED);
@@ -927,17 +931,7 @@ function IPConnection() {
             return;
         }
 
-        if (sendRequestFID == 255) {
-            this.sendRequestInternal(sendRequestDevice,
-                                     sendRequestFID,
-                                     sendRequestData,
-                                     sendRequestPackFormat,
-                                     sendRequestExpectedResponseLength,
-                                     sendRequestUnpackFormat,
-                                     sendRequestReturnCB,
-                                     sendRequestErrorCB,
-                                     startStreamResponseTimer);
-        } else {
+        if (checkValidity) {
             sendRequestDevice.checkValidity(function () {
                 this.sendRequestInternal(sendRequestDevice,
                                          sendRequestFID,
@@ -950,6 +944,16 @@ function IPConnection() {
                                          startStreamResponseTimer);
             }.bind(this),
             sendRequestErrorCB);
+        } else {
+            this.sendRequestInternal(sendRequestDevice,
+                                     sendRequestFID,
+                                     sendRequestData,
+                                     sendRequestPackFormat,
+                                     sendRequestExpectedResponseLength,
+                                     sendRequestUnpackFormat,
+                                     sendRequestReturnCB,
+                                     sendRequestErrorCB,
+                                     startStreamResponseTimer);
         }
     }
 

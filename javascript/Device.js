@@ -196,6 +196,7 @@ function Device(that, uid, ipcon, deviceIdentifier, deviceDisplayName) {
                         }
                     }.bind(this),
                     errorCallback,
+                    false,
                     false
                 );
             }

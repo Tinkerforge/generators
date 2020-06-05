@@ -299,7 +299,7 @@ var IPConnection = require('./IPConnection');
 		/*
 		{2}
 		*/
-		this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', {7}, '{8}', returnCallback, errorCallback, false);
+		this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', {7}, '{8}', returnCallback, errorCallback, false, {9});
 	}};
 """
 
@@ -311,6 +311,11 @@ var IPConnection = require('./IPConnection');
             pack_format = packet.get_javascript_format_list('in')
             unpack_format = packet.get_javascript_format_list('out')
 
+            if packet.get_function_id() == 255: # <device>.getIdentity
+                check = 'false'
+            else:
+                check = 'true'
+
             methods += template.format(name_headless,
                                        common.wrap_non_empty('', param_list, ', '),
                                        doc,
@@ -319,7 +324,8 @@ var IPConnection = require('./IPConnection');
                                        param_list,
                                        pack_format,
                                        packet.get_response_size() if len(unpack_format) > 0 else 0,
-                                       unpack_format)
+                                       unpack_format,
+                                       check)
 
         # High-level
         method_code = """
@@ -346,6 +352,7 @@ var IPConnection = require('./IPConnection');
 			                       '{unpack_format}',
 			                       returnCallback,
 			                       errorCallback,
+			                       true,
 			                       true);
 		}}
 		else {{
@@ -440,6 +447,7 @@ var IPConnection = require('./IPConnection');
 '{unpack_format}', \
 streamStateObject['responseProperties']['returnCB'], \
 streamStateObject['responseProperties']['errorCB'], \
+true, \
 true);"""
 
         template_response_handler_stream_out_body_single_chunk = """{stream_name_headless}ChunkOffset = 0;
@@ -701,7 +709,8 @@ true);"""
 				                       '{unpack_format}',
 				                       returnCallback,
 				                       errorCallback,
-				                       false);
+				                       false,
+				                       true);
 			}}
 			else {{
 				while ({stream_chunk_offset_param_name_ll} < {data_param_name_hl}.length) {{
@@ -716,7 +725,8 @@ true);"""
 					                       '{unpack_format}',
 					                       returnCallback,
 					                       errorCallback,
-					                       false);
+					                       false,
+					                       true);
 
 					{stream_chunk_offset_param_name_ll} += {chunk_cardinality};
 				}}
@@ -766,6 +776,7 @@ true);"""
 				                       '{unpack_format}',
 				                       returnCallback,
 				                       errorCallback,
+				                       true,
 				                       true);
 			}}
 			else {{
@@ -838,6 +849,7 @@ true);"""
 						                         '{unpack_format}',
 						                         returnCallback,
 						                         errorCallback,
+						                         true,
 						                         true);
 
 						streamStateObject['responseProperties']['streamInChunkOffset'] += {chunk_cardinality};
