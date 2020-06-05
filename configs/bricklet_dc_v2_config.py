@@ -242,11 +242,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the acceleration as set by :func:`Set Acceleration`.
+Returns the acceleration as set by :func:`Set Motion`.
 """,
 'de':
 """
-Gibt die Beschleunigung zurück, wie gesetzt von :func:`Set Acceleration`.
+Gibt die Beschleunigung zurück, wie gesetzt von :func:`Set Motion`.
 """
 }]
 })
