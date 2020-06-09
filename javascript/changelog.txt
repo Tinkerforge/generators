@@ -165,5 +165,5 @@
   ALL_VOLTAGES callback to Industrial Dual Analog In Bricklet 2.0 API
 - Add set/getI2CMode functions to Barometer Bricklet API
 
-2020-06-09: 2.1.29 (<unknown>)
-- Fix authenticate
+2020-06-09: 2.1.29 (4b7c531)
+- Fix authenticate function
