@@ -1,0 +1,16 @@
+Source: tinkerforge-ruby-bindings
+Section: electronics
+Priority: optional
+Maintainer: Matthias Bolte <matthias@tinkerforge.com>
+Build-Depends: debhelper (>= 11~), gem2deb
+Standards-Version: 4.1.3
+Homepage: https://www.tinkerforge.com/
+XS-Ruby-Versions: all
+
+Package: ruby-tinkerforge
+Architecture: all
+XB-Ruby-Versions: ${ruby:Versions}
+Depends: ruby | ruby-interpreter, ${misc:Depends}
+Description: Tinkerforge Ruby API Bindings
+ The Ruby API bindings allow you to control Tinkerforge Bricks and Bricklets
+ from your Ruby programs.
