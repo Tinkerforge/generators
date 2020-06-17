@@ -1,0 +1,11 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: tinkerforge-python-bindings
+Source: https://www.tinkerforge.com/
+
+Files: *
+Copyright: 2012-2015, 2017, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
+           2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+License: CC0 1.0
+ Redistribution and use in source and binary forms of this file,
+ with or without modification, are permitted. See the Creative
+ Commons Zero (CC0 1.0) License for more details.

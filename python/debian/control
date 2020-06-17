@@ -1,0 +1,25 @@
+Source: tinkerforge-python-bindings
+Section: electronics
+Priority: optional
+Maintainer: Matthias Bolte <matthias@tinkerforge.com>
+Build-Depends: debhelper (>= 10), dh-python, python, python-setuptools, python3, python3-setuptools
+Standards-Version: 4.1.2
+Homepage: https://www.tinkerforge.com/
+
+Package: python-tinkerforge
+Architecture: all
+Depends: ${python:Depends}, ${misc:Depends}
+Description: Tinkerforge Python API Bindings (Python 2)
+ The Python API bindings allow you to control Tinkerforge Bricks and Bricklets
+ from your Python programs.
+ .
+ This package installs the library for Python 2.
+
+Package: python3-tinkerforge
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: Tinkerforge Python API Bindings (Python 3)
+ The Python API bindings allow you to control Tinkerforge Bricks and Bricklets
+ from your Python programs.
+ .
+ This package installs the library for Python 3.
