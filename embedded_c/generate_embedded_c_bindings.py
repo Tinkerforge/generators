@@ -196,7 +196,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         return rc;
     }}
 
-    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, cs_pin_index);
+    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, rc);
     if (rc != TF_E_OK) {{
         return rc;
     }}{response_expected_init}
@@ -387,7 +387,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 
     if (result & TF_TICK_TIMEOUT) {{
         //return -result;
-        return TF_E_TIMEOUT
+        return TF_E_TIMEOUT;
     }}
 {extract_response}
     if (result & TF_TICK_AGAIN) {{
