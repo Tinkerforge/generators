@@ -30,3 +30,4 @@ tvpl/build_deploy_tvpl.py
 *.sublime-project
 *.sublime-workspace
 .vscode/*
+*tinkerforge*_all.deb
