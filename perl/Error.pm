@@ -125,9 +125,6 @@ Possible return value of the get_code() subroutine.
 
 use constant NON_ASCII_CHAR_IN_SECRET => 71;
 
-=back
-=cut
-
 =item WRONG_DEVICE_TYPE
 
 Possible return value of the get_code() subroutine.
@@ -136,9 +133,6 @@ Possible return value of the get_code() subroutine.
 
 use constant WRONG_DEVICE_TYPE => 81;
 
-=back
-=cut
-
 =item DEVICE_REPLACED
 
 Possible return value of the get_code() subroutine.
@@ -146,9 +140,6 @@ Possible return value of the get_code() subroutine.
 =cut
 
 use constant DEVICE_REPLACED => 82;
-
-=back
-=cut
 
 =item WRONG_RESPONSE_LENGTH
 
