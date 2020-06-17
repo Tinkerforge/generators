@@ -1,0 +1,15 @@
+Source: tinkerforge-perl-bindings
+Section: electronics
+Priority: optional
+Maintainer: Matthias Bolte <matthias@tinkerforge.com>
+Build-Depends: debhelper (>= 10)
+Build-Depends-Indep: perl
+Standards-Version: 4.1.3
+Homepage: https://www.tinkerforge.com/
+
+Package: libtinkerforge-perl
+Architecture: all
+Depends: ${perl:Depends}, ${misc:Depends}
+Description: Tinkerforge Perl API Bindings
+ The Perl API bindings allow you to control Tinkerforge Bricks and Bricklets
+ from your Perl programs.
