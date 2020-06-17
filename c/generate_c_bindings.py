@@ -407,7 +407,7 @@ int {0}_{1}({2} *{0}{3}) {{
         template_stream_in = """
 int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{high_level_parameters}) {{
 	DevicePrivate *device_p = {device_name_under}->p;
-	int ret;
+	int ret = 0;
 	{stream_length_type} {stream_name_under}_chunk_offset = 0;
 	{chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
 	{stream_length_type} {stream_name_under}_chunk_length;
@@ -447,7 +447,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
         template_stream_in_fixed_length = """
 int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{high_level_parameters}) {{
 	DevicePrivate *device_p = {device_name_under}->p;
-	int ret;
+	int ret = 0;
 	{stream_length_type} {stream_name_under}_length = {fixed_length};
 	{stream_length_type} {stream_name_under}_chunk_offset = 0;
 	{chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
@@ -482,7 +482,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
         template_stream_in_short_write = """
 int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{high_level_parameters}) {{
 	DevicePrivate *device_p = {device_name_under}->p;
-	int ret;
+	int ret = 0;
 	{stream_length_type} {stream_name_under}_chunk_offset = 0;
 	{chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
 	{stream_length_type} {stream_name_under}_chunk_length;
@@ -552,7 +552,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
 """
         template_stream_in_short_write_single_chunk = """
 int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{high_level_parameters}) {{
-	int ret;
+	int ret = 0;
 	{chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
 	uint8_t {stream_name_under}_written = 0;
 
@@ -577,7 +577,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
         template_stream_out = """
 int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{high_level_parameters}) {{
 	DevicePrivate *device_p = {device_name_under}->p;
-	int ret;
+	int ret = 0;
 	{stream_length_type} {stream_name_under}_length = {fixed_length};
 	{stream_length_type} {stream_name_under}_chunk_offset;
 	{chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
@@ -658,7 +658,7 @@ unlock:
 	}}"""
         template_stream_out_single_chunk = """
 int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{high_level_parameters}) {{
-	int ret;
+	int ret = 0;
 	{stream_length_type} {stream_name_under}_length;
 	{chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
 
