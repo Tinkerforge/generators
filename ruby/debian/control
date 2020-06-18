@@ -1,5 +1,5 @@
 Source: tinkerforge-ruby-bindings
-Section: electronics
+Section: ruby
 Priority: optional
 Maintainer: Matthias Bolte <matthias@tinkerforge.com>
 Build-Depends: debhelper (>= 11~), gem2deb
