@@ -1,0 +1,27 @@
+Source: tinkerforge-java-bindings
+Section: java
+Priority: optional
+Maintainer: Matthias Bolte <matthias@tinkerforge.com>
+Build-Depends: debhelper (>= 11), default-jdk, maven-debian-helper (>= 2.1)
+Build-Depends-Indep: default-jdk-doc, libmaven-javadoc-plugin-java
+Standards-Version: 4.2.1
+Homepage: https://www.tinkerforge.com/
+
+Package: libtinkerforge-java
+Architecture: all
+Depends: ${misc:Depends}, ${maven:Depends}
+Suggests: libtinkerforge-java-doc
+Description: Tinkerforge Java API Bindings
+ The Java API bindings allow you to control Tinkerforge Bricks and Bricklets
+ from your Java programs.
+
+Package: libtinkerforge-java-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}
+Suggests: libtinkerforge-java
+Description: Documentation for Tinkerforge Java API Bindings
+ The Java API bindings allow you to control Tinkerforge Bricks and Bricklets
+ from your Java programs.
+ .
+ This package contains the API documentation of libtinkerforge-java.

@@ -64,7 +64,7 @@ def generate(root_dir):
                     os.path.join(tmp_src_main_resources_dir, 'META-INF'))
 
     # Make pom.xml
-    common.specialize_template(os.path.join(root_dir, 'pom.xml.template'),
+    common.specialize_template(os.path.join(root_dir, 'pom.xml.maven-template'),
                                os.path.join(tmp_dir, 'pom.xml'),
                                {'{{VERSION}}': '.'.join(version)})
 

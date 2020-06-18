@@ -4,8 +4,8 @@ Tinkerforge Java Bindings
 The Java bindings allow you to control Tinkerforge Bricks and Bricklets from
 your Java programs. This ZIP file contains:
 
- Tinkerforge.jar -- precompiled Java library
- source/         -- source code of Tinkerforge.jar
+ tinkerforge.jar -- precompiled Java library
+ source/         -- source code of tinkerforge.jar
  examples/       -- examples for every Brick and Bricklet
 
 For more information about the Java bindings (including setup instructions)
@@ -16,4 +16,4 @@ go to:
 
 The Java bindings are also available from the Maven Central Repository:
 
- https://search.maven.org/#search%7Cga%7C1%7Ca%3Atinkerforge
+ https://search.maven.org/search?q=a:tinkerforge

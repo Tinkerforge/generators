@@ -126,7 +126,7 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
         if self.get_config_name().space == 'Tinkerforge':
             class_path = ''
         else:
-            class_path = '-cp /tmp/generators/java/Tinkerforge.jar '
+            class_path = '-cp /tmp/generators/java/tinkerforge.jar '
 
         with common.ChangedDirectory(self.tmp_dir):
             common.execute('javac ' +
@@ -141,7 +141,7 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
         with common.ChangedDirectory(self.tmp_source_dir):
             common.execute(['jar',
                             'cfm',
-                            os.path.join(self.tmp_dir, self.get_config_name().camel + '.jar'),
+                            os.path.join(self.tmp_dir, self.get_config_name().dash + '.jar'),
                             os.path.join(self.tmp_dir, 'manifest.txt'),
                            'com',
                            'META-INF'])
