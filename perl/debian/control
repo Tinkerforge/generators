@@ -1,5 +1,5 @@
 Source: tinkerforge-perl-bindings
-Section: electronics
+Section: perl
 Priority: optional
 Maintainer: Matthias Bolte <matthias@tinkerforge.com>
 Build-Depends: debhelper (>= 10), perl, libmodule-build-perl
