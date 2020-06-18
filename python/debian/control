@@ -1,5 +1,5 @@
 Source: tinkerforge-python-bindings
-Section: electronics
+Section: python
 Priority: optional
 Maintainer: Matthias Bolte <matthias@tinkerforge.com>
 Build-Depends: debhelper (>= 10), dh-python, python, python-setuptools, python3, python3-setuptools
