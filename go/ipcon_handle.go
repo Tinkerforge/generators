@@ -1,3 +1,10 @@
+/* Copyright (C) 2018-2020 Erik Fleckstein <erik@tinkerforge.com>
+ *
+ * Redistribution and use in source and binary forms of this file,
+ * with or without modification, are permitted. See the Creative
+ * Commons Zero (CC0 1.0) License for more details.
+ */
+
 // The IP Connection manages the communication between the API bindings and the Brick Daemon or a WIFI/Ethernet Extension.
 // Before Bricks and Bricklets can be controlled using their API an IP Connection has to be created and its TCP/IP connection has to be established.
 package ipconnection
