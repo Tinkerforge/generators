@@ -1,0 +1,15 @@
+Source: tinkerforge-go-bindings
+Section: devel
+Priority: optional
+Maintainer: Matthias Bolte <matthias@tinkerforge.com>
+Build-Depends: debhelper (>= 10), dh-golang, golang-any
+Standards-Version: 4.1.1
+Homepage: https://www.tinkerforge.com/
+XS-Go-Import-Path: github.com/Tinkerforge/go-api-bindings
+
+Package: golang-tinkerforge-dev
+Architecture: all
+Depends: ${misc:Depends}
+Description: Tinkerforge Go API Bindings
+ The Go API bindings allow you to control Tinkerforge Bricks and Bricklets
+ from your Go programs.
