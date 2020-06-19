@@ -1,0 +1,12 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: tinkerforge-javascript-bindings
+Source: https://www.tinkerforge.com/
+
+Files: *
+Copyright: 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+           2014, 2020 Matthias Bolte <matthias@tinkerforge.com>
+           2014 Olaf Lüke <olaf@tinkerforge.com>
+License: CC0 1.0
+ Redistribution and use in source and binary forms of this file,
+ with or without modification, are permitted. See the Creative
+ Commons Zero (CC0 1.0) License for more details.
