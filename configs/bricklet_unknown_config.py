@@ -39,9 +39,15 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+This function is equivalent to the normal enumerate function.
+It is used to trigger the initial enumeration of CoMCU-Bricklets.
+See :cb:`Comcu Enumerate`.
 """,
 'de':
 """
+Diese Funktion ist äquivalent zur normalen Enumerate-Funktion.
+Sie wird verwendet, um die initiale Enumerierung von CoMCU-Bricklets auszulösen.
+Siehe :cb:`Comcu Enumerate`.
 """
 }]
 })
@@ -62,9 +68,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+This callback is equivalent to the normal enumerate callback, but will send the enumeration type CONNECTED.
+See :func:`Comcu Enumerate`.
 """,
 'de':
 """
+Dieses Callback ist äquivalent zum normalen Enumerate-Callback, gibt aber den Enumeration-Type CONNECTED zurück.
+Siehe :func:`Comcu Enumerate`.
 """
 }]
 })
