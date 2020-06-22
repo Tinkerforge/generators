@@ -5,6 +5,7 @@
 C/C++ Bindings Generator
 Copyright (C) 2012-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_c_bindings.py: Generator for C/C++ bindings
 
@@ -191,7 +192,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         return rc;
     }}
 
-    rc = tf_hal_get_cs_pin_index(hal, numeric_uid);
+    rc = tf_hal_get_port_id(hal, numeric_uid);
     if (rc < 0) {{
         return rc;
     }}
@@ -205,14 +206,14 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 """
 
         unknown_template = """
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, int cs_pin_index) {{
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, int port_id) {{
     uint32_t numeric_uid;
     int rc = tf_base58_decode(uid, &numeric_uid);
     if (rc != TF_E_OK) {{
         return rc;
     }}
 
-    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, cs_pin_index);
+    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, port_id);
     if (rc != TF_E_OK) {{
         return rc;
     }}{response_expected_init}
@@ -1121,7 +1122,7 @@ int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal);
  * Creates the device object \\c {0} with the unique device ID \\c uid and adds
  * it to the IPConnection \\c ipcon.
  */
-int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, int cs_pin_index);
+int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, int port_id);
 """
         if self.get_name().under == 'unknown':
             template = unknown_template
