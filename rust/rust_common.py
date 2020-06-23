@@ -23,12 +23,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import sys
-import os
 import re
 
-sys.path.append(os.path.split(os.getcwd())[0])
-import common
+from generators import common
 
 class RustDevice(common.Device):
     def get_rust_name(self):

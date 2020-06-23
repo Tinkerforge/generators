@@ -23,12 +23,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import sys
-import os
 import json
 
-sys.path.append(os.path.split(os.getcwd())[0])
-import common
+from generators import common
 
 class MQTTDevice(common.Device):
     def get_mqtt_device_name(self):

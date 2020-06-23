@@ -6,7 +6,7 @@
 
 # Real-Time Clock Bricklet communication config
 
-from openhab_commonconfig import *
+from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',

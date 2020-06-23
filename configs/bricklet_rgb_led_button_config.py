@@ -6,7 +6,7 @@
 
 # RGB LED Button Bricklet communication config
 
-from openhab_commonconfig import *
+from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Bastian Nordmeyer <bastian@tinkerforge.com>',

@@ -24,11 +24,8 @@ Boston, MA 02111-1307, USA.
 """
 
 import math
-import sys
-import os
 
-sys.path.append(os.path.split(os.getcwd())[0])
-import common
+from generators import common
 
 class PHPDevice(common.Device):
     def get_php_class_name(self):

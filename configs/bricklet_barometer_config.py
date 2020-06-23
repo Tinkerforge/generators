@@ -6,9 +6,9 @@
 
 # Barometer Bricklet communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from generators.configs.commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 
-from openhab_commonconfig import *
+from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',

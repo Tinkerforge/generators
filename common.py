@@ -34,6 +34,9 @@ import math
 import multiprocessing.dummy
 import functools
 from collections import namedtuple
+import importlib
+
+from generators.configs import device_commonconfig
 
 gen_text_rst = """..
  #############################################################
@@ -1143,17 +1146,16 @@ def subgenerate(root_dir, language, generator_class, config_name):
     config_path_parts = [root_dir, '..', 'configs']
 
     if config_name != 'tinkerforge':
+        config_subdir = '.' + config_name
         config_path_parts.append(config_name)
+    else:
+        config_subdir = ''
 
     config_path = os.path.join(*config_path_parts)
-
-    if config_path not in sys.path:
-        sys.path.append(config_path)
-
     configs = sorted(os.listdir(config_path))
 
-    common_constant_groups = copy.deepcopy(__import__('device_commonconfig').common_constant_groups)
-    common_packets = copy.deepcopy(__import__('device_commonconfig').common_packets)
+    common_constant_groups = copy.deepcopy(device_commonconfig.common_constant_groups)
+    common_packets = copy.deepcopy(device_commonconfig.common_packets)
 
     brick_infos = []
     bricklet_infos = []
@@ -1194,7 +1196,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
 
     for config in configs:
         if config.endswith('_config.py'):
-            com = copy.deepcopy(__import__(config[:-3]).com)
+            com = copy.deepcopy(importlib.import_module('generators.configs{0}.{1}'.format(config_subdir, config[:-3])).com)
 
             if com['documented'] and not com['released']:
                 raise GeneratorError('{0} is marked as documented, but as not released'.format(config[:-10]))

@@ -23,16 +23,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import sys
-
-if sys.hexversion < 0x3040000:
-    print('Python >= 3.4 required')
-    sys.exit(1)
-
-import os
-
-sys.path.append(os.path.split(os.getcwd())[0])
-import common
+from generators import common
 
 class PythonDevice(common.Device):
     def get_python_import_name(self):

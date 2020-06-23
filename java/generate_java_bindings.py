@@ -26,17 +26,29 @@ Boston, MA 02111-1307, USA.
 
 import sys
 
-if sys.hexversion < 0x3040000:
-    print('Python >= 3.4 required')
+if sys.hexversion < 0x3050000:
+    print('Python >= 3.5 required')
     sys.exit(1)
 
 import os
 import math
 from xml.sax.saxutils import escape
+import importlib.util
 
-sys.path.append(os.path.split(os.getcwd())[0])
-import common
-import java_common
+def create_generators_module():
+    generators_dir = os.path.split(os.path.dirname(os.path.realpath(__file__)))[0]
+    generators_spec = importlib.util.spec_from_file_location('generators', os.path.join(generators_dir, '__init__.py'))
+    generators_module = importlib.util.module_from_spec(generators_spec)
+
+    generators_spec.loader.exec_module(generators_module)
+
+    sys.modules['generators'] = generators_module
+
+if 'generators' not in sys.modules:
+    create_generators_module()
+
+from generators import common
+from generators.java import java_common
 
 class JavaBindingsDevice(java_common.JavaDevice):
     def specialize_java_doc_function_links(self, text):

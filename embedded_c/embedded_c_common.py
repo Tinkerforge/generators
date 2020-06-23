@@ -23,12 +23,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import sys
-import os
 import math
 
-sys.path.append(os.path.split(os.getcwd())[0])
-import common
+from generators import common
 
 class CPacket(common.Packet):
     def get_c_parameters(self, high_level=False):

@@ -23,16 +23,12 @@ Boston, MA 02111-1307, USA.
 """
 
 import copy
-import os
 import re
-import sys
 import math
 
-sys.path.append(os.path.split(os.getcwd())[0])
-sys.path.append(os.path.join(os.path.split(os.getcwd())[0], 'java'))
-import common
-import java_common
-
+from generators import common
+from generators.configs import device_commonconfig
+from generators.java import java_common
 
 class OpenHABGeneratorTrait:
     def get_bindings_display_name(self):
@@ -551,7 +547,7 @@ class OpenHABDevice(java_common.JavaDevice):
         return oh
 
     def apply_features(self, oh):
-        common_openhab = copy.deepcopy(__import__('device_commonconfig').common_openhab)
+        common_openhab = copy.deepcopy(device_commonconfig.common_openhab)
         iface_map = {
             'comcu_bricklet': 'CoMCUFlashable',
             'standard_bricklet_host_2_ports': 'StandardFlashHost',

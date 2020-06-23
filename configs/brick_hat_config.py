@@ -6,7 +6,7 @@
 
 # HAT Brick communication config
 
-from openhab_commonconfig import *
+from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',

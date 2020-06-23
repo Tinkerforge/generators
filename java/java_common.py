@@ -23,11 +23,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import sys
-import os
-
-sys.path.append(os.path.split(os.getcwd())[0])
-import common
+from generators import common
 
 # this is a list of all the Bricks and Bricklets support by Java bindings
 # version 2.1.12 released on 2017-04-21. this list is fixed and must never be

@@ -3,13 +3,26 @@
 
 import sys
 
-if sys.hexversion < 0x3040000:
-    print('Python >= 3.4 required')
+if sys.hexversion < 0x3050000:
+    print('Python >= 3.5 required')
     sys.exit(1)
 
 import os
+import importlib.util
 
-path = os.getcwd()
+generators_dir = os.path.dirname(os.path.realpath(__file__))
+
+def create_generators_module():
+    generators_spec = importlib.util.spec_from_file_location('generators', os.path.join(generators_dir, '__init__.py'))
+    generators_module = importlib.util.module_from_spec(generators_spec)
+
+    generators_spec.loader.exec_module(generators_module)
+
+    sys.modules['generators'] = generators_module
+
+if 'generators' not in sys.modules:
+    create_generators_module()
+
 positive = set()
 negative = set()
 bindings = set()
@@ -20,7 +33,7 @@ for arg in sys.argv[1:]:
     else:
         positive.add(arg)
 
-for d in os.listdir(path):
+for d in os.listdir(generators_dir):
     if os.path.isdir(d):
         if d not in ['configs', '.git', '__pycache__', '.vscode']:
             bindings.add(d)
@@ -42,13 +55,11 @@ for binding in bindings:
     if binding in ['stubs', 'tvpl']:
         continue
 
-    path_binding = os.path.join(path, binding)
-    sys.path.append(path_binding)
-    module = __import__('test_{0}_bindings'.format(binding))
+    module = importlib.import_module('generators.{0}.test_{0}_bindings'.format(binding))
 
     print("### testing {0} bindings:".format(binding))
 
-    success = module.run(path_binding)
+    success = module.run(os.path.join(generators_dir, binding))
 
     if not isinstance(success, bool):
         raise Exception('test_{0}_bindings.py returns wrong type from its run() function'.format(binding))

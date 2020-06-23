@@ -3,13 +3,26 @@
 
 import sys
 
-if sys.hexversion < 0x3040000:
-    print('Python >= 3.4 required')
+if sys.hexversion < 0x3050000:
+    print('Python >= 3.5 required')
     sys.exit(1)
 
 import os
 import socket
-import common
+import importlib.util
+
+generators_dir = os.path.dirname(os.path.realpath(__file__))
+
+def create_generators_module():
+    generators_spec = importlib.util.spec_from_file_location('generators', os.path.join(generators_dir, '__init__.py'))
+    generators_module = importlib.util.module_from_spec(generators_spec)
+
+    generators_spec.loader.exec_module(generators_module)
+
+    sys.modules['generators'] = generators_module
+
+if 'generators' not in sys.modules:
+    create_generators_module()
 
 positive = set()
 negative = set()
@@ -36,14 +49,12 @@ else:
 if 'examples' not in positive and 'examples' in actions:
     actions.remove('examples')
 
-path = os.getcwd()
 bindings = []
 
-for d in os.listdir(path):
+for d in os.listdir(generators_dir):
     if os.path.isdir(d):
         if d not in ['configs', 'stubs', '.git', '__pycache__', '.vscode', 'embedded_c']:
             bindings.append(d)
-            sys.path.append(os.path.join(path, d))
 
 bindings = sorted(bindings)
 
@@ -53,9 +64,11 @@ if 'bindings' in actions and socket.gethostname() != 'tinkerforge.com':
         if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
             continue
 
-        module = __import__('generate_{0}_bindings'.format(binding))
+        module = importlib.import_module('generators.{0}.generate_{0}_bindings'.format(binding))
+
         print('\nGenerating bindings for {0}:'.format(binding))
-        module.generate(os.path.join(path, binding))
+
+        module.generate(os.path.join(generators_dir, binding))
 
 # examples
 if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
@@ -64,13 +77,14 @@ if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
             continue
 
         try:
-            module = __import__('generate_{0}_examples'.format(binding))
+            module = importlib.import_module('generators.{0}.generate_{0}_examples'.format(binding))
         except ImportError:
             print("\nNo example generator for {0}".format(binding))
             continue
 
         print('\nGenerating examples for {0}:'.format(binding))
-        module.generate(os.path.join(path, binding))
+
+        module.generate(os.path.join(generators_dir, binding))
 
 # doc
 if 'doc' in actions:
@@ -78,11 +92,12 @@ if 'doc' in actions:
         if binding in ['json', 'stubs', 'tvpl', 'saleae']:
             continue
 
-        module = __import__('generate_{0}_doc'.format(binding))
+        module = importlib.import_module('generators.{0}.generate_{0}_doc'.format(binding))
 
         for lang in ['en', 'de']:
             print('\nGenerating {0} documentation for {1}:'.format(lang, binding))
-            module.generate(os.path.join(path, binding), lang)
+
+            module.generate(os.path.join(generators_dir, binding), lang)
 
 # zip
 if 'zip' in actions and socket.gethostname() != 'tinkerforge.com':
@@ -90,9 +105,11 @@ if 'zip' in actions and socket.gethostname() != 'tinkerforge.com':
         if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
             continue
 
-        module = __import__('generate_{0}_zip'.format(binding))
+        module = importlib.import_module('generators.{0}.generate_{0}_zip'.format(binding))
+
         print('\nGenerating ZIP for {0}:'.format(binding))
-        module.generate(os.path.join(path, binding))
+
+        module.generate(os.path.join(generators_dir, binding))
 
 print('')
 print('>>> Done <<<')

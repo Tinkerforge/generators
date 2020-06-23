@@ -6,10 +6,10 @@
 
 # Temperature Bricklet 2.0 communication config
 
-from commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from commonconstants import add_callback_value_function
+from generators.configs.commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from generators.configs.commonconstants import add_callback_value_function
 
-from openhab_commonconfig import *
+from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
