@@ -64,9 +64,6 @@ class JavaScriptZipGenerator(javascript_common.JavascriptGeneratorTrait, common.
         self.tmp_browser_source_dir            = os.path.join(self.tmp_dir, 'browser', 'source')
         self.tmp_browser_examples_dir          = os.path.join(self.tmp_dir, 'browser', 'examples')
 
-    def get_bindings_name(self):
-        return 'javascript'
-
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_nodejs_dir)

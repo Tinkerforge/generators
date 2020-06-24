@@ -719,9 +719,6 @@ class DelphiExampleSpecialFunction(common.ExampleSpecialFunction):
             return '\r  end;\n'
 
 class DelphiExamplesGenerator(delphi_common.DelphiGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'delphi'
-
     def get_constant_class(self):
         return DelphiConstant
 

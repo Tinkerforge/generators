@@ -57,9 +57,6 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
         self.tmp_bindings_dir = os.path.join(self.tmp_dir, 'github.com', 'Tinkerforge' , 'go-api-bindings')
         self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
 
-    def get_bindings_name(self):
-        return 'go'
-
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_bindings_dir)

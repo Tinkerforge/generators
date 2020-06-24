@@ -608,9 +608,6 @@ class JavaExampleSpecialFunction(common.ExampleSpecialFunction):
             return '\r\t\t}\n'
 
 class JavaExamplesGenerator(java_common.JavaGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'java'
-
     def get_device_class(self):
         return java_common.JavaDevice
 

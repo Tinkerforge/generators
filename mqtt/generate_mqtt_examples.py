@@ -411,9 +411,6 @@ publish '{{"debounce": {period_msec}}}' to tinkerforge/request/{device_name}_{de
             return '\rendfor\n'
 
 class MQTTExamplesGenerator(mqtt_common.MQTTGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'mqtt'
-
     def get_example_class(self):
         return MQTTExample
 

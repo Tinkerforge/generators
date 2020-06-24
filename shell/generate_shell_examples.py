@@ -401,9 +401,6 @@ tinkerforge call {device_name}-{device_category} $uid set-debounce-period {perio
             return '\rdone\n'
 
 class ShellExamplesGenerator(shell_common.ShellGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'shell'
-
     def get_example_class(self):
         return ShellExample
 

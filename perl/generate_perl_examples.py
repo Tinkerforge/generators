@@ -580,9 +580,6 @@ ${device_name}->set_debounce_period({period_msec});
             return '\r}\n'
 
 class PerlExamplesGenerator(perl_common.PerlGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'perl'
-
     def get_constant_class(self):
         return PerlConstant
 

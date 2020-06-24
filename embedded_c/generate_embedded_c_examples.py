@@ -818,9 +818,6 @@ class CExampleSpecialFunction(common.ExampleSpecialFunction):
             return '\r\t}\n'
 
 class CExamplesGenerator(embedded_c_common.CGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'c'
-
     def get_constant_class(self):
         return CConstant
 

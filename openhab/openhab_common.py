@@ -31,11 +31,11 @@ from generators.configs import device_commonconfig
 from generators.java import java_common
 
 class OpenHABGeneratorTrait:
-    def get_bindings_display_name(self):
-        return 'openHAB'
-
     def get_bindings_name(self):
         return 'openhab'
+
+    def get_bindings_display_name(self):
+        return 'openHAB'
 
     def get_doc_null_value_name(self):
         return 'null'

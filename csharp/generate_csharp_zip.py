@@ -58,9 +58,6 @@ class CSharpZipGenerator(csharp_common.CSharpGeneratorTrait, common.ZipGenerator
         self.tmp_source_tinkerforge_uwp_dir = os.path.join(self.tmp_dir, 'source', self.get_config_name().camel + 'UWP')
         self.tmp_examples_dir               = os.path.join(self.tmp_dir, 'examples')
 
-    def get_bindings_name(self):
-        return 'csharp'
-
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_tinkerforge_dir)

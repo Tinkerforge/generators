@@ -54,9 +54,6 @@ class SaleaeZipGenerator(saleae_common.SaleaeGeneratorTrait, common.ZipGenerator
 
         self.tmp_dir          = self.get_tmp_dir()
 
-    def get_bindings_name(self):
-        return 'saleae'
-
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
 

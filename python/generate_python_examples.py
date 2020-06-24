@@ -580,9 +580,6 @@ class PythonExampleSpecialFunction(common.ExampleSpecialFunction):
             return '\r'
 
 class PythonExamplesGenerator(python_common.PythonGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'python'
-
     def get_constant_class(self):
         return PythonConstant
 

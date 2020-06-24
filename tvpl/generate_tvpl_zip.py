@@ -71,12 +71,6 @@ class TVPLZipGenerator(tvpl_common.TVPLGeneratorTrait, common.ZipGenerator):
         self.brick_toolbox_part            = {}
         self.bricklet_toolbox_part         = {}
 
-    def get_bindings_name(self):
-        return 'tvpl'
-
-    def get_bindings_display_name(self):
-        return 'Tinkerforge Visual Programming Language (TVPL)'
-
     def prepare(self):
         root_dir = self.get_root_dir()
 

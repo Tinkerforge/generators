@@ -625,9 +625,6 @@ class TVPLExampleSpecialFunction(common.ExampleSpecialFunction):
             return '\r'
 
 class TVPLExamplesGenerator(tvpl_common.TVPLGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'tvpl'
-
     def get_constant_class(self):
         return TVPLConstant
 

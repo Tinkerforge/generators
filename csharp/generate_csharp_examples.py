@@ -635,9 +635,6 @@ class CSharpExampleSpecialFunction(common.ExampleSpecialFunction):
             return '\r\t\t}\n'
 
 class CSharpExamplesGenerator(csharp_common.CSharpGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'csharp'
-
     def get_constant_class(self):
         return CSharpConstant
 

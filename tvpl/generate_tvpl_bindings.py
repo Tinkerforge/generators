@@ -811,12 +811,6 @@ class TVPLBindingsPacket(tvpl_common.TVPLPacket):
         return function_in_args
 
 class TVPLBindingsGenerator(tvpl_common.TVPLGeneratorTrait, common.BindingsGenerator):
-    def get_bindings_name(self):
-        return 'tvpl'
-
-    def get_bindings_display_name(self):
-        return 'Tinkerforge Visual Programming Language (TVPL)'
-
     def get_device_class(self):
         return TVPLBindingsDevice
 

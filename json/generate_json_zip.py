@@ -55,9 +55,6 @@ class JSONZipGenerator(JSONGeneratorTrait, common.ZipGenerator):
         self.tmp_dir        = self.get_tmp_dir()
         self.tmp_source_dir = os.path.join(self.tmp_dir, 'source')
 
-    def get_bindings_name(self):
-        return 'json'
-
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_dir)

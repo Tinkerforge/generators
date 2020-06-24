@@ -562,9 +562,6 @@ class RubyExampleSpecialFunction(common.ExampleSpecialFunction):
             return '\rend\n'
 
 class RubyExamplesGenerator(ruby_common.RubyGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'ruby'
-
     def get_constant_class(self):
         return RubyConstant
 

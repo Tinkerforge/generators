@@ -101,6 +101,12 @@ class TVPLElement(common.Element):
         return '{0}{1} {2}'.format(common.select_lang(list_of), c, t[0 if c == 1 else 1])
 
 class TVPLGeneratorTrait:
+    def get_bindings_name(self):
+        return 'tvpl'
+
+    def get_bindings_display_name(self):
+        return 'Tinkerforge Visual Programming Language (TVPL)'
+
     def get_doc_null_value_name(self):
         return 'null'
 

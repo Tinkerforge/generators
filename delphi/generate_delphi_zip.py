@@ -57,9 +57,6 @@ class DelphiZipGenerator(delphi_common.DelphiGeneratorTrait, common.ZipGenerator
         self.tmp_source_dir   = os.path.join(self.tmp_dir, 'source')
         self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
 
-    def get_bindings_name(self):
-        return 'delphi'
-
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_dir)

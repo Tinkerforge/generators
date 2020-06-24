@@ -583,9 +583,6 @@ ${device_name_initial}->setDebouncePeriod({period_msec});
             return '\r}\n'
 
 class PHPExamplesGenerator(php_common.PHPGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'php'
-
     def get_constant_class(self):
         return PHPConstant
 

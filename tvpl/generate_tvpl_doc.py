@@ -286,12 +286,6 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         return ret
 
 class TVPLDocGenerator(tvpl_common.TVPLGeneratorTrait, common.DocGenerator):
-    def get_bindings_name(self):
-        return 'tvpl'
-
-    def get_bindings_display_name(self):
-        return 'Tinkerforge Visual Programming Language (TVPL)'
-
     def get_doc_rst_filename_part(self):
         return 'TVPL'
 

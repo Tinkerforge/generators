@@ -727,9 +727,6 @@ class JavaScriptExampleSpecialFunction(common.ExampleSpecialFunction):
             return result + '\r        }\n'
 
 class JavaScriptExamplesGenerator(javascript_common.JavascriptGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'javascript'
-
     def get_constant_class(self):
         return JavaScriptConstant
 

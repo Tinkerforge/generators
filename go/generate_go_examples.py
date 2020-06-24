@@ -612,9 +612,6 @@ class GoExampleSpecialFunction(common.ExampleSpecialFunction):
             return '\r\t\t}\n'
 
 class GoExamplesGenerator(go_common.GoGeneratorTrait, common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'go'
-
     def get_constant_class(self):
         return GoConstant
 

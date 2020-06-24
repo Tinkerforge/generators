@@ -587,12 +587,6 @@ class JavaDocPacket(java_common.JavaPacket):
 class OpenHABDocGenerator(openhab_common.OpenHABGeneratorTrait, common.DocGenerator):
     is_openhab_doc_generator = True
 
-    def get_bindings_name(self):
-        return 'openhab'
-
-    def get_bindings_display_name(self):
-        return 'openHAB'
-
     def get_doc_rst_filename_part(self):
         return 'openHAB'
 
