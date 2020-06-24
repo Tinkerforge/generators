@@ -50,10 +50,10 @@ from generators import common
 from generators.matlab import matlab_common
 
 class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator):
-    def __init__(self, *args):
-        common.ZipGenerator.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.tmp_dir                                 = self.get_tmp_dir()
+        self.tmp_dir                                                   = self.get_zip_dir()
         self.tmp_flavor_dir                          = {'matlab': os.path.join(self.tmp_dir, 'matlab'),
                                                         'octave': os.path.join(self.tmp_dir, 'octave')}
         self.tmp_flavor_source_dir                   = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'source'),
@@ -69,7 +69,7 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
         return 'matlab'
 
     def prepare(self):
-        common.recreate_dir(self.tmp_dir)
+        super().prepare()
 
         for flavor in ['matlab', 'octave']:
             os.makedirs(self.tmp_flavor_dir[flavor])

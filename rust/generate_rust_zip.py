@@ -50,16 +50,17 @@ from generators import common
 from generators.rust import rust_common
 
 class RustZipGenerator(rust_common.RustGeneratorTrait, common.ZipGenerator):
-    def __init__(self, *args):
-        common.ZipGenerator.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.tmp_dir          = self.get_tmp_dir()
+        self.tmp_dir          = self.get_zip_dir()
         self.tmp_source_dir   = os.path.join(self.tmp_dir, 'src')
         self.tmp_bindings_dir = os.path.join(self.tmp_source_dir, 'bindings')
         self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
 
     def prepare(self):
-        common.recreate_dir(self.tmp_dir)
+        super().prepare()
+
         os.makedirs(self.tmp_source_dir)
         os.makedirs(self.tmp_bindings_dir)
         os.makedirs(self.tmp_examples_dir)

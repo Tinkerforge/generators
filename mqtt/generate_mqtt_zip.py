@@ -49,14 +49,15 @@ from generators import common
 from generators.mqtt import mqtt_common
 
 class MQTTZipGenerator(mqtt_common.MQTTGeneratorTrait, common.ZipGenerator):
-    def __init__(self, *args):
-        common.ZipGenerator.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.tmp_dir          = self.get_tmp_dir()
+        self.tmp_dir          = self.get_zip_dir()
         self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
 
     def prepare(self):
-        common.recreate_dir(self.tmp_dir)
+        super().prepare()
+
         os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):

@@ -50,10 +50,10 @@ from generators import common
 from generators.java import java_common
 
 class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
-    def __init__(self, *args):
-        common.ZipGenerator.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.tmp_dir                                            = self.get_tmp_dir()
+        self.tmp_dir                                            = self.get_zip_dir()
         self.tmp_source_dir                                     = os.path.join(self.tmp_dir, 'source')
         self.tmp_source_src_main_java_com_tinkerforge_dir       = os.path.join(self.tmp_source_dir, 'src', 'main', 'java', 'com', 'tinkerforge')
         self.tmp_source_src_main_resources_metainf_services_dir = os.path.join(self.tmp_source_dir, 'src', 'main', 'resources', 'META-INF', 'services')
@@ -61,7 +61,8 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
         self.tmp_examples_dir                                   = os.path.join(self.tmp_dir, 'examples')
 
     def prepare(self):
-        common.recreate_dir(self.tmp_dir)
+        super().prepare()
+
         os.makedirs(self.tmp_source_dir)
         os.makedirs(self.tmp_source_src_main_java_com_tinkerforge_dir)
         os.makedirs(self.tmp_source_src_main_resources_metainf_services_dir)

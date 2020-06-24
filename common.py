@@ -4378,9 +4378,13 @@ class Generator:
         if self.get_config_name().space == 'Tinkerforge':
             self.bindings_dir_name = 'bindings'
             self.doc_dir_name = 'doc'
+            self.zip_dir_name = 'zip'
         else:
-            self.bindings_dir_name = 'bindings_' + self.get_config_name().under
-            self.doc_dir_name = 'doc_' + self.get_config_name().under
+            config_name = self.get_config_name().under
+
+            self.bindings_dir_name = 'bindings_' + config_name
+            self.doc_dir_name = 'doc_' + config_name
+            self.zip_dir_name = 'zip_' + config_name
 
     def get_bindings_name(self):
         raise GeneratorError("get_bindings_name() not implemented")
@@ -4471,6 +4475,9 @@ class Generator:
 
     def get_doc_dir(self):
         return os.path.join(self.get_root_dir(), self.doc_dir_name)
+
+    def get_zip_dir(self):
+        return os.path.join(self.get_root_dir(), self.zip_dir_name)
 
     def get_changelog_version(self):
         if self.get_config_name().space == 'Tinkerforge':
@@ -4600,13 +4607,11 @@ class BindingsGenerator(Generator):
                 f.write(released_file + '\n')
 
 class ZipGenerator(Generator):
-    def get_tmp_dir(self):
-        tmp_dir = os.path.join('/tmp/generators/', self.get_bindings_name())
+    recreate_zip_dir = True
 
-        if self.get_config_name().space != 'Tinkerforge':
-            tmp_dir += '_' + self.get_config_name().under
-
-        return tmp_dir
+    def prepare(self):
+        if self.recreate_zip_dir:
+            recreate_dir(self.get_zip_dir())
 
     def get_released_files(self):
         released_files = []

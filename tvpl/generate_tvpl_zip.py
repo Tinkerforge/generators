@@ -50,10 +50,10 @@ from generators import common
 from generators.tvpl import tvpl_common
 
 class TVPLZipGenerator(tvpl_common.TVPLGeneratorTrait, common.ZipGenerator):
-    def __init__(self, *args):
-        common.ZipGenerator.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.tmp_dir                       = self.get_tmp_dir()
+        self.tmp_dir                       = self.get_zip_dir()
         self.tmp_examples_dir              = os.path.join(self.tmp_dir, 'examples')
         self.tmp_source_dir                = os.path.join(self.tmp_dir, 'source')
         self.tmp_build_dir                 = os.path.join(self.tmp_dir, 'build')
@@ -72,10 +72,11 @@ class TVPLZipGenerator(tvpl_common.TVPLGeneratorTrait, common.ZipGenerator):
         self.bricklet_toolbox_part         = {}
 
     def prepare(self):
+        super().prepare()
+
         root_dir = self.get_root_dir()
 
         # Create directories
-        common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_examples_dir)
         os.makedirs(self.tmp_source_dir)
         os.makedirs(self.tmp_build_dir)

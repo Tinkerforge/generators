@@ -49,14 +49,13 @@ from generators import common
 from generators.openhab import openhab_common
 
 class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenerator):
-    def __init__(self, *args):
-        common.ZipGenerator.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.tmp_dir                          = self.get_tmp_dir()
+        self.tmp_dir        = self.get_zip_dir()
         self.generation_dir = os.path.join(self.tmp_dir, 'generated')
-
-        self.tmp_oh_dir = os.path.join(self.generation_dir, 'src', 'main', 'java', 'org', 'openhab', 'binding', 'tinkerforge', 'internal', 'device')
-        self.tmp_xml_dir = os.path.join(self.generation_dir, 'src', 'main', 'resources', 'ESH-INF', 'thing')
+        self.tmp_oh_dir     = os.path.join(self.generation_dir, 'src', 'main', 'java', 'org', 'openhab', 'binding', 'tinkerforge', 'internal', 'device')
+        self.tmp_xml_dir    = os.path.join(self.generation_dir, 'src', 'main', 'resources', 'ESH-INF', 'thing')
 
         #TODO: use os.path.join
         self.relative_file_dests = {
@@ -133,7 +132,7 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
         self.tmp_examples_dir                 = os.path.join(self.generation_dir, 'examples')
 
     def prepare(self):
-        common.recreate_dir(self.tmp_dir)
+        super().prepare()
 
         os.makedirs(self.generation_dir)
 

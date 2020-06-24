@@ -50,10 +50,10 @@ if 'generators' not in sys.modules:
 from generators import common
 
 class VBNETZipGenerator(common.ZipGenerator):
-    def __init__(self, *args):
-        common.ZipGenerator.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.tmp_dir                    = self.get_tmp_dir()
+        self.tmp_dir                    = self.get_zip_dir()
         self.tmp_source_tinkerforge_dir = os.path.join(self.tmp_dir, 'source', 'Tinkerforge')
         self.tmp_examples_dir           = os.path.join(self.tmp_dir, 'examples')
 
@@ -67,7 +67,8 @@ class VBNETZipGenerator(common.ZipGenerator):
         return element.get_name().headless
 
     def prepare(self):
-        common.recreate_dir(self.tmp_dir)
+        super().prepare()
+
         os.makedirs(self.tmp_source_tinkerforge_dir)
         os.makedirs(self.tmp_examples_dir)
 

@@ -10,10 +10,10 @@
 */bindings/
 */bindings_*/
 */doc/
+*/doc_*/
 openhab/beta/doc/
 openhab/openhab2-addons/
 openhab/*.jar
-*/doc_*/
 */*_package/
 stubs/comcu/
 stubs/tng/
@@ -31,3 +31,5 @@ tvpl/build_deploy_tvpl.py
 *.sublime-workspace
 .vscode/*
 *tinkerforge*_all.deb
+*/zip/
+*/zip_*/

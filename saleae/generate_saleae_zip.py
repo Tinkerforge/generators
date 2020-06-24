@@ -49,13 +49,10 @@ from generators import common
 from generators.saleae import saleae_common
 
 class SaleaeZipGenerator(saleae_common.SaleaeGeneratorTrait, common.ZipGenerator):
-    def __init__(self, *args):
-        common.ZipGenerator.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.tmp_dir          = self.get_tmp_dir()
-
-    def prepare(self):
-        common.recreate_dir(self.tmp_dir)
+        self.tmp_dir = self.get_zip_dir()
 
     def generate(self, device):
         pass

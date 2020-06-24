@@ -51,10 +51,10 @@ from generators import common
 from generators.javascript import javascript_common
 
 class JavaScriptZipGenerator(javascript_common.JavascriptGeneratorTrait, common.ZipGenerator):
-    def __init__(self, *args):
-        common.ZipGenerator.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.tmp_dir                           = self.get_tmp_dir()
+        self.tmp_dir                           = self.get_zip_dir()
         self.tmp_nodejs_dir                    = os.path.join(self.tmp_dir, 'nodejs')
         self.tmp_nodejs_source_dir             = os.path.join(self.tmp_nodejs_dir, 'source')
         self.tmp_nodejs_source_tinkerforge_dir = os.path.join(self.tmp_nodejs_source_dir, 'Tinkerforge')
@@ -65,7 +65,8 @@ class JavaScriptZipGenerator(javascript_common.JavascriptGeneratorTrait, common.
         self.tmp_browser_examples_dir          = os.path.join(self.tmp_dir, 'browser', 'examples')
 
     def prepare(self):
-        common.recreate_dir(self.tmp_dir)
+        super().prepare()
+
         os.makedirs(self.tmp_nodejs_dir)
         os.makedirs(self.tmp_nodejs_source_dir)
         os.makedirs(self.tmp_nodejs_source_tinkerforge_dir)
