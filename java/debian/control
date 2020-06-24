@@ -2,8 +2,8 @@ Source: tinkerforge-java-bindings
 Section: java
 Priority: optional
 Maintainer: Matthias Bolte <matthias@tinkerforge.com>
-Build-Depends: debhelper (>= 11), default-jdk, maven-debian-helper (>= 2.1)
-Build-Depends-Indep: default-jdk-doc, libmaven-javadoc-plugin-java
+# FIXME: Packaging as JAR instead of bundle, because libmaven-bundle-plugin-java is broken for Java 8 in Debian
+Build-Depends: debhelper (>= 11), default-jdk, default-jdk-doc, maven-debian-helper (>= 2.1), libmaven-javadoc-plugin-java
 Standards-Version: 4.2.1
 Homepage: https://www.tinkerforge.com/
 

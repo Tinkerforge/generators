@@ -20,7 +20,7 @@
 - Make Device class abstract
 
 2012-05-10: 1.0.7 (baa8705)
-- Add version information to manifest of tinkerforge.jar
+- Add version information to manifest of Tinkerforge.jar
 - Silently ignore messages from devices with unknown stack ID
 - Don't generate addListener method for devices without callbacks
 - Add inline code documentation

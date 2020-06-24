@@ -53,11 +53,12 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args):
         common.ZipGenerator.__init__(self, *args)
 
-        self.tmp_dir                          = self.get_tmp_dir()
-        self.tmp_source_dir                   = os.path.join(self.tmp_dir, 'source')
-        self.tmp_source_meta_inf_services_dir = os.path.join(self.tmp_source_dir, 'META-INF', 'services')
-        self.tmp_source_com_tinkerforge_dir   = os.path.join(self.tmp_source_dir, 'com', 'tinkerforge')
-        self.tmp_examples_dir                 = os.path.join(self.tmp_dir, 'examples')
+        self.tmp_dir                                            = self.get_tmp_dir()
+        self.tmp_source_dir                                     = os.path.join(self.tmp_dir, 'source')
+        self.tmp_source_src_main_java_com_tinkerforge_dir       = os.path.join(self.tmp_source_dir, 'src', 'main', 'java', 'com', 'tinkerforge')
+        self.tmp_source_src_main_resources_metainf_services_dir = os.path.join(self.tmp_source_dir, 'src', 'main', 'resources', 'META-INF', 'services')
+        self.tmp_source_target_dir                              = os.path.join(self.tmp_source_dir, 'target')
+        self.tmp_examples_dir                                   = os.path.join(self.tmp_dir, 'examples')
 
     def get_bindings_name(self):
         return 'java'
@@ -65,8 +66,8 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
     def prepare(self):
         common.recreate_dir(self.tmp_dir)
         os.makedirs(self.tmp_source_dir)
-        os.makedirs(self.tmp_source_meta_inf_services_dir)
-        os.makedirs(self.tmp_source_com_tinkerforge_dir)
+        os.makedirs(self.tmp_source_src_main_java_com_tinkerforge_dir)
+        os.makedirs(self.tmp_source_src_main_resources_metainf_services_dir)
         os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
@@ -94,33 +95,33 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
 
         # Copy bindings and readme
         for filename in self.get_released_files():
-            shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_src_main_java_com_tinkerforge_dir)
 
-        shutil.copy(os.path.join(self.get_bindings_dir(), 'com.tinkerforge.DeviceProvider'), self.tmp_source_meta_inf_services_dir)
+        shutil.copy(os.path.join(self.get_bindings_dir(), 'com.tinkerforge.DeviceProvider'), self.tmp_source_src_main_resources_metainf_services_dir)
 
         if self.get_config_name().space == 'Tinkerforge':
-            shutil.copy(os.path.join(root_dir, 'BrickDaemon.java'),                  self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'Device.java'),                       self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'DeviceBase.java'),                   self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'DeviceListener.java'),               self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'DeviceProvider.java'),               self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'DeviceFactory.java'),                self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'IPConnection.java'),                 self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'IPConnectionBase.java'),             self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'TinkerforgeException.java'),         self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'TimeoutException.java'),             self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'AlreadyConnectedException.java'),    self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'NotConnectedException.java'),        self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'CryptoException.java'),              self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'NetworkException.java'),             self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'StreamOutOfSyncException.java'),     self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'InvalidParameterException.java'),    self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'NotSupportedException.java'),        self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'UnknownErrorCodeException.java'),    self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'WrongDeviceTypeException.java'),     self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'DeviceReplacedException.java'),      self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'WrongResponseLengthException.java'), self.tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'TinkerforgeListener.java'),          self.tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'BrickDaemon.java'),                  self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'Device.java'),                       self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'DeviceBase.java'),                   self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'DeviceListener.java'),               self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'DeviceProvider.java'),               self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'DeviceFactory.java'),                self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'IPConnection.java'),                 self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'IPConnectionBase.java'),             self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'TinkerforgeException.java'),         self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'TimeoutException.java'),             self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'AlreadyConnectedException.java'),    self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'NotConnectedException.java'),        self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'CryptoException.java'),              self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'NetworkException.java'),             self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'StreamOutOfSyncException.java'),     self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'InvalidParameterException.java'),    self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'NotSupportedException.java'),        self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'UnknownErrorCodeException.java'),    self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'WrongDeviceTypeException.java'),     self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'DeviceReplacedException.java'),      self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'WrongResponseLengthException.java'), self.tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'TinkerforgeListener.java'),          self.tmp_source_src_main_java_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'changelog.txt'),                     self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'readme.txt'),                        self.tmp_dir)
             shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),      self.tmp_dir)
@@ -128,43 +129,28 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
             shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),        self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'custom.txt'),                        os.path.join(self.tmp_dir, 'readme.txt'))
 
-        # Make manifest
+        # Make pom.xml
         version = self.get_changelog_version()
 
-        with open(os.path.join(self.tmp_dir, 'manifest.txt'), 'w') as f:
-            f.write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
+        if self.get_config_name().space == 'Tinkerforge':
+            common.specialize_template(os.path.join(root_dir, 'pom.xml.jar-template'),
+                                       os.path.join(self.tmp_source_dir, 'pom.xml'),
+                                       {'{{VERSION}}': '.'.join(version)})
+        else:
+            common.specialize_template(os.path.join(root_dir, 'pom.xml.custom-template'),
+                                       os.path.join(self.tmp_source_dir, 'pom.xml'),
+                                       {'{{CONFIG_NAME}}': self.get_config_name().dash,
+                                        '{{VERSION}}': '.'.join(version),
+                                        '{{TINKERFORGE_VERSION}}': '.'.join(common.get_changelog_version(root_dir))})
 
         # Compile source
-        if self.get_config_name().space == 'Tinkerforge':
-            class_path = ''
-        else:
-            class_path = '-cp /tmp/generators/java/tinkerforge.jar '
-
-        with common.ChangedDirectory(self.tmp_dir):
-            common.execute('javac ' +
-                           '-Xlint ' +
-                           '-source 8 ' +
-                           '-target 8 ' +
-                           class_path +
-                           os.path.join(self.tmp_source_com_tinkerforge_dir, '*.java'),
-                           shell=True)
-
-        # Make jar
         with common.ChangedDirectory(self.tmp_source_dir):
-            common.execute(['jar',
-                            'cfm',
-                            os.path.join(self.tmp_dir, self.get_config_name().dash + '.jar'),
-                            os.path.join(self.tmp_dir, 'manifest.txt'),
-                           'com',
-                           'META-INF'])
+            common.execute(['mvn', 'clean', 'verify'])
 
-        # Remove manifest
-        os.remove(os.path.join(self.tmp_dir, 'manifest.txt'))
+        os.rename(os.path.join(self.tmp_source_target_dir, '{0}-{1}.{2}.{3}.jar'.format(self.get_config_name().dash, *version)),
+                  os.path.join(self.tmp_dir, '{0}.jar'.format(self.get_config_name().camel)))
 
-        # Remove classes
-        for name in os.listdir(self.tmp_source_com_tinkerforge_dir):
-            if name.endswith('.class'):
-                os.remove(os.path.join(self.tmp_source_com_tinkerforge_dir, name))
+        shutil.rmtree(self.tmp_source_target_dir)
 
         # Make zip
         self.create_zip_file(self.tmp_dir)

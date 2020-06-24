@@ -1,15 +1,17 @@
+<!-- FIXME: Packaging as JAR instead of bundle, because libmaven-bundle-plugin-java is broken for Java 8 in Debian -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.tinkerforge</groupId>
-  <artifactId>tinkerforge</artifactId>
+  <artifactId>{{CONFIG_NAME}}</artifactId>
+  <!--<packaging>bundle</packaging>-->
   <packaging>jar</packaging>
   <version>{{VERSION}}</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <name>Tinkerforge API Bindings</name>
-  <description>Java API Bindings for Tinkerforge Bricks and Bricklets</description>
+  <name>Tinkerforge Custom API Bindings</name>
+  <description>Java API Bindings for Custom Tinkerforge Bricks and Bricklets</description>
   <url>https://www.tinkerforge.com/en/doc/Software/API_Bindings_Java.html</url>
   <organization>
     <name>Tinkerforge GmbH</name>
@@ -27,6 +29,25 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-toolchains-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>toolchain</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <toolchains>
+            <jdk>
+              <version>1.8</version>
+            </jdk>
+          </toolchains>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
@@ -41,8 +62,28 @@
           <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
+      <!--<plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>4.2.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>com.tinkerforge</Export-Package>
+            <Automatic-Module-Name>com.tinkerforge</Automatic-Module-Name>
+          </instructions>
+        </configuration>
+      </plugin>-->
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>com.tinkerforge</groupId>
+      <artifactId>tinkerforge</artifactId>
+      <version>{{TINKERFORGE_VERSION}}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
   <licenses>
     <license>
       <name>CC0 1.0 Universal</name>

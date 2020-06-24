@@ -49,15 +49,11 @@ if 'generators' not in sys.modules:
 from generators import common
 
 def generate(root_dir):
-    tmp_dir               = os.path.join(root_dir, 'maven_package')
-    tmp_src_main_java_dir = os.path.join(tmp_dir, 'src', 'main', 'java')
-    tmp_src_main_resources_dir = os.path.join(tmp_dir, 'src', 'main', 'resources')
-    tmp_unzipped_dir      = os.path.join(tmp_dir, 'unzipped')
+    tmp_dir        = os.path.join(root_dir, 'maven_package')
+    tmp_source_dir = os.path.join(tmp_dir, 'source')
 
     # Make directories
     common.recreate_dir(tmp_dir)
-    os.makedirs(tmp_src_main_java_dir)
-    os.makedirs(tmp_src_main_resources_dir)
 
     # Unzip
     version = common.get_changelog_version(root_dir)
@@ -66,22 +62,15 @@ def generate(root_dir):
                     '-q',
                     os.path.join(root_dir, 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)),
                     '-d',
-                    tmp_unzipped_dir])
+                    tmp_dir])
 
-    # Copy source
-    shutil.copytree(os.path.join(tmp_unzipped_dir, 'source', 'com'),
-                    os.path.join(tmp_src_main_java_dir, 'com'))
-    # Copy META-INF
-    shutil.copytree(os.path.join(tmp_unzipped_dir, 'source', 'META-INF'),
-                    os.path.join(tmp_src_main_resources_dir, 'META-INF'))
-
-    # Make pom.xml
-    common.specialize_template(os.path.join(root_dir, 'pom.xml.maven-template'),
-                               os.path.join(tmp_dir, 'pom.xml'),
+    # Override pom.xml
+    common.specialize_template(os.path.join(root_dir, 'pom.xml.bundle-template'),
+                               os.path.join(tmp_source_dir, 'pom.xml'),
                                {'{{VERSION}}': '.'.join(version)})
 
     # Make package
-    with common.ChangedDirectory(tmp_dir):
+    with common.ChangedDirectory(tmp_source_dir):
         common.execute(['mvn', 'clean', 'verify'])
 
 if __name__ == "__main__":

@@ -54,13 +54,9 @@ def generate(root_dir):
     tmp_dir               = os.path.join(root_dir, 'debian_package')
     tmp_source_dir        = os.path.join(tmp_dir, 'source')
     tmp_source_debian_dir = os.path.join(tmp_source_dir, 'debian')
-    tmp_source_src_main_java_dir = os.path.join(tmp_source_dir, 'src', 'main', 'java')
-    tmp_source_src_main_resources_dir = os.path.join(tmp_source_dir, 'src', 'main', 'resources')
 
     # Make directories
     common.recreate_dir(tmp_dir)
-    os.makedirs(tmp_source_src_main_java_dir)
-    os.makedirs(tmp_source_src_main_resources_dir)
 
     # Unzip
     version = common.get_changelog_version(root_dir)
@@ -77,18 +73,6 @@ def generate(root_dir):
                                os.path.join(tmp_source_debian_dir, 'changelog'),
                                {'<<VERSION>>': '.'.join(version),
                                 '<<DATE>>': subprocess.check_output(['date', '-R']).decode('utf-8')})
-
-    # Copy source
-    shutil.copytree(os.path.join(tmp_source_dir, 'com'),
-                    os.path.join(tmp_source_src_main_java_dir, 'com'))
-    # Copy META-INF
-    shutil.copytree(os.path.join(tmp_source_dir, 'META-INF'),
-                    os.path.join(tmp_source_src_main_resources_dir, 'META-INF'))
-
-    # Make pom.xml
-    common.specialize_template(os.path.join(root_dir, 'pom.xml.debian-template'),
-                               os.path.join(tmp_source_dir, 'pom.xml'),
-                               {'{{VERSION}}': '.'.join(version)})
 
     # Make package
     with common.ChangedDirectory(tmp_source_dir):
