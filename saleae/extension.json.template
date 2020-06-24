@@ -2,10 +2,10 @@
   "version": "{{version}}",
   "apiVersion": "1.0.0",
   "author": "Erik Fleckstein <erik@tinkerforge.com>",
-  "description": "High level analyzer for Tinkerforge SPITFP communication.",
-  "name": "SPITFPAnalyzer",
+  "description": "Tinkerforge SPITFP high level analyzer.",
+  "name": "SPITFP",
   "extensions": {
-    "SPITFPAnalyzer": {
+    "SPITFP": {
       "type": "HighLevelAnalyzer",
       "entryPoint": "HighLevelAnalyzer.Hla"
     }

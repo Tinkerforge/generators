@@ -6,6 +6,8 @@ import sys
 import struct
 import re
 
+from saleae.analyzers import HighLevelAnalyzer, AnalyzerFrame, StringSetting, NumberSetting, ChoicesSetting
+
 {{unpack_payload}}
 
 device_infos = {
@@ -75,7 +77,7 @@ def base58encode(value):
 class PacketBuffer():
     def __init__(self, is_master, dev_info, format):
         self.is_master = is_master
-        self.data = []
+        self.data = bytearray()
         self.frame_start_times = []
         self.frame_end_times = []
         self.device_info = dev_info
@@ -83,10 +85,10 @@ class PacketBuffer():
 
     def add_frame(self, frame):
         try:
-            self.data.append(frame['data']['mosi' if self.is_master else 'miso'])
-            self.frame_start_times.append(frame['start_time'])
-            self.frame_end_times.append(frame['end_time'])
-        except:
+            self.data += frame.data['mosi' if self.is_master else 'miso']
+            self.frame_start_times.append(frame.start_time)
+            self.frame_end_times.append(frame.end_time)
+        except KeyError:
             pass
 
     def remove(self, n):
@@ -121,27 +123,19 @@ class PacketBuffer():
 
             if packet_len == 3:
                 self.remove(packet_len)
-                return {
-                    'type': 'Ack',
-                    'start_time': start_time,
-                    'end_time': end_time,
-                    'data': {
+                return AnalyzerFrame ('Ack', start_time, end_time, {
                         'input_type': frame_type,
                         'length': packet_len,
                         'checksum': packet_checksum,
                         'seq_num': seq_num,
                         'seq_num_acked': seq_num_acked,
                     }
-                }
+                )
 
             if packet_len < 11:
                 payload = str(self.data[2:-1])
                 self.remove(packet_len)
-                return {
-                    'type': 'Invalid',
-                    'start_time': start_time,
-                    'end_time': end_time,
-                    'data': {
+                return AnalyzerFrame('Invalid', start_time, end_time, {
                         'input_type': frame_type,
                         'length': packet_len,
                         'checksum': packet_checksum,
@@ -149,7 +143,7 @@ class PacketBuffer():
                         'seq_num_acked': seq_num_acked,
                         'payload': payload
                     }
-                }
+                )
 
             tfp_header = bytes(self.data[2:10])
 
@@ -185,11 +179,7 @@ class PacketBuffer():
             response_expected = get_response_expected_from_data(tfp_header)
 
             self.remove(packet_len)
-            return {
-                'type': self.format,
-                'start_time': start_time,
-                'end_time': end_time,
-                'data': {
+            return AnalyzerFrame(self.format, start_time, end_time, {
                     'input_type': frame_type,
                     'length': packet_len,
                     'checksum': packet_checksum,
@@ -203,114 +193,42 @@ class PacketBuffer():
                     'response_expected': response_expected,
                     'payload': payload,
                 }
-            }
+            )
 
         return None
 
+devices = sorted(['{} ({})'.format(info['name'], info['device_identifier']) for info in device_infos.values()])
 
-class Hla():
+class Hla(HighLevelAnalyzer):
+    direction = ChoicesSetting(label='Direction', choices=('MOSI', 'MISO'))
+    device = ChoicesSetting(label='Device', choices=devices)
+    output_format = ChoicesSetting(label='Output Format', choices=('Everything', 'Payload', 'Headers'))
+
+    result_types = {
+        'Everything': {
+            'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}] TFP [UID: {{data.uid}}, Len: {{data.tfp_length}}, FID: {{data.fid}}, SeqNum: {{data.tfp_seq_num}}, Error: {{data.error_code}}, RespExpected: {{data.response_expected}}, Payload: {{data.payload}}], Checksum: {{data.checksum}}'
+        },
+        'Payload': {
+            'format': 'TFP[FID: {{data.fid}}, Error: {{data.error_code}}, Payload: {{data.payload}}]'
+        },
+        'Headers': {
+            'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}] TFP [UID: {{data.uid}}, Len: {{data.tfp_length}}, FID: {{data.fid}}, SeqNum: {{data.tfp_seq_num}}, Error: {{data.error_code}}, RespExpected: {{data.response_expected}}], Checksum: {{data.checksum}}'
+        },
+        'Ack': {
+            'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}], Checksum: {{data.checksum}}'
+        },
+        'Invalid': {
+            'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}], (Invalid!) SPITFP payload[{{data.payload}}] Checksum: {{data.checksum}}'
+        }
+    }
 
     def __init__(self):
-        '''
-        Initialize this HLA.
+        dev_id = int(re.findall('[^\(]*\((\d*)\)', self.device)[0])
+        self.packet_buffer = PacketBuffer(self.direction == 'MOSI', device_infos[dev_id], self.output_format)
 
-        If you have any initialization to do before any methods are called, you can do it here.
-        '''
-        self.packet_buffer = PacketBuffer(False, None, 'long')
-
-
-    def get_capabilities(self):
-        '''
-        Return the settings that a user can set for this High Level Analyzer. The settings that a user selects will later be passed into `set_settings`.
-
-        This method will be called first, before `set_settings` and `decode`
-        '''
-
-        devices = sorted(['{} ({})'.format(info['name'], info['device_identifier']) for info in device_infos.values()])
-
-
-        return {
-            'settings': {
-                'Direction': {
-                    'type': 'choices',
-                    'choices': ('MOSI', 'MISO')
-                },
-                'Device': {
-                    'type': 'choices',
-                    'choices': tuple(devices)
-                },
-                'Output Format': {
-                    'type': 'choices',
-                    'choices': ('Everything', 'Payload', 'Headers')
-                },
-            }
-        }
-
-    def set_settings(self, settings):
-        '''
-        Handle the settings values chosen by the user, and return information about how to display the results that `decode` will return.
-
-        This method will be called second, after `get_capbilities` and before `decode`.
-        '''
-
-        if 'Direction' in settings and 'Device' in settings and 'Output Format' in settings:
-            dev_id = int(re.findall('[^\(]*\((\d*)\)', settings['Device'])[0])
-            self.packet_buffer = PacketBuffer(settings['Direction'] == 'MOSI', device_infos[dev_id], settings['Output Format'])
-
-
-        # Here you can specify how output frames will be formatted in the Logic 2 UI
-        # If no format is given for a type, a default formatting will be used
-        # You can include the values from your frame data (as returned by `decode`) by wrapping their name in double braces, as shown below.
-        return {
-            'result_types': {
-                'Everything': {
-                    'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}] TFP [UID: {{data.uid}}, Len: {{data.tfp_length}}, FID: {{data.fid}}, SeqNum: {{data.tfp_seq_num}}, Error: {{data.error_code}}, RespExpected: {{data.response_expected}}, Payload: {{data.payload}}], Checksum: {{data.checksum}}'
-                },
-                'Payload': {
-                    'format': 'TFP[FID: {{data.fid}}, Error: {{data.error_code}}, Payload: {{data.payload}}]'
-                },
-                'Headers': {
-                    'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}] TFP [UID: {{data.uid}}, Len: {{data.tfp_length}}, FID: {{data.fid}}, SeqNum: {{data.tfp_seq_num}}, Error: {{data.error_code}}, RespExpected: {{data.response_expected}}], Checksum: {{data.checksum}}'
-                },
-                'Ack': {
-                    'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}], Checksum: {{data.checksum}}'
-                },
-                'Invalid': {
-                    'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}], (Invalid!) SPITFP payload[{{data.payload}}] Checksum: {{data.checksum}}'
-                }
-            }
-        }
 
     def decode(self, frame):
-        '''
-        Handle data frame from input analyzer.
-
-        `frame` will always be of the form:
-
-        {
-            'type': 'FRAME_TYPE'
-            'start_time': ...,
-            'end_time': ...,
-            'data': {
-                ...
-            }
-        }
-
-        The `type` and contents of the `data` field will depend on the input analyzer.
-        '''
         self.packet_buffer.add_frame(frame)
+        return self.packet_buffer.find_packet(frame.type)
 
-        return self.packet_buffer.find_packet(frame['type'])
-
-        #Return the data frame itself
-        #return {
-            #'type': 'mytype',  # This type matches up with the type returned from `set_settings`
-            #'start_time': frame['start_time'],
-            #'end_time': frame['end_time'],
-            #'data': {
-                #'input_type': frame['type'],
-                #'mosi': frame['data']['mosi'],
-                #'miso': frame['data']['miso']
-            #}
-        #}
 
