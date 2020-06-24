@@ -4632,7 +4632,7 @@ class ZipGenerator(Generator):
 
         with ChangedDirectory(source_path):
             execute(['zip', '-q', '-r', zipname, '.'])
-            shutil.move(zipname, self.get_root_dir())
+            os.replace(zipname, os.path.join(self.get_root_dir(), zipname))
 
 class ExamplesGenerator(Generator):
     skip_existing_incomplete_example = True
