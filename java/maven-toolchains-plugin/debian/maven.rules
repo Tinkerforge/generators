@@ -1,0 +1,11 @@
+com.thoughtworks.qdox qdox * s/.*/2.x/ * *
+junit junit jar s/4\..*/4.x/ * *
+s/org.apache.maven.shared/org.apache.maven.plugin-testing/ maven-plugin-testing-harness * s/.*/debian/ * *
+s/org.apache.maven.shared/org.apache.maven.plugin-testing/ maven-plugin-testing-tools * s/.*/debian/ * *
+s/org.apache.maven.shared/org.apache.maven.plugin-testing/ maven-plugin-testing * s/.*/debian/ * *
+s/org.apache.maven.shared/org.apache.maven.plugin-testing/ maven-test-tools * s/.*/debian/ * *
+org.codehaus.plexus plexus-compiler-api * s/2\..*/2.x/ * *
+org.codehaus.plexus plexus-compiler-manager * s/2\..*/2.x/ * *
+org.codehaus.plexus plexus-compiler-javac * s/2\..*/2.x/ * *
+org.codehaus.plexus plexus-component-metadata maven-plugin s/1.7.1/1.5.5/ * *
+org.apache.maven maven-* * s/.*/3.x/ * *

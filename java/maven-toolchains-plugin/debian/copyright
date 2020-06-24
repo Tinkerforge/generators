@@ -1,0 +1,16 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Maven Toolchains Plugin
+Source: https://github.com/apache/maven-toolchains-plugin
+
+Files: *
+Copyright: 2001-2014, The Apache Software Foundation
+License: Apache-2.0
+
+Files: debian/*
+Copyright: 2008-2011, Torsten Werner <twerner@debian.org>
+           2015, Miguel Landaeta <nomadium@debian.org>
+License: Apache-2.0
+
+License: Apache-2.0
+ On Debian systems you can find the complete text of the
+ Apache-2.0 license in '/usr/share/common-licenses/Apache-2.0'

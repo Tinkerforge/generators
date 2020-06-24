@@ -1,0 +1,4 @@
+org.apache.maven.plugins maven-enforcer-plugin * * *
+org.apache.openjpa openjpa jar * * *
+org.apache.rat apache-rat-plugin * * *
+org.codehaus.groovy groovy-eclipse-compiler jar * * *

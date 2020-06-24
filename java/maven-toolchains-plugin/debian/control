@@ -1,0 +1,48 @@
+Source: maven-toolchains-plugin
+Section: java
+Priority: optional
+Maintainer: Matthias Bolte <matthias@tinkerforge.com>
+# FIXME: The Build-Depends are copied from libmaven-compiler-plugin-java and could probably be pruned
+Build-Depends:
+ debhelper (>= 11~),
+ default-jdk,
+ junit4,
+ libmaven-plugin-testing-java,
+ libmaven-plugin-tools-java,
+ libmaven-shared-incremental-java,
+ libmaven-shared-utils-java,
+ libmaven3-core-java,
+ libmockito-java,
+ libplexus-compiler-java (>= 2.8.1),
+ libplexus-component-metadata-java,
+ libplexus-languages-java (>= 0.9.10),
+ libplexus-utils-java,
+ libqdox2-java (>= 2.0~M5),
+ maven-debian-helper (>= 1.4)
+Standards-Version: 4.2.1
+Homepage: https://maven.apache.org/plugins/maven-toolchains-plugin/
+
+Package: libmaven-toolchains-plugin-java
+Architecture: all
+Depends: ${maven:Depends}, ${misc:Depends}
+Recommends: ${maven:OptionalDepends}
+Description: Maven Toolchains plugin
+ Maven is a software project management and comprehension tool. Based on the
+ concept of a project object model (POM), Maven can manage a project's build,
+ reporting and documentation from a central piece of information.
+ .
+ Maven's primary goal is to allow a developer to comprehend the complete
+ state of a development effort in the shortest period of time. In order to
+ attain this goal there are several areas of concern that Maven attempts
+ to deal with:
+ .
+    * Making the build process easy
+    * Providing a uniform build system
+    * Providing quality project information
+    * Providing guidelines for best practices development
+    * Allowing transparent migration to new features
+ .
+ The Toolchains Plugin is used to share configuration across plugins. For
+ example to make sure the plugins like compiler, surefire, javadoc, webstart
+ etc. all use the same JDK for execution. Similarly to maven-enforcer-plugin,
+ it allows you to control environmental constraints in the build.
