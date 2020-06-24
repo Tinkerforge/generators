@@ -50,6 +50,44 @@ if 'generators' not in sys.modules:
 from generators import common
 from generators.embedded_c import embedded_c_common
 
+def format(s, device=None, packet=None, packet_skip=0, **kwargs):
+    if device is not None:
+        kwargs['device_space'] = device.get_name().space
+        kwargs['device_lower'] = device.get_name().lower
+        kwargs['device_camel'] = device.get_name().camel
+        kwargs['device_headless'] = device.get_name().headless
+        kwargs['device_under'] = device.get_name().under
+        kwargs['device_upper'] = device.get_name().upper
+        kwargs['device_dash'] = device.get_name().dash
+        kwargs['device_camel_abbrv'] = device.get_name().camel_abbrv
+        kwargs['device_lower_no_space'] = device.get_name().lower_no_space
+        kwargs['device_camel_constant_safe'] = device.get_name().camel_constant_safe
+
+        kwargs['category_space'] = device.get_category().space
+        kwargs['category_lower'] = device.get_category().lower
+        kwargs['category_camel'] = device.get_category().camel
+        kwargs['category_headless'] = device.get_category().headless
+        kwargs['category_under'] = device.get_category().under
+        kwargs['category_upper'] = device.get_category().upper
+        kwargs['category_dash'] = device.get_category().dash
+        kwargs['category_camel_abbrv'] = device.get_category().camel_abbrv
+        kwargs['category_lower_no_space'] = device.get_category().lower_no_space
+        kwargs['category_camel_constant_safe'] = device.get_category().camel_constant_safe
+
+    if packet is not None:
+        kwargs['packet_space'] = packet.get_name(packet_skip).space
+        kwargs['packet_lower'] = packet.get_name(packet_skip).lower
+        kwargs['packet_camel'] = packet.get_name(packet_skip).camel
+        kwargs['packet_headless'] = packet.get_name(packet_skip).headless
+        kwargs['packet_under'] = packet.get_name(packet_skip).under
+        kwargs['packet_upper'] = packet.get_name(packet_skip).upper
+        kwargs['packet_dash'] = packet.get_name(packet_skip).dash
+        kwargs['packet_camel_abbrv'] = packet.get_name(packet_skip).camel_abbrv
+        kwargs['packet_lower_no_space'] = packet.get_name(packet_skip).lower_no_space
+        kwargs['packet_camel_constant_safe'] = packet.get_name(packet_skip).camel_constant_safe
+
+    return s.format(**kwargs)
+
 class CBindingsDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
         def specializer(packet, high_level):
@@ -103,7 +141,6 @@ extern "C" {{
         return defines
 
     def get_c_callback_defines(self):
-        return ''
         defines = ''
         template = """
 /**
@@ -204,12 +241,13 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         return rc;
     }}
 
-    rc = tf_hal_get_port_id(hal, numeric_uid);
+    int port_id, inventory_index;
+    rc = tf_hal_get_port_id(hal, numeric_uid, &port_id, &inventory_index);
     if (rc < 0) {{
         return rc;
     }}
 
-    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, rc);
+    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, port_id, inventory_index, tf_{device_under}_callback_handler);
     if (rc != TF_E_OK) {{
         return rc;
     }}{response_expected_init}
@@ -218,14 +256,14 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 """
 
         unknown_template = """
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, int port_id) {{
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, int port_id, int inventory_index) {{
     uint32_t numeric_uid;
     int rc = tf_base58_decode(uid, &numeric_uid);
     if (rc != TF_E_OK) {{
         return rc;
     }}
 
-    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, port_id);
+    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, port_id, inventory_index, tf_{device_under}_callback_handler);
     if (rc != TF_E_OK) {{
         return rc;
     }}{response_expected_init}
@@ -403,9 +441,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
         return TF_E_TIMEOUT;
     }}
 {extract_response}
-    if (result & TF_TICK_AGAIN) {{
-        tf_tfp_finish_send(&{device_under}->tfp, deadline);
-    }}
+    tf_tfp_finish_send(&{device_under}->tfp, result, deadline);
 
     return tf_tfp_get_error(error_code);
 }}
@@ -415,7 +451,8 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 
         template_extract_response = """
     if (result & TF_TICK_PACKET_RECEIVED && error_code == 0) {{
-{response_assignments}        tf_tfp_packet_processed(&{device_under}->tfp);
+        {response_assignments}
+        tf_tfp_packet_processed(&{device_under}->tfp);
     }}
 """
 
@@ -450,8 +487,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 
             if len(packet.get_elements(direction='out')) > 0:
                 response_struct_def = '\n\t' + packet_camel + '_Response response;'
-                return_list, needs_i2 = packet.get_c_return_list('&{}->tfp.spitfp.recv_buf'.format(device_under))
-                response_assignments = template_extract_response.format(response_assignments=return_list, device_under=device_under)
+                return_list, needs_i2 = packet.get_c_return_list('&{}->tfp.spitfp.recv_buf'.format(device_under), context='getter')
+                response_assignments = template_extract_response.format(response_assignments='\n        '.join(return_list),
+                                                                        device_under=device_under)
                 reponse_ptr = '(Packet *)&response'
             else:
                 response_struct_def = ''
@@ -812,18 +850,64 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
 
         return functions
 
-    def get_c_register_callback_function(self):
-        return '\n'
-
+    def get_c_register_callback_functions(self):
         if self.get_callback_count() == 0:
             return '\n'
 
+        result = []
+
         template = """
-void tf_{0}_register_callback({1} *{0}, int16_t callback_id, void (*function)(void), void *user_data) {{
-	device_register_callback({0}->p, callback_id, function, user_data);
+void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler handler, void *user_data) {{
+    {device_under}->{packet_under}_handler = handler;
+    {device_under}->{packet_under}_user_data = user_data;
 }}
 """
-        return template.format(self.get_name().under, self.get_name().camel)
+        for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                continue
+            result.append(format(template, self, packet))
+
+        return '\n'.join(result)
+
+    def get_c_callback_handler(self):
+        template = """
+static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packetbuffer *payload) {{
+    TF_{device_camel} *{device_under} = (TF_{device_camel} *) dev;
+
+    switch(fid) {{
+{cases}
+        default:
+            return false;
+    }}
+
+    return true;
+}}"""
+
+        case_template = """
+        case TF_{device_upper}_CALLBACK_{packet_upper}: {{
+            TF_{device_camel}{packet_camel}Handler fn = {device_under}->{packet_under}_handler;
+            void *user_data = {device_under}->{packet_under}_user_data;
+            if (fn == NULL)
+                return false;
+{i_decl}
+{extract_payload}
+            tf_tfp_packet_processed(&{device_under}->tfp);
+
+            fn({device_under}, {params}user_data);
+            break;
+        }}"""
+
+        cases = []
+        for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                continue
+            extract_payload, needs_i = packet.get_c_return_list('payload', context='callback_handler')
+
+            cases.append(format(case_template, self, packet,
+                                extract_payload=common.wrap_non_empty('            ', '\n            '.join(extract_payload), ''),
+                                params=common.wrap_non_empty('', packet.get_c_arguments(context='callback_wrapper'), ', '),
+                                i_decl = '' if not needs_i else '            int i;'))
+        return format(template, self, cases='\n'.join(cases))
 
     def get_c_callback_wrapper_functions(self):
         return ''
@@ -1062,23 +1146,38 @@ extern "C" {{
  * \\defgroup {category_camel}{device_camel} {display_name}
  */
 
+struct TF_{device_camel};
+
+{callback_typedefs}
+
 /**
  * \\ingroup {category_camel}{device_camel}
  *
  * {description}
  */
-typedef struct {{
+typedef struct TF_{device_camel} {{
     TF_TfpContext tfp;
+{callback_handlers}
     uint8_t response_expected[{mapped_bytes}];
 }} TF_{device_camel};
 """
         mapped_id_count = len([p for p in self.get_packets('function') if p.get_response_expected() != 'always_true'])
+
+        cb_handler_template = """    TF_{device_camel}{cb_camel}Handler {cb_under}_handler;
+    void *{cb_under}_user_data;
+"""
+        cb_handlers = [cb_handler_template.format(device_camel=self.get_name().camel,
+                                                  cb_camel=cb.get_name().camel,
+                                                  cb_under=cb.get_name().under)
+                        for cb in self.get_packets('callback') if not cb.has_high_level()]
 
         return template.format(header_comment=self.get_generator().get_header_comment('asterisk'),
                                category_upper=self.get_category().upper,
                                device_upper=self.get_name().upper,
                                device_camel=self.get_name().camel,
                                category_camel=self.get_category().camel,
+                               callback_typedefs=self.get_c_typedefs(),
+                               callback_handlers='\n'.join(cb_handlers),
                                description=common.select_lang(self.get_description()),
                                display_name=self.get_long_display_name(),
                                mapped_bytes=math.ceil(mapped_id_count / 8.0))
@@ -1090,29 +1189,27 @@ typedef struct {{
         return "\n#ifdef __cplusplus\n}\n#endif\n"
 
     def get_c_typedefs(self):
-        return '\n'
-
         typedefs = '\n'
-        template = """
-typedef void (*{0}_CallbackFunction)({1});
+        template = """typedef void (*TF_{device_camel}{cb_camel}Handler)(struct TF_{device_camel} *device, {params}void *user_data);
 """
 
         # normal and low-level
         for packet in self.get_packets('callback'):
-            name = packet.get_name().camel
-            parameters = packet.get_c_parameters()
 
-            typedefs += template.format(name, common.wrap_non_empty('', parameters, ', ') + 'void *user_data')
+            typedefs += template.format(device_camel=self.get_name().camel,
+                                        device_under=self.get_name().under,
+                                        cb_camel=packet.get_name().camel,
+                                        params=common.wrap_non_empty('', packet.get_c_parameters(), ', '))
 
         # high-level
         for packet in self.get_packets('callback'):
             if not packet.has_high_level():
                 continue
 
-            name = packet.get_name(skip=-2).camel
-            parameters = packet.get_c_parameters(high_level=True)
-
-            typedefs += template.format(name, common.wrap_non_empty('', parameters, ', ') + 'void *user_data')
+            typedefs += template.format(device_camel=self.get_name().camel,
+                                        device_under=self.get_name().under,
+                                        cb_camel=packet.get_name(skip=-2).camel,
+                                        params=common.wrap_non_empty('', packet.get_c_parameters(high_level=True), ', '))
 
         return typedefs
 
@@ -1134,7 +1231,7 @@ int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal);
  * Creates the device object \\c {0} with the unique device ID \\c uid and adds
  * it to the IPConnection \\c ipcon.
  */
-int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, int port_id);
+int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, int port_id, int inventory_index);
 """
         if self.get_name().under == 'unknown':
             template = unknown_template
@@ -1247,32 +1344,40 @@ TF_ATTRIBUTE_NONNULL int tf_{device_name_under}_{function_name}(TF_{device_name_
 
         return functions
 
-    def get_c_register_callback_declaration(self):
-        return '\n'
-
+    def get_c_register_callback_declarations(self):
         if self.get_callback_count() == 0:
             return '\n'
 
+        result = []
+
         template = """
 /**
- * \\ingroup {2}{1}
+ * \\ingroup {category_camel}{device_camel}
  *
  * Registers the given \\c function with the given \\c callback_id. The
  * \\c user_data will be passed as the last parameter to the \\c function.
  */
-void {0}_register_callback({1} *{0}, int16_t callback_id, void (*function)(void), void *user_data);
+void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler handler, void *user_data);
 """
-        return template.format(self.get_name().under, self.get_name().camel, self.get_category().camel)
+
+        for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                continue
+            result.append(format(template, self, packet))
+
+        return '\n'.join(result)
 
     def get_c_source(self):
         source  = self.get_c_include_c()
-        source += self.get_c_typedefs()
         source += self.get_c_callback_wrapper_functions()
+        source += self.get_c_callback_handler()
         source += self.get_c_create_function()
         source += self.get_c_destroy_function()
         source += self.get_c_response_expected_functions()
-        source += self.get_c_register_callback_function()
+
         source += self.get_c_functions()
+        source += self.get_c_register_callback_functions()
+
         source += self.get_c_end_c()
 
         return source
@@ -1287,7 +1392,7 @@ void {0}_register_callback({1} *{0}, int16_t callback_id, void (*function)(void)
         header += self.get_c_create_declaration()
         header += self.get_c_destroy_declaration()
         header += self.get_c_response_expected_declarations()
-        header += self.get_c_register_callback_declaration()
+        header += self.get_c_register_callback_declarations()
         header += self.get_c_function_declaration()
         header += self.get_c_end_h()
 
@@ -1433,42 +1538,37 @@ class CBindingsPacket(embedded_c_common.CPacket):
 
         return struct_list, needs_i
 
-    def get_c_return_list(self, packetbuffer_name):
-        return_list = ''
+    def get_c_return_list(self, packetbuffer_name, context):
+        assert context in ['callback_handler', 'getter']
+        return_list = []
         needs_i = False
 
         for element in self.get_elements(direction='out'):
+            if element.get_cardinality() > 1:
+                if context == 'callback_handler':
+                    t = '{type_} {dest}[{count}]; '
+                else:
+                    t = ''
 
-            if element.get_type() == 'string':
-                temp = '\t\ttf_packetbuffer_pop_n({packetbuffer}, (uint8_t*)ret_{dest}, {count});\n'
-                return_list += temp.format(packetbuffer=packetbuffer_name,
-                                           dest=element.get_name().under,
-                                           count=element.get_cardinality())
+                if element.get_type() == 'string':
+                    t += 'tf_packetbuffer_pop_n({packetbuffer}, (uint8_t*){dest}, {count});'
+                elif element.get_type() == 'bool':
+                    t += "tf_packetbuffer_read_bool_array({packetbuffer}, {dest}, {count});"
+                else:
+                    t += 'for (i = 0; i < {count}; ++i) {dest}[i] = tf_packetbuffer_read_{type_}({packetbuffer});'
+                    needs_i = True
 
-            elif element.get_type() == 'bool':
-                temp = "\t\ttf_packetbuffer_read_bool_array({packetbuffer}, ret_{dest}, {count});\n"
-                return_list += temp.format(packetbuffer=packetbuffer_name,
-                                           dest=element.get_name().under,
-                                           count=element.get_cardinality())
+            else:
+                if context == 'callback_handler':
+                    t = '{type_} {dest} = tf_packetbuffer_read_{type_}({packetbuffer});'
+                else:
+                    t = '*{dest} = tf_packetbuffer_read_{type_}({packetbuffer});'
 
-            elif element.get_cardinality() > 1:
-                needs_i = True
-                return_list += '\t\tfor (i = 0; i < {count}; ++i) ret_{dest}[i] = tf_packetbuffer_read_{type_}({packetbuffer});\n' \
-                                .format(packetbuffer=packetbuffer_name,
-                                        dest=element.get_name().under,
+            return_list.append(t.format(packetbuffer=packetbuffer_name,
+                                        dest=('ret_' if context == 'getter' else '') + element.get_name().under,
                                         count=element.get_cardinality(),
                                         item_size=element.get_item_size(),
-                                        type_=element.get_c_type('default'))
-            else:
-                return_list += '\t\t*ret_{dest} = tf_packetbuffer_read_{type_}({packetbuffer});\n' \
-                                .format(packetbuffer=packetbuffer_name,
-                                        dest=element.get_name().under,
-                                        item_size=element.get_item_size(),
-                                        type_=element.get_c_type('default'))
-            #elif element.get_item_size() > 1:
-            #    return_list += '\t*ret_{0} = tf_leconvert_{2}_from({1}.{0});\n'.format(element.get_name().under, sf, element.get_type())
-            #else:
-            #    return_list += '\t*ret_{0} = {1}.{0};\n'.format(element.get_name().under, sf)
+                                        type_=element.get_c_type('default')))
 
         return return_list, needs_i
 
