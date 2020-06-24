@@ -3,7 +3,7 @@
 
 """
 OpenHAB ZIP Generator
-Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019-2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_openhab_zip.py: Generator for OpenHAB ZIP
 
@@ -204,7 +204,7 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
         for f in ['changelog.txt', 'readme_de.txt', 'readme_en.txt']:
             shutil.copy(os.path.join(self.get_bindings_dir(), '..', 'beta', f), zip_dir)
         shutil.copytree(os.path.join(binding_dir, 'src'), os.path.join(zip_dir, 'org.openhab.binding.tinkerforge', 'src'))
-        shutil.copy(os.path.join(binding_dir, 'target', 'org.openhab.binding.tinkerforge-2.5.6-SNAPSHOT.jar'), zip_dir)
+        shutil.copy(os.path.join(binding_dir, 'target', 'org.openhab.binding.tinkerforge-2.5.7-SNAPSHOT.jar'), zip_dir)
 
         java_bindings = os.path.join(self.get_root_dir(), 'tinkerforge-2.1.26.jar')
 
