@@ -105,7 +105,15 @@ class SaleaeBindingsDevice(common.Device):
             'out_struct_format': '8s 8s c 3B 3B H B'
         }"""
 
-        packets += [enumerate_packet]
+        comcu_enumerate_packet = """252: {
+            'function_id': 252,
+            'name': 'CoMCU Enumerate',
+            'elements': [],
+            'in_struct_format': '',
+            'out_struct_format': ''
+        }"""
+
+        packets += [enumerate_packet, comcu_enumerate_packet]
 
         return """{dev_id}: {{
     'device_identifier': {dev_id},
