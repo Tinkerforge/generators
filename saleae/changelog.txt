@@ -8,3 +8,6 @@
 2020-06-24: 2.0.2 (fae6a4e)
 - Port to Logic 2.3 API
 - Add CoMCU-Enumerate parsing support
+
+2020-06-24: 2.0.3 (<unknown>)
+- Add README.md
