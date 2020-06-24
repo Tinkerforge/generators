@@ -5,6 +5,6 @@
 - Fix parsing of TFP response expected flag
 - Fix parsing of SPITFP acknowledgments
 
-2020-06-24: 2.0.2 (<unknown>)
+2020-06-24: 2.0.2 (fae6a4e)
 - Port to Logic 2.3 API
 - Add CoMCU-Enumerate parsing support
