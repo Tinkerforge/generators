@@ -281,15 +281,20 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
                                response_expected_init=response_expected_init)
 
     def get_c_destroy_function(self):
-        return ''
-
         template = """
-void {0}_destroy({1} *{0}) {{
-	device_release({0}->p);
+int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
+    return tf_tfp_destroy(&{device_under}->tfp);
 }}
 """
-        return template.format(self.get_name().under,
-                               self.get_name().camel)
+        return format(template, self)
+
+    def get_c_callback_tick_function(self):
+        template = """
+void tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_ms) {{
+    tf_tfp_callback_tick(&{device_under}->tfp, tf_hal_current_time_ms({device_under}->tfp.spitfp.hal) + timeout_ms);
+}}
+"""
+        return format(template, self)
 
     def get_c_response_expected_info(self):
         mapped_id = 0
@@ -987,7 +992,20 @@ int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, int port_id,
  * Removes the device object \\c {0} from its IPConnection and destroys it.
  * The device object cannot be used anymore afterwards.
  */
-void tf_{0}_destroy(TF_{1} *{0});
+int tf_{0}_destroy(TF_{1} *{0});
+"""
+        return template.format(self.get_name().under,
+                               self.get_name().camel,
+                               self.get_category().camel)
+
+    def get_c_callback_tick_declaration(self):
+        template = """
+#ifdef TF_IMPLEMENT_CALLBACKS
+/**
+ * \\ingroup {2}{1}
+ */
+void tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_ms);
+#endif
 """
         return template.format(self.get_name().under,
                                self.get_name().camel,
@@ -1110,10 +1128,9 @@ void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devi
         source += self.get_c_create_function()
         source += self.get_c_destroy_function()
         source += self.get_c_response_expected_functions()
-
         source += self.get_c_functions()
         source += self.get_c_register_callback_functions()
-
+        source += self.get_c_callback_tick_function()
         source += self.get_c_end_c()
 
         return source
@@ -1129,6 +1146,7 @@ void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devi
         header += self.get_c_destroy_declaration()
         header += self.get_c_response_expected_declarations()
         header += self.get_c_register_callback_declarations()
+        header += self.get_c_callback_tick_declaration()
         header += self.get_c_function_declaration()
         header += self.get_c_end_h()
 
