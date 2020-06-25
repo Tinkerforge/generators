@@ -1134,32 +1134,6 @@ void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devi
 
         return header
 
-    def get_c_symbols(self):
-        symbols = []
-        name = self.get_name().under
-
-        symbols.append('tf_{0}_create'.format(name))
-        symbols.append('tf_{0}_destroy'.format(name))
-        symbols.append('tf_{0}_get_response_expected'.format(name))
-        symbols.append('tf_{0}_set_response_expected'.format(name))
-        symbols.append('tf_{0}_set_response_expected_all'.format(name))
-
-        if self.get_callback_count() > 0:
-            symbols.append('tf_{0}_register_callback'.format(name))
-
-        symbols.append('tf_{0}_get_api_version'.format(name))
-
-        # normal and low-level
-        for packet in self.get_packets('function'):
-            symbols.append('tf_{0}_{1}'.format(name, packet.get_name().under))
-
-        # high-level
-        for packet in self.get_packets('function'):
-            if packet.has_high_level():
-                symbols.append('tf_{0}_{1}'.format(name, packet.get_name(skip=-2).under))
-
-        return '\n'.join(symbols) + '\n'
-
 class CBindingsPacket(embedded_c_common.CPacket):
     def get_c_formatted_doc(self, high_level=False):
         text = common.select_lang(self.get_doc_text())
@@ -1329,13 +1303,9 @@ class CBindingsGenerator(embedded_c_common.CGeneratorTrait, common.BindingsGener
         with open(os.path.join(self.get_bindings_dir(), filename + '.h'), 'w') as f:
             f.write(device.get_c_header())
 
-        with open(os.path.join(self.get_bindings_dir(), filename + '.symbols'), 'w') as f:
-            f.write(device.get_c_symbols())
-
         if device.is_released():
             self.released_files.append(filename + '.c')
             self.released_files.append(filename + '.h')
-            self.released_files.append(filename + '.symbols')
 
 def generate(root_dir):
     common.generate(root_dir, 'en', CBindingsGenerator)
