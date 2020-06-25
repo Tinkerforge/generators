@@ -35,7 +35,8 @@
   </distributionManagement>
   <build>
     <plugins>
-      <plugin>
+      <!-- FIXME: maven-toolchains-plugin doesn't work correctly in all cases, use JAVA_HOME instead -->
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-toolchains-plugin</artifactId>
         <version>3.0.0</version>
@@ -53,7 +54,7 @@
             </jdk>
           </toolchains>
         </configuration>
-      </plugin>
+      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

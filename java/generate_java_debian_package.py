@@ -80,7 +80,10 @@ def generate(root_dir):
         # FIXME: maven-toolchains-plugin doesn't stop the default JDK from
         #        leaking into the build process. it is still necessary to set
         #        JAVA_HOME to Java 8 in order to stop the default JDK from
-        #        being recorded as the Build-Jdk in the manifest file.
+        #        being recorded as the Build-Jdk-Spec in the manifest file.
+        #        maven-javadoc-plugin doesn't respect the toolchain setting
+        #        correctly and tries to run javadoc with options detected for
+        #        the default JDK. this is fixed by setting JAVA_HOME also.
         env = dict(os.environ)
         env['JAVA_HOME'] = java_common.detect_java_home()
 
