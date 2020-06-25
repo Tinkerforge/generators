@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.tinkerforge</groupId>
+  <artifactId>{{CONFIG_NAME}}-octave</artifactId>
+  <packaging>jar</packaging>
+  <version>{{VERSION}}</version>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <name>Tinkerforge Custom API Bindings for Octave</name>
+  <description>Octave API Bindings for Custom Tinkerforge Bricks and Bricklets</description>
+  <url>https://www.tinkerforge.com/en/doc/Software/API_Bindings_MATLAB.html</url>
+  <organization>
+    <name>Tinkerforge GmbH</name>
+    <url>https://www.tinkerforge.com</url>
+  </organization>
+  <developers>
+    <developer>
+      <name>Matthias Bolte</name>
+      <email>matthias@tinkerforge.com</email>
+      <organization>Tinkerforge GmbH</organization>
+      <organizationUrl>https://www.tinkerforge.com</organizationUrl>
+    </developer>
+  </developers>
+  <build>
+    <plugins>
+      <!-- FIXME: maven-toolchains-plugin doesn't work correctly in all cases, use JAVA_HOME instead -->
+      <!--<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-toolchains-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>toolchain</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <toolchains>
+            <jdk>
+              <version>1.8</version>
+            </jdk>
+          </toolchains>
+        </configuration>
+      </plugin>-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>8</source>
+          <target>8</target>
+          <encoding>UTF-8</encoding>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+          </compilerArgs>
+          <failOnWarning>true</failOnWarning>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
+      </plugin>
+      <!-- Don't leak username in manifest file via Built-By entry -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <Bindings-Version>{{VERSION}}</Bindings-Version>
+              <Bindings-Flavor>Octave</Bindings-Flavor>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>com.tinkerforge</groupId>
+      <artifactId>tinkerforge-octave</artifactId>
+      <version>{{TINKERFORGE_VERSION}}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.octave</groupId>
+      <artifactId>octave</artifactId>
+      <version>3.6</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <licenses>
+    <license>
+      <name>CC0 1.0 Universal</name>
+      <url>https://creativecommons.org/publicdomain/zero/1.0/</url>
+      <comments>Public Domain Dedication</comments>
+    </license>
+  </licenses>
+</project>

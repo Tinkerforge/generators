@@ -47,6 +47,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.java import java_common
 from generators.matlab import matlab_common
 
 class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator):
@@ -54,16 +55,20 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
         super().__init__(*args, **kwargs)
 
         self.tmp_dir                                                   = self.get_zip_dir()
-        self.tmp_flavor_dir                          = {'matlab': os.path.join(self.tmp_dir, 'matlab'),
-                                                        'octave': os.path.join(self.tmp_dir, 'octave')}
-        self.tmp_flavor_source_dir                   = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'source'),
-                                                        'octave': os.path.join(self.tmp_flavor_dir['octave'], 'source')}
-        self.tmp_flavor_source_meta_inf_services_dir = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'META-INF', 'services'),
-                                                        'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'META-INF', 'services')}
-        self.tmp_flavor_source_com_tinkerforge_dir   = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'com', 'tinkerforge'),
-                                                        'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'com', 'tinkerforge')}
-        self.tmp_flavor_examples_dir                 = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'examples'),
-                                                        'octave': os.path.join(self.tmp_flavor_dir['octave'], 'examples')}
+        self.tmp_flavor_dir                                            = {'matlab': os.path.join(self.tmp_dir, 'matlab'),
+                                                                          'octave': os.path.join(self.tmp_dir, 'octave')}
+        self.tmp_flavor_source_dir                                     = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'source'),
+                                                                          'octave': os.path.join(self.tmp_flavor_dir['octave'], 'source')}
+        self.tmp_flavor_source_src_main_java_com_tinkerforge_dir       = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'src', 'main', 'java', 'com', 'tinkerforge'),
+                                                                          'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'src', 'main', 'java', 'com', 'tinkerforge')}
+        self.tmp_flavor_source_src_main_resources_metainf_services_dir = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'src', 'main', 'resources', 'META-INF', 'services'),
+                                                                          'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'src', 'main', 'resources', 'META-INF', 'services')}
+        self.tmp_flavor_source_src_main_resources_com_tinkerforge_dir  = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'src', 'main', 'resources', 'com', 'tinkerforge'),
+                                                                          'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'src', 'main', 'resources', 'com', 'tinkerforge')}
+        self.tmp_flavor_source_target_dir                              = {'matlab': os.path.join(self.tmp_flavor_source_dir['matlab'], 'target'),
+                                                                          'octave': os.path.join(self.tmp_flavor_source_dir['octave'], 'target')}
+        self.tmp_flavor_examples_dir                                   = {'matlab': os.path.join(self.tmp_flavor_dir['matlab'], 'examples'),
+                                                                          'octave': os.path.join(self.tmp_flavor_dir['octave'], 'examples')}
 
     def get_bindings_name(self):
         return 'matlab'
@@ -71,11 +76,20 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
     def prepare(self):
         super().prepare()
 
+        common.execute(['mvn', 'install:install-file',
+                        '-Dfile=octave-3.6.jar',
+                        '-DgroupId=org.octave',
+                        '-DartifactId=octave',
+                        '-Dversion=3.6',
+                        '-Dpackaging=jar',
+                        '-DgeneratePom=true'])
+
         for flavor in ['matlab', 'octave']:
             os.makedirs(self.tmp_flavor_dir[flavor])
             os.makedirs(self.tmp_flavor_source_dir[flavor])
-            os.makedirs(self.tmp_flavor_source_meta_inf_services_dir[flavor])
-            os.makedirs(self.tmp_flavor_source_com_tinkerforge_dir[flavor])
+            os.makedirs(self.tmp_flavor_source_src_main_java_com_tinkerforge_dir[flavor])
+            os.makedirs(self.tmp_flavor_source_src_main_resources_metainf_services_dir[flavor])
+            os.makedirs(self.tmp_flavor_source_src_main_resources_com_tinkerforge_dir[flavor])
             os.makedirs(self.tmp_flavor_examples_dir[flavor])
 
     def generate(self, device):
@@ -97,11 +111,20 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
     def finish(self):
         root_dir = self.get_root_dir()
 
+        if self.get_config_name().space == 'Tinkerforge':
+            shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
+        else:
+            shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
+
         for flavor in ['matlab', 'octave']:
             tmp_dir = self.tmp_flavor_dir[flavor]
             tmp_source_dir = self.tmp_flavor_source_dir[flavor]
-            tmp_source_meta_inf_services_dir = self.tmp_flavor_source_meta_inf_services_dir[flavor]
-            tmp_source_com_tinkerforge_dir = self.tmp_flavor_source_com_tinkerforge_dir[flavor]
+            tmp_source_src_main_java_com_tinkerforge_dir = self.tmp_flavor_source_src_main_java_com_tinkerforge_dir[flavor]
+            tmp_source_src_main_resources_metainf_services_dir = self.tmp_flavor_source_src_main_resources_metainf_services_dir[flavor]
+            tmp_source_src_main_resources_com_tinkerforge_dir = self.tmp_flavor_source_src_main_resources_com_tinkerforge_dir[flavor]
+            tmp_source_target_dir = self.tmp_flavor_source_target_dir[flavor]
             tmp_examples_dir = self.tmp_flavor_examples_dir[flavor]
 
             # Copy IP Connection examples
@@ -111,82 +134,71 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
 
             # Copy bindings and readme
             for filename in self.get_released_files():
-                shutil.copy(os.path.join(root_dir, self.get_bindings_dir(), flavor, filename), tmp_source_com_tinkerforge_dir)
+                shutil.copy(os.path.join(root_dir, self.get_bindings_dir(), flavor, filename), tmp_source_src_main_java_com_tinkerforge_dir)
 
-            shutil.copy(os.path.join(self.get_bindings_dir(), flavor, 'com.tinkerforge.DeviceProvider'), tmp_source_meta_inf_services_dir)
+            shutil.copy(os.path.join(self.get_bindings_dir(), flavor, 'com.tinkerforge.DeviceProvider'), tmp_source_src_main_resources_metainf_services_dir)
 
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'BrickDaemon.java'),                  tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceBase.java'),                   tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'Device_{0}.java'.format(flavor)),                  os.path.join(tmp_source_com_tinkerforge_dir, 'Device.java'))
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceListener.java'),               tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceProvider.java'),               tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceFactory.java'),                tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'IPConnection_{0}.java'.format(flavor)),            os.path.join(tmp_source_com_tinkerforge_dir, 'IPConnection.java'))
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'IPConnectionBase.java'),             tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeException.java'),         tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'TimeoutException.java'),             tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'AlreadyConnectedException.java'),    tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'NotConnectedException.java'),        tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'CryptoException.java'),              tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'NetworkException.java'),             tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'StreamOutOfSyncException.java'),     tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'InvalidParameterException.java'),    tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'NotSupportedException.java'),        tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'UnknownErrorCodeException.java'),    tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'WrongDeviceTypeException.java'),     tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceReplacedException.java'),      tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'WrongResponseLengthException.java'), tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeListener.java'),          tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-i386.so'),            tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-amd64.so'),           tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-arm.so'),             tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-x86.dll'),          tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-amd64.dll'),        tmp_source_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-macos-x86_64.dynlib'),      tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'BrickDaemon.java'),                  tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceBase.java'),                   tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'Device_{0}.java'.format(flavor)),                  os.path.join(tmp_source_src_main_java_com_tinkerforge_dir, 'Device.java'))
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceListener.java'),               tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceProvider.java'),               tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceFactory.java'),                tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'IPConnection_{0}.java'.format(flavor)),            os.path.join(tmp_source_src_main_java_com_tinkerforge_dir, 'IPConnection.java'))
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'IPConnectionBase.java'),             tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeException.java'),         tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'TimeoutException.java'),             tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'AlreadyConnectedException.java'),    tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'NotConnectedException.java'),        tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'CryptoException.java'),              tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'NetworkException.java'),             tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'StreamOutOfSyncException.java'),     tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'InvalidParameterException.java'),    tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'NotSupportedException.java'),        tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'UnknownErrorCodeException.java'),    tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'WrongDeviceTypeException.java'),     tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceReplacedException.java'),      tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'WrongResponseLengthException.java'), tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeListener.java'),          tmp_source_src_main_java_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-i386.so'),            tmp_source_src_main_resources_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-amd64.so'),           tmp_source_src_main_resources_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-arm.so'),             tmp_source_src_main_resources_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-x86.dll'),          tmp_source_src_main_resources_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-amd64.dll'),        tmp_source_src_main_resources_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-macos-x86_64.dynlib'),      tmp_source_src_main_resources_com_tinkerforge_dir)
 
-            if self.get_config_name().space == 'Tinkerforge':
-                shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
-                shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
-                shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
-            else:
-                shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
-
-            # Make manifest
+            # Make pom.xml
             version = self.get_changelog_version()
 
-            with open(os.path.join(tmp_dir, 'manifest.txt'), 'w') as f:
-                f.write('Bindings-Version: {1}.{2}.{3}\nBindings-Flavor: {0}\n'.format(flavor.upper(), *version))
+            if self.get_config_name().space == 'Tinkerforge':
+                common.specialize_template(os.path.join(root_dir, 'pom.xml.{0}-jar-template'.format(flavor)),
+                                           os.path.join(tmp_source_dir, 'pom.xml'),
+                                           {'{{VERSION}}': '.'.join(version)})
+            else:
+                common.specialize_template(os.path.join(root_dir, 'pom.xml.{0}-custom-template'.format(flavor)),
+                                           os.path.join(tmp_source_dir, 'pom.xml'),
+                                           {'{{CONFIG_NAME}}': self.get_config_name().dash,
+                                            '{{VERSION}}': '.'.join(version),
+                                            '{{TINKERFORGE_VERSION}}': '.'.join(common.get_changelog_version(root_dir))})
 
-            # Make jar
-            with common.ChangedDirectory(tmp_dir):
-                if flavor == 'octave':
-                    classpath = '-classpath {0} '.format(os.path.join(root_dir, 'octave.jar'))
-                else:
-                    classpath = ''
-
-                common.execute('javac ' +
-                               classpath +
-                               '-Xlint ' +
-                               '-source 1.6 ' +
-                               '-target 1.6 ' +
-                               os.path.join(tmp_source_com_tinkerforge_dir, '*.java'),
-                               shell=True)
-
+            # Compile source
             with common.ChangedDirectory(tmp_source_dir):
-                common.execute(['jar',
-                                'cfm',
-                                os.path.join(tmp_dir, self.get_config_name().camel + '.jar'),
-                                os.path.join(tmp_dir, 'manifest.txt'),
-                                'com',
-                                'META-INF'])
+                # FIXME: maven-toolchains-plugin doesn't stop the default JDK from
+                #        leaking into the build process. it is still necessary to set
+                #        JAVA_HOME to Java 8 in order to stop the default JDK from
+                #        being recorded as the Build-Jdk-Spec in the manifest file.
+                env = dict(os.environ)
+                env['JAVA_HOME'] = java_common.detect_java_home()
 
-            # Remove manifest
-            os.remove(os.path.join(tmp_dir, 'manifest.txt'))
+                common.execute(['mvn',
+                                'clean',
+                                'install'],
+                               env=env)
 
-            # Remove classes
-            for f in os.listdir(tmp_source_com_tinkerforge_dir):
-                if f.endswith('.class'):
-                    os.remove(os.path.join(tmp_source_com_tinkerforge_dir, f))
+            os.rename(os.path.join(tmp_source_target_dir, '{0}-{1}-{2}.{3}.{4}.jar'.format(self.get_config_name().dash, flavor, *version)),
+                      os.path.join(tmp_dir, '{0}.jar'.format(self.get_config_name().camel)))
+
+            shutil.rmtree(tmp_source_target_dir)
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
