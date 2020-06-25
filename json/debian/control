@@ -1,0 +1,14 @@
+Source: tinkerforge-json-bindings
+Section: devel
+Priority: optional
+Maintainer: Matthias Bolte <matthias@tinkerforge.com>
+Build-Depends: debhelper (>= 10)
+Standards-Version: 4.1.3
+Homepage: https://www.tinkerforge.com/
+
+Package: tinkerforge-json
+Architecture: all
+Depends: ${misc:Depends}
+Description: Tinkerforge JSON API Bindings
+ The JSON bindings represent API bindings generator configuration files for
+ Tinkerforge Bricks and Bricklets in JSON format.
