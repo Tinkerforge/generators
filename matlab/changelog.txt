@@ -158,3 +158,6 @@
 - Add getAllVoltages and set/getAllVoltagesCallbackConfiguration methods and
   AllVoltages listener to Industrial Dual Analog In Bricklet 2.0 API
 - Add set/getI2CMode methods to Barometer Bricklet API
+
+2020-06-25: 2.0.28 (<unknown>)
+- Use Maven to build all JAR file variants
