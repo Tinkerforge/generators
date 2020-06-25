@@ -66,7 +66,7 @@ class SaleaeZipGenerator(saleae_common.SaleaeGeneratorTrait, common.ZipGenerator
         shutil.copy(os.path.join(bindings_dir, 'extension.json'),             self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),                     os.path.join(self.tmp_dir, 'README.md'))
+        shutil.copy(os.path.join(root_dir, 'README.md'),                      self.tmp_dir)
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),   self.tmp_dir)
 
         # Make zip
