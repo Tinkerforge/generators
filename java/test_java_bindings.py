@@ -48,6 +48,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.java import java_common
 
 class JavaExamplesTester(common.Tester):
     def __init__(self, root_dir, extra_paths):
@@ -75,7 +76,7 @@ class JavaExamplesTester(common.Tester):
             shutil.copy(path, '/tmp/tester/java')
             path = os.path.join('/tmp/tester/java', os.path.split(path)[1])
 
-        args = ['javac',
+        args = [os.path.join(java_common.detect_java_home(), 'bin/javac'),
                 '-Xlint:all',
                 '-Werror',
                 '-cp',
@@ -91,13 +92,12 @@ class JavaDocTester(common.Tester):
     def after_unzip(self):
         print('>>> generating javadoc')
 
-        args = ['javadoc',
+        args = [os.path.join(java_common.detect_java_home(), 'bin/javadoc'),
                 '-quiet',
-                '-html4',
                 '-d',
                 '/tmp/tester/java/javadoc',
                 '-classpath',
-                '/tmp/tester/java/source',
+                '/tmp/tester/java/source/src/main/java',
                 'com.tinkerforge']
 
         rc = subprocess.call(args)
