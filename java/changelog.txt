@@ -333,5 +333,5 @@
 - Add set/getI2CMode methods to Barometer Bricklet API
 - Add Automatic-Module-Name to manifest
 
-2020-06-25: 2.1.28 (<unknown>)
+2020-06-25: 2.1.28 (a013b35)
 - Use Maven to build all JAR file variants
