@@ -165,12 +165,14 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
             shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceReplacedException.java'),      tmp_source_src_main_java_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'WrongResponseLengthException.java'), tmp_source_src_main_java_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeListener.java'),          tmp_source_src_main_java_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-i386.so'),            tmp_source_src_main_resources_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-amd64.so'),           tmp_source_src_main_resources_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-arm.so'),             tmp_source_src_main_resources_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-x86.dll'),          tmp_source_src_main_resources_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-amd64.dll'),        tmp_source_src_main_resources_com_tinkerforge_dir)
-            shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-macos-x86_64.dynlib'),      tmp_source_src_main_resources_com_tinkerforge_dir)
+
+            if flavor == 'octave':
+                shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-i386.so'),       tmp_source_src_main_resources_com_tinkerforge_dir)
+                shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-amd64.so'),      tmp_source_src_main_resources_com_tinkerforge_dir)
+                shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-linux-arm.so'),        tmp_source_src_main_resources_com_tinkerforge_dir)
+                shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-x86.dll'),     tmp_source_src_main_resources_com_tinkerforge_dir)
+                shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-windows-amd64.dll'),   tmp_source_src_main_resources_com_tinkerforge_dir)
+                shutil.copy(os.path.join(root_dir, 'liboctaveinvokewrapper-macos-x86_64.dynlib'), tmp_source_src_main_resources_com_tinkerforge_dir)
 
             # Make pom.xml
             version = self.get_changelog_version()
