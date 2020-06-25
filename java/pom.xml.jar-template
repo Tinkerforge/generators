@@ -63,6 +63,22 @@
           <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
+      <!-- Don't leak username in manifest file via Built-By entry -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <Bindings-Version>{{VERSION}}</Bindings-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
       <!--<plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
