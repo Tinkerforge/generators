@@ -231,7 +231,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         return rc;
     }}
 
-    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, port_id, inventory_index, tf_{device_under}_callback_handler);
+    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, TF_{device_upper}_DEVICE_IDENTIFIER, hal, port_id, inventory_index, tf_{device_under}_callback_handler);
     if (rc != TF_E_OK) {{
         return rc;
     }}{response_expected_init}
@@ -247,7 +247,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         return rc;
     }}
 
-    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, hal, port_id, inventory_index, tf_{device_under}_callback_handler);
+    rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, 0, hal, port_id, inventory_index, tf_{device_under}_callback_handler);
     if (rc != TF_E_OK) {{
         return rc;
     }}{response_expected_init}
@@ -277,6 +277,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
             template = unknown_template
 
         return template.format(device_under=self.get_name().under,
+                               device_upper=self.get_name().upper,
                                device_camel=self.get_name().camel,
                                response_expected_init=response_expected_init)
 
