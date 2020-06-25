@@ -146,7 +146,7 @@ extern "C" {{
         return defines
 
     def get_c_callback_defines(self):
-        defines = ''
+        defines = '#ifdef TF_IMPLEMENT_CALLBACKS'
         template = """
 /**
  * \\ingroup {5}{4}
@@ -157,35 +157,14 @@ extern "C" {{
 """
 
         for packet in self.get_packets('callback'):
-            if packet.has_high_level():
-                doc = 'See {0}_CALLBACK_{1}'.format(self.get_name().upper, packet.get_name(skip=-2).upper)
-            else:
-                doc = packet.get_c_formatted_doc()
+            doc = packet.get_c_formatted_doc()
             defines += template.format(self.get_name().upper,
                                        packet.get_name().upper,
                                        packet.get_function_id(),
                                        doc,
                                        self.get_name().camel,
                                        self.get_category().camel)
-
-        template = """
-/**
- * \\ingroup {5}{4}
- *
- * {3}
- */
-#define TF_{0}_CALLBACK_{1} (-{2})
-"""
-
-        for packet in self.get_packets('callback'):
-            if packet.has_high_level():
-                defines += template.format(self.get_name().upper,
-                                           packet.get_name(skip=-2).upper,
-                                           packet.get_function_id(),
-                                           packet.get_c_formatted_doc(high_level=True),
-                                           self.get_name().camel,
-                                           self.get_category().camel)
-
+        defines += '#endif'
         return defines
 
     def get_c_constants(self):
@@ -276,26 +255,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 }}
 """
 
-        callbacks = ''
-
-    #     cb_temp = """
-	# device_p->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
-    #     hlcb_temp = """
-	# device_p->high_level_callbacks[-{2}_CALLBACK_{1}].exists = true;"""
-
-
-    #     for packet in self.get_packets('callback'):
-    #         callbacks += cb_temp.format(self.get_name().under, packet.get_name().upper, packet.get_name().under, self.get_name().upper)
-
-    #     if len(callbacks) > 0:
-    #         callbacks += '\n'
-
-    #     for packet in self.get_packets('callback'):
-    #         if packet.has_high_level():
-    #             callbacks += hlcb_temp.format(self.get_name().under, packet.get_name(skip=-2).upper, self.get_name().upper)
-
         mapped_bytes, response_dict = self.get_c_response_expected_info()
-
 
         response_expected_bytes = [0] * mapped_bytes
 
@@ -868,14 +828,13 @@ void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devi
 }}
 """
         for packet in self.get_packets('callback'):
-            if packet.has_high_level():
-                continue
             result.append(format(template, self, packet))
 
-        return '\n'.join(result)
+        return '#ifdef TF_IMPLEMENT_CALLBACKS{}#endif'.format('\n'.join(result))
 
     def get_c_callback_handler(self):
         template = """
+#ifdef TF_IMPLEMENT_CALLBACKS
 static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packetbuffer *payload) {{
     TF_{device_camel} *{device_under} = (TF_{device_camel} *) dev;
 
@@ -886,7 +845,12 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
     }}
 
     return true;
-}}"""
+}}
+#else
+static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packetbuffer *payload) {{
+    return false;
+}}
+#endif"""
 
         case_template = """
         case TF_{device_upper}_CALLBACK_{packet_upper}: {{
@@ -904,8 +868,6 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
 
         cases = []
         for packet in self.get_packets('callback'):
-            if packet.has_high_level():
-                continue
             extract_payload, needs_i = packet.get_c_return_list('payload', context='callback_handler')
 
             cases.append(format(case_template, self, packet,
@@ -914,231 +876,12 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
                                 i_decl = '' if not needs_i else '            int i;'))
         return format(template, self, cases='\n'.join(cases))
 
-    def get_c_callback_wrapper_functions(self):
-        return ''
-
-        functions = ''
-
-        # high-level
-        template_stream_out = """
-static void {device_name_under}_callback_wrapper_{name_under}(DevicePrivate *device_p{parameters}) {{
-	{name_camel}_CallbackFunction callback_function;
-	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {device_name_upper}_CALLBACK_{name_upper}];
-	HighLevelCallback *high_level_callback = &device_p->high_level_callbacks[-{device_name_upper}_CALLBACK_{name_upper}];
-	{stream_length_type} {stream_name_under}_chunk_length = {stream_length} - {stream_name_under}_chunk_offset;
-
-	callback_function = ({name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_name_upper}_CALLBACK_{name_upper}];
-
-	if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-		{stream_name_under}_chunk_length = {chunk_cardinality};
-	}}
-
-	if (high_level_callback->data == NULL) {{ // no stream in-progress
-		if ({stream_name_under}_chunk_offset == 0) {{ // stream starts
-			high_level_callback->data = malloc(sizeof({chunk_data_type}) * {stream_length});
-			high_level_callback->length = {stream_name_under}_chunk_length;
-
-			memcpy(high_level_callback->data, {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-
-			if (high_level_callback->length >= {stream_length}) {{ // stream complete
-				if (callback_function != NULL) {{
-					callback_function({high_level_parameters}user_data);
-				}}
-
-				free(high_level_callback->data);
-				high_level_callback->data = NULL;
-				high_level_callback->length = 0;
-			}}
-		}} else {{ // ignore tail of current stream, wait for next stream start
-		}}
-	}} else {{ // stream in-progress
-		if ({stream_name_under}_chunk_offset != high_level_callback->length) {{ // stream out-of-sync
-			free(high_level_callback->data);
-			high_level_callback->data = NULL;
-			high_level_callback->length = 0;
-
-			if (callback_function != NULL) {{
-				callback_function({high_level_parameters}user_data);
-			}}
-		}} else {{ // stream in-sync
-			memcpy(&(({chunk_data_type} *)high_level_callback->data)[high_level_callback->length], {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-			high_level_callback->length += {stream_name_under}_chunk_length;
-
-			if (high_level_callback->length >= {stream_length}) {{ // stream complete
-				if (callback_function != NULL) {{
-					callback_function({high_level_parameters}user_data);
-				}}
-
-				free(high_level_callback->data);
-				high_level_callback->data = NULL;
-				high_level_callback->length = 0;
-			}}
-		}}
-	}}
-}}
-"""
-        template_stream_out_single_chunk = """
-static void {device_name_under}_callback_wrapper_{name_under}(DevicePrivate *device_p{parameters}) {{
-	{name_camel}_CallbackFunction callback_function;
-	void *user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {device_name_upper}_CALLBACK_{name_upper}];
-
-	callback_function = ({name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {device_name_upper}_CALLBACK_{name_upper}];
-
-	if (callback_function != NULL) {{
-		callback_function({high_level_parameters}user_data);
-	}}
-}}
-"""
-
-        for packet in self.get_packets('callback'):
-            stream_out = packet.get_high_level('stream_out')
-
-            if stream_out != None:
-                if stream_out.has_single_chunk():
-                    template = template_stream_out_single_chunk
-                else:
-                    template = template_stream_out
-
-                stream_length = 'stream_length'
-                length_element = stream_out.get_length_element()
-                chunk_offset_element = stream_out.get_chunk_offset_element()
-
-                if length_element != None:
-                    stream_length = length_element.get_name().under
-                    stream_length_type = length_element.get_c_type('default')
-                elif chunk_offset_element != None:
-                    stream_length_type = chunk_offset_element.get_c_type('default')
-
-                functions += template.format(device_name_under=packet.get_device().get_name().under,
-                                             device_name_upper=packet.get_device().get_name().upper,
-                                             name_under=packet.get_name(skip=-2).under,
-                                             name_upper=packet.get_name(skip=-2).upper,
-                                             name_camel=packet.get_name(skip=-2).camel,
-                                             parameters=common.wrap_non_empty(', ', packet.get_c_parameters(), ''),
-                                             high_level_parameters=common.wrap_non_empty('', packet.get_c_arguments('callback_wrapper', high_level=True, single_chunk=stream_out.has_single_chunk()), ', '),
-                                             stream_name_under=stream_out.get_name().under,
-                                             stream_length_type=stream_length_type,
-                                             stream_length=stream_out.get_fixed_length(default=stream_length),
-                                             chunk_data_type=stream_out.get_chunk_data_element().get_c_type('default'),
-                                             chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
-
-        # normal and low-level
-        template_normal = """
-static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePrivate *device_p, Packet *packet) {{
-	{packet_name_camel}_CallbackFunction callback_function;
-	void *user_data;
-	{packet_name_camel}_Callback *callback;{loop_index_decl}{bool_unpack_decls}{alignment_copies}
-
-	if (packet->header.length != sizeof({packet_name_camel}_Callback)) {{
-		return; // silently ignoring callback with wrong length
-	}}
-
-	callback_function = ({packet_name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
-	user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];
-	callback = ({packet_name_camel}_Callback *)packet;
-	(void)callback; // avoid unused variable warning
-
-	if (callback_function == NULL) {{
-		return;
-	}}
-{endian_conversions}{bool_unpacks}
-	callback_function({callback_args}{callback_args_comma}user_data);
-}}
-"""
-        template_low_level = """
-static void {device_name_under}_callback_wrapper_{packet_name_under}(DevicePrivate *device_p, Packet *packet) {{
-	{packet_name_camel}_CallbackFunction callback_function;
-	void *user_data;
-	{packet_name_camel}_Callback *callback;{loop_index_decl}{bool_unpack_decls}{alignment_copies}
-
-	if (packet->header.length != sizeof({packet_name_camel}_Callback)) {{
-		return; // silently ignoring callback with wrong length
-	}}
-
-	callback_function = ({packet_name_camel}_CallbackFunction)device_p->registered_callbacks[DEVICE_NUM_FUNCTION_IDS + {fid}];
-	user_data = device_p->registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS + {fid}];
-	callback = ({packet_name_camel}_Callback *)packet;
-	(void)callback; // avoid unused variable warning
-
-{endian_conversions}{bool_unpacks}
-	{device_name_under}_callback_wrapper_{ll_packet_name_under}(device_p, {callback_args});
-
-	if (callback_function != NULL) {{
-		callback_function({callback_args}{callback_args_comma}user_data);
-	}}
-}}
-"""
-        for packet in self.get_packets('callback'):
-            callback_arg_list = []
-
-            for element in packet.get_elements():
-                if element.get_type() == 'bool':
-                    callback_arg_list.append('unpacked_{0}'.format(element.get_name().under))
-                else:
-                    callback_arg_list.append('callback->{0}'.format(element.get_name().under))
-
-            endian_list = []
-            loop_index_decl = ''
-            bool_unpack_decls = ''
-            bool_unpacks = ''
-
-            # GCC 9.1 upwards warns (correctly) if a pointer to a member of a packed struct is accessed.
-            # Such code is only generated for arrays of types > 1 byte in callback wrappers.
-            # Fortunately all those arrays are accessed anyway by the little endian conversion.
-            # Assigning the converted values into an aligned array fixes the issue.
-            alignment_copy_list = []
-
-            for element in packet.get_elements():
-                if element.get_type() == 'bool':
-                    if element.get_cardinality() > 1:
-                        loop_index_decl = '\n\tint i;'
-                        bool_unpack_decls += '\n\tbool unpacked_{0}[{1}];'.format(element.get_name().under, element.get_cardinality())
-                        bool_unpacks += '\tfor (i = 0; i < {1}; i++) unpacked_{0}[i] = (callback->{0}[i / 8] & (1 << (i % 8))) != 0;\n' \
-                                    .format(element.get_name().under, element.get_cardinality())
-                    else:
-                        bool_unpack_decls += '\n\tbool unpacked_{0};'.format(element.get_name().under)
-                        bool_unpacks += '\tunpacked_{0} = callback->{0} != 0;\n'.format(element.get_name().under)
-                elif element.get_item_size() > 1:
-                    if element.get_cardinality() > 1:
-                        template = "\t{type} aligned_{name}[{size}];"
-                        alignment_copy_list.append(template.format(type=element.get_c_type('default'), name=element.get_name().under, size=element.get_cardinality()))
-                        callback_arg_list = [elem if elem != "callback->" + element.get_name().under else "aligned_" + element.get_name().under for elem in callback_arg_list]
-                        loop_index_decl = '\n\tint i;'
-                        endian_list.append('\tfor (i = 0; i < {2}; i++) aligned_{0}[i] = tf_leconvert_{1}_from(callback->{0}[i]);' \
-                                           .format(element.get_name().under, element.get_type(), element.get_cardinality()))
-                    else:
-                        endian_list.append('\tcallback->{0} = tf_leconvert_{1}_from(callback->{0});'.format(element.get_name().under, element.get_type()))
-
-            if packet.get_high_level('stream_out') != None:
-                template = template_low_level
-                ll_packet_name_under = packet.get_name(skip=-2).under
-            else:
-                template = template_normal
-                ll_packet_name_under = ''
-
-            fid = '{0}_CALLBACK_{1}'.format(self.get_name().upper, packet.get_name().upper)
-
-            functions += template.format(device_name_under=self.get_name().under,
-                                         packet_name_under=packet.get_name().under,
-                                         device_name_camel=self.get_name().camel,
-                                         packet_name_camel=packet.get_name().camel,
-                                         callback_args=', '.join(callback_arg_list),
-                                         callback_args_comma=', ' if len(callback_arg_list) > 0 else '',
-                                         endian_conversions=common.wrap_non_empty('\n', '\n'.join(endian_list), '\n'),
-                                         fid=fid,
-                                         loop_index_decl=loop_index_decl,
-                                         bool_unpack_decls=bool_unpack_decls,
-                                         bool_unpacks=bool_unpacks,
-                                         ll_packet_name_under=ll_packet_name_under,
-                                         alignment_copies=common.wrap_non_empty('\n', '\n'.join(alignment_copy_list), '\n'))
-
-        return functions
-
     def get_c_include_h(self):
         template = """{header_comment}
 #ifndef TF_{category_upper}_{device_upper}_H
 #define TF_{category_upper}_{device_upper}_H
 
+#include "config.h"
 #include "tfp.h"
 #include "hal_common.h"
 #include "macros.h"
@@ -1152,9 +895,9 @@ extern "C" {{
  */
 
 struct TF_{device_camel};
-
+#ifdef TF_IMPLEMENT_CALLBACKS
 {callback_typedefs}
-
+#endif
 /**
  * \\ingroup {category_camel}{device_camel}
  *
@@ -1162,7 +905,9 @@ struct TF_{device_camel};
  */
 typedef struct TF_{device_camel} {{
     TF_TfpContext tfp;
+#ifdef TF_IMPLEMENT_CALLBACKS
 {callback_handlers}
+#endif
     uint8_t response_expected[{mapped_bytes}];
 }} TF_{device_camel};
 """
@@ -1174,7 +919,7 @@ typedef struct TF_{device_camel} {{
         cb_handlers = [cb_handler_template.format(device_camel=self.get_name().camel,
                                                   cb_camel=cb.get_name().camel,
                                                   cb_under=cb.get_name().under)
-                        for cb in self.get_packets('callback') if not cb.has_high_level()]
+                        for cb in self.get_packets('callback')]
 
         return template.format(header_comment=self.get_generator().get_header_comment('asterisk'),
                                category_upper=self.get_category().upper,
@@ -1200,21 +945,10 @@ typedef struct TF_{device_camel} {{
 
         # normal and low-level
         for packet in self.get_packets('callback'):
-
             typedefs += template.format(device_camel=self.get_name().camel,
                                         device_under=self.get_name().under,
                                         cb_camel=packet.get_name().camel,
                                         params=common.wrap_non_empty('', packet.get_c_parameters(), ', '))
-
-        # high-level
-        for packet in self.get_packets('callback'):
-            if not packet.has_high_level():
-                continue
-
-            typedefs += template.format(device_camel=self.get_name().camel,
-                                        device_under=self.get_name().under,
-                                        cb_camel=packet.get_name(skip=-2).camel,
-                                        params=common.wrap_non_empty('', packet.get_c_parameters(high_level=True), ', '))
 
         return typedefs
 
@@ -1366,15 +1100,12 @@ void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devi
 """
 
         for packet in self.get_packets('callback'):
-            if packet.has_high_level():
-                continue
             result.append(format(template, self, packet))
 
-        return '\n'.join(result)
+        return '#ifdef TF_IMPLEMENT_CALLBACKS{}#endif'.format('\n'.join(result))
 
     def get_c_source(self):
         source  = self.get_c_include_c()
-        source += self.get_c_callback_wrapper_functions()
         source += self.get_c_callback_handler()
         source += self.get_c_create_function()
         source += self.get_c_destroy_function()
