@@ -387,14 +387,6 @@ void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_unde
         functions = ''
 
         # normal and low-level
-        template_version = """
-TF_ATTRIBUTE_NONNULL int tf_{device_under}_get_api_version(TF_{device_camel} *{device_under}, uint8_t ret_api_version[3]) {{
-	ret_api_version[0] = {api_major};
-    ret_api_version[1] = {api_minor};
-    ret_api_version[2] = {api_patch};
-    return TF_E_OK;
-}}
-"""
         template = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) {{
     bool response_expected = true;{response_expected}
@@ -428,11 +420,6 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 
         device_under = self.get_name().under
         device_camel = self.get_name().camel
-        functions += template_version.format(device_under=device_under,
-                                             device_camel=device_camel,
-                                             api_major=self.get_api_version()[0],
-                                             api_minor=self.get_api_version()[1],
-                                             api_patch=self.get_api_version()[2])
 
         for packet in self.get_packets('function'):
             seq_num_hack = ''
@@ -1074,13 +1061,6 @@ void tf_{0}_set_response_expected_all(TF_{1} *{0}, bool response_expected);
  */
 TF_ATTRIBUTE_NONNULL int tf_{device_name_under}_{function_name}(TF_{device_name_camel} *{device_name_under}{parameters});
 """
-        functions += template.format(category=self.get_category().camel,
-                                     device_name_camel=self.get_name().camel,
-                                     device_name_under=self.get_name().under,
-                                     doc='Returns the API version (major, minor, release) of the bindings for this\n * device.',
-                                     function_name='get_api_version',
-                                     parameters=', uint8_t ret_api_version[3]')
-
         for packet in self.get_packets('function'):
             functions += template.format(category=self.get_category().camel,
                                          device_name_camel=self.get_name().camel,
