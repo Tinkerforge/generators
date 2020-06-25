@@ -23,6 +23,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import os
+import subprocess
+
 from generators import common
 
 # this is a list of all the Bricks and Bricklets support by Java bindings
@@ -345,3 +348,15 @@ class JavaGeneratorTrait:
 
     def get_doc_formatted_param(self, element):
         return element.get_name().headless
+
+def detect_java_home():
+    for java_home in ['/usr/lib/jvm/java-8-openjdk-amd64', '/usr/lib/jvm/java-8-openjdk']:
+        try:
+            javac_version = subprocess.check_output([os.path.join(java_home, 'bin/javac'), '-version'], stderr=subprocess.STDOUT).decode()
+        except:
+            continue
+
+        if javac_version.startswith('javac 1.8.0'):
+            return java_home
+
+    raise Exception('Could not detect JAVA_HOME for Java 8')

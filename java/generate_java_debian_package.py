@@ -48,6 +48,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.java import java_common
 
 def generate(root_dir):
     debian_dir            = os.path.join(root_dir, 'debian')
@@ -76,8 +77,16 @@ def generate(root_dir):
 
     # Make package
     with common.ChangedDirectory(tmp_source_dir):
+        # FIXME: maven-toolchains-plugin doesn't stop the default JDK from
+        #        leaking into the build process. it is still necessary to set
+        #        JAVA_HOME to Java 8 in order to stop the default JDK from
+        #        being recorded as the Build-Jdk in the manifest file.
+        env = dict(os.environ)
+        env['JAVA_HOME'] = java_common.detect_java_home()
+
         common.execute(['dpkg-buildpackage',
-                        '--no-sign'])
+                        '--no-sign'],
+                       env=env)
 
     # Check package
     with common.ChangedDirectory(tmp_dir):

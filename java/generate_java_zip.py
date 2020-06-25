@@ -143,7 +143,17 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
 
         # Compile source
         with common.ChangedDirectory(self.tmp_source_dir):
-            common.execute(['mvn', 'clean', 'verify'])
+            # FIXME: maven-toolchains-plugin doesn't stop the default JDK from
+            #        leaking into the build process. it is still necessary to set
+            #        JAVA_HOME to Java 8 in order to stop the default JDK from
+            #        being recorded as the Build-Jdk in the manifest file.
+            env = dict(os.environ)
+            env['JAVA_HOME'] = java_common.detect_java_home()
+
+            common.execute(['mvn',
+                            'clean',
+                            'install'],
+                           env=env)
 
         os.rename(os.path.join(self.tmp_source_target_dir, '{0}-{1}.{2}.{3}.jar'.format(self.get_config_name().dash, *version)),
                   os.path.join(self.tmp_dir, '{0}.jar'.format(self.get_config_name().camel)))
