@@ -1,0 +1,15 @@
+Source: tinkerforge-shell-bindings
+Section: utils
+Priority: optional
+Maintainer: Matthias Bolte <matthias@tinkerforge.com>
+Build-Depends: debhelper (>= 10), bash-completion
+Standards-Version: 4.1.3
+Homepage: https://www.tinkerforge.com/
+
+Package: tinkerforge-shell
+Architecture: all
+Depends: python (>= 2.7), ${misc:Depends}
+Suggests: bash-completion
+Description: Tinkerforge Shell API Bindings
+ The Shell API bindings allow you to control Tinkerforge Bricks and Bricklets
+ from your Shell programs.
