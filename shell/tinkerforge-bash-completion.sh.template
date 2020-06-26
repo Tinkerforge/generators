@@ -60,6 +60,15 @@ _tinkerforge()
 	--group-separator)
 		return 0
 		;;
+	--array-ellipsis)
+		return 0
+		;;
+	--no-escaped-input)
+		return 0
+		;;
+	--no-escaped-output)
+		return 0
+		;;
 	--no-symbolic-input)
 		return 0
 		;;
@@ -150,7 +159,7 @@ _tinkerforge()
 
 		case "${prev}" in
 		tinkerforge)
-			COMPREPLY=($(compgen -W "--help --host --port --secret --item-separator --group-separator --no-symbolic-input --no-symbolic-output call dispatch enumerate listen" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help --version --host --port --secret --item-separator --group-separator --array-ellipsis --no-escaped-input --no-escaped-output --no-symbolic-input --no-symbolic-output call dispatch enumerate listen" -- ${cur}))
 			break
 			;;
 		call)
