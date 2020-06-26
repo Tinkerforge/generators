@@ -188,3 +188,6 @@
 - Add get-all-voltages and set/get-all-voltages-callback-configuration functions
   and all-voltages callback to Industrial Dual Analog In Bricklet 2.0 API
 - Add set/get-i2c-mode functions to Barometer Bricklet API
+
+2020-06-26: 2.1.27 (<unknown>)
+- Add missing options to bash-completion logic
