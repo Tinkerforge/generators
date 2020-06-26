@@ -8,8 +8,9 @@ def json_error(message, resultDict=None):
 message_tup = namedtuple('message_tup', ['topic', 'payload'])
 
 class MQTTBindings:
-    def __init__(self, debug, no_symbolic_response, show_payload, global_prefix, ipcon_timeout, broker_username, broker_password, broker_certificate, broker_tls_insecure):
-        self.no_symbolic_response = no_symbolic_response
+    def __init__(self, debug, symbolic_response, show_payload, global_prefix, ipcon_timeout,
+                 broker_username, broker_password, broker_certificate, broker_tls_insecure):
+        self.symbolic_response = symbolic_response
         self.show_payload = show_payload
 
         self.broker_connected_event = threading.Event()
@@ -21,6 +22,7 @@ class MQTTBindings:
 
         self.mqttc = mqtt.Client(userdata=len(global_prefix))
         logging.basicConfig(format='%(asctime)s <%(levelname)s> %(name)s: %(message)s', level=logging.DEBUG if debug else logging.INFO)
+
         if debug:
             self.mqttc.enable_logger()
 
@@ -166,7 +168,7 @@ class MQTTBindings:
                         self.ipcon.DISCONNECT_REASON_ERROR: "error",
                         self.ipcon.DISCONNECT_REASON_SHUTDOWN: "shutdown"}]
 
-        if not self.no_symbolic_response:
+        if self.symbolic_response:
             args = self.translate_symbols(symbols, args)
 
         d = dict(zip(self.ip_connection_callback_names[callback_id], args))
@@ -633,10 +635,12 @@ class MQTTBindings:
             if len(result_symbols) == 1:
                 response = (response,)
 
-            if not self.no_symbolic_response:
+            if self.symbolic_response:
                 response = self.translate_symbols(fnInfo.result_symbols, response)
+
             response = json.dumps(dict(zip(result_names, response)))
             logging.debug("Stream call {} for device {} of type {} succeded.".format(fnName, uid, device_name))
+
             return response
 
     @staticmethod
@@ -777,38 +781,46 @@ class MQTTBindings:
             return ipcon.send_request(device, fnInfo.id, tuple(args), fnInfo.payload_fmt, fnInfo.response_size, fnInfo.response_fmt)
 
         response = self.handle_ipcon_exceptions(wrapper, dict([(name, None) for name in fnInfo.result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+
         if isinstance(response, dict) and "_ERROR" in response:
             return response
 
         logging.debug("Calling function {} for device {} of type {} succedded.".format(fnName, uid, device_name))
+
         if response != None:
             if len(fnInfo.result_names) == 1:
                 response = (response,)
 
-            if not self.no_symbolic_response:
+            if self.symbolic_response:
                 response = self.translate_symbols(fnInfo.result_symbols, response)
 
             d = dict(zip(fnInfo.result_names, response))
+
             if fnName == "get_identity" and "device_identifier" in d:
                 dev_id = d["device_identifier"]
                 d["_display_name"] = device_names[dev_id]
-                if not self.no_symbolic_response:
+
+                if self.symbolic_response:
                     d["device_identifier"] = mqtt_names[dev_id]
+
             response = json.dumps(d)
+
             return response
 
     def callback_function(self, mqtt_callback_device, callback_id, *args):
         names = mqtt_callback_device.callback_names[callback_id]
         paths = mqtt_callback_device.publish_paths[callback_id]
         symbols = mqtt_callback_device.callback_symbols[callback_id]
-        if not self.no_symbolic_response:
+
+        if self.symbolic_response:
             response = self.translate_symbols(symbols, args)
         else:
             response = args
+
         payload = json.dumps(dict(zip(names, response)))
+
         for path in paths:
             self.mqttc.publish(path, payload)
-
 
 def parse_positive_int(value):
     value = int(value)
@@ -857,6 +869,9 @@ def main():
     signal.signal(signal.SIGTERM, terminate)
 
     parser = argparse.ArgumentParser(description='Tinkerforge MQTT Bindings')
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s <<VERSION>>')
+    parser.add_argument('--cmdline-file', dest='cmdline_file', type=str, default=None,
+                        help='file from where to load command line options')
     parser.add_argument('--ipcon-host', dest='ipcon_host', type=str, default=IPCON_HOST,
                         help='hostname or IP address of Brick Daemon, WIFI or Ethernet Extension (default: {0})'.format(IPCON_HOST))
     parser.add_argument('--ipcon-port', dest='ipcon_port', type=int, default=IPCON_PORT,
@@ -875,21 +890,44 @@ def main():
                         help='password for the MQTT broker connection')
     parser.add_argument('--broker-certificate', dest='broker_certificate', type=str, default=None,
                         help='Certificate Authority certificate file used for SSL/TLS connections')
-    parser.add_argument('--broker-tls-insecure', dest='broker_tls_insecure', action='store_true',
-                        help='disable verification of the server hostname in the server certificate for the MQTT broker connection')
+    parser.add_argument('--broker-tls-secure', dest='broker_tls_insecure', action='store_const', const=False,
+                        help='verify the server hostname in the server certificate for the MQTT broker connection (enabled by default)')
+    parser.add_argument('--broker-tls-insecure', dest='broker_tls_insecure', action='store_const', const=True,
+                        help='do not verify the server hostname in the server certificate for the MQTT broker connection')
     parser.add_argument('--global-topic-prefix', dest='global_topic_prefix', type=str, default=GLOBAL_TOPIC_PREFIX,
                         help='global MQTT topic prefix for this proxy instance (default: {0})'.format(GLOBAL_TOPIC_PREFIX))
-    parser.add_argument('--debug', dest='debug', action='store_true', help='enable debug output')
-    parser.add_argument('--no-symbolic-response', dest='no_symbolic_response', action='store_true', help='disable translation into string constants for responses')
-    parser.add_argument('--show-payload', dest='show_payload', action='store_true', help='show received payload if JSON parsing fails')
+    parser.add_argument('--debug', dest='debug', action='store_const', const=True,
+                        help='show debug output')
+    parser.add_argument('--no-debug', dest='debug', action='store_const', const=False,
+                        help='hide debug output (enabled by default)')
+    parser.add_argument('--symbolic-response', dest='symbolic_response', action='store_const', const=True,
+                        help='translate constant values into string constants for responses (enabled by default)')
+    parser.add_argument('--no-symbolic-response', dest='symbolic_response', action='store_const', const=False,
+                        help='do not translate constants values for responses')
+    parser.add_argument('--show-payload', dest='show_payload', action='store_const', const=True,
+                        help='show received payload if JSON parsing fails')
+    parser.add_argument('--hide-payload', dest='show_payload', action='store_const', const=False,
+                        help='hide received payload if JSON parsing fails (enabled by default)')
     parser.add_argument('--init-file', dest='init_file', type=str, default=None,
-                        help='file from where to load initial messages to publish')
-    parser.add_argument('-v', '--version', action='version', version='%(prog)s <<VERSION>>')
+                        help='file from where to load initial messages to process')
+    parser.add_argument('--no-init-file', dest='init_file', action='store_const', const=None,
+                        help='do not process initial messages (enabled by default)')
 
     args = parser.parse_args(sys.argv[1:])
 
+    if args.cmdline_file != None:
+        try:
+            with open(args.cmdline_file) as f:
+                args = parser.parse_args(shlex.split(f, comments=True) + sys.argv[1:])
+        except Exception as e:
+            print("Could not read cmdline file: {}".format(str(e)))
+            sys.exit(ERROR_COULD_NOT_READ_CMDLINE_FILE)
+
     if args.broker_username is None and args.broker_password is not None:
         parser.error('--broker-password cannot be used without --broker-username')
+
+    if args.broker_certificate is None and args.broker_tls_insecure is not None:
+        parser.error('--broker-tls-[in]secure cannot be used without --broker-certificate')
 
     global_topic_prefix = args.global_topic_prefix
 
@@ -906,17 +944,39 @@ def main():
     else:
         initial_config = []
 
-    bindings = MQTTBindings(args.debug, args.no_symbolic_response, args.show_payload, global_topic_prefix, float(args.ipcon_timeout)/1000, args.broker_username, args.broker_password, args.broker_certificate, args.broker_tls_insecure)
+    symbolic_response = args.symbolic_response
+
+    if symbolic_response == None:
+        symbolic_response = True
+
+    show_payload = args.show_payload
+
+    if show_payload == None:
+        show_payload = False
+
+    broker_tls_insecure = args.broker_tls_insecure
+
+    if broker_tls_insecure == None:
+        broker_tls_insecure = False
+
+    bindings = MQTTBindings(args.debug, symbolic_response, show_payload, global_topic_prefix,
+                            float(args.ipcon_timeout) / 1000, args.broker_username, args.broker_password,
+                            args.broker_certificate, broker_tls_insecure)
     bindings.connect_to_broker(args.broker_host, args.broker_port)
+
     pre_connect = flatten([tup[1] for tup in initial_config if tup[0] == 'pre_connect'])
     post_connect = flatten([tup[1] for tup in initial_config if tup[0] == 'post_connect'])
+
     if len(pre_connect) > 0:
         bindings.run_config(pre_connect)
+
     bindings.connect_to_brickd(args.ipcon_host, args.ipcon_port, args.ipcon_auth_secret)
+
     if len(post_connect) > 0:
         bindings.run_config(post_connect)
     else:
         bindings.run_config(initial_config)
+
     bindings.run()
 
 if __name__ == '__main__':
