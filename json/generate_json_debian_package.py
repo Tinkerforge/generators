@@ -53,7 +53,6 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
-from generators.java import java_common
 
 def generate(root_dir):
     debian_dir            = os.path.join(root_dir, 'debian')
