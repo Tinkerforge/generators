@@ -1,0 +1,3 @@
+tinkerforge_mqtt usr/bin
+tinkerforge_mqtt.service lib/systemd/system
+tinkerforge_mqtt.cmdline etc

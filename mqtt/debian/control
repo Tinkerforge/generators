@@ -1,0 +1,14 @@
+Source: tinkerforge-mqtt-bindings
+Section: utils
+Priority: optional
+Maintainer: Matthias Bolte <matthias@tinkerforge.com>
+Build-Depends: debhelper (>= 10)
+Standards-Version: 4.1.3
+Homepage: https://www.tinkerforge.com/
+
+Package: tinkerforge-mqtt
+Architecture: all
+Depends: python (>= 2.7.9), python-paho-mqtt, ${misc:Depends}
+Description: Tinkerforge MQTT API Bindings
+ The MQTT API bindings allow you to control Tinkerforge Bricks and Bricklets
+ from your MQTT programs.

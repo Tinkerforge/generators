@@ -1,0 +1,10 @@
+[Unit]
+Description=Tinkerforge MQTT API Bindings
+After=brickd.service
+After=mosquitto.service
+
+[Service]
+ExecStart=/usr/bin/tinkerforge_mqtt --cmdline-file /etc/tinkerforge_mqtt.cmdline
+
+[Install]
+WantedBy=multi-user.target

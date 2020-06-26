@@ -1,0 +1,103 @@
+##
+## Tinkerforge MQTT API Bindings Commandline Options
+##
+
+##
+## hostname or IP address of Brick Daemon, WIFI or Ethernet Extension (default: localhost)
+##
+#--ipcon-host localhost
+
+##
+## port number of Brick Daemon, WIFI or Ethernet Extension (default: 4223)
+##
+#--ipcon-port 4223
+
+##
+## authentication secret of Brick Daemon, WIFI or Ethernet Extension (no default)
+##
+#--ipcon-auth-secret IPCON_AUTH_SECRET
+
+##
+## timeout in milliseconds for communication with Brick Daemon, WIFI or Ethernet Extension (default: 2500)
+##
+#--ipcon-timeout 2500
+
+##
+## hostname or IP address of MQTT broker (default: localhost)
+##
+#--broker-host localhost
+
+##
+## port number of MQTT broker (default: 1883)
+##
+#--broker-port 1883
+
+##
+## username for the MQTT broker connection (no default)
+##
+#--broker-username BROKER_USERNAME
+
+##
+## password for the MQTT broker connection (no default)
+##
+#--broker-password BROKER_PASSWORD
+
+##
+## certificate authority certificate file used for SSL/TLS connections (no default)
+##
+#--broker-certificate BROKER_CERTIFICATE
+
+##
+## verify the server hostname in the server certificate for the MQTT broker connection (enabled by default)
+##
+#--broker-tls-secure
+
+##
+## do not verify the server hostname in the server certificate for the MQTT broker connection
+##
+#--broker-tls-insecure
+
+##
+## global MQTT topic prefix for this proxy instance (default: tinkerforge/)
+##
+#--global-topic-prefix tinkerforge/
+
+##
+## show debug output
+##
+#--debug
+
+##
+## hide debug output (enabled by default)
+##
+#--no-debug
+
+##
+## translate constant values into string constants for responses (enabled by default)
+##
+#--symbolic-response
+
+##
+## do not translate constants values for responses
+##
+#--no-symbolic-response
+
+##
+## show received payload if JSON parsing fails
+##
+#--show-payload
+
+##
+## hide received payload if JSON parsing fails (enabled by default)
+##
+#--hide-payload
+
+##
+## file from where to load initial messages to process (no default)
+##
+#--init-file INIT_FILE
+
+##
+## do not process initial messages (enabled by default)
+##
+#--no-init-file

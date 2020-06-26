@@ -1,5 +1,5 @@
 [Unit]
-Description=Tinkerforge MQTT Bindings
+Description=Tinkerforge MQTT API Bindings
 
 # Enable if brickd is running locally
 #After=brickd.service
