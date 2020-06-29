@@ -291,8 +291,8 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
 
     def get_c_callback_tick_function(self):
         template = """
-void tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_ms) {{
-    tf_tfp_callback_tick(&{device_under}->tfp, tf_hal_current_time_ms({device_under}->tfp.spitfp.hal) + timeout_ms);
+void tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us) {{
+    tf_tfp_callback_tick(&{device_under}->tfp, tf_hal_current_time_us({device_under}->tfp.spitfp.hal) + timeout_us);
 }}
 """
         return format(template, self)
@@ -394,7 +394,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     tf_tfp_prepare_send(&{device_under}->tfp, TF_{fid}, {request_size}, {response_size}, response_expected);
     {unknown_bricklet_seq_num_hack}
 	{loop_counter_def}{request_assignments}
-    uint32_t deadline = tf_hal_current_time_ms({device_under}->tfp.spitfp.hal) + tf_hal_get_common({device_under}->tfp.spitfp.hal)->timeout;
+    uint32_t deadline = tf_hal_current_time_us({device_under}->tfp.spitfp.hal) + tf_hal_get_common({device_under}->tfp.spitfp.hal)->timeout;
 
     uint8_t error_code = 0;
 	int result = tf_tfp_transmit_packet(&{device_under}->tfp, response_expected, deadline, &error_code);
@@ -992,7 +992,7 @@ int tf_{0}_destroy(TF_{1} *{0});
 /**
  * \\ingroup {2}{1}
  */
-void tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_ms);
+void tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
 #endif
 """
         return template.format(self.get_name().under,
