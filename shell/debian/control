@@ -8,7 +8,7 @@ Homepage: https://www.tinkerforge.com/
 
 Package: tinkerforge-shell
 Architecture: all
-Depends: python (>= 2.7), ${misc:Depends}
+Depends: python (>= 2.7), python-argparse, ${misc:Depends}
 Suggests: bash-completion
 Description: Tinkerforge Shell API Bindings
  The Shell API bindings allow you to control Tinkerforge Bricks and Bricklets
