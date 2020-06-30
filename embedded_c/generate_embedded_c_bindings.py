@@ -390,6 +390,11 @@ void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_unde
         # normal and low-level
         template = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) {{
+#ifdef TF_IMPLEMENT_CALLBACKS
+    if(tf_hal_get_common({device_under}->tfp.spitfp.hal)->callback_executing) {{
+        return TF_E_CALLBACK_EXEC;
+    }}
+#endif
     bool response_expected = true;{response_expected}
     tf_tfp_prepare_send(&{device_under}->tfp, TF_{fid}, {request_size}, {response_size}, response_expected);
     {loop_counter_def}{request_assignments}
@@ -845,8 +850,10 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
 {i_decl}
 {extract_payload}
             tf_tfp_packet_processed(&{device_under}->tfp);
-
+            TF_HalCommon *common = tf_hal_get_common({device_under}->tfp.spitfp.hal);
+            common->callback_executing = true;
             fn({device_under}, {params}user_data);
+            common->callback_executing = false;
             break;
         }}"""
 
