@@ -392,8 +392,7 @@ void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_unde
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) {{
     bool response_expected = true;{response_expected}
     tf_tfp_prepare_send(&{device_under}->tfp, TF_{fid}, {request_size}, {response_size}, response_expected);
-    {unknown_bricklet_seq_num_hack}
-	{loop_counter_def}{request_assignments}
+    {loop_counter_def}{request_assignments}
     uint32_t deadline = tf_hal_current_time_us({device_under}->tfp.spitfp.hal) + tf_hal_get_common({device_under}->tfp.spitfp.hal)->timeout;
 
     uint8_t error_code = 0;
@@ -423,13 +422,6 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
         device_camel = self.get_name().camel
 
         for packet in self.get_packets('function'):
-            seq_num_hack = ''
-            if self.get_name().under == 'unknown' and packet.get_name().under == 'comcu_enumerate':
-                seq_num_hack = 'unknown->tfp.waiting_for_sequence_number = 0;\n\tunknown->tfp.waiting_for_fid = 253;'
-                packet.elements = next(p for p in self.get_packets('callback') if p.get_name().under == 'comcu_enumerate').elements
-
-
-
             packet_under = packet.get_name().under
             params = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
             fid = '{0}_FUNCTION_{1}'.format(self.get_name().upper,
@@ -478,8 +470,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
                                          loop_counter_def=loop_counter_def,
                                          reponse_ptr=reponse_ptr,
                                          request_size=request_size,
-                                         response_size=response_size,
-                                         unknown_bricklet_seq_num_hack=seq_num_hack)
+                                         response_size=response_size)
 
         # high-level
         template_stream_in = """
