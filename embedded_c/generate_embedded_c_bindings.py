@@ -225,7 +225,8 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         return rc;
     }}
 
-    int port_id, inventory_index;
+    uint8_t port_id;
+    int inventory_index;
     rc = tf_hal_get_port_id(hal, numeric_uid, &port_id, &inventory_index);
     if (rc < 0) {{
         return rc;
@@ -240,7 +241,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 """
 
         unknown_template = """
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, int port_id, int inventory_index) {{
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, uint8_t port_id, int inventory_index) {{
     uint32_t numeric_uid;
     int rc = tf_base58_decode(uid, &numeric_uid);
     if (rc != TF_E_OK) {{
@@ -291,8 +292,8 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
 
     def get_c_callback_tick_function(self):
         template = """
-void tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us) {{
-    tf_tfp_callback_tick(&{device_under}->tfp, tf_hal_current_time_us({device_under}->tfp.spitfp.hal) + timeout_us);
+int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us) {{
+    return tf_tfp_callback_tick(&{device_under}->tfp, tf_hal_current_time_us({device_under}->tfp.spitfp.hal) + timeout_us);
 }}
 """
         return format(template, self)
@@ -397,18 +398,22 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 #endif
     bool response_expected = true;{response_expected}
     tf_tfp_prepare_send(&{device_under}->tfp, TF_{fid}, {request_size}, {response_size}, response_expected);
-    {loop_counter_def}{request_assignments}
+{loop_counter_def}{request_assignments}
     uint32_t deadline = tf_hal_current_time_us({device_under}->tfp.spitfp.hal) + tf_hal_get_common({device_under}->tfp.spitfp.hal)->timeout;
 
     uint8_t error_code = 0;
 	int result = tf_tfp_transmit_packet(&{device_under}->tfp, response_expected, deadline, &error_code);
+    if(result < 0)
+        return result;
 
     if (result & TF_TICK_TIMEOUT) {{
         //return -result;
         return TF_E_TIMEOUT;
     }}
 {extract_response}
-    tf_tfp_finish_send(&{device_under}->tfp, result, deadline);
+    result = tf_tfp_finish_send(&{device_under}->tfp, result, deadline);
+    if(result < 0)
+        return result;
 
     return tf_tfp_get_error(error_code);
 }}
@@ -961,7 +966,7 @@ int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal);
  * Creates the device object \\c {0} with the unique device ID \\c uid and adds
  * it to the IPConnection \\c ipcon.
  */
-int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, int port_id, int inventory_index);
+int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, uint8_t port_id, int inventory_index);
 """
         if self.get_name().under == 'unknown':
             template = unknown_template
@@ -990,7 +995,7 @@ int tf_{0}_destroy(TF_{1} *{0});
 /**
  * \\ingroup {2}{1}
  */
-void tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
+int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
 #endif
 """
         return template.format(self.get_name().under,
