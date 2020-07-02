@@ -1282,6 +1282,11 @@ class CBindingsPacket(embedded_c_common.CPacket):
                                         item_size=element.get_item_size(),
                                         type_=element.get_c_type('default')))
 
+        if self.get_function_id() == 255:
+            return_list.append("""if(ret_connected_uid[0] == 0) {{
+            *ret_position = tf_hal_get_port_name({device_under}->tfp.spitfp.hal, {device_under}->tfp.spitfp.port_id);
+        }}""".format(device_under=self.get_device().get_name().under))
+
         return return_list, needs_i
 
 class CBindingsGenerator(embedded_c_common.CGeneratorTrait, common.BindingsGenerator):
