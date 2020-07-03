@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-C/C++ ZIP Generator
+C/C++ for Microcontrollers ZIP Generator
 Copyright (C) 2012-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_c_zip.py: Generator for C/C++ ZIP
 
@@ -52,9 +53,9 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
-from generators.embedded_c import embedded_c_common
+from generators.uc import uc_common
 
-class CZipGenerator(embedded_c_common.CGeneratorTrait, common.ZipGenerator):
+class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -62,8 +63,6 @@ class CZipGenerator(embedded_c_common.CGeneratorTrait, common.ZipGenerator):
         self.tmp_source_dir   = os.path.join(self.tmp_dir, 'source')
         self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
 
-    def get_bindings_name(self):
-        return 'c'
 
     def prepare(self):
         super().prepare()
@@ -129,7 +128,7 @@ class CZipGenerator(embedded_c_common.CGeneratorTrait, common.ZipGenerator):
 
 def generate(root_dir):
     return
-    common.generate(root_dir, 'en', CZipGenerator)
+    common.generate(root_dir, 'en', UCZipGenerator)
 
 if __name__ == '__main__':
     generate(os.getcwd())

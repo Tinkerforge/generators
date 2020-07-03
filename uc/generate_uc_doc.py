@@ -5,6 +5,7 @@
 C/C++ Documentation Generator
 Copyright (C) 2012-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_c_doc.py: Generator for C/C++ documentation
 
@@ -51,7 +52,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
-from generators.embedded_c import embedded_c_common
+from generators.uc import uc_common
 
 class CDocDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
@@ -481,7 +482,7 @@ Konstanten
 
         return doc
 
-class CDocPacket(embedded_c_common.CPacket):
+class CDocPacket(uc_common.CPacket):
     def get_c_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
         text = self.get_device().specialize_c_doc_function_links(text)
@@ -506,7 +507,7 @@ class CDocPacket(embedded_c_common.CPacket):
 
         return common.shift_right(text, 1)
 
-class CDocGenerator(embedded_c_common.CGeneratorTrait, common.DocGenerator):
+class CDocGenerator(uc_common.CGeneratorTrait, common.DocGenerator):
     def get_doc_rst_filename_part(self):
         return 'C'
 
@@ -520,7 +521,7 @@ class CDocGenerator(embedded_c_common.CGeneratorTrait, common.DocGenerator):
         return CDocPacket
 
     def get_element_class(self):
-        return embedded_c_common.CElement
+        return uc_common.CElement
 
     def generate(self, device):
         with open(device.get_doc_rst_path(), 'w') as f:

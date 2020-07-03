@@ -4,8 +4,9 @@
 C/C++ Generator
 Copyright (C) 2012-2013, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
-embedded_c_common.py: Common library for generation of C/C++ bindings and documentation
+uc_common.py: Common library for generation of C/C++ bindings and documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -184,12 +185,12 @@ class CElement(common.Element):
 
         return self.get_cardinality()
 
-class CGeneratorTrait:
+class UCGeneratorTrait:
     def get_bindings_name(self):
-        return 'embedded_c'
+        return 'uc'
 
     def get_bindings_display_name(self):
-        return 'Embedded C/C++'
+        return common.select_lang({'en': 'C/C++ for Microcontrollers', 'de': 'C/C++ für Mikrocontroller'})
 
     def get_doc_null_value_name(self):
         return 'NULL'

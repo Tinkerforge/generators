@@ -2,12 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-C/C++ Bindings Generator
-Copyright (C) 2012-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+C/C++ for Microcontrollers Bindings Generator
 Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
-generate_c_bindings.py: Generator for C/C++ bindings
+generate_c_bindings.py: Generator for C/C++ bindings for Microcontrollers
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -53,7 +51,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
-from generators.embedded_c import embedded_c_common
+from generators.uc import uc_common
 
 def format(s, device=None, packet=None, packet_skip=0, **kwargs):
     if device is not None:
@@ -93,7 +91,7 @@ def format(s, device=None, packet=None, packet_skip=0, **kwargs):
 
     return s.format(**kwargs)
 
-class CBindingsDevice(common.Device):
+class UCBindingsDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
@@ -1136,7 +1134,7 @@ void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devi
 
         return header
 
-class CBindingsPacket(embedded_c_common.CPacket):
+class CBindingsPacket(uc_common.CPacket):
     def get_c_formatted_doc(self, high_level=False):
         text = common.select_lang(self.get_doc_text())
 
@@ -1289,15 +1287,15 @@ class CBindingsPacket(embedded_c_common.CPacket):
 
         return return_list, needs_i
 
-class CBindingsGenerator(embedded_c_common.CGeneratorTrait, common.BindingsGenerator):
+class CBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
     def get_device_class(self):
-        return CBindingsDevice
+        return UCBindingsDevice
 
     def get_packet_class(self):
         return CBindingsPacket
 
     def get_element_class(self):
-        return embedded_c_common.CElement
+        return uc_common.CElement
 
     def generate(self, device):
         if not device.has_comcu():

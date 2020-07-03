@@ -4,6 +4,7 @@
 """
 C/C++ Bindings Tester
 Copyright (C) 2012-2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 test_c_bindings.py: Tests the C/C++ bindings
 

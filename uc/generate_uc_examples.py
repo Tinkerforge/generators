@@ -4,6 +4,7 @@
 """
 C/C++ Examples Generator
 Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_c_examples.py: Generator for C/C++ examples
 
@@ -51,7 +52,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
-from generators.embedded_c import embedded_c_common
+from generators.uc import uc_common
 
 global_line_prefix = ''
 
@@ -822,7 +823,7 @@ class CExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\r\t}\n'
 
-class CExamplesGenerator(embedded_c_common.CGeneratorTrait, common.ExamplesGenerator):
+class CExamplesGenerator(uc_common.CGeneratorTrait, common.ExamplesGenerator):
     def get_constant_class(self):
         return CConstant
 

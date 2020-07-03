@@ -1,5 +1,5 @@
-Tinkerforge C/C++ Bindings
-==========================
+Tinkerforge C/C++ Bindings for Microcontrollers
+===============================================
 
 The C/C++ bindings allow you to control Tinkerforge Bricks and Bricklets from
 your C/C++ programs. This ZIP file contains:
