@@ -1,0 +1,66 @@
+/*
+ * Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
+ *
+ * Redistribution and use in source and binary forms of this file,
+ * with or without modification, are permitted. See the Creative
+ * Commons Zero (CC0 1.0) License for more details.
+ */
+
+#ifndef TF_TFP_H
+#define TF_TFP_H
+
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+#include "hal_common.h"
+#include "spitfp.h"
+#include "macros.h"
+#include "packetbuffer.h"
+
+#define TFP_HEADER_UID_OFFSET 0
+#define TFP_HEADER_LENGTH_OFFSET 4
+#define TFP_HEADER_FID_OFFSET 5
+#define TFP_HEADER_SEQ_NUM_OFFSET 6
+#define TFP_HEADER_FLAGS_OFFSET 7
+#define TFP_HEADER_LENGTH 8
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef bool (*CallbackHandler)(void *device, uint8_t fid, TF_Packetbuffer *payload);
+
+typedef struct TF_TfpContext {
+    TF_SpiTfpContext spitfp;
+
+    uint32_t uid;
+
+    uint8_t next_sequence_number;
+    uint8_t waiting_for_fid; //0 if waiting for nothing
+    uint8_t waiting_for_length; // includes tfp, but not spitfp header, (to be comparable against length field in the tfp header); 0 if waiting for nothing
+    uint8_t waiting_for_sequence_number; //0 if waiting for nothing
+    uint8_t last_seen_spitfp_seq_num;
+    CallbackHandler cb_handler;
+} TF_TfpContext;
+
+
+int tf_tfp_init(TF_TfpContext *tfp, uint32_t uid, uint16_t dev_id, TF_HalContext *hal, uint8_t port_id, int inventory_index, CallbackHandler cb_handler) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_tfp_destroy(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+
+void tf_tfp_prepare_send(TF_TfpContext *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) TF_ATTRIBUTE_NONNULL;
+uint8_t *tf_tfp_get_payload_buffer(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL;
+
+int tf_tfp_transmit_packet(TF_TfpContext *tfp, bool response_expected, uint32_t deadline_us, uint8_t *error_code) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+void tf_tfp_packet_processed(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL;
+int tf_tfp_finish_send(TF_TfpContext *tfp, int previous_result, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+
+int tf_tfp_get_error(uint8_t error_code) TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+
+int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
