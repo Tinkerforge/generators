@@ -825,10 +825,18 @@ void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devi
         return '#ifdef TF_IMPLEMENT_CALLBACKS{}#endif'.format('\n'.join(result))
 
     def get_c_callback_handler(self):
+        no_callbacks_template = """
+static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packetbuffer *payload) {{
+    (void)dev;
+    (void)fid;
+    (void)payload;
+    return false;
+}}"""
         template = """
 #ifdef TF_IMPLEMENT_CALLBACKS
 static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packetbuffer *payload) {{
     TF_{device_camel} *{device_under} = (TF_{device_camel} *) dev;
+    (void)payload;
 
     switch(fid) {{
 {cases}
@@ -867,8 +875,9 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
             cases.append(format(case_template, self, packet,
                                 extract_payload=common.wrap_non_empty('            ', '\n            '.join(extract_payload), ''),
                                 params=common.wrap_non_empty('', packet.get_c_arguments(context='callback_wrapper'), ', '),
-                                i_decl = '' if not needs_i else '            int i;'))
-        return format(template, self, cases='\n'.join(cases))
+                                i_decl = '' if not needs_i else '            size_t i;'))
+
+        return format(template if len(cases) > 0 else no_callbacks_template, self, cases='\n'.join(cases))
 
     def get_c_include_h(self):
         template = """{header_comment}
@@ -1238,12 +1247,9 @@ class CBindingsPacket(uc_common.CPacket):
             elif element.get_item_size() > 1:
                 struct_list += '\n    {src} = tf_leconvert_{type_}_to({src}); memcpy(buf + {offset}, &{src}, {count});'.format(src=element.get_name().under, type_=element.get_type(), offset=offset, count=element.get_item_size())
                 offset += element.get_item_size()
-            elif element.get_type() == 'char':
-                # Fixes clang -Weverything complaining about sign conversion
-                struct_list += '\n\tbuf[{offset}] = (uint8_t){src};'.format(src=element.get_name().under, offset=offset)
-                offset += 1
             else:
-                struct_list += '\n\tbuf[{offset}] = {src};'.format(src=element.get_name().under, offset=offset)
+                # Cast fixes clang -Weverything complaining about sign conversion in case of char or int8_t
+                struct_list += '\n    buf[{offset}] = (uint8_t){src};'.format(src=element.get_name().under, offset=offset)
                 offset += 1
 
         return struct_list, needs_i
