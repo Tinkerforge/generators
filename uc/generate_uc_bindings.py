@@ -1236,8 +1236,12 @@ class CBindingsPacket(uc_common.CPacket):
             elif element.get_cardinality() > 1:
                 if element.get_item_size() > 1:
                     needs_i = True
-                    struct_list += '\n\tfor (i = 0; i < {count}; i++) buf[{offset} + i] = tf_leconvert_{type_}_to({src}[i]);' \
-                                   .format(src=element.get_name().under, type_=element.get_type(), count=element.get_cardinality(), offset=offset)
+                    struct_list += '\n    for (i = 0; i < {count}; i++) {{ {c_type} tmp_{src} = tf_leconvert_{type_}_to({src}[i]); memcpy(buf + {offset} + (i * sizeof({c_type})), &tmp_{src}, sizeof({c_type})); }}' \
+                                   .format(src=element.get_name().under,
+                                           c_type=element.get_c_type('default'),
+                                           type_=element.get_type(),
+                                           count=element.get_cardinality(),
+                                           offset=offset)
                 else:
                     temp = '\n    memcpy(buf + {offset}, {src}, {count});'
                     struct_list += temp.format(offset=offset,
