@@ -144,7 +144,7 @@ extern "C" {{
         return defines
 
     def get_c_callback_defines(self):
-        defines = '#ifdef TF_IMPLEMENT_CALLBACKS'
+        defines = '#ifdef TF_IMPLEMENT_CALLBACKS\n'
         template = """
 /**
  * \\ingroup {5}{4}
@@ -162,7 +162,7 @@ extern "C" {{
                                        doc,
                                        self.get_name().camel,
                                        self.get_category().camel)
-        defines += '#endif'
+        defines += '\n#endif'
         return defines
 
     def get_c_constants(self):
@@ -270,7 +270,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         for i, b in enumerate(response_expected_bytes):
             response_expected_assigns.append("{}->response_expected[{}] = 0x{:02X};".format(self.get_name().under, i, b))
 
-        response_expected_init = common.wrap_non_empty('\n\t', '\n\t'.join(response_expected_assigns), '')
+        response_expected_init = common.wrap_non_empty('\n    ', '\n    '.join(response_expected_assigns), '')
 
         if self.get_name().under == 'unknown':
             template = unknown_template
@@ -441,10 +441,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
             response_size = sum(e.get_size() for e in packet.get_elements(direction='out'))
 
             if len(request_assignments) > 0:
-                request_assignments = '\n\tuint8_t *buf = tf_tfp_get_payload_buffer(&{}->tfp);\n{}\n'.format(device_under, request_assignments)
+                request_assignments = '\n    uint8_t *buf = tf_tfp_get_payload_buffer(&{}->tfp);\n{}\n'.format(device_under, request_assignments)
 
             if len(packet.get_elements(direction='out')) > 0:
-                response_struct_def = '\n\t' + packet_camel + '_Response response;'
+                response_struct_def = '\n    ' + packet_camel + '_Response response;'
                 return_list, needs_i2 = packet.get_c_return_list('&{}->tfp.spitfp.recv_buf'.format(device_under), context='getter')
                 response_assignments = template_extract_response.format(response_assignments='\n        '.join(return_list),
                                                                         device_under=device_under)
@@ -456,7 +456,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
                 reponse_ptr = 'NULL'
 
             if needs_i or needs_i2:
-                loop_counter_def = '\n\tint i;'
+                loop_counter_def = '\n    size_t i;'
             else:
                 loop_counter_def = ''
 
@@ -1197,9 +1197,9 @@ class CBindingsPacket(uc_common.CPacket):
             name = element.get_name().under
 
             if element.get_cardinality() > 1:
-                struct_body.append('\t{0} {1}[{2}];\n'.format(c_type, name, element.get_c_array_length()))
+                struct_body.append('    {0} {1}[{2}];\n'.format(c_type, name, element.get_c_array_length()))
             else:
-                struct_body.append('\t{0} {1};\n'.format(c_type, name))
+                struct_body.append('    {0} {1};\n'.format(c_type, name))
 
         return ''.join(struct_body)
 
@@ -1211,18 +1211,18 @@ class CBindingsPacket(uc_common.CPacket):
         for element in self.get_elements(direction='in'):
 
             if element.get_type() == 'string':
-                temp = '\n\tmemcpy(buf + {offset}, {src}, {count});\n'
+                temp = '\n    memcpy(buf + {offset}, {src}, {count});\n'
                 struct_list += temp.format(src=element.get_name().under, offset=offset, count=element.get_cardinality())
                 offset += element.get_cardinality()
             elif element.get_type() == 'bool':
                 if element.get_cardinality() > 1:
                     needs_i = True
                     byte_count = math.ceil(element.get_cardinality() / 8.0)
-                    struct_list += '\n\tmemset(buf + {offset}, 0, {byte_count}); for (i = 0; i < {count}; ++i) buf[{offset} + (i / 8)] |= ({src}[i] ? 1 : 0) << (i % 8);' \
+                    struct_list += '\n    memset(buf + {offset}, 0, {byte_count}); for (i = 0; i < {count}; ++i) buf[{offset} + (i / 8)] |= ({src}[i] ? 1 : 0) << (i % 8);' \
                                    .format(src=element.get_name().under, offset=offset, count=element.get_cardinality(), byte_count=math.ceil(element.get_cardinality() / 8.0))
                     offset += byte_count
                 else:
-                    struct_list += '\n\tbuf[{offset}] = {src} ? 1 : 0;'.format(offset=offset, src=element.get_name().under)
+                    struct_list += '\n    buf[{offset}] = {src} ? 1 : 0;'.format(offset=offset, src=element.get_name().under)
                     offset += 1
             elif element.get_cardinality() > 1:
                 if element.get_item_size() > 1:
@@ -1230,13 +1230,13 @@ class CBindingsPacket(uc_common.CPacket):
                     struct_list += '\n\tfor (i = 0; i < {count}; i++) buf[{offset} + i] = tf_leconvert_{type_}_to({src}[i]);' \
                                    .format(src=element.get_name().under, type_=element.get_type(), count=element.get_cardinality(), offset=offset)
                 else:
-                    temp = '\n\tmemcpy(buf + {offset}, {src}, {count});'
+                    temp = '\n    memcpy(buf + {offset}, {src}, {count});'
                     struct_list += temp.format(offset=offset,
                                                src=element.get_name().under,
                                                count=element.get_cardinality())
                 offset += element.get_cardinality() * element.get_item_size()
             elif element.get_item_size() > 1:
-                struct_list += '\n\t{src} = tf_leconvert_{type_}_to({src}); memcpy(buf + {offset}, &{src}, {count});'.format(src=element.get_name().under, type_=element.get_type(), offset=offset, count=element.get_item_size())
+                struct_list += '\n    {src} = tf_leconvert_{type_}_to({src}); memcpy(buf + {offset}, &{src}, {count});'.format(src=element.get_name().under, type_=element.get_type(), offset=offset, count=element.get_item_size())
                 offset += element.get_item_size()
             elif element.get_type() == 'char':
                 # Fixes clang -Weverything complaining about sign conversion
