@@ -61,73 +61,73 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
 
         self.tmp_dir          = self.get_zip_dir()
         self.tmp_source_dir   = os.path.join(self.tmp_dir, 'source')
-        self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
-
+        self.tmp_bindings_dir = os.path.join(self.tmp_source_dir, 'bindings')
 
     def prepare(self):
         super().prepare()
 
         os.makedirs(self.tmp_source_dir)
-        os.makedirs(self.tmp_examples_dir)
+        os.makedirs(self.tmp_bindings_dir)
 
     def generate(self, device):
         if not device.is_released():
             return
 
-        # Copy device examples
-        tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
-                                               device.get_category().under,
-                                               device.get_name().under)
-
-        if not os.path.exists(tmp_examples_device_dir):
-            os.makedirs(tmp_examples_device_dir)
-
-        for example in common.find_device_examples(device, r'^example_.*\.c$'):
-            shutil.copy(example[1], tmp_examples_device_dir)
-
     def finish(self):
         root_dir = self.get_root_dir()
 
-        # Copy IP Connection examples
-        if self.get_config_name().space == 'Tinkerforge':
-            for example in common.find_examples(root_dir, r'^example_.*\.c$'):
-                shutil.copy(example[1], self.tmp_examples_dir)
+        bindings_files = [
+            'base58.c',
+            'base58.h',
+            'config.h',
+            'endian_convert.c',
+            'endian_convert.h',
+            'errors.c',
+            'errors.h',
+            'hal_common.c',
+            'hal_common.h',
+            'macros.h',
+            'packetbuffer.c',
+            'packetbuffer.h',
+            'pearson_hash.c',
+            'pearson_hash.h',
+            'spitfp.c',
+            'spitfp.h',
+            'tfp.c',
+            'tfp.h',
+        ]
 
-        # Copy bindings and merge symbols
-        symbols = 'EXPORTS\n'
-
-        if self.get_config_name().space == 'Tinkerforge':
-            with open(os.path.join(root_dir, 'ip_connection.symbols'), 'r') as f:
-                symbols += f.read()
-
-        for filename in self.get_released_files():
+        # Copy brick(let) specific bindings
+        for filename in self.get_released_files() + ['bricklet_unknown.h', 'bricklet_unknown.c']:
             path = os.path.join(self.get_bindings_dir(), filename)
+            shutil.copy(path, self.tmp_bindings_dir)
 
-            if path.endswith('.symbols'):
-                with open(path, 'r') as f:
-                    symbols += f.read()
-            else:
-                shutil.copy(path, self.tmp_source_dir)
+        # Copy static binding files
+        for filename in bindings_files:
+            path = os.path.join(root_dir, filename)
+            shutil.copy(path, self.tmp_bindings_dir)
 
-        with open(os.path.join(self.tmp_source_dir, self.get_config_name().under + '.def'), 'w') as f:
-            f.write(symbols)
+        # Copy all HALs
+        for folder in next(os.walk('.'))[1]:
+            if not folder.startswith('hal_'):
+                continue
+            shutil.copytree(os.path.join(root_dir, folder), os.path.join(self.tmp_source_dir, folder))
 
-        if self.get_config_name().space == 'Tinkerforge':
-            shutil.copy(os.path.join(root_dir, 'ip_connection.c'),              self.tmp_source_dir)
-            shutil.copy(os.path.join(root_dir, 'ip_connection.h'),              self.tmp_source_dir)
-            shutil.copy(os.path.join(root_dir, 'Makefile'),                     self.tmp_source_dir)
-            shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
-        else:
-            shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, 'custom.txt'),                   os.path.join(self.tmp_dir, 'readme.txt'))
+        shutil.copy(os.path.join(root_dir, 'beta', 'changelog.txt'),        self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'beta', 'README_EN.txt'),           self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'beta', 'README_DE.txt'),           self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
+
+        shutil.copy(os.path.join(root_dir, 'beta', 'arduino_avr.ino'),   self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'beta', 'arduino_esp32.ino'), self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'beta', 'main.c'),            self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'beta', 'Makefile'),          self.tmp_source_dir)
+        shutil.copytree(os.path.join(root_dir, 'beta', 'demo'), os.path.join(self.tmp_source_dir, 'demo'))
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
 def generate(root_dir):
-    return
     common.generate(root_dir, 'en', UCZipGenerator)
 
 if __name__ == '__main__':
