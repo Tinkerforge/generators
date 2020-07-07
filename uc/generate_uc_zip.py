@@ -118,7 +118,7 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
         shutil.copy(os.path.join(root_dir, 'beta', 'README_DE.txt'),           self.tmp_dir)
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
-        shutil.copy(os.path.join(root_dir, 'beta', 'arduino_avr.ino'),   self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'beta', 'arduino.ino'),   self.tmp_source_dir)
         shutil.copy(os.path.join(root_dir, 'beta', 'arduino_esp32.ino'), self.tmp_source_dir)
         shutil.copy(os.path.join(root_dir, 'beta', 'main.c'),            self.tmp_source_dir)
         shutil.copy(os.path.join(root_dir, 'beta', 'Makefile'),          self.tmp_source_dir)

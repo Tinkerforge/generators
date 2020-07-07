@@ -1,4 +1,4 @@
-#include "src/hal_arduino_avr/hal_arduino_avr.h"
+#include "src/hal_arduino/hal_arduino.h"
 
 // Forward declare the demo functions here, as the .ino is
 // compiled as C++, however the rest of the bindings is plain C.

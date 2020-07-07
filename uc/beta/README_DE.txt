@@ -10,15 +10,15 @@ Inhalt der Zip
 
  source/bindings/ - Die Implementierung der Bindings
  source/demo/ - Ein Demoprogramm für PTC 2.0 Bricklet und LCD 128x64 Bricklet
- source/hal_arduino_avr/ - HAL für Arduino-Boards mit AVR (z.B. Arduino Uno)
+ source/hal_arduino/ - HAL für Arduino-Boards (z.B. Arduino Uno oder Teensy)
  source/hal_arduino_esp32/ - HAL für Arduino-Boards mit ESP32 (z.B. NodeMCU)
  source/hal_linux/ - HAL für Linux-Systeme mit spidev Support (z.B. Raspberry Pi)
  
  source/Makefile - Makefile für die Linux-Variante des Demoprogramms
  source/main.c - Linux-Variante des Demoprogramms
  
- source/arduino_avr.ino - Arduino AVR-Variante des Demoprogramms
- source/arduino_esp32.ino - Arduino ESP32-Variante des Demoprogramms
+ source/arduino.ino - Arduino-Variante des Demoprogramms
+ source/arduino_esp32.ino - Arduino-ESP32-Variante des Demoprogramms
 
 Die Bindings entsprechen weitestgehend den normalen C/C++-Bindings, die hier
 https://www.tinkerforge.com/de/doc/Software/API_Bindings_C.html#api-referenz-und-beispiele
@@ -61,7 +61,7 @@ Es gibt aber folgende, bisher nicht dokumentierte Abweichungen:
     
     - Das Konzept der IP-Connection entfällt, stattdessen wird ein HAL (Hardware Abstraction Layer) benötigt,
       der die plattformspezifische Art und Weise der SPI-Kommunikation abstrahiert.
-      HALs für Raspberry Pi sowie AVR und ESP32-Boards werden mitgeliefert. Für andere
+      HALs für Raspberry Pi sowie Arduinos werden mitgeliefert. Für andere
       Plattformen muss ein eigener HAL implementiert werden. (Siehe unten)
 
     - Die _create-Funktion eines Bricklets erwartet dementsprechend als letzten
@@ -101,17 +101,17 @@ Je nach Verkabelung muss das Port-Mapping in der entsprechenden .ino angepasst
 werden.
 
 Damit die Arduino-IDE die Programme kompiliert muss folgende Ordnerstruktur aufgebaut werden
-(_avr durch _esp32 ersetzen, falls ein ESP32 basiertes Board verwendet wird):
+(_esp32 anfügen, falls ein ESP32 basiertes Board verwendet wird):
 
-arduino_avr
-├── arduino_avr.ino
+arduino(_esp32)
+├── arduino(_esp32).ino
 └── src
     ├── bindings
     │   └── Inhalt des source/bindings-Ordners
     ├── demo
     │   └── Inhalt des source/demo-Ordners
-    └── hal_arduino_avr
-        └── Inhalt des source/hal_arduino_avr-Ordners
+    └── hal_arduino(_esp32)
+        └── Inhalt des source/hal_arduino(_esp32)-Ordners
 
 Achtung: Beide Beispielprogramme benutzen nur eine vereinfachte
 Fehlerbehandlung!

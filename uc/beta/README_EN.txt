@@ -10,14 +10,14 @@ Zip Contents
 
  source/bindings/ - Implementation of the bindings
  source/demo/ - A demo program for a PTC 2.0 Bricklet and a LCD 128x64 Bricklet
- source/hal_arduino_avr/ - HAL for Arduino boards with an AVR (e.g. an Arduino Uno)
+ source/hal_arduino/ - HAL for Arduino boards (e.g. an Arduino Uno or a Teensy)
  source/hal_arduino_esp32/ - HAL for Arduino boards with an ESP32 (e.g. a NodeMCU)
  source/hal_linux/ - HAL for Linux systems with spidev support (e.g. a Raspberry Pi)
 
  source/Makefile - Makefile for the Linux variant of the demo program
  source/main.c - Linux variant of the demo program
  
- source/arduino_avr.ino - Arduino AVR variant of the demo program
+ source/arduino.ino - Arduino variant of the demo program
  source/arduino_esp32.ino - Arduino ESP32 variant of the demo program
 
 The bindings are nearly the same as the normal C/C++ bindings documented here:
@@ -55,7 +55,7 @@ However there are the following changes:
     
     - There is no IP connection. Instead a HAL (Hardware Abstraction Layer) is required.
       The HAL wraps the platform specific SPI communication details. The bindings already
-      contain HALs for the Raspberry Pi and Arduino Boards with an AVR or ESP32. For other
+      contain HALs for the Raspberry Pi and Arduino Boards. For other
       platforms, a custom HAL must be implemented (see below)
       
     - The _create function of a bricklet requires passing a pointer to an (initialized) HAL
@@ -91,17 +91,17 @@ you have to install the package "esp32 by Espressif Systems" in the board manage
 Depending on your wiring, the port mapping in the used .ino file must be changed.
 
 The Arduino IDE requires the following directory layout:
-(replace _avr with _esp32 if you use an ESP32 board)
+(append _esp32 if you use an ESP32 board)
 
-arduino_avr
-├── arduino_avr.ino
+arduino(_esp32)
+├── arduino(_esp32).ino
 └── src
     ├── bindings
     │   └── Content of the source/bindings folder
     ├── demo
     │   └── Content of the source/demo folder
-    └── hal_arduino_avr
-        └── Content of the source/hal_arduino_avr folder
+    └── hal_arduino(_esp32)
+        └── Content of the source/hal_arduino(_esp32) folder
         
 Attention: Both demos implement a simplified error handling only.
 

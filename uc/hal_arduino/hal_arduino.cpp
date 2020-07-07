@@ -6,7 +6,7 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
-#include "hal_arduino_avr.h"
+#include "hal_arduino.h"
 #include "SPI.h"
 #include <Arduino.h>
 
