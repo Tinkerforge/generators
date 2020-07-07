@@ -26,35 +26,52 @@ dokumentiert sind.
 
 Es gibt aber folgende, bisher nicht dokumentierte Abweichungen:
     - Es werden nur Koprozessor-Bricklets, also die mit einem 7-Pol-Stecker
-    unterstützt
+      unterstützt
     
     - Alle Funktions-, Konstanten- und Typnamen beginnen mit einem tf_ bzw.
-    TF_ Präfix.
-    Die (dokumentierte) Funktion ptc_v2_get_temperature heißt hier also
-    tf_ptc_v2_get_temperature, der Typ PTCV2 hier TF_PTCV2, die Konstante
-    PTC_V2_WIRE_MODE_2 hier TF_PTC_V2_WIRE_MODE_2
+      TF_ Präfix.
+      Die (dokumentierte) Funktion ptc_v2_get_temperature heißt hier also
+      tf_ptc_v2_get_temperature, der Typ PTCV2 hier TF_PTCV2, die Konstante
+      PTC_V2_WIRE_MODE_2 hier TF_PTC_V2_WIRE_MODE_2
 
     - Es werden keine High-Level-Callbacks unterstüzt.
-    "Normale" Callbacks werden nur ausgeliefert, wenn periodisch mit dem Device kommuniziert wird.
-    Hierfür kann anstelle von anderen Funktionsaufrufen die Funktion
-    int tf_[device]_callback_tick(TF_[device] *[device], uint32_t timeout_us);
-    verwendet werden, die die für die übergebene Zeit (in Mikrosekunden) blockiert und Callbacks empfängt und ausliefert.
+      "Normale" Callbacks werden nur ausgeliefert, wenn periodisch mit dem Device kommuniziert wird.
+      Hierfür kann anstelle von anderen Funktionsaufrufen die Funktion
+      int tf_[device]_callback_tick(TF_[device] *[device], uint32_t timeout_us);
+      verwendet werden, die die für die übergebene Zeit (in Mikrosekunden) blockiert
+      und Callbacks empfängt und ausliefert.
+
+    - Callbacks bekommen immer als ersten Parameter einen Pointer auf das Bricklet,
+      dass das Callback ausgelöst hat: Das dokumentierte input-value-Callback der IO4 2.0
+      hat also die Signatur
+      void callback(TF_IO4V2 *device, uint8_t channel, bool changed, bool value, void *user_data)
+      anstelle der dokumentierten
+      void callback(uint8_t channel, bool changed, bool value, void *user_data)
+
+    - Callbacks werden mit einer spezifischen Funktion pro Callback registriert, die allgemeine
+      [device]_register_callback-Funktion, die eine Callback-ID übergeben bekommt entfällt.
+      Stattdessen müssen spezifische Funktionen wie
+      void tf_io4_v2_register_input_value_callback(TF_IO4V2 *io4_v2, TF_IO4V2InputValueHandler handler, void *user_data);
+      verwendet werden. Das bedeutet außerdem, dass der Callback-Handler nicht nach
+      void (*)(void)
+      gecastet werden muss und dass man sich auf die Compiler-Warnungen verlassen kann,
+      falls die Signatur des Handlers nicht korrekt ist.
     
     - Devicefunktionen dürfen nicht aus einem Callback-Handler heraus aufgerufen werden.
     
     - Das Konzept der IP-Connection entfällt, stattdessen wird ein HAL (Hardware Abstraction Layer) benötigt,
-    der die plattformspezifische Art und Weise der SPI-Kommunikation abstrahiert.
-    HALs für Raspberry Pi sowie AVR und ESP32-Boards werden mitgeliefert. Für andere
-    Plattformen muss ein eigener HAL implementiert werden. (Siehe unten)
+      der die plattformspezifische Art und Weise der SPI-Kommunikation abstrahiert.
+      HALs für Raspberry Pi sowie AVR und ESP32-Boards werden mitgeliefert. Für andere
+      Plattformen muss ein eigener HAL implementiert werden. (Siehe unten)
 
     - Die _create-Funktion eines Bricklets erwartet dementsprechend als letzten
-    Parameter nicht einen Pointer auf die IPConnection, sondern auf den (initialisierten) HAL.
+      Parameter nicht einen Pointer auf die IPConnection, sondern auf den (initialisierten) HAL.
 
     - Die Fehlercodes entsprechen nicht denen der normalen C/C++-Bindings.
-    Alle Fehlercodes sind in bindings/errors.h bzw. dem verwendeten HAL definiert.
-    Durch Aufrufen von 
-    const char* tf_strerror(int error_code)
-    kann eine Fehlerbeschreibung abgefragt werden.
+      Alle Fehlercodes sind in bindings/errors.h bzw. dem verwendeten HAL definiert.
+      Durch Aufrufen von
+      const char* tf_strerror(int error_code)
+      kann eine Fehlerbeschreibung abgefragt werden.
  
  
 Demoprogramm

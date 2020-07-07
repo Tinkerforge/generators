@@ -37,6 +37,20 @@ However there are the following changes:
       int tf_[device]_callback_tick(TF_[device] *[device], uint32_t timeout_us);
       function, that blocks for the given time in microseconds and receives and delivers callbacks.
     
+    - Callbacks always receive a pointer to the sending device as first parameter:
+      The documented input value callback of the IO4 2.0 has the signature
+      void callback(TF_IO4V2 *device, uint8_t channel, bool changed, bool value, void *user_data)
+      instead of the documented
+      void callback(uint8_t channel, bool changed, bool value, void *user_data)
+
+    - Callbacks are registered with a specific function per callback. There is no
+      [device]_register_callback function that receives a callback ID. Instead
+      specific function such as
+      void tf_io4_v2_register_input_value_callback(TF_IO4V2 *io4_v2, TF_IO4V2InputValueHandler handler, void *user_data);
+      must be used. This also means, that you don't have to cast your callback handler to
+      void (*)(void)
+      and can rely on the compiler warnings if your handler signature is wrong.
+
     - Calling device functions in a callback handler is not allowed.
     
     - There is no IP connection. Instead a HAL (Hardware Abstraction Layer) is required.
