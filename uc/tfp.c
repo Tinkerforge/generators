@@ -362,13 +362,15 @@ int tf_tfp_get_error(uint8_t error_code) {
 }
 
 int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) {
-    /*
     int result = TF_TICK_AGAIN;
-    while(result & TF_TICK_AGAIN) {
-        result = tf_spitfp_tick(&tfp->spitfp, tf_hal_current_time_us(tfp->spitfp.hal) + 1);
-        if (result & TF_TICK_PACKET_RECEIVED) {*/
-    while(tf_hal_current_time_us(tfp->spitfp.hal) < deadline_us) {
-        int result = tf_spitfp_tick(&tfp->spitfp, deadline_us);
+    // Allow the state machine to run a bit over the deadline:
+    // Timeout is returned when the state machine goes back into the idle state.
+    // In the worst case, we just ticking the idling state machine into RECEIVE
+    // when the deadline is triggered, then we receive a packet, create an ACK and transmit
+    // it. Transmitting the ACK only clocks out three bytes, so no other packet should be
+    // able to be received there. In other words this is not an infinite loop.
+    while(tf_hal_current_time_us(tfp->spitfp.hal) < deadline_us || !(result & TF_TICK_TIMEOUT)) {
+        result = tf_spitfp_tick(&tfp->spitfp, deadline_us);
         if(result < 0)
             return result;
         if (result & TF_TICK_PACKET_RECEIVED) {
