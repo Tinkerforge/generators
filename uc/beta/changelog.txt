@@ -1,2 +1,7 @@
-03.07.2020: 2.0.0 Beta 1 (<unknown>)
+03.07.2020: 2.0.0 Beta 1 (5ab14ad7)
 - Initial version
+
+07.07.2020: 2.0.0 Beta 2 (<unknown>)
+- Add more callback documentation to the READMEs
+- Rename hal_arduino_avr to hal_arduino
+- Fix timeouts caused by leaving the state machine in a wrong state
