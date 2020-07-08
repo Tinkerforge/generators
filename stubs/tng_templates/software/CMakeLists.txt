@@ -35,6 +35,7 @@ SET(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/tng.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/tng_firmware.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/tng_communication.c"
+	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/tng_led.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/usb_stm32/usb.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/usb_stm32/usbd_tfp.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/usb_stm32/usbd_conf.c"
