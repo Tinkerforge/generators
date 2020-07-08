@@ -372,7 +372,7 @@ class TNGStubGenerator(common.Generator):
 
 #include "bricklib2/utility/communication_callback.h"
 #include "bricklib2/protocols/tfp/tfp.h"
-#include "bricklib2/tng/usb_stm32/usb.h
+#include "bricklib2/tng/usb_stm32/usb.h"
 {7}
 TNGHandleMessageResponse handle_message(const void *message, void *response) {{
 \tswitch(tfp_get_fid_from_message(message)) {{
