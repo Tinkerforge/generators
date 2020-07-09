@@ -54,15 +54,15 @@ endif
 
 libtinkerforge.so: $(OBJECTS) Makefile
 	@echo LD $@
-	$(E)$(CC) -shared -o $@ *.o
+	$(E)$(CC) -shared -o $@ $(OBJECTS)
 
 libtinkerforge.a: $(OBJECTS) Makefile
 	@echo AR $@
-	$(E)$(AR) rcs $@ *.o
+	$(E)$(AR) rcs $@ $(OBJECTS)
 
 tinkerforge.dll: $(OBJECTS) Makefile
 	@echo LD $@
-	$(E)$(CC) -shared -o $@ *.o *.def -lws2_32 -ladvapi32
+	$(E)$(CC) -shared -o $@ $(OBJECTS) *.def -lws2_32 -ladvapi32
 
 clean: Makefile
 	$(E)$(RM) $(OBJECTS) libtinkerforge.so libtinkerforge.a tinkerforge.dll
