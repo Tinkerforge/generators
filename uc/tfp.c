@@ -363,13 +363,11 @@ int tf_tfp_get_error(uint8_t error_code) {
 
 int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) {
     int result = TF_TICK_AGAIN;
-    // Allow the state machine to run a bit over the deadline:
-    // Timeout is returned when the state machine goes back into the idle state.
-    // In the worst case, we just ticking the idling state machine into RECEIVE
-    // when the deadline is triggered, then we receive a packet, create an ACK and transmit
-    // it. Transmitting the ACK only clocks out three bytes, so no other packet should be
-    // able to be received there. In other words this is not an infinite loop.
-    while(tf_hal_current_time_us(tfp->spitfp.hal) < deadline_us || !(result & TF_TICK_TIMEOUT)) {
+
+    do {
+        if (result & TF_TICK_SLEEP) {
+            tf_hal_sleep_us(tfp->spitfp.hal, TF_TFP_SLEEP_TIME_US);
+        }
         result = tf_spitfp_tick(&tfp->spitfp, deadline_us);
         if(result < 0)
             return result;
@@ -378,9 +376,12 @@ int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) {
             uint8_t error_code;
             tf_tfp_filter_received_packet(tfp, false, tfp->spitfp.last_sequence_number_seen, &error_code);
         }
-        if (result & TF_TICK_SLEEP) {
-            tf_hal_sleep_us(tfp->spitfp.hal, TF_TFP_SLEEP_TIME_US);
-        }
-    }
+
+    // Allow the state machine to run a bit over the deadline:
+    // Result will in the worst case not contain TICK_AGAIN when
+    // the state machine has just transmitted an ACK. The then
+    // received 3 bytes should not contain a complete packet.
+    // (Except an ACK that has not be acked again).
+    } while(tf_hal_current_time_us(tfp->spitfp.hal) < deadline_us || (result & TF_TICK_AGAIN));
     return 0;
 }

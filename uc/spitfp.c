@@ -222,22 +222,26 @@ static void tf_spitfp_build_ack(TF_SpiTfpContext *spitfp) {
 
 #define RECEIVE_PACKET_RECIEVED 1
 #define RECEIVE_PACKET_TIMEOUT 2
-static int tf_spitfp_receive_packet(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
+static int tf_spitfp_receive_packet(TF_SpiTfpContext *spitfp) {
     uint8_t bytes_missing;
     if(process_packets(spitfp, &bytes_missing))
         return true;
+
+    uint8_t bytes_received = 0;
     do {
         uint8_t to_recv = bytes_to_recv(spitfp, bytes_missing, 0);
 
         int rc = tf_spitfp_receive(spitfp, to_recv);
         if(rc != TF_E_OK)
             return rc;
-
+        bytes_received += to_recv;
         if(process_packets(spitfp, &bytes_missing))
             return RECEIVE_PACKET_RECIEVED;
-    } while(deadline_us > tf_hal_current_time_us(spitfp->hal) && bytes_missing > 0);
+    // Allow receiving two complete packets in case the first has a bitflip etc.
+    // Immediately abort if the device has no data available.
+    } while(bytes_received < 2 * TF_SPITFP_MAX_MESSAGE_LENGTH && bytes_missing > 0);
 
-    return deadline_us > tf_hal_current_time_us(spitfp->hal) ? 0 : RECEIVE_PACKET_TIMEOUT;
+    return bytes_missing > 0 ? RECEIVE_PACKET_TIMEOUT : 0;
 }
 
 static int tf_spitfp_wait_for_ack(TF_SpiTfpContext *spitfp, uint8_t seq_num, uint32_t deadline_us) {
@@ -420,7 +424,7 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
         }
 
         case STATE_RECEIVE: {
-            int result = tf_spitfp_receive_packet(spitfp, deadline_us);
+            int result = tf_spitfp_receive_packet(spitfp);
             if(result < 0)
                 return result;
 
