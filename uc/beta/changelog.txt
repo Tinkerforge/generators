@@ -6,6 +6,6 @@
 - Rename hal_arduino_avr to hal_arduino
 - Fix timeouts caused by leaving the state machine in a wrong state
 
-2020-07-21: 2.0.0 Beta 3 (<unknown>)
+2020-07-21: 2.0.0 Beta 3 (3a47eea4)
 - Add polling feature to callback handling
 - Add tf_hal_callback_tick
