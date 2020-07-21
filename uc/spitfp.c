@@ -282,27 +282,7 @@ static int tf_spitfp_wait_for_ack(TF_SpiTfpContext *spitfp, uint8_t seq_num, uin
 
     return deadline_us > tf_hal_current_time_us(spitfp->hal) ? 0 : TRANSCEIVE_TIMEOUT;
 }
-/*
-#define AVAILABLE_NOTHING 0
-#define AVAILABLE_TO_RECEIVE 1
-#define AVAILABLE_PROCESSED 2
 
-int tf_spitfp_data_available(TF_SpiTfpContext *spitfp) {
-    uint8_t bytes_missing;
-    bool packet_received = process_packets(spitfp, &bytes_missing);
-    if (packet_received)
-        return AVAILABLE_PROCESSED;
-
-    if (bytes_missing != 0)
-        return AVAILABLE_TO_RECEIVE;
-
-    tf_spitfp_receive(spitfp, 1);
-
-    uint8_t received_byte = tf_packetbuffer_peek_offset(&spitfp->recv_buf, tf_packetbuffer_get_used(&spitfp->recv_buf) - 1);
-    if (received_byte != 0)
-        return AVAILABLE_TO_RECEIVE;
-}
-*/
 // See: dot -Tpng spitfp_tick.dot -o spitfp_tick.png && xdg-open spitfp_tick.png
 int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
     TF_SpiTfpStateMachine *m = &spitfp->state;

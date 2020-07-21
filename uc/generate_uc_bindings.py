@@ -217,7 +217,7 @@ extern "C" {{
     def get_c_create_function(self):
         template = """
 int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal) {{
-	uint32_t numeric_uid;
+    uint32_t numeric_uid;
     int rc = tf_base58_decode(uid, &numeric_uid);
     if (rc != TF_E_OK) {{
         return rc;
@@ -400,7 +400,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     uint32_t deadline = tf_hal_current_time_us({device_under}->tfp.spitfp.hal) + tf_hal_get_common({device_under}->tfp.spitfp.hal)->timeout;
 
     uint8_t error_code = 0;
-	int result = tf_tfp_transmit_packet(&{device_under}->tfp, response_expected, deadline, &error_code);
+    int result = tf_tfp_transmit_packet(&{device_under}->tfp, response_expected, deadline, &error_code);
     if(result < 0)
         return result;
 
@@ -483,259 +483,259 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
         # high-level
         template_stream_in = """
 int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
-	int ret = TF_E_OK;
-	{stream_length_type} {stream_name_under}_chunk_offset = 0;
-	{chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-	{stream_length_type} {stream_name_under}_chunk_length;
+    int ret = TF_E_OK;
+    {stream_length_type} {stream_name_under}_chunk_offset = 0;
+    {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
+    {stream_length_type} {stream_name_under}_chunk_length;
 
-	if ({stream_name_under}_length == 0) {{
-		memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
+    if ({stream_name_under}_length == 0) {{
+        memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
 
-		ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
-	}} else {{
+        ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+    }} else {{
 
-		while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
-			{stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
+        while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
+            {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
 
-			if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-				{stream_name_under}_chunk_length = {chunk_cardinality};
-			}}
+            if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
+                {stream_name_under}_chunk_length = {chunk_cardinality};
+            }}
 
-			memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-			memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
+            memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
+            memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
 
-			ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+            ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 
-			if (ret != TF_E_OK) {{
-				break;
-			}}
+            if (ret != TF_E_OK) {{
+                break;
+            }}
 
-			{stream_name_under}_chunk_offset += {chunk_cardinality};
-		}}
+            {stream_name_under}_chunk_offset += {chunk_cardinality};
+        }}
 
-	}}
+    }}
 
-	return ret;
+    return ret;
 }}
 """
         template_stream_in_fixed_length = """
 int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
-	int ret = TF_E_OK;
-	{stream_length_type} {stream_name_under}_length = {fixed_length};
-	{stream_length_type} {stream_name_under}_chunk_offset = 0;
-	{chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-	{stream_length_type} {stream_name_under}_chunk_length;
+    int ret = TF_E_OK;
+    {stream_length_type} {stream_name_under}_length = {fixed_length};
+    {stream_length_type} {stream_name_under}_chunk_offset = 0;
+    {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
+    {stream_length_type} {stream_name_under}_chunk_length;
 
-	while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
-		{stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
+    while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
+        {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
 
-		if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-			{stream_name_under}_chunk_length = {chunk_cardinality};
-		}}
+        if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
+            {stream_name_under}_chunk_length = {chunk_cardinality};
+        }}
 
-		memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-		memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
+        memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
+        memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
 
-		ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+        ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 
-		if (ret < TF_E_OK) {{
-			break;
-		}}
+        if (ret < TF_E_OK) {{
+            break;
+        }}
 
-		{stream_name_under}_chunk_offset += {chunk_cardinality};
-	}}
+        {stream_name_under}_chunk_offset += {chunk_cardinality};
+    }}
 
-	return ret;
+    return ret;
 }}
 """
         template_stream_in_short_write = """
 int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
-	int ret = TF_E_OK;
-	{stream_length_type} {stream_name_under}_chunk_offset = 0;
-	{chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-	{stream_length_type} {stream_name_under}_chunk_length;
-	uint8_t {stream_name_under}_chunk_written;
+    int ret = TF_E_OK;
+    {stream_length_type} {stream_name_under}_chunk_offset = 0;
+    {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
+    {stream_length_type} {stream_name_under}_chunk_length;
+    uint8_t {stream_name_under}_chunk_written;
 
-	*ret_{stream_name_under}_written = 0;
+    *ret_{stream_name_under}_written = 0;
 
-	if ({stream_name_under}_length == 0) {{
-		memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
+    if ({stream_name_under}_length == 0) {{
+        memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
 
-		ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+        ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 
-		if (ret != TF_E_OK) {{
-			return ret;
-		}}
+        if (ret != TF_E_OK) {{
+            return ret;
+        }}
 
-		*ret_{stream_name_under}_written = {stream_name_under}_chunk_written;
-	}} else {{
+        *ret_{stream_name_under}_written = {stream_name_under}_chunk_written;
+    }} else {{
 
-		while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
-			{stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
+        while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
+            {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
 
-			if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-				{stream_name_under}_chunk_length = {chunk_cardinality};
-			}}
+            if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
+                {stream_name_under}_chunk_length = {chunk_cardinality};
+            }}
 
-			memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-			memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
+            memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
+            memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
 
-			ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+            ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 
-			if (ret != TF_E_OK) {{
-				*ret_{stream_name_under}_written = 0;
+            if (ret != TF_E_OK) {{
+                *ret_{stream_name_under}_written = 0;
 
-				break;
-			}}
+                break;
+            }}
 
-			*ret_{stream_name_under}_written += {stream_name_under}_chunk_written;
+            *ret_{stream_name_under}_written += {stream_name_under}_chunk_written;
 
-			if ({stream_name_under}_chunk_written < {chunk_cardinality}) {{
-				break; // either last chunk or short write
-			}}
+            if ({stream_name_under}_chunk_written < {chunk_cardinality}) {{
+                break; // either last chunk or short write
+            }}
 
-			{stream_name_under}_chunk_offset += {chunk_cardinality};
-		}}
+            {stream_name_under}_chunk_offset += {chunk_cardinality};
+        }}
 
-	}}
+    }}
 
-	return ret;
+    return ret;
 }}
 """
         template_stream_in_single_chunk = """
 int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
-	{chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
+    {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
 
-	if ({stream_name_under}_length > {chunk_cardinality}) {{
-		return TF_E_INVALID_PARAMETER;
-	}}
+    if ({stream_name_under}_length > {chunk_cardinality}) {{
+        return TF_E_INVALID_PARAMETER;
+    }}
 
-	memcpy({stream_name_under}_data, {stream_name_under}, sizeof({chunk_data_type}) * {stream_name_under}_length);
-	memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
+    memcpy({stream_name_under}_data, {stream_name_under}, sizeof({chunk_data_type}) * {stream_name_under}_length);
+    memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
 
-	return tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+    return tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 }}
 """
         template_stream_in_short_write_single_chunk = """
 int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
-	int ret = TF_E_OK;
-	{chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
-	uint8_t {stream_name_under}_written = 0;
+    int ret = TF_E_OK;
+    {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
+    uint8_t {stream_name_under}_written = 0;
 
-	if ({stream_name_under}_length > {chunk_cardinality}) {{
-		return TF_E_INVALID_PARAMETER;
-	}}
+    if ({stream_name_under}_length > {chunk_cardinality}) {{
+        return TF_E_INVALID_PARAMETER;
+    }}
 
-	memcpy({stream_name_under}_data, {stream_name_under}, sizeof({chunk_data_type}) * {stream_name_under}_length);
-	memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
+    memcpy({stream_name_under}_data, {stream_name_under}, sizeof({chunk_data_type}) * {stream_name_under}_length);
+    memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
 
-	ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+    ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 
-	if (ret != TF_E_OK) {{
-		return ret;
-	}}
+    if (ret != TF_E_OK) {{
+        return ret;
+    }}
 
-	*ret_{stream_name_under}_written = {stream_name_under}_written;
+    *ret_{stream_name_under}_written = {stream_name_under}_written;
 
-	return ret;
+    return ret;
 }}
 """
         template_stream_out = """
 int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
-	int ret = TF_E_OK;
-	{stream_length_type} {stream_name_under}_length = {fixed_length};
-	{stream_length_type} {stream_name_under}_chunk_offset;
-	{chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-	bool {stream_name_under}_out_of_sync;
-	{stream_length_type} {stream_name_under}_chunk_length;
+    int ret = TF_E_OK;
+    {stream_length_type} {stream_name_under}_length = {fixed_length};
+    {stream_length_type} {stream_name_under}_chunk_offset;
+    {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
+    bool {stream_name_under}_out_of_sync;
+    {stream_length_type} {stream_name_under}_chunk_length;
 
-	*ret_{stream_name_under}_length = 0;
+    *ret_{stream_name_under}_length = 0;
 
-	ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+    ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 
-	if (ret != TF_E_OK) {{
-		return ret;
-	}}{chunk_offset_check}
+    if (ret != TF_E_OK) {{
+        return ret;
+    }}{chunk_offset_check}
 
-	{stream_name_under}_out_of_sync = {stream_name_under}_chunk_offset != 0;
+    {stream_name_under}_out_of_sync = {stream_name_under}_chunk_offset != 0;
 
-	if (!{stream_name_under}_out_of_sync) {{
-		{stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
+    if (!{stream_name_under}_out_of_sync) {{
+        {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
 
-		if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-			{stream_name_under}_chunk_length = {chunk_cardinality};
-		}}
+        if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
+            {stream_name_under}_chunk_length = {chunk_cardinality};
+        }}
 
-		memcpy(ret_{stream_name_under}, {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-		*ret_{stream_name_under}_length = {stream_name_under}_chunk_length;
+        memcpy(ret_{stream_name_under}, {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
+        *ret_{stream_name_under}_length = {stream_name_under}_chunk_length;
 
-		while (*ret_{stream_name_under}_length < {stream_name_under}_length) {{
-			ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+        while (*ret_{stream_name_under}_length < {stream_name_under}_length) {{
+            ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 
-			if (ret != TF_E_OK) {{
-				return ret;
-			}}
+            if (ret != TF_E_OK) {{
+                return ret;
+            }}
 
-			{stream_name_under}_out_of_sync = {stream_name_under}_chunk_offset != *ret_{stream_name_under}_length;
+            {stream_name_under}_out_of_sync = {stream_name_under}_chunk_offset != *ret_{stream_name_under}_length;
 
-			if ({stream_name_under}_out_of_sync) {{
-				break;
-			}}
+            if ({stream_name_under}_out_of_sync) {{
+                break;
+            }}
 
-			{stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
+            {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
 
-			if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-				{stream_name_under}_chunk_length = {chunk_cardinality};
-			}}
+            if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
+                {stream_name_under}_chunk_length = {chunk_cardinality};
+            }}
 
-			memcpy(&ret_{stream_name_under}[*ret_{stream_name_under}_length], {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-			*ret_{stream_name_under}_length += {stream_name_under}_chunk_length;
-		}}
-	}}
+            memcpy(&ret_{stream_name_under}[*ret_{stream_name_under}_length], {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
+            *ret_{stream_name_under}_length += {stream_name_under}_chunk_length;
+        }}
+    }}
 
-	if ({stream_name_under}_out_of_sync) {{
-		*ret_{stream_name_under}_length = 0; // return empty array
+    if ({stream_name_under}_out_of_sync) {{
+        *ret_{stream_name_under}_length = 0; // return empty array
 
-		// discard remaining stream to bring it back in-sync
-		while ({stream_name_under}_chunk_offset + {chunk_cardinality} < {stream_name_under}_length) {{
-			ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+        // discard remaining stream to bring it back in-sync
+        while ({stream_name_under}_chunk_offset + {chunk_cardinality} < {stream_name_under}_length) {{
+            ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 
-			if (ret != TF_E_OK) {{
-				return ret;
-			}}
-		}}
+            if (ret != TF_E_OK) {{
+                return ret;
+            }}
+        }}
 
-		ret = TF_E_STREAM_OUT_OF_SYNC;
-	}}
+        ret = TF_E_STREAM_OUT_OF_SYNC;
+    }}
 
-	return ret;
+    return ret;
 }}
 """
         template_stream_out_chunk_offset_check = """
 
-	if ({stream_name_under}_chunk_offset == (1 << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
-		return ret;
-	}}"""
+    if ({stream_name_under}_chunk_offset == (1 << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
+        return ret;
+    }}"""
         template_stream_out_single_chunk = """
 int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
-	int ret = TF_E_OK;
-	{stream_length_type} {stream_name_under}_length;
-	{chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
+    int ret = TF_E_OK;
+    {stream_length_type} {stream_name_under}_length;
+    {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
 
-	*ret_{stream_name_under}_length = 0;
+    *ret_{stream_name_under}_length = 0;
 
-	ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+    ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
 
-	if (ret != TF_E_OK) {{
-		return ret;
-	}}
+    if (ret != TF_E_OK) {{
+        return ret;
+    }}
 
-	memcpy(ret_{stream_name_under}, {stream_name_under}_data, sizeof({chunk_data_type}) * {stream_name_under}_length);
-	memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
+    memcpy(ret_{stream_name_under}, {stream_name_under}_data, sizeof({chunk_data_type}) * {stream_name_under}_length);
+    memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
 
-	*ret_{stream_name_under}_length = {stream_name_under}_length;
+    *ret_{stream_name_under}_length = {stream_name_under}_length;
 
-	return ret;
+    return ret;
 }}
 """
 
