@@ -217,6 +217,8 @@ extern "C" {{
     def get_c_create_function(self):
         template = """
 int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal) {{
+    memset({device_under}, 0, sizeof(TF_{device_camel}));
+
     uint32_t numeric_uid;
     int rc = tf_base58_decode(uid, &numeric_uid);
     if (rc != TF_E_OK) {{
@@ -240,6 +242,8 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 
         unknown_template = """
 int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, uint8_t port_id, int inventory_index) {{
+    memset({device_under}, 0, sizeof(TF_{device_camel}));
+
     uint32_t numeric_uid;
     int rc = tf_base58_decode(uid, &numeric_uid);
     if (rc != TF_E_OK) {{
