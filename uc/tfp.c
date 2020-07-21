@@ -383,5 +383,5 @@ int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) {
     // received 3 bytes should not contain a complete packet.
     // (Except an ACK that has not be acked again).
     } while(tf_hal_current_time_us(tfp->spitfp.hal) < deadline_us || (result & TF_TICK_AGAIN));
-    return 0;
+    return TF_E_OK;
 }

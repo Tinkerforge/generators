@@ -42,6 +42,7 @@ typedef struct TF_TfpContext {
     uint8_t waiting_for_sequence_number; //0 if waiting for nothing
     uint8_t last_seen_spitfp_seq_num;
     CallbackHandler cb_handler;
+    bool needs_callback_tick;
 } TF_TfpContext;
 
 

@@ -819,12 +819,26 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
 
         template = """
 void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler handler, void *user_data) {{
+    if (handler == NULL) {{
+        {device_under}->tfp.needs_callback_tick = false;
+        {other_handler_checks}
+    }} else {{
+        {device_under}->tfp.needs_callback_tick = true;
+    }}
     {device_under}->{packet_under}_handler = handler;
     {device_under}->{packet_under}_user_data = user_data;
 }}
 """
+        other_handler_check_template = """{device_under}->tfp.needs_callback_tick |= {device_under}->{packet_under}_handler != NULL;"""
+
         for packet in self.get_packets('callback'):
-            result.append(format(template, self, packet))
+            other_handler_checks = '\n        '.join([
+                format(other_handler_check_template, self, other_packet)
+                for other_packet in self.get_packets('callback')
+                if other_packet != packet
+            ])
+
+            result.append(format(template, self, packet, other_handler_checks=other_handler_checks))
 
         return '#ifdef TF_IMPLEMENT_CALLBACKS{}#endif'.format('\n'.join(result))
 

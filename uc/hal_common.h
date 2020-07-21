@@ -36,6 +36,7 @@ typedef struct TF_HalCommon {
 
     bool callback_executing;
     uint8_t port_count;
+    size_t callback_tick_index;
 } TF_HalCommon;
 
 typedef struct TF_HalContext TF_HalContext;
@@ -43,6 +44,7 @@ typedef struct TF_HalContext TF_HalContext;
 void tf_hal_set_timeout(TF_HalContext *hal, uint32_t timeout_us) TF_ATTRIBUTE_NONNULL;
 uint32_t tf_hal_get_timeout(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL;
 bool tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us) TF_ATTRIBUTE_NONNULL;
 
 #define TF_LOG_LEVEL_NONE 0
 #define TF_LOG_LEVEL_ERROR 1

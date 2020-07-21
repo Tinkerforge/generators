@@ -161,3 +161,45 @@ bool tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], c
     *ret_device_id = hal_common->dids[index];
     return true;
 }
+
+static TF_TfpContext *next_callback_tick_tfp(TF_HalContext *hal) {
+    TF_HalCommon *hal_common = tf_hal_get_common(hal);
+    TF_TfpContext *tfp = NULL;
+
+    ++hal_common->callback_tick_index;
+    if(hal_common->callback_tick_index >= hal_common->used)
+        // Skip index 0; used for the unknown bricklet
+        hal_common->callback_tick_index = 1;
+
+    for(size_t i = hal_common->callback_tick_index; i < hal_common->callback_tick_index + hal_common->used; ++i) {
+        size_t index = i;
+        if (index >= hal_common->used) {
+            // Skip index 0; used for the unknown bricklet
+            index -= hal_common->used - 1;
+        }
+        tfp = hal_common->tfps[index];
+        if(tfp == NULL || !tfp->needs_callback_tick) {
+            hal_common->callback_tick_index = index;
+            return tfp;
+        }
+    }
+
+    return NULL;
+}
+
+int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us) {
+    uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
+    TF_TfpContext *tfp = NULL;
+
+    do {
+        tfp = next_callback_tick_tfp(hal);
+        if(tfp == NULL)
+            return TF_E_OK;
+
+        int result = tf_tfp_callback_tick(tfp, 0);
+        if(result != TF_E_OK)
+            return result;
+    } while(tf_hal_current_time_us(hal) < deadline_us);
+
+    return TF_E_OK;
+}
