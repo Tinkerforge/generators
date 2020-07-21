@@ -33,10 +33,16 @@ However there are the following changes:
 
     - High level callbacks are not supported.
       "Normal" callbacks will only be delivered if you commmunicate periodically with the device.
-      Instead of other function calls, you can use the
+      To receive callbacks for all devices with at least one registered handler, you can use
+      int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us);
+      This function  blocks for the given time in microseconds and receives and delivers callbacks.
+      This function can be called with a timeout of 0 to poll for one immediatly available callback.
+
+      If the default round-robin scheduling is not useful, you can use the device specific functions
+      with the folloing pattern:
       int tf_[device]_callback_tick(TF_[device] *[device], uint32_t timeout_us);
-      function, that blocks for the given time in microseconds and receives and delivers callbacks.
-    
+      These functions work the same way, but only on the passed device.
+
     - Callbacks always receive a pointer to the sending device as first parameter:
       The documented input value callback of the IO4 2.0 has the signature
       void callback(TF_IO4V2 *device, uint8_t channel, bool changed, bool value, void *user_data)
@@ -50,6 +56,8 @@ However there are the following changes:
       must be used. This also means, that you don't have to cast your callback handler to
       void (*)(void)
       and can rely on the compiler warnings if your handler signature is wrong.
+
+      To deregister a callback, pass NULL (C) or nullptr (C++) as handler.
 
     - Calling device functions in a callback handler is not allowed.
     

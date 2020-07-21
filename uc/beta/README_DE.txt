@@ -36,10 +36,17 @@ Es gibt aber folgende, bisher nicht dokumentierte Abweichungen:
 
     - Es werden keine High-Level-Callbacks unterstüzt.
       "Normale" Callbacks werden nur ausgeliefert, wenn periodisch mit dem Device kommuniziert wird.
-      Hierfür kann anstelle von anderen Funktionsaufrufen die Funktion
+      Um Callbacks für alle Devices, die mindestens einen Callback-Handler registriert haben
+      zu empfangen, kann die Funktion
+      int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us);
+      verwendet werden. Diese Funktion blockiert für die übergebene Zeit (in Mikrosekunden),
+      empfängt Callbacks und liefert diese aus. Die Funktion kann mit einem Timeout von 0
+      aufgerufen werden, um nur ein Callback zu empfangen, falls eins verfügbar ist.
+
+      Falls das Standard-Round-Robin-Scheduling von tf_hal_callback_tick unerwünscht ist,
+      können die Device-spezifischen Funktionen der Form
       int tf_[device]_callback_tick(TF_[device] *[device], uint32_t timeout_us);
-      verwendet werden, die die für die übergebene Zeit (in Mikrosekunden) blockiert
-      und Callbacks empfängt und ausliefert.
+      verwendet werden, die identisch, aber nur auf dem übergebenen Device arbeiten.
 
     - Callbacks bekommen immer als ersten Parameter einen Pointer auf das Bricklet,
       dass das Callback ausgelöst hat: Das dokumentierte input-value-Callback der IO4 2.0
@@ -56,6 +63,8 @@ Es gibt aber folgende, bisher nicht dokumentierte Abweichungen:
       void (*)(void)
       gecastet werden muss und dass man sich auf die Compiler-Warnungen verlassen kann,
       falls die Signatur des Handlers nicht korrekt ist.
+
+      Um ein Callback zu deregistrieren, kann NULL (C) oder nullptr (C++) als handler übergeben werden.
     
     - Devicefunktionen dürfen nicht aus einem Callback-Handler heraus aufgerufen werden.
     
