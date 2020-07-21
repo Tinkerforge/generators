@@ -33,7 +33,7 @@ int gpio_sysfs_export(int cs_pin) {
 	int fd;
 	char buffer[16];
 	int length;
-	int rc;
+	ssize_t rc;
 
 	fd = open(GPIO_SYSFS_DIR "export", O_WRONLY);
 
@@ -67,7 +67,7 @@ int gpio_sysfs_unexport(int cs_pin) {
 	int fd;
 	char buffer[16];
 	int length;
-	int rc;
+	ssize_t rc;
 
 	fd = open(GPIO_SYSFS_DIR "unexport", O_WRONLY);
 
@@ -96,7 +96,7 @@ int gpio_sysfs_unexport(int cs_pin) {
 int gpio_sysfs_set_direction_out_with_initial_value(char cs_pin_name[32], GPIOSYSFSValue value) {
 	int fd;
 	char buffer[GPIO_SYSFS_DIR_MAXLEN];
-	int rc;
+	ssize_t rc;
 
 	if(value >= GPIO_SYSFS_VALUE_NUM) {
 		log_error("Unknown value: %d", value);
@@ -127,7 +127,7 @@ int gpio_sysfs_set_direction_out_with_initial_value(char cs_pin_name[32], GPIOSY
 int gpio_sysfs_set_output(char cs_pin_name[32], GPIOSYSFSValue value) {
 	int fd;
 	char buffer[GPIO_SYSFS_DIR_MAXLEN];
-	int rc;
+	ssize_t rc;
 
 	if(value >= GPIO_SYSFS_VALUE_NUM) {
 		log_error("Unknown value: %d", value);

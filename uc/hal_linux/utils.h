@@ -18,7 +18,6 @@
 const char *get_errno_name(int error_code);
 
 int robust_close(int fd);
-int robust_read(int fd, void *buffer, int length) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
-int robust_write(int fd, const void *buffer, int length) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+ssize_t robust_write(int fd, const void *buffer, int length) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 #endif

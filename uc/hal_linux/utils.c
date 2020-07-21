@@ -16,13 +16,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
-#ifdef __ANDROID__
-	#include <arpa/inet.h>
-#endif
-#ifdef __APPLE__
-	#include <mach/mach_time.h>
-	#include <sys/select.h>
-#endif
 
 #include "utils.h"
 
@@ -201,23 +194,12 @@ int robust_close(int fd) {
 }
 
 // sets errno on error
-int robust_read(int fd, void *buffer, int length) {
-	int rc;
-
-	do {
-		rc = read(fd, buffer, length);
-	} while (rc < 0 && errno == EINTR);
-
-	return rc;
-}
-
-// sets errno on error
-int robust_write(int fd, const void *buffer, int length) {
-	int rc;
+ssize_t robust_write(int fd, const void *buffer, int length) {
+	ssize_t rc;
 
 	do {
 		// FIXME: handle partial write
-		rc = write(fd, buffer, length);
+		rc = write(fd, buffer, (size_t)length);
 	} while (rc < 0 && errno == EINTR);
 
 	return rc;
