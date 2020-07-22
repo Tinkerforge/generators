@@ -9,3 +9,6 @@
 2020-07-21: 2.0.0 Beta 3 (3a47eea4)
 - Add polling feature to callback handling
 - Add tf_hal_callback_tick
+
+2020-07-22: 2.0.0 Beta 4 (<unknown>)
+- Fix tf_hal_callback_tick
