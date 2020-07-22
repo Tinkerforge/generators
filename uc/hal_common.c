@@ -178,7 +178,7 @@ static TF_TfpContext *next_callback_tick_tfp(TF_HalContext *hal) {
             index -= hal_common->used - 1;
         }
         tfp = hal_common->tfps[index];
-        if(tfp == NULL || !tfp->needs_callback_tick) {
+        if(tfp != NULL && tfp->needs_callback_tick) {
             hal_common->callback_tick_index = index;
             return tfp;
         }
