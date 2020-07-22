@@ -46,19 +46,19 @@ typedef struct TF_TfpContext {
 } TF_TfpContext;
 
 
-int tf_tfp_init(TF_TfpContext *tfp, uint32_t uid, uint16_t dev_id, TF_HalContext *hal, uint8_t port_id, int inventory_index, CallbackHandler cb_handler) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
-int tf_tfp_destroy(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_tfp_init(TF_TfpContext *tfp, uint32_t uid, uint16_t dev_id, TF_HalContext *hal, uint8_t port_id, int inventory_index, CallbackHandler cb_handler) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_tfp_destroy(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
-void tf_tfp_prepare_send(TF_TfpContext *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) TF_ATTRIBUTE_NONNULL;
-uint8_t *tf_tfp_get_payload_buffer(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL;
+void tf_tfp_prepare_send(TF_TfpContext *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) TF_ATTRIBUTE_NONNULL_ALL;
+uint8_t *tf_tfp_get_payload_buffer(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL_ALL;
 
-int tf_tfp_transmit_packet(TF_TfpContext *tfp, bool response_expected, uint32_t deadline_us, uint8_t *error_code) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
-void tf_tfp_packet_processed(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL;
-int tf_tfp_finish_send(TF_TfpContext *tfp, int previous_result, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_tfp_transmit_packet(TF_TfpContext *tfp, bool response_expected, uint32_t deadline_us, uint8_t *error_code) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+void tf_tfp_packet_processed(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_tfp_finish_send(TF_TfpContext *tfp, int previous_result, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 int tf_tfp_get_error(uint8_t error_code) TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
-int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 #ifdef __cplusplus
 }

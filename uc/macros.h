@@ -13,7 +13,8 @@
 
 #ifdef __clang__
 	#define TF_ATTRIBUTE_FMT_PRINTF(fmtpos, argpos) __attribute__((__format__(__printf__, fmtpos, argpos)))
-    #define TF_ATTRIBUTE_NONNULL __attribute__((nonnull))
+    #define TF_ATTRIBUTE_NONNULL(...) __attribute__((nonnull (__VA_ARGS__)))
+    #define TF_ATTRIBUTE_NONNULL_ALL __attribute__((nonnull))
     #define TF_ATTRIBUTE_WARN_UNUSED_RESULT __attribute__ ((warn_unused_result))
 #elif defined __GNUC__
 	#ifndef __GNUC_PREREQ
@@ -24,11 +25,13 @@
 	#else
 		#define TF_ATTRIBUTE_FMT_PRINTF(fmtpos, argpos) __attribute__((__format__(__printf__, fmtpos, argpos)))
 	#endif
-    #define TF_ATTRIBUTE_NONNULL __attribute__((nonnull))
+    #define TF_ATTRIBUTE_NONNULL(...) __attribute__((nonnull (__VA_ARGS__)))
+    #define TF_ATTRIBUTE_NONNULL_ALL __attribute__((nonnull))
     #define TF_ATTRIBUTE_WARN_UNUSED_RESULT __attribute__ ((warn_unused_result))
 #else
 	#define TF_ATTRIBUTE_FMT_PRINTF(fmtpos, argpos) // FIXME
-    #define TF_ATTRIBUTE_NONNULL
+    #define TF_ATTRIBUTE_NONNULL(...)
+    #define TF_ATTRIBUTE_NONNULL_ALL __attribute__((nonnull))
     #define TF_ATTRIBUTE_WARN_UNUSED_RESULT
 #endif
 

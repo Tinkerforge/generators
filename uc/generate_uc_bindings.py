@@ -337,7 +337,8 @@ void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_unde
 """
 
         getter_template = """        case TF_{device_upper}_FUNCTION_{packet_upper}:
-            *ret_response_expected = ({device_under}->response_expected[{byte}] & (1 << {bit})) != 0;
+            if(ret_response_expected != NULL)
+                *ret_response_expected = ({device_under}->response_expected[{byte}] & (1 << {bit})) != 0;
             break;"""
 
         setter_template = """        case TF_{device_upper}_FUNCTION_{packet_upper}:
@@ -981,7 +982,7 @@ typedef struct TF_{device_camel} {{
  * Creates the device object \\c {0} with the unique device ID \\c uid and adds
  * it to the IPConnection \\c ipcon.
  */
-int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal);
+TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal);
 """
 
         unknown_template = """
@@ -991,7 +992,7 @@ int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal);
  * Creates the device object \\c {0} with the unique device ID \\c uid and adds
  * it to the IPConnection \\c ipcon.
  */
-int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, uint8_t port_id, int inventory_index);
+TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, uint8_t port_id, int inventory_index);
 """
         if self.get_name().under == 'unknown':
             template = unknown_template
@@ -1008,7 +1009,7 @@ int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, uint8_t port
  * Removes the device object \\c {0} from its IPConnection and destroys it.
  * The device object cannot be used anymore afterwards.
  */
-int tf_{0}_destroy(TF_{1} *{0});
+TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_destroy(TF_{1} *{0});
 """
         return template.format(self.get_name().under,
                                self.get_name().camel,
@@ -1020,7 +1021,7 @@ int tf_{0}_destroy(TF_{1} *{0});
 /**
  * \\ingroup {2}{1}
  */
-int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
+TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
 #endif
 """
         return template.format(self.get_name().under,
@@ -1048,7 +1049,7 @@ int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
  * disabled for a setter function then no response is sent and errors are
  * silently ignored, because they cannot be detected.
  */
-int tf_{0}_get_response_expected(TF_{1} *{0}, uint8_t function_id, bool *ret_response_expected);
+TF_ATTRIBUTE_NONNULL(1) int tf_{0}_get_response_expected(TF_{1} *{0}, uint8_t function_id, bool *ret_response_expected);
 
 /**
  * \\ingroup {2}{1}
@@ -1064,7 +1065,7 @@ int tf_{0}_get_response_expected(TF_{1} *{0}, uint8_t function_id, bool *ret_res
  * setter function then no response is sent and errors are silently ignored,
  * because they cannot be detected.
  */
-int tf_{0}_set_response_expected(TF_{1} *{0}, uint8_t function_id, bool response_expected);
+TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_set_response_expected(TF_{1} *{0}, uint8_t function_id, bool response_expected);
 
 /**
  * \\ingroup {2}{1}
@@ -1072,7 +1073,7 @@ int tf_{0}_set_response_expected(TF_{1} *{0}, uint8_t function_id, bool response
  * Changes the response expected flag for all setter and callback configuration
  * functions of this device at once.
  */
-void tf_{0}_set_response_expected_all(TF_{1} *{0}, bool response_expected);
+TF_ATTRIBUTE_NONNULL_ALL void tf_{0}_set_response_expected_all(TF_{1} *{0}, bool response_expected);
 """
         return template.format(self.get_name().under,
                                self.get_name().camel,
@@ -1088,7 +1089,7 @@ void tf_{0}_set_response_expected_all(TF_{1} *{0}, bool response_expected);
  *
  * {doc}
  */
-TF_ATTRIBUTE_NONNULL int tf_{device_name_under}_{function_name}(TF_{device_name_camel} *{device_name_under}{parameters});
+TF_ATTRIBUTE_NONNULL(1) int tf_{device_name_under}_{function_name}(TF_{device_name_camel} *{device_name_under}{parameters});
 """
         for packet in self.get_packets('function'):
             functions += template.format(category=self.get_category().camel,
@@ -1123,7 +1124,7 @@ TF_ATTRIBUTE_NONNULL int tf_{device_name_under}_{function_name}(TF_{device_name_
  * Registers the given \\c function with the given \\c callback_id. The
  * \\c user_data will be passed as the last parameter to the \\c function.
  */
-void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler handler, void *user_data);
+TF_ATTRIBUTE_NONNULL(1) void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler handler, void *user_data);
 """
 
         for packet in self.get_packets('callback'):
@@ -1286,7 +1287,7 @@ class CBindingsPacket(uc_common.CPacket):
                 if context == 'callback_handler':
                     t = '{type_} {dest}[{count}]; '
                 else:
-                    t = ''
+                    t = 'if ({dest} != NULL) {{ '
 
                 if element.get_type() == 'string':
                     t += 'tf_packetbuffer_pop_n({packetbuffer}, (uint8_t*){dest}, {count});'
@@ -1296,21 +1297,32 @@ class CBindingsPacket(uc_common.CPacket):
                     t += 'for (i = 0; i < {count}; ++i) {dest}[i] = tf_packetbuffer_read_{type_}({packetbuffer});'
                     needs_i = True
 
+                if context == 'getter':
+                    t += '}} else {{ tf_packetbuffer_remove({packetbuffer}, {count} * {item_size}); }}'
+
             else:
                 if context == 'callback_handler':
                     t = '{type_} {dest} = tf_packetbuffer_read_{type_}({packetbuffer});'
                 else:
-                    t = '*{dest} = tf_packetbuffer_read_{type_}({packetbuffer});'
+                    t = 'if ({dest} != NULL) {{ *{dest} = tf_packetbuffer_read_{type_}({packetbuffer}); }} else {{ tf_packetbuffer_remove({packetbuffer}, {count} * {item_size}); }}'
+
+            dest = ('ret_' if context == 'getter' else '') + element.get_name().under
+            if self.get_function_id() == 255 and element.get_name().under == 'connected_uid':
+                dest = 'tmp_connected_uid'
 
             return_list.append(t.format(packetbuffer=packetbuffer_name,
-                                        dest=('ret_' if context == 'getter' else '') + element.get_name().under,
+                                        dest=dest,
                                         count=element.get_cardinality(),
                                         item_size=element.get_item_size(),
                                         type_=element.get_c_type('default')))
 
         if self.get_function_id() == 255:
-            return_list.append("""if(ret_connected_uid[0] == 0) {{
+            return_list.insert(0, 'char tmp_connected_uid[8] = {0};')
+            return_list.append("""if (tmp_connected_uid[0] == 0 && ret_position != NULL) {{
             *ret_position = tf_hal_get_port_name({device_under}->tfp.spitfp.hal, {device_under}->tfp.spitfp.port_id);
+        }}
+        if (ret_connected_uid != NULL) {{
+            memcpy(ret_connected_uid, tmp_connected_uid, 8);
         }}""".format(device_under=self.get_device().get_name().under))
 
         return return_list, needs_i

@@ -20,8 +20,8 @@
 extern "C" {
 #endif
 
-void tf_base58_encode(uint32_t value, char *str) TF_ATTRIBUTE_NONNULL;
-int tf_base58_decode(const char *str, uint32_t *ret_value) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT ;
+void tf_base58_encode(uint32_t value, char *str) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_base58_decode(const char *str, uint32_t *ret_value) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT ;
 
 #ifdef __cplusplus
 }

@@ -29,34 +29,34 @@ typedef struct {
 	uint8_t buffer[PACKET_BUFFER_SIZE];
 } TF_Packetbuffer;
 
-uint8_t tf_packetbuffer_get_size(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-uint8_t tf_packetbuffer_get_used(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-uint8_t tf_packetbuffer_get_free(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-bool tf_packetbuffer_is_empty(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-bool tf_packetbuffer_is_full(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-bool tf_packetbuffer_push(TF_Packetbuffer *rb, const uint8_t data) TF_ATTRIBUTE_NONNULL;
-void tf_packetbuffer_remove(TF_Packetbuffer *rb, const uint8_t num) TF_ATTRIBUTE_NONNULL;
-bool tf_packetbuffer_pop(TF_Packetbuffer *rb, uint8_t *data) TF_ATTRIBUTE_NONNULL;
-bool tf_packetbuffer_peek(TF_Packetbuffer *rb, uint8_t *data) TF_ATTRIBUTE_NONNULL;
-bool tf_packetbuffer_peek_offset(TF_Packetbuffer *rb, uint8_t *data, uint8_t offset) TF_ATTRIBUTE_NONNULL;
-void tf_packetbuffer_init(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-void tf_packetbuffer_print(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-bool tf_packetbuffer_free_array_view(TF_Packetbuffer *rb, uint8_t length, uint8_t **first_chunk, uint8_t *first_len, uint8_t **second_chunk, uint8_t *second_len) TF_ATTRIBUTE_NONNULL;
+uint8_t tf_packetbuffer_get_size(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+uint8_t tf_packetbuffer_get_used(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+uint8_t tf_packetbuffer_get_free(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+bool tf_packetbuffer_is_empty(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+bool tf_packetbuffer_is_full(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+bool tf_packetbuffer_push(TF_Packetbuffer *rb, const uint8_t data) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_packetbuffer_remove(TF_Packetbuffer *rb, const uint8_t num) TF_ATTRIBUTE_NONNULL_ALL;
+bool tf_packetbuffer_pop(TF_Packetbuffer *rb, uint8_t *data) TF_ATTRIBUTE_NONNULL_ALL;
+bool tf_packetbuffer_peek(TF_Packetbuffer *rb, uint8_t *data) TF_ATTRIBUTE_NONNULL_ALL;
+bool tf_packetbuffer_peek_offset(TF_Packetbuffer *rb, uint8_t *data, uint8_t offset) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_packetbuffer_init(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_packetbuffer_print(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+bool tf_packetbuffer_free_array_view(TF_Packetbuffer *rb, uint8_t length, uint8_t **first_chunk, uint8_t *first_len, uint8_t **second_chunk, uint8_t *second_len) TF_ATTRIBUTE_NONNULL_ALL;
 
-void tf_packetbuffer_pop_n(TF_Packetbuffer *rb, uint8_t* dest, uint8_t count) TF_ATTRIBUTE_NONNULL;
+void tf_packetbuffer_pop_n(TF_Packetbuffer *rb, uint8_t* dest, uint8_t count) TF_ATTRIBUTE_NONNULL_ALL;
 
-int8_t tf_packetbuffer_read_int8_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-uint8_t tf_packetbuffer_read_uint8_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-uint16_t tf_packetbuffer_read_uint16_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-uint32_t tf_packetbuffer_read_uint32_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-uint64_t tf_packetbuffer_read_uint64_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-int16_t tf_packetbuffer_read_int16_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-int32_t tf_packetbuffer_read_int32_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-int64_t tf_packetbuffer_read_int64_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-char tf_packetbuffer_read_char(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-float tf_packetbuffer_read_float(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-bool tf_packetbuffer_read_bool(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL;
-void tf_packetbuffer_read_bool_array(TF_Packetbuffer *rb, bool* dest, uint16_t count) TF_ATTRIBUTE_NONNULL;
+int8_t tf_packetbuffer_read_int8_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+uint8_t tf_packetbuffer_read_uint8_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+uint16_t tf_packetbuffer_read_uint16_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+uint32_t tf_packetbuffer_read_uint32_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+uint64_t tf_packetbuffer_read_uint64_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+int16_t tf_packetbuffer_read_int16_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+int32_t tf_packetbuffer_read_int32_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+int64_t tf_packetbuffer_read_int64_t(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+char tf_packetbuffer_read_char(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+float tf_packetbuffer_read_float(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+bool tf_packetbuffer_read_bool(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_packetbuffer_read_bool_array(TF_Packetbuffer *rb, bool* dest, uint16_t count) TF_ATTRIBUTE_NONNULL_ALL;
 
 #ifdef __cplusplus
 }
