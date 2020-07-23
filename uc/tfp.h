@@ -36,6 +36,9 @@ typedef struct TF_TfpContext {
 
     uint32_t uid;
 
+    uint32_t error_count_frame;
+    uint32_t error_count_unexpected;
+
     uint8_t next_sequence_number;
     uint8_t waiting_for_fid; //0 if waiting for nothing
     uint8_t waiting_for_length; // includes tfp, but not spitfp header, (to be comparable against length field in the tfp header); 0 if waiting for nothing

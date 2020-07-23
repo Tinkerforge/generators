@@ -64,6 +64,9 @@ typedef struct TF_SpiTfpContext {
     uint8_t last_sequence_number_acked;
     uint8_t last_sequence_number_sent;
 
+    uint32_t error_count_checksum;
+    uint32_t error_count_frame;
+
     uint8_t send_buf[TF_SPITFP_MAX_MESSAGE_LENGTH];
     TF_Packetbuffer recv_buf;
 

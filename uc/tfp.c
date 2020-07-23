@@ -132,6 +132,7 @@ static bool tf_tfp_filter_received_packet(TF_TfpContext *tfp, bool remove_intere
         tf_hal_log_debug("Too short!");
         tf_packetbuffer_remove(&tfp->spitfp.recv_buf, used);
         //tf_tfp_packet_processed(tfp);
+        ++tfp->error_count_frame;
         return false;
     }
 
@@ -148,6 +149,7 @@ static bool tf_tfp_filter_received_packet(TF_TfpContext *tfp, bool remove_intere
         tf_hal_log_debug("Too short! used (%d) < header_length (%d)", used, header_length);
         tf_packetbuffer_remove(&tfp->spitfp.recv_buf, used);
         //tf_tfp_packet_processed(tfp);
+        ++tfp->error_count_frame;
         return false;
     }
 
@@ -178,6 +180,7 @@ static bool tf_tfp_filter_received_packet(TF_TfpContext *tfp, bool remove_intere
             }
             tf_packetbuffer_remove(&tfp->spitfp.recv_buf, header_length);
             tf_tfp_packet_processed(tfp);
+            ++tfp->error_count_unexpected;
         }
         return false;
     }
@@ -188,6 +191,7 @@ static bool tf_tfp_filter_received_packet(TF_TfpContext *tfp, bool remove_intere
         tf_hal_log_debug("Remove unexpected 2");
         tf_packetbuffer_remove(&tfp->spitfp.recv_buf, header_length);
         tf_tfp_packet_processed(tfp);
+        ++tfp->error_count_unexpected;
         return false;
     }
 
@@ -209,6 +213,8 @@ int tf_tfp_init(TF_TfpContext *tfp, uint32_t uid, uint16_t dev_id, TF_HalContext
     tfp->last_seen_spitfp_seq_num = 0;
     tfp->uid = uid;
     tfp->cb_handler = cb_handler;
+    tfp->error_count_frame = 0;
+    tfp->error_count_unexpected = 0;
     TF_HalCommon *common = tf_hal_get_common(hal);
 
     if(dev_id != 0 && common->dids[inventory_index] != dev_id) {

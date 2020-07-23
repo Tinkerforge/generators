@@ -203,3 +203,48 @@ int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us) {
 
     return TF_E_OK;
 }
+
+int tf_hal_get_error_counters(TF_HalContext *hal,
+                              char port_name,
+                              uint32_t *ret_spitfp_error_count_checksum,
+                              uint32_t *ret_spitfp_error_count_frame,
+                              uint32_t *ret_tfp_error_count_frame,
+                              uint32_t *ret_tfp_error_count_unexpected) {
+    TF_HalCommon *hal_common = tf_hal_get_common(hal);
+    TF_TfpContext *tfp = NULL;
+
+    uint32_t spitfp_error_count_checksum = 0;
+    uint32_t spitfp_error_count_frame = 0;
+    uint32_t tfp_error_count_frame = 0;
+    uint32_t tfp_error_count_unexpected = 0;
+
+    bool port_found = false;
+
+    for(int i = 0; i < (int)hal_common->used; ++i) {
+        if(tf_hal_get_port_name(hal, hal_common->port_ids[i]) != port_name)
+            continue;
+
+        port_found = true;
+
+        tfp = hal_common->tfps[i];
+        if(tfp == NULL)
+            continue;
+
+        spitfp_error_count_checksum += tfp->spitfp.error_count_checksum;
+        spitfp_error_count_frame += tfp->spitfp.error_count_frame;
+
+        tfp_error_count_frame += tfp->error_count_frame;
+        tfp_error_count_unexpected += tfp->error_count_unexpected;
+    }
+
+    if(ret_spitfp_error_count_checksum != NULL)
+        *ret_spitfp_error_count_checksum = spitfp_error_count_checksum;
+    if(ret_spitfp_error_count_frame != NULL)
+        *ret_spitfp_error_count_frame = spitfp_error_count_frame;
+    if(ret_tfp_error_count_frame != NULL)
+        *ret_tfp_error_count_frame = tfp_error_count_frame;
+    if(ret_tfp_error_count_unexpected != NULL)
+        *ret_tfp_error_count_unexpected = tfp_error_count_unexpected;
+
+    return port_found ? TF_E_OK : TF_E_PORT_NOT_FOUND;
+}

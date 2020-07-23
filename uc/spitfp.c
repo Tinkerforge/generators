@@ -86,8 +86,10 @@ static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
     while (!tf_packetbuffer_is_empty(buf)) {
         uint8_t packet_len;
         tf_packetbuffer_peek(buf, &packet_len);
-        if (packet_len > tf_packetbuffer_get_size(buf) || packet_len < 3) {
+        if (packet_len > TF_SPITFP_MAX_MESSAGE_LENGTH || (packet_len < TF_SPITFP_MIN_MESSAGE_LENGTH && packet_len != TF_SPITFP_PROTOCOL_OVERHEAD)) {
             //This can't be the start of a packet.
+            if(packet_len != 0)
+                ++spitfp->error_count_frame;
             tf_packetbuffer_remove(buf, 1);
             continue;
         }
@@ -115,6 +117,7 @@ static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
         } else {
             // checksum was wrong, advance one byte
             tf_packetbuffer_remove(buf, 1);
+            ++spitfp->error_count_checksum;
         }
     }
     return false;
@@ -470,6 +473,8 @@ int tf_spitfp_init(TF_SpiTfpContext *spitfp, void *hal, uint8_t port_id) {
     spitfp->last_sequence_number_sent = 0;
     spitfp->state.deadline_us = 0;
     spitfp->state.state = STATE_IDLE;
+    spitfp->error_count_checksum = 0;
+    spitfp->error_count_frame = 0;
 
     //TODO: The context is memsetted by tf_tfp_init, so this could be removed
     memset(spitfp->send_buf, 0, sizeof(spitfp->send_buf));

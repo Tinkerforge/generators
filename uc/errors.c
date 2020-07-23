@@ -40,6 +40,8 @@ const char *tf_strerror(int rc) {
             return "the device with the given UID is of unexpected device type";
         case TF_E_CALLBACK_EXEC:
             return "calling device functions from a callback handler is not allowed";
+        case TF_E_PORT_NOT_FOUND:
+            return "no port with the given port name was found";
         default:
             return tf_hal_strerror(rc);
     }
