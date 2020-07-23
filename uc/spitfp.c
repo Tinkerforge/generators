@@ -328,7 +328,7 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
                 tf_hal_log_debug("->WAIT_FOR_ACK");
 
                 m->info.wait_for_ack.seq_num = seq_num;
-                m->info.wait_for_ack.packet_received = true; //TODO: is this correct here?
+                m->info.wait_for_ack.packet_received = true;
                 m->info.wait_for_ack.inner_deadline_us = MIN(m->deadline_us, tf_hal_current_time_us(spitfp->hal) + 5000);
 
                 return TF_TICK_AGAIN | TF_TICK_PACKET_RECEIVED;
