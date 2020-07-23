@@ -1024,6 +1024,15 @@ TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_destroy(TF_{1} *{0});
 TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
 #endif
 """
+        unknown_template = """
+/**
+ * \\ingroup {2}{1}
+ */
+TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
+"""
+        if self.get_name().under == 'unknown':
+            template = unknown_template
+
         return template.format(self.get_name().under,
                                self.get_name().camel,
                                self.get_category().camel)
