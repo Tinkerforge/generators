@@ -276,8 +276,8 @@ static int tf_tfp_transmit_getter(TF_TfpContext *tfp, uint32_t deadline_us, uint
     uint32_t last_send = tf_hal_current_time_us(tfp->spitfp.hal);
 
 
-    while(tf_hal_current_time_us(tfp->spitfp.hal) < deadline_us && !packet_received) {
-        if (result & TF_TICK_TIMEOUT && tf_hal_current_time_us(tfp->spitfp.hal) - last_send >= 5000) {
+    while(!tf_hal_deadline_elapsed(tfp->spitfp.hal, deadline_us) && !packet_received) {
+        if (result & TF_TICK_TIMEOUT && tf_hal_deadline_elapsed(tfp->spitfp.hal, last_send + 5000)) {
             last_send = tf_hal_current_time_us(tfp->spitfp.hal);
             tf_spitfp_build_packet(&tfp->spitfp, true);
         }
@@ -308,7 +308,7 @@ static int tf_tfp_transmit_setter(TF_TfpContext *tfp, uint32_t deadline_us) {
     int result = TF_TICK_AGAIN;
     bool packet_sent = false;
 
-    while(tf_hal_current_time_us(tfp->spitfp.hal) < deadline_us && !packet_sent) {
+    while(!tf_hal_deadline_elapsed(tfp->spitfp.hal, deadline_us) && !packet_sent) {
         if (result & TF_TICK_TIMEOUT)
             tf_spitfp_build_packet(&tfp->spitfp, true);
 
@@ -341,7 +341,7 @@ int tf_tfp_transmit_packet(TF_TfpContext *tfp, bool response_expected, uint32_t 
 int tf_tfp_finish_send(TF_TfpContext *tfp, int previous_result, uint32_t deadline_us) {
     int result = previous_result;
 
-    while(tf_hal_current_time_us(tfp->spitfp.hal) < deadline_us && (result & TF_TICK_AGAIN)) {
+    while(!tf_hal_deadline_elapsed(tfp->spitfp.hal, deadline_us) && (result & TF_TICK_AGAIN)) {
         result = tf_spitfp_tick(&tfp->spitfp, deadline_us);
         if(result < 0)
             return result;
@@ -388,6 +388,6 @@ int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) {
     // the state machine has just transmitted an ACK. The then
     // received 3 bytes should not contain a complete packet.
     // (Except an ACK that has not be acked again).
-    } while(tf_hal_current_time_us(tfp->spitfp.hal) < deadline_us || (result & TF_TICK_AGAIN));
+    } while(!tf_hal_deadline_elapsed(tfp->spitfp.hal, deadline_us) || (result & TF_TICK_AGAIN));
     return TF_E_OK;
 }

@@ -285,9 +285,9 @@ static int tf_spitfp_wait_for_ack(TF_SpiTfpContext *spitfp, uint8_t seq_num, uin
 
         if(result != 0)
             return result;
-    } while(deadline_us > tf_hal_current_time_us(spitfp->hal) && bytes_missing > 0);
+    } while(!tf_hal_deadline_elapsed(spitfp->hal, deadline_us) && bytes_missing > 0);
 
-    return deadline_us > tf_hal_current_time_us(spitfp->hal) ? 0 : TRANSCEIVE_TIMEOUT;
+    return tf_hal_deadline_elapsed(spitfp->hal, deadline_us) ? TRANSCEIVE_TIMEOUT : 0;
 }
 
 // See: dot -Tpng spitfp_tick.dot -o spitfp_tick.png && xdg-open spitfp_tick.png

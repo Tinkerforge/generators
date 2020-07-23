@@ -199,9 +199,26 @@ int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us) {
         int result = tf_tfp_callback_tick(tfp, 0);
         if(result != TF_E_OK)
             return result;
-    } while(tf_hal_current_time_us(hal) < deadline_us);
+    } while(!tf_hal_deadline_elapsed(hal, deadline_us));
 
     return TF_E_OK;
+}
+
+bool tf_hal_deadline_elapsed(TF_HalContext *hal, uint32_t deadline_us) {
+    uint32_t now = tf_hal_current_time_us(hal);
+
+    if(now < deadline_us) {
+        uint32_t diff = deadline_us - now;
+        if (diff < UINT32_MAX / 2)
+            return false;
+        return true;
+    }
+    else {
+        uint32_t diff = now - deadline_us;
+        if(diff > UINT32_MAX / 2)
+            return false;
+        return true;
+    }
 }
 
 int tf_hal_get_error_counters(TF_HalContext *hal,
