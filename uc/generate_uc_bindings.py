@@ -1298,13 +1298,13 @@ class CBindingsPacket(uc_common.CPacket):
                     needs_i = True
 
                 if context == 'getter':
-                    t += '}} else {{ tf_packetbuffer_remove({packetbuffer}, {count} * {item_size}); }}'
+                    t += '}} else {{ tf_packetbuffer_remove({packetbuffer}, {size}); }}'
 
             else:
                 if context == 'callback_handler':
                     t = '{type_} {dest} = tf_packetbuffer_read_{type_}({packetbuffer});'
                 else:
-                    t = 'if ({dest} != NULL) {{ *{dest} = tf_packetbuffer_read_{type_}({packetbuffer}); }} else {{ tf_packetbuffer_remove({packetbuffer}, {count} * {item_size}); }}'
+                    t = 'if ({dest} != NULL) {{ *{dest} = tf_packetbuffer_read_{type_}({packetbuffer}); }} else {{ tf_packetbuffer_remove({packetbuffer}, {size}); }}'
 
             dest = ('ret_' if context == 'getter' else '') + element.get_name().under
             if self.get_function_id() == 255 and element.get_name().under == 'connected_uid':
@@ -1313,7 +1313,7 @@ class CBindingsPacket(uc_common.CPacket):
             return_list.append(t.format(packetbuffer=packetbuffer_name,
                                         dest=dest,
                                         count=element.get_cardinality(),
-                                        item_size=element.get_item_size(),
+                                        size=element.get_size(),
                                         type_=element.get_c_type('default')))
 
         if self.get_function_id() == 255:
