@@ -81,8 +81,10 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
     def prepare(self):
         super().prepare()
 
+        root_dir = self.get_root_dir()
+
         common.execute(['mvn', 'install:install-file',
-                        '-Dfile=octave-3.6.jar',
+                        '-Dfile={0}'.format(os.path.join(root_dir, 'octave-3.6.jar')),
                         '-DgroupId=org.octave',
                         '-DartifactId=octave',
                         '-Dversion=3.6',
