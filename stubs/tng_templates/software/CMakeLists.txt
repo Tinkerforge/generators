@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 SET(PROJECT_NAME tng-<<<DEVICE_NAME_DASH>>>)
 SET(CHIP_FAMILY STM32F0)
-SET(CHIP STM32F072xB)
+SET(CHIP STM32F070xB)
 SET(MCU cortex-m0\ -mthumb)
 PROJECT(${PROJECT_NAME})
 
@@ -44,7 +44,7 @@ SET(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/uartbb/uartbb.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/system_timer/system_timer.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/startup/startup_stm32f0.c"
-	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/startup/startup_stm32f072xb.S"
+	"${PROJECT_SOURCE_DIR}/src/bricklib2/hal/startup/startup_stm32f070xb.S"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/crc32.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/utility/communication_callback.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/os/coop_task.c"
