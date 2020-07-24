@@ -51,10 +51,12 @@ SET(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/os/coop_task_pendsv_handler.S"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/logging/logging.c"
 
+	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_usb.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.c"
-	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pcd.c"
+#	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pcd.c"
+	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/usb_stm32/stm32f0xx_hal_pcd_fix.c
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pcd_ex.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.c"
