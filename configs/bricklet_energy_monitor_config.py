@@ -359,7 +359,7 @@ com['examples'].append({
                                                               (('Energy', 'Energy'), 'int32', 1, 100, 'Wh', None),
                                                               (('Real Power', 'Real Power'), 'int32', 1, 100, 'h', None),
                                                               (('Apparent Power', 'Apparent Power'), 'int32', 1, 100, 'VA', None),
-                                                              (('Reactive Power', 'Reactive Power'), 'int32', 1, 100, 'VAR', None),
+                                                              (('Reactive Power', 'Reactive Power'), 'int32', 1, 100, 'var', None),
                                                               (('Power Factor', 'Power Factor'), 'uint16', 1, 1000, None, None),
                                                               (('Frequency', 'Frequency'), 'uint16', 1, 100, 'Hz', None)
 ], [])]})
@@ -371,7 +371,7 @@ com['examples'].append({
                                                             (('Energy', 'Energy'), 'int32', 1, 100, 'Wh', None),
                                                             (('Real Power', 'Real Power'), 'int32', 1, 100, 'h', None),
                                                             (('Apparent Power', 'Apparent Power'), 'int32', 1, 100, 'VA', None),
-                                                            (('Reactive Power', 'Reactive Power'), 'int32', 1, 100, 'VAR', None),
+                                                            (('Reactive Power', 'Reactive Power'), 'int32', 1, 100, 'var', None),
                                                             (('Power Factor', 'Power Factor'), 'uint16', 1, 1000, None, None),
                                                             (('Frequency', 'Frequency'), 'uint16', 1, 100, 'Hz', None)], None, None),
               ('callback_configuration', ('Energy Data', 'Energy Data'), [], 1000, False, None, [])]
@@ -443,7 +443,7 @@ com['openhab'] = {
         oh_generic_channel_type('ReacPower', 'Number', 'Reactive Power',
                     update_style=None,
                     description='Reactive Power\n\n'+integration_info,
-                    pattern='%.2f VAR'),
+                    pattern='%.2f var'),
         oh_generic_channel_type('Factor', 'Number', 'Power Factor',
                     update_style=None,
                     description='Power Factor\n\n'+integration_info),
