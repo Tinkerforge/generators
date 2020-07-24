@@ -31,14 +31,14 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Value',
+'name': 'Get Values',
 'elements': [('Timestamp', 'uint64', 1, 'out', {'scale': (1, 10**6), 'unit': 'Second'}),
-             ('Value', 'bool', 8, 'out', {})],
+             ('Values', 'bool', 8, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the input value as bools, *true* refers to high and *false* refers to low.
+Returns the input values as bools, *true* refers to high and *false* refers to low.
 """,
 'de':
 """
@@ -47,7 +47,27 @@ Gibt die Eingangswerte als Bools zurück, *true* bedeutet logisch 1 und *false* 
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Selected Value',
+'elements': [('Channel', 'uint8', 1, 'in', {}),
+             ('Timestamp', 'uint64', 1, 'out', {'scale': (1, 10**6), 'unit': 'Second'}),
+             ('Value', 'bool', 1, 'out', {})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the selected input value as bool, *true* refers to high and *false* refers to low.
+""",
+'de':
+"""
+Gibt den selektierten Eingangswert als Bool zurück, *true* bedeutet logisch 1 und *false* logisch 0.
+"""
+}]
+})
+
+
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Value', 'value'), [(('Value', ['Channel 0', 'Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Channel 5', 'Channel 6', 'Channel 7']), 'bool', 8, None, None, None)], [])]
+'functions': [('getter', ('Get Values', 'values'), [(('Values', ['Channel 0', 'Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Channel 5', 'Channel 6', 'Channel 7']), 'bool', 8, None, None, None)], [])]
 })

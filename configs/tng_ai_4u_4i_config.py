@@ -4,15 +4,15 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# TNG DO8 communication config
+# TNG DI8 communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
     'category': 'TNG',
-    'device_identifier': 205,
-    'name': 'DO8',
-    'display_name': 'DO8',
+    'device_identifier': 203,
+    'name': 'AI 4U 4I',
+    'display_name': 'AI 4U 4I',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'TBD',
@@ -31,26 +31,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Values',
-'elements': [('Timestamp', 'uint64', 1, 'in', {'scale': (1, 10**6), 'unit': 'Second'}),
-             ('Values', 'bool', 8, 'in', {})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-timestamp = 0 => now
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': 'Get Values',
 'elements': [('Timestamp', 'uint64', 1, 'out', {'scale': (1, 10**6), 'unit': 'Second'}),
-             ('Values', 'bool', 8, 'out', {})],
+             ('Voltages', 'int32', 4, 'out', {}),
+             ('Currents', 'int32', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -62,18 +46,15 @@ com['packets'].append({
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
-'name': 'Set Selected Value',
-'elements': [('Channel', 'uint8', 1, 'in', {}),
-             ('Timestamp', 'uint64', 1, 'in', {'scale': (1, 10**6), 'unit': 'Second'}),
-             ('Value', 'bool', 8, 'in', {})],
+'name': 'Get Voltages',
+'elements': [('Timestamp', 'uint64', 1, 'out', {'scale': (1, 10**6), 'unit': 'Second'}),
+             ('Voltages', 'int32', 4, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-timestamp = 0 => now
 """,
 'de':
 """
@@ -83,10 +64,26 @@ timestamp = 0 => now
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Selected Value',
+'name': 'Get Currents',
+'elements': [('Timestamp', 'uint64', 1, 'out', {'scale': (1, 10**6), 'unit': 'Second'}),
+             ('Currents', 'int32', 4, 'out', {})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Selected Voltage',
 'elements': [('Channel', 'uint8', 1, 'in', {}),
              ('Timestamp', 'uint64', 1, 'out', {'scale': (1, 10**6), 'unit': 'Second'}),
-             ('Value', 'bool', 1, 'out', {})],
+             ('Voltage', 'int32', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -98,7 +95,19 @@ com['packets'].append({
 }]
 })
 
-com['examples'].append({
-'name': 'Simple',
-'functions': [('setter', 'Set Value', [('uint64', 0), ('bool', [True, False, True, False, True, False, True, False])], None, None)]
+com['packets'].append({
+'type': 'function',
+'name': 'Get Selected Current',
+'elements': [('Channel', 'uint8', 1, 'in', {}),
+             ('Timestamp', 'uint64', 1, 'out', {'scale': (1, 10**6), 'unit': 'Second'}),
+             ('Current', 'int32', 1, 'out', {})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
 })

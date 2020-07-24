@@ -1130,7 +1130,57 @@ der UID.
 })
 
 common_packets.append({
+'feature': 'tng',
+'type': 'function',
+'function_id': 248,
+'name': 'Write UID',
+'elements': [('UID', 'uint32', 1, 'in', {})],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['if', {
+'en':
+"""
+Writes a new UID into flash. If you want to set a new UID
+you have to decode the Base58 encoded UID string into an
+integer first.
+
+We recommend that you use Brick Viewer to change the UID.
+""",
+'de':
+"""
+Schreibt eine neue UID in den Flash. Die UID muss zuerst
+vom Base58 encodierten String in einen Integer decodiert
+werden.
+
+Wir empfehlen die Nutzung des Brick Viewers zum ändern
+der UID.
+"""
+}]
+})
+
+common_packets.append({
 'feature': 'comcu_bricklet',
+'type': 'function',
+'function_id': 249,
+'name': 'Read UID',
+'elements': [('UID', 'uint32', 1, 'out', {})],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['if', {
+'en':
+"""
+Returns the current UID as an integer. Encode as
+Base58 to get the usual string version.
+""",
+'de':
+"""
+Gibt die aktuelle UID als Integer zurück. Dieser Integer
+kann als Base58 encodiert werden um an den üblichen
+UID-String zu gelangen.
+"""
+}]
+})
+
+common_packets.append({
+'feature': 'tng',
 'type': 'function',
 'function_id': 249,
 'name': 'Read UID',
