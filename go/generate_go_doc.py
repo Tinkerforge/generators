@@ -3,7 +3,7 @@
 
 """
 Go Documentation Generator
-Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2018, 2020 Erik Fleckstein <erik@tinkerforge.com>
 Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_go_doc.py: Generator for Go documentation
@@ -57,7 +57,7 @@ class GoDocDevice(go_common.GoDevice):
     def specialize_go_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return ':go:func:`Register{1}Callback <(*{0}) Register{1}Callback>`' \
+                return ':go:func:`{1}Callback <(*{0}) Register{1}Callback>`' \
                        .format(packet.get_device().get_go_name(),
                                packet.get_name(skip=-2 if high_level else 0).camel)
             else:
