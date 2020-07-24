@@ -95,20 +95,18 @@ class UCBindingsDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return '{{@link {0}_CALLBACK_{1}}}'.format(packet.get_device().get_name().upper,
-                                                           packet.get_name(skip=-2 if high_level else 0).upper)
+                return format('{{@link {device_upper}_CALLBACK_{packet_upper}}}', packet.get_device(), packet, -2 if high_level else 0)
             else:
-                return '{{@link {0}_{1}}}'.format(packet.get_device().get_name().under,
-                                                  packet.get_name(skip=-2 if high_level else 0).under)
+                return format('{{@link {device_under}_{packet_under}}}', packet.get_device(), packet, -2 if high_level else 0)
 
         return self.specialize_doc_rst_links(text, specializer)
 
     def get_c_include_c(self):
-        template = """{0}
+        template = """{header_comment}
 
 //#define IPCON_EXPOSE_INTERNALS
 
-#include "{1}_{2}.h"
+#include "{category_under}_{device_under}.h"
 #include "base58.h"
 #include "endian_convert.h"
 #include "errors.h"
@@ -121,25 +119,19 @@ extern "C" {{
 
 """
 
-        return template.format(self.get_generator().get_header_comment('asterisk'),
-                               self.get_category().under,
-                               self.get_name().under)
+        return format(template, self, header_comment=self.get_generator().get_header_comment('asterisk'))
 
     def get_c_function_id_defines(self):
         defines = ''
         template = """
 /**
- * \\ingroup {4}{3}
+ * \\ingroup {category_camel}{device_camel}
  */
-#define TF_{0}_FUNCTION_{1} {2}
+#define TF_{device_upper}_FUNCTION_{packet_upper} {fid}
 """
 
         for packet in self.get_packets('function'):
-            defines += template.format(self.get_name().upper,
-                                       packet.get_name().upper,
-                                       packet.get_function_id(),
-                                       self.get_name().camel,
-                                       self.get_category().camel)
+            defines += format(template, self, packet, fid=packet.get_function_id())
 
         return defines
 
@@ -147,72 +139,61 @@ extern "C" {{
         defines = '#ifdef TF_IMPLEMENT_CALLBACKS\n'
         template = """
 /**
- * \\ingroup {5}{4}
+ * \\ingroup {category_camel}{device_camel}
  *
- * {3}
+ * {doc}
  */
-#define TF_{0}_CALLBACK_{1} {2}
+#define TF_{device_upper}_CALLBACK_{packet_upper} {fid}
 """
 
         for packet in self.get_packets('callback'):
             doc = packet.get_c_formatted_doc()
-            defines += template.format(self.get_name().upper,
-                                       packet.get_name().upper,
-                                       packet.get_function_id(),
-                                       doc,
-                                       self.get_name().camel,
-                                       self.get_category().camel)
+            defines += format(template, self, packet, doc=doc, fid=packet.get_function_id())
+
         defines += '\n#endif'
         return defines
 
     def get_c_constants(self):
         constant_format = """
 /**
- * \\ingroup {doxygen}
+ * \\ingroup {category_camel}{device_camel}
  */
-#define TF_{device_name}_{constant_group_name_upper}_{constant_name_upper} {constant_value}
+#define TF_{device_upper}_{constant_group_name_upper}_{constant_name_upper} {constant_value}
 """
 
         return '\n' + self.get_formatted_constants(constant_format,
                                                    bool_format_func=lambda value: str(value).lower(),
-                                                   doxygen=self.get_category().camel + self.get_name().camel,
-                                                   device_name=self.get_name().upper)
+                                                   category_camel=self.get_category().camel,
+                                                   device_camel=self.get_name().camel,
+                                                   device_upper=self.get_name().upper)
 
     def get_c_device_identifier_define(self):
         template = """
 /**
- * \\ingroup {3}{2}
+ * \\ingroup {category_camel}{device_camel}
  *
- * This constant is used to identify a {5}.
+ * This constant is used to identify a {device_display_name}.
  *
- * The {{@link {4}_get_identity}} function and the
+ * The {{@link {device_under}_get_identity}} function and the
  * {{@link IPCON_CALLBACK_ENUMERATE}} callback of the IP Connection have a
  * \\c device_identifier parameter to specify the Brick's or Bricklet's type.
  */
-#define TF_{0}_DEVICE_IDENTIFIER {1}
+#define TF_{device_upper}_DEVICE_IDENTIFIER {did}
 """
 
-        return template.format(self.get_name().upper,
-                               self.get_device_identifier(),
-                               self.get_name().camel,
-                               self.get_category().camel,
-                               self.get_name().under,
-                               self.get_long_display_name())
+        return format(template, self, did=self.get_device_identifier(), device_display_name=self.get_long_display_name())
 
     def get_c_device_display_name_define(self):
         template = """
 /**
- * \\ingroup {3}{2}
+ * \\ingroup {category_camel}{device_camel}
  *
- * This constant represents the display name of a {1}.
+ * This constant represents the display name of a {device_display_name}.
  */
-#define TF_{0}_DEVICE_DISPLAY_NAME "{1}"
+#define TF_{device_upper}_DEVICE_DISPLAY_NAME "{device_display_name}"
 """
 
-        return template.format(self.get_name().upper,
-                               self.get_long_display_name(),
-                               self.get_name().camel,
-                               self.get_category().camel)
+        return format(template, self, device_display_name=self.get_long_display_name())
 
     def get_c_create_function(self):
         template = """
@@ -272,17 +253,14 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 
         response_expected_assigns = []
         for i, b in enumerate(response_expected_bytes):
-            response_expected_assigns.append("{}->response_expected[{}] = 0x{:02X};".format(self.get_name().under, i, b))
+            response_expected_assigns.append(format("{device_under}->response_expected[{i}] = 0x{b:02X};", self, i=i, b=b))
 
         response_expected_init = common.wrap_non_empty('\n    ', '\n    '.join(response_expected_assigns), '')
 
         if self.get_name().under == 'unknown':
             template = unknown_template
 
-        return template.format(device_under=self.get_name().under,
-                               device_upper=self.get_name().upper,
-                               device_camel=self.get_name().camel,
-                               response_expected_init=response_expected_init)
+        return format(template, self, response_expected_init=response_expected_init)
 
     def get_c_destroy_function(self):
         template = """
@@ -352,9 +330,6 @@ void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_unde
         getters = []
         setters = []
 
-        device_under = self.get_name().under
-        device_camel = self.get_name().camel
-
         mapped_bytes, response_map = self.get_c_response_expected_info()
 
         for packet in self.get_packets('function'):
@@ -365,27 +340,12 @@ void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_unde
             byte = mapped_id // 8
             bit = mapped_id % 8
 
-            g = getter_template.format(device_upper=self.get_name().upper,
-                                       packet_upper=packet.get_name().upper,
-                                       device_under=device_under,
-                                       device_camel=device_camel,
-                                       byte=byte,
-                                       bit=bit)
+            getters.append(format(getter_template, self, packet, byte=byte, bit=bit))
+            setters.append(format(setter_template, self, packet, byte=byte, bit=bit))
 
-            s = setter_template.format(device_upper=self.get_name().upper,
-                                       packet_upper=packet.get_name().upper,
-                                       device_under=device_under,
-                                       device_camel=device_camel,
-                                       byte=byte,
-                                       bit=bit)
-            getters.append(g)
-            setters.append(s)
-
-        return template.format(device_under=device_under,
-                               device_camel=device_camel,
-                               setter_cases='\n'.join(setters),
-                               getter_cases='\n'.join(getters),
-                               mapped_bytes=mapped_bytes)
+        return format(template, self, setter_cases='\n'.join(setters),
+                                      getter_cases='\n'.join(getters),
+                                      mapped_bytes=mapped_bytes)
 
 
     def get_c_functions(self):
@@ -431,14 +391,11 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     }}
 """
 
-        device_under = self.get_name().under
-        device_camel = self.get_name().camel
-
         for packet in self.get_packets('function'):
             packet_under = packet.get_name().under
             params = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
-            fid = '{0}_FUNCTION_{1}'.format(self.get_name().upper,
-                                            packet.get_name().upper)
+            fid = format('{device_upper}_FUNCTION_{packet_upper}', self, packet)
+
             packet_camel = packet.get_name().camel
             request_assignments, needs_i = packet.get_c_struct_list()
 
@@ -446,13 +403,13 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
             response_size = sum(e.get_size() for e in packet.get_elements(direction='out'))
 
             if len(request_assignments) > 0:
-                request_assignments = '\n    uint8_t *buf = tf_tfp_get_payload_buffer(&{}->tfp);\n{}\n'.format(device_under, request_assignments)
+                request_assignments = format('\n    uint8_t *buf = tf_tfp_get_payload_buffer(&{device_under}->tfp);\n{req_assign}\n', self, req_assign=request_assignments)
 
             if len(packet.get_elements(direction='out')) > 0:
                 response_struct_def = '\n    ' + packet_camel + '_Response response;'
-                return_list, needs_i2 = packet.get_c_return_list('&{}->tfp.spitfp.recv_buf'.format(device_under), context='getter')
-                response_assignments = template_extract_response.format(response_assignments='\n        '.join(return_list),
-                                                                        device_under=device_under)
+                return_list, needs_i2 = packet.get_c_return_list(format('&{device_under}->tfp.spitfp.recv_buf', self), context='getter')
+                response_assignments = format(template_extract_response, self, response_assignments='\n        '.join(return_list))
+
                 reponse_ptr = '(Packet *)&response'
             else:
                 response_struct_def = ''
@@ -466,28 +423,24 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
                 loop_counter_def = ''
 
             if packet.get_response_expected() != 'always_true':
-                response_expected = template_response_expected.format(device_under=device_under, fid=fid)
+                response_expected = format(template_response_expected, self, fid=fid)
             else:
                 response_expected = ''
 
-            functions += template.format(device_under=device_under,
-                                         packet_under=packet_under,
-                                         device_camel=device_camel,
-                                         params=params,
-                                         fid=fid,
-                                         packet_camel=packet_camel,
-                                         response_struct_def=response_struct_def,#6
-                                         request_assignments=request_assignments,
-                                         response_expected=response_expected,
-                                         extract_response=response_assignments,
-                                         loop_counter_def=loop_counter_def,
-                                         reponse_ptr=reponse_ptr,
-                                         request_size=request_size,
-                                         response_size=response_size)
+            functions += format(template, self, packet, params=params,
+                                                        fid=fid,
+                                                        response_struct_def=response_struct_def,
+                                                        request_assignments=request_assignments,
+                                                        response_expected=response_expected,
+                                                        extract_response=response_assignments,
+                                                        loop_counter_def=loop_counter_def,
+                                                        reponse_ptr=reponse_ptr,
+                                                        request_size=request_size,
+                                                        response_size=response_size)
 
         # high-level
         template_stream_in = """
-int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
+int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
     {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
@@ -496,7 +449,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
     if ({stream_name_under}_length == 0) {{
         memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
 
-        ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+        ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
     }} else {{
 
         while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
@@ -509,7 +462,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
             memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
             memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
 
-            ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+            ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
             if (ret != TF_E_OK) {{
                 break;
@@ -524,7 +477,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
 }}
 """
         template_stream_in_fixed_length = """
-int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
+int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_length = {fixed_length};
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
@@ -541,7 +494,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
         memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
         memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
 
-        ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+        ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
         if (ret < TF_E_OK) {{
             break;
@@ -554,7 +507,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
 }}
 """
         template_stream_in_short_write = """
-int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
+int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
     {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
@@ -566,7 +519,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
     if ({stream_name_under}_length == 0) {{
         memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
 
-        ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+        ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
         if (ret != TF_E_OK) {{
             return ret;
@@ -585,7 +538,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
             memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
             memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
 
-            ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+            ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
             if (ret != TF_E_OK) {{
                 *ret_{stream_name_under}_written = 0;
@@ -608,7 +561,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
 }}
 """
         template_stream_in_single_chunk = """
-int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
+int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
 
     if ({stream_name_under}_length > {chunk_cardinality}) {{
@@ -618,11 +571,11 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
     memcpy({stream_name_under}_data, {stream_name_under}, sizeof({chunk_data_type}) * {stream_name_under}_length);
     memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
 
-    return tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+    return tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 }}
 """
         template_stream_in_short_write_single_chunk = """
-int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
+int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     int ret = TF_E_OK;
     {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
     uint8_t {stream_name_under}_written = 0;
@@ -634,7 +587,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
     memcpy({stream_name_under}_data, {stream_name_under}, sizeof({chunk_data_type}) * {stream_name_under}_length);
     memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
 
-    ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+    ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
     if (ret != TF_E_OK) {{
         return ret;
@@ -646,7 +599,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
 }}
 """
         template_stream_out = """
-int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
+int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_length = {fixed_length};
     {stream_length_type} {stream_name_under}_chunk_offset;
@@ -656,7 +609,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
 
     *ret_{stream_name_under}_length = 0;
 
-    ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+    ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
     if (ret != TF_E_OK) {{
         return ret;
@@ -675,7 +628,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
         *ret_{stream_name_under}_length = {stream_name_under}_chunk_length;
 
         while (*ret_{stream_name_under}_length < {stream_name_under}_length) {{
-            ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+            ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
             if (ret != TF_E_OK) {{
                 return ret;
@@ -703,7 +656,7 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
 
         // discard remaining stream to bring it back in-sync
         while ({stream_name_under}_chunk_offset + {chunk_cardinality} < {stream_name_under}_length) {{
-            ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+            ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
             if (ret != TF_E_OK) {{
                 return ret;
@@ -722,14 +675,14 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
         return ret;
     }}"""
         template_stream_out_single_chunk = """
-int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_under}{high_level_parameters}) {{
+int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_length;
     {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
 
     *ret_{stream_name_under}_length = 0;
 
-    ret = tf_{device_name_under}_{name_under}_low_level({device_name_under}{parameters});
+    ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
     if (ret != TF_E_OK) {{
         return ret;
@@ -768,16 +721,14 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
                 else:
                     template = template_stream_in
 
-                functions += template.format(device_name_camel=self.get_name().camel,
-                                             device_name_under=self.get_name().under,
-                                             name_under=packet.get_name(skip=-2).under,
-                                             parameters=common.wrap_non_empty(', ', packet.get_c_arguments('default'), ''),
-                                             high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
-                                             stream_name_under=stream_in.get_name().under,
-                                             stream_length_type=stream_length_type,
-                                             fixed_length=stream_in.get_fixed_length(),
-                                             chunk_data_type=stream_in.get_chunk_data_element().get_c_type('default'),
-                                             chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())
+                functions += format(template, self, packet, -2,
+                                    parameters=common.wrap_non_empty(', ', packet.get_c_arguments('default'), ''),
+                                    high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
+                                    stream_name_under=stream_in.get_name().under,
+                                    stream_length_type=stream_length_type,
+                                    fixed_length=stream_in.get_fixed_length(),
+                                    chunk_data_type=stream_in.get_chunk_data_element().get_c_type('default'),
+                                    chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())
             elif stream_out != None:
                 length_element = stream_out.get_length_element()
                 chunk_offset_element = stream_out.get_chunk_offset_element()
@@ -793,22 +744,21 @@ int tf_{device_name_under}_{name_under}(TF_{device_name_camel} *{device_name_und
                     template = template_stream_out
 
                 if stream_out.get_fixed_length() != None:
-                    chunk_offset_check = template_stream_out_chunk_offset_check.format(stream_name_under=stream_out.get_name().under,
-                                                                                       shift_size=int(stream_out.get_chunk_offset_element().get_type().replace('uint', '')))
+                    chunk_offset_check = format(template_stream_out_chunk_offset_check,
+                                                stream_name_under=stream_out.get_name().under,
+                                                shift_size=int(stream_out.get_chunk_offset_element().get_type().replace('uint', '')))
                 else:
                     chunk_offset_check = ''
 
-                functions += template.format(device_name_camel=self.get_name().camel,
-                                             device_name_under=self.get_name().under,
-                                             name_under=packet.get_name(skip=-2).under,
-                                             parameters=common.wrap_non_empty(', ', packet.get_c_arguments('default'), ''),
-                                             high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
-                                             stream_name_under=stream_out.get_name().under,
-                                             stream_length_type=stream_length_type,
-                                             fixed_length=stream_out.get_fixed_length(default='0'),
-                                             chunk_offset_check=chunk_offset_check,
-                                             chunk_data_type=stream_out.get_chunk_data_element().get_c_type('default'),
-                                             chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
+                functions += format(template, self, packet, -2,
+                                    parameters=common.wrap_non_empty(', ', packet.get_c_arguments('default'), ''),
+                                    high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
+                                    stream_name_under=stream_out.get_name().under,
+                                    stream_length_type=stream_length_type,
+                                    fixed_length=stream_out.get_fixed_length(default='0'),
+                                    chunk_offset_check=chunk_offset_check,
+                                    chunk_data_type=stream_out.get_chunk_data_element().get_c_type('default'),
+                                    chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
 
         return functions
 
@@ -841,7 +791,7 @@ void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devi
 
             result.append(format(template, self, packet, other_handler_checks=other_handler_checks))
 
-        return '#ifdef TF_IMPLEMENT_CALLBACKS{}#endif'.format('\n'.join(result))
+        return format('#ifdef TF_IMPLEMENT_CALLBACKS{funcs}#endif', funcs='\n'.join(result))
 
     def get_c_callback_handler(self):
         no_callbacks_template = """
@@ -935,24 +885,17 @@ typedef struct TF_{device_camel} {{
 """
         mapped_id_count = len([p for p in self.get_packets('function') if p.get_response_expected() != 'always_true'])
 
-        cb_handler_template = """    TF_{device_camel}{cb_camel}Handler {cb_under}_handler;
-    void *{cb_under}_user_data;
+        cb_handler_template = """    TF_{device_camel}{packet_camel}Handler {packet_under}_handler;
+    void *{packet_under}_user_data;
 """
-        cb_handlers = [cb_handler_template.format(device_camel=self.get_name().camel,
-                                                  cb_camel=cb.get_name().camel,
-                                                  cb_under=cb.get_name().under)
-                        for cb in self.get_packets('callback')]
+        cb_handlers = [format(cb_handler_template, self, packet) for packet in self.get_packets('callback')]
 
-        return template.format(header_comment=self.get_generator().get_header_comment('asterisk'),
-                               category_upper=self.get_category().upper,
-                               device_upper=self.get_name().upper,
-                               device_camel=self.get_name().camel,
-                               category_camel=self.get_category().camel,
-                               callback_typedefs=self.get_c_typedefs(),
-                               callback_handlers='\n'.join(cb_handlers),
-                               description=common.select_lang(self.get_description()),
-                               display_name=self.get_long_display_name(),
-                               mapped_bytes=math.ceil(mapped_id_count / 8.0))
+        return format(template, self, header_comment=self.get_generator().get_header_comment('asterisk'),
+                                      callback_typedefs=self.get_c_typedefs(),
+                                      callback_handlers='\n'.join(cb_handlers),
+                                      description=common.select_lang(self.get_description()),
+                                      display_name=self.get_long_display_name(),
+                                      mapped_bytes=math.ceil(mapped_id_count / 8.0))
 
     def get_c_end_h(self):
         return "\n#ifdef __cplusplus\n}\n#endif\n\n#endif\n"
@@ -962,85 +905,76 @@ typedef struct TF_{device_camel} {{
 
     def get_c_typedefs(self):
         typedefs = '\n'
-        template = """typedef void (*TF_{device_camel}{cb_camel}Handler)(struct TF_{device_camel} *device, {params}void *user_data);
+        template = """typedef void (*TF_{device_camel}{packet_camel}Handler)(struct TF_{device_camel} *device, {params}void *user_data);
 """
 
         # normal and low-level
         for packet in self.get_packets('callback'):
-            typedefs += template.format(device_camel=self.get_name().camel,
-                                        device_under=self.get_name().under,
-                                        cb_camel=packet.get_name().camel,
-                                        params=common.wrap_non_empty('', packet.get_c_parameters(), ', '))
+            typedefs += format(template, self, packet, params=common.wrap_non_empty('', packet.get_c_parameters(), ', '))
 
         return typedefs
 
     def get_c_create_declaration(self):
         template = """
 /**
- * \\ingroup {2}{1}
+ * \\ingroup {category_camel}{device_camel}
  *
- * Creates the device object \\c {0} with the unique device ID \\c uid and adds
+ * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
  * it to the IPConnection \\c ipcon.
  */
-TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal);
+TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal);
 """
 
         unknown_template = """
 /**
- * \\ingroup {2}{1}
+ * \\ingroup {category_camel}{device_camel}
  *
- * Creates the device object \\c {0} with the unique device ID \\c uid and adds
+ * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
  * it to the IPConnection \\c ipcon.
  */
-TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_create(TF_{1} *{0}, const char *uid, TF_HalContext *hal, uint8_t port_id, int inventory_index);
+TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, uint8_t port_id, int inventory_index);
 """
         if self.get_name().under == 'unknown':
             template = unknown_template
 
-        return template.format(self.get_name().under,
-                               self.get_name().camel,
-                               self.get_category().camel)
+        return format(template, self)
 
     def get_c_destroy_declaration(self):
         template = """
 /**
- * \\ingroup {2}{1}
+ * \\ingroup {category_camel}{device_camel}
  *
- * Removes the device object \\c {0} from its IPConnection and destroys it.
+ * Removes the device object \\c {device_under} from its IPConnection and destroys it.
  * The device object cannot be used anymore afterwards.
  */
-TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_destroy(TF_{1} *{0});
+TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_destroy(TF_{device_camel} *{device_under});
 """
-        return template.format(self.get_name().under,
-                               self.get_name().camel,
-                               self.get_category().camel)
+        return format(template, self)
 
     def get_c_callback_tick_declaration(self):
         template = """
 #ifdef TF_IMPLEMENT_CALLBACKS
 /**
- * \\ingroup {2}{1}
+ * \\ingroup {category_camel}{device_camel}
  */
-TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
+TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us);
 #endif
 """
         unknown_template = """
 /**
- * \\ingroup {2}{1}
+ * \\ingroup {category_camel}{device_camel}
  */
-TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_us);
+TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us);
 """
         if self.get_name().under == 'unknown':
             template = unknown_template
 
-        return template.format(self.get_name().under,
-                               self.get_name().camel,
-                               self.get_category().camel)
+        return format(template, self)
 
     def get_c_response_expected_declarations(self):
         template = """
 /**
- * \\ingroup {2}{1}
+ * \\ingroup {category_camel}{device_camel}
  *
  * Returns the response expected flag for the function specified by the
  * \\c function_id parameter. It is *true* if the function is expected to
@@ -1049,7 +983,7 @@ TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_
  * For getter functions this is enabled by default and cannot be disabled,
  * because those functions will always send a response. For callback
  * configuration functions it is enabled by default too, but can be disabled
- * via the {0}_set_response_expected function. For setter functions it is
+ * via the {device_under}_set_response_expected function. For setter functions it is
  * disabled by default and can be enabled.
  *
  * Enabling the response expected flag for a setter function allows to
@@ -1058,10 +992,10 @@ TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_callback_tick(TF_{1} *{0}, uint32_t timeout_
  * disabled for a setter function then no response is sent and errors are
  * silently ignored, because they cannot be detected.
  */
-TF_ATTRIBUTE_NONNULL(1) int tf_{0}_get_response_expected(TF_{1} *{0}, uint8_t function_id, bool *ret_response_expected);
+TF_ATTRIBUTE_NONNULL(1) int tf_{device_under}_get_response_expected(TF_{device_camel} *{device_under}, uint8_t function_id, bool *ret_response_expected);
 
 /**
- * \\ingroup {2}{1}
+ * \\ingroup {category_camel}{device_camel}
  *
  * Changes the response expected flag of the function specified by the
  * \\c function_id parameter. This flag can only be changed for setter
@@ -1074,19 +1008,17 @@ TF_ATTRIBUTE_NONNULL(1) int tf_{0}_get_response_expected(TF_{1} *{0}, uint8_t fu
  * setter function then no response is sent and errors are silently ignored,
  * because they cannot be detected.
  */
-TF_ATTRIBUTE_NONNULL_ALL int tf_{0}_set_response_expected(TF_{1} *{0}, uint8_t function_id, bool response_expected);
+TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_set_response_expected(TF_{device_camel} *{device_under}, uint8_t function_id, bool response_expected);
 
 /**
- * \\ingroup {2}{1}
+ * \\ingroup {category_camel}{device_camel}
  *
  * Changes the response expected flag for all setter and callback configuration
  * functions of this device at once.
  */
-TF_ATTRIBUTE_NONNULL_ALL void tf_{0}_set_response_expected_all(TF_{1} *{0}, bool response_expected);
+TF_ATTRIBUTE_NONNULL_ALL void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under}, bool response_expected);
 """
-        return template.format(self.get_name().under,
-                               self.get_name().camel,
-                               self.get_category().camel)
+        return format(template, self)
 
     def get_c_function_declaration(self):
         functions = ''
@@ -1094,29 +1026,23 @@ TF_ATTRIBUTE_NONNULL_ALL void tf_{0}_set_response_expected_all(TF_{1} *{0}, bool
         # normal and low-level
         template = """
 /**
- * \\ingroup {category}{device_name_camel}
+ * \\ingroup {category_camel}{device_camel}
  *
  * {doc}
  */
-TF_ATTRIBUTE_NONNULL(1) int tf_{device_name_under}_{function_name}(TF_{device_name_camel} *{device_name_under}{parameters});
+TF_ATTRIBUTE_NONNULL(1) int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{parameters});
 """
         for packet in self.get_packets('function'):
-            functions += template.format(category=self.get_category().camel,
-                                         device_name_camel=self.get_name().camel,
-                                         device_name_under=self.get_name().under,
-                                         doc=packet.get_c_formatted_doc(),
-                                         function_name=packet.get_name().under,
-                                         parameters=common.wrap_non_empty(', ', packet.get_c_parameters(), ''))
+            functions += format(template, self, packet,
+                                doc=packet.get_c_formatted_doc(),
+                                parameters=common.wrap_non_empty(', ', packet.get_c_parameters(), ''))
 
         # high-level
         for packet in self.get_packets('function'):
             if packet.has_high_level():
-                functions += template.format(category=self.get_category().camel,
-                                             device_name_camel=self.get_name().camel,
-                                             device_name_under=self.get_name().under,
-                                             doc=packet.get_c_formatted_doc(),
-                                             function_name=packet.get_name(skip=-2).under,
-                                             parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''))
+                functions += format(template, self, packet, -2,
+                                    doc=packet.get_c_formatted_doc(),
+                                    parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''))
 
         return functions
 
@@ -1327,12 +1253,13 @@ class CBindingsPacket(uc_common.CPacket):
 
         if self.get_function_id() == 255:
             return_list.insert(0, 'char tmp_connected_uid[8] = {0};')
-            return_list.append("""if (tmp_connected_uid[0] == 0 && ret_position != NULL) {{
+            return_list.append(
+                format("""if (tmp_connected_uid[0] == 0 && ret_position != NULL) {{
             *ret_position = tf_hal_get_port_name({device_under}->tfp.spitfp.hal, {device_under}->tfp.spitfp.port_id);
         }}
         if (ret_connected_uid != NULL) {{
             memcpy(ret_connected_uid, tmp_connected_uid, 8);
-        }}""".format(device_under=self.get_device().get_name().under))
+        }}""", self.get_device()))
 
         return return_list, needs_i
 
@@ -1349,7 +1276,7 @@ class CBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
     def generate(self, device):
         if not device.has_comcu():
             return
-        filename = '{0}_{1}'.format(device.get_category().under, device.get_name().under)
+        filename = format('{category_under}_{device_under}', device)
 
         with open(os.path.join(self.get_bindings_dir(), filename + '.c'), 'w') as f:
             f.write(device.get_c_source())
