@@ -60,6 +60,7 @@ SET(SOURCES
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pcd_ex.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.c"
+	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.c"
 
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c"
