@@ -19,6 +19,7 @@ ENABLE_LANGUAGE(C ASM)
 
 INCLUDE_DIRECTORIES(
 	"${PROJECT_SOURCE_DIR}/src/"
+	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/tng/usb_stm32/"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/STM32F0xx_HAL_Driver/Inc/"
 	"${PROJECT_SOURCE_DIR}/src/bricklib2/stm32cubef0/Drivers/CMSIS/Device/ST/STM32F0xx/Include/"
