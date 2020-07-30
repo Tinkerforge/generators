@@ -5,6 +5,7 @@
 C/C++ Documentation Generator
 Copyright (C) 2012-2015, 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_c_doc.py: Generator for C/C++ documentation
 
@@ -100,8 +101,8 @@ class CDocDevice(common.Device):
 
     def get_c_callbacks(self):
         callbacks = []
-        tempate = '.. c:var:: {0}_CALLBACK_{1}\n{2}\n{3}\n{4}\n'
-        param_tempate = {
+        template = '.. c:var:: {0}_CALLBACK_{1}\n{2}\n{3}\n{4}\n'
+        param_template = {
             'en': """
  .. code-block:: c
 
@@ -122,7 +123,7 @@ class CDocDevice(common.Device):
             else:
                 plist += ', void *user_data'
 
-            params = common.select_lang(param_tempate).format(plist)
+            params = common.select_lang(param_template).format(plist)
             meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_c_type('meta', cardinality=cardinality),
                                                      lambda element, index=None: element.get_c_name(index=index),
                                                      suffix_elements=[('user_data', 'void *', 1, 'out')],
@@ -132,7 +133,7 @@ class CDocDevice(common.Device):
             desc = packet.get_c_formatted_doc()
             skip = -2 if packet.has_high_level() else 0
 
-            callbacks.append(tempate.format(self.get_name().upper,
+            callbacks.append(template.format(self.get_name().upper,
                                             packet.get_name(skip=skip).upper,
                                             params,
                                             meta_table,
