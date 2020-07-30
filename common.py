@@ -4,6 +4,7 @@
 Common Generator Library
 Copyright (C) 2012-2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2012-2015, 2019 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 common.py: Common library for generation of bindings and documentation
 
@@ -1249,7 +1250,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
                                    software_doc_prefix,
                                    device.get_git_name(),
                                    firmware_url_part,
-                                   False,
+                                   device.has_comcu(),
                                    device.is_released(),
                                    device.is_documented(),
                                    device.is_discontinued(),
