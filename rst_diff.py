@@ -11,7 +11,26 @@ import os
 import re
 import tempfile
 import shutil
-import common
+import importlib.util
+import importlib.machinery
+
+generators_dir = os.path.dirname(os.path.realpath(__file__))
+
+def create_generators_module():
+    if sys.hexversion < 0x3050000:
+        generators_module = importlib.machinery.SourceFileLoader('generators', os.path.join(generators_dir, '__init__.py')).load_module()
+    else:
+        generators_spec = importlib.util.spec_from_file_location('generators', os.path.join(generators_dir, '__init__.py'))
+        generators_module = importlib.util.module_from_spec(generators_spec)
+
+        generators_spec.loader.exec_module(generators_module)
+
+    sys.modules['generators'] = generators_module
+
+if 'generators' not in sys.modules:
+    create_generators_module()
+
+from generators import common
 
 args = sys.argv[1:]
 
