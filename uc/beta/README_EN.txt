@@ -13,6 +13,7 @@ Zip Contents
  source/hal_arduino/ - HAL for Arduino boards (e.g. an Arduino Uno or a Teensy)
  source/hal_arduino_esp32/ - HAL for Arduino boards with an ESP32 (e.g. a NodeMCU)
  source/hal_linux/ - HAL for Linux systems with spidev support (e.g. a Raspberry Pi)
+ source/hal_raspberry_pi/ - HAL specifically for Raspberry Pis. Experimental, but potentially with better performance
 
  source/Makefile - Makefile for the Linux variant of the demo program
  source/main.c - Linux variant of the demo program
