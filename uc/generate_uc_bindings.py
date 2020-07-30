@@ -5,7 +5,7 @@
 C/C++ for Microcontrollers Bindings Generator
 Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
-generate_c_bindings.py: Generator for C/C++ bindings for Microcontrollers
+generate_uc_bindings.py: Generator for C/C++ bindings for Microcontrollers
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -52,44 +52,7 @@ if 'generators' not in sys.modules:
 
 from generators import common
 from generators.uc import uc_common
-
-def format(s, device=None, packet=None, packet_skip=0, **kwargs):
-    if device is not None:
-        kwargs['device_space'] = device.get_name().space
-        kwargs['device_lower'] = device.get_name().lower
-        kwargs['device_camel'] = device.get_name().camel
-        kwargs['device_headless'] = device.get_name().headless
-        kwargs['device_under'] = device.get_name().under
-        kwargs['device_upper'] = device.get_name().upper
-        kwargs['device_dash'] = device.get_name().dash
-        kwargs['device_camel_abbrv'] = device.get_name().camel_abbrv
-        kwargs['device_lower_no_space'] = device.get_name().lower_no_space
-        kwargs['device_camel_constant_safe'] = device.get_name().camel_constant_safe
-
-        kwargs['category_space'] = device.get_category().space
-        kwargs['category_lower'] = device.get_category().lower
-        kwargs['category_camel'] = device.get_category().camel
-        kwargs['category_headless'] = device.get_category().headless
-        kwargs['category_under'] = device.get_category().under
-        kwargs['category_upper'] = device.get_category().upper
-        kwargs['category_dash'] = device.get_category().dash
-        kwargs['category_camel_abbrv'] = device.get_category().camel_abbrv
-        kwargs['category_lower_no_space'] = device.get_category().lower_no_space
-        kwargs['category_camel_constant_safe'] = device.get_category().camel_constant_safe
-
-    if packet is not None:
-        kwargs['packet_space'] = packet.get_name(packet_skip).space
-        kwargs['packet_lower'] = packet.get_name(packet_skip).lower
-        kwargs['packet_camel'] = packet.get_name(packet_skip).camel
-        kwargs['packet_headless'] = packet.get_name(packet_skip).headless
-        kwargs['packet_under'] = packet.get_name(packet_skip).under
-        kwargs['packet_upper'] = packet.get_name(packet_skip).upper
-        kwargs['packet_dash'] = packet.get_name(packet_skip).dash
-        kwargs['packet_camel_abbrv'] = packet.get_name(packet_skip).camel_abbrv
-        kwargs['packet_lower_no_space'] = packet.get_name(packet_skip).lower_no_space
-        kwargs['packet_camel_constant_safe'] = packet.get_name(packet_skip).camel_constant_safe
-
-    return s.format(**kwargs)
+from generators.uc.uc_common import format
 
 class UCBindingsDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
@@ -172,7 +135,7 @@ extern "C" {{
 /**
  * \\ingroup {category_camel}{device_camel}
  *
- * This constant is used to identify a {device_display_name}.
+ * This constant is used to identify a {device_display}.
  *
  * The {{@link {device_under}_get_identity}} function and the
  * {{@link IPCON_CALLBACK_ENUMERATE}} callback of the IP Connection have a
@@ -181,19 +144,19 @@ extern "C" {{
 #define TF_{device_upper}_DEVICE_IDENTIFIER {did}
 """
 
-        return format(template, self, did=self.get_device_identifier(), device_display_name=self.get_long_display_name())
+        return format(template, self, did=self.get_device_identifier())
 
     def get_c_device_display_name_define(self):
         template = """
 /**
  * \\ingroup {category_camel}{device_camel}
  *
- * This constant represents the display name of a {device_display_name}.
+ * This constant represents the display name of a {device_display}.
  */
-#define TF_{device_upper}_DEVICE_DISPLAY_NAME "{device_display_name}"
+#define TF_{device_upper}_DEVICE_DISPLAY_NAME "{device_display}"
 """
 
-        return format(template, self, device_display_name=self.get_long_display_name())
+        return format(template, self)
 
     def get_c_create_function(self):
         template = """
@@ -863,7 +826,7 @@ extern "C" {{
 #endif
 
 /**
- * \\defgroup {category_camel}{device_camel} {display_name}
+ * \\defgroup {category_camel}{device_camel} {device_display}
  */
 
 struct TF_{device_camel};
@@ -894,7 +857,6 @@ typedef struct TF_{device_camel} {{
                                       callback_typedefs=self.get_c_typedefs(),
                                       callback_handlers='\n'.join(cb_handlers),
                                       description=common.select_lang(self.get_description()),
-                                      display_name=self.get_long_display_name(),
                                       mapped_bytes=math.ceil(mapped_id_count / 8.0))
 
     def get_c_end_h(self):
@@ -1097,7 +1059,7 @@ TF_ATTRIBUTE_NONNULL(1) void tf_{device_under}_register_{packet_under}_callback(
 
         return header
 
-class CBindingsPacket(uc_common.CPacket):
+class UCBindingsPacket(uc_common.UCPacket):
     def get_c_formatted_doc(self, high_level=False):
         text = common.select_lang(self.get_doc_text())
 
@@ -1263,15 +1225,15 @@ class CBindingsPacket(uc_common.CPacket):
 
         return return_list, needs_i
 
-class CBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
+class UCBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
     def get_device_class(self):
         return UCBindingsDevice
 
     def get_packet_class(self):
-        return CBindingsPacket
+        return UCBindingsPacket
 
     def get_element_class(self):
-        return uc_common.CElement
+        return uc_common.UCElement
 
     def generate(self, device):
         if not device.has_comcu():
@@ -1289,7 +1251,7 @@ class CBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
             self.released_files.append(filename + '.h')
 
 def generate(root_dir):
-    common.generate(root_dir, 'en', CBindingsGenerator)
+    common.generate(root_dir, 'en', UCBindingsGenerator)
 
 if __name__ == '__main__':
     generate(os.getcwd())

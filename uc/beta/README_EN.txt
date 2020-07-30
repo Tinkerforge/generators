@@ -205,6 +205,6 @@ Data is transmitted MSB first, the default clock frequency is 1.4 MHz.
 The logic level of all signals is 3.3V.
 
 Due to a bug with the XMC microcontroller used by the Bricklets, they don't correctly
-go into a float the MISO signal. This results in interference when multiple
+go into a floating state on the MISO signal. This results in interference when multiple
 Bricklets are used on the same SPI bus. To be able to use multiple bricklets, a
 tri-state buffer chip controlled by the chip select signal has to be used.

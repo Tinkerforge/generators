@@ -28,7 +28,7 @@ import math
 
 from generators import common
 
-class CPacket(common.Packet):
+class UCPacket(common.Packet):
     def get_c_parameters(self, high_level=False):
         parameters = []
         packet_type = self.get_type()
@@ -113,7 +113,7 @@ class CPacket(common.Packet):
 
         return ', '.join(arguments)
 
-class CElement(common.Element):
+class UCElement(common.Element):
     def format_value(self, value):
         if isinstance(value, list):
             result = []
@@ -197,3 +197,47 @@ class UCGeneratorTrait:
 
     def get_doc_formatted_param(self, element):
         return element.get_name().under
+
+def format(s, device=None, packet=None, packet_skip=0, **kwargs):
+    if device is not None:
+        kwargs['device_space'] = device.get_name().space
+        kwargs['device_lower'] = device.get_name().lower
+        kwargs['device_camel'] = device.get_name().camel
+        kwargs['device_headless'] = device.get_name().headless
+        kwargs['device_under'] = device.get_name().under
+        kwargs['device_upper'] = device.get_name().upper
+        kwargs['device_dash'] = device.get_name().dash
+        kwargs['device_camel_abbrv'] = device.get_name().camel_abbrv
+        kwargs['device_lower_no_space'] = device.get_name().lower_no_space
+        kwargs['device_camel_constant_safe'] = device.get_name().camel_constant_safe
+
+        kwargs['device_initial'] = device.get_initial_name()
+        kwargs['device_display'] = device.get_long_display_name()
+
+        kwargs['category_space'] = device.get_category().space
+        kwargs['category_lower'] = device.get_category().lower
+        kwargs['category_camel'] = device.get_category().camel
+        kwargs['category_headless'] = device.get_category().headless
+        kwargs['category_under'] = device.get_category().under
+        kwargs['category_upper'] = device.get_category().upper
+        kwargs['category_dash'] = device.get_category().dash
+        kwargs['category_camel_abbrv'] = device.get_category().camel_abbrv
+        kwargs['category_lower_no_space'] = device.get_category().lower_no_space
+        kwargs['category_camel_constant_safe'] = device.get_category().camel_constant_safe
+
+    if packet is not None:
+        kwargs['packet_space'] = packet.get_name(packet_skip).space
+        kwargs['packet_lower'] = packet.get_name(packet_skip).lower
+        kwargs['packet_camel'] = packet.get_name(packet_skip).camel
+        kwargs['packet_headless'] = packet.get_name(packet_skip).headless
+        kwargs['packet_under'] = packet.get_name(packet_skip).under
+        kwargs['packet_upper'] = packet.get_name(packet_skip).upper
+        kwargs['packet_dash'] = packet.get_name(packet_skip).dash
+        kwargs['packet_camel_abbrv'] = packet.get_name(packet_skip).camel_abbrv
+        kwargs['packet_lower_no_space'] = packet.get_name(packet_skip).lower_no_space
+        kwargs['packet_camel_constant_safe'] = packet.get_name(packet_skip).camel_constant_safe
+
+        if hasattr(packet, 'get_comment_name'):
+            kwargs['packet_comment'] = packet.get_comment_name()
+
+    return s.format(**kwargs)
