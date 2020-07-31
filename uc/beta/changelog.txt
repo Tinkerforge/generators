@@ -13,8 +13,11 @@
 2020-07-22: 2.0.0 Beta 4 (f5f88802)
 - Fix tf_hal_callback_tick
 
-2020-07-30: 2.0.0 Beta 5 (<unknown>)
+2020-07-30: 2.0.0 Beta 5 (6fb54a57)
 - Allow passing NULL as return parameter to ignore a result
 - Add tf_hal_get_error_counters
 - Fix deadline overflow behaviour
 - Add hal_raspberry_pi
+
+2020-07-31: 2.0.0 Beta 6 (<unknown>)
+- Fix nonnull attributes in HALs
