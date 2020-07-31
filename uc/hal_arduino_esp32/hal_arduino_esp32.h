@@ -34,6 +34,6 @@ typedef struct TF_HalContext {
 
 #define TF_E_INVALID_PIN_CONFIGURATION -100
 
-int tf_hal_arduino_init(struct TF_HalContext *hal, TF_Port *ports, size_t port_count) TF_ATTRIBUTE_NONNULL;
+int tf_hal_arduino_init(struct TF_HalContext *hal, TF_Port *ports, size_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
 
 #endif

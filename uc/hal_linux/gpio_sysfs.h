@@ -35,7 +35,7 @@ typedef struct {
 
 int gpio_sysfs_export(int cs_pin) TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 int gpio_sysfs_unexport(int cs_pin) TF_ATTRIBUTE_WARN_UNUSED_RESULT;
-int gpio_sysfs_set_direction_out_with_initial_value(char cs_pin_name[32], GPIOSYSFSValue value) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
-int gpio_sysfs_set_output(char cs_pin_name[32], GPIOSYSFSValue value) TF_ATTRIBUTE_NONNULL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int gpio_sysfs_set_direction_out_with_initial_value(char cs_pin_name[32], GPIOSYSFSValue value) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int gpio_sysfs_set_output(char cs_pin_name[32], GPIOSYSFSValue value) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 #endif
