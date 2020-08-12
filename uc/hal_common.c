@@ -112,6 +112,7 @@ bool tf_hal_enumerate_handler(TF_HalContext *hal, uint8_t port_id, TF_Packetbuff
 
 TF_ATTRIBUTE_FMT_PRINTF(1, 2)
 void tf_hal_log_formatted_message(const char *fmt, ...){
+#ifdef TF_LOG_USE_VSNPRINTF
     char buf[128];
     memset(buf, 0, sizeof(buf)/sizeof(buf[0]));
 
@@ -121,6 +122,82 @@ void tf_hal_log_formatted_message(const char *fmt, ...){
     va_end (args);
 
     tf_hal_log_message(buf);
+#else
+    // Very minimalistic vsnprintf: no zero-padding, grouping, l-modifier or similar and no float
+	va_list va;
+	va_start(va, fmt);
+
+    uint32_t index = 0;
+	char buffer[128] = {'\0'};
+	char character;
+
+	while((character = *(fmt++))) {
+		if(character != '%') {
+            buffer[index] = character;
+            index++;
+		} else {
+			character = *(fmt++);
+
+			switch(character) {
+				case '\0': {
+					return;
+				}
+
+				case 'u': {
+					uint32_t value = va_arg(va, uint32_t);
+
+					utoa(value, &buffer[index], 10);
+                    index += strlen(&buffer[index]);
+					break;
+				}
+
+				case 'b': {
+					uint32_t value = va_arg(va, uint32_t);
+
+					utoa(value, &buffer[index], 2);
+                    index += strlen(&buffer[index]);
+					break;
+				}
+
+				case 'd': {
+					uint32_t value = va_arg(va, uint32_t);
+
+					itoa(value, &buffer[index], 10);
+                    index += strlen(&buffer[index]);
+					break;
+				}
+
+				case 'x': {
+					uint32_t value = va_arg(va, uint32_t);
+
+					itoa(value, &buffer[index], 16);
+                    index += strlen(&buffer[index]);
+					break;
+				}
+
+				case 'c' : {
+                    buffer[index] = (char)(va_arg(va, int));
+                    index++;
+					break;
+				}
+
+				case 's' : {
+                    strcpy(&buffer[index], va_arg(va, char*));
+                    index += strlen(&buffer[index]);
+					break;
+				}
+
+				default:
+                    buffer[index] = character;
+					break;
+			}
+		}
+	}
+
+    va_end(va);
+
+    tf_hal_log_message(buffer);
+#endif
 }
 
 void tf_hal_set_timeout(TF_HalContext *hal, uint32_t timeout_us) {
