@@ -1061,7 +1061,7 @@ def recreate_dir(path):
 
     os.makedirs(path)
 
-def specialize_template(template_filename, destination_filename, replacements, check_completeness=True):
+def specialize_template(template_filename, destination_filename, replacements, check_completeness=True, remove_template=False):
     lines = []
     replaced = set()
 
@@ -1082,6 +1082,9 @@ def specialize_template(template_filename, destination_filename, replacements, c
 
     with open(destination_filename, 'w') as f:
         f.writelines(lines)
+
+    if remove_template:
+        os.remove(template_filename)
 
 def make_c_like_bitmask(value, shift='{0} << {1}', combine='({0}) | ({1})'):
     if value == 0:

@@ -78,7 +78,8 @@ def generate(root_dir):
     common.specialize_template(os.path.join(tmp_octave_debian_dir, 'changelog.template'),
                                os.path.join(tmp_octave_debian_dir, 'changelog'),
                                {'<<VERSION>>': '.'.join(version),
-                                '<<DATE>>': subprocess.check_output(['date', '-R']).decode('utf-8')})
+                                '<<DATE>>': subprocess.check_output(['date', '-R']).decode('utf-8')},
+                               remove_template=True)
 
     os.replace(os.path.join(tmp_octave_dir, 'Tinkerforge.jar'), os.path.join(tmp_octave_dir, 'tinkerforge.jar'))
 

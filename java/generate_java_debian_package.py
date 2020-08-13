@@ -78,7 +78,8 @@ def generate(root_dir):
     common.specialize_template(os.path.join(tmp_source_debian_dir, 'changelog.template'),
                                os.path.join(tmp_source_debian_dir, 'changelog'),
                                {'<<VERSION>>': '.'.join(version),
-                                '<<DATE>>': subprocess.check_output(['date', '-R']).decode('utf-8')})
+                                '<<DATE>>': subprocess.check_output(['date', '-R']).decode('utf-8')},
+                               remove_template=True)
 
     # Make package
     with common.ChangedDirectory(tmp_source_dir):
