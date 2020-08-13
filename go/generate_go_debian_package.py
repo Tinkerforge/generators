@@ -89,8 +89,5 @@ def generate(root_dir):
     with common.ChangedDirectory(os.path.join(tmp_source_dir, '..')):
         common.execute(['lintian'] + glob.glob('*.deb'))
 
-    shutil.move(os.path.join(tmp_source_dir, '..', 'golang-tinkerforge-dev_{0}.{1}.{2}_all.deb'.format(*version)),
-                os.path.join(root_dir, 'golang-tinkerforge-dev_{0}.{1}.{2}_all.deb'.format(*version)))
-
 if __name__ == '__main__':
     generate(os.getcwd())

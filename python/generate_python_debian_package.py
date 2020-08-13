@@ -89,9 +89,5 @@ def generate(root_dir):
     with common.ChangedDirectory(tmp_dir):
         common.execute(['lintian'] + glob.glob('*.deb'))
 
-    for p in ['', '3']:
-        shutil.move(os.path.join(tmp_dir, 'python{0}-tinkerforge_{1}.{2}.{3}_all.deb'.format(p, *version)),
-                    os.path.join(root_dir, 'python{0}-tinkerforge_{1}.{2}.{3}_all.deb'.format(p, *version)))
-
 if __name__ == '__main__':
     generate(os.getcwd())

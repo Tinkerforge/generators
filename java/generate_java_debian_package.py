@@ -101,9 +101,5 @@ def generate(root_dir):
     with common.ChangedDirectory(tmp_dir):
         common.execute(['lintian'] + glob.glob('*.deb'))
 
-    for suffix in ['', '-doc']:
-        shutil.move(os.path.join(tmp_dir, 'libtinkerforge-java{0}_{1}.{2}.{3}_all.deb'.format(suffix, *version)),
-                    os.path.join(root_dir, 'libtinkerforge-java{0}_{1}.{2}.{3}_all.deb'.format(suffix, *version)))
-
 if __name__ == '__main__':
     generate(os.getcwd())
