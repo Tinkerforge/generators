@@ -55,11 +55,12 @@ if 'generators' not in sys.modules:
 from generators import common
 
 def generate(root_dir):
-    version                 = common.get_changelog_version(root_dir)
-    debian_dir              = os.path.join(root_dir, 'debian')
-    tmp_dir                 = os.path.join(root_dir, 'debian_package')
-    tmp_bindings_dir        = os.path.join(tmp_dir, 'tinkerforge-ruby-bindings-{0}.{1}.{2}'.format(*version))
-    tmp_bindings_debian_dir = os.path.join(tmp_bindings_dir, 'debian')
+    version                    = common.get_changelog_version(root_dir)
+    debian_dir                 = os.path.join(root_dir, 'debian')
+    tmp_dir                    = os.path.join(root_dir, 'debian_package')
+    tmp_tinkerforge_dir        = os.path.join(tmp_dir, 'tinkerforge')
+    tmp_tinkerforge_debian_dir = os.path.join(tmp_tinkerforge_dir, 'debian')
+    tmp_build_dir              = os.path.join(tmp_dir, 'tinkerforge-ruby-bindings-{0}.{1}.{2}'.format(*version))
 
     # Make directories
     common.recreate_dir(tmp_dir)
@@ -80,18 +81,18 @@ def generate(root_dir):
                     '-C',
                     tmp_dir])
 
-    shutil.move(os.path.join(tmp_dir, 'tinkerforge'), tmp_bindings_dir)
+    shutil.copytree(debian_dir, tmp_tinkerforge_debian_dir)
 
-    shutil.copytree(debian_dir, tmp_bindings_debian_dir)
-
-    common.specialize_template(os.path.join(tmp_bindings_debian_dir, 'changelog.template'),
-                               os.path.join(tmp_bindings_debian_dir, 'changelog'),
+    common.specialize_template(os.path.join(tmp_tinkerforge_debian_dir, 'changelog.template'),
+                               os.path.join(tmp_tinkerforge_debian_dir, 'changelog'),
                                {'<<VERSION>>': '.'.join(version),
                                 '<<DATE>>': subprocess.check_output(['date', '-R']).decode('utf-8')},
                                remove_template=True)
 
     # Make package
-    with common.ChangedDirectory(tmp_bindings_dir):
+    os.rename(tmp_tinkerforge_dir, tmp_build_dir)
+
+    with common.ChangedDirectory(tmp_build_dir):
         common.execute(['dpkg-buildpackage',
                         '--no-sign'])
 

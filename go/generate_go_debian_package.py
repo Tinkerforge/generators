@@ -55,20 +55,21 @@ if 'generators' not in sys.modules:
 from generators import common
 
 def generate(root_dir):
+    version               = common.get_changelog_version(root_dir)
     debian_dir            = os.path.join(root_dir, 'debian')
     tmp_dir               = os.path.join(root_dir, 'debian_package')
     tmp_source_dir        = os.path.join(tmp_dir, 'github.com', 'Tinkerforge', 'go-api-bindings')
     tmp_source_debian_dir = os.path.join(tmp_source_dir, 'debian')
+    tmp_build_dir         = os.path.join(tmp_dir, 'tinkerforge-go-bindings-{0}.{1}.{2}'.format(*version))
 
     # Make directories
     common.recreate_dir(tmp_dir)
 
     # Unzip
-    version = common.get_changelog_version(root_dir)
-
     common.execute(['unzip',
                     '-q',
                     os.path.join(root_dir, 'tinkerforge_go_bindings_{0}_{1}_{2}.zip'.format(*version)),
+                    os.path.join('github.com', 'Tinkerforge', 'go-api-bindings', '*'),
                     '-d',
                     tmp_dir])
 
@@ -81,12 +82,14 @@ def generate(root_dir):
                                remove_template=True)
 
     # Make package
-    with common.ChangedDirectory(tmp_source_dir):
+    os.rename(tmp_source_dir, tmp_build_dir)
+
+    with common.ChangedDirectory(tmp_build_dir):
         common.execute(['dpkg-buildpackage',
                         '--no-sign'])
 
     # Check package
-    with common.ChangedDirectory(os.path.join(tmp_source_dir, '..')):
+    with common.ChangedDirectory(tmp_dir):
         common.execute(['lintian'] + glob.glob('*.deb'))
 
 if __name__ == '__main__':

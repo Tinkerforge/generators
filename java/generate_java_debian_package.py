@@ -56,20 +56,21 @@ from generators import common
 from generators.java import java_common
 
 def generate(root_dir):
+    version               = common.get_changelog_version(root_dir)
     debian_dir            = os.path.join(root_dir, 'debian')
     tmp_dir               = os.path.join(root_dir, 'debian_package')
     tmp_source_dir        = os.path.join(tmp_dir, 'source')
     tmp_source_debian_dir = os.path.join(tmp_source_dir, 'debian')
+    tmp_build_dir         = os.path.join(tmp_dir, 'tinkerforge-java-bindings-{0}.{1}.{2}'.format(*version))
 
     # Make directories
     common.recreate_dir(tmp_dir)
 
     # Unzip
-    version = common.get_changelog_version(root_dir)
-
     common.execute(['unzip',
                     '-q',
                     os.path.join(root_dir, 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)),
+                    os.path.join('source', '*'),
                     '-d',
                     tmp_dir])
 
@@ -82,7 +83,9 @@ def generate(root_dir):
                                remove_template=True)
 
     # Make package
-    with common.ChangedDirectory(tmp_source_dir):
+    os.rename(tmp_source_dir, tmp_build_dir)
+
+    with common.ChangedDirectory(tmp_build_dir):
         # FIXME: maven-toolchains-plugin doesn't stop the default JDK from
         #        leaking into the build process. it is still necessary to set
         #        JAVA_HOME to Java 8 in order to stop the default JDK from
