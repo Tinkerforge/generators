@@ -27,8 +27,8 @@ extern "C" {
 // Set this to a higher log level to reduce debug output and program size.
 #define TF_LOG_LEVEL TF_LOG_LEVEL_INFO
 
-// Uncomment to use stdlib vsnprintf instead of minimalist implementation
-// #define TF_LOG_USE_VSNPRINTF
+// Comment to use custom minimalist implementation instead of stdlib vsnprintf
+#define TF_LOG_USE_VSNPRINTF
 
 #ifdef __cplusplus
 }
