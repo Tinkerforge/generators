@@ -874,7 +874,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes the NDEF messages that is to be transferred to the NFC peer.
+Writes the NDEF message that is to be transferred to the NFC peer.
 
 The maximum supported NDEF message size in Cardemu mode is 255 byte.
 
@@ -1048,7 +1048,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes the NDEF messages that is to be transferred to the NFC peer.
+Writes the NDEF message that is to be transferred to the NFC peer.
 
 The maximum supported NDEF message size for P2P transfer is 255 byte.
 
