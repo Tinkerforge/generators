@@ -407,7 +407,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
     {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-    {stream_length_type} {stream_name_under}_chunk_length;
+    {stream_length_type} {stream_name_under}_chunk_length = 0;
 
     if ({stream_name_under}_length == 0) {{
         memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
@@ -445,7 +445,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
     {stream_length_type} {stream_name_under}_length = {fixed_length};
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
     {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-    {stream_length_type} {stream_name_under}_chunk_length;
+    {stream_length_type} {stream_name_under}_chunk_length = 0;
 
     while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
         {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
@@ -474,8 +474,8 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
     {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-    {stream_length_type} {stream_name_under}_chunk_length;
-    uint8_t {stream_name_under}_chunk_written;
+    {stream_length_type} {stream_name_under}_chunk_length = 0;
+    uint8_t {stream_name_under}_chunk_written = 0;
 
     *ret_{stream_name_under}_written = 0;
 
@@ -565,10 +565,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_length = {fixed_length};
-    {stream_length_type} {stream_name_under}_chunk_offset;
+    {stream_length_type} {stream_name_under}_chunk_offset = 0;
     {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
     bool {stream_name_under}_out_of_sync;
-    {stream_length_type} {stream_name_under}_chunk_length;
+    {stream_length_type} {stream_name_under}_chunk_length = 0;
 
     *ret_{stream_name_under}_length = 0;
 
@@ -640,7 +640,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
         template_stream_out_single_chunk = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     int ret = TF_E_OK;
-    {stream_length_type} {stream_name_under}_length;
+    {stream_length_type} {stream_name_under}_length = 0;
     {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
 
     *ret_{stream_name_under}_length = 0;
@@ -1206,6 +1206,8 @@ class UCBindingsPacket(uc_common.UCPacket):
             dest = ('ret_' if context == 'getter' else '') + element.get_name().under
             if self.get_function_id() == 255 and element.get_name().under == 'connected_uid':
                 dest = 'tmp_connected_uid'
+                # Overriding the template fixes clang's "comparison of array 'tmp_connected_uid' not equal to a null pointer is always true" warning
+                t = '*{dest} = tf_packetbuffer_read_{type_}({packetbuffer});'
 
             return_list.append(t.format(packetbuffer=packetbuffer_name,
                                         dest=dest,
