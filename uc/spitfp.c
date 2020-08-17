@@ -465,7 +465,7 @@ uint8_t *tf_spitfp_get_payload_buffer(TF_SpiTfpContext *spitfp) {
     return spitfp->send_buf + TF_SPITFP_HEADER_LENGTH;
 }
 
-int tf_spitfp_init(TF_SpiTfpContext *spitfp, void *hal, uint8_t port_id) {
+int tf_spitfp_init(TF_SpiTfpContext *spitfp, struct TF_HalContext *hal, uint8_t port_id) {
     spitfp->hal = hal;
     spitfp->port_id = port_id;
     spitfp->last_sequence_number_seen = 0;
