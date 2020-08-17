@@ -148,7 +148,7 @@ void example_setup(TF_HalContext *hal) {{
 
 void example_loop(TF_HalContext *hal) {{
 	// Poll for callbacks
-	tf_hal_callback_tick(&hal, 0);
+	tf_hal_callback_tick(hal, 0);
 }}
 """
 
@@ -606,7 +606,7 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
 
     def get_c_source(self):
         template = r"""	// Register {packet_comment}<BP>callback<BP>to<BP>function<BP>cb_{packet_under}
-	tf_{device_under}_register_{packet_under}_handler(&{device_initial},
+	tf_{device_under}_register_{packet_under}_callback(&{device_initial},
 	{spaces}{packet_under}_handler,
 	{spaces}NULL);
 """
@@ -765,7 +765,7 @@ class UCExampleSpecialFunction(common.ExampleSpecialFunction):
                           period_msec=period_msec,
                           period_sec=period_sec)
         elif type_ == 'sleep':
-            template = '{comment1}{global_line_prefix}\tmillisleep({duration});{comment2}\n'
+            template = '{comment1}{global_line_prefix}\ttf_hal_sleep_us(hal, {duration} * 1000);{comment2}\n'
 
             return template.format(global_line_prefix=global_line_prefix,
                                    duration=self.get_sleep_duration(),
