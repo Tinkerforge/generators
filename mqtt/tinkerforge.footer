@@ -31,6 +31,8 @@ class MQTTBindings:
         except:
             pass
 
+        logging.info("Starting Tinkerforge MQTT bindings <<VERSION>>")
+
         if broker_username is not None:
             self.mqttc.username_pw_set(broker_username, broker_password)
 
