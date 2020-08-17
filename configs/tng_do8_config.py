@@ -100,5 +100,5 @@ com['packets'].append({
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('setter', 'Set Value', [('uint64', 0), ('bool', [True, False, True, False, True, False, True, False])], None, None)]
+'functions': [('setter', 'Set Values', [('uint64', 0), ('bool', [True, False, True, False, True, False, True, False])], None, None)]
 })
