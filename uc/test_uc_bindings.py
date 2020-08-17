@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-C/C++ Bindings Tester
-Copyright (C) 2012-2018 Matthias Bolte <matthias@tinkerforge.com>
+C/C++ for Microcontrollers Bindings Tester
 Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
-test_c_bindings.py: Tests the C/C++ bindings
+test_uc_bindings.py: Tests the C/C++ bindings for Microcontrollers
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -54,9 +53,9 @@ if 'generators' not in sys.modules:
 
 from generators import common
 
-class CExamplesTester(common.Tester):
+class UCExamplesTester(common.Tester):
     def __init__(self, root_dir, compiler, extra_paths):
-        common.Tester.__init__(self, 'c', '.c', root_dir, comment=compiler, extra_paths=extra_paths)
+        common.Tester.__init__(self, 'uc', '.c', root_dir, comment=compiler, extra_paths=extra_paths)
 
         self.compiler = compiler
 
@@ -72,14 +71,14 @@ class CExamplesTester(common.Tester):
             return
 
         if extra:
-            shutil.copy(path, '/tmp/tester/c')
-            path = os.path.join('/tmp/tester/c', os.path.split(path)[1])
+            shutil.copy(path, '/tmp/tester/uc')
+            path = os.path.join('/tmp/tester/uc', os.path.split(path)[1])
 
         output = path[:-2]
 
         if not extra and '/brick' in path:
             dirname = os.path.split(path)[0]
-            device = '/tmp/tester/c/source/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
+            device = '/tmp/tester/uc/source/bindings/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
         else:
             device = ''
 
@@ -104,16 +103,26 @@ class CExamplesTester(common.Tester):
                  '-Wextra',
                  '-Werror',
                  '-O2',
-                 '-I/tmp/tester/c/source',
+                 '-I/tmp/tester/uc/source',
                  '-o',
                  output,
-                 '/tmp/tester/c/source/ip_connection.c']
+                 '/tmp/tester/uc/source/bindings/base58.c',
+                 '/tmp/tester/uc/source/bindings/bricklet_unknown.c',
+                 '/tmp/tester/uc/source/bindings/endian_convert.c',
+                 '/tmp/tester/uc/source/bindings/errors.c',
+                 '/tmp/tester/uc/source/bindings/hal_common.c',
+                 '/tmp/tester/uc/source/bindings/packetbuffer.c',
+                 '/tmp/tester/uc/source/bindings/pearson_hash.c',
+                 '/tmp/tester/uc/source/bindings/spitfp.c',
+                 '/tmp/tester/uc/source/bindings/tfp.c',
+                 '/tmp/tester/uc/source/hal_fake/hal_fake.c',
+                 '/tmp/tester/uc/source/hal_fake/example_driver.c',]
 
         if len(device) > 0:
             args.append(device)
         elif extra:
-            dependencies = glob.glob('/tmp/tester/c/source/*.c')
-            dependencies.remove('/tmp/tester/c/source/ip_connection.c')
+            dependencies = glob.glob('/tmp/tester/uc/source/*.c')
+            dependencies.remove('/tmp/tester/uc/source/ip_connection.c')
             args.append('-Wno-error=unused-parameter')
             args += dependencies
 
@@ -134,26 +143,24 @@ class CExamplesTester(common.Tester):
         return exit_code == 0
 
 def run(root_dir):
-    extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/c/weather_station.c'),
-                   os.path.join(root_dir, '../../hardware-hacking/remote_switch/c/remote_switch.c'),
-                   os.path.join(root_dir, '../../hardware-hacking/smoke_detector/c/smoke_detector.c')]
+    extra_paths = []
 
-    if not CExamplesTester(root_dir, 'gcc', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'gcc', extra_paths).run():
         return False
 
-    if not CExamplesTester(root_dir, 'g++', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'g++', extra_paths).run():
         return False
 
-    if not CExamplesTester(root_dir, 'mingw32-gcc', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'mingw32-gcc', extra_paths).run():
         return False
 
-    if not CExamplesTester(root_dir, 'mingw32-g++', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'mingw32-g++', extra_paths).run():
         return False
 
-    if not CExamplesTester(root_dir, 'clang', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'clang', extra_paths).run():
         return False
 
-    return CExamplesTester(root_dir, 'scan-build clang', extra_paths).run()
+    return UCExamplesTester(root_dir, 'scan-build clang', extra_paths).run()
 
 if __name__ == '__main__':
     run(os.getcwd())

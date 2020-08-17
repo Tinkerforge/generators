@@ -62,6 +62,7 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
         self.tmp_dir          = self.get_zip_dir()
         self.tmp_source_dir   = os.path.join(self.tmp_dir, 'source')
         self.tmp_bindings_dir = os.path.join(self.tmp_source_dir, 'bindings')
+        self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
 
     def prepare(self):
         super().prepare()
@@ -72,6 +73,19 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
     def generate(self, device):
         if not device.is_released():
             return
+        if not device.has_comcu():
+            return
+
+        # Copy device examples
+        tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
+                                               device.get_category().under,
+                                               device.get_name().under)
+
+        if not os.path.exists(tmp_examples_device_dir):
+            os.makedirs(tmp_examples_device_dir)
+
+        for example in common.find_device_examples(device, r'^example_.*\.c$'):
+            shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
         root_dir = self.get_root_dir()
