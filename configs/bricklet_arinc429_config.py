@@ -23,8 +23,8 @@ com = {
         'en': 'TBD',
         'de': 'TBD'
     },
-    'released': True,
-    'documented': True,
+    'released': False,
+    'documented': False,
     'discontinued': False,
     'features': [
         'comcu_bricklet',
