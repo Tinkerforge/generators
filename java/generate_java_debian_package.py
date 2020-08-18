@@ -102,7 +102,7 @@ def generate(root_dir):
 
     # Check package
     with common.ChangedDirectory(tmp_dir):
-        common.execute(['lintian'] + glob.glob('*.deb'))
+        common.execute(['lintian', '--pedantic'] + glob.glob('*.deb'))
 
 if __name__ == '__main__':
     generate(os.getcwd())
