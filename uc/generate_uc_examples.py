@@ -606,7 +606,7 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, '{}_handler('.format(self.get_name().under))
 
     def get_c_source(self):
-        template = r"""	// Register {packet_comment}<BP>callback<BP>to<BP>function<BP>cb_{packet_under}
+        template = r"""	// Register {packet_comment}<BP>callback<BP>to<BP>function<BP>{packet_under}_handler
 	tf_{device_under}_register_{packet_under}_callback(&{device_initial},
 	{spaces}{packet_under}_handler,
 	{spaces}NULL);
