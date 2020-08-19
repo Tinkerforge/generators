@@ -154,7 +154,16 @@ void tf_hal_printf(const char *fmt, ...){
 
 	while((character = *(cursor++))) {
         if(character == '\n') {
+            if(cursor > fmt) {
+                // cursor is on the \n character
+                uint32_t chunk_len = cursor - fmt - 1;
+                if(chunk_len != 0)
+                    tf_hal_log_message(fmt, chunk_len);
+
+                fmt = cursor;
+            }
             tf_hal_log_newline();
+            continue;
         }
 
 		if(character != '%') {
@@ -229,7 +238,7 @@ void tf_hal_printf(const char *fmt, ...){
                 break;
         }
 
-        fmt = cursor + 1;
+        fmt = cursor;
     }
 
     if(cursor > fmt) {
