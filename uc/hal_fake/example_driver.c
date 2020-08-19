@@ -7,7 +7,7 @@ void example_loop(TF_HalContext *hal);
 
 void check(int rc, const char *c) {
     if (rc < 0) {
-        printf("Failed to %s: %s (return code %d)\n", c, tf_strerror(rc), rc);
+        tf_hal_printf("Failed to %s: %s (return code %d)\n", c, tf_strerror(rc), rc);
     }
 }
 
