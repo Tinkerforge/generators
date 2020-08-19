@@ -118,8 +118,12 @@ TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) {
     return &hal->hal_common;
 }
 
-void tf_hal_log_message(const char *msg) {
-    Serial.println(msg);
+void tf_hal_log_message(const char *msg, uint32_t len) {
+    Serial.write(msg, len);
+}
+
+void tf_hal_log_newline() {
+    Serial.println("");
 }
 
 const char *tf_hal_strerror(int rc) {

@@ -20,7 +20,7 @@ bool show_ptc_resistance = false;
 void check(int rc, char *msg) {
     if (rc >= 0)
         return;
-    tf_hal_log_error("Failed to %s: %d", msg, rc);
+    tf_hal_log_error("Failed to %s: %d\n", msg, rc);
 }
 
 void gui_tab_handler(TF_LCD128x64 *lcd, int8_t index, void *user_data) {

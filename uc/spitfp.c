@@ -302,7 +302,7 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
 
             if (bytes_to_send != 0) {
                 m->state = STATE_TRANSCEIVE;
-                tf_hal_log_debug("->TRANSCEIVE");
+                tf_hal_log_debug("->TRANSCEIVE\n");
 
                 m->info.transceive.seq_num_to_send = spitfp->send_buf[1] & 0x0F;
                 m->info.transceive.packet_received = false;
@@ -310,7 +310,7 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
                 m->info.transceive.send_buf_offset = 0;
             } else {
                 m->state = STATE_RECEIVE;
-                tf_hal_log_debug("->RECEIVE");
+                tf_hal_log_debug("->RECEIVE\n");
             }
 
             return TF_TICK_AGAIN;
@@ -325,7 +325,7 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
             if ( (result & TRANSCEIVE_PACKET_SENT)
                 && (result & TRANSCEIVE_PACKET_RECEIVED)) {
                 m->state = STATE_WAIT_FOR_ACK;
-                tf_hal_log_debug("->WAIT_FOR_ACK");
+                tf_hal_log_debug("->WAIT_FOR_ACK\n");
 
                 m->info.wait_for_ack.seq_num = seq_num;
                 m->info.wait_for_ack.packet_received = true;
@@ -343,7 +343,7 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
                 bool packet_received = m->info.transceive.packet_received;
 
                 m->state = STATE_WAIT_FOR_ACK;
-                tf_hal_log_debug("->WAIT_FOR_ACK");
+                tf_hal_log_debug("->WAIT_FOR_ACK\n");
 
                 m->info.wait_for_ack.seq_num = seq_num;
                 m->info.wait_for_ack.packet_received = packet_received;
@@ -361,16 +361,16 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
             if (m->info.wait_for_ack.seq_num == 0) {
                 // clear packet length field to not send the ack again if ticked again
                 spitfp->send_buf[0] = 0;
-                tf_hal_log_debug("ACK sent");
+                tf_hal_log_debug("ACK sent\n");
                 if (m->info.wait_for_ack.packet_received) {
                     m->state = STATE_BUILD_ACK;
-                    tf_hal_log_debug("->BUILD_ACK");
+                    tf_hal_log_debug("->BUILD_ACK\n");
 
                     return TF_TICK_AGAIN | TF_TICK_PACKET_RECEIVED;
                 }
                 else {
                     m->state = STATE_IDLE;
-                    tf_hal_log_debug("->IDLE");
+                    tf_hal_log_debug("->IDLE\n");
 
                     return 0;
                 }
@@ -380,7 +380,7 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
             if ((result & TRANSCEIVE_PACKET_ACKED)
                 && (result & TRANSCEIVE_PACKET_RECEIVED)) {
                 m->state = STATE_BUILD_ACK;
-                tf_hal_log_debug("->BUILD_ACK");
+                tf_hal_log_debug("->BUILD_ACK\n");
 
 
                 return TF_TICK_AGAIN | TF_TICK_PACKET_SENT | TF_TICK_PACKET_RECEIVED;
@@ -394,7 +394,7 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
             // the bricklets packet.
             if (result & TRANSCEIVE_PACKET_RECEIVED) {
                 m->state = STATE_IDLE;
-                tf_hal_log_debug("->IDLE");
+                tf_hal_log_debug("->IDLE\n");
 
                 return TF_TICK_AGAIN | TF_TICK_TIMEOUT | TF_TICK_PACKET_RECEIVED;
             }
@@ -403,14 +403,14 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
                 if (m->info.wait_for_ack.packet_received) {
 
                     m->state = STATE_BUILD_ACK;
-                    tf_hal_log_debug("->BUILD_ACK");
+                    tf_hal_log_debug("->BUILD_ACK\n");
 
                     return TF_TICK_AGAIN | TF_TICK_PACKET_SENT | TF_TICK_PACKET_RECEIVED;
                 }
                 else {
 
                     m->state = STATE_IDLE;
-                    tf_hal_log_debug("->IDLE");
+                    tf_hal_log_debug("->IDLE\n");
 
                     return TF_TICK_PACKET_SENT;
                 }
@@ -418,7 +418,7 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
 
             if (result & TRANSCEIVE_TIMEOUT) {
                 m->state = STATE_IDLE;
-                tf_hal_log_debug("->IDLE");
+                tf_hal_log_debug("->IDLE\n");
 
                 return TF_TICK_TIMEOUT;
             }
@@ -433,20 +433,20 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
 
             if (result & RECEIVE_PACKET_RECIEVED) {
                 m->state = STATE_BUILD_ACK;
-                tf_hal_log_debug("->BUILD_ACK");
+                tf_hal_log_debug("->BUILD_ACK\n");
 
                 return TF_TICK_AGAIN | TF_TICK_PACKET_RECEIVED;
             }
 
             m->state = STATE_IDLE;
-            tf_hal_log_debug("->IDLE");
+            tf_hal_log_debug("->IDLE\n");
             return (result & RECEIVE_PACKET_TIMEOUT )? TF_TICK_TIMEOUT : TF_TICK_SLEEP;
         }
 
         case STATE_BUILD_ACK: {
             tf_spitfp_build_ack(spitfp);
             m->state = STATE_TRANSCEIVE;
-            tf_hal_log_debug("->TRANSCEIVE");
+            tf_hal_log_debug("->TRANSCEIVE\n");
             m->info.transceive.seq_num_to_send = 0;
             m->info.transceive.packet_received = false;
             m->info.transceive.send_buf_offset = 0;

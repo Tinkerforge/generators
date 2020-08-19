@@ -92,8 +92,12 @@ TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) {
     return &hal->hal_common;
 }
 
-void tf_hal_log_message(const char *msg) {
-    puts(msg);
+void tf_hal_log_message(const char *msg, uint32_t len) {
+    fwrite(msg, len, 1, stdout);
+}
+
+void tf_hal_log_newline() {
+    puts("");
 }
 
 const char *tf_hal_strerror(int rc) {

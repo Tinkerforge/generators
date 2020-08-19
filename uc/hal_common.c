@@ -83,7 +83,7 @@ static void enum_handler(TF_HalContext* hal,
             return;
         }
 
-    tf_hal_log_info("Found device %s of type %d at port %c", uid, dev_id, tf_hal_get_port_name(hal, port_id));
+    tf_hal_log_info("Found device %s of type %d at port %c\n", uid, dev_id, tf_hal_get_port_name(hal, port_id));
 
     hal_common->port_ids[hal_common->used] = port_id;
     hal_common->uids[hal_common->used] = numeric_uid;
@@ -110,94 +110,136 @@ bool tf_hal_enumerate_handler(TF_HalContext *hal, uint8_t port_id, TF_Packetbuff
     return true;
 }
 
+const char *alphabet = "0123456789abcdef";
+
+static void log_unsigned(unsigned int value, int base) {
+    if(base < 2 || base > 16)
+        return;
+
+    char buffer[32] = {0};
+
+    int len = 0;
+    do {
+        int digit = value % base;
+        buffer[32 - len - 1] = alphabet[digit];
+        ++len;
+        value /= base;
+    } while(value > 0);
+
+    tf_hal_log_message(buffer + (32 - len), len);
+
+    return;
+}
+
+static void log_signed(int value, int base) {
+    if(value < 0) {
+        tf_hal_log_message("-", 1);
+        value = -value;
+    }
+
+    log_unsigned(value, base);
+
+    return;
+}
+
 TF_ATTRIBUTE_FMT_PRINTF(1, 2)
-void tf_hal_log_formatted_message(const char *fmt, ...){
-#ifdef TF_LOG_USE_VSNPRINTF
-    char buf[128];
-    memset(buf, 0, sizeof(buf)/sizeof(buf[0]));
-
-    va_list args;
-    va_start (args, fmt);
-    vsnprintf(buf, sizeof(buf)/sizeof(buf[0]), fmt, args);
-    va_end (args);
-
-    tf_hal_log_message(buf);
-#else
-    // Very minimalistic vsnprintf: no zero-padding, grouping, l-modifier or similar and no float
+void tf_hal_printf(const char *fmt, ...){
+    // Very minimalistic printf: no zero-padding, grouping, l-modifier or similar and no float.
+    // Newlines (\n) are translated to the platform specific newline character(s).
 	va_list va;
 	va_start(va, fmt);
 
-    uint32_t index = 0;
-	char buffer[128] = {'\0'};
-	char character;
+    char character;
+    const char *cursor = fmt;
 
-	while((character = *(fmt++))) {
+	while((character = *(cursor++))) {
+        if(character == '\n') {
+            tf_hal_log_newline();
+        }
+
 		if(character != '%') {
-            buffer[index] = character;
-            index++;
-		} else {
-			character = *(fmt++);
+            continue;
+        }
 
-			switch(character) {
-				case '\0': {
-					return;
-				}
+        if(cursor > fmt) {
+            // cursor is on the % character
+            uint32_t chunk_len = cursor - fmt - 1;
+            if(chunk_len != 0)
+                tf_hal_log_message(fmt, chunk_len);
+        }
 
-				case 'u': {
-					uint32_t value = va_arg(va, uint32_t);
+        character = *(cursor++);
 
-					utoa(value, &buffer[index], 10);
-                    index += strlen(&buffer[index]);
-					break;
-				}
+        switch(character) {
+            case '\n': {
+                tf_hal_log_newline();
+                break;
+            }
+            case '\0': {
+                tf_hal_log_message("%", 1);
+                va_end(va);
+                return;
+            }
 
-				case 'b': {
-					uint32_t value = va_arg(va, uint32_t);
+            case 'u': {
+                uint32_t value = va_arg(va, uint32_t);
+                log_unsigned(value, 10);
+                break;
+            }
 
-					utoa(value, &buffer[index], 2);
-                    index += strlen(&buffer[index]);
-					break;
-				}
+            case 'b': {
+                uint32_t value = va_arg(va, uint32_t);
+                log_unsigned(value, 2);
+                break;
+            }
 
-				case 'd': {
-					uint32_t value = va_arg(va, uint32_t);
+            case 'd': {
+                int32_t value = va_arg(va, int32_t);
+                log_signed(value, 10);
+                break;
+            }
 
-					itoa(value, &buffer[index], 10);
-                    index += strlen(&buffer[index]);
-					break;
-				}
+            case 'X':
+            case 'x': {
+                uint32_t value = va_arg(va, uint32_t);
+                log_unsigned(value, 16);
+                break;
+            }
 
-				case 'x': {
-					uint32_t value = va_arg(va, uint32_t);
+            case 'c' : {
+                char c = (char)(va_arg(va, int));
+                tf_hal_log_message(&c, 1);
+                break;
+            }
 
-					itoa(value, &buffer[index], 16);
-                    index += strlen(&buffer[index]);
-					break;
-				}
+            case 's' : {
+                const char *str = va_arg(va, char*);
+                tf_hal_log_message(str, strlen(str));
+                break;
+            }
 
-				case 'c' : {
-                    buffer[index] = (char)(va_arg(va, int));
-                    index++;
-					break;
-				}
+            case '%' : {
+                tf_hal_log_message("%", 1);
+                break;
+            }
 
-				case 's' : {
-                    strcpy(&buffer[index], va_arg(va, char*));
-                    index += strlen(&buffer[index]);
-					break;
-				}
+            default:
+                tf_hal_log_message("%", 1);
+                tf_hal_log_message(&character, 1);
+                break;
+        }
 
-				default:
-                    buffer[index] = character;
-					break;
-			}
-		}
-	}
+        fmt = cursor + 1;
+    }
+
+    if(cursor > fmt) {
+        // cursor is on the null terminator
+        uint32_t chunk_len = cursor - fmt - 1;
+        if(chunk_len != 0)
+            tf_hal_log_message(fmt, chunk_len);
+    }
 
     va_end(va);
-
-    tf_hal_log_message(buffer);
-#endif
 }
 
 void tf_hal_set_timeout(TF_HalContext *hal, uint32_t timeout_us) {

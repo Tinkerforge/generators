@@ -129,7 +129,7 @@ static bool tf_tfp_dispatch_callback(TF_TfpContext *tfp, uint32_t uid, uint8_t f
 static bool tf_tfp_filter_received_packet(TF_TfpContext *tfp, bool remove_interesting, uint8_t spitfp_seq_num, uint8_t *error_code) {
     uint8_t used = tf_packetbuffer_get_used(&tfp->spitfp.recv_buf);
     if(used < 8) {
-        tf_hal_log_debug("Too short!");
+        tf_hal_log_debug("Too short!\n");
         tf_packetbuffer_remove(&tfp->spitfp.recv_buf, used);
         //tf_tfp_packet_processed(tfp);
         ++tfp->error_count_frame;
@@ -146,7 +146,7 @@ static bool tf_tfp_filter_received_packet(TF_TfpContext *tfp, bool remove_intere
 
     // Compare with <= as behind the tfp packet there has to be the SPITFP checksum
     if(used <= header_length) {
-        tf_hal_log_debug("Too short! used (%d) < header_length (%d)", used, header_length);
+        tf_hal_log_debug("Too short! used (%d) < header_length (%d)\n", used, header_length);
         tf_packetbuffer_remove(&tfp->spitfp.recv_buf, used);
         //tf_tfp_packet_processed(tfp);
         ++tfp->error_count_frame;
@@ -161,22 +161,22 @@ static bool tf_tfp_filter_received_packet(TF_TfpContext *tfp, bool remove_intere
 
     if (packet_uninteresting) {
         if(!tf_tfp_dispatch_callback(tfp, header_uid, header_fid, spitfp_seq_num, &tfp->spitfp.recv_buf)) {
-            tf_hal_log_debug("Remove unexpected");
+            tf_hal_log_debug("Remove unexpected\n");
 
             if (tfp->waiting_for_fid == 0) {
-                tf_hal_log_debug("tfp->waiting_for_fid == 0");
+                tf_hal_log_debug("tfp->waiting_for_fid == 0\n");
             }
             if (tfp->uid != 0 && header_uid != tfp->uid) {
-                tf_hal_log_debug("tfp->uid != 0 && header_uid (%d) != tfp->uid (%d)", header_uid, tfp->uid);
+                tf_hal_log_debug("tfp->uid != 0 && header_uid (%d) != tfp->uid (%d)\n", header_uid, tfp->uid);
             }
             if (header_fid != tfp->waiting_for_fid) {
-                tf_hal_log_debug("header_fid (%d) != tfp->waiting_for_fid (%d)", header_fid, tfp->waiting_for_fid);
+                tf_hal_log_debug("header_fid (%d) != tfp->waiting_for_fid (%d)\n", header_fid, tfp->waiting_for_fid);
             }
             if (header_length != tfp->waiting_for_length) {
-                tf_hal_log_debug("header_length (%d) != tfp->waiting_for_length (%d)", header_length, tfp->waiting_for_length);
+                tf_hal_log_debug("header_length (%d) != tfp->waiting_for_length (%d)\n", header_length, tfp->waiting_for_length);
             }
             if (header_seq_num != tfp->waiting_for_sequence_number) {
-                tf_hal_log_debug("header_seq_num (%d) != tfp->waiting_for_sequence_number (%d)", header_seq_num, tfp->waiting_for_sequence_number);
+                tf_hal_log_debug("header_seq_num (%d) != tfp->waiting_for_sequence_number (%d)\n", header_seq_num, tfp->waiting_for_sequence_number);
             }
             tf_packetbuffer_remove(&tfp->spitfp.recv_buf, header_length);
             tf_tfp_packet_processed(tfp);
@@ -188,7 +188,7 @@ static bool tf_tfp_filter_received_packet(TF_TfpContext *tfp, bool remove_intere
     tfp->last_seen_spitfp_seq_num = spitfp_seq_num;
 
     if(remove_interesting) {
-        tf_hal_log_debug("Remove unexpected 2");
+        tf_hal_log_debug("Remove interesting\n");
         tf_packetbuffer_remove(&tfp->spitfp.recv_buf, header_length);
         tf_tfp_packet_processed(tfp);
         ++tfp->error_count_unexpected;

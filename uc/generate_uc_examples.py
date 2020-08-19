@@ -99,7 +99,7 @@ class UCPrintfFormatMixin(object):
             else:
                 return '%d'
         else:
-            return '%f'
+            return '%d 1/%d'
 
     def get_c_printf_prefix(self):
         return ''
@@ -134,6 +134,7 @@ class UCExample(common.Example):
 #define UID "{dummy_uid}" // Change {dummy_uid} to the UID of your {device_display}
 
 void check(int rc, const char* msg);
+
 
 {functions}
 
@@ -304,7 +305,7 @@ class UCExampleParameter(common.ExampleParameter, UCTypeMixin, UCPrintfFormatMix
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\ttf_hal_log_info("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\ttf_hal_printf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -324,7 +325,7 @@ class UCExampleParameter(common.ExampleParameter, UCTypeMixin, UCPrintfFormatMix
             #        there is "char *itoa(int value, int base)" (see https://www.strudel.org.uk/itoa/)
             #        but it's not in the standard C library and it's not reentrant. so just print the
             #        integer in base-10 the normal way
-            template = '{global_line_prefix}\ttf_hal_log_info("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
+            template = '{global_line_prefix}\ttf_hal_printf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -339,7 +340,7 @@ class UCExampleParameter(common.ExampleParameter, UCTypeMixin, UCPrintfFormatMix
                                               name=self.get_name().under,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              divisor=self.get_formatted_divisor(', {0}'),
                                               printf_format=self.get_c_printf_format(),
                                               printf_prefix=self.get_c_printf_prefix(),
                                               printf_suffix=self.get_c_printf_suffix(),
@@ -381,7 +382,7 @@ class UCExampleResult(common.ExampleResult, UCTypeMixin, UCPrintfFormatMixin):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\ttf_hal_log_info("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\ttf_hal_printf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -401,7 +402,7 @@ class UCExampleResult(common.ExampleResult, UCTypeMixin, UCPrintfFormatMixin):
             #        there is "char *itoa(int value, int base)" (see https://www.strudel.org.uk/itoa/)
             #        but it's not in the standard C library and it's not reentrant. so just print the
             #        integer in base-10 the normal way
-            template = '{global_line_prefix}\ttf_hal_log_info("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
+            template = '{global_line_prefix}\ttf_hal_printf("{label}: {printf_format}{unit}\\n", {printf_prefix}{name}{index}{divisor}{printf_suffix});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -421,7 +422,7 @@ class UCExampleResult(common.ExampleResult, UCTypeMixin, UCPrintfFormatMixin):
                                               name=name,
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
-                                              divisor=self.get_formatted_divisor('/{0}'),
+                                              divisor=self.get_formatted_divisor(', {0}'),
                                               printf_format=self.get_c_printf_format(),
                                               printf_prefix=self.get_c_printf_prefix(),
                                               printf_suffix=self.get_c_printf_suffix(),
@@ -588,9 +589,9 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
             printfs.remove(None)
 
         if len(printfs) > 1:
-            printfs.append('\ttf_hal_log_info("\\n");')
+            printfs.append('\ttf_hal_printf("\\n");')
 
-        extra_message = self.get_formatted_extra_message('\ttf_hal_log_info("{0}\\n");').replace('%', '%%')
+        extra_message = self.get_formatted_extra_message('\ttf_hal_printf("{0}\\n");').replace('%', '%%')
 
         if len(extra_message) > 0 and len(printfs) > 0:
             extra_message = '\n' + extra_message

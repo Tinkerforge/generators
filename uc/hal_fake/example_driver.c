@@ -13,7 +13,7 @@ void check(int rc, const char *c) {
 
 TF_HalContext hal;
 
-int main() {    
+int main() {
     TF_Port ports[1] = {{
         .chip_select_pin=1,
         .port_name = 'A'

@@ -189,10 +189,16 @@ TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) {
 	return &hal->hal_common;
 }
 
-void tf_hal_log_message(const char *msg) {
-	// bricklib2-specific, change me for other platforms
-	uartbb_puts(msg);
-	uartbb_puts("\n\r");
+void tf_hal_log_message(const char *msg, uint32_t len) {
+    // bricklib2-specific, change me for other platforms
+    for(int i = 0; i < len; ++i) {
+        uartbb_tx(msg[i]);
+    }
+}
+
+void tf_hal_log_newline() {
+    // bricklib2-specific, change me for other platforms
+    uartbb_tx("\n\r");
 }
 
 const char *tf_hal_strerror(int rc) {

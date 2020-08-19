@@ -55,24 +55,24 @@ int tf_hal_get_error_counters(TF_HalContext *hal, char port_name, uint32_t *ret_
 #define TF_LOG_LEVEL_DEBUG 3
 
 #if TF_LOG_LEVEL >= TF_LOG_LEVEL_ERROR
-#define tf_hal_log_error(...) tf_hal_log_formatted_message(__VA_ARGS__)
+#define tf_hal_log_error(...) tf_hal_printf(__VA_ARGS__)
 #else
 #define tf_hal_log_error(...)
 #endif
 
 #if TF_LOG_LEVEL >= TF_LOG_LEVEL_INFO
-#define tf_hal_log_info(...) tf_hal_log_formatted_message(__VA_ARGS__)
+#define tf_hal_log_info(...) tf_hal_printf(__VA_ARGS__)
 #else
 #define tf_hal_log_info(...)
 #endif
 
 #if TF_LOG_LEVEL >= TF_LOG_LEVEL_DEBUG
-#define tf_hal_log_debug(...) tf_hal_log_formatted_message(__VA_ARGS__)
+#define tf_hal_log_debug(...) tf_hal_printf(__VA_ARGS__)
 #else
 #define tf_hal_log_debug(...)
 #endif
 
-void tf_hal_log_formatted_message(const char *format, ...) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_hal_printf(const char *format, ...) TF_ATTRIBUTE_NONNULL_ALL;
 
 // To be used by HAL implementations
 int tf_hal_common_init(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
@@ -91,7 +91,8 @@ TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL;
 
 // These functions have to work without an initialized HAL to be able to report HAL initialization info/errors, so don't pass the handle here.
-void tf_hal_log_message(const char *msg) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_hal_log_message(const char *msg, uint32_t len) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_hal_log_newline();
 const char *tf_hal_strerror(int rc);
 
 // END - To be implemented by the specific HAL
