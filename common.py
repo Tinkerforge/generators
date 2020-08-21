@@ -1156,7 +1156,6 @@ def subgenerate(root_dir, language, generator_class, config_name):
         config_subdir = ''
 
     config_path = os.path.join(*config_path_parts)
-    configs = sorted(os.listdir(config_path))
 
     common_constant_groups = copy.deepcopy(device_commonconfig.common_constant_groups)
     common_packets = copy.deepcopy(device_commonconfig.common_packets)
@@ -1198,117 +1197,119 @@ def subgenerate(root_dir, language, generator_class, config_name):
 
         return filter(lambda x: 'to_be_removed' not in x, common_packets)
 
-    for config in configs:
-        if config.endswith('_config.py'):
-            com = copy.deepcopy(importlib.import_module('generators.configs{0}.{1}'.format(config_subdir, config[:-3])).com)
+    for config in sorted(os.listdir(config_path)):
+        if not config.endswith('_config.py'):
+            continue
 
-            if com['documented'] and not com['released']:
-                raise GeneratorError('{0} is marked as documented, but as not released'.format(config[:-10]))
+        com = copy.deepcopy(importlib.import_module('generators.configs{0}.{1}'.format(config_subdir, config[:-3])).com)
 
-            if not com['released'] and not com['documented']:
-                print(' * {0} \033[01;36m(not released, not documented)\033[0m'.format(config[:-10]))
-            elif not com['released']:
-                print(' * {0} \033[01;36m(not released)\033[0m'.format(config[:-10]))
-            elif not com['documented']:
-                print(' * {0} \033[01;36m(not documented)\033[0m'.format(config[:-10]))
-            else:
-                print(' * {0}'.format(config[:-10]))
+        if com['documented'] and not com['released']:
+            raise GeneratorError('{0} is marked as documented, but as not released'.format(config[:-10]))
 
-            if 'common_included' not in com:
-                com['constant_groups'].extend(prepare_common_constant_groups(com, copy.deepcopy(common_constant_groups)))
-                com['packets'].extend(prepare_common_packets(com, copy.deepcopy(common_packets)))
-                com['common_included'] = True
+        if not com['released'] and not com['documented']:
+            print(' * {0} \033[01;36m(not released, not documented)\033[0m'.format(config[:-10]))
+        elif not com['released']:
+            print(' * {0} \033[01;36m(not released)\033[0m'.format(config[:-10]))
+        elif not com['documented']:
+            print(' * {0} \033[01;36m(not documented)\033[0m'.format(config[:-10]))
+        else:
+            print(' * {0}'.format(config[:-10]))
 
-            if generator.is_openhab_doc_generator:
-                com['packets'] = [x for x in com['packets'] if 'openhab_doc' not in x or x['openhab_doc']]
-            else:
-                com['packets'] = [x for x in com['packets'] if 'openhab_doc' not in x or not x['openhab_doc']]
+        if 'common_included' not in com:
+            com['constant_groups'].extend(prepare_common_constant_groups(com, copy.deepcopy(common_constant_groups)))
+            com['packets'].extend(prepare_common_packets(com, copy.deepcopy(common_packets)))
+            com['common_included'] = True
 
-            device = generator.get_device_class()(com, generator)
-            device_identifier = device.get_device_identifier()
+        if generator.is_openhab_doc_generator:
+            com['packets'] = [x for x in com['packets'] if 'openhab_doc' not in x or x['openhab_doc']]
+        else:
+            com['packets'] = [x for x in com['packets'] if 'openhab_doc' not in x or not x['openhab_doc']]
 
-            if device_identifier in device_identifiers:
-                raise GeneratorError('Device identifier {0} is not unique'.format(device_identifier))
+        device = generator.get_device_class()(com, generator)
+        device_identifier = device.get_device_identifier()
 
-            device_identifiers.add(device_identifier)
+        if device_identifier in device_identifiers:
+            raise GeneratorError('Device identifier {0} is not unique'.format(device_identifier))
 
-            # only collect device_infos for default config
-            if config_name == 'tinkerforge':
-                if device.is_brick():
-                    ref_name = device.get_name().under + '_brick'
-                    hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3') + '_Brick'
-                    software_doc_prefix = device.get_name().camel + '_Brick'
+        device_identifiers.add(device_identifier)
 
-                    if device.get_device_identifier() != 17:
-                        firmware_url_part = device.get_name().under
-                    else:
-                        firmware_url_part = None
+        # only collect device_infos for default config
+        if config_name != 'tinkerforge':
+            if device.is_brick():
+                ref_name = device.get_name().under + '_brick'
+                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3') + '_Brick'
+                software_doc_prefix = device.get_name().camel + '_Brick'
 
-                    device_info = (device.get_device_identifier(),
-                                   'Brick',
-                                   device.get_long_display_name(),
-                                   device.get_short_display_name(),
-                                   ref_name,
-                                   hardware_doc_name,
-                                   software_doc_prefix,
-                                   device.get_git_name(),
-                                   firmware_url_part,
-                                   device.has_comcu(),
-                                   device.is_released(),
-                                   device.is_documented(),
-                                   device.is_discontinued(),
-                                   True,
-                                   device.get_description())
-
-                    brick_infos.append(device_info)
-                elif device.is_tng():
-                    ref_name = 'tng_' + device.get_name().under
-                    hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
-                    software_doc_prefix = 'TNG_' + device.get_name().camel
+                if device.get_device_identifier() != 17:
                     firmware_url_part = device.get_name().under
-
-                    device_info = (device.get_device_identifier(),
-                                   'TNG',
-                                   device.get_long_display_name(),
-                                   device.get_short_display_name(),
-                                   ref_name,
-                                   hardware_doc_name,
-                                   software_doc_prefix,
-                                   device.get_git_name(),
-                                   firmware_url_part,
-                                   False,
-                                   device.is_released(),
-                                   device.is_documented(),
-                                   device.is_discontinued(),
-                                   True,
-                                   device.get_description())
-
-                    tng_infos.append(device_info)
                 else:
-                    ref_name = device.get_name().under + '_bricklet'
-                    hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
-                    software_doc_prefix = device.get_name().camel + '_Bricklet'
-                    firmware_url_part = device.get_name().under
+                    firmware_url_part = None
 
-                    device_info = (device.get_device_identifier(),
-                                   'Bricklet',
-                                   device.get_long_display_name(),
-                                   device.get_short_display_name(),
-                                   ref_name,
-                                   hardware_doc_name,
-                                   software_doc_prefix,
-                                   device.get_git_name(),
-                                   firmware_url_part,
-                                   device.has_comcu(),
-                                   device.is_released(),
-                                   device.is_documented(),
-                                   device.is_discontinued(),
-                                   True,
-                                   device.get_description())
+                device_info = (device.get_device_identifier(),
+                               'Brick',
+                               device.get_long_display_name(),
+                               device.get_short_display_name(),
+                               ref_name,
+                               hardware_doc_name,
+                               software_doc_prefix,
+                               device.get_git_name(),
+                               firmware_url_part,
+                               device.has_comcu(),
+                               device.is_released(),
+                               device.is_documented(),
+                               device.is_discontinued(),
+                               True,
+                               device.get_description())
 
-                    bricklet_infos.append(device_info)
+                brick_infos.append(device_info)
+            elif device.is_tng():
+                ref_name = 'tng_' + device.get_name().under
+                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
+                software_doc_prefix = 'TNG_' + device.get_name().camel
+                firmware_url_part = device.get_name().under
 
-            generator.generate(device)
+                device_info = (device.get_device_identifier(),
+                               'TNG',
+                               device.get_long_display_name(),
+                               device.get_short_display_name(),
+                               ref_name,
+                               hardware_doc_name,
+                               software_doc_prefix,
+                               device.get_git_name(),
+                               firmware_url_part,
+                               False,
+                               device.is_released(),
+                               device.is_documented(),
+                               device.is_discontinued(),
+                               True,
+                               device.get_description())
+
+                tng_infos.append(device_info)
+            else:
+                ref_name = device.get_name().under + '_bricklet'
+                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
+                software_doc_prefix = device.get_name().camel + '_Bricklet'
+                firmware_url_part = device.get_name().under
+
+                device_info = (device.get_device_identifier(),
+                               'Bricklet',
+                               device.get_long_display_name(),
+                               device.get_short_display_name(),
+                               ref_name,
+                               hardware_doc_name,
+                               software_doc_prefix,
+                               device.get_git_name(),
+                               firmware_url_part,
+                               device.has_comcu(),
+                               device.is_released(),
+                               device.is_documented(),
+                               device.is_discontinued(),
+                               True,
+                               device.get_description())
+
+                bricklet_infos.append(device_info)
+
+        generator.generate(device)
 
     generator.finish()
 
