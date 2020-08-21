@@ -82,7 +82,7 @@ class RustBindingsDevice(rust_common.RustDevice):
 
         category_name = self.get_category().camel
 
-        if not self.is_tng():
+        if self.is_brick() or self.is_bricklet():
             category_name += 's'
 
         description += common.select_lang(tf_doc_link).format(category_name=category_name,

@@ -261,10 +261,12 @@ def make_rst_header(device, has_device_identifier_constant=True):
 
     if device.is_brick():
         device_name = select_lang(brick_name)
+    elif device.is_bricklet():
+        device_name = select_lang(bricklet_name)
     elif device.is_tng():
         device_name = select_lang(tng_name)
     else:
-        device_name = select_lang(bricklet_name)
+        assert False
 
     device_identifier_constant = {'en': '.. |device_identifier_constant| replace:: There is also a :ref:`constant <{0}_{1}_constants>` for the device identifier of {2}.\n',
                                   'de': '.. |device_identifier_constant| replace:: Es gibt auch eine :ref:`Konstante <{0}_{1}_constants>` für den Device Identifier {2}.\n'}
@@ -382,10 +384,12 @@ Bindings ist Teil deren allgemeine Beschreibung.
     # format device name
     if device.is_brick():
         device_name = select_lang(brick_name)
+    elif device.is_bricklet():
+        device_name = select_lang(bricklet_name)
     elif device.is_tng():
         device_name = select_lang(tng_name)
     else:
-        device_name = select_lang(bricklet_name)
+        assert False
 
     device_name = device_name.format(device.get_long_display_name(),
                                      device.get_doc_rst_ref_name())
@@ -402,10 +406,12 @@ Bindings ist Teil deren allgemeine Beschreibung.
     if not device.is_released():
         if device.is_brick():
             d = brick
-        if device.is_tng():
+        elif device.is_bricklet():
+            d = bricklet
+        elif device.is_tng():
             d = tng
         else:
-            d = bricklet
+            assert False
 
         s = select_lang(not_released).format(select_lang(d)) + s
 
@@ -952,8 +958,12 @@ def format_since_firmware(device, packet):
 
     if device.is_brick():
         suffix = 'Firmware'
-    else:
+    elif device.is_bricklet():
         suffix = 'Plugin'
+    elif device.is_tng():
+        suffix = 'Firmware'
+    else:
+        assert False
 
     return '\n.. versionadded:: {1}.{2}.{3}$nbsp;({0})\n'.format(suffix, *since)
 
@@ -1262,6 +1272,29 @@ def subgenerate(root_dir, language, generator_class, config_name):
                                device.get_description())
 
                 brick_infos.append(device_info)
+            elif device.is_bricklet():
+                ref_name = device.get_name().under + '_bricklet'
+                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
+                software_doc_prefix = device.get_name().camel + '_Bricklet'
+                firmware_url_part = device.get_name().under
+
+                device_info = (device.get_device_identifier(),
+                               'Bricklet',
+                               device.get_long_display_name(),
+                               device.get_short_display_name(),
+                               ref_name,
+                               hardware_doc_name,
+                               software_doc_prefix,
+                               device.get_git_name(),
+                               firmware_url_part,
+                               device.has_comcu(),
+                               device.is_released(),
+                               device.is_documented(),
+                               device.is_discontinued(),
+                               True,
+                               device.get_description())
+
+                bricklet_infos.append(device_info)
             elif device.is_tng():
                 ref_name = 'tng_' + device.get_name().under
                 hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
@@ -1286,28 +1319,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
 
                 tng_infos.append(device_info)
             else:
-                ref_name = device.get_name().under + '_bricklet'
-                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
-                software_doc_prefix = device.get_name().camel + '_Bricklet'
-                firmware_url_part = device.get_name().under
-
-                device_info = (device.get_device_identifier(),
-                               'Bricklet',
-                               device.get_long_display_name(),
-                               device.get_short_display_name(),
-                               ref_name,
-                               hardware_doc_name,
-                               software_doc_prefix,
-                               device.get_git_name(),
-                               firmware_url_part,
-                               device.has_comcu(),
-                               device.is_released(),
-                               device.is_documented(),
-                               device.is_discontinued(),
-                               True,
-                               device.get_description())
-
-                bricklet_infos.append(device_info)
+                assert False
 
         generator.generate(device)
 

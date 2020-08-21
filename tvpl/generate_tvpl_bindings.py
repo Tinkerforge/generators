@@ -72,8 +72,10 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
             if self.is_brick():
                 block_set_color = 'this.setColour(195);'
-            else:
+            elif device.is_bricklet():
                 block_set_color = 'this.setColour(297);'
+            else:
+                assert False
 
             block_help_url = 'this.setHelpUrl(\'' + '/'.join(['https://www.tinkerforge.com/en/doc/Software',
                                                               self.get_category().camel +\

@@ -619,7 +619,7 @@ class {0}(Device):
         source += self.get_python_methods()
         source += self.get_python_register_callback_method()
 
-        if not self.is_tng():
+        if self.is_brick() or self.is_bricklet():
             source += self.get_python_old_name()
 
         return common.strip_trailing_whitespace(source)

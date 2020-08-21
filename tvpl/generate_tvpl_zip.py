@@ -138,8 +138,10 @@ class TVPLZipGenerator(tvpl_common.TVPLGeneratorTrait, common.ZipGenerator):
         with open(os.path.join(self.get_bindings_dir(), device_name + '.toolbox.part'), 'r') as f:
             if device.is_brick():
                 self.brick_toolbox_part[device_name] = f.read()
-            else:
+            elif device.is_bricklet():
                 self.bricklet_toolbox_part[device_name] = f.read()
+            else:
+                assert False
 
         # Copy device examples
         tmp_examples_device = os.path.join(self.tmp_examples_dir,
