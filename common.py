@@ -3421,13 +3421,13 @@ class Device(object):
 
     def get_packets(self, type_=None):
         if type_ == None:
-            if self.generator.is_doc():
+            if self.generator.is_doc_generator:
                 return self.all_packets
 
             return self.all_packets_without_doc_only
 
         if type_ == 'function':
-            if self.generator.is_doc():
+            if self.generator.is_doc_generator:
                 return self.all_function_packets
 
             return self.all_function_packets_without_doc_only
@@ -3477,7 +3477,7 @@ class Device(object):
         return self.get_name().camel + '_' + self.get_category().camel
 
     def get_doc_rst_path(self):
-        if not self.get_generator().is_doc():
+        if not self.get_generator().is_doc_generator:
             raise GeneratorError("Invalid call in non-doc generator")
 
         filename = self.get_doc_rst_name() + '_' + self.get_generator().get_doc_rst_filename_part() + '.rst'
@@ -3487,7 +3487,7 @@ class Device(object):
                             filename)
 
     def get_doc_rst_ref_name(self):
-        if not self.get_generator().is_doc():
+        if not self.get_generator().is_doc_generator:
             raise GeneratorError("Invalid call in non-doc generator")
 
         if self.is_tng():
@@ -4366,6 +4366,7 @@ class ExampleSpecialFunction(ExampleItem):
 
 class Generator:
     check_root_dir_name = True
+    is_doc_generator = False
     is_openhab_doc_generator = False
 
     def __init__(self, root_dir, config_name, language):
@@ -4547,9 +4548,6 @@ class Generator:
                                     version[2],
                                     ' '*delta)
 
-    def is_doc(self):
-        return False
-
     def prepare(self):
         pass
 
@@ -4560,6 +4558,8 @@ class Generator:
         pass
 
 class DocGenerator(Generator):
+    is_doc_generator = True
+
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
 
@@ -4571,9 +4571,6 @@ class DocGenerator(Generator):
 
     def get_doc_example_regex(self):
         raise GeneratorError("get_doc_example_regex() not implemented")
-
-    def is_doc(self):
-        return True
 
     def prepare(self):
         recreate_dir(os.path.join(self.get_doc_dir(), self.get_language()))
