@@ -136,6 +136,6 @@ else:
     with open(os.path.join(tmp, 'diff2.diff'), 'w') as f:
         f.writelines(filtered)
 
-    if os.system('bash -c "{} {}/diff2.diff && popd"'.format(diff_tool, tmp)) != 0:
+    if os.system('bash -c "{} {}/diff2.diff"'.format(diff_tool, tmp)) != 0:
         print('{} diff.diff failed'.format(diff_tool))
         sys.exit(1)
