@@ -42,3 +42,6 @@ class MathematicaGeneratorTrait:
 
     def get_doc_formatted_param(self, element):
         return element.get_name().headless
+
+    def generates_high_level_callbacks(self):
+        return True

@@ -4,6 +4,7 @@
 """
 JSON Bindings Generator
 Copyright (C) 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_json_bindings.py: Generator for JSON bindings
 
@@ -198,6 +199,9 @@ class JSONGeneratorTrait:
 
     def get_doc_formatted_param(self, element):
         return element.get_name().space
+
+    def generates_high_level_callbacks(self):
+        return True
 
 class JSONBindingsGenerator(JSONGeneratorTrait, common.BindingsGenerator):
     def get_device_class(self):

@@ -2,7 +2,7 @@
 
 """
 Rust Generator
-Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2018, 2020 Erik Fleckstein <erik@tinkerforge.com>
 Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 rust_common.py: Common library for generation of Rust bindings and documentation
@@ -349,3 +349,6 @@ class RustGeneratorTrait:
 
     def get_doc_formatted_param(self, element):
         return element.get_name().under
+
+    def generates_high_level_callbacks(self):
+        return True

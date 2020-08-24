@@ -4,6 +4,7 @@
 PHP Generator
 Copyright (C) 2012, 2014, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 php_common.py: Common library for generation of PHP bindings and documentation
 
@@ -233,3 +234,6 @@ class PHPGeneratorTrait:
 
     def get_doc_formatted_param(self, element):
         return element.get_name().headless
+
+    def generates_high_level_callbacks(self):
+        return True

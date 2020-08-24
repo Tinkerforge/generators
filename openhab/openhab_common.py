@@ -2,7 +2,7 @@
 
 """
 openHAB Generator
-Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2019-2020 Erik Fleckstein <erik@tinkerforge.com>
 
 openhab_common.py: Common library for generation of openHAB bindings and documentation
 
@@ -42,6 +42,9 @@ class OpenHABGeneratorTrait:
 
     def get_doc_formatted_param(self, element):
         return element.get_name().camel
+
+    def generates_high_level_callbacks(self):
+        return True
 
 class OpenHABUnit:
     def __init__(self, tf_unit, java_unit, java_number_type, tf_to_oh_divisor=1):

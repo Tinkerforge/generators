@@ -2,7 +2,7 @@
 
 """
 Go Generator
-Copyright (C) 2018 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2018, 2020 Erik Fleckstein <erik@tinkerforge.com>
 Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
 go_common.py: Common library for generation of Go bindings and documentation
@@ -328,3 +328,6 @@ class GoGeneratorTrait:
 
     def get_element_class(self):
         return GoElement
+
+    def generates_high_level_callbacks(self):
+        return True

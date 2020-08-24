@@ -4,6 +4,7 @@
 Ruby Generator
 Copyright (C) 2012-2013, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 ruby_common.py: Common library for generation of Ruby bindings and documentation
 
@@ -142,3 +143,6 @@ class RubyGeneratorTrait:
 
     def get_doc_formatted_param(self, element):
         return element.get_name().under
+
+    def generates_high_level_callbacks(self):
+        return True

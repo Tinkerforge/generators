@@ -2678,15 +2678,20 @@ class Packet(object):
         self.add_high_level_callback_note()
 
     def add_high_level_callback_note(self):
-        if self.get_type() == 'callback' and self.has_high_level():
-            null = self.get_generator().get_doc_null_value_name()
-            param = self.get_generator().get_doc_formatted_param(self.get_high_level('stream_*').get_data_element())
-            doc = self.raw_data['doc'][1]
-            doc['de'] += """
+        if not self.get_generator().generates_high_level_callbacks():
+            return
+
+        if self.get_type() != 'callback' or not self.has_high_level():
+            return
+
+        null = self.get_generator().get_doc_null_value_name()
+        param = self.get_generator().get_doc_formatted_param(self.get_high_level('stream_*').get_data_element())
+        doc = self.raw_data['doc'][1]
+        doc['de'] += """
 .. note::
  Falls das Rekonstruieren des Wertes fehlschlägt, wird der Callback mit {} für {} ausgelöst.
 """.format(null, param)
-            doc['en'] += """
+        doc['en'] += """
 .. note::
  If reconstructing the value fails, the callback is triggered with {} for {}.
 """.format(null, param)

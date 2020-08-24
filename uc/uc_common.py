@@ -198,6 +198,9 @@ class UCGeneratorTrait:
     def get_doc_formatted_param(self, element):
         return element.get_name().under
 
+    def generates_high_level_callbacks(self):
+        return False
+
 def format(s, device=None, packet=None, packet_skip=0, **kwargs):
     if device is not None:
         kwargs['device_space'] = device.get_name().space
