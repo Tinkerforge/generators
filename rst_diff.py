@@ -52,18 +52,33 @@ args = parser.parse_args(argv)
 diff_tool = args.diff_tool
 
 if args.prepare:
-    for d in os.listdir('.'):
-        if not os.path.isdir(d):
-            continue
+    if args.bindings != None:
+        ds = [args.bindings.rstrip('/')]
+    else:
+        parent_dir, bindings = os.path.split(os.getcwd())
 
+        if parent_dir == generators_dir:
+            ds = [bindings]
+        else:
+            ds = sorted(os.listdir(generators_dir))
+
+    for d in ds:
         if d in ['configs', 'stubs', 'json', 'tvpl', '.git', '__pycache__', '.vscode']:
             continue
 
-        doc_path = os.path.join(d, 'doc')
-        doc_old_path = os.path.join(d, 'doc_old')
+        path = os.path.join(generators_dir, d)
+
+        if not os.path.isdir(path):
+            continue
+
+        doc_path = os.path.join(path, 'doc')
+        doc_old_path = os.path.join(path, 'doc_old')
 
         if not os.path.isdir(doc_path):
+            print('skipping {0}, no doc directory'.format(d))
             continue
+
+        print('preparing ' + d)
 
         if os.path.isdir(doc_old_path):
             shutil.rmtree(doc_old_path)
