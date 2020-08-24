@@ -5,6 +5,7 @@
 Shell Documentation Generator
 Copyright (C) 2012-2015, 2017-2018, 2020 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_shell_doc.py: Generator for Shell documentation
 
@@ -209,7 +210,7 @@ Command Structure
 ^^^^^^^^^^^^^^^^^
 
 The common options of the ``call`` and ``dispatch`` commands are documented
-:ref:`here <ipcon_shell_api>`. The specific command structure is shown below.
+:ref:`here <ip_connection_shell_api>`. The specific command structure is shown below.
 
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
 
@@ -245,7 +246,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
  Getter functions can take the following options:
 
  * ``--execute <command>`` shell command line to execute for each incoming
-   response (see section about :ref:`output formatting <ipcon_shell_output>`
+   response (see section about :ref:`output formatting <ip_connection_shell_output>`
    for details)
 
  Setter functions can take the following options:
@@ -267,7 +268,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
 
  * ``--help`` shows help for the specific callback and exits
  * ``--execute <command>`` shell command line to execute for each incoming
-   response (see section about :ref:`output formatting <ipcon_shell_output>`
+   response (see section about :ref:`output formatting <ip_connection_shell_output>`
    for details)
 
 
@@ -300,7 +301,7 @@ Befehlsstruktur
 ^^^^^^^^^^^^^^^
 
 Allgemeine Optionen des ``call`` und des ``dispatch`` Befehls sind
-:ref:`hier <ipcon_shell_api>` zu finden. Im Folgenden wird die spezifische
+:ref:`hier <ip_connection_shell_api>` zu finden. Im Folgenden wird die spezifische
 Befehlsstruktur dargestellt.
 
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
@@ -341,7 +342,7 @@ Befehlsstruktur dargestellt.
 
  * ``--execute <command>`` Shell-Befehl der für jede eingehende Antwort
    ausgeführt wird (siehe den Abschnitt über :ref:`Ausgabeformatierung
-   <ipcon_shell_output>` für Details)
+   <ip_connection_shell_output>` für Details)
 
  Setter-Funktionen kennen zusätzlich die folgenden Optionen:
 
@@ -364,7 +365,7 @@ Befehlsstruktur dargestellt.
  * ``--help`` zeigt Hilfe für den spezifische ``<callback>`` an und endet dann
  * ``--execute <command>`` Shell-Befehlszeile der für jede eingehende Antwort
    ausgeführt wird (siehe den Abschnitt über :ref:`Ausgabeformatierung
-   <ipcon_shell_output>` für Details)
+   <ip_connection_shell_output>` für Details)
 
 {2}
 """
