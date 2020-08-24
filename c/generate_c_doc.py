@@ -330,7 +330,7 @@ All functions listed below are thread-safe.
 API
 ---
 
-Die meistens Funktionen der C/C++ Bindings giben einen Fehlercode (``e_result``)
+Die meistens Funktionen der C/C++ Bindings geben einen Fehlercode (``e_result``)
 zurück. Vom Gerät zurückgegebene Daten werden, wenn eine
 Abfrage aufgerufen wurde, über Ausgabeparameter gehandhabt. Diese Parameter
 sind mit dem ``ret_`` Präfix gekennzeichnet.
