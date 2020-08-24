@@ -27,6 +27,7 @@ com = {
     'documented': True,
     'discontinued': True, # replaced by Accelerometer Bricklet 2.0
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],

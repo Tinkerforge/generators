@@ -24,6 +24,7 @@ com = {
     'documented': True,
     'discontinued': True, # replaced by IMU Brick 2.0
     'features': [
+        'device',
         'brick_get_identity',
         'brick_status_led',
         'brick_reset',

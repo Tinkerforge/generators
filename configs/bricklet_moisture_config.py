@@ -26,6 +26,7 @@ com = {
     'documented': True,
     'discontinued': True, # currently no replacement available
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],

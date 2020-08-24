@@ -24,6 +24,7 @@ com = {
     'documented': True,
     'discontinued': False, # selling remaining stock, replaced by OLED 128x64 Bricklet 2.0
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],

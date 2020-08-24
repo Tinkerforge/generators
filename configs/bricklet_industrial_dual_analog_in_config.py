@@ -26,6 +26,7 @@ com = {
     'documented': True,
     'discontinued': True, # replaced by Industrial Dual Analog In Bricklet 2.0
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],

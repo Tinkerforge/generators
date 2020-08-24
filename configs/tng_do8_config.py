@@ -22,6 +22,7 @@ com = {
     'documented': False,
     'discontinued': False,
     'features': [
+        'device',
         'tng'
     ],
     'constant_groups': [],

@@ -22,6 +22,7 @@ com = {
     'documented': False,
     'discontinued': False,
     'features': [
+        'device',
         'comcu_bricklet',
         'bricklet_get_identity'
     ],

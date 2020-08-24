@@ -27,6 +27,7 @@ com = {
     'documented': True,
     'discontinued': True, # replaced by Ambient Light Bricklet 3.0
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],

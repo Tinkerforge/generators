@@ -24,6 +24,7 @@ com = {
     'documented': True,
     'discontinued': False,
     'features': [
+        'device',
         'brick_get_identity'
      ],
     'constant_groups': [],

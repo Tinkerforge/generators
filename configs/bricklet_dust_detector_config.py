@@ -26,6 +26,7 @@ com = {
     'documented': True,
     'discontinued': False, # selling remaining stock, replaced by Particulate Matter Bricklet
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],

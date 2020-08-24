@@ -72,6 +72,7 @@ common_packets = []
 
 common_packets.append({
 'is_virtual': True, # function without a corresponding TCP/IP packet
+'feature': 'device',
 'type': 'function',
 'function_id': -1,
 'name': 'Get API Version',
@@ -96,6 +97,7 @@ repräsentierte(n) Brick oder Bricklet.
 
 common_packets.append({
 'is_virtual': True, # function without a corresponding TCP/IP packet
+'feature': 'device',
 'type': 'function',
 'function_id': -1,
 'name': 'Get Response Expected',
@@ -145,6 +147,7 @@ nicht detektiert werden können.
 
 common_packets.append({
 'is_virtual': True, # function without a corresponding TCP/IP packet
+'feature': 'device',
 'type': 'function',
 'function_id': -1,
 'name': 'Set Response Expected',
@@ -184,6 +187,7 @@ nicht detektiert werden können.
 
 common_packets.append({
 'is_virtual': True, # function without a corresponding TCP/IP packet
+'feature': 'device',
 'type': 'function',
 'function_id': -1,
 'name': 'Set Response Expected All',

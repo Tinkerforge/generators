@@ -24,6 +24,7 @@ com = {
     'documented': True,
     'discontinued': True, # replaced by Solid State Relay Bricklet 2.0
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],

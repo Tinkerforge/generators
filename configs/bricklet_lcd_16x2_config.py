@@ -24,6 +24,7 @@ com = {
     'documented': True,
     'discontinued': True, # replaced by LCD 128x64 Bricklet
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],

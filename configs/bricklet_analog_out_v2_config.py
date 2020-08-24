@@ -24,6 +24,7 @@ com = {
     'documented': True,
     'discontinued': False, # selling remaining stock, replaced by Analog Out Bricklet 3.0
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],

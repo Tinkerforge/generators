@@ -1191,16 +1191,14 @@ def subgenerate(root_dir, language, generator_class, config_name):
         features = com['features']
 
         for common_packet in common_packets:
-            if common_packet.get('is_virtual', False):
-                continue
+            if not common_packet.get('is_virtual', False):
+                if com['name'] in common_packet['since_firmware']:
+                    common_packet['since_firmware'] = common_packet['since_firmware'][com['name']]
+                else:
+                    common_packet['since_firmware'] = common_packet['since_firmware']['*']
 
-            if com['name'] in common_packet['since_firmware']:
-                common_packet['since_firmware'] = common_packet['since_firmware'][com['name']]
-            else:
-                common_packet['since_firmware'] = common_packet['since_firmware']['*']
-
-            if common_packet['since_firmware'] == None:
-                common_packet['to_be_removed'] = True
+                if common_packet['since_firmware'] == None:
+                    common_packet['to_be_removed'] = True
 
             if common_packet['feature'] not in features:
                 common_packet['to_be_removed'] = True

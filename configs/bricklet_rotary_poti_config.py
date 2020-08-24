@@ -26,6 +26,7 @@ com = {
     'documented': True,
     'discontinued': False, # replaced by Rotary Poti Bricklet 2.0
     'features': [
+        'device',
         'bricklet_get_identity'
     ],
     'constant_groups': [],
