@@ -134,10 +134,7 @@ class UCExample(common.Example):
 #define UID "{dummy_uid}" // Change {dummy_uid} to the UID of your {device_display}
 
 void check(int rc, const char* msg);
-
-
 {functions}
-
 TF_{device_camel} {device_initial};
 
 void example_setup(TF_HalContext *hal) {{

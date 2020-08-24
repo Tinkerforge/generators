@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Olaf Lüke <olaf@tinkerforge.com>
+ * Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted. See the Creative
@@ -124,10 +125,10 @@ int tf_hal_stm32f0_init(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_p
 		hal->ports[i].spi.Init.CRCPolynomial     = 7;
 		hal->ports[i].spi.Init.DataSize          = SPI_DATASIZE_8BIT;
 		hal->ports[i].spi.Init.FirstBit          = SPI_FIRSTBIT_MSB;
-		hal->ports[i].spi.Init.NSS               = SPI_NSS_SOFT; 
+		hal->ports[i].spi.Init.NSS               = SPI_NSS_SOFT;
 		hal->ports[i].spi.Init.NSSPMode          = SPI_NSS_PULSE_DISABLE;
 		hal->ports[i].spi.Init.TIMode            = SPI_TIMODE_DISABLE;
-		hal->ports[i].spi.Init.Mode              = SPI_MODE_MASTER;	
+		hal->ports[i].spi.Init.Mode              = SPI_MODE_MASTER;
 		HAL_SPI_Init(&hal->ports[i].spi);
 	}
 
@@ -170,7 +171,7 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 	uint8_t tmp = 10;
 	while((spi_state = HAL_SPI_GetState(&port->spi)) != HAL_SPI_STATE_READY) {
 		// TODO: Timeout and yield if coop task is used
-	} 
+	}
 
 	return status == HAL_OK ? TF_E_OK : TF_E_TRANSCEIVE_FAILED;
 }
