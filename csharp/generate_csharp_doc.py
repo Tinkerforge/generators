@@ -125,7 +125,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
     def get_csharp_api(self):
         create_str = {
             'en': """
-.. csharp:function:: class {0}(String uid, IPConnection ipcon)
+.. csharp:function:: class {0}(string uid, IPConnection ipcon)
 
 {2}
 
@@ -138,7 +138,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
  This object can then be used after the IP Connection is connected.
 """,
             'de': """
-.. csharp:function:: class {0}(String uid, IPConnection ipcon)
+.. csharp:function:: class {0}(string uid, IPConnection ipcon)
 
 {2}
 
@@ -307,7 +307,7 @@ Konstanten
 """
         }
 
-        create_meta = common.format_simple_element_meta([('uid', 'String', 1, 'in'),
+        create_meta = common.format_simple_element_meta([('uid', 'string', 1, 'in'),
                                                          ('ipcon', 'IPConnection', 1, 'in'),
                                                          (self.get_name().headless, self.get_csharp_class_name(), 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta)
