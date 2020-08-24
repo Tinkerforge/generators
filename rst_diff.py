@@ -11,6 +11,8 @@ import os
 import re
 import tempfile
 import shutil
+import argparse
+import shlex
 import importlib.util
 import importlib.machinery
 
@@ -32,23 +34,24 @@ if 'generators' not in sys.modules:
 
 from generators import common
 
-args = sys.argv[1:]
+argv = sys.argv[1:]
 
 for path in [os.path.expanduser('~/.rst_diffrc'), './.rst_diffrc']:
     if os.path.exists(path):
-        with open(path) as f:
-            args += f.readline().replace('\n', '').split(' ')
+        with open(path, 'r') as f:
+            argv += shlex.split(f.read(), comments=True)
 
-diff_tool = 'geany'
+parser = argparse.ArgumentParser()
 
-try:
-    diff_tool_idx = args.index('--diff-tool')
-    diff_tool = args[diff_tool_idx + 1]
-    args = args[:diff_tool_idx] + args[diff_tool_idx + 2:]
-except:
-    pass
+parser.add_argument('--prepare', action='store_true', help='prepare current rst as old diff input')
+parser.add_argument('--diff-tool', default='geany', help='program to open diff file with')
+parser.add_argument('bindings', nargs='?', help='bindings to create diff file for')
 
-if '--prepare' in args:
+args = parser.parse_args(argv)
+
+diff_tool = args.diff_tool
+
+if args.prepare:
     for d in os.listdir('.'):
         if not os.path.isdir(d):
             continue
@@ -67,17 +70,16 @@ if '--prepare' in args:
 
         shutil.copytree(doc_path, doc_old_path)
 else:
-    if len(args) == 0:
-        bindings = os.path.split(os.getcwd())[-1]
+    if args.bindings != None:
+        bindings = args.bindings.rstrip('/')
     else:
-        bindings = args[0].rstrip('/')
+        parent_dir, bindings = os.path.split(os.getcwd())
 
-    root = os.path.split(__file__)[0]
+        if parent_dir != generators_dir:
+            print('error: wrong working directory, cannot auto-detect bindings')
+            sys.exit(1)
 
-    if len(root) == 0:
-        root = '.'
-
-    base = os.path.join(root, bindings)
+    base = os.path.join(generators_dir, bindings)
     tmp = tempfile.mkdtemp()
 
     if os.system('bash -cx "pushd {0} && diff -U 15 -r doc_old/ doc/ > {1}/diff1.diff; popd"'.format(base, tmp)) != 0:

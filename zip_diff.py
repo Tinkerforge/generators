@@ -10,6 +10,8 @@ if sys.hexversion < 0x3040000:
 import os
 import re
 import tempfile
+import argparse
+import shlex
 import importlib.util
 import importlib.machinery
 
@@ -31,36 +33,33 @@ if 'generators' not in sys.modules:
 
 from generators import common
 
-args = sys.argv[1:]
+argv = sys.argv[1:]
 
 for path in [os.path.expanduser('~/.zip_diffrc'), './.zip_diffrc']:
     if os.path.exists(path):
-        with open(path) as f:
-            args += f.readline().replace('\n', '').split(' ')
+        with open(path, 'r') as f:
+            argv += shlex.split(f.read(), comments=True)
 
-diff_tool = 'geany'
+parser = argparse.ArgumentParser()
 
-try:
-    diff_tool_idx = args.index('--diff-tool')
-    diff_tool = args[diff_tool_idx + 1]
-    args = args[:diff_tool_idx] + args[diff_tool_idx + 2:]
-except:
-    pass
+parser.add_argument('--diff-tool', default='geany', help='program to open diff with')
+parser.add_argument('bindings', nargs='?', help='bindings to create diff for')
 
-if len(args) == 0:
-    bindings = os.path.split(os.getcwd())[-1]
+args = parser.parse_args(argv)
+
+diff_tool = args.diff_tool
+
+if args.bindings != None:
+    bindings = args.bindings.rstrip('/')
 else:
-    bindings = args[0].rstrip('/')
+    parent_dir, bindings = os.path.split(os.getcwd())
 
-root = os.path.split(__file__)[0]
+    if parent_dir != generators_dir:
+        print('error: wrong working directory, cannot auto-detect bindings')
+        sys.exit(1)
 
-if len(root) == 0:
-    root = '.'
-
-with common.ChangedDirectory(root):
-    version = common.get_changelog_version(bindings)
-
-base = os.path.join(root, bindings)
+base = os.path.join(generators_dir, bindings)
+version = common.get_changelog_version(base)
 tmp = tempfile.mkdtemp()
 
 if os.system('bash -cex "curl https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/tinkerforge_{0}_bindings_latest.zip"'.format(bindings, tmp)) != 0:
