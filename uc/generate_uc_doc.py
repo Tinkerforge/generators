@@ -57,7 +57,7 @@ class UCDocDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return format(':c:func:`{packet_space} <tf_{device_under}_register_{packet_under}_callback>`', packet.get_device(), packet, -2 if high_level else 0)
+                return format(':c:func:`{packet_space} <tf_{device_under}_register_{packet_under}_callback>`', packet.get_device(), packet, 0)
             else:
                 return format(':c:func:`tf_{device_under}_{packet_under}`', packet.get_device(), packet, -2 if high_level else 0)
 
@@ -68,7 +68,7 @@ class UCDocDevice(common.Device):
             filename = filename.replace('example_', '').replace('.c', '')
             return common.under_to_space(filename).replace('Pwm ', 'PWM ')
 
-        return common.make_rst_examples(title_from_filename, self)
+        return common.make_rst_examples(title_from_filename, self, language_from_filename=lambda f: 'c')
 
     def get_c_functions(self, type_):
         functions = []
@@ -116,16 +116,15 @@ class UCDocDevice(common.Device):
         }
 
         for packet in self.get_packets('callback'):
-            plist = format('TF_{device_camel} *{device_under}, ', self) + packet.get_c_parameters(high_level=True) + ', void *user_data'
+            plist = format('TF_{device_camel} *{device_under}, ', self) + common.wrap_non_empty('', packet.get_c_parameters(), ', ') + 'void *user_data'
 
             meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_c_type('meta', cardinality=cardinality),
                                                      lambda element, index=None: element.get_c_name(index=index),
                                                      prefix_elements=[(format('{device_under}', self), format('TF_{device_camel} *', self), 1, 'out')],
                                                      suffix_elements=[('user_data', 'void *', 1, 'out')],
-                                                     stream_length_suffix='_length',
-                                                     high_level=True)
+                                                     stream_length_suffix='_length')
 
-            callbacks.append(format(template, self, packet, -2 if packet.has_high_level() else 0,
+            callbacks.append(format(template, self, packet,
                                     params=common.select_lang(param_template).format(plist),
                                     meta_table=common.make_rst_meta_table(meta),
                                     desc=packet.get_c_formatted_doc()))
