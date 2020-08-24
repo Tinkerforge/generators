@@ -2616,7 +2616,7 @@ class Packet(object):
             else:
                 payload_out_size += element.get_size()
 
-            if payload_in_size > 64 or payload_out_size > 64:
+            if not self.is_virtual() and (payload_in_size > 64 or payload_out_size > 64):
                 raise GeneratorError('Payload too long: ' + raw_data['name'])
 
             self.elements.append(element)
