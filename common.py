@@ -2602,7 +2602,7 @@ class Packet(object):
             if element.get_type() not in Packet.valid_types:
                 raise GeneratorError('Invalid element type: {}'.format(element.get_type()))
 
-            if element.get_cardinality() < 1:
+            if not isinstance(element.get_cardinality(), int) or element.get_cardinality() < 1:
                 raise GeneratorError('Invalid element cardinality: {}'.format(element.get_cardinality()))
 
             if element.get_direction() not in ['in', 'out']:
