@@ -5,6 +5,7 @@
 Visual Basic .NET ZIP Generator
 Copyright (C) 2012-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_vbnet_zip.py: Generator for Visual Basic .NET ZIP
 
@@ -53,23 +54,15 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.vbnet import vbnet_common
 
-class VBNETZipGenerator(common.ZipGenerator):
+class VBNETZipGenerator(vbnet_common.VBNETGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.tmp_dir                    = self.get_zip_dir()
         self.tmp_source_tinkerforge_dir = os.path.join(self.tmp_dir, 'source', 'Tinkerforge')
         self.tmp_examples_dir           = os.path.join(self.tmp_dir, 'examples')
-
-    def get_bindings_name(self):
-        return 'vbnet'
-
-    def get_doc_null_value_name(self):
-        return 'Nothing'
-
-    def get_doc_formatted_param(self, element):
-        return element.get_name().headless
 
     def prepare(self):
         super().prepare()

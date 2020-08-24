@@ -4,6 +4,7 @@
 """
 Visual Basic .NET Bindings Generator
 Copyright (C) 2013, 2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_vbnet_bindings.py: Generator for Visual Basic .NET bindings
 
@@ -50,17 +51,11 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.vbnet import vbnet_common
 from generators.csharp.generate_csharp_bindings import CSharpBindingsGenerator
 
-class VBNETBindingsGenerator(CSharpBindingsGenerator):
-    def get_bindings_name(self):
-        return 'vbnet'
-
-    def get_bindings_display_name(self):
-        return 'Visual Basic .NET'
-
-    def get_doc_null_value_name(self):
-        return 'Nothing'
+class VBNETBindingsGenerator(vbnet_common.VBNETGeneratorTrait, CSharpBindingsGenerator):
+    pass
 
 def generate(root_dir):
     common.generate(root_dir, 'en', VBNETBindingsGenerator)

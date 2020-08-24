@@ -4,6 +4,7 @@
 """
 Visual Basic .NET Examples Generator
 Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_vbnet_examples.py: Generator for Visual Basic .NET examples
 
@@ -50,6 +51,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.vbnet import vbnet_common
 
 global_line_prefix = ''
 
@@ -674,10 +676,7 @@ class VBNETExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\r        Next i\n'
 
-class VBNETExamplesGenerator(common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'vbnet'
-
+class VBNETExamplesGenerator(vbnet_common.VBNETGeneratorTrait, common.ExamplesGenerator):
     def get_constant_class(self):
         return VBNETConstant
 
@@ -716,12 +715,6 @@ class VBNETExamplesGenerator(common.ExamplesGenerator):
 
     def get_example_special_function_class(self):
         return VBNETExampleSpecialFunction
-
-    def get_doc_null_value_name(self):
-        return 'Nothing'
-
-    def get_doc_formatted_param(self, element):
-        return element.get_name().headless
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:

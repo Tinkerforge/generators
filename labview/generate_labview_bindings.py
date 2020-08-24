@@ -4,6 +4,7 @@
 """
 LabVIEW Bindings Generator
 Copyright (C) 2013-2014, 2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_labview_bindings.py: Generator for LabVIEW bindings
 
@@ -50,14 +51,11 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.labview import labview_common
 from generators.csharp.generate_csharp_bindings import CSharpBindingsGenerator
 
-class LabVIEWBindingsGenerator(CSharpBindingsGenerator):
-    def get_bindings_name(self):
-        return 'labview'
-
-    def get_bindings_display_name(self):
-        return 'LabVIEW'
+class LabVIEWBindingsGenerator(labview_common.LabVIEWGeneratorTrait, CSharpBindingsGenerator):
+    pass
 
 def generate(root_dir):
     common.generate(root_dir, 'en', LabVIEWBindingsGenerator)

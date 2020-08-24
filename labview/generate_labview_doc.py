@@ -5,6 +5,7 @@
 LabVIEW Documentation Generator
 Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_labview_doc.py: Generator for LabVIEW documentation
 
@@ -55,6 +56,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.labview import labview_common
 
 class LabVIEWDocDevice(common.Device):
     def get_labview_class_name(self):
@@ -442,13 +444,7 @@ class LabVIEWDocElement(common.Element):
 
         return labview_type
 
-class LabVIEWDocGenerator(common.DocGenerator):
-    def get_bindings_name(self):
-        return 'labview'
-
-    def get_bindings_display_name(self):
-        return 'LabVIEW'
-
+class LabVIEWDocGenerator(labview_common.LabVIEWGeneratorTrait, common.DocGenerator):
     def get_doc_rst_filename_part(self):
         return 'LabVIEW'
 
@@ -463,12 +459,6 @@ class LabVIEWDocGenerator(common.DocGenerator):
 
     def get_element_class(self):
         return LabVIEWDocElement
-
-    def get_doc_null_value_name(self):
-        return 'null'
-
-    def get_doc_formatted_param(self, element):
-        return element.get_name().headless
 
     def generate(self, device):
         with open(device.get_doc_rst_path(), 'w') as f:

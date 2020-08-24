@@ -5,6 +5,7 @@
 Mathematica Documentation Generator
 Copyright (C) 2012-2015, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_mathematica_doc.py: Generator for Mathematica documentation
 
@@ -51,6 +52,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.mathematica import mathematica_common
 
 class MathematicaDocDevice(common.Device):
     def get_mathematica_class_name(self):
@@ -531,21 +533,9 @@ class MathematicaDocElement(common.Element):
 
         return name
 
-class MathematicaDocGenerator(common.DocGenerator):
-    def get_bindings_name(self):
-        return 'mathematica'
-
-    def get_bindings_display_name(self):
-        return 'Mathematica'
-
+class MathematicaDocGenerator(mathematica_common.MathematicaGeneratorTrait, common.DocGenerator):
     def get_doc_rst_filename_part(self):
         return 'Mathematica'
-
-    def get_doc_null_value_name(self):
-        return 'Null'
-
-    def get_doc_formatted_param(self, element):
-        return element.get_name().headless
 
     def get_doc_example_regex(self):
         return r'^Example.*\.nb.txt$'

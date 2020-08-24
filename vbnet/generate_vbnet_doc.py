@@ -5,6 +5,7 @@
 Visual Basic .NET Documentation Generator
 Copyright (C) 2012-2014, 2017-2019 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_vbnet_doc.py: Generator for Visual Basic .NET documentation
 
@@ -51,6 +52,7 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.vbnet import vbnet_common
 
 class VBNETDocDevice(common.Device):
     def get_vbnet_class_name(self):
@@ -471,13 +473,7 @@ class VBNETDocElement(common.Element):
 
         return vbnet_type
 
-class VBNETDocGenerator(common.DocGenerator):
-    def get_bindings_name(self):
-        return 'vbnet'
-
-    def get_bindings_display_name(self):
-        return 'Visual Basic .NET'
-
+class VBNETDocGenerator(vbnet_common.VBNETGeneratorTrait, common.DocGenerator):
     def get_doc_rst_filename_part(self):
         return 'VBNET'
 
@@ -492,12 +488,6 @@ class VBNETDocGenerator(common.DocGenerator):
 
     def get_element_class(self):
         return VBNETDocElement
-
-    def get_doc_null_value_name(self):
-        return 'Nothing'
-
-    def get_doc_formatted_param(self, element):
-        return element.get_name().headless
 
     def generate(self, device):
         with open(device.get_doc_rst_path(), 'w') as f:

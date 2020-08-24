@@ -4,6 +4,7 @@
 """
 Mathematica Bindings Generator
 Copyright (C) 2013-2014, 2018 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_mathematica_bindings.py: Generator for Mathematica bindings
 
@@ -50,19 +51,10 @@ if 'generators' not in sys.modules:
 
 from generators import common
 from generators.csharp.generate_csharp_bindings import CSharpBindingsGenerator
+from generators.mathematica import mathematica_common
 
-class MathematicaBindingsGenerator(CSharpBindingsGenerator):
-    def get_bindings_name(self):
-        return 'mathematica'
-
-    def get_bindings_display_name(self):
-        return 'Mathematica'
-
-    def get_doc_null_value_name(self):
-        return 'Null'
-
-    def get_doc_formatted_param(self, element):
-        return element.get_name().headless
+class MathematicaBindingsGenerator(mathematica_common.MathematicaGeneratorTrait, CSharpBindingsGenerator):
+    pass
 
 def generate(root_dir):
     common.generate(root_dir, 'en', MathematicaBindingsGenerator)

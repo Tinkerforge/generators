@@ -4,6 +4,7 @@
 """
 Mathematica Examples Generator
 Copyright (C) 2015-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_mathematica_examples.py: Generator for Mathematica examples
 
@@ -52,6 +53,7 @@ if 'generators' not in sys.modules:
 
 from generators import common
 from generators.mathematica.txt2nb import txt2nb
+from generators.mathematica import mathematica_common
 
 global_line_prefix = ''
 global_line_suffix = ''
@@ -640,10 +642,7 @@ class MathematicaExampleSpecialFunction(common.ExampleSpecialFunction):
 
             return '\b\r]\n'
 
-class MathematicaExamplesGenerator(common.ExamplesGenerator):
-    def get_bindings_name(self):
-        return 'mathematica'
-
+class MathematicaExamplesGenerator(mathematica_common.MathematicaGeneratorTrait, common.ExamplesGenerator):
     def get_constant_class(self):
         return MathematicaConstant
 
@@ -682,12 +681,6 @@ class MathematicaExamplesGenerator(common.ExamplesGenerator):
 
     def get_example_special_function_class(self):
         return MathematicaExampleSpecialFunction
-
-    def get_doc_null_value_name(self):
-        return 'Null'
-
-    def get_doc_formatted_param(self, element):
-        return element.get_name().headless
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:

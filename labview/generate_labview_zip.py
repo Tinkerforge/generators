@@ -5,6 +5,7 @@
 LabVIEW ZIP Generator
 Copyright (C) 2012-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 generate_labview_zip.py: Generator for LabVIEW ZIP
 
@@ -53,8 +54,9 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
+from generators.labview import labview_common
 
-class LabVIEWZipGenerator(common.ZipGenerator):
+class LabVIEWZipGenerator(labview_common.LabVIEWGeneratorTrait, common.ZipGenerator):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -62,15 +64,6 @@ class LabVIEWZipGenerator(common.ZipGenerator):
         self.tmp_source_tinkerforge_dir = os.path.join(self.tmp_dir, 'source', 'Tinkerforge')
         self.tmp_examples_dir           = os.path.join(self.tmp_dir, 'examples')
         self.tmp_examples_10_dir        = os.path.join(self.tmp_examples_dir, '10.0')
-
-    def get_bindings_name(self):
-        return 'labview'
-
-    def get_doc_null_value_name(self):
-        return 'null'
-
-    def get_doc_formatted_param(self, element):
-        return element.get_name().headless
 
     def prepare(self):
         super().prepare()
