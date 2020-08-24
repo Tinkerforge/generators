@@ -10,6 +10,7 @@ if sys.hexversion < 0x3040000:
 import os
 import re
 import tempfile
+import shutil
 import argparse
 import shlex
 import importlib.util
@@ -42,12 +43,50 @@ for path in [os.path.expanduser('~/.zip_diffrc'), './.zip_diffrc']:
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument('--prepare', action='store_true', help='prepare unreleased zip as old diff input')
+parser.add_argument('--unreleased', action='store_true', help='use unreleased zip as old diff input')
 parser.add_argument('--diff-tool', default='geany', help='program to open diff with')
 parser.add_argument('bindings', nargs='?', help='bindings to create diff for')
 
 args = parser.parse_args(argv)
 
 diff_tool = args.diff_tool
+
+if args.prepare:
+    if args.bindings != None:
+        ds = [args.bindings.rstrip('/')]
+    else:
+        parent_dir, bindings = os.path.split(os.getcwd())
+
+        if parent_dir == generators_dir:
+            ds = [bindings]
+        else:
+            ds = sorted(os.listdir(generators_dir))
+
+    for d in ds:
+        if d in ['configs', 'modbus', 'stubs', 'tcpip', 'tvpl', '.git', '__pycache__', '.vscode']:
+            continue
+
+        path = os.path.join(generators_dir, d)
+
+        if not os.path.isdir(path):
+            continue
+
+        zip_path = os.path.join(path, 'zip')
+        zip_old_path = os.path.join(path, 'zip_old')
+
+        if not os.path.isdir(zip_path):
+            print('skipping {0}, no zip directory'.format(d))
+            continue
+
+        print('preparing ' + d)
+
+        if os.path.isdir(zip_old_path):
+            shutil.rmtree(zip_old_path)
+
+        shutil.copytree(zip_path, zip_old_path)
+
+    sys.exit(0)
 
 if args.bindings != None:
     bindings = args.bindings.rstrip('/')
@@ -62,20 +101,23 @@ base = os.path.join(generators_dir, bindings)
 version = common.get_changelog_version(base)
 tmp = tempfile.mkdtemp()
 
-if os.system('bash -cex "curl https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/tinkerforge_{0}_bindings_latest.zip"'.format(bindings, tmp)) != 0:
-    print('download latest.zip failed')
+if args.unreleased:
+    shutil.copytree(os.path.join(base, 'zip_old'), os.path.join(tmp, 'old'))
+else:
+    if os.system('bash -cex "curl https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/old.zip"'.format(bindings, tmp)) != 0:
+        print('download latest.zip failed')
+        sys.exit(1)
+
+    if os.system('bash -cex "pushd {1} && unzip -q -d old old.zip && popd"'.format(bindings, tmp)) != 0:
+        print('unzip latest.zip failed')
+        sys.exit(1)
+
+if os.system('bash -cex "cp {0}/tinkerforge_{1}_bindings_{3}_{4}_{5}.zip {2} && pushd {2} && unzip -q -d new tinkerforge_{1}_bindings_{3}_{4}_{5}.zip && popd"'.format(base, bindings, tmp, *version)) != 0:
+    print('copy and unzip new.zip failed')
     sys.exit(1)
 
-if os.system('bash -cex "pushd {1} && unzip -q -d latest tinkerforge_{0}_bindings_latest.zip && popd"'.format(bindings, tmp)) != 0:
-    print('unzip latest.zip failed')
-    sys.exit(1)
-
-if os.system('bash -cex "cp {0}/tinkerforge_{1}_bindings_{3}_{4}_{5}.zip {2} && pushd {2} && unzip -q -d {3}_{4}_{5} tinkerforge_{1}_bindings_{3}_{4}_{5}.zip && popd"'.format(base, bindings, tmp, *version)) != 0:
-    print('copy/unzip current.zip failed')
-    sys.exit(1)
-
-if os.system('bash -cx "pushd {0} && diff -ru6 latest/ {1}_{2}_{3}/ > diff1.diff; popd"'.format(tmp, *version)) != 0:
-    print('diff latest vs current failed')
+if os.system('bash -cx "pushd {0} && diff -ru6 old/ new/ > diff1.diff; popd"'.format(tmp)) != 0:
+    print('diff old vs new failed')
     sys.exit(1)
 
 with open(os.path.join(tmp, 'diff1.diff'), 'r') as f:
