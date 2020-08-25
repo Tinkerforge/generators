@@ -197,7 +197,13 @@ The ``user_data``  passed to the registration function as well as the device tha
 passed to the registered callback handler.
 
 .. note::
- TODO write note explaining that callbacks are not as useful here as in other bindings.
+ Using callbacks for recurring events is preferred
+ compared to using getters. Polling for a callback requires
+ writing one Byte only. See here :ref:`api_bindings_uc_performance`.
+
+.. warning::
+ Calling bindings function from inside a callback handler is not allowed.
+ See here :ref:`api_bindings_uc_thread_safety`.
 
 {callbacks}
 """,
@@ -217,9 +223,13 @@ unten beschrieben.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist
- *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
- Es wird weniger USB-Bandbreite benutzt und die Latenz ist
- erheblich geringer, da es keine Paketumlaufzeit gibt.
+ gegenüber der Verwendung von Abfragen zu bevorzugen.
+ Es muss nur ein Byte abgefragt werden um zu prüfen ob ein Callback
+ vorliegt. Siehe hier :ref:`api_bindings_uc_performance`.
+
+.. warning::
+ Aus Callback-Handlern heraus können keine Bindings-Funktionen verwendet werden.
+ Siehe hier :ref:`api_bindings_uc_thread_safety`.
 
 {callbacks}
 """
