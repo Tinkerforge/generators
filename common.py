@@ -1241,85 +1241,87 @@ def subgenerate(root_dir, language, generator_class, config_name):
 
         device_identifiers.add(device_identifier)
 
+        generator.generate(device)
+
         # only collect device_infos for default config
         if config_name != 'tinkerforge':
-            if device.is_brick():
-                ref_name = device.get_name().under + '_brick'
-                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3') + '_Brick'
-                software_doc_prefix = device.get_name().camel + '_Brick'
+            continue
 
-                if device.get_device_identifier() != 17:
-                    firmware_url_part = device.get_name().under
-                else:
-                    firmware_url_part = None
+        if device.is_brick():
+            ref_name = device.get_name().under + '_brick'
+            hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3') + '_Brick'
+            software_doc_prefix = device.get_name().camel + '_Brick'
 
-                device_info = (device.get_device_identifier(),
-                               'Brick',
-                               device.get_long_display_name(),
-                               device.get_short_display_name(),
-                               ref_name,
-                               hardware_doc_name,
-                               software_doc_prefix,
-                               device.get_git_name(),
-                               firmware_url_part,
-                               device.has_comcu(),
-                               device.is_released(),
-                               device.is_documented(),
-                               device.is_discontinued(),
-                               True,
-                               device.get_description())
-
-                brick_infos.append(device_info)
-            elif device.is_bricklet():
-                ref_name = device.get_name().under + '_bricklet'
-                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
-                software_doc_prefix = device.get_name().camel + '_Bricklet'
+            if device.get_device_identifier() != 17:
                 firmware_url_part = device.get_name().under
-
-                device_info = (device.get_device_identifier(),
-                               'Bricklet',
-                               device.get_long_display_name(),
-                               device.get_short_display_name(),
-                               ref_name,
-                               hardware_doc_name,
-                               software_doc_prefix,
-                               device.get_git_name(),
-                               firmware_url_part,
-                               device.has_comcu(),
-                               device.is_released(),
-                               device.is_documented(),
-                               device.is_discontinued(),
-                               True,
-                               device.get_description())
-
-                bricklet_infos.append(device_info)
-            elif device.is_tng():
-                ref_name = 'tng_' + device.get_name().under
-                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
-                software_doc_prefix = 'TNG_' + device.get_name().camel
-                firmware_url_part = device.get_name().under
-
-                device_info = (device.get_device_identifier(),
-                               'TNG',
-                               device.get_long_display_name(),
-                               device.get_short_display_name(),
-                               ref_name,
-                               hardware_doc_name,
-                               software_doc_prefix,
-                               device.get_git_name(),
-                               firmware_url_part,
-                               False,
-                               device.is_released(),
-                               device.is_documented(),
-                               device.is_discontinued(),
-                               True,
-                               device.get_description())
-
-                tng_infos.append(device_info)
             else:
-                assert False
+                firmware_url_part = None
 
-        generator.generate(device)
+            device_info = (device.get_device_identifier(),
+                           'Brick',
+                           device.get_long_display_name(),
+                           device.get_short_display_name(),
+                           ref_name,
+                           hardware_doc_name,
+                           software_doc_prefix,
+                           device.get_git_name(),
+                           firmware_url_part,
+                           device.has_comcu(),
+                           device.is_released(),
+                           device.is_documented(),
+                           device.is_discontinued(),
+                           True,
+                           device.get_description())
+
+            brick_infos.append(device_info)
+        elif device.is_bricklet():
+            ref_name = device.get_name().under + '_bricklet'
+            hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
+            software_doc_prefix = device.get_name().camel + '_Bricklet'
+            firmware_url_part = device.get_name().under
+
+            device_info = (device.get_device_identifier(),
+                           'Bricklet',
+                           device.get_long_display_name(),
+                           device.get_short_display_name(),
+                           ref_name,
+                           hardware_doc_name,
+                           software_doc_prefix,
+                           device.get_git_name(),
+                           firmware_url_part,
+                           device.has_comcu(),
+                           device.is_released(),
+                           device.is_documented(),
+                           device.is_discontinued(),
+                           True,
+                           device.get_description())
+
+            bricklet_infos.append(device_info)
+        elif device.is_tng():
+            ref_name = 'tng_' + device.get_name().under
+            hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
+            software_doc_prefix = 'TNG_' + device.get_name().camel
+            firmware_url_part = device.get_name().under
+
+            device_info = (device.get_device_identifier(),
+                           'TNG',
+                           device.get_long_display_name(),
+                           device.get_short_display_name(),
+                           ref_name,
+                           hardware_doc_name,
+                           software_doc_prefix,
+                           device.get_git_name(),
+                           firmware_url_part,
+                           False,
+                           device.is_released(),
+                           device.is_documented(),
+                           device.is_discontinued(),
+                           True,
+                           device.get_description())
+
+            tng_infos.append(device_info)
+        else:
+            assert False
 
     generator.finish()
 
