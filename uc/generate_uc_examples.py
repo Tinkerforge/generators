@@ -128,9 +128,6 @@ class UCExample(common.Example):
     def get_c_source(self):
         template = r"""{defines}{includes}{incomplete}{description}
 
-#include "bindings/hal_common.h"
-#include "bindings/{category_under}_{device_under}.h"
-
 #define UID "{dummy_uid}" // Change {dummy_uid} to the UID of your {device_display}
 
 void check(int rc, const char* msg);
@@ -161,7 +158,8 @@ void example_loop(TF_HalContext *hal) {{
             description = ''
 
         defines = []
-        includes = []
+        includes = ['#include "bindings/hal_common.h"',
+                    format('#include "bindings/{category_under}_{device_under}.h"', self.get_device())]
         functions = []
         sources = []
         cleanups = []
@@ -204,7 +202,7 @@ void example_loop(TF_HalContext *hal) {{
 
         return format(template, self.get_device(),
                                defines=common.wrap_non_empty('', '\n'.join(unique_defines), '\n\n'),
-                               includes=common.wrap_non_empty('\n', '\n'.join(unique_includes), ''),
+                               includes=common.wrap_non_empty('', '\n'.join(unique_includes), ''),
                                incomplete=incomplete,
                                description=description,
 
