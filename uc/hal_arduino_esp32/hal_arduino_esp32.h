@@ -17,7 +17,6 @@
 #include <SPI.h>
 
 typedef struct TF_Port {
-    //external
     int chip_select_pin;
     uint8_t spi;
     char port_name;
@@ -31,8 +30,6 @@ typedef struct TF_HalContext {
     size_t port_count;
     TF_HalCommon hal_common;
 } TF_HalContext;
-
-#define TF_E_INVALID_PIN_CONFIGURATION -100
 
 int tf_hal_arduino_init(struct TF_HalContext *hal, TF_Port *ports, size_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
 

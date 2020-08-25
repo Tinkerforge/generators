@@ -29,10 +29,6 @@ int tf_hal_arduino_init(TF_HalContext *hal, TF_Port *ports, size_t port_count) {
         uses_vspi |= hal->ports[i].spi == VSPI;
     }
 
-    if (!uses_hspi && !uses_vspi) {
-        return TF_E_INVALID_PIN_CONFIGURATION;
-    }
-
     hal->spi_settings = SPISettings(1400000, SPI_MSBFIRST, SPI_MODE3);
 
     if (uses_hspi) {
@@ -127,12 +123,7 @@ void tf_hal_log_newline() {
 }
 
 const char *tf_hal_strerror(int rc) {
-    switch(rc) {
-        case TF_E_INVALID_PIN_CONFIGURATION:
-            return "invalid pin configuration";
-        default:
-            return "unknown error";
-    }
+    return "unknown error";
 }
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
