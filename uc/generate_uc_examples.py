@@ -137,9 +137,7 @@ TF_{device_camel} {device_initial};
 void example_setup(TF_HalContext *hal) {{
 	// Create device object
 	check(tf_{device_under}_create(&{device_initial}, UID, hal), "create device object");
-
-{sources}
-}}
+{sources}}}
 
 void example_loop(TF_HalContext *hal) {{
 	// Poll for callbacks
@@ -158,8 +156,7 @@ void example_loop(TF_HalContext *hal) {{
             description = ''
 
         defines = []
-        includes = ['#include "bindings/hal_common.h"',
-                    format('#include "bindings/{category_under}_{device_under}.h"', self.get_device())]
+        includes = []
         functions = []
         sources = []
         cleanups = []
@@ -175,6 +172,12 @@ void example_loop(TF_HalContext *hal) {{
             includes += cleanup.get_c_includes()
             functions.append(cleanup.get_c_function())
             cleanups.append(cleanup.get_c_source())
+
+        if len(includes) > 0:
+            includes += ['']
+
+        includes += ['#include "bindings/hal_common.h"',
+                     format('#include "bindings/{category_under}_{device_under}.h"', self.get_device())]
 
         unique_includes = []
 
@@ -492,8 +495,6 @@ class UCExampleGetterFunction(common.ExampleGetterFunction, UCExampleArgumentsMi
         while None in printfs:
             printfs.remove(None)
 
-
-
         result = format(template, self.get_device(), self,
                         global_line_prefix=global_line_prefix,
                         variable_declarations=variable_declarations,
@@ -608,7 +609,7 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
 """
 
         result = format(template, self.get_device(), self,
-                        spaces=' ' * (len(self.get_device().get_name().under) + len(self.get_name().under) + 22))
+                        spaces=' ' * (len(self.get_device().get_name().under) + len(self.get_name().under) + 23))
 
         return common.break_string(result, '// ', indent_tail='// ')
 
