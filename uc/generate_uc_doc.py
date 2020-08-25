@@ -264,8 +264,17 @@ Possible error codes are:
 
 (as defined in :file:`errors.h`) as well as the errors returned from
 the hardware abstraction layer (HAL) that is used.
-Use ``tf_strerror`` (also defined in :file:`errors.h`) to get
+
+.. cpp:namespace-push:: {device_under}
+
+Use :cpp:func`tf_strerror` (also defined in :file:`errors.h`) to get
 an error string for an error code.
+
+.. cpp:function:: const char * tf_strerror(int rc)
+
+ Returns an error string for the given error code.
+
+.. cpp:namespace-pop::
 
 Data returned from the device, when a getter is called,
 is handled via output parameters. These parameters are labeled with the
@@ -411,9 +420,10 @@ Konstanten
                           device_doc_rst_ref=self.get_doc_rst_ref_name(),
                           article=article)
 
-        return common.select_lang(api).format(device_doc_rst_ref=self.get_doc_rst_ref_name(),
-                                              doc_str=self.specialize_c_doc_function_links(common.select_lang(self.get_doc())),
-                                              api_str=api_str)
+        return format(common.select_lang(api), self,
+                      device_doc_rst_ref=self.get_doc_rst_ref_name(),
+                      doc_str=self.specialize_c_doc_function_links(common.select_lang(self.get_doc())),
+                      api_str=api_str)
 
     def get_c_doc(self):
         doc  = common.make_rst_header(self)
