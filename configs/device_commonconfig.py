@@ -360,7 +360,7 @@ If the dynamic baudrate feature is enabled, the baudrate set by this
 function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
 
 Regulatory testing is done with the default baudrate. If CE compatibility
-or similar is necessary in you applications we recommend to not change
+or similar is necessary in your applications we recommend to not change
 the baudrate.
 """,
     'de':
@@ -1346,7 +1346,7 @@ def openhab_spitfp_baudrate(port):
         'max': 2000000,
 
         'label': '(Maximum) SPITFP Baudrate Port {}'.format(port),
-        'description': 'The baudrate for Bricklet port {}.\n\nIf you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.\n\nIf the dynamic baudrate feature is enabled, this is the maximum baudrate.\n\nRegulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in you applications we recommend to not change the baudrate.'.format(port),
+        'description': 'The baudrate for Bricklet port {}.\n\nIf you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.\n\nIf the dynamic baudrate feature is enabled, this is the maximum baudrate.\n\nRegulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in your applications we recommend to not change the baudrate.'.format(port),
     }
 
 

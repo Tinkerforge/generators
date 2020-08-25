@@ -151,7 +151,7 @@ If the dynamic baudrate feature is enabled, the baudrate set by this
 function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
 
 Regulatory testing is done with the default baudrate. If CE compatibility
-or similar is necessary in you applications we recommend to not change
+or similar is necessary in your applications we recommend to not change
 the baudrate.
 """,
 'de':
@@ -361,7 +361,7 @@ com['openhab'] = {
             'name': 'SPITFP Baudrate',
             'type': 'integer',
             'label': '(Maximum) SPITFP Baudrate',
-            'description': 'The baudrate used to communicate with the Bricklet.\n\nIf you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.\n\nIf the dynamic baudrate feature is enabled, this is the maximum baudrate.\n\nRegulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in you applications we recommend to not change the baudrate.',
+            'description': 'The baudrate used to communicate with the Bricklet.\n\nIf you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.\n\nIf the dynamic baudrate feature is enabled, this is the maximum baudrate.\n\nRegulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in your applications we recommend to not change the baudrate.',
         },
         update_interval('Set Statistics Callback Configuration', 'Period', 'Statistics', 'all statistics data')
     ],
