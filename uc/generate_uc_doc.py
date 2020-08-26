@@ -355,7 +355,7 @@ Konstanten
  Diese Konstante wird verwendet um {article} {device_display} zu identifizieren.
 
  Die Funktionen :c:func:`tf_{device_under}_get_identity` und :c:func:`tf_hal_get_device_info`
- haben einen ``device_identifier`` Parameter um den Typ
+ haben einen ``device_identifier`` Ausgabe-Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
 .. c:var:: TF_{device_upper}_DEVICE_DISPLAY_NAME

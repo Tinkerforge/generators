@@ -14,10 +14,10 @@ Inhalt der Zip
  source/hal_arduino_esp32/ - HAL für Arduino-Boards mit ESP32 (z.B. NodeMCU)
  source/hal_linux/ - HAL für Linux-Systeme mit spidev Support (z.B. Raspberry Pi)
  source/hal_raspberry_pi/ - HAL spezifisch für Raspberry Pis. Experimental, aber möglicherweise performanter
- 
+
  source/Makefile - Makefile für die Linux-Variante des Demoprogramms
  source/main.c - Linux-Variante des Demoprogramms
- 
+
  source/arduino.ino - Arduino-Variante des Demoprogramms
  source/arduino_esp32.ino - Arduino-ESP32-Variante des Demoprogramms
 
@@ -28,7 +28,7 @@ dokumentiert sind.
 Es gibt aber folgende, bisher nicht dokumentierte Abweichungen:
     - Es werden nur Koprozessor-Bricklets, also die mit einem 7-Pol-Stecker
       unterstützt
-    
+
     - Alle Funktions-, Konstanten- und Typnamen beginnen mit einem tf_ bzw.
       TF_ Präfix.
       Die (dokumentierte) Funktion ptc_v2_get_temperature heißt hier also
@@ -66,9 +66,9 @@ Es gibt aber folgende, bisher nicht dokumentierte Abweichungen:
       falls die Signatur des Handlers nicht korrekt ist.
 
       Um ein Callback zu deregistrieren, kann NULL (C) oder nullptr (C++) als handler übergeben werden.
-    
+
     - Devicefunktionen dürfen nicht aus einem Callback-Handler heraus aufgerufen werden.
-    
+
     - Das Konzept der IP-Connection entfällt, stattdessen wird ein HAL (Hardware Abstraction Layer) benötigt,
       der die plattformspezifische Art und Weise der SPI-Kommunikation abstrahiert.
       HALs für Raspberry Pi sowie Arduinos werden mitgeliefert. Für andere
@@ -82,8 +82,8 @@ Es gibt aber folgende, bisher nicht dokumentierte Abweichungen:
       Durch Aufrufen von
       const char* tf_strerror(int error_code)
       kann eine Fehlerbeschreibung abgefragt werden.
- 
- 
+
+
 Demoprogramm
 ------------
 
@@ -142,8 +142,8 @@ in hal_common.c unter Verwendung der HAL-spezifischen Funktionen)
 
 - uint32_t tf_hal_get_timeout(TF_HalContext *hal);
   Gibt den Timeout zurück.
-  
-- bool tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id);
+
+- int tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id);
   Gibt die UID, den Port und den Device Identifier des n-ten (=index) Bricks/Bricklets zurück.
   Diese Funktion gibt TF_E_DEVICE_NOT_FOUND zurück, wenn der Index zu groß war.
   Es können also alle gefundenen Devices aufgelistet werden, indem die Funktion
@@ -176,7 +176,7 @@ Zunächst muss eine eigene TF_HalContext-Struktur definiert werden. Diese hält
 alle notwendigen Informationen für die SPI-Kommunikation. Zusätzlich wird
 typischerweise eine Instanz von TF_HalCommon, sowie ein Pointer auf ein Array
 von Port-Mapping-Informationen gehalten. Das Format der Array-Einträge kann
-für den spezifischen HAL angepasst werden. Siehe die struct Port in 
+für den spezifischen HAL angepasst werden. Siehe die struct Port in
 hal_arduino_esp32.h und hal_linux.h für Beispiele.
 
 Bricklets werden anhand ihrer UID, sowie des Ports identifiziert, an dem sie
@@ -188,7 +188,7 @@ typischerweise ein Index in das Array der Port-Mapping-Informationen.
 Nachdem die TF_HalContext-Struktur definiert wurde, muss deren
 Initialisierungs-Funktion programmiert werden. Diese hat folgende Aufgaben:
     - Initialisieren der TF_HalCommon-Instanz mit tf_hal_common_init.
-    
+
     - Vorbereiten der SPI-Kommunikation:
       Nachdem die Initialisierungs-Funktion lief, muss SPI-Kommunikation zu allen
       angeschlossenen Devices möglich sein. Alle Chip Select-Pins sollten auf HIGH,
@@ -218,20 +218,20 @@ aufgelistet sind implementiert werden. Diese haben folgende Aufgaben:
       Beispielsweise müssen auf einem Arduino zusätzlich begin oder endTransaction
       der SPI-Einheit aufgerufen werden. Die Bindings stellen sicher, dass immer
       nur ein Chip-Select-Pin gleichzeitig aktiv ist.
-    
+
     - int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length);
       Überträgt length Bytes aus dem write_buffer an das Bricklet am übergebenen
       Port und empfängt ebensoviele Daten (SPI ist bidirektional) in den
       read_buffer. Die übergebenen Buffer sind immer groß genug um length Bytes zu
       lesen oder zu schreiben.
-    
+
     - uint32_t tf_hal_current_time_us(TF_HalContext *hal);
       Gibt die aktuelle Zeit in Mikrosekunden zurück. Die Zeit muss keiner "echten"
       Zeit entsprechen, aber muss (abgesehen von Überläufen) monoton sein.
-    
+
     - void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us);
       Blockiert für die übergebene Zeit in Mikrosekunden.
-    
+
     - TF_HalCommon *tf_hal_get_common(TF_HalContext *hal);
       Gibt die TF_HalCommon-Instanz aus dem spezifischen HalContext zurück.
 
@@ -239,14 +239,14 @@ aufgelistet sind implementiert werden. Diese haben folgende Aufgaben:
       Gibt einen Port-Namen (typischerweise ein Buchstabe von 'A' bis 'Z') für die übergebene
       Port-ID zurück. Dieser Name wird z.B. in get_identity()-Aufrufe gepatcht, falls ein
       Brick/Bricklet direkt am System angeschlossen ist.
-    
+
     - void tf_hal_log_message(const char *msg);
       Loggt die übergebene Nachricht. Je nach Plattform kann hier die
       Standardausgabe (Linux) oder eine serielle Konsole (ESP32) o.Ä. verwendet
       werden. Achtung: Diese Funktion darf nicht davon ausgehen, dass die HAL-Initialisierung
       erfolgreich war, da eventuelle Fehler, die während der Initialisierung
       auftreten auch geloggt werden können sollen.
-    
+
     - const char* tf_hal_strerror(int rc);
       Gibt eine Fehlerbeschreibung für den übergebenen Fehlercode zurück. Die
       Bindings stellen eine Funktion tf_strerror zur Verfügung, die die meisten
