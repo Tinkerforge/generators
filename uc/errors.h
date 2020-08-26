@@ -28,7 +28,7 @@ extern "C" {
 #define TF_E_DEVICE_NOT_FOUND -10
 #define TF_E_WRONG_DEVICE_TYPE -11
 
-#define TF_E_CALLBACK_EXEC -12
+#define TF_E_LOCKED -12
 
 #define TF_E_PORT_NOT_FOUND -13
 

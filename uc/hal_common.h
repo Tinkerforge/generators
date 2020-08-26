@@ -36,7 +36,7 @@ typedef struct TF_HalCommon {
 
     uint32_t timeout;
 
-    bool callback_executing;
+    bool locked;
     uint8_t port_count;
     size_t callback_tick_index;
 
