@@ -12,7 +12,7 @@
 
 #include "../bindings/errors.h"
 
-int tf_hal_create(TF_HalContext *hal, TF_Port *ports, size_t port_count) {
+int tf_hal_create(TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
     if (rc != TF_E_OK) {
         return rc;
@@ -24,7 +24,7 @@ int tf_hal_create(TF_HalContext *hal, TF_Port *ports, size_t port_count) {
     bool uses_hspi = false;
     bool uses_vspi = false;
 
-    for(size_t i = 0; i < port_count; ++i) {
+    for(int i = 0; i < port_count; ++i) {
         uses_hspi |= hal->ports[i].spi == HSPI;
         uses_vspi |= hal->ports[i].spi == VSPI;
     }
@@ -40,7 +40,7 @@ int tf_hal_create(TF_HalContext *hal, TF_Port *ports, size_t port_count) {
         hal->vspi.begin();
     }
 
-    for(size_t i = 0; i < port_count; ++i) {
+    for(int i = 0; i < port_count; ++i) {
         pinMode(hal->ports[i].chip_select_pin, OUTPUT);
         digitalWrite(hal->ports[i].chip_select_pin, HIGH);
     }
@@ -52,7 +52,7 @@ int tf_hal_destroy(TF_HalContext *hal){
     bool uses_hspi = false;
     bool uses_vspi = false;
 
-    for(size_t i = 0; i < hal->port_count; ++i) {
+    for(int i = 0; i < hal->port_count; ++i) {
         uses_hspi |= hal->ports[i].spi == HSPI;
         uses_vspi |= hal->ports[i].spi == VSPI;
     }

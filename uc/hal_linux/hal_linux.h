@@ -28,7 +28,7 @@ typedef struct TF_Port {
 
 struct TF_HalContext {
     TF_Port *ports;
-    int port_count;
+    uint8_t port_count;
 
     int spidev_fd;
     TF_HalCommon hal_common;

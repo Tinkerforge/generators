@@ -18,13 +18,13 @@
 #include "../bindings/macros.h"
 
 typedef struct TF_Port {
-    int chip_select_pin;
+    uint8_t chip_select_pin;
     char port_name;
 } TF_Port;
 
 struct TF_HalContext {
     TF_Port *ports;
-    int port_count;
+    uint8_t port_count;
 
     TF_HalCommon hal_common;
 };
