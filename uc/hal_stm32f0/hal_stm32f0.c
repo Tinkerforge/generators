@@ -204,15 +204,15 @@ void tf_hal_log_newline() {
 }
 
 #ifdef TF_IMPLEMENT_STRERROR
-const char *tf_hal_strerror(int rc) {
+const char *tf_hal_strerror(int e_code) {
     #define TF_CONST_STRING(x) x
-    switch(rc) {
+    switch(e_code) {
         #include "../bindings/errors.inc"
         case TF_E_CHIP_SELECT_FAILED:
             return TF_CONST_STRING("failed to write to chip select GPIO");
         case TF_E_TRANSCEIVE_FAILED:
             return TF_CONST_STRING("failed to transceive over SPI");
-		default:
+        default:
             return TF_CONST_STRING("unknown error");
     }
     #undef TF_CONST_STRING

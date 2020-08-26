@@ -61,12 +61,12 @@ TF_Port ports[9] = {{
 }};*/
 
 // Used to report any error encountered while running the example.
-void check(int rc, const char *c) {
-    if (rc == TF_E_OK) {
+void check(int e_code, const char *c) {
+    if (e_code == TF_E_OK) {
         return;
     }
 
-    tf_hal_printf("Failed to %s: %s (return code %d)\n", c, tf_hal_strerror(rc), rc);
+    tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
 }
 
 TF_HalContext hal;

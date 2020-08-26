@@ -80,7 +80,7 @@ Es gibt aber folgende, bisher nicht dokumentierte Abweichungen:
     - Die Fehlercodes entsprechen nicht denen der normalen C/C++-Bindings.
       Alle Fehlercodes sind in bindings/errors.h bzw. dem verwendeten HAL definiert.
       Durch Aufrufen von
-      const char* tf_strerror(int error_code)
+      const char *tf_hal_strerror(int e_code)
       kann eine Fehlerbeschreibung abgefragt werden.
 
 
@@ -131,7 +131,7 @@ Hinweise zur Implementierung eigener Programme
 
 Fase alle Funktionen der Bindings geben einen int zurück, der einen Fehlercode
 darstellt. Alle Fehlercodes sind in bindings/errors.h bzw. im spezifischen HAL
-aufgelistet. const char* tf_strerror(int); liefert eine Fehlerbeschreibung.
+aufgelistet. const char *tf_hal_strerror(int e_code); liefert eine Fehlerbeschreibung.
 
 Alle HALs stellen automatisch folgende Funktionen zur Verfügung (implementiert
 in hal_common.c unter Verwendung der HAL-spezifischen Funktionen)
@@ -247,12 +247,8 @@ aufgelistet sind implementiert werden. Diese haben folgende Aufgaben:
       erfolgreich war, da eventuelle Fehler, die während der Initialisierung
       auftreten auch geloggt werden können sollen.
 
-    - const char* tf_hal_strerror(int rc);
-      Gibt eine Fehlerbeschreibung für den übergebenen Fehlercode zurück. Die
-      Bindings stellen eine Funktion tf_strerror zur Verfügung, die die meisten
-      Fehlercodes abdeckt. Falls im HAL eigene Fehlercodes definiert werden, müssen
-      diese hier behandlet werden, da tf_strerror, bei den Bindungs unbekannten
-      Fehlern diese tf_hal_strerror aufruft.
+    - const char *tf_hal_strerror(int e_code);
+      Gibt eine Fehlerbeschreibung für den übergebenen Fehlercode zurück.
 
 
 Details zur SPI-Kommunikation

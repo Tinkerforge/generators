@@ -88,7 +88,7 @@ class UCDocDevice(common.Device):
                                                      lambda element, index=None: element.get_c_name(index=index),
                                                      output_parameter='always',
                                                      prefix_elements=[(self.get_name().under, 'TF_' + self.get_name().camel + ' *', 1, 'in')],
-                                                     suffix_elements=[('error_code', 'int', 1, 'return')],
+                                                     suffix_elements=[('e_code', 'int', 1, 'return')],
                                                      stream_length_suffix='_length',
                                                      high_level=True)
 
@@ -242,8 +242,8 @@ unten beschrieben.
 API
 ---
 
-Every function of the C/C++ for microcontrollers bindings returns an integer which describes an
-error code.
+Most functions of the C/C++ bindings for microcontrollers return an error code
+(``e_code``).
 
 Possible error codes are:
 
@@ -286,8 +286,8 @@ See the :ref:`API bindings description <api_bindings_uc>` for details.
 API
 ---
 
-Jede Funktion der C/C++ Bindings gibt einen Integer zurück, welcher einen
-Fehlercode beschreibt.
+Die meistens Funktionen der C/C++ Bindings für Mikrocontroller geben einen
+Fehlercode (``e_code``) zurück
 
 Mögliche Fehlercodes sind:
 

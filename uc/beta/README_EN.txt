@@ -72,7 +72,7 @@ However there are the following changes:
       
     - The error codes are not the same as in the normal C/C++ bindings. All error codes are
       defined in the file bindings/errors.h or in the used HAL.
-      const char* tf_strerror(int error_code)
+      const char *tf_hal_strerror(int e_code)
       returns a description for the given error code.
       
 Demo program
@@ -191,10 +191,8 @@ must be implemented.
       Attention: This function may not assume that the HAL was initialized successfully, to be able
       to log errors that occurred while initializing the HAL.
     
-    - const char* tf_hal_strerror(int rc);
-      Returns an error description for the given error code. The bindings contain the function
-      tf_strerror, that handles most error codes. If this function encounters unknown error codes, it calls
-      tf_hal_strerror of the HAL, so error codes defined for the specific HAL must be handled here.
+    - const char *tf_hal_strerror(int e_code);
+      Returns an error description for the given error code.
   
 Details about the SPI communication
 -----------------------------------

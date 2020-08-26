@@ -5,9 +5,9 @@
 void example_setup(TF_HalContext *hal);
 void example_loop(TF_HalContext *hal);
 
-void check(int rc, const char *c) {
-    if (rc < 0) {
-        tf_hal_printf("Failed to %s: %s (return code %d)\n", c, tf_hal_strerror(rc), rc);
+void check(int e_code, const char *c) {
+    if (e_code < 0) {
+        tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
     }
 }
 

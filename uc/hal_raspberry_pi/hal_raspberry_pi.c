@@ -103,9 +103,9 @@ void tf_hal_log_newline() {
 }
 
 #ifdef TF_IMPLEMENT_STRERROR
-const char *tf_hal_strerror(int rc) {
+const char *tf_hal_strerror(int e_code) {
     #define TF_CONST_STRING(x) x
-    switch(rc) {
+    switch(e_code) {
         #include "../bindings/errors.inc"
         case TF_E_BCM2835_INIT_FAILED:
             return TF_CONST_STRING("bcm2835_init failed. Are you running as root?");

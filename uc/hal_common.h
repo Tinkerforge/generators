@@ -98,7 +98,7 @@ void tf_hal_log_message(const char *msg, uint32_t len) TF_ATTRIBUTE_NONNULL_ALL;
 void tf_hal_log_newline();
 
 #ifdef TF_IMPLEMENT_STRERROR
-const char *tf_hal_strerror(int rc);
+const char *tf_hal_strerror(int e_code);
 #endif
 
 // END - To be implemented by the specific HAL

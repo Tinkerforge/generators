@@ -4,9 +4,9 @@
 
 #include "demo/demo.h"
 
-static void check(int rc, const char *c) {
-    if (rc < 0) {
-        printf("Failed to %s: %s (return code %d)\n", c, tf_hal_strerror(rc), rc);
+static void check(int e_code, const char *c) {
+    if (e_code < 0) {
+        printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
     }
 }
 

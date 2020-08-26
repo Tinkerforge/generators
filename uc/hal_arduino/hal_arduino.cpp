@@ -80,9 +80,9 @@ void tf_hal_log_newline() {
 }
 
 #ifdef TF_IMPLEMENT_STRERROR
-const char *tf_hal_strerror(int rc) {
+const char *tf_hal_strerror(int e_code) {
     #define TF_CONST_STRING(x) PSTR(x)
-    switch(rc) {
+    switch(e_code) {
         #include "../bindings/errors.inc"
         default:
             return TF_CONST_STRING("unknown error");
