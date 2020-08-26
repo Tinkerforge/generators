@@ -283,10 +283,14 @@ int tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], ch
     if (index >= hal_common->used) {
         return TF_E_DEVICE_NOT_FOUND;
     }
+    if (ret_uid != NULL)
+        tf_base58_encode(hal_common->uids[index], ret_uid);
 
-    tf_base58_encode(hal_common->uids[index], ret_uid);
-    *ret_port_name = tf_hal_get_port_name(hal, hal_common->port_ids[index]);
-    *ret_device_id = hal_common->dids[index];
+    if (ret_port_name != NULL)
+        *ret_port_name = tf_hal_get_port_name(hal, hal_common->port_ids[index]);
+
+    if (ret_port_name != NULL)
+        *ret_device_id = hal_common->dids[index];
     return TF_E_OK;
 }
 
