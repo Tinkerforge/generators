@@ -142,11 +142,11 @@ that handles the following tasks:
       When your initialization function returns, SPI communication must be possible to all attached devices.
       All chip select pins must be set to HIGH (e.g. disabled) See below for details about the SPI communication.
       
-    - Call tf_hal_finish_init
+    - Call tf_hal_common_prepare
       This is normally the last step in the initialization. SPI communication must be possible here.
       The function expects the number of usable ports as well as a timeout in micro seconds, for how long
       the bindungs should try to reach a device under one of the ports.
-      tf_hal_finish_init then builds a list of reachable devices and stores it in the TF_HalCommon instance.
+      tf_hal_common_prepare then builds a list of reachable devices and stores it in the TF_HalCommon instance.
       
 Finally all functions defined in bindings/hal_common.h between 
 // BEGIN - To be implemented by the specific HAL

@@ -8,8 +8,8 @@
 
 #include "hal_fake.h"
 
-int tf_hal_fake_init(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
-    int rc = tf_hal_common_init(hal);
+int tf_hal_fake_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
+    int rc = tf_hal_common_create(hal);
     if (rc != TF_E_OK) {
         return rc;
     }
@@ -17,7 +17,7 @@ int tf_hal_fake_init(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_cou
     hal->ports = ports;
     hal->port_count = port_count;
 
-    return tf_hal_finish_init(hal, port_count, 200000);
+    return tf_hal_common_prepare(hal, port_count, 200000);
 }
 
 int tf_hal_destroy(TF_HalContext *hal) {

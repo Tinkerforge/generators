@@ -32,6 +32,6 @@ struct TF_HalContext {
 #define TF_E_BCM2835_INIT_FAILED -100
 #define TF_E_BCM2835_SPI_BEGIN_FAILED -101
 
-int tf_hal_raspberry_pi_init(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_raspberry_pi_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
 
 #endif

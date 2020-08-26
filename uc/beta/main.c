@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
         .port_name = 'E'
     }};*/
 
-    check(tf_hal_linux_init(&hal, "/dev/spidev0.0", ports, sizeof(ports)/sizeof(ports[0])), "init hal");
+    check(tf_hal_linux_create(&hal, "/dev/spidev0.0", ports, sizeof(ports)/sizeof(ports[0])), "hal create");
 
     demo_setup(&hal);
 

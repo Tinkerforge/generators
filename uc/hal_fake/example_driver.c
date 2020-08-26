@@ -19,7 +19,7 @@ int main() {
         .port_name = 'A'
     }};
 
-    check(tf_hal_fake_init(&hal, ports, sizeof(ports)/sizeof(ports[0])), "init hal");
+    check(tf_hal_fake_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
 
     example_setup(&hal);
 

@@ -32,7 +32,7 @@ void setup() {
   delay(3000);
   Serial.println("Hello World!");
 
-  check(tf_hal_arduino_init(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal init");
+  check(tf_hal_arduino_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
   demo_setup(&hal);
 }
 

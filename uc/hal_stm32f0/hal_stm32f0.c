@@ -40,15 +40,15 @@ void DMA1_Channel4_5_IRQHandler(void) {
 	HAL_DMA_IRQHandler(tf_hal->ports[1].spi.hdmatx);
 }
 
-// Filled by tf_hal_stm32f0_init to allow for faster access during operation
+// Filled by tf_hal_stm32f0_create to allow for faster access during operation
 static TF_Port    *tf_hal_stm32f0_port[TF_HAL_STM32F0_MAX_PORT_COUNT]    = {NULL};
 static TF_STMGPIO *tf_hal_stm32f0_cs_gpio[TF_HAL_STM32F0_MAX_PORT_COUNT] = {NULL};
 static uint8_t     tf_hal_stm32f0_port_count                             = 0;
 
-int tf_hal_stm32f0_init(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_count) {
+int tf_hal_stm32f0_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_count) {
 	tf_hal = hal;
 
-	int rc = tf_hal_common_init(hal);
+	int rc = tf_hal_common_create(hal);
 	if (rc != TF_E_OK) {
 		return rc;
 	}
@@ -134,7 +134,7 @@ int tf_hal_stm32f0_init(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_p
 
 	tf_hal_stm32f0_port_count = count;
 
-	return tf_hal_finish_init(hal, tf_hal_stm32f0_port_count, 200000);
+	return tf_hal_common_prepare(hal, tf_hal_stm32f0_port_count, 200000);
 }
 
 int tf_hal_destroy(TF_HalContext *hal) {

@@ -12,8 +12,8 @@
 
 #include "../bindings/errors.h"
 
-int tf_hal_arduino_init(TF_HalContext *hal, TF_Port *ports, size_t port_count) {
-    int rc = tf_hal_common_init(hal);
+int tf_hal_arduino_create(TF_HalContext *hal, TF_Port *ports, size_t port_count) {
+    int rc = tf_hal_common_create(hal);
     if (rc != TF_E_OK) {
         return rc;
     }
@@ -29,7 +29,7 @@ int tf_hal_arduino_init(TF_HalContext *hal, TF_Port *ports, size_t port_count) {
         digitalWrite(hal->ports[i].chip_select_pin, HIGH);
     }
 
-    return tf_hal_finish_init(hal, port_count, 50000);
+    return tf_hal_common_prepare(hal, port_count, 50000);
 }
 
 int tf_hal_shutdown(TF_HalContext *hal) {

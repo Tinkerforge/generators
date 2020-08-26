@@ -194,12 +194,12 @@ Initialisierungs-Funktion programmiert werden. Diese hat folgende Aufgaben:
       angeschlossenen Devices möglich sein. Alle Chip Select-Pins sollten auf HIGH,
       also disabled gesetzt werden. (Siehe "Details zur SPI-Kommunikation")
 
-    - Aufrufen von tf_hal_finish_init:
+    - Aufrufen von tf_hal_common_prepare:
       Das ist typischerweise der letzte Schritt der Initialisierung.
       SPI-Kommunikation muss hier bereits möglich sein. Die Funktion erwartet
       die Anzahl der verfügbaren Ports, sowie einen Timeout in micro seconds, wie lange an
       jedem Port auf eine Bricklet-Antwort gewartet werden soll.
-      tf_hal_finish_init baut dann eine Liste erreichbarer Bricklets und legt sie
+      tf_hal_common_prepare baut dann eine Liste erreichbarer Bricklets und legt sie
       in der TF_HalCommon-Instanz ab.
 
 Als letztes müssen alle Funktionen, die in bindings/hal_common.h zwischen

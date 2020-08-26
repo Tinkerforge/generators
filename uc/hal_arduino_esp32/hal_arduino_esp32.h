@@ -31,6 +31,6 @@ typedef struct TF_HalContext {
     TF_HalCommon hal_common;
 } TF_HalContext;
 
-int tf_hal_arduino_init(struct TF_HalContext *hal, TF_Port *ports, size_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_arduino_create(struct TF_HalContext *hal, TF_Port *ports, size_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
 
 #endif

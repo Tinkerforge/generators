@@ -55,8 +55,8 @@ static int open_spi_port(TF_Port *port) {
     return TF_E_OK;
 }
 
-int tf_hal_linux_init(struct TF_HalContext *hal, const char *spidev_path, TF_Port *ports, uint8_t port_count) {
-    int rc = tf_hal_common_init(hal);
+int tf_hal_linux_create(struct TF_HalContext *hal, const char *spidev_path, TF_Port *ports, uint8_t port_count) {
+    int rc = tf_hal_common_create(hal);
     if (rc != TF_E_OK) {
         return rc;
     }
@@ -108,7 +108,7 @@ int tf_hal_linux_init(struct TF_HalContext *hal, const char *spidev_path, TF_Por
         return TF_E_SPI_DEV_CONFIG_FAILED; // FIXME: close spidev_fd, close gpio_fd and unexport gpio cs pin
     }
 
-    return tf_hal_finish_init(hal, port_count, 200000);
+    return tf_hal_common_prepare(hal, port_count, 200000);
 }
 
 int tf_hal_destroy(TF_HalContext *hal) {

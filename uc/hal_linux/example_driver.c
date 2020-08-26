@@ -74,7 +74,7 @@ TF_HalContext hal;
 int main() {
     printf("Hello World!\n");
     
-    check(tf_hal_linux_init(&hal, "/dev/spidev0.0", ports, sizeof(ports)/sizeof(ports[0])), "init hal");
+    check(tf_hal_linux_create(&hal, "/dev/spidev0.0", ports, sizeof(ports)/sizeof(ports[0])), "hal create");
 
     example_setup(&hal);
 

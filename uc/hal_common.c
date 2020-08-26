@@ -17,13 +17,13 @@
 #include "macros.h"
 #include "errors.h"
 
-int tf_hal_common_init(TF_HalContext *hal) {
+int tf_hal_common_create(TF_HalContext *hal) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
     memset(hal_common, 0, sizeof(TF_HalCommon));
     return TF_E_OK;
 }
 
-int tf_hal_finish_init(TF_HalContext *hal, uint8_t port_count, uint32_t port_discovery_timeout_us) {
+int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_discovery_timeout_us) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
     hal_common->timeout = port_discovery_timeout_us;
     hal_common->port_count = port_count;
