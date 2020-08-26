@@ -89,7 +89,7 @@ class CDocDevice(common.Device):
                                                      lambda element, index=None: element.get_c_name(index=index),
                                                      output_parameter='always',
                                                      prefix_elements=[(self.get_name().under, self.get_name().camel + ' *', 1, 'in')],
-                                                     suffix_elements=[('e_result', 'int', 1, 'return')],
+                                                     suffix_elements=[('e_code', 'int', 1, 'return')],
                                                      stream_length_suffix='_length',
                                                      high_level=True)
             meta_table = common.make_rst_meta_table(meta)
@@ -290,7 +290,7 @@ unten beschrieben.
 API
 ---
 
-Most functions of the C/C++ bindings return an error code (``e_result``).
+Most functions of the C/C++ bindings return an error code (``e_code``).
 Data returned from the device, when a getter is called,
 is handled via output parameters. These parameters are labeled with the
 ``ret_`` prefix.
@@ -330,7 +330,7 @@ All functions listed below are thread-safe.
 API
 ---
 
-Die meistens Funktionen der C/C++ Bindings geben einen Fehlercode (``e_result``)
+Die meistens Funktionen der C/C++ Bindings geben einen Fehlercode (``e_code``)
 zurück. Vom Gerät zurückgegebene Daten werden, wenn eine
 Abfrage aufgerufen wurde, über Ausgabeparameter gehandhabt. Diese Parameter
 sind mit dem ``ret_`` Präfix gekennzeichnet.
