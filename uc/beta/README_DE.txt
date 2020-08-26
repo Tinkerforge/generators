@@ -145,7 +145,7 @@ in hal_common.c unter Verwendung der HAL-spezifischen Funktionen)
   
 - bool tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id);
   Gibt die UID, den Port und den Device Identifier des n-ten (=index) Bricks/Bricklets zurück.
-  Diese Funktion gibt false zurück, wenn der Index zu groß war.
+  Diese Funktion gibt TF_E_DEVICE_NOT_FOUND zurück, wenn der Index zu groß war.
   Es können also alle gefundenen Devices aufgelistet werden, indem die Funktion
   in einer Schleife mit von 0 aus wachsendem Index verwendet wird, bis einmal
   false zurückgegeben wird.

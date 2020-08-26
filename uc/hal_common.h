@@ -47,7 +47,7 @@ typedef struct TF_HalContext TF_HalContext;
 
 void tf_hal_set_timeout(TF_HalContext *hal, uint32_t timeout_us) TF_ATTRIBUTE_NONNULL_ALL;
 uint32_t tf_hal_get_timeout(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
-bool tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id) TF_ATTRIBUTE_NONNULL_ALL;
 int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us) TF_ATTRIBUTE_NONNULL_ALL;
 
 bool tf_hal_deadline_elapsed(TF_HalContext *hal, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL;

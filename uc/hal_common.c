@@ -273,7 +273,7 @@ int tf_hal_get_port_id(TF_HalContext *hal, uint32_t uid, uint8_t *port_id, int *
     return TF_E_DEVICE_NOT_FOUND;
 }
 
-bool tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id) {
+int tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
 
     // Increment index to skip over the 0th inventory entry
@@ -281,13 +281,13 @@ bool tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], c
     ++index;
 
     if (index >= hal_common->used) {
-        return false;
+        return TF_E_DEVICE_NOT_FOUND;
     }
 
     tf_base58_encode(hal_common->uids[index], ret_uid);
     *ret_port_name = tf_hal_get_port_name(hal, hal_common->port_ids[index]);
     *ret_device_id = hal_common->dids[index];
-    return true;
+    return TF_E_OK;
 }
 
 static TF_TfpContext *next_callback_tick_tfp(TF_HalContext *hal) {
