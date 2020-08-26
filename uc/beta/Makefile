@@ -23,7 +23,6 @@ endif
 SOURCES_BINDINGS := bindings/base58.c \
 					bindings/bricklet_unknown.c \
 					bindings/endian_convert.c \
-					bindings/errors.c \
 					bindings/hal_common.c \
 					bindings/packetbuffer.c \
 					bindings/pearson_hash.c \

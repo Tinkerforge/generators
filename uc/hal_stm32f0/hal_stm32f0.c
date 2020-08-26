@@ -14,6 +14,7 @@
 #include "bricklib2/hal/system_timer/system_timer.h"
 
 #include "bindings/errors.h"
+#include "bindings/config.h"
 
 #include "configs/config.h"
 
@@ -202,16 +203,21 @@ void tf_hal_log_newline() {
     uartbb_tx("\n\r");
 }
 
+#ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int rc) {
-	switch(rc) {
+    #define TF_CONST_STRING(x) x
+    switch(rc) {
+        #include "../bindings/errors.inc"
         case TF_E_CHIP_SELECT_FAILED:
-            return "failed to write to chip select GPIO";
+            return TF_CONST_STRING("failed to write to chip select GPIO");
         case TF_E_TRANSCEIVE_FAILED:
-            return "failed to transceive over SPI";
+            return TF_CONST_STRING("failed to transceive over SPI");
 		default:
-			return "unknown error";
-	}
+            return TF_CONST_STRING("unknown error");
+    }
+    #undef TF_CONST_STRING
 }
+#endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
 	if(port_id > tf_hal_stm32f0_port_count)

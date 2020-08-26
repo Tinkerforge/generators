@@ -96,7 +96,10 @@ char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONN
 // These functions have to work without an initialized HAL to be able to report HAL initialization info/errors, so don't pass the handle here.
 void tf_hal_log_message(const char *msg, uint32_t len) TF_ATTRIBUTE_NONNULL_ALL;
 void tf_hal_log_newline();
+
+#ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int rc);
+#endif
 
 // END - To be implemented by the specific HAL
 

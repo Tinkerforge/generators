@@ -23,7 +23,6 @@ endif
 SOURCES_BINDINGS := bindings/base58.c \
 					bindings/bricklet_unknown.c \
 					bindings/endian_convert.c \
-					bindings/errors.c \
 					bindings/hal_common.c \
 					bindings/packetbuffer.c \
 					bindings/pearson_hash.c \
@@ -36,7 +35,7 @@ SOURCES_HAL_LINUX := hal_linux/hal_linux.c \
 					hal_linux/utils.c \
 
 # TODO: List your used devices here
-SOURCES_DEVICES :=  
+SOURCES_DEVICES :=
 
 # TODO: Add your example file below
 SOURCES := example_driver.c \

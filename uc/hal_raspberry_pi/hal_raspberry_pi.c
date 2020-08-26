@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include <time.h>
 
+#include "../bindings/config.h"
+
 #include "bcm2835.h"
 
 #define BRICKLET_STACK_SPI_CONFIG_MODE           SPI_MODE_3
@@ -100,16 +102,21 @@ void tf_hal_log_newline() {
     puts("");
 }
 
+#ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int rc) {
+    #define TF_CONST_STRING(x) x
     switch(rc) {
+        #include "../bindings/errors.inc"
         case TF_E_BCM2835_INIT_FAILED:
-            return "bcm2835_init failed. Are you running as root?";
+            return TF_CONST_STRING("bcm2835_init failed. Are you running as root?");
         case TF_E_BCM2835_SPI_BEGIN_FAILED:
-            return "bcm2835_spi_begin failed. Are you running as root?";
+            return TF_CONST_STRING("bcm2835_spi_begin failed. Are you running as root?");
         default:
-            return "unknown error";
+            return TF_CONST_STRING("unknown error");
     }
+    #undef TF_CONST_STRING
 }
+#endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
     if(port_id > hal->port_count)

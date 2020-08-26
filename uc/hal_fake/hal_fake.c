@@ -8,6 +8,8 @@
 
 #include "hal_fake.h"
 
+#include "../bindings/config.h"
+
 int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
     if (rc != TF_E_OK) {
@@ -68,10 +70,17 @@ void tf_hal_log_newline() {
 
 }
 
+#ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int rc) {
-    (void) rc;
-    return "unknown error";
+    #define TF_CONST_STRING(x) x
+    switch(rc) {
+        #include "../bindings/errors.inc"
+        default:
+            return TF_CONST_STRING("unknown error");
+    }
+    #undef TF_CONST_STRING
 }
+#endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
     if(port_id > hal->port_count)

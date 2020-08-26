@@ -24,8 +24,8 @@ extern "C" void check(int rc, const char *c) {
     if (rc == TF_E_OK) {
         return;
     }
-    
-    tf_hal_printf("Failed to %s: %s (return code %d)\n", c, tf_strerror(rc), rc);
+
+    tf_hal_printf("Failed to %s: %s (return code %d)\n", c, tf_hal_strerror(rc), rc);
 }
 
 TF_HalContext hal;
@@ -34,7 +34,7 @@ void setup() {
     Serial.begin(115200);
     delay(3000);
     Serial.println("Hello World!");
-    
+
     check(tf_hal_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
     example_setup(&hal);
 }

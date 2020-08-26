@@ -27,6 +27,9 @@ extern "C" {
 // Set this to a higher log level to reduce debug output and program size.
 #define TF_LOG_LEVEL TF_LOG_LEVEL_INFO
 
+// Remove this to remove the tf_hal_strerror implementation.
+#define TF_IMPLEMENT_STRERROR
+
 #ifdef __cplusplus
 }
 #endif

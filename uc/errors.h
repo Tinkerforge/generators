@@ -32,8 +32,6 @@ extern "C" {
 
 #define TF_E_PORT_NOT_FOUND -13
 
-const char *tf_strerror(int rc);
-
 #ifdef __cplusplus
 }
 #endif

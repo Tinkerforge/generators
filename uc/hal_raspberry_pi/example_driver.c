@@ -66,7 +66,7 @@ void check(int rc, const char *c) {
         return;
     }
 
-    tf_hal_printf("Failed to %s: %s (return code %d)\n", c, tf_strerror(rc), rc);
+    tf_hal_printf("Failed to %s: %s (return code %d)\n", c, tf_hal_strerror(rc), rc);
 }
 
 TF_HalContext hal;

@@ -65,15 +65,15 @@ void check(int rc, const char *c) {
     if (rc == TF_E_OK) {
         return;
     }
-    
-    tf_hal_printf("Failed to %s: %s (return code %d)\n", c, tf_strerror(rc), rc);
+
+    tf_hal_printf("Failed to %s: %s (return code %d)\n", c, tf_hal_strerror(rc), rc);
 }
 
 TF_HalContext hal;
 
 int main() {
     printf("Hello World!\n");
-    
+
     check(tf_hal_create(&hal, "/dev/spidev0.0", ports, sizeof(ports)/sizeof(ports[0])), "hal create");
 
     example_setup(&hal);

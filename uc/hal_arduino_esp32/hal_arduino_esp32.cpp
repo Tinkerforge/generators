@@ -10,6 +10,7 @@
 #include "SPI.h"
 #include <Arduino.h>
 
+#include "../bindings/config.h"
 #include "../bindings/errors.h"
 
 int tf_hal_create(TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
@@ -122,9 +123,17 @@ void tf_hal_log_newline() {
     Serial.println("");
 }
 
+#ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int rc) {
-    return "unknown error";
+    #define TF_CONST_STRING(x) PSTR(x)
+    switch(rc) {
+        #include "../bindings/errors.inc"
+        default:
+            return TF_CONST_STRING("unknown error");
+    }
+    #undef TF_CONST_STRING
 }
+#endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
     if(port_id > hal->port_count)

@@ -109,7 +109,6 @@ class UCExamplesTester(common.Tester):
                  '/tmp/tester/uc/source/bindings/base58.c',
                  '/tmp/tester/uc/source/bindings/bricklet_unknown.c',
                  '/tmp/tester/uc/source/bindings/endian_convert.c',
-                 '/tmp/tester/uc/source/bindings/errors.c',
                  '/tmp/tester/uc/source/bindings/hal_common.c',
                  '/tmp/tester/uc/source/bindings/packetbuffer.c',
                  '/tmp/tester/uc/source/bindings/pearson_hash.c',

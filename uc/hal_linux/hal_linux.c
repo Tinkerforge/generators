@@ -20,6 +20,8 @@
 #include <unistd.h>
 #include <time.h>
 
+#include "../bindings/config.h"
+
 #include "utils.h"
 #include "gpio_sysfs.h"
 
@@ -163,27 +165,32 @@ void tf_hal_log_newline() {
     puts("");
 }
 
+#ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int rc) {
+    #define TF_CONST_STRING(x) x
     switch(rc) {
+        #include "../bindings/errors.inc"
         case TF_E_EXPORT_GPIO_FAILED:
-            return "failed to export GPIO";
+            return TF_CONST_STRING("failed to export GPIO");
         case TF_E_SET_GPIO_DIRECTION_FAILED:
-            return "failed to set GPIO direction";
+            return TF_CONST_STRING("failed to set GPIO direction");
         case TF_E_OPEN_GPIO_FAILED:
-            return "failed to open GPIO";
+            return TF_CONST_STRING("failed to open GPIO");
 
         case TF_E_OPEN_SPI_DEV_FAILED:
-            return "failed to open SPI device";
+            return TF_CONST_STRING("failed to open SPI device");
         case TF_E_SPI_DEV_CONFIG_FAILED:
-            return "failed to configure SPI device";
+            return TF_CONST_STRING("failed to configure SPI device");
         case TF_E_CHIP_SELECT_FAILED:
-            return "failed to write to chip select GPIO";
+            return TF_CONST_STRING("failed to write to chip select GPIO");
         case TF_E_TRANSCEIVE_FAILED:
-            return "failed to transceive over SPI";
+            return TF_CONST_STRING("failed to transceive over SPI");
         default:
-            return "unknown error";
+            return TF_CONST_STRING("unknown error");
     }
+    #undef TF_CONST_STRING
 }
+#endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
     if(port_id > hal->port_count)

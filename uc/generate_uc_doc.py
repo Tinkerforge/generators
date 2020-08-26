@@ -265,16 +265,8 @@ Possible error codes are:
 (as defined in :file:`errors.h`) as well as the errors returned from
 the hardware abstraction layer (HAL) that is used.
 
-.. cpp:namespace-push:: {device_under}
-
-Use :cpp:func`tf_strerror` (also defined in :file:`errors.h`) to get
+Use :cpp:func`tf_hal_strerror` (defined in the HAL's header file) to get
 an error string for an error code.
-
-.. cpp:function:: const char * tf_strerror(int rc)
-
- Returns an error string for the given error code.
-
-.. cpp:namespace-pop::
 
 Data returned from the device, when a getter is called,
 is handled via output parameters. These parameters are labeled with the
@@ -315,8 +307,8 @@ Mögliche Fehlercodes sind:
 * TF\_\ **E**\\ _PORT_NOT_FOUND = -13
 
 (wie in :file:`errors.h` definiert), sowie die Fehlercodes des verwendeten
-Hardware-Abstraction-Layers (HALs). Mit ``tf_strerror`` (ebenfalls in :file:`errors.h`
-definiert) kann ein Fehlerstring zu einem Fehlercode abgefragt werden.
+Hardware-Abstraction-Layers (HALs). Mit ``tf_hal_strerror`` (im Header das HALs definiert)
+kann ein Fehlerstring zu einem Fehlercode abgefragt werden.
 
 Vom Gerät zurückgegebene Daten werden, wenn eine
 Abfrage aufgerufen wurde, über Ausgabeparameter gehandhabt. Diese Parameter
