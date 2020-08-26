@@ -57,6 +57,6 @@ struct TF_HalContext {
 #define TF_E_CHIP_SELECT_FAILED -100
 #define TF_E_TRANSCEIVE_FAILED -101
 
-int tf_hal_stm32f0_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_count) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_count) TF_ATTRIBUTE_NONNULL_ALL;
 
 #endif

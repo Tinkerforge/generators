@@ -26,8 +26,8 @@
 // and the SPI clock is not stable...
 #define BRICKLET_STACK_SPI_CONFIG_MAX_SPEED_HZ   1400000
 
-int tf_hal_raspberry_pi_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
+int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     if (rc != TF_E_OK) {
         return rc;
     }

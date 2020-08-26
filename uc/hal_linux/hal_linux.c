@@ -55,8 +55,8 @@ static int open_spi_port(TF_Port *port) {
     return TF_E_OK;
 }
 
-int tf_hal_linux_create(struct TF_HalContext *hal, const char *spidev_path, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
+int tf_hal_create(struct TF_HalContext *hal, const char *spidev_path, TF_Port *ports, uint8_t port_count) {
     if (rc != TF_E_OK) {
         return rc;
     }
