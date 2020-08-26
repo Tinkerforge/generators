@@ -12,8 +12,8 @@
 
 #include "../bindings/errors.h"
 
-    int rc = tf_hal_common_create(hal);
 int tf_hal_create(TF_HalContext *hal, TF_Port *ports, size_t port_count) {
+    int rc = tf_hal_common_create(hal);
     if (rc != TF_E_OK) {
         return rc;
     }

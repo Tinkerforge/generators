@@ -32,5 +32,6 @@ typedef struct TF_HalContext {
 } TF_HalContext;
 
 int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, size_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_destroy(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
 
 #endif

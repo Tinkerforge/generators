@@ -17,7 +17,7 @@
 #include "macros.h"
 #include "errors.h"
 
-int tf_hal_create(TF_HalContext *hal) {
+int tf_hal_common_create(TF_HalContext *hal) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
     memset(hal_common, 0, sizeof(TF_HalCommon));
     return TF_E_OK;

@@ -82,7 +82,6 @@ bool tf_hal_enumerate_handler(TF_HalContext *hal, uint8_t port_id, TF_Packetbuff
 
 
 // BEGIN - To be implemented by the specific HAL
-int tf_hal_destroy(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 uint32_t tf_hal_current_time_us(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
