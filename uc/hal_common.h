@@ -18,6 +18,8 @@
 #include "packetbuffer.h"
 #include "macros.h"
 
+#include "spitfp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,6 +39,8 @@ typedef struct TF_HalCommon {
     bool callback_executing;
     uint8_t port_count;
     size_t callback_tick_index;
+
+    uint8_t empty_buf[TF_SPITFP_MAX_MESSAGE_LENGTH];
 } TF_HalCommon;
 
 typedef struct TF_HalContext TF_HalContext;

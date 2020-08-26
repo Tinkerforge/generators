@@ -25,8 +25,6 @@
 #define STATE_RECEIVE 3
 #define STATE_BUILD_ACK 4
 
-static uint8_t empty_buf[TF_SPITFP_MAX_MESSAGE_LENGTH] = {0};
-
 static bool on_receive_packet(TF_SpiTfpContext *spitfp) {
     uint8_t packet_length;
     tf_packetbuffer_pop(&spitfp->recv_buf, &packet_length);
@@ -157,7 +155,8 @@ static int tf_spitfp_transceive(TF_SpiTfpContext *spitfp, uint8_t send_buf_offse
 }
 
 static int tf_spitfp_receive(TF_SpiTfpContext *spitfp, uint8_t length) {
-    return tf_spitfp_transceive_buffer(spitfp, empty_buf, 0, length);
+    TF_HalCommon *common = tf_hal_get_common(spitfp->hal);
+    return tf_spitfp_transceive_buffer(spitfp, common->empty_buf, 0, length);
 }
 
 uint8_t tf_spitfp_build_packet(TF_SpiTfpContext *spitfp, bool retransmission) {
