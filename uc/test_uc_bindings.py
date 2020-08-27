@@ -93,7 +93,7 @@ class UCExamplesTester(common.Tester):
         elif self.compiler == 'mingw32-g++':
             args += ['x86_64-w64-mingw32-g++', '-Wno-error=return-type']
         elif self.compiler == 'clang':
-            args += ['clang', '-std=c99', '-pthread']
+            args += ['clang', '-std=c99', '-pthread', '-Weverything', '-Wno-padded']
         elif self.compiler == 'scan-build clang':
             args += ['scan-build', 'clang', '-std=c99', '-pthread']
         else:
@@ -144,6 +144,9 @@ class UCExamplesTester(common.Tester):
 def run(root_dir):
     extra_paths = []
 
+    if not UCExamplesTester(root_dir, 'clang', extra_paths).run():
+        return False
+
     if not UCExamplesTester(root_dir, 'gcc', extra_paths).run():
         return False
 
@@ -156,8 +159,7 @@ def run(root_dir):
     if not UCExamplesTester(root_dir, 'mingw32-g++', extra_paths).run():
         return False
 
-    if not UCExamplesTester(root_dir, 'clang', extra_paths).run():
-        return False
+
 
     return UCExamplesTester(root_dir, 'scan-build clang', extra_paths).run()
 
