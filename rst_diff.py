@@ -51,22 +51,30 @@ args = parser.parse_args(argv)
 
 diff_tool = args.diff_tool
 
+ignored = ['configs', 'stubs', 'json', 'saleae', 'tvpl', '.git', '__pycache__', '.vscode']
+
+if args.bindings != None:
+    b = args.bindings.rstrip('/')
+
+    if not os.path.isdir(os.path.join(generators_dir, b)):
+        print('error: {0} is not a directory'.format(b))
+        sys.exit(1)
+
+    bindings = [b]
+elif os.path.samefile(generators_dir, os.getcwd()):
+    bindings = sorted([x for x in os.listdir(generators_dir) if x not in ignored])
+else:
+    parent_dir, b = os.path.split(os.getcwd())
+
+    if parent_dir != generators_dir:
+        print('error: wrong working directory, cannot auto-detect bindings')
+        sys.exit(1)
+
+    bindings = [b]
+
 if args.prepare:
-    if args.bindings != None:
-        ds = [args.bindings.rstrip('/')]
-    else:
-        parent_dir, bindings = os.path.split(os.getcwd())
-
-        if parent_dir == generators_dir:
-            ds = [bindings]
-        else:
-            ds = sorted(os.listdir(generators_dir))
-
-    for d in ds:
-        if d in ['configs', 'stubs', 'json', 'tvpl', '.git', '__pycache__', '.vscode']:
-            continue
-
-        path = os.path.join(generators_dir, d)
+    for b in bindings:
+        path = os.path.join(generators_dir, b)
 
         if not os.path.isdir(path):
             continue
@@ -75,45 +83,21 @@ if args.prepare:
         doc_old_path = os.path.join(path, 'doc_old')
 
         if not os.path.isdir(doc_path):
-            print('skipping {0}, no doc directory'.format(d))
+            print('skipping {0}, no doc directory'.format(b))
             continue
 
-        print('preparing ' + d)
+        if not os.path.isdir(doc_old_path):
+            print('skipping {0}, no old doc directory'.format(b))
+            continue
+
+        print('preparing ' + b)
 
         if os.path.isdir(doc_old_path):
             shutil.rmtree(doc_old_path)
 
         shutil.copytree(doc_path, doc_old_path)
 else:
-    if args.bindings != None:
-        bindings = args.bindings.rstrip('/')
-    else:
-        parent_dir, bindings = os.path.split(os.getcwd())
-
-        if parent_dir != generators_dir:
-            print('error: wrong working directory, cannot auto-detect bindings')
-            sys.exit(1)
-
-    base = os.path.join(generators_dir, bindings)
-    tmp = tempfile.mkdtemp()
-
-    if os.system('bash -cx "pushd {0} && diff -U 15 -r doc_old/ doc/ > {1}/diff1.diff; popd"'.format(base, tmp)) != 0:
-        print('diff old vs new failed')
-        sys.exit(1)
-
-    with open(os.path.join(tmp, 'diff1.diff'), 'r') as f:
-        diffs = [[[]]] # list of diffs as lists of lines
-
-        for line in f.readlines():
-            if line.startswith('diff ') or line[0] not in ['@', '-', '+', ' ']:
-                diffs.append([[]])
-
-            if line.startswith('@@ '):
-                diffs[-1].append([])
-
-            diffs[-1][-1].append(line)
-
-    header = re.compile(r"""^@@ -1,6 \+1,6 @@
+    rst_header = re.compile(r"""^@@ -1,6 \+1,6 @@
  \.\.
   #############################################################
 - # This file was automatically generated on [0-9]{4}-[0-9]{2}-[0-9]{2}\.      #
@@ -122,37 +106,73 @@ else:
   # If you have a bugfix for this file and want to commit it, #
   # please fix the bug in the generator\. You can find a link  #$""")
 
-    filtered = []
+    tmp = tempfile.mkdtemp()
 
-    for diff in diffs:
-        filtered_lines = []
+    print('using tmpdir ' + tmp)
 
-        for lines in diff:
-            if len(lines) == 0:
-                continue
+    for b in bindings:
+        path = os.path.join(generators_dir, b)
 
-            hunk = ''.join(lines)
-
-            if not header.match(hunk):
-                filtered_lines += lines
-            else:
-                filtered_lines += [lines[0].rstrip() + ' // dropped header hunk\n']
-
-        if len(filtered_lines) == 0:
+        if not os.path.isdir(path):
             continue
 
-        if len(filtered_lines) == 4 and \
-           filtered_lines[0].startswith('diff -U 15 -r ') and \
-           filtered_lines[1].startswith('--- ') and \
-           filtered_lines[2].startswith('+++ ') and \
-           filtered_lines[3].endswith('// dropped header hunk\n'):
-            filtered += [filtered_lines[0].rstrip() + ' // dropped header diff\n']
-        else:
-            filtered += filtered_lines
+        if not os.path.isdir(os.path.join(path, 'doc')):
+            print('skipping {0}, no doc directory'.format(b))
+            continue
 
-    with open(os.path.join(tmp, 'diff2.diff'), 'w') as f:
-        f.writelines(filtered)
+        if not os.path.isdir(os.path.join(path, 'doc_old')):
+            print('skipping {0}, no doc_old directory'.format(b))
+            continue
 
-    if os.system('bash -c "{} {}/diff2.diff"'.format(diff_tool, tmp)) != 0:
-        print('{} diff.diff failed'.format(diff_tool))
+        print('diffing ' + b)
+
+        if os.system('bash -c "pushd {0} > /dev/null && diff -ru15 doc_old/ doc/ > {1}/diff_{2}.diff; popd > /dev/null"'.format(path, tmp, b)) != 0:
+            print('diff old vs new failed')
+            sys.exit(1)
+
+        with open(os.path.join(tmp, 'diff_{0}.diff'.format(b)), 'r') as f:
+            diffs = [[[]]] # list of diffs as lists of lines
+
+            for line in f.readlines():
+                if line.startswith('diff ') or line[0] not in ['@', '-', '+', ' ']:
+                    diffs.append([[]])
+
+                if line.startswith('@@ '):
+                    diffs[-1].append([])
+
+                diffs[-1][-1].append(line)
+
+        filtered = []
+
+        for diff in diffs:
+            filtered_lines = []
+
+            for lines in diff:
+                if len(lines) == 0:
+                    continue
+
+                hunk = ''.join(lines)
+
+                if not rst_header.match(hunk):
+                    filtered_lines += lines
+                else:
+                    filtered_lines += [lines[0].rstrip() + ' // dropped header hunk\n']
+
+            if len(filtered_lines) == 0:
+                continue
+
+            if len(filtered_lines) == 4 and \
+               filtered_lines[0].startswith('diff -U 15 -r ') and \
+               filtered_lines[1].startswith('--- ') and \
+               filtered_lines[2].startswith('+++ ') and \
+               filtered_lines[3].endswith('// dropped header hunk\n'):
+                filtered += [filtered_lines[0].rstrip() + ' // dropped header diff\n']
+            else:
+                filtered += filtered_lines
+
+        with open(os.path.join(tmp, 'diff.diff'), 'a') as f:
+            f.writelines(filtered)
+
+    if os.system('bash -ce "{0} {1}/diff.diff"'.format(diff_tool, tmp)) != 0:
+        print('{0} diff.diff failed'.format(diff_tool))
         sys.exit(1)
