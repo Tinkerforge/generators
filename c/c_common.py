@@ -160,7 +160,7 @@ class CElement(common.Element):
             if self.get_direction() == 'in' and context in ['signature', 'meta']:
                 type_ = 'const char'
             else:
-                type_ ='char'
+                type_ = 'char'
         elif type_ == 'char':
             if self.get_direction() == 'in' and self.get_role() == 'stream_data' and context in ['signature', 'meta']:
                 type_ = 'const char'
