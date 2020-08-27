@@ -3241,10 +3241,9 @@ class Device(object):
         for raw_packet in raw_data['packets']:
             if not 'function_id' in raw_packet:
                 raw_packet['function_id'] = next_function_id
-            else:
-                next_function_id = raw_packet['function_id']
-
-            next_function_id += 1
+                next_function_id += 1
+            elif raw_packet['function_id'] >= 0:
+                next_function_id = raw_packet['function_id'] + 1
 
             packet = generator.get_packet_class()(raw_packet, self)
 
