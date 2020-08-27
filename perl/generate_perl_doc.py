@@ -285,6 +285,7 @@ error code:
 * Error->NON_ASCII_CHAR_IN_SECRET = 71
 * Error->WRONG_DEVICE_TYPE = 81
 * Error->DEVICE_REPLACED = 82
+* Error->WRONG_RESPONSE_LENGTH = 83
 
 All functions listed below are thread-safe.
 
@@ -316,6 +317,7 @@ Fehlercodes definiert:
 * Error->NON_ASCII_CHAR_IN_SECRET = 71
 * Error->WRONG_DEVICE_TYPE = 81
 * Error->DEVICE_REPLACED = 82
+* Error->WRONG_RESPONSE_LENGTH = 83
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
