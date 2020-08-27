@@ -196,10 +196,14 @@ device. The registration is done with the corresponding ``tf_{device_under}_regi
 The ``user_data``  passed to the registration function as well as the device that triggered the callback are
 passed to the registered callback handler.
 
+Only one handler can be registered to a callback at the same time.
+To deregister a callback, call the ``tf_{device_under}_register_*_callback`` function
+with NULL as handler.
+
 .. note::
  Using callbacks for recurring events is preferred
  compared to using getters. Polling for a callback requires
- writing one Byte only. See here :ref:`api_bindings_uc_performance`.
+ writing one byte only. See here :ref:`api_bindings_uc_performance`.
 
 .. warning::
  Calling bindings function from inside a callback handler is not allowed.
@@ -218,8 +222,9 @@ vom Gerät zu erhalten. Die Registrierung kann mit der entsprechenden ``tf_{devi
 Funktion durchgeführt werden. Die ``user_data``, sowie das Gerät, dass das Callback ausgelöst hat, werden
 dem registrierten Callback-Handler übergeben.
 
-Die verfügbaren Konstanten mit den zugehörigen Funktionssignaturen werden weiter
-unten beschrieben.
+Nur ein Handler kann gleichzeitig auf das selbe Callback registriert werden.
+Um einen Handler zu deregistrieren, kann die ``tf_{device_under}_register_*_callback``-Funktion
+mit ``NULL`` als Handler aufgerufen werden.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist
@@ -229,7 +234,7 @@ unten beschrieben.
 
 .. warning::
  Aus Callback-Handlern heraus können keine Bindings-Funktionen verwendet werden.
- Siehe hier :ref:`api_bindings_uc_thread_safety`.
+ Siehe hier :ref:`api_bindings_uc_callbacks`.
 
 {callbacks}
 """
@@ -259,7 +264,7 @@ Possible error codes are:
 * TF\_\ **E**\\ _TOO_MANY_DEVICES = -9
 * TF\_\ **E**\\ _DEVICE_NOT_FOUND = -10
 * TF\_\ **E**\\ _WRONG_DEVICE_TYPE = -11
-* TF\_\ **E**\\ _CALLBACK_EXEC = -12
+* TF\_\ **E**\\ _LOCKED = -12
 * TF\_\ **E**\\ _PORT_NOT_FOUND = -13
 
 (as defined in :file:`errors.h`) as well as the errors returned from
