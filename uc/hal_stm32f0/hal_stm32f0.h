@@ -18,6 +18,7 @@
 #include "stm32f0xx_hal.h"
 #include "bindings/hal_common.h"
 
+// Maximum number of ports handled by the HAL
 #define TF_HAL_STM32F0_MAX_PORT_COUNT 8
 
 typedef struct {
@@ -26,7 +27,7 @@ typedef struct {
 } TF_STMGPIO;
 
 typedef struct TF_Port {
-	//external
+	// External
 	TF_STMGPIO clk;
 	TF_STMGPIO mosi;
 	TF_STMGPIO miso;
@@ -41,7 +42,7 @@ typedef struct TF_Port {
 	DMA_Channel_TypeDef *dma_channel_rx;
 	DMA_Channel_TypeDef *dma_channel_tx;
 
-	//internal
+	// Internal
 	SPI_HandleTypeDef spi;
 	DMA_HandleTypeDef hdma_tx;
 	DMA_HandleTypeDef hdma_rx;
@@ -52,6 +53,11 @@ struct TF_HalContext {
 	uint8_t spi_port_count;
 
 	TF_HalCommon hal_common;
+
+	// Internal: Filled internally by tf_hal_create to allow for faster access during operation
+	TF_Port    *_port[TF_HAL_STM32F0_MAX_PORT_COUNT];
+	TF_STMGPIO *_cs_gpio[TF_HAL_STM32F0_MAX_PORT_COUNT];
+	uint8_t     _port_count;
 };
 
 #define TF_E_CHIP_SELECT_FAILED -100

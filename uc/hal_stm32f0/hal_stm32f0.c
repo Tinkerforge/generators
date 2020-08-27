@@ -12,14 +12,20 @@
 #include "hal_stm32f0.h"
 
 #include "bricklib2/hal/system_timer/system_timer.h"
+#include "bricklib2/hal/uartbb/uartbb.h"
+#include "bricklib2/os/coop_task.h"
 
 #include "bindings/errors.h"
 #include "bindings/config.h"
 
 #include "configs/config.h"
 
-// To be used by IRQs
-static struct TF_HalContext *tf_hal = NULL;
+#define TF_HAL_USE_COOP_TASK    // Comment out to not use coop task
+#define TF_HAL_SPI_TIMEOUT 1000 // in ms
+
+// Filled in tf_hal_create, to be used by IRQs
+static SPI_HandleTypeDef *tf_hal_irq2_3_spi = NULL;
+static SPI_HandleTypeDef *tf_hal_irq4_5_spi = NULL;
 
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *spi) {
 	// Nothing
@@ -29,26 +35,21 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *spi) {
 	// TODO: Maybe log error?
 }
 
-// SPI1: Configuration specific, change me or remove me if necessary
 void DMA1_Channel2_3_IRQHandler(void) {
-	HAL_DMA_IRQHandler(tf_hal->ports[0].spi.hdmarx);
-	HAL_DMA_IRQHandler(tf_hal->ports[0].spi.hdmatx);
+	if(tf_hal_irq2_3_spi != NULL) {
+		HAL_DMA_IRQHandler(tf_hal_irq2_3_spi->hdmarx);
+		HAL_DMA_IRQHandler(tf_hal_irq2_3_spi->hdmatx);
+	}
 }
 
-// SPI2: Configuration specific, change me or remove me if necessary
 void DMA1_Channel4_5_IRQHandler(void) {
-	HAL_DMA_IRQHandler(tf_hal->ports[1].spi.hdmarx);
-	HAL_DMA_IRQHandler(tf_hal->ports[1].spi.hdmatx);
+	if(tf_hal_irq4_5_spi != NULL) {
+		HAL_DMA_IRQHandler(tf_hal_irq4_5_spi->hdmarx);
+		HAL_DMA_IRQHandler(tf_hal_irq4_5_spi->hdmatx);
+	}
 }
-
-// Filled by tf_hal_create to allow for faster access during operation
-static TF_Port    *tf_hal_stm32f0_port[TF_HAL_STM32F0_MAX_PORT_COUNT]    = {NULL};
-static TF_STMGPIO *tf_hal_stm32f0_cs_gpio[TF_HAL_STM32F0_MAX_PORT_COUNT] = {NULL};
-static uint8_t     tf_hal_stm32f0_port_count                             = 0;
 
 int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_count) {
-	tf_hal = hal;
-
 	int rc = tf_hal_common_create(hal);
 	if (rc != TF_E_OK) {
 		return rc;
@@ -65,8 +66,14 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_co
 	uint8_t count = 0;
 	for(uint8_t i = 0; i < spi_port_count; i++) {
 		if(hal->ports[i].spi_instance == SPI1) {
+			if(tf_hal_irq2_3_spi == NULL) {
+				tf_hal_irq2_3_spi = &hal->ports[i].spi;
+			}
 			__HAL_RCC_SPI1_CLK_ENABLE();
 		} else {
+			if(tf_hal_irq4_5_spi == NULL) {
+				tf_hal_irq4_5_spi = &hal->ports[i].spi;
+			}
 			__HAL_RCC_SPI2_CLK_ENABLE();
 		}
 
@@ -76,8 +83,8 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_co
 
 		for(uint8_t j = 0; j < hal->ports[j].cs_count; j++) {
 			HAL_GPIO_Init(hal->ports[i].cs[j].port, &hal->ports[i].cs[j].pin);
-			tf_hal_stm32f0_port[count]    = &hal->ports[i];
-			tf_hal_stm32f0_cs_gpio[count] = &hal->ports[i].cs[j];
+			hal->_port[count]    = &hal->ports[i];
+			hal->_cs_gpio[count] = &hal->ports[i].cs[j];
 			count++;
 		}
 
@@ -133,9 +140,9 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_co
 		HAL_SPI_Init(&hal->ports[i].spi);
 	}
 
-	tf_hal_stm32f0_port_count = count;
+	hal->_port_count = count;
 
-	return tf_hal_common_prepare(hal, tf_hal_stm32f0_port_count, 200000);
+	return tf_hal_common_prepare(hal, hal->_port_count, 200000);
 }
 
 int tf_hal_destroy(TF_HalContext *hal) {
@@ -147,7 +154,7 @@ int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
 		return TF_E_CHIP_SELECT_FAILED;
 	}
 
-	TF_STMGPIO *cs = tf_hal_stm32f0_cs_gpio[port_id];
+	TF_STMGPIO *cs = hal->_cs_gpio[port_id];
 	if(cs == NULL) {
 		return TF_E_CHIP_SELECT_FAILED;
 	}
@@ -162,16 +169,30 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 		return TF_E_CHIP_SELECT_FAILED;
 	}
 
-	TF_Port *port = tf_hal_stm32f0_port[port_id];
+	TF_Port *port = hal->_port[port_id];
 	if(port == NULL) {
 		return TF_E_TRANSCEIVE_FAILED;
 	}
 
+	if((length == 0) || (write_buffer == NULL) || (read_buffer == NULL)) {
+		return TF_E_OK;
+	}
+
 	HAL_StatusTypeDef status = HAL_SPI_TransmitReceive_DMA(&port->spi, (uint8_t *)write_buffer, read_buffer, length);
 	HAL_SPI_StateTypeDef spi_state;
-	uint8_t tmp = 10;
+
+	// bricklib2-specific, change me for other platforms
+	uint32_t start = system_timer_get_ms();
 	while((spi_state = HAL_SPI_GetState(&port->spi)) != HAL_SPI_STATE_READY) {
-		// TODO: Timeout and yield if coop task is used
+#ifdef TF_HAL_USE_COOP_TASK
+		coop_task_yield();
+#endif
+
+		// Timeout if SPI state doesn't change to ready within 1s.
+		// TODO: Maybe also explicitly check for ERROR and ABORT states here?
+		if(system_timer_is_time_elapsed_ms(start, TF_HAL_SPI_TIMEOUT)) {
+			return TF_E_TRANSCEIVE_TIMEOUT;
+		}
 	}
 
 	return status == HAL_OK ? TF_E_OK : TF_E_TRANSCEIVE_FAILED;
@@ -224,7 +245,7 @@ const char *tf_hal_strerror(int e_code) {
 #endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
-	if(port_id > tf_hal_stm32f0_port_count)
+	if(port_id > hal->_port_count)
 		return '?';
 
 	return 'a' + port_id;
