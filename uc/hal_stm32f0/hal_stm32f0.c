@@ -212,9 +212,9 @@ TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) {
 	return &hal->hal_common;
 }
 
-void tf_hal_log_message(const char *msg, uint32_t len) {
+void tf_hal_log_message(const char *msg, size_t len) {
     // bricklib2-specific, change me for other platforms
-    for(int i = 0; i < len; ++i) {
+    for(size_t i = 0; i < len; ++i) {
         uartbb_tx(msg[i]);
     }
 }

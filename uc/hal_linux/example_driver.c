@@ -7,6 +7,8 @@
 void example_setup(TF_HalContext *hal);
 void example_loop(TF_HalContext *hal);
 
+void check(int e_code, const char *c);
+
 // Change this to your port assignment.
 // If you use a HAT or one or more Breakout Bricklets
 // you have to connect and list all chip select
@@ -14,7 +16,7 @@ void example_loop(TF_HalContext *hal);
 // correctly.
 
 // HAT Brick
-TF_Port ports[9] = {{
+static TF_Port ports[9] = {{
     .chip_select_pin=23,
     .port_name = 'A'
 }, {
@@ -69,9 +71,9 @@ void check(int e_code, const char *c) {
     tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
 }
 
-TF_HalContext hal;
+static TF_HalContext hal;
 
-int main() {
+int main(void) {
     printf("Hello World!\n");
 
     check(tf_hal_create(&hal, "/dev/spidev0.0", ports, sizeof(ports)/sizeof(ports[0])), "hal create");
@@ -80,6 +82,4 @@ int main() {
 
     while(true)
         example_loop(&hal);
-
-    return 0;
 }

@@ -125,8 +125,12 @@ class UCExample(common.Example):
 #define UID "{dummy_uid}" // Change {dummy_uid} to the UID of your {device_display}
 
 void check(int rc, const char* msg);
+
+void example_setup(TF_HalContext *hal);
+void example_loop(TF_HalContext *hal);
+
 {functions}
-TF_{device_camel} {device_initial};
+static TF_{device_camel} {device_initial};
 
 void example_setup(TF_HalContext *hal) {{
 	// Create device object
@@ -545,7 +549,7 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""void {packet_under}_handler(TF_{device_camel} *device, {parameters}void *user_data) {{
+        template2 = r"""static void {packet_under}_handler(TF_{device_camel} *device, {parameters}void *user_data) {{
 	{unuseds}
 
 {printfs}{extra_message}
