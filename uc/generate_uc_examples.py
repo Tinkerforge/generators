@@ -69,16 +69,10 @@ class UCTypeMixin(object):
 
 class UCPrintfFormatMixin(object):
     def get_c_printf_defines(self):
-        if self.get_type().split(':')[0].endswith('int64'):
-            return ['#define __STDC_FORMAT_MACROS // for PRId64/PRIu64 in C++']
-        else:
-            return []
+        return []
 
     def get_c_printf_includes(self):
-        if self.get_type().split(':')[0].endswith('int64'):
-            return ['#include <inttypes.h>']
-        else:
-            return []
+        return []
 
     def get_c_printf_format(self):
         type_ = self.get_type().split(':')[0]
@@ -91,9 +85,9 @@ class UCPrintfFormatMixin(object):
             return '%s'
         elif type_ != 'float' and self.get_divisor() == None:
             if type_ == 'int64':
-                return '%" PRId64 "'
+                return '%lld'
             elif type_ == 'uint64':
-                return '%" PRIu64 "'
+                return '%llu'
             elif type_.startswith('uint'):
                 return '%u'
             else:

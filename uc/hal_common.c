@@ -110,34 +110,34 @@ bool tf_hal_enumerate_handler(TF_HalContext *hal, uint8_t port_id, TF_Packetbuff
     return true;
 }
 
-const char *alphabet = "0123456789abcdef";
+static const char *alphabet = "0123456789abcdef";
 
-static void log_unsigned(unsigned int value, int base) {
+static void log_unsigned(uint64_t value, uint64_t base) {
     if(base < 2 || base > 16)
         return;
 
-    char buffer[32] = {0};
+    char buffer[64] = {0};
 
-    int len = 0;
+    uint64_t len = 0;
     do {
-        int digit = value % base;
-        buffer[32 - len - 1] = alphabet[digit];
+        uint64_t digit = value % base;
+        buffer[64 - len - 1] = alphabet[digit];
         ++len;
         value /= base;
     } while(value > 0);
 
-    tf_hal_log_message(buffer + (32 - len), len);
+    tf_hal_log_message(buffer + (64 - len), len);
 
     return;
 }
 
-static void log_signed(int value, int base) {
+static void log_signed(int64_t value, int64_t base) {
     if(value < 0) {
         tf_hal_log_message("-", 1);
         value = -value;
     }
 
-    log_unsigned(value, base);
+    log_unsigned((uint64_t) value, (uint64_t) base);
 
     return;
 }
@@ -156,7 +156,7 @@ void tf_hal_printf(const char *fmt, ...){
         if(character == '\n') {
             if(cursor > fmt) {
                 // cursor is on the \n character
-                uint32_t chunk_len = cursor - fmt - 1;
+                size_t chunk_len = (size_t)(cursor - fmt) - 1;
                 if(chunk_len != 0)
                     tf_hal_log_message(fmt, chunk_len);
 
@@ -172,7 +172,7 @@ void tf_hal_printf(const char *fmt, ...){
 
         if(cursor > fmt) {
             // cursor is on the % character
-            uint32_t chunk_len = cursor - fmt - 1;
+            size_t chunk_len = (size_t)(cursor - fmt) - 1;
             if(chunk_len != 0)
                 tf_hal_log_message(fmt, chunk_len);
         }
@@ -232,6 +232,37 @@ void tf_hal_printf(const char *fmt, ...){
                 break;
             }
 
+            case 'l': {
+                if(cursor[0] == 'l') {
+                    if(cursor[1] == 'd') {
+                        cursor += 2;
+                        int64_t value = va_arg(va, int64_t);
+                        log_signed(value, 10);
+                        break;
+                    }
+                    if(cursor[1] == 'u') {
+                        cursor += 2;
+                        uint64_t value = va_arg(va, uint64_t);
+                        log_unsigned(value, 10);
+                        break;
+                    }
+                    if(cursor[1] == 'x') {
+                        cursor += 2;
+                        uint64_t value = va_arg(va, uint64_t);
+                        log_unsigned(value, 16);
+                        break;
+                    }
+                    if(cursor[1] == 'b') {
+                        cursor += 2;
+                        uint64_t value = va_arg(va, uint64_t);
+                        log_unsigned(value, 2);
+                        break;
+                    }
+                }
+                //Intentionally fall through here, if the placeholder was not a known one (or we encountered a \0).
+                //Handle this as if the placeholder was completely unknown.
+            }
+            TF_ATTRIBUTE_FALLTHROUGH;
             default:
                 tf_hal_log_message("%", 1);
                 tf_hal_log_message(&character, 1);
@@ -243,7 +274,7 @@ void tf_hal_printf(const char *fmt, ...){
 
     if(cursor > fmt) {
         // cursor is on the null terminator
-        uint32_t chunk_len = cursor - fmt - 1;
+        size_t chunk_len = (size_t)(cursor - fmt) - 1;
         if(chunk_len != 0)
             tf_hal_log_message(fmt, chunk_len);
     }
