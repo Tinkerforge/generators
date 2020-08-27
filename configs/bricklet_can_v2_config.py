@@ -1040,9 +1040,9 @@ aktiviert werden.
 # com['packets'].append({
 # 'type': 'function',
 # 'name': 'Get Timestamped Frame Configuration',
-# 'elements': [('Enabled', 'bool', 1, 'out'),
-#             ('Write Backlog Size', 'uint16', 1, 'out'),
-#             ('Read Backlog Size', 'uint16', 1, 'out')],
+# 'elements': [('Enabled', 'bool', 1, 'out', {'default': False}),
+#              ('Write Backlog Size', 'uint16', 1, 'out'),
+#              ('Read Backlog Size', 'uint16', 1, 'out')],
 # 'since_firmware': [2, 0, 3],
 # 'doc': ['af', {
 # 'en':
@@ -1129,7 +1129,7 @@ aktiviert werden.
 # com['packets'].append({
 # 'type': 'function',
 # 'name': 'Get Timestamped Frame Read Callback Configuration',
-# 'elements': [('Enabled', 'bool', 1, 'out')],
+# 'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 # 'since_firmware': [2, 0, 3],
 # 'doc': ['ccf', {
 # 'en':

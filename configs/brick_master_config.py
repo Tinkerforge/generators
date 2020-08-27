@@ -3240,7 +3240,7 @@ Deaktiviert die grüne Status LED der WIFI Extension 2.0.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Wifi2 Status LED Enabled',
-'elements': [('Enabled', 'bool', 1, 'out', {})],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': True})],
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
 'en':

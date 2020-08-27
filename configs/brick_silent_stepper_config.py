@@ -725,7 +725,7 @@ Aktivierung erfolgt.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Enabled',
-'elements': [('Enabled', 'bool', 1, 'out', {})],
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

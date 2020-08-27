@@ -704,7 +704,7 @@ ausgelöst, wenn sich die Geschwindigkeit geändert hat.
 #com['packets'].append({
 #'type': 'function',
 #'name': 'Is Encoder Enabled',
-#'elements': [('Enabled', 'bool', 1, 'out')],
+#'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
 #'since_firmware': [2, 0, 1],
 #'doc': ['af', {
 #'en':

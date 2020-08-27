@@ -108,7 +108,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Is Enabled',
 'elements': [('Servo Num', 'uint8', 1, 'in', {'range': (0, 6)}),
-             ('Enabled', 'bool', 1, 'out', {})],
+             ('Enabled', 'bool', 1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
