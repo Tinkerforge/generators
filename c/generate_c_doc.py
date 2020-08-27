@@ -343,7 +343,7 @@ Mögliche Fehlercodes sind:
 * **E**\\ _HOSTNAME_INVALID = -3
 * **E**\\ _NO_CONNECT = -4
 * **E**\\ _NO_THREAD = -5
-* **E**\\ _NOT_ADDED = -6 (wird seit C/C++ Bindings Version 2.0.0 nicht mehr verwendet)
+* **E**\\ _NOT_ADDED = -6 (seit C/C++ Bindings Version 2.0.0 nicht mehr verwendet)
 * **E**\\ _ALREADY_CONNECTED = -7
 * **E**\\ _NOT_CONNECTED = -8
 * **E**\\ _INVALID_PARAMETER = -9
