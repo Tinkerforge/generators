@@ -58,9 +58,9 @@ class UCBindingsDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return format('{{@link {device_upper}_CALLBACK_{packet_upper}}}', packet.get_device(), packet, -2 if high_level else 0)
+                return format('{{@link tf_{device_under}_register_{packet_under}_callback}}', packet.get_device(), packet, -2 if high_level else 0)
             else:
-                return format('{{@link {device_under}_{packet_under}}}', packet.get_device(), packet, -2 if high_level else 0)
+                return format('{{@link tf_{device_under}_{packet_under}}}', packet.get_device(), packet, -2 if high_level else 0)
 
         return self.specialize_doc_rst_links(text, specializer)
 
@@ -96,22 +96,19 @@ extern "C" {{
         for packet in self.get_packets('function'):
             defines += format(template, self, packet, fid=packet.get_function_id())
 
-        return defines
+        return common.wrap_non_empty('', defines, '\n')
 
     def get_c_callback_defines(self):
         defines = '#ifdef TF_IMPLEMENT_CALLBACKS\n'
         template = """
 /**
  * \\ingroup {category_camel}{device_camel}
- *
- * {doc}
  */
 #define TF_{device_upper}_CALLBACK_{packet_upper} {fid}
 """
 
         for packet in self.get_packets('callback'):
-            doc = packet.get_c_formatted_doc()
-            defines += format(template, self, packet, doc=doc, fid=packet.get_function_id())
+            defines += format(template, self, packet, fid=packet.get_function_id())
 
         defines += '\n#endif'
         return defines
@@ -917,6 +914,10 @@ TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_destroy(TF_{device_camel} *{devic
 #ifdef TF_IMPLEMENT_CALLBACKS
 /**
  * \\ingroup {category_camel}{device_camel}
+ *
+ * Polls for callbacks. Will block for the given timeout in microseconds.
+ *
+ * This function can be used in a non-blocking fashion by calling it with a timeout of 0.
  */
 TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us);
 #endif
@@ -924,6 +925,10 @@ TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_callback_tick(TF_{device_camel} *
         unknown_template = """
 /**
  * \\ingroup {category_camel}{device_camel}
+ *
+ * Polls for callbacks. Will block for the given timeout in microseconds.
+ *
+ * This function can be used in a non-blocking fashion by calling it with a timeout of 0.
  */
 TF_ATTRIBUTE_NONNULL_ALL int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us);
 """
@@ -1017,14 +1022,16 @@ TF_ATTRIBUTE_NONNULL(1) int tf_{device_under}_{packet_under}(TF_{device_camel} *
 /**
  * \\ingroup {category_camel}{device_camel}
  *
- * Registers the given \\c function with the given \\c callback_id. The
- * \\c user_data will be passed as the last parameter to the \\c function.
+ * Registers the given \\c handler to the {packet_space} callback. The
+ * \\c user_data will be passed as the last parameter to the \\c handler.
+ *
+ * {doc}
  */
 TF_ATTRIBUTE_NONNULL(1) void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler handler, void *user_data);
 """
 
         for packet in self.get_packets('callback'):
-            result.append(format(template, self, packet))
+            result.append(format(template, self, packet, doc=packet.get_c_formatted_doc()))
 
         return '#ifdef TF_IMPLEMENT_CALLBACKS{}#endif'.format('\n'.join(result))
 
