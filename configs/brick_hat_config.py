@@ -26,7 +26,7 @@ com = {
     'features': [
         'device',
         'comcu_bricklet',
-        'bricklet_get_identity'
+        'hat_get_identity'
     ],
     'constant_groups': [],
     'packets': [],
