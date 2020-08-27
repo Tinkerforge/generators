@@ -200,7 +200,8 @@ void tf_hal_log_message(const char *msg, uint32_t len) {
 
 void tf_hal_log_newline() {
     // bricklib2-specific, change me for other platforms
-    uartbb_tx("\n\r");
+    uartbb_tx('\n');
+    uartbb_tx('\r');
 }
 
 #ifdef TF_IMPLEMENT_STRERROR
