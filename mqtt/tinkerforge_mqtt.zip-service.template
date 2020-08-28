@@ -1,5 +1,5 @@
 [Unit]
-Description=<<CONFIGURATION_NAME_CAMEL>> MQTT API Bindings
+Description=<<CONFIG_NAME_SPACE>> MQTT API Bindings
 
 # Enable if brickd is running locally
 #After=brickd.service
@@ -8,7 +8,7 @@ Description=<<CONFIGURATION_NAME_CAMEL>> MQTT API Bindings
 #After=mosquitto.service
 
 [Service]
-ExecStart=/usr/local/bin/<<CONFIGURATION_NAME_UNDER>>
+ExecStart=/usr/local/bin/<<CONFIG_NAME_UNDER>>
 
 [Install]
 WantedBy=multi-user.target

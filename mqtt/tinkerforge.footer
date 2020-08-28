@@ -31,7 +31,7 @@ class MQTTBindings:
         except:
             pass
 
-        logging.info("Starting <<CONFIGURATION_NAME_CAMEL>> MQTT bindings <<VERSION>>")
+        logging.info("Starting <<CONFIG_NAME_SPACE>> MQTT bindings <<VERSION>>")
 
         if broker_username is not None:
             self.mqttc.username_pw_set(broker_username, broker_password)
@@ -840,7 +840,7 @@ IPCON_TIMEOUT = 2500
 IPCON_AUTH_SECRET = ''
 BROKER_HOST = 'localhost'
 BROKER_PORT = 1883 # 8883 for TLS
-GLOBAL_TOPIC_PREFIX = '<<CONFIGURATION_NAME_UNDER>>/'
+GLOBAL_TOPIC_PREFIX = '<<CONFIG_NAME_UNDER>>/'
 
 bindings = None
 
@@ -870,7 +870,7 @@ def main():
     signal.signal(signal.SIGINT, terminate)
     signal.signal(signal.SIGTERM, terminate)
 
-    parser = argparse.ArgumentParser(description='<<CONFIGURATION_NAME_CAMEL>> MQTT Bindings')
+    parser = argparse.ArgumentParser(description='<<CONFIG_NAME_SPACE>> MQTT Bindings')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s <<VERSION>>')
     parser.add_argument('--cmdline-file', dest='cmdline_file', type=str, default=None,
                         help='file from where to load command line options')

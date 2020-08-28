@@ -295,8 +295,8 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
 
         with open(os.path.join(root_dir, 'tinkerforge.footer'), 'r') as f:
             footer = (f.read().replace('<<VERSION>>', '.'.join(version))
-                              .replace('<<CONFIGURATION_NAME_CAMEL>>', self.get_config_name().camel)
-                              .replace('<<CONFIGURATION_NAME_UNDER>>', self.get_config_name().under))
+                              .replace('<<CONFIG_NAME_SPACE>>', self.get_config_name().space)
+                              .replace('<<CONFIG_NAME_UNDER>>', self.get_config_name().under))
 
         mqtt.write(header)
 

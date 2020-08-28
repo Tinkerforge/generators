@@ -95,8 +95,8 @@ class MQTTZipGenerator(mqtt_common.MQTTGeneratorTrait, common.ZipGenerator):
             os.path.join(root_dir, 'tinkerforge_mqtt.zip-service.template'),
             os.path.join(self.tmp_dir, '{}_mqtt.service'.format(self.get_config_name().under)),
             {
-                "<<CONFIGURATION_NAME_CAMEL>>": self.get_config_name().camel,
-                "<<CONFIGURATION_NAME_UNDER>>": self.get_config_name().under
+                "<<CONFIG_NAME_SPACE>>": self.get_config_name().space,
+                "<<CONFIG_NAME_UNDER>>": self.get_config_name().under
             }
         )
 
