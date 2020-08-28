@@ -285,7 +285,7 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
         root_dir = self.get_root_dir()
         bindings_dir = self.get_bindings_dir()
         version = self.get_changelog_version()
-        mqtt = open(os.path.join(bindings_dir, 'tinkerforge_mqtt'), 'w')
+        mqtt = open(os.path.join(bindings_dir, '{}_mqtt'.format(self.get_config_name().under)), 'w')
 
         with open(os.path.join(root_dir, 'tinkerforge.header'), 'r') as f:
             header = f.read().replace('<<VERSION>>', '.'.join(version))
@@ -294,7 +294,9 @@ class MQTTBindingsGenerator(mqtt_common.MQTTGeneratorTrait, common.BindingsGener
             middle = f.read().replace('<<VERSION>>', '.'.join(version))
 
         with open(os.path.join(root_dir, 'tinkerforge.footer'), 'r') as f:
-            footer = f.read().replace('<<VERSION>>', '.'.join(version))
+            footer = (f.read().replace('<<VERSION>>', '.'.join(version))
+                              .replace('<<CONFIGURATION_NAME_CAMEL>>', self.get_config_name().camel)
+                              .replace('<<CONFIGURATION_NAME_UNDER>>', self.get_config_name().under))
 
         mqtt.write(header)
 
@@ -343,7 +345,7 @@ def get_device_display_name(device_identifier):
         mqtt.write(footer)
         mqtt.close()
 
-        os.system('chmod +x {0}/tinkerforge_mqtt'.format(bindings_dir))
+        os.system('chmod +x {0}/{1}_mqtt'.format(bindings_dir, self.get_config_name().under))
 
         common.BindingsGenerator.finish(self)
 

@@ -1,5 +1,5 @@
 [Unit]
-Description=Tinkerforge MQTT API Bindings
+Description=<<CONFIGURATION_NAME_CAMEL>> MQTT API Bindings
 
 # Enable if brickd is running locally
 #After=brickd.service
@@ -8,7 +8,7 @@ Description=Tinkerforge MQTT API Bindings
 #After=mosquitto.service
 
 [Service]
-ExecStart=/usr/local/bin/tinkerforge_mqtt
+ExecStart=/usr/local/bin/<<CONFIGURATION_NAME_UNDER>>
 
 [Install]
 WantedBy=multi-user.target
