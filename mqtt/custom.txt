@@ -1,0 +1,5 @@
+Tinkerforge MQTT Bindings for Custom Devices
+============================================
+
+The custom MQTT bindings allow you to control custom Tinkerforge devices from
+your MQTT client.
