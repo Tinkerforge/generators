@@ -128,8 +128,7 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
 
             top_level_files = [
                 (os.path.join(self.get_config_dir(), 'changelog.txt'), 'changelog.txt'),
-                (os.path.join(root_dir, 'custom.txt'), 'readme.txt'),
-                (os.path.join(root_dir, 'LICENSE'), 'LICENSE')
+                (os.path.join(root_dir, 'custom.txt'), 'readme.txt')
             ]
 
         for s, t in top_level_files:
