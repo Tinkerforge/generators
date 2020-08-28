@@ -1,5 +1,5 @@
 Tinkerforge JSON Bindings for Custom Devices
 ============================================
 
-The JSON bindings represent API bindings generator configuration files for
-custom devices in JSON format.
+The custom JSON bindings represent API bindings generator configuration files
+for custom Tinkerforge devices in JSON format.
