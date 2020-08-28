@@ -137,6 +137,10 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
         self.tmp_examples_dir                 = os.path.join(self.generation_dir, 'examples')
 
     def prepare(self):
+        if self.get_config_name().space != 'Tinkerforge':
+            print("Custom configs not supported yet.")
+            return
+
         super().prepare()
 
         os.makedirs(self.generation_dir)
@@ -146,6 +150,8 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
                 os.makedirs(directory)
 
     def generate(self, device):
+        if self.get_config_name().space != 'Tinkerforge':
+            return
         if not device.is_released():
             return
 
@@ -154,14 +160,13 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
                 shutil.copy(os.path.join(self.get_bindings_dir(), file), self.tmp_oh_dir)
 
     def finish(self):
+        if self.get_config_name().space != 'Tinkerforge':
+            return
+
         root_dir = self.get_root_dir()
 
-        if self.get_config_name().space == 'Tinkerforge':
-            for src, dst in self.file_dests.items():
-                shutil.copy(src, dst)
-        else:
-            shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'), self.generation_dir)
-            shutil.copy(os.path.join(root_dir, 'custom.txt'), os.path.join(self.generation_dir, 'readme.txt'))
+        for src, dst in self.file_dests.items():
+            shutil.copy(src, dst)
 
         binding_dir = os.path.join(self.get_bindings_dir(), '..', 'openhab2-addons', 'bundles', 'org.openhab.binding.tinkerforge')
 
