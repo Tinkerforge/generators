@@ -112,31 +112,36 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
         ]
 
         # Copy brick(let) specific bindings
-        for filename in self.get_released_files() + ['bricklet_unknown.h', 'bricklet_unknown.c']:
+        files = self.get_released_files()
+        if self.get_config_name().space == 'Tinkerforge':
+            files += ['bricklet_unknown.h', 'bricklet_unknown.c']
+
+        for filename in files:
             path = os.path.join(self.get_bindings_dir(), filename)
             shutil.copy(path, self.tmp_bindings_dir)
 
-        # Copy static binding files
-        for filename in bindings_files:
-            path = os.path.join(root_dir, filename)
-            shutil.copy(path, self.tmp_bindings_dir)
+        if self.get_config_name().space == 'Tinkerforge':
+            # Copy static binding files
+            for filename in bindings_files:
+                path = os.path.join(root_dir, filename)
+                shutil.copy(path, self.tmp_bindings_dir)
 
-        # Copy all HALs
-        for folder in next(os.walk('.'))[1]:
-            if not folder.startswith('hal_'):
-                continue
-            shutil.copytree(os.path.join(root_dir, folder), os.path.join(self.tmp_source_dir, folder))
+            # Copy all HALs
+            for folder in next(os.walk('.'))[1]:
+                if not folder.startswith('hal_'):
+                    continue
+                shutil.copytree(os.path.join(root_dir, folder), os.path.join(self.tmp_source_dir, folder))
 
-        shutil.copy(os.path.join(root_dir, 'beta', 'changelog.txt'),        self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'beta', 'README_EN.txt'),           self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'beta', 'README_DE.txt'),           self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'changelog.txt'),        self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'README_EN.txt'),           self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'README_DE.txt'),           self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
-        shutil.copy(os.path.join(root_dir, 'beta', 'arduino.ino'),   self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'beta', 'arduino_esp32.ino'), self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'beta', 'main.c'),            self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'beta', 'Makefile'),          self.tmp_source_dir)
-        shutil.copytree(os.path.join(root_dir, 'beta', 'demo'), os.path.join(self.tmp_source_dir, 'demo'))
+            shutil.copy(os.path.join(root_dir, 'beta', 'arduino.ino'),   self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'arduino_esp32.ino'), self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'main.c'),            self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'Makefile'),          self.tmp_source_dir)
+            shutil.copytree(os.path.join(root_dir, 'beta', 'demo'), os.path.join(self.tmp_source_dir, 'demo'))
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
