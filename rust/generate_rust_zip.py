@@ -64,6 +64,10 @@ class RustZipGenerator(rust_common.RustGeneratorTrait, common.ZipGenerator):
         self.tmp_examples_dir = os.path.join(self.tmp_dir, 'examples')
 
     def prepare(self):
+        if self.get_config_name().space != 'Tinkerforge':
+            print("Custom configs not supported yet.")
+            return
+
         super().prepare()
 
         os.makedirs(self.tmp_source_dir)
@@ -71,6 +75,8 @@ class RustZipGenerator(rust_common.RustGeneratorTrait, common.ZipGenerator):
         os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
+        if self.get_config_name().space != 'Tinkerforge':
+            return
         if not device.is_released():
             return
 
@@ -86,6 +92,8 @@ class RustZipGenerator(rust_common.RustGeneratorTrait, common.ZipGenerator):
             #shutil.copy(example[1], os.path.join(self.tmp_examples_dir, device.get_name().under + "_" + example[0]))
 
     def finish(self):
+        if self.get_config_name().space != 'Tinkerforge':
+            return
         root_dir = self.get_root_dir()
 
         # Copy IP Connection examples
