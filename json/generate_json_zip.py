@@ -75,9 +75,13 @@ class JSONZipGenerator(JSONGeneratorTrait, common.ZipGenerator):
         for filename in self.get_released_files():
             shutil.copy(os.path.join(self.get_bindings_dir(), filename), self.tmp_source_dir)
 
-        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
+        if self.get_config_name().space == 'Tinkerforge':
+            shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
+        else:
+            shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'custom.txt'),                   os.path.join(self.tmp_dir, 'readme.txt'))
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
