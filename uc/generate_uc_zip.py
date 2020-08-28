@@ -73,6 +73,7 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
     def generate(self, device):
         if not device.is_released():
             return
+
         if not device.has_comcu():
             return
 
@@ -113,6 +114,7 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
 
         # Copy brick(let) specific bindings
         files = self.get_released_files()
+
         if self.get_config_name().space == 'Tinkerforge':
             files += ['bricklet_unknown.h', 'bricklet_unknown.c']
 
@@ -130,18 +132,19 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
             for folder in next(os.walk('.'))[1]:
                 if not folder.startswith('hal_'):
                     continue
+
                 shutil.copytree(os.path.join(root_dir, folder), os.path.join(self.tmp_source_dir, folder))
 
             shutil.copy(os.path.join(root_dir, 'beta', 'changelog.txt'),        self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'README_EN.txt'),           self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'README_DE.txt'),           self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'README_EN.txt'),        self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'README_DE.txt'),        self.tmp_dir)
             shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
-            shutil.copy(os.path.join(root_dir, 'beta', 'arduino.ino'),   self.tmp_source_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'arduino_esp32.ino'), self.tmp_source_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'main.c'),            self.tmp_source_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'Makefile'),          self.tmp_source_dir)
-            shutil.copytree(os.path.join(root_dir, 'beta', 'demo'), os.path.join(self.tmp_source_dir, 'demo'))
+            shutil.copy(os.path.join(root_dir, 'beta', 'arduino.ino'),          self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'arduino_esp32.ino'),    self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'main.c'),               self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'beta', 'Makefile'),             self.tmp_source_dir)
+            shutil.copytree(os.path.join(root_dir, 'beta', 'demo'),             os.path.join(self.tmp_source_dir, 'demo'))
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
