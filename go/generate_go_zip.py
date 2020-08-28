@@ -90,7 +90,6 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
             for example in common.find_examples(root_dir, r'^example_.*\.go$'):
                 shutil.copy(example[1], self.tmp_examples_dir)
 
-
         for filename in self.get_released_files():
             path = os.path.join(self.get_bindings_dir(), filename)
             target_folder = os.path.splitext(os.path.basename(filename))[0]
@@ -98,36 +97,50 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
             os.makedirs(target_folder)
             shutil.copy(path, os.path.join(target_folder, filename))
 
-        copy_map = {
-            "internal": [
-                'base58.go',
-                'byteconverter.go',
-                'device.go',
-                'bindings/device_display_names.go',
-                'ipconnection.go'
-            ],
-            "ipconnection": [
-                "ipcon_handle.go"
-            ],
-            "": [
-                "doc.go"
+        if self.get_config_name().space == 'Tinkerforge':
+            copy_map = {
+                "internal": [
+                    'base58.go',
+                    'byteconverter.go',
+                    'device.go',
+                    'bindings/device_display_names.go',
+                    'ipconnection.go'
+                ],
+                "ipconnection": [
+                    "ipcon_handle.go"
+                ],
+                "": [
+                    "doc.go"
+                ]
+            }
+
+            top_level_files = [
+                (os.path.join(root_dir, 'changelog.txt'), 'changelog.txt'),
+                (os.path.join(root_dir, 'readme.txt'), 'readme.txt'),
+                (os.path.join(root_dir, 'LICENSE'), 'LICENSE')
             ]
-        }
+        else:
+            copy_map = {
+                 "": [
+                    "doc.go"
+                ]
+            }
 
-        top_level_files = [
-            'changelog.txt',
-            'readme.txt',
-            'LICENSE',
-        ]
+            top_level_files = [
+                (os.path.join(self.get_config_dir(), 'changelog.txt'), 'changelog.txt'),
+                (os.path.join(root_dir, 'custom.txt'), 'readme.txt'),
+                (os.path.join(root_dir, 'LICENSE'), 'LICENSE')
+            ]
 
-        for f in top_level_files:
-            shutil.copy(os.path.join(root_dir, f), self.tmp_dir)
+        for s, t in top_level_files:
+            shutil.copy(s, os.path.join(self.tmp_dir, t))
 
         for dir, files in copy_map.items():
             path = os.path.join(self.tmp_bindings_dir, dir)
 
             if not os.path.exists(path):
                 os.makedirs(path)
+
             for f in files:
                 shutil.copy(os.path.join(root_dir, f), path)
 
