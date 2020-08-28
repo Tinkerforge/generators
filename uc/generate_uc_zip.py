@@ -145,6 +145,9 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
             shutil.copy(os.path.join(root_dir, 'beta', 'main.c'),               self.tmp_source_dir)
             shutil.copy(os.path.join(root_dir, 'beta', 'Makefile'),             self.tmp_source_dir)
             shutil.copytree(os.path.join(root_dir, 'beta', 'demo'),             os.path.join(self.tmp_source_dir, 'demo'))
+        else:
+            shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'custom.txt'),                   os.path.join(self.tmp_dir, 'readme.txt'))
 
         # Make zip
         self.create_zip_file(self.tmp_dir)
