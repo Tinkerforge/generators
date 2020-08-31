@@ -229,20 +229,17 @@ void tf_hal_log_newline() {
 
 #ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int e_code) {
-	// As long as GCC sees the strings as const it will put them in flash automatically.
-    #define TF_CONST_STRING(x) x
     switch(e_code) {
-        #include "../bindings/errors.inc"
+        #include "../bindings/error_cases.h"
         case TF_E_CHIP_SELECT_FAILED:
-            return TF_CONST_STRING("failed to write to chip select GPIO");
+            return "failed to write to chip select GPIO";
         case TF_E_TRANSCEIVE_FAILED:
-            return TF_CONST_STRING("failed to transceive over SPI");
+            return "failed to transceive over SPI";
         case TF_E_TRANSCEIVE_TIMEOUT:
-            return TF_CONST_STRING("timeout during transceive over SPI");
+            return "timeout during transceive over SPI";
         default:
-            return TF_CONST_STRING("unknown error");
+            return "unknown error";
     }
-    #undef TF_CONST_STRING
 }
 #endif
 

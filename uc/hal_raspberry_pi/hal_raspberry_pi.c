@@ -104,17 +104,15 @@ void tf_hal_log_newline() {
 
 #ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int e_code) {
-    #define TF_CONST_STRING(x) x
     switch(e_code) {
-        #include "../bindings/errors.inc"
+        #include "../bindings/error_cases.h"
         case TF_E_BCM2835_INIT_FAILED:
-            return TF_CONST_STRING("bcm2835_init failed. Are you running as root?");
+            return "bcm2835_init failed. Are you running as root?";
         case TF_E_BCM2835_SPI_BEGIN_FAILED:
-            return TF_CONST_STRING("bcm2835_spi_begin failed. Are you running as root?");
+            return "bcm2835_spi_begin failed. Are you running as root?";
         default:
-            return TF_CONST_STRING("unknown error");
+            return "unknown error";
     }
-    #undef TF_CONST_STRING
 }
 #endif
 

@@ -72,13 +72,11 @@ void tf_hal_log_newline() {
 
 #ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int rc) {
-    #define TF_CONST_STRING(x) x
     switch(rc) {
-        #include "../bindings/errors.inc"
+        #include "../bindings/error_cases.h"
         default:
-            return TF_CONST_STRING("unknown error");
+            return "unknown error";
     }
-    #undef TF_CONST_STRING
 }
 #endif
 

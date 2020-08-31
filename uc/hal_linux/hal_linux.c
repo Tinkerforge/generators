@@ -167,28 +167,26 @@ void tf_hal_log_newline() {
 
 #ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int e_code) {
-    #define TF_CONST_STRING(x) x
     switch(e_code) {
-        #include "../bindings/errors.inc"
+        #include "../bindings/error_cases.h"
         case TF_E_EXPORT_GPIO_FAILED:
-            return TF_CONST_STRING("failed to export GPIO");
+            return "failed to export GPIO";
         case TF_E_SET_GPIO_DIRECTION_FAILED:
-            return TF_CONST_STRING("failed to set GPIO direction");
+            return "failed to set GPIO direction";
         case TF_E_OPEN_GPIO_FAILED:
-            return TF_CONST_STRING("failed to open GPIO");
+            return "failed to open GPIO";
 
         case TF_E_OPEN_SPI_DEV_FAILED:
-            return TF_CONST_STRING("failed to open SPI device");
+            return "failed to open SPI device";
         case TF_E_SPI_DEV_CONFIG_FAILED:
-            return TF_CONST_STRING("failed to configure SPI device");
+            return "failed to configure SPI device";
         case TF_E_CHIP_SELECT_FAILED:
-            return TF_CONST_STRING("failed to write to chip select GPIO");
+            return "failed to write to chip select GPIO";
         case TF_E_TRANSCEIVE_FAILED:
-            return TF_CONST_STRING("failed to transceive over SPI");
+            return "failed to transceive over SPI";
         default:
-            return TF_CONST_STRING("unknown error");
+            return "unknown error";
     }
-    #undef TF_CONST_STRING
 }
 #endif
 
