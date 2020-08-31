@@ -32,7 +32,8 @@ typedef struct TF_HalCommon {
     uint8_t port_ids[TF_INVENTORY_SIZE + 1];
     struct TF_TfpContext *tfps[TF_INVENTORY_SIZE + 1];
     uint16_t dids[TF_INVENTORY_SIZE + 1];
-    size_t used;
+    uint16_t used;
+    uint8_t device_overflow_count;
 
     uint32_t timeout;
 

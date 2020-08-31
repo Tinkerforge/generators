@@ -30,10 +30,9 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
 
     TF_Unknown unknown;
     hal_common->used = 1;
+    hal_common->device_overflow_count = 0;
 
     for(int i = 0; i < port_count; ++i) {
-        if (hal_common->used >= sizeof(hal_common->uids) / sizeof(hal_common->uids[0]))
-            return TF_E_TOO_MANY_DEVICES;
         tf_unknown_create(&unknown, "1", hal, (uint8_t)i, 0);
 
         int rc = tf_unknown_comcu_enumerate(&unknown);
@@ -44,8 +43,10 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
         tf_unknown_destroy(&unknown);
     }
 
-    if (hal_common->used > sizeof(hal_common->uids) / sizeof(hal_common->uids[0]))
+    if (hal_common->device_overflow_count > 0) {
+        tf_hal_log_info("%I8u additional devices found, but the inventory is full. Please increase TF_INVENTORY_SIZE.\n", hal_common->device_overflow_count);
         return TF_E_TOO_MANY_DEVICES;
+    }
 
     hal_common->timeout = 2500000;
 
@@ -67,8 +68,10 @@ static void enum_handler(TF_HalContext* hal,
     (void) fw_version;
     (void) enumeration_type;
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
-    if (hal_common->used >= sizeof(hal_common->uids) / sizeof(hal_common->uids[0]))
+    if (hal_common->used >= sizeof(hal_common->uids) / sizeof(hal_common->uids[0])) {
+        ++hal_common->device_overflow_count;
         return;
+    }
 
     uint32_t numeric_uid;
     if(tf_base58_decode(uid, &numeric_uid) != TF_E_OK)
