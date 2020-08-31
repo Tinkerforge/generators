@@ -76,6 +76,13 @@ int tf_hal_get_error_counters(TF_HalContext *hal, char port_name, uint32_t *ret_
 #define tf_hal_log_debug(...)
 #endif
 
+// Very minimalistic printf: no zero-padding, grouping, l-modifier or similar and no float.
+// Newlines (\n) are translated to the platform specific newline character(s).
+// To print fixed width integer types use a I[width] prefix, for example %I16x to print
+// an uint16_t as hex. Supported are I8, I16, I32 and I64.
+// Note that the prefix only specifies the width of the integer, not it's signedness
+// (i.e. use %I.. even if you want to print an unsigned integer).
+// The signedness is communicated as usual with %[prefix]d or %[prefix]u.
 void tf_hal_printf(const char *format, ...) TF_ATTRIBUTE_NONNULL_ALL;
 
 // To be used by HAL implementations

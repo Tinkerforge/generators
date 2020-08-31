@@ -84,14 +84,7 @@ class UCPrintfFormatMixin(object):
         elif type_ == 'bool':
             return '%s'
         elif type_ != 'float' and self.get_divisor() == None:
-            if type_ == 'int64':
-                return '%lld'
-            elif type_ == 'uint64':
-                return '%llu'
-            elif type_.startswith('uint'):
-                return '%u'
-            else:
-                return '%d'
+            return '%I{}{}'.format(self.get_element().get_item_size() * 8, 'u' if type_.startswith('uint') else 'd')
         else:
             return '%d 1/%d'
 

@@ -112,7 +112,7 @@ bool tf_hal_enumerate_handler(TF_HalContext *hal, uint8_t port_id, TF_Packetbuff
 
 static const char *alphabet = "0123456789abcdef";
 
-static void log_unsigned(uint64_t value, uint64_t base) {
+static void log_unsigned(uint64_t value, uint8_t base) {
     if(base < 2 || base > 16)
         return;
 
@@ -131,21 +131,27 @@ static void log_unsigned(uint64_t value, uint64_t base) {
     return;
 }
 
-static void log_signed(int64_t value, int64_t base) {
+static void log_signed(int64_t value, uint8_t base) {
     if(value < 0) {
         tf_hal_log_message("-", 1);
         value = -value;
     }
 
-    log_unsigned((uint64_t) value, (uint64_t) base);
+    log_unsigned((uint64_t) value, base);
 
     return;
 }
 
-TF_ATTRIBUTE_FMT_PRINTF(1, 2)
+static void write_chunk(const char *fmt, const char *cursor) {
+     if(cursor > fmt) {
+        // cursor is on the first character that must not be printed
+        size_t chunk_len = (size_t)(cursor - fmt) - 1;
+        if(chunk_len != 0)
+            tf_hal_log_message(fmt, chunk_len);
+    }
+}
+
 void tf_hal_printf(const char *fmt, ...){
-    // Very minimalistic printf: no zero-padding, grouping, l-modifier or similar and no float.
-    // Newlines (\n) are translated to the platform specific newline character(s).
 	va_list va;
 	va_start(va, fmt);
 
@@ -154,14 +160,9 @@ void tf_hal_printf(const char *fmt, ...){
 
 	while((character = *(cursor++))) {
         if(character == '\n') {
-            if(cursor > fmt) {
-                // cursor is on the \n character
-                size_t chunk_len = (size_t)(cursor - fmt) - 1;
-                if(chunk_len != 0)
-                    tf_hal_log_message(fmt, chunk_len);
+            write_chunk(fmt, cursor);
+            fmt = cursor;
 
-                fmt = cursor;
-            }
             tf_hal_log_newline();
             continue;
         }
@@ -170,114 +171,152 @@ void tf_hal_printf(const char *fmt, ...){
             continue;
         }
 
-        if(cursor > fmt) {
-            // cursor is on the % character
-            size_t chunk_len = (size_t)(cursor - fmt) - 1;
-            if(chunk_len != 0)
-                tf_hal_log_message(fmt, chunk_len);
+        write_chunk(fmt, cursor);
+        fmt = cursor;
+
+        // Parse integer prefixes
+        int width = 0;
+
+        if (strncmp(cursor, "I8", 2) == 0) {
+            width = 1;
+            cursor += 2;
+        } else if (strncmp(cursor, "I16", 3) == 0) {
+            width = 2;
+            cursor += 3;
+        } else if (strncmp(cursor, "I32", 3) == 0) {
+            width = 4;
+            cursor += 3;
+        } else if (strncmp(cursor, "I64", 3) == 0) {
+            width = 8;
+            cursor += 3;
         }
 
+        // Parse and handle non-integer placeholders
         character = *(cursor++);
 
         switch(character) {
             case '\n': {
+                write_chunk(fmt, cursor);
                 tf_hal_log_newline();
-                break;
+                fmt = cursor;
+                continue;
             }
             case '\0': {
-                tf_hal_log_message("%", 1);
+                write_chunk(fmt, cursor);
                 va_end(va);
                 return;
             }
 
-            case 'u': {
-                uint32_t value = va_arg(va, uint32_t);
-                log_unsigned(value, 10);
-                break;
-            }
-
-            case 'b': {
-                uint32_t value = va_arg(va, uint32_t);
-                log_unsigned(value, 2);
-                break;
-            }
-
-            case 'd': {
-                int32_t value = va_arg(va, int32_t);
-                log_signed(value, 10);
-                break;
-            }
-
-            case 'X':
-            case 'x': {
-                uint32_t value = va_arg(va, uint32_t);
-                log_unsigned(value, 16);
-                break;
-            }
-
             case 'c' : {
-                char c = (char)(va_arg(va, int));
+                char c = (char) va_arg(va, int);
                 tf_hal_log_message(&c, 1);
-                break;
+                fmt = cursor;
+                continue;
             }
 
             case 's' : {
                 const char *str = va_arg(va, char*);
                 tf_hal_log_message(str, strlen(str));
-                break;
+                fmt = cursor;
+                continue;
             }
 
             case '%' : {
                 tf_hal_log_message("%", 1);
+                fmt = cursor;
+                continue;
+            }
+        }
+
+        // Parse integer placeholders
+        bool sign = 0;
+        uint8_t base = 0;
+
+        switch(character) {
+            case 'u': {
+                if(width == 0)
+                    width = sizeof(unsigned int);
+                base = 10;
+                sign = false;
                 break;
             }
 
-            case 'l': {
-                if(cursor[0] == 'l') {
-                    if(cursor[1] == 'd') {
-                        cursor += 2;
-                        int64_t value = va_arg(va, int64_t);
-                        log_signed(value, 10);
-                        break;
-                    }
-                    if(cursor[1] == 'u') {
-                        cursor += 2;
-                        uint64_t value = va_arg(va, uint64_t);
-                        log_unsigned(value, 10);
-                        break;
-                    }
-                    if(cursor[1] == 'x') {
-                        cursor += 2;
-                        uint64_t value = va_arg(va, uint64_t);
-                        log_unsigned(value, 16);
-                        break;
-                    }
-                    if(cursor[1] == 'b') {
-                        cursor += 2;
-                        uint64_t value = va_arg(va, uint64_t);
-                        log_unsigned(value, 2);
-                        break;
-                    }
-                }
-                //Intentionally fall through here, if the placeholder was not a known one (or we encountered a \0).
-                //Handle this as if the placeholder was completely unknown.
+            case 'b': {
+                if(width == 0)
+                    width = sizeof(unsigned int);
+                base = 2;
+                sign = false;
+                break;
             }
-            TF_ATTRIBUTE_FALLTHROUGH;
+
+            case 'd': {
+                if(width == 0)
+                    width = sizeof(int);
+                base = 10;
+                sign = true;
+                break;
+            }
+
+            case 'X':
+            case 'x': {
+                if(width == 0)
+                    width = sizeof(unsigned int);
+                base = 16;
+                sign = false;
+                break;
+            }
             default:
                 tf_hal_log_message("%", 1);
                 tf_hal_log_message(&character, 1);
+                fmt = cursor;
+                continue;
+        }
+
+        // Handle integer placeholders with optional prefix.
+        uint64_t value = 0;
+
+        // double casts fix implicit conversion signedness change warnings
+        switch(width) {
+            case 1:
+                if (sign) {
+                    value = (uint64_t)((int8_t) va_arg(va, int));
+                } else {
+                    value = (uint8_t) va_arg(va, unsigned int);
+                }
                 break;
+            case 2:
+                if (sign) {
+                    value = (uint64_t)((int16_t) va_arg(va, int));
+                } else {
+                    value = (uint16_t) va_arg(va, unsigned int);
+                }
+                break;
+            case 4:
+                if (sign) {
+                    value = (uint64_t)(va_arg(va, int32_t));
+                } else {
+                    value = va_arg(va, uint32_t);
+                }
+                break;
+            case 8:
+                if (sign) {
+                    value = (uint64_t)(va_arg(va, int64_t));
+                } else {
+                    value = va_arg(va, uint64_t);
+                }
+                break;
+        }
+
+        if (sign) {
+            log_signed((int64_t) value, base);
+        } else {
+            log_unsigned((uint64_t) value, base);
         }
 
         fmt = cursor;
     }
 
-    if(cursor > fmt) {
-        // cursor is on the null terminator
-        size_t chunk_len = (size_t)(cursor - fmt) - 1;
-        if(chunk_len != 0)
-            tf_hal_log_message(fmt, chunk_len);
-    }
+    write_chunk(fmt, cursor);
 
     va_end(va);
 }
