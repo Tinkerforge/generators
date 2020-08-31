@@ -44,7 +44,7 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
     }
 
     if (hal_common->device_overflow_count > 0) {
-        tf_hal_log_info("%I8u additional devices found, but the inventory is full. Please increase TF_INVENTORY_SIZE.\n", hal_common->device_overflow_count);
+        tf_hal_log_info("Additional devices found, but the inventory is full. Please increase TF_INVENTORY_SIZE.\n");
         return TF_E_TOO_MANY_DEVICES;
     }
 
