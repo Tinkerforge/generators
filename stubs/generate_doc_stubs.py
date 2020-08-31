@@ -339,6 +339,9 @@ Beschreibung.
     def get_doc_formatted_param(self, element):
         return element.get_name().under
 
+    def generates_high_level_callbacks(self):
+        return True
+
     def prepare(self):
         if self.get_config_name().space == 'Tinkerforge':
             name = 'doc'
