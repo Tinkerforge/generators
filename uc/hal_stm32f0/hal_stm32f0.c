@@ -210,8 +210,15 @@ uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
 }
 
 void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
+#ifdef TF_HAL_USE_COOP_TASK
 	// bricklib2-specific, change me for other platforms
+	const uint32_t deadline = tf_hal_current_time_us(hal) + us;
+	while(!tf_hal_deadline_elapsed(hal, deadline)) {
+		coop_task_yield();
+	}
+#else
 	system_timer_sleep_us(us);
+#endif
 }
 
 TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) {
