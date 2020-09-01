@@ -33,6 +33,15 @@ com = {
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Channel LED Config',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Show Heartbeat', 2),
+              ('Show Channel Status', 3)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set Value',
@@ -80,6 +89,47 @@ Returns the state of the relays, *true* means on and *false* means off.
 'de':
 """
 Gibt den Zustand der Relais zurück, *true* bedeutet ein und *false* aus.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Channel LED Config',
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Config', 'default': 3})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Each channel has a corresponding LED. You can turn the LED off, on or show a
+heartbeat. You can also set the LED to "Channel Status". In this mode the
+LED is on if the channel is high and off otherwise.
+""",
+'de':
+"""
+Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
+ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus
+angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn
+ein High-Signal am Kanal anliegt und sonst aus.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Channel LED Config',
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Config', 'uint8', 1, 'out', {'constant_group': 'Channel LED Config', 'default': 3})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the channel LED configuration as set by :func:`Set Channel LED Config`
+""",
+'de':
+"""
+Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config` gesetzt.
 """
 }]
 })
