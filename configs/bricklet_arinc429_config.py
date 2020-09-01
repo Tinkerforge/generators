@@ -575,7 +575,7 @@ This callback is triggered according to the configuration set by :func:`Set Rece
 
 The parameter 'Frame Status' indicates if a new frame was received, or if a timeout encountered.
 The timeout can be configured with the :func:'Configure Label', default is timeout disabled.
-The other :word:`parameters` are the same as with :func:`Read next Frame`.
+The other :word:`parameters` are the same as with :func:`Read Next Frame`.
 """,
 'de':
 """
