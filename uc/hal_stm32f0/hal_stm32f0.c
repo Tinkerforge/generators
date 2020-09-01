@@ -181,7 +181,6 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 	HAL_StatusTypeDef status = HAL_SPI_TransmitReceive_DMA(&port->spi, (uint8_t *)write_buffer, read_buffer, length);
 	HAL_SPI_StateTypeDef spi_state;
 
-	// bricklib2-specific, change me for other platforms
 	uint32_t deadline = tf_hal_current_time_us(hal) + TF_HAL_SPI_TIMEOUT*1000;
 	while((spi_state = HAL_SPI_GetState(&port->spi)) != HAL_SPI_STATE_READY) {
 #ifdef TF_HAL_USE_COOP_TASK
@@ -189,7 +188,7 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 		// We don't want to wait unnecessary long for that.
 		if(length > 1) {
 			tf_hal_get_common(hal)->locked = true;
-			coop_task_yield();
+			coop_task_yield(); // bricklib2-specific, change me for other platforms
 			tf_hal_get_common(hal)->locked = false;
 		}
 #endif
@@ -211,13 +210,12 @@ uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
 
 void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
 #ifdef TF_HAL_USE_COOP_TASK
-	// bricklib2-specific, change me for other platforms
 	const uint32_t deadline = tf_hal_current_time_us(hal) + us;
 	while(!tf_hal_deadline_elapsed(hal, deadline)) {
-		coop_task_yield();
+		coop_task_yield(); // bricklib2-specific, change me for other platforms
 	}
 #else
-	system_timer_sleep_us(us);
+	system_timer_sleep_us(us); // bricklib2-specific, change me for other platforms
 #endif
 }
 
