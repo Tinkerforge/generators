@@ -185,9 +185,13 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 	uint32_t start = system_timer_get_ms();
 	while((spi_state = HAL_SPI_GetState(&port->spi)) != HAL_SPI_STATE_READY) {
 #ifdef TF_HAL_USE_COOP_TASK
-		tf_hal_get_common(hal)->locked = true;
-		coop_task_yield();
-		tf_hal_get_common(hal)->locked = false;
+		// Don't yield if we only transceive one byte.
+		// We don't want to wait unnecessary long for that.
+		if(length > 1) {
+			tf_hal_get_common(hal)->locked = true;
+			coop_task_yield();
+			tf_hal_get_common(hal)->locked = false;
+		}
 #endif
 
 		// Timeout if SPI state doesn't change to ready within 1s.
