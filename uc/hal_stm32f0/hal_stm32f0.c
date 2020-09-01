@@ -182,7 +182,7 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 	HAL_SPI_StateTypeDef spi_state;
 
 	// bricklib2-specific, change me for other platforms
-	uint32_t start = system_timer_get_ms();
+	uint32_t deadline = tf_hal_current_time_us(hal) + TF_HAL_SPI_TIMEOUT*1000;
 	while((spi_state = HAL_SPI_GetState(&port->spi)) != HAL_SPI_STATE_READY) {
 #ifdef TF_HAL_USE_COOP_TASK
 		// Don't yield if we only transceive one byte.
@@ -196,7 +196,7 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 
 		// Timeout if SPI state doesn't change to ready within 1s.
 		// TODO: Maybe also explicitly check for ERROR and ABORT states here?
-		if(system_timer_is_time_elapsed_ms(start, TF_HAL_SPI_TIMEOUT)) {
+		if(tf_hal_deadline_elapsed(hal, deadline)) {
 			return TF_E_TRANSCEIVE_TIMEOUT;
 		}
 	}
