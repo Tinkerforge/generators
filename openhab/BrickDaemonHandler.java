@@ -26,12 +26,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
-import org.openhab.binding.tinkerforge.internal.Utils;
-import org.openhab.binding.tinkerforge.internal.device.BrickDaemonConfig;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -40,6 +36,9 @@ import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.openhab.binding.tinkerforge.discovery.BrickDaemonDiscoveryService;
+import org.openhab.binding.tinkerforge.internal.Utils;
+import org.openhab.binding.tinkerforge.internal.device.BrickDaemonConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +53,7 @@ import com.tinkerforge.TinkerforgeException;
 
 /**
  * Handles communication with Brick Daemons.
+ *
  * @author Erik Fleckstein - Initial contribution
  */
 @NonNullByDefault
@@ -75,6 +75,9 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
     private static final int ALL_PACKETS_LOST_THRESHOLD = 5;
     private final Map<String, ThingHandler> childHandlers = new ConcurrentHashMap<>();
+
+    private final Object isRequestedHeartbeatRunningLock = new Object();
+    private boolean isRequestedHeartbeatRunning = false;
 
     public BrickDaemonHandler(Bridge bridge, Consumer<BrickDaemonDiscoveryService> registerFn,
             Consumer<BrickDaemonDiscoveryService> deregisterFn) {
@@ -140,6 +143,20 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
 
     public void handleTimeout(DeviceHandler handler) {
         logger.trace("Timeout for device {}", handler.getThing().getUID());
+
+        // Make sure only one timeout triggers a heartbeat.
+        // Otherwise, all timeouts can spawn a heartbeat, that
+        // will give the scheduler a task per device
+        // If we are unlucky with the scheduling, all
+        // threads start running the heartbeat method, leaving
+        // no tasks to run the tasks spawned by a heartbeat
+        // This then blocks all thing handling threads forever.
+        synchronized(isRequestedHeartbeatRunningLock) {
+            if (isRequestedHeartbeatRunning)
+                return;
+            isRequestedHeartbeatRunning = true;
+        }
+
         if (heartbeatFuture != null)
             Utils.assertNonNull(heartbeatFuture).cancel(false);
         // Replace canceled heartbeat with one, that will run immediately
@@ -170,16 +187,21 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         return !lst.stream().anyMatch(r -> r.reachable);
     }
 
+
     private void heartbeat() {
-        if (thing.getStatus().equals(ThingStatus.OFFLINE))
+        if (thing.getStatus().equals(ThingStatus.OFFLINE)) {
+            synchronized(isRequestedHeartbeatRunningLock) {
+                isRequestedHeartbeatRunning = false;
+            }
             return;
+        }
 
         int allPacketsLost = 0;
         List<ReachabilityResult> reachabilityResults = new ArrayList<>();
         while (allPacketsLost < ALL_PACKETS_LOST_THRESHOLD) {
             List<ReachabilityResult> reachable = this.checkReachability(thing -> true);
             reachabilityResults.addAll(reachable);
-            // Only assume lost connection if there are devices that can have been checked
+            // Only assume lost connection if at least one device was checked
             if (none(reachable) && reachable.size() > 0) {
                 ++allPacketsLost;
             } else {
@@ -199,6 +221,10 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
                     "Connection lost. Trying to reconnect.");
             attemptReconnect(FIRST_RECONNECT_INTERVAL_SECS);
+        }
+
+        synchronized(isRequestedHeartbeatRunningLock) {
+            isRequestedHeartbeatRunning = false;
         }
     }
 
