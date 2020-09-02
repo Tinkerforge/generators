@@ -19,5 +19,15 @@
 - Fix deadline overflow behaviour
 - Add hal_raspberry_pi
 
-2020-07-31: 2.0.0 Beta 6 (<unknown>)
+2020-07-31: 2.0.0 Beta 6 (f4e4e196)
 - Fix nonnull attributes in HALs
+
+2020-09-02: 2.0.0 Beta 7 (<unknown>)
+- Add hal_stm32f0
+- Add examples
+- Add documentation
+- Add TF_IMPLEMENT_STRERROR config
+- Replace usage of vsnprintf with custom printf implementation
+- Remove tf_strerror, use tf_hal_strerror instead
+- Rename tf_hal_*_init to tf_hal_create
+- Fix bugs to allow running multiple HAL instances at the same time
