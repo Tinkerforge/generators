@@ -22,7 +22,7 @@
 2020-07-31: 2.0.0 Beta 6 (f4e4e196)
 - Fix nonnull attributes in HALs
 
-2020-09-02: 2.0.0 Beta 7 (<unknown>)
+2020-09-02: 2.0.0 Beta 7 (3a080018)
 - Add hal_stm32f0
 - Add examples
 - Add documentation
