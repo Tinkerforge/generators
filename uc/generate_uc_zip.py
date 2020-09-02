@@ -132,6 +132,8 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
             for folder in next(os.walk('.'))[1]:
                 if not folder.startswith('hal_'):
                     continue
+                if folder == 'hal_fake':
+                    continue
 
                 shutil.copytree(os.path.join(root_dir, folder), os.path.join(self.tmp_source_dir, folder))
 
