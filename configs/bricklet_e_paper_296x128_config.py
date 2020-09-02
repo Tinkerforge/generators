@@ -632,9 +632,10 @@ com['openhab'] = {
             'transform': 'new DecimalType(drawStatus)'}]
     }],
     'channel_types': [
-        oh_generic_channel_type('Draw Status', 'Number', 'Draw Status',
+        oh_generic_channel_type('Draw Status', 'Number', {'en': 'Draw Status', 'de': 'Zeichen-Status'},
                     update_style=None,
-                    description="One of three draw statuses:<ul><li>0: Idle</li><li>1: Copying: Data is being copied from the buffer of the Bricklet to the buffer of the display.</li><li>2: Drawing: The display is updating its content (during this phase the flickering etc happens).</li></ul>\n\nYou can write to the buffer (through one of the write or draw functions) when the status is either idle or drawing. You should not write to the buffer while it is being copied to the display. There is no double-buffering."),
+                    description={'en': "One of three draw statuses:<ul><li>0: Idle</li><li>1: Copying: Data is being copied from the buffer of the Bricklet to the buffer of the display.</li><li>2: Drawing: The display is updating its content (during this phase the flickering etc happens).</li></ul>\n\nYou can write to the buffer (through one of the write or draw functions) when the status is either idle or drawing. You should not write to the buffer while it is being copied to the display. There is no double-buffering.",
+                                 'de': "Einer von drei möglichen Status:<ul><li>0: Idle<li>1: Copying: Daten werden vom Buffer des Bricklets in den Buffer des Displays kopiert.</li><li>2: Drawing: Das Display aktualisiert den Inhalt (während dieser Phase flackert das Display).</li>Der Buffer kann beschrieben werden (durch eine der *write*- oder *draw*-Actions) wenn der Status entweder *idle* oder *drawing* ist. Der Buffer sollte nicht beschrieben werden während er *kopiert* wird. Es findet kein Double-Buffering statt."}),
     ],
     'actions': ['Draw', 'Get Draw Status',
                 'Write Black White', 'Read Black White', 'Write Color', 'Read Color', 'Fill Display',

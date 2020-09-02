@@ -324,7 +324,7 @@ com['openhab'] = {
             'name': 'Background Calibration',
             'type': 'boolean',
 
-            'label': {'en': 'Enable Background Calibration', 'de': 'Hintergrundkalibrierung aktivieren'},
+            'label': {'en': 'Background Calibration', 'de': 'Hintergrundkalibrierung'},
             'description': {'en': 'If the background calibration is enabled the sensing polarity is flipped once per second to automatically calculate and remove offset that is caused by temperature changes. This polarity flipping takes about 20ms. This means that once a second you will not get new data for a period of 20ms. We highly recommend that you keep the background calibration enabled and only disable it if the 20ms off-time is a problem in you application.',
                             'de': 'Wenn die Hintergrundkalibrierung aktiviert ist, ändert das Bricklet einmal pro Sekunde die Erfassungspolarität, um damit automatisch temperaturabhängige Offsets zu entfernen. Das Ändern der Polarität dauert ungefähr 20ms. Daher werden einmal pro Sekunde für 20ms keine neuen Daten generiert, wenn die Kalibrierung aktiviert ist. Wir empfehlen die Kalibrierung nur zu deaktivieren, falls diese 20ms Auszeit ein großes Problem in der Anwendung des Bricklets darstellen.'}
         },

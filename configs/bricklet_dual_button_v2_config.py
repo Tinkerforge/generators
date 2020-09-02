@@ -262,12 +262,12 @@ com['openhab'] = {
 
             'name': 'Left LED State',
             'type': 'integer',
-            'label': 'Left LED State',
+            'label': {'en': 'Left LED State', 'de': 'Zustand der linken LED'},
             'description': """<ul><li>Auto Toggle - Default On: Enables auto toggle. LED initially enabled</li><li>Auto Toggle - Default Off: Enables auto toggle. LED initially disabled</li><li>Channel - Default On: Creates a control channel. LED initially enabled.</li><li>Channel - Default Off: Creates a control channel. LED initially disabled.</li></ul>""",
-            'options':  [('Auto Toggle - Default On', 0),
-                         ('Auto Toggle - Default Off', 1),
-                         ('Channel - Default On', 2),
-                         ('Channel - Default Off', 3)],
+            'options': [({'en': 'Auto Toggle - Default On', 'de': 'Automatisches Umschalten - Standard An'}, 0),
+                        ({'en': 'Auto Toggle - Default Off', 'de': 'Automatisches Umschalten - Standard Aus'}, 1),
+                        ({'en': 'Channel - Default On', 'de': 'Channel - Standard An'}, 2),
+                        ({'en': 'Channel - Default Off', 'de': 'Channel - Standard Aus'}, 3)],
         },
         {
             'packet': 'Set LED State',
@@ -275,12 +275,12 @@ com['openhab'] = {
 
             'name': 'Right LED State',
             'type': 'integer',
-            'label': 'Right LED State',
-            'description': """<ul><li>Auto Toggle - Default On: Enables auto toggle. LED initially enabled</li><li>Auto Toggle - Default Off: Enables auto toggle. LED initially disabled</li><li>Channel - Default On: Creates a control channel. LED initially enabled.</li><li>Channel - Default Off: Creates a control channel. LED initially disabled.</li></ul>""",
-            'options':  [('Auto Toggle - Default On', 0),
-                         ('Auto Toggle - Default Off', 1),
-                         ('Channel - Default On', 2),
-                         ('Channel - Default Off', 3)],
+            'label': {'en': 'Right LED State', 'de': 'Zustand der rechten LED'},
+            'description': """<ul><li>Auto Toggle - Default On: Aktiviert automatisches Umschalten. LED anfangs aktiviert.</li><li>Auto Toggle - Default Off: Aktiviert automatisches Umschalten. LED anfangs deaktiviert.</li><li>Channel - Default On: Erstellt einen Kontrollchannel. LED anfangs aktiviert.</li><li>Channel - Default Off: Erstellt einen Kontrollchannel. LED anfangs deaktiviert.</li></ul>""",
+            'options': [({'en': 'Auto Toggle - Default On', 'de': 'Automatisches Umschalten - Standard An'}, 0),
+                        ({'en': 'Auto Toggle - Default Off', 'de': 'Automatisches Umschalten - Standard Aus'}, 1),
+                        ({'en': 'Channel - Default On', 'de': 'Channel - Standard An'}, 2),
+                        ({'en': 'Channel - Default Off', 'de': 'Channel - Standard Aus'}, 3)],
         }
     ],
     'init_code': """this.setLEDState(cfg.leftLEDState, cfg.rightLEDState);
@@ -289,9 +289,10 @@ com['openhab'] = {
     'channels': [
         {
             'id': 'Left Button',
-            'label': 'Left Button',
+            'label': {'en': 'Left Button', 'de': 'Linker Taster'},
+            'description': {'en': 'This channel triggers if the left button is pressed or released',
+                            'de': 'Dieser Channel löst aus, wenn der linke Taster gedrückt oder losgelassen wird'},
             'type': 'system.rawbutton',
-            'description': 'This channel triggers if the left button is pressed or released',
             'getters': [{
                 'packet': 'Get Button State',
                 'element': 'Button L',
@@ -304,9 +305,10 @@ com['openhab'] = {
         },
         {
             'id': 'Right Button',
-            'label': 'Right Button',
+            'label': {'en': 'Right Button', 'de': 'Rechter Taster'},
+            'description': {'en': 'This channel triggers if the right button is pressed or released',
+                            'de': 'Dieser Channel löst aus, wenn der rechte Taster gedrückt oder losgelassen wird'},
             'type': 'system.rawbutton',
-            'description': 'This channel triggers if the right button is pressed or released',
             'getters': [{
                 'packet': 'Get Button State',
                 'element': 'Button R',
@@ -318,7 +320,6 @@ com['openhab'] = {
                 'transform': 'buttonR == BrickletDualButtonV2.BUTTON_STATE_PRESSED ? CommonTriggerEvents.PRESSED : CommonTriggerEvents.RELEASED'}],
         }, {
             'id': 'Left LED',
-            'label': 'Left LED',
             'type': 'Left LED',
 
             'predicate': 'cfg.leftLEDState > 1',
@@ -337,7 +338,6 @@ com['openhab'] = {
 
         }, {
             'id': 'Right LED',
-            'label': 'Right LED',
             'type': 'Right LED',
 
             'predicate': 'cfg.rightLEDState > 1',
@@ -356,12 +356,12 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Left LED', 'Switch', 'Left LED',
+        oh_generic_channel_type('Left LED', 'Switch', {'en': 'Left LED', 'de': 'Linke LED'},
                     update_style=None,
-                    description='Controls the left LED.'),
-        oh_generic_channel_type('Right LED', 'Switch', 'Right LED',
+                    description={'en': 'Controls the LED under the left button.', 'de': 'Steuert die LED unter dem linken Taster'}),
+        oh_generic_channel_type('Right LED', 'Switch', {'en': 'Right LED', 'de': 'Rechte LED'},
                     update_style=None,
-                    description='Controls the right LED.'),
+                    description={'en': 'Controls the LED under the right button.', 'de': 'Steuert die LED unter dem rechten Taster'}),
     ],
     'actions': ['Get LED State', 'Get Button State']
 }

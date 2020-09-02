@@ -182,16 +182,18 @@ com['openhab'] = {
             'name': 'Update Rate',
             'type': 'integer',
 
-            'label': 'Update Rate',
-            'description': 'With 2 Hz update rate the noise is about +-1mm, while with 10 Hz update rate the noise increases to about +-5mm.',
+            'label': {'en': 'Update Rate', 'de': 'Aktualisierungsrate'},
+            'description': {'en': 'With 2 Hz update rate the noise is about +-1mm, while with 10 Hz update rate the noise increases to about +-5mm.',
+                            'de': 'Mit 2 Hz Aktualisierungsrate beträgt das Rauschen ungefähr ±1mm. Bei 10 Hz erhöht sich das das Rauschen auf ungefähr ±5mm.'}
         }, {
             'packet': 'Set Distance LED Config',
             'element': 'Config',
 
             'name': 'Distance LED Config',
             'type': 'integer',
-            'label': 'Distance LED Config',
-            'description': 'Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).',
+            'label': {'en': 'Distance LED Config', 'de': 'Distanz-LED-Konfiguration'},
+            'description': {'en': "Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).",
+                            'de': "Konfiguriert die Distanz-LED. Die LED kann ausgeschaltet, eingeschaltet, im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option mit der LED die Distanz anzuzeigen (heller = Objekt näher)."}
         }
     ],
     'init_code': """this.setUpdateRate(cfg.updateRate);
@@ -200,9 +202,9 @@ this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
         oh_generic_channel('Distance', 'Distance')
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', {'en': 'Distance', 'de': 'Distanz'},
                     update_style='Callback Configuration',
-                    description='The current distance measured by the sensor.')
+                    description={'en': 'The measured distance', 'de': 'Die gemessene Distanz'})
     ],
     'actions': ['Get Distance', 'Get Update Rate', 'Get Distance LED Config']
 }

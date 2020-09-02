@@ -568,9 +568,9 @@ com['openhab'] = {
         oh_analog_value_channel()
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', {'en': 'Distance', 'de': 'Distanz'},
                     update_style='Callback Period',
-                    description='The measured distance'),
+                    description={'en': 'The measured distance', 'de': 'Die gemessene Distanz'}),
         oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Distance', 'Get Analog Value', 'Get Sampling Point']

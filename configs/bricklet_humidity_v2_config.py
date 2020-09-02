@@ -278,8 +278,9 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups() +  [{
         'name': 'average',
-        'label': 'Averaging',
-        'description': 'Sets the length of a moving averaging for the humidity and temperature.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nThe range for the averaging is 1-1000.\n\nNew data is gathered every 50ms*. With a moving average of length 1000 the resulting averaging window has a length of 50s. If you want to do long term measurements the longest moving average will give the cleanest results.\n\nThe default value is 5.\n\n* In firmware version 2.0.3 we added the setSamplesPerSecond() function. It configures the measurement frequency. Since high frequencies can result in self-heating of th IC, changed the default value from 20 samples per second to 1. With 1 sample per second a moving average length of 1000 would result in an averaging window of 1000 seconds!',
+        'label': {'en': 'Averaging', 'de': 'Mittelwertbildung'},
+        'description': {'en': 'The length of a moving averaging for the humidity and temperature.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nThe range for the averaging is 1-1000.\n\nNew data is gathered every 50ms*. With a moving average of length 1000 the resulting averaging window has a length of 50s. If you want to do long term measurements the longest moving average will give the cleanest results.\n\nThe default value is 5.\n\n* In firmware version 2.0.3 we added the setSamplesPerSecond action. It configures the measurement frequency. Since high frequencies can result in self-heating of th IC, changed the default value from 20 samples per second to 1. With 1 sample per second a moving average length of 1000 would result in an averaging window of 1000 seconds!',
+                        'de': 'Setzt die Länge eines gleitenden Mittelwerts für die Luftfeuchtigkeit und Temperatur.\n\nWenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert. Je kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.\n\nEiner neue Wert wird alle 50ms* gemessen. Mit einer Mittelwerts-Länge von 1000 hat das resultierende gleitende Fenster eine Zeitspanne von 50s. Bei Langzeitmessungen gibt ein langer Mittelwert die saubersten Resultate.\n\n\* In Firmware Version 2.0.3 haben wir die Sample Rate-Konfiguration hinzugefügt. Diese konfiguriert die Messfrequenz. Da eine hohe Messfrequenz zu Selbsterhitzung führen kann haben wir die Standardeinstellung von 20 SPS auf 1 SPS geändert. Mit einer Messung pro Sekunde entspricht eine Mittelwert-Länge von 1000 einem Zeitfenster von 1000 Sekunden!'},
         'advanced': 'true'
     }],
     'params': [
@@ -289,8 +290,8 @@ com['openhab'] = {
 
             'name': 'Humidity Moving Average Length',
             'type': 'integer',
-            'label': 'Humidity Moving Average Length',
-            'description': 'The length of a moving averaging for the humidity.',
+            'label': {'en': 'Humidity Moving Average Length', 'de': 'Länge des gleitenden Luftfeuchte-Mittelwerts'},
+            'description': {'en': 'The length of a moving averaging for the humidity.', 'de': 'Die Länge des gleitenden Mittelwerts für die Luftfeuchtigkeit'},
             'groupName': 'average'
         },
         {
@@ -299,8 +300,8 @@ com['openhab'] = {
 
             'name': 'Temperature Moving Average Length',
             'type': 'integer',
-            'label': 'Temperature Moving Average Length',
-            'description': 'The length of a moving averaging for the temperature.',
+            'label': {'en': 'Temperature Moving Average Length', 'de': 'Länge des gleitenden Temperatur-Mittelwerts'},
+            'description': {'en': 'The length of a moving averaging for the temperature.', 'de': 'Die Länge des gleitenden Mittelwerts für die Temperatur'},
             'groupName': 'average'
         },
         {
@@ -316,14 +317,15 @@ com['openhab'] = {
                         ('0.2 SPS', 4),
                         ('0.1 SPS', 5)],
             'limit_to_options': 'true',
-            'label': 'Sample Rate',
-            'description': "The samples per second that are gathered by the humidity/temperature sensor HDC1080.\n\nWe added this function since we found out that a high measurement frequency can lead to self-heating of the sensor. Which can distort the temperature measurement.\n\nIf you don't need a lot of measurements, you can use the lowest available measurement frequency of 0.1 samples per second for the least amount of self-heating.",
+            'label': {'en': 'Sample Rate', 'de': 'Messrate'},
+            'description': {'en': "The samples per second that are gathered by the humidity/temperature sensor HDC1080.\n\nWe added this function since we found out that a high measurement frequency can lead to self-heating of the sensor. Which can distort the temperature measurement.\n\nIf you don't need a lot of measurements, you can use the lowest available measurement frequency of 0.1 samples per second for the least amount of self-heating.",
+                            'de': "Die Messungen pro Sekunde mit denen neue Luftfeuchte/Temperatur-Werte vom HDC1080 Sensor gelesen werden.\n\nWir haben diese Funktion hinzugefügt, da eine hohe Messfrequenz zu einer Selbsterhitzung des Sensors führen kann. Diese kann die Temperaturmessung verfälschen.\n\nWenn wenig Messwerte benötigt werden kann die Frequenz auf bis zu 0,1 Messungen pro Sekunde verringert werden um einen Fehler durch Selbsterhitzung möglichst weit zu minimieren."}
         }
     ],
     'init_code': """this.setSamplesPerSecond(cfg.sampleRate);
 this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperatureMovingAverageLength);""",
     'channels': [
-        oh_generic_channel('Humidity', 'Humidity',),
+        oh_generic_channel('Humidity', 'Humidity'),
         oh_generic_channel('Temperature', 'Temperature'),
         {
             'id': 'Heater',
@@ -343,15 +345,16 @@ this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperat
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Humidity', 'Number', 'Humidity',
+        oh_generic_channel_type('Humidity', 'Number', {'en': 'Humidity', 'de': 'Luftfeuchtigkeit'},
                     update_style='Callback Configuration',
-                    description='The measured relative humidity'),
-        oh_generic_channel_type('Temperature', 'Number', 'Temperature',
+                    description={'en': 'The measured relative humidity', 'de': 'Die gemessene relative Luftfeuchtigkeit'}),
+        oh_generic_channel_type('Temperature', 'Number', {'en': 'Temperature', 'de': 'Temperatur'},
                     update_style='Callback Configuration',
-                    description='The measured temperature'),
-        oh_generic_channel_type('Heater', 'Switch', 'Heater',
+                    description={'en': 'The measured temperature', 'de': 'Die gemessene Temperatur'}),
+        oh_generic_channel_type('Heater', 'Switch', {'en': 'Heater', 'de': 'Heizelement'},
                     update_style=None,
-                    description='Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.'),
+                    description={'en': 'Enables/disables the heater. The heater can be used to dry the sensor in extremely wet conditions.',
+                                 'de': 'Aktiviert/deaktiviert das Heizelement. Das Heizelement kann genutzt werden um den Sensor bei extremer Feuchtigkeit zu trocknen.'}),
     ],
     'actions': ['Get Humidity', 'Get Temperature', {'fn': 'Set Heater Configuration', 'refreshs': ['Heater']}, 'Get Heater Configuration', 'Get Moving Average Configuration', 'Get Samples Per Second']
 }

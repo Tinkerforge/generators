@@ -766,7 +766,7 @@ com['openhab'] = {
                     update_style='Callback Period',
                     description={'en': 'To get a correct color temperature measurement make sure that the color values themself are not saturated. The color value (R, G or B) is saturated if it is equal to the maximum value of 255. In that case you have to reduce the gain.',
                                  'de': 'Für eine korrekte Messung der Farbtemperatur muss sichergestellt sein das die Farbwerte (R, G oder B) nicht saturiert sind. Ein Farbwert ist saturiert wenn der Wert 255 beträgt. In diesem Fall muss die Verstärkung reduziert werden.'}),
-        oh_generic_channel_type('Light', 'Switch', {'en': 'Enable Light', 'de': 'TODO'},
+        oh_generic_channel_type('Light', 'Switch', {'en': 'Light', 'de': 'Licht'},
                     update_style=None,
                     description={'en': 'Turns the white LED on the Bricklet on/off.',
                                  'de': 'Schaltet die weiße LED am Bricklet an/aus.'}),

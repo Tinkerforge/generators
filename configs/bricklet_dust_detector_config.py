@@ -337,8 +337,9 @@ com['openhab'] = {
 
             'name': 'Moving Average Length',
             'type': 'integer',
-            'label': 'Moving Average Length',
-            'description': 'The length of a moving averaging for the dust_density.\n\nSetting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.'
+            'label': {'en': 'Moving Average Length', 'de': 'Länge des gleitenden Mittelwerts'},
+            'description': {'en': 'The length of a moving averaging for the dust density.\n\nSetting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.',
+                            'de': 'Die Länge eines gleitenden Mittelwerts für die Staubdichte.\n\nWenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.'}
         }
     ],
     'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
@@ -346,9 +347,9 @@ com['openhab'] = {
         oh_generic_old_style_channel('Dust Density', 'Dust Density')
     ],
     'channel_types': [
-        oh_generic_channel_type('Dust Density', 'Number', 'Dust Density',
+        oh_generic_channel_type('Dust Density', 'Number', {'en': 'Dust Density', 'de': 'Staubdichte'},
                     update_style='Callback Period',
-                    description='The dust density.')
+                    description={'en': 'The measured dust density', 'de': 'Die gemessene Staubdichte'})
     ],
     'actions': ['Get Dust Density', 'Get Moving Average']
 }

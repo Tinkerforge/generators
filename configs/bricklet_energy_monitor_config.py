@@ -379,7 +379,8 @@ com['examples'].append({
 })
 
 
-integration_info = 'Integrated over 10 zero-crossings of the voltage sine wave. With a standard AC mains voltage frequecy of 50Hz this results in a 5 measurements per second (or an integration time of 200ms per measurement). If no voltage transformer is connected, the Bricklet will use the current waveform to calculate the frequency and it will use an integration time of 10 zero-crossings of the current waveform.'
+integration_info_en = 'Integrated over 10 zero-crossings of the voltage sine wave. With a standard AC mains voltage frequency of 50Hz this results in a 5 measurements per second (or an integration time of 200ms per measurement). If no voltage transformer is connected, the Bricklet will use the current waveform to calculate the frequency and it will use an integration time of 10 zero-crossings of the current waveform.'
+integration_info_de = 'Über 10 Nulldurchgänge der Spannungs-Sinuskurve integriert. Mit einer Standard Netzspannungsfrequenz von 50Hz entspricht das 5 Messungen pro Sekunde (oder einer Integrationszeit von 200ms pro Messung). Wenn kein Spannungstransformator angeschlossen ist, nutzt das Bricklet den Kurvenverlauf des Stroms, um die Frequenz zu bestimmen und die Integrationszeit beträgt 10 Nulldurchläufe der Strom-Sinuskurve.'
 
 def energyDataChannel(id_, type_):
     return {
@@ -425,35 +426,44 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Voltage', 'Number', 'Voltage RMS',
+        oh_generic_channel_type('Voltage', 'Number', {'en': 'Voltage', 'de': 'Spannung'},
                     update_style=None,
-                    description='Voltage RMS\n\n'+integration_info),
-        oh_generic_channel_type('Current', 'Number', 'Current RMS',
+                    description={'en': 'Root mean square voltage.\n\n'+integration_info_en,
+                                 'de': 'Effektivwert der Spannung.\n\n' + integration_info_de}),
+        oh_generic_channel_type('Current', 'Number', {'en': 'Current', 'de': 'Stromstärke'},
                     update_style=None,
-                    description='Current RMS\n\n'+integration_info),
-        oh_generic_channel_type('Energy', 'Number', 'Energy',
+                    description={'en': 'Root mean square current.\n\n'+integration_info_en,
+                                 'de': 'Effektivwert der Stromstärke.\n\n' + integration_info_de}),
+        oh_generic_channel_type('Energy', 'Number', {'en': 'Energy', 'de': 'Energie'},
                     update_style=None,
-                    description='Energy (integrated over time)\n\n'+integration_info),
-        oh_generic_channel_type('RealPower', 'Number', 'Real Power',
+                    description={'en': 'Energy (integrated over time)\n\n'+integration_info_en,
+                                 'de': 'Energie (integriert über Zeit)\n\n'+integration_info_de}),
+        oh_generic_channel_type('RealPower', 'Number', {'en': 'Real Power','de': 'Wirkleistung'},
                     update_style=None,
-                    description='Real Power\n\n'+integration_info),
-        oh_generic_channel_type('AppPower', 'Number', 'Apparent Power',
+                    description={'en': 'Real Power\n\n'+integration_info_en,
+                                 'de': 'Wirkleistung\n\n'+integration_info_de}),
+        oh_generic_channel_type('AppPower', 'Number', {'en': 'Apparent Power', 'de': 'Scheinleistung'},
                     update_style=None,
-                    description='Apparent Power\n\n'+integration_info,
+                    description={'en': 'Apparent Power\n\n'+integration_info_en,
+                                 'de': 'Scheinleistung\n\n'+integration_info_de},
                     pattern='%.2f VA'),
-        oh_generic_channel_type('ReacPower', 'Number', 'Reactive Power',
+        oh_generic_channel_type('ReacPower', 'Number', {'en': 'Reactive Power', 'de': 'Blindleistung'},
                     update_style=None,
-                    description='Reactive Power\n\n'+integration_info,
+                    description={'en': 'Reactive Power\n\n'+integration_info_en,
+                                 'de': 'Blindleistung\n\n'+integration_info_de},
                     pattern='%.2f var'),
-        oh_generic_channel_type('Factor', 'Number', 'Power Factor',
+        oh_generic_channel_type('Factor', 'Number', {'en': 'Power Factor', 'de': 'Leistungsfaktor'},
                     update_style=None,
-                    description='Power Factor\n\n'+integration_info),
-        oh_generic_channel_type('Frequency', 'Number', 'Frequency',
+                    description={'en': 'Power Factor\n\n'+integration_info_en,
+                                 'de': 'Leistungsfaktor\n\n'+integration_info_de}),
+        oh_generic_channel_type('Frequency', 'Number', {'en': 'Frequency', 'de': 'Frequenz'},
                     update_style=None,
-                    description='AC Frequency of the mains voltage\n\nThe frequency is recalculated every 6s.'),
-        oh_generic_channel_type('Reset', 'String', 'Reset Energy Value',
+                    description={'en': 'AC Frequency of the mains voltage\n\nThe frequency is recalculated every 6 seconds.',
+                                 'de': 'AC-Frequenz der Netzspannung\n\nDie Frequenz wird alle 6 Sekunden neu berechnet'}),
+        oh_generic_channel_type('Reset', 'String', {'en': 'Reset Energy Value', 'de': 'Energiewert zurücksetzen'},
                     update_style=None,
-                    description='Sets the energy value back to 0 Wh',
+                    description={'en': 'Sets the energy value back to 0 Wh',
+                                 'de': 'Setzt den Energiewert zurück auf 0Wh'},
                     command_options=[('Reset', 'RESET')])
     ],
     'actions': ['Get Energy Data', 'Reset Energy', 'Get Waveform', 'Get Transformer Status', 'Get Transformer Calibration']

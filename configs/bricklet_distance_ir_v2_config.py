@@ -280,8 +280,9 @@ com['openhab'] = {
 
             'name': 'Moving Average Length',
             'type': 'integer',
-            'label': 'Moving Average Length',
-            'description': 'Sets the length of a moving averaging for the distance.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nThe range for the averaging is 1-1000.\n\nNew data is gathered every ~10ms. With a moving average of length 1000 the resulting averaging window has a length of approximately 10s. If you want to do long term measurements the longest moving average will give the cleanest results.\n\nThe default value is 25.',
+            'label': {'en': 'Moving Average Length', 'de': 'Länge des gleitenden Mittelwerts'},
+            'description': {'en': 'Sets the length of a moving averaging for the distance.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nThe range for the averaging is 1-1000.\n\nNew data is gathered every ~10ms. With a moving average of length 1000 the resulting averaging window has a length of approximately 10s. If you want to do long term measurements the longest moving average will give the cleanest results.',
+                            'de': 'Setzt die Länge eines `gleitenden Mittelwerts für die Distanz.\n\nWenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert. Je kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.\n\nEiner neue Wert wird alle ~10ms gemessen. Mit einer Mittelwerts-Länge von 1000 hat das resultierende gleitende Fenster eine Zeitspanne von ca. 10s. Bei Langzeitmessungen gibt ein langer Mittelwert die saubersten Resultate.'}
         },
         {
             'packet': 'Set Distance LED Config',
@@ -290,8 +291,9 @@ com['openhab'] = {
             'name': 'Distance LED Config',
             'type': 'integer',
 
-            'label': 'Distance LED Config',
-            'description': "Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).",
+            'label': {'en': 'Distance LED Config', 'de': 'Distanz-LED-Konfiguration'},
+            'description': {'en': "Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).",
+                            'de': "Konfiguriert die Distanz-LED. Die LED kann ausgeschaltet, eingeschaltet, im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option mit der LED die Distanz anzuzeigen (heller = Objekt näher)."}
         }],
     'init_code': """this.setMovingAverageConfiguration(cfg.movingAverageLength);
 this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
@@ -300,12 +302,13 @@ this.setDistanceLEDConfig(cfg.distanceLEDConfig);""",
         oh_generic_channel('Analog Value', 'Analog Value'),
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', {'en': 'Distance', 'de': 'Distanz'},
                     update_style='Callback Configuration',
-                    description='The measured distance'),
-        oh_generic_channel_type('Analog Value', 'Number', 'Analog Value',
+                    description={'en': 'The measured distance', 'de': 'Die gemessene Distanz'}),
+        oh_generic_channel_type('Analog Value', 'Number', {'en': 'Analog Value', 'de': 'Analogwert'},
                     update_style='Callback Configuration',
-                    description='The analog value as read by a analog-to-digital converter.\n\nThis is unfiltered raw data. We made sure that the integration time of the ADC is shorter then the measurement interval of the sensor (10ms vs 16.5ms). So there is no information lost.\n\nIf you want to do your own calibration or create your own lookup table you can use this value.')
+                    description={'en': 'The analog value as read by a analog-to-digital converter.\n\nThis is unfiltered raw data. We made sure that the integration time of the ADC is shorter then the measurement interval of the sensor (10ms vs 16.5ms). So there is no information lost.\n\nIf you want to do your own calibration or create your own lookup table you can use this value.',
+                                 'de': """Der Analogwert des Analog/Digital-Wandlers.\n\nDieser Wert ist ein unverarbeiteter Rohwert. Wir haben sichergestellt, dass die Integrationszeit des ADCs kleiner ist als das Messintervall des Sensors (10ms vs 16,5ms). Dadurch ist sichergestellt das keine Informationen verloren gehen können.\n\nDer Analogwert kann genutzt werden wenn eine eigene Kalibrierung oder Lookup-Tabelle benötigt wird."""})
     ],
     'actions': ['Get Distance', 'Get Analog Value', 'Get Moving Average Configuration', 'Get Distance LED Config', 'Get Sensor Type']
 }

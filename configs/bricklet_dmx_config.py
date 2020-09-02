@@ -572,8 +572,9 @@ com['openhab'] = {
             'name': 'DMX Mode',
             'type': 'integer',
 
-            'label': 'DMX Mode',
-            'description': "Sets the DMX mode to either master or slave.",
+            'label': {'en': 'DMX Mode', 'de': 'DMX-Modus'},
+            'description': {'en': "Sets the DMX mode to either master or slave.",
+                            'de': "Setzt den DMX-Modus entweder auf Master oder Slave."}
         }, {
             'packet': 'Set Communication LED Config',
             'element': 'Config',
@@ -581,8 +582,9 @@ com['openhab'] = {
             'name': 'Communication LED Config',
             'type': 'integer',
 
-            'label': 'Communication LED Config',
-            'description': "By default the LED shows communication traffic, it flickers once for every 10 received data packets. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
+            'label': {'en': 'Communication LED Config', 'de': 'Kommunikations-LED-Konfiguration'},
+            'description': {'en': "By default the LED shows communication traffic, it flickers once for every 10 received data packets. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
+                            'de': "Standardmäßig zeigt die LED die Kommunikationsdatenmenge an. Sie blinkt einmal auf pro 10 empfangenen Datenpaketen zwischen Brick und Bricklet.\n\nDie LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen. Wenn das Bricklet sich im Bootloadermodus befindet ist die LED aus."}
         }, {
             'packet': 'Set Error LED Config',
             'element': 'Config',
@@ -590,18 +592,20 @@ com['openhab'] = {
             'name': 'Error LED Config',
             'type': 'integer',
             'label': 'Error LED Config',
-            'description': "By default the error LED turns on if there is any error (see FrameErrorCountListener callback). If you call this function with the Show-Error option again, the LED will turn off until the next error occurs. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
+            'description': {'en': "By default the error LED turns on if there is any error (see Frame Error Count Channel). If you call this function with the Show-Error option again, the LED will turn off until the next error occurs. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
+                            'de': "Standardmäßig geht die LED an, wenn ein Error auftritt (siehe Frame Error Count Channel). Wenn diese Funktion danach nochmal mit der Show-Error-Option aufgerufen wird, geht die LED wieder aus bis der nächste Error auftritt.\n\nDie LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.\n\nWenn das Bricklet sich im Bootloadermodus befindet ist die LED aus."}
         }, {
             'packet': 'Set Frame Duration',
             'element': 'Frame Duration',
 
             'name': 'Frame Duration',
             'type': 'integer',
-            'label': 'Frame Duration',
+            'label': {'en': 'Frame Duration', 'de': 'Frame-Dauer'},
             'default': -1,
             'min': -1,
 
-            'description': 'The duration of a frame in ms. Example: If you want to achieve 20 frames per second, you should set the frame duration to 50ms (50ms * 20 = 1 second). If you always want to send a frame as fast as possible you can set this value to 0. To disable the frame started channel set this value to -1. This setting is only used in master mode.'
+            'description': {'en': 'The duration of a frame.\n\nExample: If you want to achieve 20 frames per second, you should set the frame duration to 50ms (50ms * 20 = 1 second). If you always want to send a frame as fast as possible you can set this value to 0. To disable the frame started channel set this value to -1. This setting is only used in master mode.',
+                            'de': 'Die Dauer eines Frames.\n\nBeispiel: Wenn 20 Frames pro Sekunde erreicht werden sollen, muss die Frame Dauer auf 50ms gesetzt werden (50ms * 20 = 1 Sekunde).\n\nSoll jeweils ein Frame so schnell wie möglich gesendet werden, so sollte\n\ndie Frame Dauer auf 0 gesetzt werden.\n\nDiese Einstellung wird nur im Master Modus genutzt.'}
     }],
 
     'init_code': """this.setDMXMode(cfg.dmxMode);
@@ -615,25 +619,29 @@ com['openhab'] = {
         }""",
 
     'channels': [{
-            'id': 'Frame Started',
-            'label': 'Frame Started',
-            'type': 'system.trigger',
-            'description': 'This channel is triggered directly after a new frame render is started. You should send the data for the next frame directly after this listener was triggered.',
+            'predicate': 'cfg.dmxMode == 0',
 
+            'id': 'Frame Started',
+            'label': {'en': 'Frame Started', 'de': 'Frame gestartet'},
+            'type': 'system.trigger',
+            'description': {'en': 'This channel is triggered directly after a new frame render is started. You should send the data for the next frame directly after this listener was triggered.',
+                            'de': 'Dieser Channel wird ausgelöst sobald ein neuer Frame gestartet wurde. Nachdem dieser Channel ausgeöst wurde sollten die Daten für den nächsten Frame geschrieben werden.'},
             'callbacks': [{
                 'packet': 'Frame Started',
                 'transform': '""'}],
         }, {
+            'predicate': 'cfg.dmxMode == 1',
+
             'id': 'Frame Available',
-            'label': 'Frame Available',
-            'description': "This channel is triggered in slave mode when a new frame was received from the DMX master and it can be read out. You have to read the frame before the master has written the next frame using the readFrame action.",
+            'label': {'en': 'Frame Available', 'de': 'Frame verfügbar'},
+            'description': {'en': "This channel is triggered in slave mode when a new frame was received from the DMX master and it can be read out. You have to read the frame before the master has written the next frame using the readFrame action.",
+                            'de': "Dieser Callback wird im Slave Modus ausgelöst, wenn ein neuer Frame vom DMX Master empfangen wurde und nun ausgelesen werden kann. Der Frame muss mit der readFrame-Action ausgelesen werden, bevor der Master ein neues Frame schreibt."},
             'type': 'system.trigger',
             'callbacks': [{
                 'packet': 'Frame Available',
                 'transform': '""'}],
         }, {
             'id': 'Overrun Error Count',
-            'label': 'Overrun Error Count',
             'type': 'Overrun Error Count',
 
             'getters': [{
@@ -648,7 +656,6 @@ com['openhab'] = {
                 'transform': 'new DecimalType(overrunErrorCount)'}],
         }, {
             'id': 'Framing Error Count',
-            'label': 'Framing Error Count',
             'type': 'Framing Error Count',
 
             'getters': [{
@@ -663,12 +670,12 @@ com['openhab'] = {
                 'transform': 'new DecimalType(framingErrorCount)'}],
         }],
     'channel_types': [
-        oh_generic_channel_type('Overrun Error Count', 'Number', 'Overrun Error Count',
+        oh_generic_channel_type('Overrun Error Count', 'Number', {'en': 'Overrun Error Count', 'de': 'Overrun-Fehlerzähler'},
             update_style=None,
-            description='The current number of overrun errors'),
-        oh_generic_channel_type('Framing Error Count', 'Number', 'Framing Error Count',
+            description={'en': 'The number of occurred overrun errors', 'de': 'Die Anzahl an aufgetretenen Overrun-Fehlern'}),
+        oh_generic_channel_type('Framing Error Count', 'Number', {'en': 'Framing Error Count', 'de': 'Framing-Fehlerzähler'},
             update_style=None,
-            description='The current number of framing errors'),
+            description={'en': 'The number of occurred framing errors', 'de': 'Die Anzahl an aufgetretenen Framing-Fehlern'}),
     ],
     'actions': ['Write Frame', 'Get DMX Mode', 'Read Frame', 'Get Frame Duration', 'Get Frame Error Count', 'Get Communication LED Config', 'Get Error LED Config']
 }

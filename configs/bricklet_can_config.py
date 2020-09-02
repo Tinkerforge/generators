@@ -754,7 +754,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Error Log',
                 'element': '{title_words}',
-                'transform': 'new DecimalType(value.writeErrorLevel)'
+                'transform': 'new {number_type}(value.writeErrorLevel)'
             }],
         }, {
             'id': 'Read Error Level',
@@ -763,7 +763,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Error Log',
                 'element': '{title_words}',
-                'transform': 'new DecimalType(value.readErrorLevel)'
+                'transform': 'new {number_type}(value.readErrorLevel)'
             }],
         }, {
             'id': 'Transceiver Disabled',
@@ -781,7 +781,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Error Log',
                 'element': '{title_words}',
-                'transform': 'new DecimalType(value.writeTimeoutCount)'
+                'transform': 'new {number_type}(value.writeTimeoutCount)'
             }],
         }, {
             'id': 'Read Register Overflow Count',
@@ -790,7 +790,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Error Log',
                 'element': '{title_words}',
-                'transform': 'new DecimalType(value.readRegisterOverflowCount)'
+                'transform': 'new {number_type}(value.readRegisterOverflowCount)'
             }],
         }, {
             'id': 'Read Buffer Overflow Count',
@@ -799,7 +799,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Error Log',
                 'element': '{title_words}',
-                'transform': 'new DecimalType(value.readBufferOverflowCount)'
+                'transform': 'new {number_type}(value.readBufferOverflowCount)'
             }],
         }],
     'channel_types': [

@@ -358,8 +358,9 @@ com['openhab'] = {
 
             'name': 'Moving Average Length',
             'type': 'integer',
-            'label': 'Moving Average Length',
-            'description': 'Sets the length of a moving averaging for the distance value.\n\nSetting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.'
+            'label': {'en': 'Moving Average Length', 'de': 'Länge des gleitenden Mittelwerts'},
+            'description': {'en': 'Sets the length of a moving averaging for the distance value.\n\nSetting the length to 0 will turn the averaging completely off. With less averaging, there is more noise on the data.',
+                            'de': 'Setzt die Länge eines gleitenden Mittelwerts für den Entfernungswert.\n\nWenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.'}
         }
     ],
     'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
@@ -367,9 +368,11 @@ com['openhab'] = {
         distance_channel
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', {'de': 'Distance', 'en': 'Distanz'},
                     update_style='Callback Period',
-                    description='The current distance value measured by the sensor. The value has a range of 0 to 4095. A small value corresponds to a small distance, a big value corresponds to a big distance. The relation between the measured distance value and the actual distance is affected by the 5V supply voltage (deviations in the supply voltage result in deviations in the distance values) and is non-linear (resolution is bigger at close range).')
+                    description={'en': 'The current distance value measured by the sensor. A small value corresponds to a small distance, a big value corresponds to a big distance. The relation between the measured distance value and the actual distance is affected by the 5V supply voltage (deviations in the supply voltage result in deviations in the distance values) and is non-linear (resolution is bigger at close range).',
+                                 'de': 'Der aktuelle Entfernungswert. Ein kleiner Wert entspricht einer kleinen Entfernung, ein großer Wert entspricht einer großen Entfernung. Das Verhältnis zwischen gemessenem Entfernungswert und wirklicher Entfernung wird durch die 5V Versorgungsspannung beeinflusst (Abweichungen der Versorgungsspannung führen zu Abweichungen in den Entfernungswerten) und ist nicht-linear (Auflösung ist größer im Nahbereich).'}
+        )
     ],
     'actions': ['Get Distance Value', 'Get Moving Average']
 }

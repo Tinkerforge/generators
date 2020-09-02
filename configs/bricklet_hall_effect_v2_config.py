@@ -254,30 +254,32 @@ com['openhab'] = {
 
             'name': 'Low Threshold',
             'type': 'integer',
-            'label': 'Low Threshold',
-            'description': 'The low threshold in µT. If the measured magnetic flux density goes below the low threshold, the count of the counter is increased by 1.',
+            'label': {'en': 'Low Threshold', 'de': 'Unterer Schwellwert'},
+            'description': {'en': 'The low threshold . If the measured magnetic flux density goes below the low threshold, the count of the counter is increased by 1.',
+                            'de': 'Der untere Schwellwert. Wenn die gemessene magnetische Flussdichte unter den unteren Schwellwert wandert, wird der Zählerstand des Zählers um 1 erhöht.'},
         }, {
             'packet': 'Set Counter Config',
             'element': 'High Threshold',
 
             'name': 'High Threshold',
             'type': 'integer',
-            'label': 'High Threshold',
-            'description': 'The high threshold in µT. If the measured magnetic flux density goes above the high threshold, the count of the counter is increased by 1.',
+            'label': {'en': 'High Threshold', 'de': 'Oberer Schwellwert'},
+            'description': {'en': 'The high threshold. If the measured magnetic flux density goes above the high threshold, the count of the counter is increased by 1.',
+                            'de': 'Der obere Schwellwert. Wenn die gemessene magnetische Flussdichte über den oberen Schwellwert wandert, wird der Zählerstand des Zählers um 1 erhöht.'}
         }, {
             'packet': 'Set Counter Config',
             'element': 'Debounce',
 
             'name': 'Debounce',
             'type': 'integer',
-            'label': 'Debounce Time',
-            'description': 'The debounce time in µs is the minimum time between two count increments.',
+            'label': {'en': 'Debounce Time', 'de': 'Entprellzeit'},
+            'description': {'en': 'The debounce time is the minimum time between two count increments.',
+                            'de': 'Die Entprellzeit ist die Minimalzeit zwischen zwei Zählererhöhungen.'}
         }],
     'channels': [
         {
             'id': 'Counter',
             'type': 'Counter',
-            'label': 'Counter',
 
             'init_code':"""this.setCounterConfig(cfg.highThreshold, cfg.lowThreshold, cfg.debounce.longValue());
             this.setCounterCallbackConfiguration(channelCfg.updateInterval, true);""",
@@ -298,9 +300,10 @@ com['openhab'] = {
         oh_generic_channel('Magnetic Flux Density', 'Magnetic Flux Density')
     ],
     'channel_types': [
-        oh_generic_channel_type('Counter', 'Number', 'Counter',
+        oh_generic_channel_type('Counter', 'Number', {'en': 'Counter', 'de': 'Zähler'},
                     update_style='Callback Configuration',
-                    description='The current value of the counter.',
+                    description={'en': 'The current value of the counter.',
+                                 'de': 'Der aktuelle Zählerstand'},
                     params=[{
                         'packet': 'Get Counter',
                         'element': 'Reset Counter',
@@ -309,12 +312,14 @@ com['openhab'] = {
 
                         'default': 'false',
 
-                        'label': 'Reset Counter On Update',
-                        'description': 'Enabling this will reset the counter after OpenHAB reads its value. Use this if you want relative counts per update.',
+                        'label': {'en': 'Reset Counter On Update', 'de': 'Zähler bei Update zurücksetzen'},
+                        'description': {'en': 'Enabling this will reset the counter after openHAB reads its value. Use this if you want relative counts per update.',
+                                        'de': 'Wenn aktiviert, wird der Zähler jedes Mal wenn openHAB dessen Wert liest zurückgesetzt. Dann wird eine relative Zählung pro Update ausgegeben.'}
                     }]),
-        oh_generic_channel_type('Magnetic Flux Density', 'Number', 'Magnetic Flux Density',
+        oh_generic_channel_type('Magnetic Flux Density', 'Number', {'en': 'Magnetic Flux Density', 'de': 'Magnetische Flussdichte'},
                     update_style='Callback Configuration',
-                    description='The measured magnetic flux density.'),
+                    description={'en': 'The measured magnetic flux density.',
+                                 'de': 'Die gemessene magnetische Flussdichte.'}),
     ],
     'actions': ['Get Magnetic Flux Density', 'Get Counter', 'Get Counter Config']
 }

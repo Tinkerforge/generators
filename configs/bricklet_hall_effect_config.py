@@ -314,22 +314,23 @@ com['openhab'] = {
 
             'name': 'Edge Type',
             'type': 'integer',
-            'label': 'Edge Type',
-            'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
+            'label': {'en': 'Edge Type', 'de': 'Flankentyp'},
+            'description': {'en': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
+                            'de': 'Der edge type Parameter konfiguriert ob steigende, fallende oder beide Flanken gezählt werden.'}
         }, {
             'packet': 'Set Edge Count Config',
             'element': 'Debounce',
 
             'name': 'Debounce',
             'type': 'integer',
-            'label': 'Debounce Time',
-            'description': 'The debounce time in ms.',
+            'label': {'en': 'Debounce Time', 'de': 'Entprellzeit'},
+            'description': {'en': 'The debounce time is the minimum time between two count increments.',
+                            'de': 'Die Entprellzeit ist die Minimalzeit zwischen zwei Zählererhöhungen.'}
         }],
     'channels': [
         {
             'id': 'Edge Count',
             'type': 'Edge Count',
-            'label': 'Edge Count',
 
             'init_code':"""this.setEdgeCountConfig(cfg.edgeType.shortValue(), cfg.debounce.shortValue());
             this.setEdgeInterrupt(channelCfg.refreshCount);""",
@@ -348,7 +349,6 @@ com['openhab'] = {
         }, {
             'id': 'Magnetic Field Detected',
             'type': 'Magnetic Field Detected',
-            'label': 'Magnetic Field Detected',
 
             'getters': [{
                 'packet': 'Get Value',
@@ -358,9 +358,9 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
+        oh_generic_channel_type('Edge Count', 'Number', {'en': 'Edge Count', 'de': 'Flankenzähler'},
                     update_style=None,
-                    description='The current value of the edge counter.',
+                    description={'en': 'The current value of the edge counter.', 'de': 'Der aktuelle Wert des Flankenzählers'},
                     params=[{
                         'packet': 'Set Edge Interrupt',
                         'element': 'Edges',
@@ -370,8 +370,9 @@ com['openhab'] = {
 
                         'default': 1,
 
-                        'label': 'Refresh Count',
-                        'description': 'The edge count value will be refreshed every n-th edge.',
+                        'label': {'en': 'Refresh Count', 'de': 'Aktualisierungsschwellwert'},
+                        'description': {'en': 'The edge count value will be refreshed every n-th edge.',
+                                        'de': 'Der Flankenzähler wird jeder n-te Flanke aktualisiert'},
                     }, {
                         'packet': 'Get Edge Count',
                         'element': 'Reset Counter',
@@ -381,12 +382,14 @@ com['openhab'] = {
 
                         'default': 'false',
 
-                        'label': 'Reset Edge Count On Update',
-                        'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
+                        'label': {'en': 'Reset Edge Count On Update', 'de': 'Flankenzähler bei Update zurücksetzen'},
+                        'description': {'en': 'Enabling this will reset the edge counter after openHAB reads its value. Use this if you want relative edge counts per update.',
+                                        'de': 'Wenn aktiviert, wird der Flankenzähler jedes Mal wenn openHAB dessen Wert liest zurückgesetzt. Dann wird eine relative Flankenzählung pro Update ausgegeben.'}
                     }]),
-        oh_generic_channel_type('Magnetic Field Detected', 'Switch', 'Magnetic Field Detected',
+        oh_generic_channel_type('Magnetic Field Detected', 'Switch', {'en': 'Magnetic Field Detected', 'de': 'Magnetfeld detektiert'},
                     update_style=None,
-                    description='Enabled if a magnetic field of 3.5 millitesla or greater is detected.'),
+                    description={'en': 'Enabled if a magnetic field of 3.5 millitesla or greater is detected.',
+                                 'de': 'Aktiviert, wenn ein Magnetfeld größer oder gleich 3,5 Millitesla detektiert wird.'}),
     ],
     'actions': ['Get Value', {'fn': 'Get Edge Count', 'refreshs': ['Edge Count']}, 'Get Edge Count Config']
 }
