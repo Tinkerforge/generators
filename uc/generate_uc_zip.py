@@ -136,15 +136,8 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
                 shutil.copytree(os.path.join(root_dir, folder), os.path.join(self.tmp_source_dir, folder))
 
             shutil.copy(os.path.join(root_dir, 'beta', 'changelog.txt'),        self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'README_EN.txt'),        self.tmp_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'README_DE.txt'),        self.tmp_dir)
             shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
-
-            shutil.copy(os.path.join(root_dir, 'beta', 'arduino.ino'),          self.tmp_source_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'arduino_esp32.ino'),    self.tmp_source_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'main.c'),               self.tmp_source_dir)
-            shutil.copy(os.path.join(root_dir, 'beta', 'Makefile'),             self.tmp_source_dir)
-            shutil.copytree(os.path.join(root_dir, 'beta', 'demo'),             os.path.join(self.tmp_source_dir, 'demo'))
+            shutil.copy(os.path.join(root_dir, 'readme.txt'),        self.tmp_dir)
         else:
             shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'custom.txt'),                   os.path.join(self.tmp_dir, 'readme.txt'))
