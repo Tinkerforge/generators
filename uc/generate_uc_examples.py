@@ -113,7 +113,11 @@ class UCExample(common.Example):
         self.used_argument_decl_names = {}
 
     def get_c_source(self):
-        template = r"""{defines}{includes}{incomplete}{description}
+        template = r"""// This example is not self-contained.
+// It requres usage of the example driver specific to your platform.
+// See the HAL documentation.
+
+{defines}{includes}{incomplete}{description}
 
 #define UID "{dummy_uid}" // Change {dummy_uid} to the UID of your {device_display}
 
