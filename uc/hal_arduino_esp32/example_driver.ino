@@ -53,9 +53,9 @@ void setup() {
     Serial.println("Hello World!");
 
     check(tf_hal_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
-    demo_setup(&hal);
+    example_setup(&hal);
 }
 
 void loop() {
-    demo_loop(&hal);
+    example_loop(&hal);
 }
