@@ -429,10 +429,11 @@ com['examples'].append({
 
 def input_channel(idx):
     return {
-            'id': 'Input Pin {}'.format(idx),
-            'label': 'Input Value (Pin {})'.format(idx),
+            'id': 'Input {}'.format(idx),
+            'label': {'en': 'Input Value {}'.format(idx),
+                      'de': 'Eingangswert {}'.format(idx)},
 
-            'type': 'Input Pin',
+            'type': 'Input',
 
             'getters': [{
                 'packet': 'Get Value',
@@ -451,9 +452,10 @@ def input_channel(idx):
 
 def edge_count_channel(index):
     return {
-            'id': 'Edge Count Pin {0}'.format(index),
+            'id': 'Edge Count {0}'.format(index),
             'type': 'Edge Count',
-            'label': 'Edge Count Pin {0}'.format(index),
+            'label': {'en': 'Edge Count {}'.format(index),
+                      'de': 'Flankenzähler {}'.format(index)},
 
             'init_code':"""this.setEdgeCountConfig((short)(1 << {}), channelCfg.edgeType.shortValue(), channelCfg.debounce.shortValue());""".format(index),
 
@@ -472,28 +474,32 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Input Pin', 'Switch', 'Input Value',
+        oh_generic_channel_type('Input', 'Switch', 'NOT USED',
                     update_style=None,
-                    description='The logic level that is currently measured on the pin.'),
-        oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
+                    description={'en': 'The logic level that is currently measured on the channel.',
+                                 'de': 'Der Logikpegel, der aktuell auf dem Kanal gemessen wird.'}),
+        oh_generic_channel_type('Edge Count', 'Number', 'NOT USED',
             update_style=None,
-            description='The current value of the edge counter for the selected channel',
+            description={'en': 'The current value of the edge counter of the channel.',
+                         'de': 'Der aktuelle Wert des Flankenzählers des Kanals.'},
             params=[{
                 'packet': 'Set Edge Count Config',
                 'element': 'Edge Type',
 
                 'name': 'Edge Type',
                 'type': 'integer',
-                'label': 'Edge Type',
-                'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
+                'label': {'en': 'Edge Type', 'de': 'Flankentyp'},
+                'description': {'en': 'Configures if rising edges, falling edges or both are counted.',
+                                'de': 'Konfiguriert den zu zählenden Flankentyp. Es können steigende, fallende oder beide Flanken gezählt werden.'}
             },{
                 'packet': 'Set Edge Count Config',
                 'element': 'Debounce',
 
                 'name': 'Debounce',
                 'type': 'integer',
-                'label': 'Debounce Time',
-                'description': 'The debounce time in ms.',
+                'label': {'en': 'Debounce Time', 'de': 'Entprellzeit'},
+                'description': {'en': 'The debounce time is the minimum time between two count increments.',
+                                'de': 'Die Entprellzeit ist die Minimalzeit zwischen zwei Zählererhöhungen.'}
             },{
                 'packet': 'Get Edge Count',
                 'element': 'Reset Counter',
@@ -503,9 +509,10 @@ com['openhab'] = {
 
                 'default': 'false',
 
-                'label': 'Reset Edge Count On Update',
-                'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
+                'label': {'en': 'Reset Edge Counter On Update', 'de': 'Flankenzähler bei Update zurücksetzen'},
+                'description': {'en': 'Enabling this will reset the edge counter after openHAB reads its value. Use this if you want relative counts per update.',
+                                'de': 'Wenn aktiviert, wird der Flankenzähler jedes Mal wenn openHAB dessen Wert liest zurückgesetzt. Dann wird eine relative Zählung pro Update ausgegeben.'}
             }])
     ],
-    'actions': ['Get Value', {'fn': 'Get Edge Count', 'refreshs': ['Edge Count Pin 0', 'Edge Count Pin 1', 'Edge Count Pin 2', 'Edge Count Pin 3']}, 'Get Edge Count Config']
+    'actions': ['Get Value', {'fn': 'Get Edge Count', 'refreshs': ['Edge Count 0', 'Edge Count 1', 'Edge Count 2', 'Edge Count 3']}, 'Get Edge Count Config']
 }

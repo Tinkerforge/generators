@@ -378,7 +378,7 @@ def current_channel(index):
     return {
             'id': 'Current Sensor {0}'.format(index),
             'type': 'Current',
-            'label': 'Current Sensor {0}'.format(index),
+            'label': {'en': 'Current Sensor {0}'.format(index), 'de': 'Stromstärke Sensor {0}'},
 
             'init_code':"""this.setCurrentCallbackPeriod((short){0}, channelCfg.updateInterval);""".format(index),
             'dispose_code': """this.setCurrentCallbackPeriod((short){0}, 0);""".format(index),
@@ -407,8 +407,9 @@ com['openhab'] = {
 
             'name': 'Sample Rate',
             'type': 'integer',
-            'label': 'Sample Rate',
-            'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
+            'label': {'en': 'Sample Rate', 'de': 'Abtastrate'},
+            'description': {'en': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
+                            'de': "Setzt die Abtastrate auf 240, 60, 15 oder 4 Samples pro Sekunde. Die Auflösung für die Raten sind 12, 14, 16 und 18 Bit respektive."}
         }
     ],
     'init_code': """this.setSampleRate(cfg.sampleRate.shortValue());""",
@@ -419,7 +420,8 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Current', 'Number', 'NOT USED',
                     update_style='Callback Period',
-                    description='The measured current between 0 and 0.022505322A (22.5mA)')
+                    description={'en': 'The measured current of the sensor.\n\nIt is possible to detect if an IEC 60381-1 compatible sensor is connected and if it works properly.\n\nIf the returned current is below 4mA, there is likely no sensor connected or the sensor may be defect. If the returned current is over 20mA, there might be a short circuit or the sensor may be defect.',
+                                 'de': 'Die gemessene Stromstärke des Sensors.\n\nEs ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen ist und ob er funktionsfähig ist.\n\nFalls die zurückgegebene Stromstärke kleiner als 4mA ist, ist wahrscheinlich kein Sensor angeschlossen oder der Sensor ist defekt. Falls die zurückgegebene Stromstärke über 20mA ist, besteht entweder ein Kurzschluss oder der Sensor ist defekt. Somit ist erkennbar ob ein Sensor angeschlossen und funktionsfähig ist.'})
     ],
     'actions': ['Get Current', 'Get Sample Rate']
 }

@@ -293,7 +293,7 @@ com['openhab'] = {
     'channels': [{
             'id': 'Position {}'.format(axis),
             'type': 'Position',
-            'label': 'Position {}'.format(axis),
+            'label': {'en': 'Position {}'.format(axis), 'de': 'Position {}'.format(axis)},
 
             'getters': [{
                 'packet': 'Get Position',
@@ -307,8 +307,9 @@ com['openhab'] = {
 
         } for axis in ['X', 'Y']] + [{
             'id': 'Pressed',
-            'label': 'Pressed',
-            'description': 'Triggers if the button is pressed or released',
+            'label': {'en': 'Pressed', 'de': 'Gedrückt'},
+            'description': {'en': 'Triggers if the button is pressed or released.',
+                            'de': 'Löst aus wenn der Knopf gedrückt oder losgelassen wird.'},
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Is Pressed',
@@ -323,9 +324,10 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Position', 'Number', 'Position',
+        oh_generic_channel_type('Position', 'Number', 'NOT USED',
                     update_style=None,
-                    description='The position of the joystick. The value ranges between -100 and 100 for both axis. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.')
+                    description={'en': 'The position of the joystick. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.',
+                                 'de': 'Gibt die Position des Joystick zurück. Die Mittelposition des Joysticks ist x=0, y=0. Die zurückgegebenen Werte sind gemittelt und kalibriert'})
     ],
     'actions': ['Get Position', 'Is Pressed']
 }

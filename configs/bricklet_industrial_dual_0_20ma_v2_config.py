@@ -156,11 +156,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the gain as set by :func:`Set Sample Rate`.
+Returns the sample rate as set by :func:`Set Sample Rate`.
 """,
 'de':
 """
-Gibt die Verstärkung zurück, wie von :func:`Set Sample Rate` gesetzt.
+Gibt die Abtastrate zurück, wie von :func:`Set Sample Rate` gesetzt.
 """
 }]
 })
@@ -181,10 +181,10 @@ Example: If you measure 0.5mA with a gain of 8x the return value will be
 """,
 'de':
 """
-Setzt den Gain zwischen 1x und 8x. Wenn ein sehr kleiner Strom gemessen werden
-soll, dann kann der Gain hochgesetzt werden, um die Auflösung zu verbessern.
+Setzt die Verstärkung zwischen 1x und 8x. Wenn ein sehr kleiner Strom gemessen werden
+soll, dann kann die Verstärkung hochgesetzt werden, um die Auflösung zu verbessern.
 
-Beispiel: Wenn 0,5mA gememsen werden mit einem Gain von 8x dann wird 4mA
+Beispiel: Wenn 0,5mA gemessen werden mit einer Verstärkung von 8x dann wird 4mA
 zurückgegeben.
 """
 }]
@@ -255,7 +255,8 @@ Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config`
 }]
 })
 
-led_status_config_description = """For each channel you can choose between threshold and intensity mode.
+led_status_config_description = {'en':
+"""For each channel you can choose between threshold and intensity mode.
 
 In threshold mode you can define a positive or a negative threshold.
 For a positive threshold set the "min" parameter to the threshold value in nA
@@ -271,30 +272,10 @@ In intensity mode you can define a range in nA that is used to scale the brightn
 of the LED. Example with min=4mA and max=20mA: The LED is off at 4mA and below,
 on at 20mA and above and the brightness is linearly scaled between the values
 4mA and 20mA. If the min value is greater than the max value, the LED brightness
-is scaled the other way around."""
+is scaled the other way around.""",
 
-com['packets'].append({
-'type': 'function',
-'name': 'Set Channel LED Status Config',
-'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Min', 'int32', 1, 'in', {'scale': (1, 1000*1000*1000), 'unit': 'Ampere', 'default': 4*1000*1000}),
-             ('Max', 'int32', 1, 'in', {'scale': (1, 1000*1000*1000), 'unit': 'Ampere', 'default': 20*1000*1000}),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config', 'default': 1})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Sets the channel LED status config. This config is used if the channel LED is
-configured as "Channel Status", see :func:`Set Channel LED Config`.
-
-{}
-""".format(led_status_config_description),
 'de':
-"""
-Setzt die Kanal-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
-die Kanal-LED auf Kanalstatus eingestellt ist, siehe :func:`Set Channel LED Config`.
-
-Für jeden Kanal kann zwischen Schwellwert- und Intensitätsmodus gewählt werden.
+"""Für jeden Kanal kann zwischen Schwellwert- und Intensitätsmodus gewählt werden.
 
 Im Schwellwertmodus kann ein positiver oder negativer Schwellwert definiert werden.
 Für einen positiven Schwellwert muss der "min" Parameter auf den gewünschten
@@ -313,7 +294,31 @@ der LED skaliert wird. Beispiel mit min=4mA und max=20mA: Die LED ist bei 4mA un
 darunter aus, bei 20mA und darüber an und zwischen 4mA und 20mA wird die Helligkeit
 linear skaliert. Wenn der min Wert größer als der max Wert ist, dann wird die
 Helligkeit andersherum skaliert.
+"""}
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Channel LED Status Config',
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Min', 'int32', 1, 'in', {'scale': (1, 1000*1000*1000), 'unit': 'Ampere', 'default': 4*1000*1000}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 1000*1000*1000), 'unit': 'Ampere', 'default': 20*1000*1000}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config', 'default': 1})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
 """
+Sets the channel LED status config. This config is used if the channel LED is
+configured as "Channel Status", see :func:`Set Channel LED Config`.
+
+{}
+""".format(led_status_config_description['en']),
+'de':
+"""
+Setzt die Kanal-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
+die Kanal-LED auf Kanalstatus eingestellt ist, siehe :func:`Set Channel LED Config`.
+
+{}
+""".format(led_status_config_description['de']),
 }]
 })
 
@@ -361,7 +366,7 @@ def current_channel(index):
     return {
             'id': 'Current Sensor {0}'.format(index),
             'type': 'Current',
-            'label': 'Current Sensor {0}'.format(index),
+            'label': {'en': 'Current Sensor {0}'.format(index), 'de': 'Stromstärke Sensor {0}'.format(index)},
 
             'init_code':"""this.setCurrentCallbackConfiguration({0}, channelCfg.updateInterval, true, \'x\', 0, 0);
             this.setChannelLEDConfig({0}, channelCfg.ledConfig);
@@ -390,8 +395,9 @@ def led_status_config():
             'name': 'LED Config',
             'type': 'integer',
 
-            'label': 'LED Configuration',
-            'description': """Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Show Channel Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the measured value.""",
+            'label': {'en': 'LED Configuration', 'de': 'LED-Konfiguration'},
+            'description': {'en': "Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Show Channel Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the measured value.",
+                            'de': "Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus angezeigt werden. Falls Kanalstatus gewählt wird kann die LED entweder ab einem vordefinierten Schwellwert eingeschaltet werden oder ihre Helligkeit anhand des gemessenen Wertes skaliert werden."}
         },
         {
             'packet': 'Set Channel LED Status Config',
@@ -400,8 +406,9 @@ def led_status_config():
             'name': 'LED Status Mode',
             'type': 'integer',
 
-            'label': 'LED Status Mode',
-            'description': led_status_config_description.replace('"', '\\\"'),
+            'label': {'en': 'LED Status Mode', 'de': 'LED-Status Modus'},
+            'description': {'en': led_status_config_description['en'].replace('"', '\\\"'),
+                            'de': led_status_config_description['de'].replace('"', '\\\"')}
         },
         {
             'packet': 'Set Channel LED Status Config',
@@ -414,8 +421,9 @@ def led_status_config():
             'unit': 'V',
             'default': 0,
 
-            'label': 'LED Status Maximum',
-            'description': 'See LED Status Mode for further explaination.',
+            'label': {'en': 'LED Status Minimum', 'de': 'LED-Status Minimum'},
+            'description': {'en': 'See LED Status Mode for further explaination.',
+                            'de': 'Siehe LED-Status Modus für Details'}
         },
         {
             'packet': 'Set Channel LED Status Config',
@@ -428,8 +436,9 @@ def led_status_config():
             'unit': 'V',
             'default': 10,
 
-            'label': 'LED Status Maximum',
-            'description': 'See LED Status Mode for further explaination.',
+            'label': {'en': 'LED Status Maximum', 'de': 'LED-Status Maximum'},
+            'description': {'en': 'See LED Status Mode for further explaination.',
+                            'de': 'Siehe LED-Status Modus für Details'}
         }]
 
 com['openhab'] = {
@@ -442,16 +451,18 @@ com['openhab'] = {
             'name': 'Sample Rate',
             'type': 'integer',
 
-            'label': 'Sample Rate',
-            'description': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
+            'label': {'en': 'Sample Rate', 'de': 'Abtastrate'},
+            'description': {'en': "The sample rate to either 240, 60, 15 or 4 samples per second. The resolution for the rates is 12, 14, 16 and 18 bit respectively.",
+                            'de': "Setzt die Abtastrate auf 240, 60, 15 oder 4 Samples pro Sekunde. Die Auflösung für die Raten sind 12, 14, 16 und 18 Bit respektive."}
         }, {
             'packet': 'Set Gain',
             'element': 'Gain',
 
             'name': 'Gain',
             'type': 'integer',
-            'label': 'Gain',
-            'description': "The gain between 1x and 8x. If you want to measure a very small current, you can increase the gain to get some more resolution.\n\nExample: If you measure 0.5mA with a gain of 8x the return value will be 4mA.",
+            'label': {'en': 'Gain', 'de': 'Verstärkung'},
+            'description': {'en': "The gain between 1x and 8x. If you want to measure a very small current, you can increase the gain to get some more resolution.\n\nExample: If you measure 0.5mA with a gain of 8x the return value will be 4mA.",
+                            'de': 'Setzt den Gain zwischen 1x und 8x. Wenn ein sehr kleiner Strom gemessen werden soll, dann kann der Gain hochgesetzt werden, um die Auflösung zu verbessern.\n\nBeispiel: Wenn 0,5mA gemessen werden mit einer Verstärkung von 8x dann wird 4mA zurückgegeben.'}
         }
     ],
     'init_code': """this.setSampleRate(cfg.sampleRate);
@@ -463,7 +474,8 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Current', 'Number', 'NOT USED',
                     update_style='Callback Configuration',
-                    description='The measured current between 0 and 0.022505322A (22.5mA)',
+                    description={'en': 'The measured current of the sensor.\n\nIt is possible to detect if an IEC 60381-1 compatible sensor is connected and if it works properly.\n\nIf the returned current is below 4mA, there is likely no sensor connected or the sensor may be defect. If the returned current is over 20mA, there might be a short circuit or the sensor may be defect.',
+                                 'de': 'Die gemessene Stromstärke des Sensors.\n\nEs ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen ist und ob er funktionsfähig ist.\n\nFalls die zurückgegebene Stromstärke kleiner als 4mA ist, ist wahrscheinlich kein Sensor angeschlossen oder der Sensor ist defekt. Falls die zurückgegebene Stromstärke über 20mA ist, besteht entweder ein Kurzschluss oder der Sensor ist defekt. Somit ist erkennbar ob ein Sensor angeschlossen und funktionsfähig ist.'},
                     params=led_status_config())
     ],
     'actions': ['Get Current', 'Get Channel LED Config', 'Get Channel LED Status Config', 'Get Sample Rate', 'Get Gain']

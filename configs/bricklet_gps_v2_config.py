@@ -832,7 +832,7 @@ com['openhab'] = {
 
             'name': 'Fix LED Config',
             'type': 'integer',
-            'label': {'en': 'Fix LED Config', 'de': 'Fix-LED-Konfiguration'},
+            'label': {'en': 'Fix LED Configuration', 'de': 'Fix-LED-Konfiguration'},
             'description': {'en': 'The fix LED configuration. By default the LED shows if the Bricklet got a GPS fix yet. If a fix is established the LED turns on. If there is no fix then the LED is turned off.\n\nYou can also turn the LED permanently on/off, show a heartbeat or let it blink in sync with the PPS (pulse per second) output of the GPS module.\n\nIf the Bricklet is in bootloader mode, the LED is off.',
                             'de': 'Die Konfiguration der Fix-LED. Standardmäßig zeigt die LED an ob ein GPS-Fix besteht. Wenn ein Fix da ist, geht die LED an. Wenn kein Fix da ist, geht die LED aus.\n\nDie LED kann auch permanent an/aus gestellt werden, einen Herzschlag anzeigen oder im Rhythmus des PPS (Puls pro Sekunde) Ausgangs des GPS Moduls blinken.\n\nWenn das Bricklet sich im Bootloadermodus befindet ist die LED aus.'}
         }, {

@@ -1772,7 +1772,7 @@ com['openhab'] = {
 
             'name': 'Touch LED Config',
             'type': 'integer',
-            'label': 'Touch LED Config',
+            'label': 'Touch LED Configuration',
             'description': 'The touch LED configuration. By default the LED is on if the LCD is touched.\nYou can also turn the LED permanently on/off or show a heartbeat.\nIf the Bricklet is in bootloader mode, the LED is off.'
         },
         update_interval('Set GUI Button Pressed Callback Configuration', 'Period', 'GUI Button', 'the GUI buttons', default=100),

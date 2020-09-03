@@ -253,7 +253,7 @@ com['openhab'] = {
 
         'name': 'Communication LED Config',
         'type': 'integer',
-        'label': 'Communication LED Config',
+        'label': 'Communication LED Configuration',
         'description': "The communication LED configuration. By default the LED shows 1-wire communication traffic by flickering. You can also turn the LED permanently on/off or show a heartbeat.",
     }],
     'init_code': """this.setCommunicationLEDConfig(cfg.communicationLEDConfig);""",

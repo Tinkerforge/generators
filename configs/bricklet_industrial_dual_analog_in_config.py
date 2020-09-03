@@ -416,7 +416,7 @@ def voltage_channel(index):
     return {
             'id': 'Voltage Channel {0}'.format(index),
             'type': 'Voltage',
-            'label': 'Voltage Channel {0}'.format(index),
+            'label': {'en': 'Voltage Channel {0}'.format(index), 'de': 'Spannung Kanal {0}'.format(index)},
 
             'init_code':"""this.setVoltageCallbackPeriod((short){0}, channelCfg.updateInterval);""".format(index),
             'dispose_code': """this.setVoltageCallbackPeriod((short){0}, 0);""".format(index),
@@ -446,8 +446,9 @@ com['openhab'] = {
             'name': 'Sample Rate',
             'type': 'integer',
 
-            'label': 'Sample Rate',
-            'description': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
+            'label': {'en': 'Sample Rate', 'de': 'Abtastrate'},
+            'description': {'en': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
+                            'de': "Die Abtastrate der Spannungsmessung.  Ein Verringern der Abtastrate wird auch das Rauschen auf den Daten verringern."}
         }
     ],
     'init_code': """this.setSampleRate(cfg.sampleRate.shortValue());""",
@@ -458,7 +459,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number', 'NOT USED',
                     update_style='Callback Period',
-                    description='The measured voltage between -35 and 35 V')
+                    description={'en': 'The measured voltage', 'de': 'Die gemessene Spannung'})
     ],
     'actions': ['Get Voltage', 'Get Sample Rate', 'Get Calibration', 'Get ADC Values']
 }

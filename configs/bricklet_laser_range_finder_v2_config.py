@@ -470,7 +470,7 @@ com['openhab'] = {
             'name': 'Distance LED Config',
             'type': 'integer',
 
-            'label': 'Distance LED Config',
+            'label': 'Distance LED Configuration',
             'description': 'Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).',
         }],
     'param_groups': oh_generic_channel_param_groups() + [{

@@ -623,8 +623,9 @@ def pin_name(idx):
 def input_channel(idx):
     return {
             'predicate': 'cfg.pinConfiguration{} > 1'.format(idx),
-            'id': 'Input Pin {}'.format(idx),
-            'label': 'Input Value {}'.format(pin_name(idx)),
+            'id': 'Input {}'.format(idx),
+            'label': {'en': 'Input Value {}'.format(idx),
+                      'de': 'Eingangswert {}'.format(idx)},
 
             'type': 'Input Value',
 
@@ -647,8 +648,9 @@ def input_channel(idx):
 def output_channel(idx):
     return {
             'predicate': 'cfg.pinConfiguration{} <= 1'.format(idx),
-            'id': 'Output Pin {}'.format(idx),
-            'label': 'Output Value {}'.format(pin_name(idx)),
+            'id': 'Output {}'.format(idx),
+            'label': {'en': 'Output Value {}'.format(idx),
+                      'de': 'Ausgabewert {}'.format(idx)},
 
             'type': 'Output Pin',
 
@@ -678,8 +680,9 @@ def output_channel(idx):
 def monoflop_channel(idx):
     return {
         'predicate': 'cfg.pinConfiguration{} <= 1'.format(idx),
-        'id': 'Monoflop Pin {}'.format(idx),
-        'label': 'Monoflop {}'.format(pin_name(idx)),
+        'id': 'Monoflop {}'.format(idx),
+        'label': {'en': 'Monoflop {}'.format(idx),
+                  'de': 'Monoflop {}'.format(idx)},
         'type': 'Monoflop',
 
         'getters': [{
@@ -695,7 +698,7 @@ def monoflop_channel(idx):
         }],
 
         'setter_refreshs': [{
-            'channel': 'Output Pin {}'.format(idx),
+            'channel': 'Output {}'.format(idx),
             'delay': '0'
         }]
     }
@@ -704,9 +707,10 @@ def monoflop_channel(idx):
 def edge_count_channel(idx):
     return {
             'predicate': 'cfg.pinConfiguration{} > 1'.format(idx),
-            'id': 'Edge Count Pin {0}'.format(idx),
+            'id': 'Edge Count {0}'.format(idx),
             'type': 'Edge Count',
-            'label': 'Edge Count {0}'.format(pin_name(idx)),
+            'label': {'en': 'Edge Count {0}'.format(idx),
+                      'de': 'Flankenzähler {0}'.format(idx)},
 
             'init_code':"""this.setEdgeCountConfiguration({0}, channelCfg.edgeType, channelCfg.debounce);""".format(idx),
 
@@ -726,14 +730,15 @@ def pin_config(idx):
             'type': 'integer',
             'default': 3,
             'options': [
-                ('Input with pull-up', 3),
-                ('Input without pull-up', 2),
-                ('Output (Initial high)', 1),
-                ('Output (Initial low)', 0)
+                ({'en': 'Input with pull-up', 'de': 'Eingang mit Pull-Up'}, 3),
+                ({'en': 'Input without pull-up', 'de': 'Eingang ohne Pull-Up'}, 2),
+                ({'en': 'Output (Initial high)', 'de': 'Ausgang (initial high)'}, 1),
+                ({'en': 'Output (Initial low)', 'de': 'Ausgang (initial low)'}, 0)
             ],
             'limit_to_options': 'true',
-            'label': 'Pin Configuration {}/{}'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
-            'description': 'Configures the direction of pin {}/{}. Inputs without pull-up will be floating if nothing is connected. Outputs can have an initial state of low or high.'.format(idx, ('A' if idx <= 7 else 'B') + str(idx % 8)),
+            'label': {'en': 'Pin Configuration {}'.format(idx), 'de': 'Pin-Konfiguration {}'},
+            'description': {'en': 'Configures pin {} as input or output. Inputs without pull-up will be floating if nothing is connected. Outputs can have an initial state of low or high.'.format(idx),
+                            'de': 'Konfiguriert Pin {} as Ein- oder Ausgang. Eingänge ohne Pull-Up sind potentialfrei wenn nicht verbunden. Ausgänge können einen Initialzustand von low oder high haben.'.format(idx)}
         }
 
 channels = [input_channel(i) for i in range(0, 16)] + [output_channel(i) for i in range(0, 16)] + [monoflop_channel(i) for i in range(0, 16)] + [edge_count_channel(i) for i in range(0, 16)]
@@ -744,12 +749,14 @@ com['openhab'] = {
     'params': params,
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Input Value', 'Switch', 'Input Value',
+        oh_generic_channel_type('Input Value', 'Switch', 'NOT USED',
                     update_style='Callback Configuration',
-                    description='The logic level that is currently measured on the pin.'),
-        oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
+                    description={'en': 'The logic level that is currently measured on the pin.',
+                                 'de': 'Der Logikpegel, der aktuell auf dem Pin gemessen wird.'}),
+        oh_generic_channel_type('Output Pin', 'Switch', 'NOT USED',
                     update_style=None,
-                    description='The logic level that is currently set on the pin.'),
+                    description={'en': 'The logic level that is currently set on the pin.',
+                                 'de': 'Der Logikpegel, der aktuell auf dem Pin ausgegeben wird.'}),
         {
             'id': 'Monoflop',
             'item_type': 'String',
@@ -762,8 +769,9 @@ com['openhab'] = {
                 'default': 1000,
                 'unit': 'ms',
 
-                'label': 'Monoflop Duration',
-                'description': 'The time (in ms) that the pin should hold the configured value.',
+                'label': {'en': 'Monoflop Duration', 'de': 'Monoflop-Dauer'},
+                'description': {'en': 'The time that the pin should hold the configured value.',
+                                'de': 'Die Zeit, für die der Pin den konfigurierten Wert halten soll.'}
             },
             {
                 'packet': 'Set Monoflop',
@@ -773,32 +781,36 @@ com['openhab'] = {
                 'type': 'boolean',
                 'default': 'true',
 
-                'label': 'Monoflop Value',
-                'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
+                'label': {'en': 'Monoflop Value', 'de': 'Monoflop-Zustand'},
+                'description': {'en': 'The desired value of the pin.',
+                                'de': 'Der gewünschte Zustand des Pin. '}
             }],
             'label': 'NOT USED',
-            'description':'Triggers a monoflop as configured',
+            'description': {'en': 'Triggers a monoflop as configured.', 'de': 'Löst einen Monoflop mit den konfigurierten Eigenschaften aus.'},
             'command_options': [('Trigger', 'TRIGGER')]
         },
-        oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
+        oh_generic_channel_type('Edge Count', 'Number', 'NOT USED',
             update_style=None,
-            description='The current value of the edge counter for the selected channel',
+            description={'en': 'The current value of the edge counter of the pin.',
+                         'de': 'Der aktuelle Wert des Flankenzählers des Pins.'},
             params=[{
                 'packet': 'Set Edge Count Configuration',
                 'element': 'Edge Type',
 
                 'name': 'Edge Type',
                 'type': 'integer',
-                'label': 'Edge Type',
-                'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
+                'label': {'en': 'Edge Type', 'de': 'Flankentyp'},
+                'description': {'en': 'Configures if rising edges, falling edges or both are counted.',
+                                'de': 'Konfiguriert den zu zählenden Flankentyp. Es können steigende, fallende oder beide Flanken gezählt werden.'}
             },{
                 'packet': 'Set Edge Count Configuration',
                 'element': 'Debounce',
 
                 'name': 'Debounce',
                 'type': 'integer',
-                'label': 'Debounce Time',
-                'description': 'The debounce time in ms.',
+                'label': {'en': 'Debounce Time', 'de': 'Entprellzeit'},
+                'description': {'en': 'The debounce time is the minimum time between two count increments.',
+                                'de': 'Die Entprellzeit ist die Minimalzeit zwischen zwei Zählererhöhungen.'}
             },{
                 'packet': 'Get Edge Count',
                 'element': 'Reset Counter',
@@ -808,14 +820,15 @@ com['openhab'] = {
 
                 'default': 'false',
 
-                'label': 'Reset Edge Count On Update',
-                'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
+                'label': {'en': 'Reset Edge Counter On Update', 'de': 'Flankenzähler bei Update zurücksetzen'},
+                'description': {'en': 'Enabling this will reset the edge counter after openHAB reads its value. Use this if you want relative counts per update.',
+                                'de': 'Wenn aktiviert, wird der Flankenzähler jedes Mal wenn openHAB dessen Wert liest zurückgesetzt. Dann wird eine relative Zählung pro Update ausgegeben.'}
             }])
     ],
-    'actions': [{'fn': 'Set Value', 'refreshs': ['Output Pin {}'.format(i) for i in range(0, 16)] + ['Monoflop Pin {}'.format(i) for i in range(0, 16)]},
-                {'fn': 'Set Selected Value', 'refreshs': ['Output Pin {}'.format(i) for i in range(0, 16)] + ['Monoflop Pin {}'.format(i) for i in range(0, 16)]},
-                {'fn': 'Set Monoflop', 'refreshs': ['Output Pin {}'.format(i) for i in range(0, 16)] + ['Monoflop Pin {}'.format(i) for i in range(0, 16)]},
+    'actions': [{'fn': 'Set Value', 'refreshs': ['Output {}'.format(i) for i in range(0, 16)] + ['Monoflop {}'.format(i) for i in range(0, 16)]},
+                {'fn': 'Set Selected Value', 'refreshs': ['Output {}'.format(i) for i in range(0, 16)] + ['Monoflop {}'.format(i) for i in range(0, 16)]},
+                {'fn': 'Set Monoflop', 'refreshs': ['Output {}'.format(i) for i in range(0, 16)] + ['Monoflop {}'.format(i) for i in range(0, 16)]},
                 'Get Value', 'Get Configuration',
-                {'fn': 'Get Edge Count', 'refreshs': ['Edge Count Pin {}'.format(i) for i in range(0, 16)]},
+                {'fn': 'Get Edge Count', 'refreshs': ['Edge Count {}'.format(i) for i in range(0, 16)]},
                 'Get Monoflop', 'Get Edge Count Configuration']
 }

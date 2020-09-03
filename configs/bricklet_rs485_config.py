@@ -2516,7 +2516,7 @@ com['openhab'] = {
             'name': 'Communication LED Config',
             'type': 'integer',
 
-            'label': 'Communication LED Config',
+            'label': 'Communication LED Configuration',
             'description': "By default the LED shows RS485 communication traffic by flickering. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
             'packet': 'Set Error LED Config',
@@ -2524,7 +2524,7 @@ com['openhab'] = {
 
             'name': 'Error LED Config',
             'type': 'integer',
-            'label': 'Error LED Config',
+            'label': 'Error LED Configuration',
             'description': "By default the error LED turns on if there is any error (see FrameErrorCountListener callback). You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }],
 

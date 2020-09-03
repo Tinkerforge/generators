@@ -409,7 +409,8 @@ def input_channel(index):
     return {
             'id': 'Input {0}'.format(index),
             'type': 'Value',
-            'label': 'Input Value {0}'.format(index),
+            'label': {'en': 'Input Value {0}'.format(index),
+                      'de': 'Eingangswert {0}'.format(index)},
 
             'init_code':"""this.setValueCallbackConfiguration({0}, channelCfg.updateInterval, true);
 this.setChannelLEDConfig({0}, channelCfg.ledConfig);""".format(index),
@@ -430,9 +431,10 @@ this.setChannelLEDConfig({0}, channelCfg.ledConfig);""".format(index),
 
 def edge_count_channel(index):
     return {
-            'id': 'Edge Count Input {0}'.format(index),
+            'id': 'Edge Count {0}'.format(index),
             'type': 'Edge Count',
-            'label': 'Edge Count Input {0}'.format(index),
+            'label': {'en': 'Edge Count {0}'.format(index),
+                      'de': 'Flankenzähler {0}'.format(index)},
 
             'init_code':"""this.setEdgeCountConfiguration({0}, channelCfg.edgeType, channelCfg.debounce);""".format(index),
 
@@ -449,51 +451,57 @@ com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'channels': [input_channel(i) for i in range(0, 4)] + [edge_count_channel(i) for i in range(0, 4)],
     'channel_types': [
-        oh_generic_channel_type('Value', 'Switch', 'Input Value',
-                    update_style='Callback Configuration',
-                    description='The logic level that is currently measured on the input.',
-                    params=[{
-                        'packet': 'Set Channel LED Config',
-                        'element': 'Config',
+        oh_generic_channel_type('Value', 'Switch', 'NOT USED',
+            update_style='Callback Configuration',
+            description={'en': 'The logic level that is currently measured on the channel.',
+                            'de': 'Der Logikpegel, der aktuell auf dem Kanal gemessen wird.'},
+            params=[{
+                'packet': 'Set Channel LED Config',
+                'element': 'Config',
 
-                        'name': 'LED Config',
-                        'type': 'integer',
+                'name': 'LED Config',
+                'type': 'integer',
 
-                        'label': 'LED Configuration',
-                        'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.'
-                    }],
-                    update_interval_default=100),
-        oh_generic_channel_type('Edge Count', 'Number', 'Edge Count',
-                    update_style=None,
-                    description='The current value of the edge counter for the selected channel',
-                    params=[{
-                            'packet': 'Set Edge Count Configuration',
-                            'element': 'Edge Type',
+                'label': {'en': 'LED Configuration', 'de': 'LED-Konfiguration'},
+                'description': {'en': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
+                                'de': 'Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn ein High-Signal am Kanal anliegt und sonst aus.'}
+            }],
+            update_interval_default=100),
+        oh_generic_channel_type('Edge Count', 'Number', 'NOT USED',
+            update_style=None,
+            description={'en': 'The current value of the edge counter of the channel.',
+                            'de': 'Der aktuelle Wert des Flankenzählers des Kanals.'},
+            params=[{
+                    'packet': 'Set Edge Count Configuration',
+                    'element': 'Edge Type',
 
-                            'name': 'Edge Type',
-                            'type': 'integer',
-                            'label': 'Edge Type',
-                            'description': 'The edge type parameter configures if rising edges, falling edges or both are counted.',
-                        },{
-                            'packet': 'Set Edge Count Configuration',
-                            'element': 'Debounce',
+                    'name': 'Edge Type',
+                    'type': 'integer',
+                    'label': {'en': 'Edge Type', 'de': 'Flankentyp'},
+                    'description': {'en': 'Configures if rising edges, falling edges or both are counted.',
+                                    'de': 'Konfiguriert den zu zählenden Flankentyp. Es können steigende, fallende oder beide Flanken gezählt werden.'}
+                },{
+                    'packet': 'Set Edge Count Configuration',
+                    'element': 'Debounce',
 
-                            'name': 'Debounce',
-                            'type': 'integer',
-                            'label': 'Debounce Time',
-                            'description': 'The debounce time in ms.',
-                        },{
-                            'packet': 'Get Edge Count',
-                            'element': 'Reset Counter',
+                    'name': 'Debounce',
+                    'type': 'integer',
+                    'label': {'en': 'Debounce Time', 'de': 'Entprellzeit'},
+                    'description': {'en': 'The debounce time is the minimum time between two count increments.',
+                                    'de': 'Die Entprellzeit ist die Minimalzeit zwischen zwei Zählererhöhungen.'}
+                },{
+                    'packet': 'Get Edge Count',
+                    'element': 'Reset Counter',
 
-                            'name': 'Reset On Read',
-                            'type': 'boolean',
+                    'name': 'Reset On Read',
+                    'type': 'boolean',
 
-                            'default': 'false',
+                    'default': 'false',
 
-                            'label': 'Reset Edge Count On Update',
-                            'description': 'Enabling this will reset the edge counter after OpenHAB reads its value. Use this if you want relative edge counts per update.',
-                        }])
+                    'label': {'en': 'Reset Edge Counter On Update', 'de': 'Flankenzähler bei Update zurücksetzen'},
+                    'description': {'en': 'Enabling this will reset the edge counter after openHAB reads its value. Use this if you want relative counts per update.',
+                                    'de': 'Wenn aktiviert, wird der Flankenzähler jedes Mal wenn openHAB dessen Wert liest zurückgesetzt. Dann wird eine relative Zählung pro Update ausgegeben.'}
+                }])
     ],
-    'actions': ['Get Value', 'Get Channel LED Config', 'Get Edge Count Configuration', {'fn': 'Get Edge Count', 'refreshs': ['Edge Count Input 0', 'Edge Count Input 1', 'Edge Count Input 2', 'Edge Count Input 3']},]
+    'actions': ['Get Value', 'Get Channel LED Config', 'Get Edge Count Configuration', {'fn': 'Get Edge Count', 'refreshs': ['Edge Count 0', 'Edge Count 1', 'Edge Count 2', 'Edge Count 3']},]
 }

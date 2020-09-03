@@ -233,7 +233,7 @@ com['openhab'] = {
                 'unit': 'ms',
 
                 'label': 'Monoflop Duration',
-                'description': 'The time (in ms) that the relay should hold the configured value.',
+                'description': 'The time that the relay should hold the configured value.',
             },
             {
                 'packet': 'Set Monoflop',

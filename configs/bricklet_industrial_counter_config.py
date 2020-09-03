@@ -609,19 +609,20 @@ com['examples'].append({
 def signal_data_channel(idx, data_words, data_headless):
     return {
         'predicate': 'cfg.enableChannel{}'.format(idx),
-        'id': '{} {}'.format(data_words, idx),
-        'label': 'Channel {} - {}'.format(idx, data_words),
-        'type': data_words,
+        'id': '{} {}'.format(data_words['en'], idx),
+        'label': {'en': 'Channel {} - {}'.format(idx, data_words['en']),
+                  'de': 'Kanal {} - {}'.format(idx, data_words['de'])},
+        'type': data_words['en'],
 
         'getters': [{
             'packet': 'Get Signal Data',
-            'element': data_words,
+            'element': data_words['en'],
             'packet_params': [str(idx)],
             'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(data_headless)
         }],
         'callbacks': [{
             'packet': 'All Signal Data',
-            'element': data_words,
+            'element': data_words['en'],
             'transform': 'new {{number_type}}({}[{}]{{divisor}}{{unit}})'.format(data_headless, idx)
         }],
     }
@@ -630,7 +631,8 @@ def value_channel(idx):
     return {
         'predicate': 'cfg.enableChannel{}'.format(idx),
         'id': 'Value {}'.format(idx),
-        'label': 'Channel {} - Value'.format(idx),
+        'label': {'en': 'Channel {} - Value'.format(idx),
+                  'de': 'Channel {} - Status'.format(idx)},
         'type': 'Value',
 
         'getters': [{
@@ -652,7 +654,8 @@ def counter_channel(idx):
             'predicate': 'cfg.enableChannel{}'.format(idx),
             'id': 'Counter Channel {0}'.format(idx),
             'type': 'Counter',
-            'label': 'Channel {0} - Counter'.format(idx),
+            'label': {'en': 'Channel {0} - Counter'.format(idx),
+                      'de': 'Channel {0} - Zählerstand'.format(idx)},
 
             'init_code':"""this.setCounterConfiguration({0}, channelCfg.countEdge, channelCfg.countDirection, channelCfg.dutyCyclePrescaler, channelCfg.frequencyIntegrationTime);
             this.setChannelLEDConfig({0}, channelCfg.channelLEDConfiguration);""".format(idx),
@@ -685,14 +688,16 @@ def enable_config(idx):
             'name': 'Enable Channel {}'.format(idx),
             'type': 'boolean',
 
-            'label': 'Enable Channel {}'.format(idx),
-            'description': 'Activates/deactivates the counter of channel {}.'.format(idx),
+            'label': {'en': 'Enable Channel {}'.format(idx),
+                      'de': 'Kanal {} aktivieren'.format(idx)},
+            'description': {'en': 'Activates/deactivates the counter of channel {}.'.format(idx),
+                            'de': 'Aktiviert/Deaktiviert den Zähler für Kanal {}.'.format(idx)}
         }
 
 channels = [counter_channel(i) for i in range(0, 4)]
-channels += [signal_data_channel(i, 'Duty Cycle', 'dutyCycle') for i in range(0, 4)]
-channels += [signal_data_channel(i, 'Period', 'period') for i in range(0, 4)]
-channels += [signal_data_channel(i, 'Frequency', 'frequency') for i in range(0, 4)]
+channels += [signal_data_channel(i, {'en': 'Duty Cycle', 'de': 'Tastverhältnis'}, 'dutyCycle') for i in range(0, 4)]
+channels += [signal_data_channel(i, {'en': 'Period', 'de': 'Periode'}, 'period') for i in range(0, 4)]
+channels += [signal_data_channel(i, {'en': 'Frequency', 'de': 'Frequenz'}, 'frequency') for i in range(0, 4)]
 channels += [value_channel(i) for i in range(0, 4)]
 
 com['openhab'] = {
@@ -700,28 +705,35 @@ com['openhab'] = {
     'params': [enable_config(i) for i in range(0, 4)] + \
               [update_interval('Set All Counter Callback Configuration', 'Period', 'Counter', 'all counters'),
                update_interval('Set All Signal Data Callback Configuration', 'Period', 'Signal Data', 'all signal data')],
+
     'init_code': """this.setAllCounterActive(new boolean[]{cfg.enableChannel0, cfg.enableChannel1, cfg.enableChannel2, cfg.enableChannel3});
     this.setAllCounterCallbackConfiguration(cfg.counterUpdateInterval, true);
     this.setAllSignalDataCallbackConfiguration(cfg.signalDataUpdateInterval, true);""",
     'dispose_code': """this.setAllCounterCallbackConfiguration(0, true);
     this.setAllSignalDataCallbackConfiguration(0, true);""",
+
     'channels': channels,
     'channel_types': [
         oh_generic_channel_type('Duty Cycle', 'Number', 'NOT USED',
                     update_style=None,
-                    description='The signal duty cycle.'),
+                    description={'en': "The signal's duty cycle.",
+                                 'de': 'Das Tastverhältnis des Signals'}),
         oh_generic_channel_type('Period', 'Number', 'NOT USED',
                     update_style=None,
-                    description='The signal period'),
+                    description={'en': "The signal's period",
+                                 'de': 'Die Periode des Signals'}),
         oh_generic_channel_type('Frequency', 'Number', 'NOT USED',
                     update_style=None,
-                    description='The signal frequency.'),
+                    description={'en': "The signal's frequency.",
+                                 'de': 'Die Frequenz des Signals'}),
         oh_generic_channel_type('Value', 'Switch', 'NOT USED',
                     update_style=None,
-                    description='The signal value'),
-        oh_generic_channel_type('Counter', 'Number', 'Counter',
+                    description={'en': "The signal's current value",
+                                 'de': 'Der aktuelle Wert des Signals'}),
+        oh_generic_channel_type('Counter', 'Number', {'en': 'Counter Value', 'de': 'Zählerstand'},
             update_style=None,
-            description='The current counter value for the given channel.',
+            description={'en': 'The current counter value for the channel.',
+                         'de': 'Der aktuelle Zählerstand des Kanals'},
             params=[{
                 'packet': 'Set Counter Configuration',
                 'element': 'Count Edge',
@@ -729,8 +741,9 @@ com['openhab'] = {
                 'name': 'Count Edge',
                 'type': 'integer',
 
-                'label': 'Count Edge',
-                'description': 'Counter can count on rising, falling or both edges.',
+                'label': {'en': 'Count Edge', 'de': 'Zählflanke'},
+                'description': {'en': 'The counter can count on rising, falling or both edges.',
+                                'de': 'Der Zähler kann bei der steigenden, fallenden oder beiden Flanken zählen.'}
             }, {
                 'packet': 'Set Counter Configuration',
                 'element': 'Count Direction',
@@ -738,8 +751,9 @@ com['openhab'] = {
                 'name': 'Count Direction',
                 'type': 'integer',
 
-                'label': 'Count Direction',
-                'description': 'Counter can count up or down. You can also use another channel as direction input: Channel 0 additionally supports to use the input of channel 2 as direction. You can configure channel 0 to count up if the value of channel 2 is high and down if the value is low and the other way around. Additionally channel 3 can use channel 1 as direction input in the same manner.',
+                'label': {'en': 'Count Direction', 'de': 'Zählrichtung'},
+                'description': {'en': 'The counter can count up or down. You can also use another channel as direction input: Channel 0 additionally supports to use the input of channel 2 as direction. You can configure channel 0 to count up if the value of channel 2 is high and down if the value is low and the other way around. Additionally channel 3 can use channel 1 as direction input in the same manner.',
+                                'de': 'Der Zähler kann hoch- oder runterzählen. Es kann auch ein weiterer Kanal als Richtungseingang genutzt werden: Kanal 0 erlaubt es zusätzlich Kanal 2 als Richtungssteuerungseingang zu verwenden. In diesem Fall wird der Zähler von Kanal 0 inkrementiert (hoch zählen), wenn Kanal 2 high ist und dekrementiert (runter zählen) wenn Kanal 2 low ist. Für Kanal 3 kann Kanal 1 in gleicher Weise als Richtungseingang verwendet werden.'}
             }, {
                 'packet': 'Set Counter Configuration',
                 'element': 'Duty Cycle Prescaler',
@@ -747,8 +761,9 @@ com['openhab'] = {
                 'name': 'Duty Cycle Prescaler',
                 'type': 'integer',
 
-                'label': 'Duty Cycle Prescaler',
-                'description': 'Sets a divider for the internal clock. See `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__ for details.',
+                'label': {'en': 'Duty Cycle Prescaler', 'de': 'Tastfrequenz-Vorskalierung'},
+                'description': {'en': 'Sets a divider for the internal clock. See `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__ for details.',
+                                'de': 'Setzt einen Teiler für die interne Clock. Siehe `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-und-frequency-integration-time>`__ für weitere Details.'}
             }, {
                 'packet': 'Set Counter Configuration',
                 'element': 'Frequency Integration Time',
@@ -756,16 +771,18 @@ com['openhab'] = {
                 'name': 'Frequency Integration Time',
                 'type': 'integer',
 
-                'label': 'Frequency Integration Time',
-                'description': 'Sets the integration time for the frequency measurement. See `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__ for details.',
+                'label': {'en': 'Frequency Integration Time', 'de': 'Frequenz-Integration'},
+                'description': {'en': 'Sets the integration time for the frequency measurement. See `here <https://www.tinkerforge.com/en/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-and-frequency-integration-time>`__ for details.',
+                                'de': 'Setzt die Integrationszeit für die Frequenzmessung. Siehe `hier <https://www.tinkerforge.com/de/doc/Hardware/Bricklets/Industrial_Counter.html#duty-cycle-prescaler-und-frequency-integration-time>`__ für weitere Details.'},
             }, {
                 'packet': 'Set Channel LED Config',
                 'element': 'Config',
 
                 'name': 'Channel LED Configuration',
                 'type': 'integer',
-                'label': 'Channel LED Configuration',
-                'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to \\\"Channel Status\\\". In this mode the LED is on if the channel is high and off otherwise.',
+                'label': {'en': 'Channel LED Configuration', 'de': 'Kanal-LED-Konfiguration'},
+                'description': {'en': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
+                                'de': 'Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn ein High-Signal am Kanal anliegt und sonst aus.'},
             },])
     ],
     'actions': ['Get Counter', 'Get All Counter', 'Set Counter', 'Set All Counter', 'Get Signal Data', 'Get All Signal Data',

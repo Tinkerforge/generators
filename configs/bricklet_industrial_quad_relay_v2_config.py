@@ -275,8 +275,9 @@ com['examples'].append({
 def relay_channel(channel):
     return {
         'id': 'Relay {}'.format(channel),
-        'label': 'Relay {}'.format(channel),
-        'description': 'Switches Relay {}. A running monoflop timer for this relay will be aborted if the relay is toggled by this channel.'.format(channel),
+        'label': {'en': 'Relay {}'.format(channel), 'de': 'Relais {}'.format(channel)},
+        'description': {'en': 'Switches Relay {}. A running monoflop timer for this relay will be aborted if the relay is toggled by this channel.'.format(channel),
+                        'de:': 'Schaltet das Relais {} Ein laufender Monoflop Timer für das Relais wird abgebrochen, wenn das Relais von diesem Channel geschaltet wird.'.format(channel)},
 
         'type': 'Relay',
 
@@ -305,7 +306,7 @@ def relay_channel(channel):
 def monoflop_channel(channel):
     return {
         'id': 'Monoflop Relay {}'.format(channel),
-        'label': 'Monoflop Relay {}'.format(channel),
+        'label': {'en': 'Monoflop Relay {}'.format(channel), 'de': 'Monoflop Relais {}'.format(channel)},
         'type': 'Monoflop',
 
         'getters': [{
@@ -336,8 +337,9 @@ relay_channel_type['params'] = [
 
     'name': 'Channel LED Config',
     'type': 'integer',
-    'label': 'Channel LED Config',
-    'description': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
+    'label': {'en': 'LED Configuration', 'de': 'LED-Konfiguration'},
+    'description': {'en': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
+                    'de': 'Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn ein High-Signal am Kanal anliegt und sonst aus.'}
 },
 ]
 
@@ -360,8 +362,9 @@ com['openhab'] = {
                 'default': 1000,
                 'unit': 'ms',
 
-                'label': 'Monoflop Duration',
-                'description': 'The time (in ms) that the relay should hold the configured value.',
+                'label': {'en': 'Monoflop Duration', 'de': 'Monoflop-Dauer'},
+                'description': {'en': 'The time that the relay should hold the configured value.',
+                                'de': 'Die Zeit, für die das Relais den konfigurierten Wert halten soll.'}
             },
             {
                 'packet': 'Set Monoflop',
@@ -371,11 +374,12 @@ com['openhab'] = {
                 'type': 'boolean',
                 'default': 'true',
 
-                'label': 'Monoflop Value',
-                'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
+                'label': {'en': 'Monoflop Value', 'de': 'Monoflop-Zustand'},
+                'description': {'en': 'The desired value of the relay. Activated means relay closed and deactivated means relay open.',
+                                'de': 'Der gewünschte Zustand des Relais. Aktiviert bedeutet Relais geschlossen und deaktiviert bedeutet Relais offen.'}
             }],
             'label': 'NOT USED',
-            'description':'Triggers a monoflop as configured',
+            'description': {'en': 'Triggers a monoflop as configured.', 'de': 'Löst einen Monoflop mit den konfigurierten Eigenschaften aus.'},
             'command_options': [('Trigger', 'TRIGGER')]
         }
     ],

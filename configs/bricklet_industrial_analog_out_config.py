@@ -282,8 +282,9 @@ com['openhab'] = {
             'limit_to_options': 'true',
             'default': 1,
 
-            'label': 'Output Configuration',
-            'description': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
+            'label': {'en': 'Output Configuration', 'de': 'Ausgabekonfiguration'},
+            'description': {'en': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
+                            'de': 'Setzt die Ausgabekonfiguration. Da die ausgegebene Spannung und Stromstärke von einander abhängen, kann nur einer der Werte gleichzeitig gesteuert werden.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Voltage Range',
@@ -291,16 +292,18 @@ com['openhab'] = {
             'name': 'Voltage Range',
             'type': 'integer',
 
-            'label': 'Voltage Range',
-            'description': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+            'label': {'en': 'Voltage Range', 'de': 'Spannungsbereich'},
+            'description': {'en': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+                            'de': 'Konfiguriert den Spannungswertebereich. Die Auflösung ist immer 12 Bit. Dass heißt, die Genauigkeit erhöht sich bei kleineren Wertebereichen.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Current Range',
 
             'name': 'Current Range',
             'type': 'integer',
-            'label': 'Current Range',
-            'description': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+            'label': {'en': 'Current Range', 'de': 'Stromstärkenbereich'},
+            'description': {'en': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+                            'de': 'Konfiguriert den Stromstärken-Wertebereich. Die Auflösung ist immer 12 Bit. Dass heißt, die Genauigkeit erhöht sich bei kleineren Wertebereichen.'}
         }
     ],
     'init_code': """this.setConfiguration(cfg.voltageRange.shortValue(), cfg.currentRange.shortValue());""",
@@ -366,15 +369,18 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Enabled', 'Switch', 'Output Enabled',
+        oh_generic_channel_type('Enabled', 'Switch', {'en': 'Output', 'de': 'Ausgabe'},
                     update_style=None,
-                    description='Enables/disables the output of voltage and current.'),
-        oh_generic_channel_type('Voltage', 'Number', 'Output Voltage',
+                    description={'en': 'Enables/disables the output of voltage and current.',
+                                 'de': 'Aktiviert/Deaktiviert die Ausgabe von Spannung und Strom.'}),
+        oh_generic_channel_type('Voltage', 'Number', {'en': 'Output Voltage', 'de': 'Ausgabespannung'},
                     update_style=None,
-                    description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.'),
-        oh_generic_channel_type('Current', 'Number', 'Output Current',
+                    description={'en': 'The output voltage. The output voltage and output current are linked. Changing the output voltage also changes the output current.',
+                                 'de': 'Die Ausgabespannung. Die Ausgangsspannung und der Ausgangsstrom sind gekoppelt. Eine Änderung der Ausgangsspannung führt auch zu einer Änderung des Ausgangsstroms.'}),
+        oh_generic_channel_type('Current', 'Number', {'en': 'Output Current', 'de': 'Ausgabestrom'},
                     update_style=None,
-                    description='The output current in A. The output current and output voltage are linked. Changing the output current also changes the output voltage.')
+                    description={'en': 'The output current. The output current and output voltage are linked. Changing the output current also changes the output voltage.',
+                                 'de': 'Der Ausgabestrom. Der Ausgangsstrom und die Ausgangsspannung sind gekoppelt. Eine Änderung des Ausgangsstroms führt auch zu einer Änderung der Ausgangsspannung.'})
     ],
     'actions': [{'fn': 'Enable', 'refreshs': ['Enabled']}, {'fn': 'Disable', 'refreshs': ['Enabled']}, 'Is Enabled',
                 'Get Voltage', 'Get Current', 'Get Configuration']

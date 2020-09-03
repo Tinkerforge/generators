@@ -1414,7 +1414,7 @@ common_openhab = {
                         ('Show Status', 3)],
             'limit_to_options': 'true',
             'default': 3,
-            'label': 'Status LED Config',
+            'label': 'Status LED Configuration',
             'description': 'The status LED configuration. By default the LED shows communication traffic between Brick and Bricklet, it flickers once for every 10 received data packets.\n\nYou can also turn the LED permanently on/off or show a heartbeat.\n\nIf the Bricklet is in bootloader mode, the LED is will show heartbeat by default.'
         }],
         'init_code': 'this.setStatusLEDConfig(cfg.statusLEDConfig);'
@@ -1432,7 +1432,7 @@ common_openhab = {
             'name': 'Status LED Config',
             'type': 'boolean',
             'default': 'true',
-            'label': 'Status LED Config',
+            'label': 'Status LED Configuration',
             'description': 'The status LED is the blue LED next to the USB connector. If enabled is is on and it flickers if data is transfered. If disabled it is always off.'
         }],
         'init_code': """if(cfg.statusLEDConfig) {

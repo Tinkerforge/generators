@@ -585,15 +585,24 @@ com['examples'].append({
 'incomplete': True # because of special print logic in callback
 })
 
-analog_value_desc = """
-Returns the {} value as read by a 12-bit analog-to-digital converter.
+analog_value_desc = {'en': """
+The {0} value as read by a 12-bit analog-to-digital converter.
 
 .. note::
- The values returned by :func:`Get Position` are averaged over several samples
- to yield less noise, while :func:`Get Analog Value` gives back raw
- unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
+ The position {0} value is averaged over several samples
+ to yield less noise, while this channel gives back raw
+ unfiltered analog values. The only reason to use this channel is,
  if you need the full resolution of the analog-to-digital converter.
-"""
+""",
+'de': """
+Der {0} Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen.
+
+.. note::
+ Der Position {0} Wert ist über mehrere
+ Messwerte gemittelt um das Rauschen zu vermindern, während dieser Channel
+ unverarbeitete Analogwerte zurück gibt. Der einzige Grund diesen Channel
+ zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
+"""}
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
@@ -611,7 +620,7 @@ this.setAnalogValueCallbackPeriod(0);""",
     'channels': [{
             'id': 'Position {}'.format(axis),
             'type': 'Position',
-            'label': 'Position {}'.format(axis),
+            'label': {'en': 'Position {}'.format(axis), 'de': 'Position {}'.format(axis)},
 
             'getters': [{
                 'packet': 'Get Position',
@@ -627,8 +636,9 @@ this.setAnalogValueCallbackPeriod(0);""",
         } for axis in ['X', 'Y']] +
         [{
             'id': 'Pressed',
-            'label': 'Pressed',
-            'description': 'Triggers if the button is pressed or released',
+            'label': {'en': 'Pressed', 'de': 'Gedrückt'},
+            'description': {'en': 'Triggers if the button is pressed or released.',
+                            'de': 'Löst aus wenn der Knopf gedrückt oder losgelassen wird.'},
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Is Pressed',
@@ -673,20 +683,23 @@ this.setAnalogValueCallbackPeriod(0);""",
                 'filter': 'true'}],
         }],
     'channel_types': [
-        oh_generic_channel_type('Position', 'Number', 'Position',
+        oh_generic_channel_type('Position', 'Number', 'NOT USED',
                     update_style=None,
-                    description='The position of the joystick. The value ranges between -100 and 100 for both axis. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.'),
+                    description={'en': 'The position of the joystick. The middle position of the joystick is x=0, y=0. The returned values are averaged and calibrated.',
+                                 'de': 'Gibt die Position des Joystick zurück. Die Mittelposition des Joysticks ist x=0, y=0. Die zurückgegebenen Werte sind gemittelt und kalibriert'}),
         {
             'id': 'Analog Value X',
             'item_type': 'Number',
-            'label': 'Analog Value X',
-            'description': analog_value_desc.format('X'),
+            'label': {'en': 'Analog Value X', 'de': 'Analog-Wert X'},
+            'description': {'en': analog_value_desc['en'].format('X'),
+                            'de': analog_value_desc['de'].format('X')},
             'is_trigger_channel': False,
         }, {
             'id': 'Analog Value Y',
             'item_type': 'Number',
-            'label': 'Analog Value Y',
-            'description': analog_value_desc.format('Y'),
+            'label': {'en': 'Analog Value Y', 'de': 'Analog-Wert Y'},
+            'description': {'en': analog_value_desc['en'].format('Y'),
+                            'de': analog_value_desc['de'].format('Y')},
             'is_trigger_channel': False,
         }
     ],

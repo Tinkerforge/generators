@@ -207,11 +207,6 @@ wird für die Kalibrierung benötigt, siehe :func:`Set Calibration`.
 }]
 })
 
-led_channel_config_description = """Each channel has a corresponding LED. You can turn the LED off, on or show a
-heartbeat. You can also set the LED to "Channel Status". In this mode the
-LED can either be turned on with a pre-defined threshold or the intensity
-of the LED can change with the measured value."""
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel LED Config',
@@ -221,12 +216,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-{}
+Each channel has a corresponding LED. You can turn the LED off, on or show a
+heartbeat. You can also set the LED to "Channel Status". In this mode the
+LED can either be turned on with a pre-defined threshold or the intensity
+of the LED can change with the measured value.
 
 You can configure the channel status behavior with :func:`Set Channel LED Status Config`.
 
 By default all channel LEDs are configured as "Channel Status".
-""".format(led_channel_config_description),
+""",
 'de':
 """
 Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder
@@ -259,7 +257,7 @@ Gibt die Kanal-LED-Konfiguration zurück, wie von :func:`Set Channel LED Config`
 }]
 })
 
-led_status_config_description = """For each channel you can choose between threshold and intensity mode.
+led_status_config_description = {'en': """For each channel you can choose between threshold and intensity mode.
 
 In threshold mode you can define a positive or a negative threshold.
 For a positive threshold set the "min" parameter to the threshold value in mV
@@ -275,30 +273,9 @@ In intensity mode you can define a range in mV that is used to scale the brightn
 of the LED. Example with min=4V, max=20V: The LED is off at 4V, on at 20V
 and the brightness is linearly scaled between the values 4V and 20V. If the
 min value is greater than the max value, the LED brightness is scaled the other
-way around."""
+way around.""",
 
-com['packets'].append({
-'type': 'function',
-'name': 'Set Channel LED Status Config',
-'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
-             ('Min', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0}),
-             ('Max', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 10000}),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config', 'default': 1})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Sets the channel LED status config. This config is used if the channel LED is
-configured as "Channel Status", see :func:`Set Channel LED Config`.
-
-{}
-""".format(led_status_config_description),
-'de':
-"""
-Setzt die Kanal-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
-die Kanal-LED auf Kanalstatus eingestellt ist, siehe :func:`Set Channel LED Config`.
-
-Für jeden Kanal kann zwischen Schwellwert- und Intensitätsmodus gewählt werden.
+'de': """Für jeden Kanal kann zwischen Schwellwert- und Intensitätsmodus gewählt werden.
 
 Im Schwellwertmodus kann ein positiver oder negativer Schwellwert definiert werden.
 Für einen positiven Schwellwert muss der "min" Parameter auf den gewünschten
@@ -316,8 +293,31 @@ Im Intensitätsmodus kann ein Bereich in mV angegeben werden über den die Helli
 der LED skaliert wird. Beispiel mit min=4V und max=20V: Die LED ist bei 4V und
 darunter aus, bei 20V und darüber an und zwischen 4V und 20V wird die Helligkeit
 linear skaliert. Wenn der min Wert größer als der max Wert ist, dann wird die
-Helligkeit andersherum skaliert.
+Helligkeit andersherum skaliert."""}
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Channel LED Status Config',
+'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Min', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 0}),
+             ('Max', 'int32', 1, 'in', {'scale': (1, 1000), 'unit': 'Volt', 'default': 10000}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Channel LED Status Config', 'default': 1})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
 """
+Sets the channel LED status config. This config is used if the channel LED is
+configured as "Channel Status", see :func:`Set Channel LED Config`.
+
+{}
+""".format(led_status_config_description['en']),
+'de':
+"""
+Setzt die Kanal-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
+die Kanal-LED auf Kanalstatus eingestellt ist, siehe :func:`Set Channel LED Config`.
+
+{}
+""".format(led_status_config_description['de']),
 }]
 })
 
@@ -467,7 +467,7 @@ def voltage_channel(index):
     return {
             'id': 'Voltage Channel {0}'.format(index),
             'type': 'Voltage',
-            'label': 'Voltage Channel {0}'.format(index),
+            'label': {'en': 'Voltage Channel {0}'.format(index), 'de': 'Spannung Kanal {0}'.format(index)},
 
             'init_code':"""this.setVoltageCallbackConfiguration({0}, channelCfg.updateInterval, true, \'x\', 0, 0);
 this.setChannelLEDConfig({0}, channelCfg.ledConfig);
@@ -496,8 +496,9 @@ def led_status_config():
             'name': 'LED Config',
             'type': 'integer',
 
-            'label': 'LED Configuration',
-            'description': led_channel_config_description.replace('"', '\\\"'),
+            'label': {'en': 'LED Configuration', 'de': 'LED-Konfiguration'},
+            'description': {'en': "Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Show Channel Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the measured value.",
+                            'de': "Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus angezeigt werden. Falls Kanalstatus gewählt wird kann die LED entweder ab einem vordefinierten Schwellwert eingeschaltet werden oder ihre Helligkeit anhand des gemessenen Wertes skaliert werden."}
         },
         {
             'packet': 'Set Channel LED Status Config',
@@ -506,8 +507,9 @@ def led_status_config():
             'name': 'LED Status Mode',
             'type': 'integer',
 
-            'label': 'LED Status Mode',
-            'description': led_status_config_description.replace('"', '\\\"'),
+            'label': {'en': 'LED Status Mode', 'de': 'LED-Status Modus'},
+            'description': {'en': led_status_config_description['en'].replace('"', '\\\"'),
+                            'de': led_status_config_description['de'].replace('"', '\\\"')}
         },
         {
             'packet': 'Set Channel LED Status Config',
@@ -520,8 +522,9 @@ def led_status_config():
             'unit': 'V',
             'default': 0,
 
-            'label': 'LED Status Maximum',
-            'description': 'See LED Status Mode for further explaination.',
+            'label': {'en': 'LED Status Minimum', 'de': 'LED-Status Minimum'},
+            'description': {'en': 'See LED Status Mode for further explaination.',
+                            'de': 'Siehe LED-Status Modus für Details'}
         },
         {
             'packet': 'Set Channel LED Status Config',
@@ -534,8 +537,9 @@ def led_status_config():
             'unit': 'V',
             'default': 10,
 
-            'label': 'LED Status Maximum',
-            'description': 'See LED Status Mode for further explaination.',
+            'label': {'en': 'LED Status Maximum', 'de': 'LED-Status Maximum'},
+            'description': {'en': 'See LED Status Mode for further explaination.',
+                            'de': 'Siehe LED-Status Modus für Details'}
         }]
 
 com['openhab'] = {
@@ -549,8 +553,9 @@ com['openhab'] = {
             'name': 'Sample Rate',
             'type': 'integer',
 
-            'label': 'Sample Rate',
-            'description': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
+            'label': {'en': 'Sample Rate', 'de': 'Abtastrate'},
+            'description': {'en': "The voltage measurement sample rate. Decreasing the sample rate will also decrease the noise on the data.",
+                            'de': "Die Abtastrate der Spannungsmessung. Ein Verringern der Abtastrate wird auch das Rauschen auf den Daten verringern."}
         }
     ],
     'init_code': """this.setSampleRate(cfg.sampleRate);""",
@@ -561,7 +566,7 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Voltage', 'Number', 'NOT USED',
                     update_style='Callback Configuration',
-                    description='The measured voltage between -35 and 35 V',
+                    description={'en': 'The measured voltage', 'de': 'Die gemessene Spannung'},
                     params=led_status_config())
     ],
     'actions': ['Get Voltage', 'Get Channel LED Config', 'Get Channel LED Status Config', 'Get Sample Rate', 'Get Calibration', 'Get ADC Values']

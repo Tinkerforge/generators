@@ -1212,7 +1212,7 @@ com['openhab'] = {
             'name': 'Communication LED Config',
             'type': 'integer',
 
-            'label': {'en': 'Communication LED Config', 'de': 'Kommunikations-LED-Modus'},
+            'label': {'en': 'Communication LED Configuration', 'de': 'Kommunikations-LED-Modus'},
             'description': "By default the LED shows CAN-Bus traffic, it flickers once for every 40 transmitted or received frames. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
         }, {
             'packet': 'Set Error LED Config',
@@ -1221,7 +1221,7 @@ com['openhab'] = {
             'name': 'Error LED Config',
             'type': 'integer',
 
-            'label': {'en': 'Error LED Config', 'de': 'Fehler-LED-Modus'},
+            'label': {'en': 'Error LED Configuration', 'de': 'Fehler-LED-Modus'},
             'description': {'en': "By default (show-transceiver-state) the error LED turns on if the CAN transceiver is passive or disabled state (see the getErrorLog action). If the CAN transceiver is in active state the LED turns off.\n\nIf the LED is configured as show-error then the error LED turns on if any error occurs. If you call this function with the show-error option again, the LED will turn off until the next error occurs.\n\nYou can also turn the LED permanently on/off or show a heartbeat.\n\nIf the Bricklet is in bootloader mode, the LED is off.",
                             'de': 'Standardmäßig zeigt die LED die Kommunikationsdatenmenge an. Sie blinkt einmal pro 40 empfangenen oder gesendeten Frames.\n\nDie LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.\n\nWenn das Bricklet sich im Bootloadermodus befindet ist die LED aus.'}
         }],

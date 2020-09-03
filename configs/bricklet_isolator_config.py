@@ -48,7 +48,7 @@ Returns statistics for the Isolator Bricklet.
 """,
 'de':
 """
-Gibt Statistken des Isolator Bricklets zurück.
+Gibt Statistiken des Isolator Bricklets zurück.
 """
 }]
 })
@@ -343,25 +343,32 @@ com['openhab'] = {
 
             'name': 'SPITFP Enable Dynamic Baudrate',
             'type': 'boolean',
+            'advanced': 'true',
 
-            'label': 'SPITFP Enable Dynamic Baudrate',
-            'description': 'The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is enabled, the Brick will try to adapt the baudrate for the communication between Bricks and Bricklets according to the amount of data that is transferred.\n\nThe baudrate for communication config between Brick and Isolator Bricklet can be set through the configuration of the Brick.\n\nThe baudrate will be increased exponentially if lots of data is sent/received and decreased linearly if little data is sent/received.\n\nThis lowers the baudrate in applications where little data is transferred (e.g. a weather station) and increases the robustness. If there is lots of data to transfer (e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.\n\nIn cases where some data has to transferred as fast as possible every few seconds (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn the dynamic baudrate off to get the highest possible performance.\n\nThe maximum value of the baudrate can be set per port. If the dynamic baudrate is disabled, the maximum baudrate will be used statically.'
+            'label': {'en': 'SPITFP Dynamic Baudrate', 'de': 'SPITFP dynamische Baudrate'},
+            'description': {'en': 'The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is enabled, the Brick will try to adapt the baudrate for the communication between Bricks and Bricklets according to the amount of data that is transferred.\n\nThe baudrate for communication config between Brick and Isolator Bricklet can be set through the configuration of the Brick.\n\nThe baudrate will be increased exponentially if lots of data is sent/received and decreased linearly if little data is sent/received.\n\nThis lowers the baudrate in applications where little data is transferred (e.g. a weather station) and increases the robustness. If there is lots of data to transfer (e.g. Thermal Imaging Bricklet) it automatically increases the baudrate as needed.\n\nIn cases where some data has to transferred as fast as possible every few seconds (e.g. RS485 Bricklet with a high baudrate but small payload) you may want to turn the dynamic baudrate off to get the highest possible performance.\n\nThe maximum value of the baudrate can be set per port. If the dynamic baudrate is disabled, the maximum baudrate will be used statically.',
+                            'de': 'Das SPITF-Protokoll kann mit einer dynamischen Baudrate genutzt werden. Wenn die dynamische Baudrate aktiviert ist, versucht das Isolator Bricklet die Baudrate anhand des Datenaufkommens zwischen Isolator Bricklet und Bricklet anzupassen.\n\nDie Baudratenkonfiguration für die Kommunikation zwischen Brick und Isolator Bricklet kann in der API des Bricks eingestellt werden.\n\nDie Baudrate wird exponentiell erhöht wenn viele Daten gesendet/empfangen werden und linear verringert wenn wenig Daten gesendet/empfangen werden.\n\nDiese Vorgehensweise verringert die Baudrate in Anwendungen wo nur wenig Daten ausgetauscht werden müssen (z.B. eine Wetterstation) und erhöht die Robustheit. Wenn immer viele Daten ausgetauscht werden (z.B. Thermal Imaging Bricklet), wird die Baudrate automatisch erhöht.\n\nIn Fällen wo wenige Daten all paar Sekunden so schnell wie Möglich übertragen werden sollen (z.B. RS485 Bricklet mit hoher Baudrate aber kleinem Payload) kann die dynamische Baudrate zum maximieren der Performance ausgestellt werden. Die maximale Baudrate kann pro Port gesetzt werden. Falls die dynamische Baudrate nicht aktiviert ist, wird die maximale Baudrate statisch verwendet.'}
         }, {
             'packet': 'Set SPITFP Baudrate Config',
             'element': 'Minimum Dynamic Baudrate',
 
             'name': 'SPITFP Minimum Dynamic Baudrate',
             'type': 'integer',
-            'label': 'SPITFP Minimum Dynamic Baudrate',
-            'description': 'See SPITFP Enable Dynamic Baudrate',
+            'advanced': 'true',
+
+            'label': {'en': 'SPITFP Minimum Dynamic Baudrate', 'de': 'SPITFP Minimale dynamische Baudrate'},
+            'description': {'en': 'See SPITFP Dynamic Baudrate', 'de': 'Siehe SPITFP dynamische Baudrate'}
         }, {
             'packet': 'Set SPITFP Baudrate',
             'element': 'Baudrate',
 
             'name': 'SPITFP Baudrate',
             'type': 'integer',
-            'label': '(Maximum) SPITFP Baudrate',
-            'description': 'The baudrate used to communicate with the Bricklet.\n\nIf you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.\n\nIf the dynamic baudrate feature is enabled, this is the maximum baudrate.\n\nRegulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in your applications we recommend to not change the baudrate.',
+            'advanced': 'true',
+
+            'label': {'en': 'SPITFP (Maximum) Baudrate', 'de': 'SPITFP (Maximale) Baudrate'},
+            'description': {'en': 'The baudrate used to communicate with the Bricklet.\n\nIf you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.\n\nIf the dynamic baudrate feature is enabled, this is the maximum baudrate.\n\nRegulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in your applications we recommend to not change the baudrate.',
+                            'de': 'Die Baudrate für die Kommunikation zwischen Isolator Bricklet und angeschlossenem Bricklet.\n\nFür einen höheren Durchsatz der Bricklets kann die Baudrate erhöht werden. Wenn der Fehlerzähler auf Grund von lokaler Störeinstrahlung hoch ist, kann die Baudrate verringert werden.\n\nWenn das Feature der dynamische Baudrate aktiviert ist, setzt diese Funktion die maximale Baudrate.\n\nEMV Tests werden mit der Standardbaudrate durchgeführt. Falls eine CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die Baudrate nicht zu ändern.'}
         },
         update_interval('Set Statistics Callback Configuration', 'Period', 'Statistics', 'all statistics data')
     ],
@@ -407,18 +414,22 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Messages From Brick', 'Number', 'Messages From Brick',
+        oh_generic_channel_type('Messages From Brick', 'Number', {'en': 'Messages From Brick', 'de': 'Nachrichten vom Brick'},
                     update_style=None,
-                    description='Messages passed through the Isolator from the controlling Brick.'),
-        oh_generic_channel_type('Messages From Bricklet', 'Number', 'Messages From Bricklet',
+                    description={'en': 'Count of messages passed through the Isolator from the controlling Brick.',
+                                 'de': 'Anzahl der Nachrichten die vom kontrollierenden Brick durch den Isolator durchgereicht wurden'}),
+        oh_generic_channel_type('Messages From Bricklet', 'Number', {'en': 'Messages From Bricköet', 'de': 'Nachrichten vom Bricköet'},
                     update_style=None,
-                    description='Messages passed through the Isolator from the isolated Bricklet.'),
-        oh_generic_channel_type('Connected Bricklet Device Name', 'String', 'Connected Bricklet Device Name',
+                    description={'en': 'Count of messages passed through the Isolator from the isolated Bricklet.',
+                                 'de': 'Anzahl der Nachrichten, die vom isolierten Bricklet durch den Isolator durchgereicht wurden.'}),
+        oh_generic_channel_type('Connected Bricklet Device Name', 'String', {'en': 'Bricklet Type', 'de': 'Bricklet-Typ'},
                     update_style=None,
-                    description='Device Name of the isolated Bricklet.'),
-        oh_generic_channel_type('Connected Bricklet UID', 'String', 'Connected Bricklet UID',
+                    description={'en': 'Device Name of the isolated Bricklet.',
+                                 'de': 'Gerätename des isolierten Bricklets.'}),
+        oh_generic_channel_type('Connected Bricklet UID', 'String', {'en': 'Bricklet UID', 'de': 'Bricklet-UID'},
                     update_style=None,
-                    description='UID of the isolated Bricklet.'),
+                    description={'en': 'UID of the isolated Bricklet.',
+                                 'de': 'UID des isolierten Bricklets'}),
     ],
     'actions': ['Get Statistics', 'Get SPITFP Baudrate Config', 'Get Isolator SPITFP Error Count', 'Get SPITFP Baudrate']
 }

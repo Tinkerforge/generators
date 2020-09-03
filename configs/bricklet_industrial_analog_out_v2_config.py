@@ -289,7 +289,8 @@ Gibt die Out-LED-Konfiguration zurück, wie von :func:`Set Out LED Config` geset
 }]
 })
 
-out_led_status_description = """For each channel you can choose between threshold and intensity mode.
+out_led_status_description = {
+'en': """For each channel you can choose between threshold and intensity mode.
 
 In threshold mode you can define a positive or a negative threshold.
 For a positive threshold set the "min" parameter to the threshold value in mV or
@@ -306,29 +307,8 @@ In intensity mode you can define a range mV or µA that is used to scale the bri
 of the LED. Example with min=2V, max=8V: The LED is off at 2V and below, on at
 8V and above and the brightness is linearly scaled between the values 2V and 8V.
 If the min value is greater than the max value, the LED brightness is scaled the
-other way around."""
-
-com['packets'].append({
-'type': 'function',
-'name': 'Set Out LED Status Config',
-'elements': [('Min', 'uint16', 1, 'in', {'range': (0, 24000), 'default': 0}),
-             ('Max', 'uint16', 1, 'in', {'range': (0, 24000), 'default': 10000}),
-             ('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Status Config', 'default': 1})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Sets the Out LED status config. This config is used if the Out LED is
-configured as "Out Status", see :func:`Set Out LED Config`.
-
-{}
-""".format(out_led_status_description),
-'de':
-"""
-Setzt die Out-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
-die Out-LED auf Out-Status eingestellt ist, siehe :func:`Set Out LED Config`.
-
-Für jeden Kanal kann zwischen Schwellwert- und Intensitätsmodus gewählt werden.
+other way around.""",
+'de': """Für jeden Kanal kann zwischen Schwellwert- und Intensitätsmodus gewählt werden.
 
 Im Schwellwertmodus kann ein positiver oder negativer Schwellwert definiert werden.
 Für einen positiven Schwellwert muss der "min" Parameter auf den gewünschten
@@ -346,8 +326,30 @@ Im Intensitätsmodus kann ein Bereich in mV oder µA angegeben werden über den 
 Helligkeit der LED skaliert wird. Beispiel mit min=2V und max=8V: Die LED ist
 bei 2V und darunter aus, bei 8V und darüber an und zwischen 2V und 8V wird die
 Helligkeit linear skaliert. Wenn der min Wert größer als der max Wert ist, dann
-wird die Helligkeit andersherum skaliert.
+wird die Helligkeit andersherum skaliert."""}
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Out LED Status Config',
+'elements': [('Min', 'uint16', 1, 'in', {'range': (0, 24000), 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'range': (0, 24000), 'default': 10000}),
+             ('Config', 'uint8', 1, 'in', {'constant_group': 'Out LED Status Config', 'default': 1})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
 """
+Sets the Out LED status config. This config is used if the Out LED is
+configured as "Out Status", see :func:`Set Out LED Config`.
+
+{}
+""".format(out_led_status_description['en']),
+'de':
+"""
+Setzt die Out-LED-Status-Konfiguration. Diese Einstellung wird verwendet wenn
+die Out-LED auf Out-Status eingestellt ist, siehe :func:`Set Out LED Config`.
+
+{}
+""".format(out_led_status_description['de'])
 }]
 })
 
@@ -390,6 +392,12 @@ com['examples'].append({
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'param_groups': oh_generic_channel_param_groups() + [{
+        'name': 'outledstatus',
+        'label': {'en': 'Output LED Status Configuration', 'de': 'Output-LED-Status-Konfiguration'},
+        'description': {'en': 'Configuration of the status mode of the output LED',
+                        'de': 'Konfiguration des Status-Modus der Output-LED'},
+    }],
     'params': [
         {
             'virtual': True,
@@ -401,8 +409,9 @@ com['openhab'] = {
             ],
             'limit_to_options': 'true',
             'default': 1,
-            'label': 'Output Configuration',
-            'description': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
+            'label': {'en': 'Output Configuration', 'de': 'Ausgabekonfiguration'},
+            'description': {'en': 'Sets the output configuration. As the output voltage and current level depend on each other, only one can be controlled at the same time.',
+                            'de': 'Setzt die Ausgabekonfiguration. Da die ausgegebene Spannung und Stromstärke von einander abhängen, kann nur einer der Werte gleichzeitig gesteuert werden.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Voltage Range',
@@ -410,8 +419,9 @@ com['openhab'] = {
             'name': 'Voltage Range',
             'type': 'integer',
 
-            'label': 'Voltage Range',
-            'description': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+            'label': {'en': 'Voltage Range', 'de': 'Spannungsbereich'},
+            'description': {'en': 'Configures the voltage range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+                            'de': 'Konfiguriert den Spannungswertebereich. Die Auflösung ist immer 12 Bit. Dass heißt, die Genauigkeit erhöht sich bei kleineren Wertebereichen.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Current Range',
@@ -419,8 +429,9 @@ com['openhab'] = {
             'name': 'Current Range',
             'type': 'integer',
 
-            'label': 'Current Range',
-            'description': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+            'label': {'en': 'Current Range', 'de': 'Stromstärkenbereich'},
+            'description': {'en': 'Configures the current range. The resolution will always be 12 bit. This means, that the precision is higher with a smaller range.',
+                            'de': 'Konfiguriert den Stromstärken-Wertebereich. Die Auflösung ist immer 12 Bit. Dass heißt, die Genauigkeit erhöht sich bei kleineren Wertebereichen.'}
         }, {
             'packet': 'Set Out LED Config',
             'element': 'Config',
@@ -428,38 +439,45 @@ com['openhab'] = {
             'name': 'Out LED Config',
             'type': 'integer',
 
-            'label': 'Output LED Configuration',
-            'description': 'You can turn the Out LED off, on or show a heartbeat. You can also set the LED to Out Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the output value (voltage or current).',
+            'label': {'en': 'Output LED Configuration', 'de': 'Output-LED-Konfiguration'},
+            'description': {'en': 'You can turn the Out LED off, on or show a heartbeat. You can also set the LED to Out Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the output value (voltage or current).',
+                            'de': 'Die Out LED kann an- oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der "Out-Status" angezeigt werden. Falls Out-Status gewählt wird kann die LED entweder ab einem vordefinierten Schwellwert eingeschaltet werden oder ihre Helligkeit anhand des Ausgabewertes (Spannung oder Strom) skaliert werden.'},
         }, {
             'packet': 'Set Out LED Status Config',
             'element': 'Config',
 
             'name': 'Out LED Status Mode',
             'type': 'integer',
-            'label': 'Output LED Status Mode',
-            'description': out_led_status_description.replace('"', '\\\"'),
+            'groupName': 'outledstatus',
+            'label': {'en': 'Output LED Status Mode', 'de': 'Output-LED-Status Modus'},
+            'description': {'en': out_led_status_description['en'].replace('"', '\\\"'),
+                            'de': out_led_status_description['de'].replace('"', '\\\"')}
         }, {
             'packet': 'Set Out LED Status Config',
             'element': 'Min',
 
             'name': 'Out LED Status Minimum',
             'type': 'decimal',
+            'groupName': 'outledstatus',
             'min': 0,
             'max': 10,
-            'label': 'Output LED Status Maximum',
-            'description': 'See LED Status Mode for further explaination.',
+            'label': {'en': 'Output LED Status Minumum', 'de': 'Output-LED-Status Minumum'},
+            'description': {'en': 'See Output LED Status Mode for further explaination.',
+                            'de': 'Siehe Output LED Status Mode für Details.'}
         }, {
             'packet': 'Set Out LED Status Config',
             'element': 'Max',
 
             'name': 'Out LED Status Maximum',
             'type': 'decimal',
+            'groupName': 'outledstatus',
             'min': 0,
             'max': 10,
             'default': 10,
 
-            'label': 'Output LED Status Maximum',
-            'description': 'See LED Status Mode for further explaination.',
+            'label': {'en': 'Output LED Status Maximum', 'de': 'Output-LED-Status Maximum'},
+            'description': {'en': 'See Output LED Status Mode for further explaination.',
+                            'de': 'Siehe Output LED Status Mode für Details.'}
         }
     ],
     'init_code': """this.setConfiguration(cfg.voltageRange, cfg.currentRange);
@@ -523,15 +541,18 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Enabled', 'Switch', 'Output Enabled',
+        oh_generic_channel_type('Enabled', 'Switch', {'en': 'Output', 'de': 'Ausgabe'},
                     update_style=None,
-                    description='Enables/disables the output of voltage and current.'),
-        oh_generic_channel_type('Voltage', 'Number', 'Output Voltage',
+                    description={'en': 'Enables/disables the output of voltage and current.',
+                                 'de': 'Aktiviert/Deaktiviert die Ausgabe von Spannung und Strom.'}),
+        oh_generic_channel_type('Voltage', 'Number', {'en': 'Output Voltage', 'de': 'Ausgabespannung'},
                     update_style=None,
-                    description='The output voltage in V. The output voltage and output current are linked. Changing the output voltage also changes the output current.'),
-        oh_generic_channel_type('Current', 'Number', 'Output Current',
+                    description={'en': 'The output voltage. The output voltage and output current are linked. Changing the output voltage also changes the output current.',
+                                 'de': 'Die Ausgabespannung. Die Ausgangsspannung und der Ausgangsstrom sind gekoppelt. Eine Änderung der Ausgangsspannung führt auch zu einer Änderung des Ausgangsstroms.'}),
+        oh_generic_channel_type('Current', 'Number', {'en': 'Output Current', 'de': 'Ausgabestrom'},
                     update_style=None,
-                    description='The output current in A. The output current and output voltage are linked. Changing the output current also changes the output voltage.')
+                    description={'en': 'The output current. The output current and output voltage are linked. Changing the output current also changes the output voltage.',
+                                 'de': 'Der Ausgabestrom. Der Ausgangsstrom und die Ausgangsspannung sind gekoppelt. Eine Änderung des Ausgangsstroms führt auch zu einer Änderung der Ausgangsspannung.'})
     ],
     'actions': [{'fn': 'Set Enabled', 'refreshs': ['Enabled']}, 'Get Enabled', 'Get Voltage', 'Get Current', 'Get Configuration', 'Get Out LED Config', 'Get Out LED Status Config']
 }

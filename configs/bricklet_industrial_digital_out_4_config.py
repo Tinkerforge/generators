@@ -353,10 +353,11 @@ com['examples'].append({
 
 def output_channel(idx):
     return {
-            'id': 'Output Pin {}'.format(idx),
-            'label': 'Output Value (Pin {})'.format(idx),
+            'id': 'Output {}'.format(idx),
+            'label': {'en': 'Output Value {}'.format(idx),
+                      'de': 'Ausgabewert {}'.format(idx)},
 
-            'type': 'Output Pin',
+            'type': 'Output',
 
             'getters': [{
                 'packet': 'Get Value',
@@ -380,8 +381,9 @@ def output_channel(idx):
 
 def monoflop_channel(idx):
     return {
-        'id': 'Monoflop Pin {}'.format(idx),
-        'label': 'Monoflop Pin {}'.format(idx),
+        'id': 'Monoflop {}'.format(idx),
+        'label': {'en': 'Monoflop {}'.format(idx),
+                  'de': 'Monoflop {}'.format(idx)},
         'type': 'Monoflop',
 
         'getters': [{
@@ -397,20 +399,21 @@ def monoflop_channel(idx):
         }],
 
         'setter_refreshs': [{
-            'channel': 'Output Pin {}'.format(idx),
+            'channel': 'Output {}'.format(idx),
             'delay': '0'
         }]
     }
 
-channels =[output_channel(i) for i in range(0, 4)] + [monoflop_channel(i) for i in range(0, 4)]
+channels = [output_channel(i) for i in range(0, 4)] + [monoflop_channel(i) for i in range(0, 4)]
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Output Pin', 'Switch', 'Output Value',
+        oh_generic_channel_type('Output', 'Switch', 'NOT USED',
                     update_style=None,
-                    description='The logic level that is currently set on the pin.'),
+                    description={'en': 'The logic level that is currently set on the pin.',
+                                 'de': 'Der Logikpegel, der aktuell auf dem Kanal ausgegeben wird.'}),
         {
             'id': 'Monoflop',
             'item_type': 'String',
@@ -423,8 +426,9 @@ com['openhab'] = {
                 'default': 1000,
                 'unit': 'ms',
 
-                'label': 'Monoflop Duration',
-                'description': 'The time (in ms) that the pin should hold the configured value.',
+                'label': {'en': 'Monoflop Duration', 'de': 'Monoflop-Dauer'},
+                'description': {'en': 'The time that the channel should hold the configured value.',
+                                'de': 'Die Zeit, für die der Kanal den konfigurierten Wert halten soll.'}
             },
             {
                 'packet': 'Set Monoflop',
@@ -434,16 +438,17 @@ com['openhab'] = {
                 'type': 'boolean',
                 'default': 'true',
 
-                'label': 'Monoflop Value',
-                'description': 'The desired value of the specified channel. Activated means relay closed and Deactivated means relay open.',
+                'label': {'en': 'Monoflop Value', 'de': 'Monoflop-Zustand'},
+                'description': {'en': 'The desired value of the channel.',
+                                'de': 'Der gewünschte Zustand des Kanals.'}
             }],
             'label': 'NOT USED',
-            'description':'Triggers a monoflop as configured',
+            'description': {'en': 'Triggers a monoflop as configured.', 'de': 'Löst einen Monoflop mit den konfigurierten Eigenschaften aus.'},
             'command_options': [('Trigger', 'TRIGGER')]
         }
     ],
-    'actions': [{'fn': 'Set Value', 'refreshs': ['Output Pin 0', 'Output Pin 1', 'Output Pin 2', 'Output Pin 3', 'Monoflop Pin 0', 'Monoflop Pin 1', 'Monoflop Pin 2', 'Monoflop Pin 3']},
-                {'fn': 'Set Selected Values', 'refreshs': ['Output Pin 0', 'Output Pin 1', 'Output Pin 2', 'Output Pin 3', 'Monoflop Pin 0', 'Monoflop Pin 1', 'Monoflop Pin 2', 'Monoflop Pin 3']},
-                {'fn': 'Set Monoflop', 'refreshs': ['Output Pin 0', 'Output Pin 1', 'Output Pin 2', 'Output Pin 3', 'Monoflop Pin 0', 'Monoflop Pin 1', 'Monoflop Pin 2', 'Monoflop Pin 3']},
+    'actions': [{'fn': 'Set Value', 'refreshs': ['Output 0', 'Output 1', 'Output 2', 'Output 3', 'Monoflop 0', 'Monoflop 1', 'Monoflop 2', 'Monoflop 3']},
+                {'fn': 'Set Selected Values', 'refreshs': ['Output 0', 'Output 1', 'Output 2', 'Output 3', 'Monoflop 0', 'Monoflop 1', 'Monoflop 2', 'Monoflop 3']},
+                {'fn': 'Set Monoflop', 'refreshs': ['Output 0', 'Output 1', 'Output 2', 'Output 3', 'Monoflop 0', 'Monoflop 1', 'Monoflop 2', 'Monoflop 3']},
                 'Get Value', 'Get Monoflop']
 }

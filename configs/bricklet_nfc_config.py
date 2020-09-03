@@ -1353,7 +1353,7 @@ com['openhab'] = {
             'name': 'Detection LED Config',
             'type': 'integer',
 
-            'label': 'Detection LED Config',
+            'label': 'Detection LED Configuration',
             'description': "The detection LED configuration. By default the LED shows if a card/reader is detected.\n\nYou can also turn the LED permanently on/off or show a heartbeat.\n\nIf the Bricklet is in bootloader mode, the LED is off.",
         }, {
             'packet': 'Set Maximum Timeout',

@@ -288,7 +288,7 @@ com['openhab'] = {
                 'unit': 'ms',
 
                 'label': {'en': 'Monoflop Duration', 'de': 'Monoflop-Dauer'},
-                'description': {'en': 'The time (in ms) that the relay should hold the configured value.',
+                'description': {'en': 'The time that the relay should hold the configured value.',
                                 'de': 'Die Zeit, für die das Relais den konfigurierten Wert halten soll.'}
             },
             {
@@ -300,7 +300,7 @@ com['openhab'] = {
                 'default': 'true',
 
                 'label': {'en': 'Monoflop Value', 'de': 'Monoflop-Zustand'},
-                'description': {'en': 'The desired value of the specified channel. Activated means relay closed and deactivated means relay open.',
+                'description': {'en': 'The desired value of the relay. Activated means relay closed and deactivated means relay open.',
                                 'de': 'Der gewünschte Zustand des Relais. Aktiviert bedeutet Relais geschlossen und deaktiviert bedeutet Relais offen.'}
             }],
             'label': 'NOT USED',
