@@ -301,9 +301,10 @@ com['openhab'] = {
         oh_generic_old_style_channel('Reflectivity', 'Reflectivity'),
     ],
     'channel_types': [
-        oh_generic_channel_type('Reflectivity', 'Number', 'Reflectivity',
+        oh_generic_channel_type('Reflectivity', 'Number', {'en': 'Reflectivity', 'de': 'Reflektivität'},
                     update_style='Callback Period',
-                    description='The currently measured reflectivity. The reflectivity is a value between 0 (not reflective) and 4095 (very reflective).\n\nUsually black has a low reflectivity while white has a high reflectivity.'),
+                    description={'en': 'The measured reflectivity. The reflectivity is a value between 0 (not reflective) and 4095 (very reflective).\n\nUsually black has a low reflectivity while white has a high reflectivity.',
+                                 'de': 'Die gemessene Reflektivität. Die Reflektivität ist ein Wert zwischen 0 (nicht reflektiv) und 4095 (sehr reflektiv).\n\nNormalerweise hat schwarz eine geringe Reflektivität während weiß eine hohe Reflektivität hat.'}),
     ],
     'actions': ['Get Reflectivity']
 }

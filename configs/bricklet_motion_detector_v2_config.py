@@ -219,34 +219,38 @@ com['openhab'] = {
 
             'name': 'Sensitivity',
             'type': 'integer',
-            'label': 'Sensitivity',
-            'description': 'The sensitivity of the PIR sensor. The range is 0-100. At full sensitivity (100), the Bricklet can detect motion in a range of approximately 12m.\n\nThe actual range depends on many things in the environment (e.g. reflections) and the size of the object to be detected. While a big person might be detected in a range of 10m a cat may only be detected at 2m distance with the same setting. So you will have to find a good sensitivity for your application by trial and error.'
+            'label': {'en': 'Sensitivity', 'de': 'Empfindlichkeit'},
+            'description': {'en': 'The sensitivity of the PIR sensor. The range is 0-100. At full sensitivity (100), the Bricklet can detect motion in a range of approximately 12m.\n\nThe actual range depends on many things in the environment (e.g. reflections) and the size of the object to be detected. While a big person might be detected in a range of 10m a cat may only be detected at 2m distance with the same setting. So you will have to find a good sensitivity for your application by trial and error.',
+                            'de': 'Setzt die Empfindlichkeit des PIR Sensors. Bei maximaler Empfindlichkeit (100) kann das Bricklet Bewegung bin in ca. 12m Entfernung erkennen.\n\nDie wirkliche Entfernung hängt von vielen Dingen in der Umgebung ab (z.B. Ruflektionen) und der Größe des zu erkennenden Objekts. Während eine große Person bei 10m erkannt werden kann, wird eine Katze vielleicht erst an 2m erkannt mit den gleichen Einstellungen.\n\nDaher muss die passenden Empfindlichkeit je nach Anwendung experimentell bestimmt werden.'}
     }],
     'init_code': "this.setSensitivity(cfg.sensitivity);",
     'channels': [
         {
             'id': 'Motion Detected',
-            'label': 'Motion Detected',
+            'label': {'en': 'Motion Detected', 'de': 'Bewegung detektiert'},
             'type': 'system.trigger',
 
             'callbacks': [{
                 'packet': 'Motion Detected',
                 'transform': '""'}],
-            'description': 'This channel is triggered after a motion was detected.'
+            'description': {'en': 'This channel is triggered after a motion was detected.',
+                            'de': 'Dieser Channel wird ausgelöst wenn eine Bewegung detektiert wurde.'}
         }, {
             'id': 'Detection Cycle Ended',
-            'label': 'Detection Cycle Ended',
+            'label': {'en': 'Detection Cycle Ended',
+                      'de': 'Bewegungserkennungszyklus beendet'},
             'type': 'system.trigger',
 
             'callbacks': [{
                 'packet': 'Detection Cycle Ended',
                 'transform': '""'}],
-            'description': 'This channel is triggered when the detection cycle ended. A new motion can be detected again after approximately 2 seconds.'
+            'description': {'en': 'This channel is triggered when the detection cycle ended. A new motion can be detected again after approximately 2 seconds.',
+                            'de': 'Dieser Channel wird ausgelöst wenn ein Bewegungserkennungszyklus beendet ist. Eine weitere Bewegung kann nach ungefähr 2 Sekunde erkannt werden.'}
         },
 
         {
             'id': 'Top Left Indicator',
-            'label': 'Top Left Indicator',
+            'label': {'en': 'Top Left Indicator', 'de': 'Indikator Oben Links'},
             'type': 'Indicator',
 
             'getters': [{
@@ -262,7 +266,7 @@ com['openhab'] = {
             }],
         },{
             'id': 'Top Right Indicator',
-            'label': 'Top Right Indicator',
+            'label': {'en': 'Top Right Indicator', 'de': 'Indikator Oben Rechts'},
             'type': 'Indicator',
             'getters': [{
                 'packet': 'Get Indicator',
@@ -277,7 +281,7 @@ com['openhab'] = {
             }],
         },{
             'id': 'Bottom Indicator',
-            'label': 'Bottom Indicator',
+            'label': {'en': 'Bottom Indicator', 'de': 'Indikator Unten'},
             'type': 'Indicator',
             'getters': [{
                 'packet': 'Get Indicator',
@@ -295,7 +299,8 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Indicator', 'Number', 'NOT USED',
                     update_style=None,
-                    description='Sets one of the blue backlight LEDs of the fresnel lens. A value of 0 turns the LED off and a value of 255 turns the LED to full brightness.',
+                    description={'en': 'One of the blue backlight LEDs of the fresnel lens. A value of 0 turns the LED off and a value of 255 turns the LED to full brightness.',
+                                 'de': 'Eine der blauen Beleuchtungs-LEDs der Fresnel-Linse ein. Ein Wert von 0 deaktiviert die LED und ein Wert von 255 aktiviert die LED mit voller Helligkeit.'},
                     min_=0, # Will currently be not deduced.
                     max_=255)
     ],

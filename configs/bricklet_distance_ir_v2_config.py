@@ -291,7 +291,7 @@ com['openhab'] = {
             'name': 'Distance LED Config',
             'type': 'integer',
 
-            'label': {'en': 'Distance LED Configuration', 'de': 'Distanz-LED-Konfiguration'},
+            'label': {'en': 'Distance LED', 'de': 'Distanz-LED'},
             'description': {'en': "Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).",
                             'de': "Konfiguriert die Distanz-LED. Die LED kann ausgeschaltet, eingeschaltet, im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option mit der LED die Distanz anzuzeigen (heller = Objekt näher)."}
         }],

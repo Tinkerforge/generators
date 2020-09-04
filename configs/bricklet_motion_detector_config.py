@@ -170,22 +170,25 @@ com['openhab'] = {
     'channels': [
         {
             'id': 'Motion Detected',
-            'label': 'Motion Detected',
+            'label': {'en': 'Motion Detected', 'de': 'Bewegung detektiert'},
             'type': 'system.trigger',
 
             'callbacks': [{
                 'packet': 'Motion Detected',
                 'transform': '""'}],
-            'description': 'This channel is triggered after a motion was detected.'
+            'description': {'en': 'This channel is triggered after a motion was detected.',
+                            'de': 'Dieser Channel wird ausgelöst wenn eine Bewegung detektiert wurde.'}
         }, {
             'id': 'Detection Cycle Ended',
-            'label': 'Detection Cycle Ended',
+            'label': {'en': 'Detection Cycle Ended',
+                      'de': 'Bewegungserkennungszyklus beendet'},
             'type': 'system.trigger',
 
             'callbacks': [{
                 'packet': 'Detection Cycle Ended',
                 'transform': '""'}],
-            'description': 'This channel is triggered when the detection cycle ended. A new motion can be detected again after approximately 2 seconds.'
+            'description': {'en': 'This channel is triggered when the detection cycle ended. A new motion can be detected again after approximately 2 seconds.',
+                            'de': 'Dieser Channel wird ausgelöst wenn ein Bewegungserkennungszyklus beendet ist. Eine weitere Bewegung kann nach ungefähr 2 Sekunde erkannt werden.'}
         },
     ],
     'channel_types': [],

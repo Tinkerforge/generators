@@ -292,7 +292,7 @@ Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gl
 für den Feuchtigkeitswert.
 
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
-die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten..
+die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 """
 }]
 })
@@ -348,8 +348,9 @@ com['openhab'] = {
 
         'name': 'Moving Average Length',
         'type': 'integer',
-        'label': 'Moving Average Length',
-        'description': 'The length of a moving averaging for the moisture value.\n\nSetting the length to 0 will turn the averaging off. With less averaging, there is more noise on the data.'
+        'label': {'en': 'Moving Average Length', 'de': 'Länge des gleitenden Mittelwerts'},
+        'description': {'en': 'The length of a moving averaging for the moisture value.\n\nSetting the length to 0 will turn the averaging off. With less averaging, there is more noise on the data.',
+                        'de': 'Setzt die Länge eines gleitenden Mittelwerts für den Feuchtigkeitswert.\n\nWenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.'}
 
     }],
     'init_code': """this.setMovingAverage(cfg.movingAverageLength.shortValue());""",
@@ -357,9 +358,10 @@ com['openhab'] = {
         moisture_channel
     ],
     'channel_types': [
-        oh_generic_channel_type('Moisture', 'Number', 'Moisture',
+        oh_generic_channel_type('Moisture', 'Number', {'en': 'Moisture', 'de': 'Feuchtigkeit'},
                     update_style='Callback Period',
-                    description='The current moisture value. The value has a range of 0 to 4095. A small value corresponds to little moisture, a big value corresponds to much moisture.')
+                    description={'en': 'Returns the current moisture value. A small value corresponds to little moisture, a big value corresponds to much moisture.',
+                                 'de': 'Gibt den aktuellen Feuchtigkeitswert zurück. Ein kleiner Wert entspricht einer geringen Feuchtigkeit, ein großer Wert entspricht einer hohen Feuchtigkeit.'})
     ],
     'actions': ['Get Moisture Value', 'Get Moving Average']
 }

@@ -457,8 +457,10 @@ def custom_character_param(idx):
     return {
             'name': 'Custom Character {}'.format(idx),
             'type': 'integer',
-            'label': 'Custom Character {}'.format(idx),
-            'description': "Custom characters consist of 5x8 pixels and can be addressed with the index 0-7. This character ({}) is printed by writing \\\\x{:02x}. To describe the pixels, the first 5 bits of 8 bytes are used. For example, to make a custom character 'H', you should configure 1229782998376845568, which is the following in binary:\n00010001\n00010001\n00010001\n00011111\n00010001\n00010001\n00010001\n00000000\n.".format(idx, idx+8),
+            'label': {'en': 'Custom Character {}'.format(idx),
+                      'de': 'Benutzerdefiniertes Zeichen {}'.format(idx)},
+            'description': {'en': "Custom characters consist of 5x8 pixels and can be addressed with the index 0-7. This character ({}) is printed by writing \\\\x{:02x}. To describe the pixels, the first 5 bits of 8 bytes are used. For example, to make a custom character 'H', you should configure 1229782998376845568, which is the following in binary:\n00010001\n00010001\n00010001\n00011111\n00010001\n00010001\n00010001\n00000000\n.".format(idx, idx+8),
+                            'de': "Benutzerdefinierte Zeichen bestehen aus 5x8 Pixel. Dieses Zeichen ({}) kann ausgegeben werden, indem \\\\x{{:02x} geschrieben wird. Um die Pixel zu beschreiben, werden die ersten 5 Bit von 8 Bytes verwenden. Zum Beispiel, um den Buchstaben 'H' zu erzeugen, sollte 1229782998376845568 konfiguriert werden, das nach binär konvertiert folgendes ist: \n00010001\n00010001\n00010001\n00011111\n00010001\n00010001\n00010001\n00000000\n.".format(idx, idx+8)}
     }
 
 def custom_character_init_code(idx):
@@ -477,8 +479,10 @@ def default_text_param(idx):
             'type': 'text',
             'default': '',
 
-            'label': 'Default Text Line {}'.format(idx),
-            'description': 'Sets the default text for line {}. The max number of characters per line is 20. The default text is shown on the LCD, if the default text counter expires.'.format(idx)
+            'label': {'en': 'Default Text Line {}'.format(idx),
+                      'de': 'Standard-Text Zeile {}'.format(idx)},
+            'description': {'en': 'Sets the default text for line {}. The max number of characters per line is 20. The default text is shown on the LCD, if the default text counter expires.'.format(idx),
+                            'de': 'Setzt den Standard-Text für die Zeile {}. Die maximale Anzahl an Buchstaben pro Zeile ist 20. Der Standard-Text wird auf dem LCD angezeigt, wenn der Standard-Text-Zähler ausläuft.'.format(idx)}
     }
 
 def default_text_init_code(idx):
@@ -487,9 +491,11 @@ def default_text_init_code(idx):
 def button_channel(idx):
     return {
             'id': 'Button {}'.format(idx),
-            'label': 'Button {}'.format(idx),
+            'label': {'en': 'Button {}'.format(idx),
+                      'de': 'Taste {}'.format(idx)},
+            'description': {'en': 'This channel triggers if button {} is pressed or released'.format(idx),
+                            'de': 'Dieser Channel löst aus, wenn die Taste {} gedrückt oder losgelassen wird'.format(idx)},
             'type': 'system.rawbutton',
-            'description': 'This channel triggers if button {} is pressed or released'.format(idx),
             'getters': [{
                 'packet': 'Is Button Pressed',
                 'element': 'Pressed',
@@ -510,7 +516,8 @@ def button_channel(idx):
 
 button_channels = [button_channel(i) for i in range(0, 4)]
 button_channels[3]['predicate'] = """this.getIdentity().hardwareVersion[1] >= 2"""
-button_channels[3]['predicate_description'] = {'de': 'TODO', 'en': 'This channel will only be available if the Bricklet has a hardware version of at least 2 (e.g. if it has 4 buttons)'}
+button_channels[3]['predicate_description'] = {'de': 'Dieser Channel ist nur verfügbar, wenn das Bricklet eine Hardware-Version von mindestens 1.2 hat (also wenn es 4 Tasten hat).',
+                                               'en': 'This channel will only be available if the Bricklet has a hardware version of at least 1.2 (e.g. if it has 4 buttons)'}
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +  ['org.eclipse.smarthome.core.library.types.StringType','org.eclipse.smarthome.core.library.types.OnOffType'],
@@ -523,8 +530,9 @@ com['openhab'] = {
             'name': 'Show Cursor',
             'type': 'boolean',
 
-            'label': 'Show Cursor',
-            'description': "Configures if the cursor (shown as '_') should be visible. The cursor position is one character behind the the last text written.",
+            'label': {'en': 'Show Cursor', 'de': 'Cursor anzeigen'},
+            'description': {'en': "Configures if the cursor (shown as '_') should be visible. The cursor position is one character behind the the last text written.",
+                            'de': 'Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist. Die Cursor Position ist ein Zeichen hinter dem zuletzt geschriebenen Text.'}
         },
         {
             'packet': 'Set Config',
@@ -533,8 +541,10 @@ com['openhab'] = {
             'name': 'Show Blinking Cursor',
             'type': 'boolean',
 
-            'label': 'Show Blinking Cursor',
-            'description': 'Configures if the blinking cursor (shown as a blinking block) should be visible. The cursor position is one character behind the the last text written.',
+            'label': {'en': 'Show Blinking Cursor',
+                      'de': 'Blinkenden Cursor anzeigen'},
+            'description': {'en': 'Configures if the blinking cursor (shown as a blinking block) should be visible. The cursor position is one character behind the the last text written.',
+                            'de': 'Konfiguriert ob der blinkende Cursor (angezeigt als blinkender Block) sichtbar ist. Die Cursor Position ist ein Zeichen hinter dem zuletzt geschriebenen Text.'}
         },
     ] ,
     'init_code': """this.setConfig(cfg.showCursor, cfg.showBlinkingCursor);""",
@@ -579,19 +589,22 @@ com['openhab'] = {
             }
     ] + button_channels,
     'channel_types': [
-        oh_generic_channel_type('Text', 'String', 'Text',
+        oh_generic_channel_type('Text', 'String', {'en': 'Text', 'de': 'Text'},
                     update_style=None,
-                    description="Text to display on the LCD. Command format is [line],[position],[text].\n\nAdditional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly."),
+                    description={'en': "Text to display on the LCD. Command format is [line],[position],[text].\n\nAdditional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly.",
+                                 'de': "Text der auf dem LCD angezeigt werden soll. Das Kommandoformat ist [Zeile],[Position],[Text].\n\nWeitere ',' werden als Teil des Texts behandelt. Unicodezeichen werden in den Zeichensatz des LCDs konvertiert, falls möglich. Zusätzlich kann mit \\\\x[zwei Hex-Zahlen] ein Zeichen des LCD-Zeichensatzes direkt benutzt werden."}),
         {
             'id': 'Clear Display',
             'item_type': 'String',
-            'label': 'Clear Display',
-            'description':'Deletes all characters from the display.',
+            'label': {'en': 'Clear Display', 'de': 'Display leeren'},
+            'description': {'en': 'Deletes all characters from the display.',
+                            'de': 'Löscht alle Zeichen auf dem Display.'},
             'command_options': [('Clear', 'CLEAR')]
         },
-        oh_generic_channel_type('Backlight', 'Switch', 'Backlight',
+        oh_generic_channel_type('Backlight', 'Switch', {'en': 'Backlight', 'de': 'Hintergrundbeleuchtung'},
                     update_style=None,
-                    description="Toggles the LCD's backlight")
+                    description={'en': "Toggles the LCD's backlight.",
+                                 'de': 'Schaltet die Hintergrundbeleuchtung des LCDs an oder aus.'}),
     ],
     'actions': ['Write Line', 'Clear Display',
                 {'fn': 'Backlight On', 'refreshs': ['Backlight']}, {'fn': 'Backlight Off', 'refreshs': ['Backlight']}, 'Is Backlight On',

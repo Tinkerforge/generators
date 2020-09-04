@@ -1696,8 +1696,9 @@ com['examples'].append({
 def gui_button_pressed_channel(index):
     return {
         'id': 'GUI Button {}'.format(index),
-        'label': 'GUI Button {}'.format(index),
-        'description': 'Triggers when GUI Button {} is pressed or released.'.format(index),
+        'label': {'en': 'GUI Button {}'.format(index), 'de': 'GUI-Button {}'.format(index)},
+        'description': {'en': 'Triggers when GUI Button {} is pressed or released.'.format(index),
+                        'de': 'Löst aus wenn der GUI-Button {} gedrückt oder losgelassen wird.'},
         'type': 'system.rawbutton',
         'getters': [{
             'packet': 'Get GUI Button Pressed',
@@ -1713,7 +1714,7 @@ def gui_button_pressed_channel(index):
 def gui_slider_value_channel(index):
     return {
         'id': 'GUI Slider {}'.format(index),
-        'label': 'GUI Slider {}'.format(index),
+        'label': {'en': 'GUI Slider {}'.format(index), 'de': 'GUI-Slider {}'.format(index)},
         'type': 'GUI Slider',
         'getters': [{
             'packet': 'Get GUI Slider Value',
@@ -1738,16 +1739,19 @@ com['openhab'] = {
 
             'name': 'Contrast',
             'type': 'integer',
-            'label': 'Contrast',
-            'description': "Sets the contrast of the display (0-63).",
+            'label': {'en': 'Contrast', 'de': 'Kontrast'},
+            'description': {'en': "Sets the contrast of the display.",
+                            'de': 'Setzt den Kontrast des Displays.'},
         }, {
             'packet': 'Set Display Configuration',
             'element': 'Backlight',
 
             'name': 'Default Backlight Intensity',
             'type': 'integer',
-            'label': 'Default Backlight Intensity',
-            'description': "Sets the default backlight intensity of the display (0-100).",
+            'label': {'en': 'Default Backlight Intensity',
+                      'de': 'Standard-Hintergrundbeleuchtungsstärke'},
+            'description': {'en': "Sets the default backlight intensity of the display.",
+                            'de': 'Setzt die standardmäßig eingestellte Helligkeit der Hintergrundbeleuchtung.'}
         }, {
             'packet': 'Set Display Configuration',
             'element': 'Invert',
@@ -1755,8 +1759,9 @@ com['openhab'] = {
             'name': 'Invert',
             'type': 'boolean',
 
-            'label': 'Invert',
-            'description': 'Inverts the color (black/white) of the display.',
+            'label': {'en':'Invert', 'de': 'Invertiert'},
+            'description': {'en': 'Inverts black and white pixels.',
+                            'de': 'Invertiert schwarze und weiße Pixel'}
         }, {
             'packet': 'Set Display Configuration',
             'element': 'Automatic Draw',
@@ -1764,22 +1769,24 @@ com['openhab'] = {
             'name': 'Automatic Draw',
             'type': 'boolean',
 
-            'label': 'Automatic Draw',
-            'description': 'If automatic draw is enabled, the display is automatically updated when writing text or clearing the display. If it is disabled, the changes are written into an internal buffer and only shown on the display after triggering the Draw Buffered Frame channel.',
+            'label': {'en': 'Automatic Draw', 'de': 'Automatisches Zeichnen'},
+            'description': {'en': 'If automatic draw is enabled, the display is automatically updated when writing text or clearing the display. If it is disabled, the changes are written into an internal buffer and only shown on the display after triggering the Draw Buffered Frame channel.',
+                            'de': 'Wenn automatisches Zeichnen, dann wird das Display automatisch aktualisiert, wenn Text geschrieben, oder das Display geleert wird. Wenn es deaktiviert ist, dann werden die Änderungen in einen internen Buffer geschrieben und nur auf dem Display angezeigt, wenn der Zeichne gepuffertes Bild-Channel aufgerufen wird.'}
         }, {
             'packet': 'Set Touch LED Config',
             'element': 'Config',
 
             'name': 'Touch LED Config',
             'type': 'integer',
-            'label': 'Touch LED Configuration',
-            'description': 'The touch LED configuration. By default the LED is on if the LCD is touched.\nYou can also turn the LED permanently on/off or show a heartbeat.\nIf the Bricklet is in bootloader mode, the LED is off.'
+            'label': {'en': 'Touch LED', 'de': 'Touch-LED'},
+            'description': {'en': 'The touch LED configuration. By default the LED is on if the LCD is touched.\nYou can also turn the LED permanently on/off or show a heartbeat.\nIf the Bricklet is in bootloader mode, the LED is off.',
+                            'de': 'Die Konfiguration der Kommunikations-LED. Standardmäßig ist die LED an wenn das LCD berührt wird.\n\nDie LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen.\n\nWenn das Bricklet sich im Bootloadermodus befindet ist die LED aus.'}
         },
         update_interval('Set GUI Button Pressed Callback Configuration', 'Period', 'GUI Button', 'the GUI buttons', default=100),
         update_interval('Set GUI Slider Value Callback Configuration', 'Period', 'GUI Slider', 'the GUI sliders', default=100),
         update_interval('Set Touch Position Callback Configuration', 'Period', 'Touch Position', 'touch positions', default=100),
         update_interval('Set Touch Gesture Callback Configuration', 'Period', 'Touch Gesture', 'touch gestures', default=100),
-    ] ,
+    ],
     'init_code': """this.setDisplayConfiguration(cfg.contrast, cfg.defaultBacklightIntensity, cfg.invert, cfg.automaticDraw);
     this.setTouchLEDConfig(cfg.touchLEDConfig);
     this.setGUIButtonPressedCallbackConfiguration(cfg.guiButtonUpdateInterval.longValue(), true);
@@ -1801,6 +1808,7 @@ com['openhab'] = {
                 }],
 
             }, {
+                'predicate': 'cfg.automaticDraw',
                 'id': 'Draw Buffered Frame',
                 'type': 'Draw Buffered Frame',
                 'setters': [{
@@ -1826,8 +1834,9 @@ com['openhab'] = {
                 }]
             }, {
                 'id': 'Touch Position',
-                'label': 'Touch Position',
-                'description': 'Triggers when a new touch position is available. You can then use the getTouchPosition action to query the touch position information.',
+                'label': {'en': 'Touch Position', 'de': 'Touchposition'},
+                'description': {'en': 'Triggers when a new touch position is available. You can then use the getTouchPosition action to query the touch position information.',
+                                'de':' Löst aus wenn eine neue Touch-Position verfügbar ist. Es kann dann die getTouchPosition-Action verwendet werden um die Positions-Informationen abzufragen.'},
                 'type': 'system.trigger',
 
                 'callbacks': [{
@@ -1838,8 +1847,9 @@ com['openhab'] = {
                 'dispose_code': """this.setTouchPositionCallbackConfiguration(0, true);""",
             }, {
                 'id': 'Touch Gesture',
-                'label': 'Touch Gesture',
-                'description': 'Triggers when a new touch gesture is available. You can then use the getTouchGesture action to query the touch position information.',
+                'label': {'en': 'Touch Gesture', 'de': 'Touch-Geste'},
+                'description': {'en': 'Triggers when a new touch gesture is available. You can then use the getTouchGesture action to query the touch gesture information.',
+                                'de':' Löst aus wenn eine neue Touch-Geste verfügbar ist. Es kann dann die getTouchGesture-Action verwendet werden um die Gesten-Informationen abzufragen.'},
                 'type': 'system.trigger',
 
                 'callbacks': [{
@@ -1876,32 +1886,37 @@ com['openhab'] = {
             }
     ] + [gui_button_pressed_channel(i) for i in range(0, 12)] + [gui_slider_value_channel(i) for i in range(0, 6)],
     'channel_types': [
-        oh_generic_channel_type('Text', 'String', 'Text',
+        oh_generic_channel_type('Text', 'String', {'en': 'Text', 'de': 'Text'},
                     update_style=None,
-                    description="Text to display on the LCD. Command format is [line],[position],[text].\n\nAdditional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly.\n\nPaperUI truncates whitespace at the start and end of commands. So to clear (parts of) a line, you can not use f.e. 1,2,[spaces]. Instead you can use the empty character like this 1,2,\\\\xFE\\\\xFE\\\\xFE to delete three characters at Line 1, Column 2."),
+                    description={'en': "Text to display on the LCD. Command format is [line],[position],[text].\n\nAdditional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly.\n\nPaperUI truncates whitespace at the start and end of commands. So to clear (parts of) a line, you can not use f.e. 1,2,[spaces]. Instead you can use the empty character like this 1,2,\\\\xFE\\\\xFE\\\\xFE to delete three characters at Line 1, Column 2.",
+                                 'de': "Text der auf dem LCD angezeigt werden soll. Das Kommandoformat ist [Zeile],[Position],[Text].\n\nWeitere ',' werden als Teil des Texts behandelt. Unicodezeichen werden in den Zeichensatz des LCDs konvertiert, falls möglich. Zusätzlich kann mit \\\\x[zwei Hex-Zahlen] ein Zeichen des LCD-Zeichensatzes direkt benutzt werden.\n\nPaperUI schneidet whitespace am Anfang und Ende von Kommandos ab. Um Teile einer Zeile zu löschen kann also nicht z.B. 1,2,[ein oder mehrere Leerzeichen] verwendet werden. Stattdessen kann das Leerzeichen im LCD-Zeichensatz verwendet werden. So löscht z.b. \\\\xFE\\\\xFE\\\\xFE drei Zeichen in Zeile 1, Reihe 2."}),
         {
             'id': 'Clear Display',
             'item_type': 'String',
-            'label': 'Clear Display',
-            'description':'Deletes all characters from the display.',
+            'label': {'en': 'Clear Display', 'de': 'Display leeren'},
+            'description': {'en': 'Deletes all characters from the display.',
+                            'de': 'Löscht alle Zeichen auf dem Display.'},
             'command_options': [('Clear', 'CLEAR')]
         },
         {
             'id': 'Draw Buffered Frame',
             'item_type': 'String',
-            'label': 'Draw Buffered Frame',
-            'description':'Draws the currently buffered frame.',
+            'label': {'en': 'Draw Buffered Frame', 'de': 'Gepuffertes Bild zeichnen'},
+            'description': {'en': 'Draws the currently buffered frame.', 'de': 'Zeichnet das aktuell gepufferte Bild'},
             'command_options': [('Draw', 'DRAW')]
         },
-        oh_generic_channel_type('Backlight', 'Number', 'Backlight',
+        oh_generic_channel_type('Backlight', 'Number', {'en': 'Backlight', 'de': 'Hintergrundbeleuchtung'},
             update_style=None,
-            description="The backlight intensity value from 0 to 100."),
-        oh_generic_channel_type('GUI Tab Selected', 'Number', 'Selected GUI Tab',
+            description={'en': "The backlight intensity value.",
+                         'de': "Die Helligkeit der Hintergrundbeleuchtung."}),
+        oh_generic_channel_type('GUI Tab Selected', 'Number', {'en': 'Selected GUI Tab', 'de': 'Ausgewählter GUI-Tab'},
             update_style='Callback Configuration',
-            description="Returns the index of the currently selected tab. If there are not tabs, the returned index is -1."),
-        oh_generic_channel_type('GUI Slider', 'Number', 'GUI Slider',
+            description={'en': "The index of the currently selected tab. If there are not tabs, the index is -1.",
+                         'de': "Der Index des aktuell ausgewählten Tabs. Wenn keine Tabs vorhanden sind, ist der Index -1"}),
+        oh_generic_channel_type('GUI Slider', 'Number', 'NOT USED',
             update_style=None,
-            description="The current slider value for the given index."),
+            description={'en': "The current slider value.",
+                         'de': 'Der aktuelle Slider-Wert.'}),
     ],
     'actions': ['Write Pixels', 'Read Pixels', 'Clear Display', 'Write Line', 'Draw Buffered Frame',
                 'Get Touch Position', 'Get Touch Gesture',

@@ -530,8 +530,9 @@ com['openhab'] = {
             'element': 'Average',
             'name': 'Moving Average',
             'type': 'integer',
-            'label': 'Moving Average',
-            'description': 'The length of a moving averaging for the weight value.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
+            'label': {'en': 'Moving Average Length', 'de': 'Länge des gleitenden Mittelwerts'},
+            'description': {'en': 'The length of a moving averaging for the weight value.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.',
+                            'de': 'Die Länge eines gleitenden Mittelwerts für den Gewichtswert.\n\nWenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.'}
         }
     ],
     'init_code': """this.setMovingAverage(cfg.movingAverage.shortValue());""",
@@ -572,19 +573,22 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Weight', 'Number', 'Weight',
+        oh_generic_channel_type('Weight', 'Number', {'en': 'Weight', 'de': 'Gewicht'},
                     update_style='Callback Period',
-                    description='The currently measured weight'),
+                    description={'en': 'The measured weight',
+                                 'de': 'Das gemessene Gewicht'}),
         {
             'id': 'Tare',
             'item_type': 'String',
-            'label': 'Tare',
-            'description':'Sets the currently measured weight as tare weight.',
+            'label': {'en': 'Tare', 'de': 'Leergewicht'},
+            'description': {'en': 'Sets the currently measured weight as tare weight.',
+                            'de': 'Setzt das aktuell gemessene Gewicht als Leergewicht.'},
             'command_options': [('Tare', 'TARE')]
         },
-        oh_generic_channel_type('LED', 'Switch', 'LED',
+        oh_generic_channel_type('LED', 'Switch', {'en': 'LED', 'de': 'LED'},
                     update_style=None,
-                    description='Activates/Deactivates the LED.'),
+                    description={'en': 'Activates/Deactivates the LED.',
+                                 'de': 'Aktiviert/Deaktiviert die LED.'}),
     ],
     'actions': ['Get Weight', 'Tare', 'Get Moving Average', 'Get Configuration',
                 {'fn': 'LED On', 'refreshs': ['LED']}, {'fn': 'LED Off', 'refreshs': ['LED']}, 'Is LED On']

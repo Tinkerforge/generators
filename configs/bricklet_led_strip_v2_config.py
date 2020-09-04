@@ -518,24 +518,27 @@ com['openhab'] = {
             'name': 'Chip Type',
             'type': 'integer',
 
-            'label': 'LED Driver Chip Type',
-            'description': 'The type of the LED driver chip. We currently support the chips\n\n<ul><li>WS2801</li><li>WS2811</li><li>WS2812 / SK6812 / NeoPixel RGB</li><li>SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812)</li><li>LPD8806</li><li>APA102 / DotStar</li></ul>'
+            'label': {'en': 'LED Driver Chip Type', 'de': 'LED-Treiber-Chip-Typ'},
+            'description': {'en': 'The type of the LED driver chip. We currently support the chips\n\n<ul><li>WS2801</li><li>WS2811</li><li>WS2812 / SK6812 / NeoPixel RGB</li><li>SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812)</li><li>LPD8806</li><li>APA102 / DotStar</li></ul>',
+                            'de': 'Den Typ des LED-Treiber-Chips. Aktuell unterstützen wir die folgenden Chips <ul><li>WS2801</li><li>WS2811</li><li>WS2812 / SK6812 / NeoPixel RGB</li><li>SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812)</li><li>LPD8806 an</li><li>APA102 / DotStar</li></ul>'}
         }, {
             'packet': 'Set Channel Mapping',
             'element': 'Mapping',
 
             'name': 'Channel Mapping',
             'type': 'integer',
-            'label': 'LED Channel Mapping',
-            'description': 'The channel mapping for the connected LEDs.\n\nIf the mapping has 4 colors, the LED Values channel expects 4 values per pixel and if the mapping has 3 colors it expects 3 values per pixel.\n\nThe LED Values channel always expects the order RGB(W). The connected LED driver chips might have their 3 or 4 channels in a different order. For example, the WS2801 chips typically use BGR order, then WS2812 chips typically use GRB order and the APA102 chips typically use WBGR order.\n\nThe APA102 chips are special. They have three 8-bit channels for RGB and an additional 5-bit channel for the overall brightness of the RGB LED making them 4-channel chips. Internally the brightness channel is the first channel, therefore one of the Wxyz channel mappings should be used. Then the W channel controls the brightness.'
+            'label': {'en': 'LED Channel Mapping', 'de': 'LED Channel-Mapping'},
+            'description': {'en': 'The channel mapping for the connected LEDs.\n\nIf the mapping has 4 colors, the LED Values channel expects 4 values per pixel and if the mapping has 3 colors it expects 3 values per pixel.\n\nThe LED Values channel always expects the order RGB(W). The connected LED driver chips might have their 3 or 4 channels in a different order. For example, the WS2801 chips typically use BGR order, then WS2812 chips typically use GRB order and the APA102 chips typically use WBGR order.\n\nThe APA102 chips are special. They have three 8-bit channels for RGB and an additional 5-bit channel for the overall brightness of the RGB LED making them 4-channel chips. Internally the brightness channel is the first channel, therefore one of the Wxyz channel mappings should be used. Then the W channel controls the brightness.',
+                            'de': 'Setzt das Channel Mapping für die angeschlossenene LEDs.\n\nFalls das Mapping 4 Farben hat, erwartet der LED-Werte Channel 4 Werte pro Pixel, falls es 3 Farben hat, erwartet der Channel 3 Werte pro Pixel.\n\nDer LED-Werte Channel nimmt die Daten in RGB(W) Reihenfolge entgegen. Aber die angeschlossenen LED-Treiber-Chips erwarten die Daten für ihre 3 oder 4 Kanäle in einer anderen Reihenfolge. Zum Beispiel verwenden WS2801 Chips typischerweise BGR Reihenfolge, WS2812 Chips verwenden typischerweise GRB Reihenfolge und APA102 verwenden typischerweise WBGR Reihenfolge.\n\nDie APA102 haben eine Besonderheit. Sie haben drei 8-Bit Kanäle für RGB und einen zusätzlichen 5-Bit Kanal für die Helligkeit der RGB LED. Dadurch ist der APA102 insgesamt ein 4-Kanal Chip. Intern ist der Helligkeitskanal der erste Kanal. Daher sollte eines der Wxyz Channel Mappings verwendet werden. Dann kann über den W Kanal die Helligkeit eingestellt werden.'}
         }, {
             'packet': 'Set Frame Duration',
             'element': 'Duration',
 
             'name': 'Frame Duration',
             'type': 'integer',
-            'label': 'Frame Duration',
-            'description': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger.',
+            'label': {'en': 'Frame Duration', 'de': 'Frame-Dauer'},
+            'description': {'en': 'The frame duration in milliseconds. This configures how fast the Frame Started Channel will trigger.',
+                            'de': 'Die Frame-Dauer in Millisekunden. Damit wird konfiguriert, wie schnell der Frame gestartet-Channel auslöst.'},
             'default': 1000, # Override default to reduce openhab log spam
         }, {
             'packet': 'Set Clock Frequency',
@@ -543,15 +546,17 @@ com['openhab'] = {
 
             'name': 'Clock Frequency',
             'type': 'integer',
-            'label': 'Clock Frequency',
-            'description': 'The frequency of the clock in Hz. The Bricklet will choose the nearest achievable frequency, which may be off by a few Hz.\n\nIf you have problems with flickering LEDs, they may be bits flipping. You can fix this by either making the connection between the LEDs and the Bricklet shorter or by reducing the frequency.\n\nWith a decreasing frequency your maximum frames per second will decrease too.\n\nThe default value is 1.66MHz (1660000Hz).'
+            'label': {'en': 'Clock Frequency', 'de': 'Taktfrequenz'},
+            'description': {'en': 'The frequency of the clock in Hz. The Bricklet will choose the nearest achievable frequency, which may be off by a few Hz.\n\nIf you have problems with flickering LEDs, they may be bits flipping. You can fix this by either making the connection between the LEDs and the Bricklet shorter or by reducing the frequency.\n\nWith a decreasing frequency your maximum frames per second will decrease too.',
+                            'de': 'Die Frequenz der Clock-Leitung. Das Bricklet wählt die nächst mögliche erreichbare Frequenz. Diese kann ein paar Hz neben des gesetzten Wertes liegen.\n\nWenn Probleme mit flackernden LEDs auftreten kann es daran liegen das Bits auf der Leitung flippen. Dies kann behoben werden in dem man die Verbindung zwischen Bricklet und LEDs verringert oder in dem man die Frequenz reduziert.\n\nMit abnehmender Frequenz nimmt allerdings auch die maximale Framerate ab.'}
         },
         ],
     'channels': [
         {
             'id': 'Frame Started',
-            'label': 'Frame Started',
-            'description': 'This channel is triggered directly after a new frame render is started. You should send the data for the next frame directly after this listener was triggered.',
+            'label': {'en': 'Frame Started', 'de': 'Frame gestartet'},
+            'description': {'en': 'This channel is triggered directly after a new frame render is started. You should send the data for the next frame directly after this listener was triggered.',
+                            'de': 'Dieser Channel wird ausgelöst sobald ein neuer Frame gestartet wurde. Nachdem dieser Channel ausgeöst wurde sollten die Daten für den nächsten Frame geschrieben werden.'},
             'type': 'system.trigger',
 
             'callbacks': [{
@@ -588,10 +593,11 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('LED Values', 'String', 'LED Values',
+        oh_generic_channel_type('LED Values', 'String', {'en': 'LED Values', 'de': 'LED-Werte'},
                     update_style=None,
-                    description="The RGB(W) values for the LEDs. Changes will be applied the next time the Frame Started Channel triggers.\n\nCommand format is a ','-separated list of integers. The first integer is the index of the first LED to set, additional integers are the values to set. Values are between 0 (off) and 255 (on). If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...\n\nThe data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.\n\n For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue."),
-        oh_generic_channel_type('All LEDs', 'Color', 'All LEDs',
+                    description={'en': "The RGB(W) values for the LEDs. Changes will be applied the next time the Frame Started Channel triggers.\n\nCommand format is a ','-separated list of integers. The first integer is the index of the first LED (not the first value!) to set, additional integers are the values to set. If the channel mapping has 3 colors, you need to give the data in the sequence R,G,B,R,G,B,R,G,B,... if the channel mapping has 4 colors you need to give data in the sequence R,G,B,W,R,G,B,W,R,G,B,W...\n\nThe data is double buffered and the colors will be transfered to the LEDs when the next frame duration ends. You can set at most 2048 RGB values or 1536 RGBW values.\n\n For example sending 2,255,0,0,0,255,0,0,0,255 will set the LED 2 to red, LED 3 to green and LED 4 to blue.",
+                                 'de': "Die RGB(W)-Werte der LEDs. Änderungen werden angewandt, wenn der Frame gestartet-Channel das nächste mal auslöst.\n\nDas Kommando-Format ist eine ','-separierte Liste von Ganzzahlen. Die erste Zahl ist der Index der ersten LED (nicht des ersten Wertes!), die gesetzt werden soll, weitere Zahlen sind die Werte die gesetzt werden sollen. Wenn das Channel-Mapping drei Farben verwendet, müssen die Daten in der Reihenfolge R,G,B,R,G,B,R,G,B,... übergeben werden, wenn es vier Farben verwendet in der Reihenfolge R,G,B,W,R,G,B,W,R,G,B,W...\n\nEs gibt ein double-buffering für die Daten. Die Farben werden zu den LEDs übertragen, wenn die nächste Frame-Dauer abläuft. Es können maximal 6144 Werte, also 2048 RGB- oder 1536 RGBW-LEDs gesteuert werden.\n\nEin Beispiel: 2,255,0,0,0,255,0,0,0,255 setzt die LED 2 auf rot, die LED 3 auf grün und die LED 4 auf blau."}),
+        oh_generic_channel_type('All LEDs', 'Color', {'en': 'All LEDs', 'de': 'Alle LEDs'},
                     params=[{
                         'virtual': True,
 
@@ -601,11 +607,12 @@ com['openhab'] = {
                         'max': 2048,
                         'default': 0,
 
-                        'label': 'LED Count',
-                        'description': 'The number of LEDs to control.'
+                        'label': {'en':'LEDs', 'de': 'LEDs'},
+                        'description': {'en': 'The number of LEDs to control.', 'de': 'Die Anzahl der zu kontrollierenden LEDs'}
                     }],
                     update_style=None,
-                    description="This channel allows you to set a configurable amount of LEDs (up to 1536 RGBW LEDs or 2048 RGB LEDs) to the same color. If you want more fine-grained control over the LEDs, use the LED Values channel or the actions.")
+                    description={'en': "This channel allows you to set a configurable amount of LEDs (up to 1536 RGBW LEDs or 2048 RGB LEDs) to the same color. If you want more fine-grained control over the LEDs, use the LED Values channel or the actions.",
+                                 'de': "Mit diesem Channel kann eine konfigurierbare Anzahl an LEDs (bis zu 1536 RGBW- bzw. 2048 RGB-LEDs) auf die selbe Farbe gesetzt werden. Mit dem LED-Werte-Channel oder den Actions kann eine genauere Kontrolle umgesetzt werden."})
     ],
     'actions': ['Set LED Values', 'Get LED Values', 'Get Frame Duration', 'Get Supply Voltage', 'Get Clock Frequency', 'Get Chip Type', 'Get Channel Mapping']
 }

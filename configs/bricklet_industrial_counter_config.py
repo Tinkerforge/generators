@@ -780,7 +780,7 @@ com['openhab'] = {
 
                 'name': 'Channel LED Configuration',
                 'type': 'integer',
-                'label': {'en': 'Channel LED Configuration', 'de': 'Kanal-LED-Konfiguration'},
+                'label': {'en': 'Channel LED', 'de': 'Kanal-LED'},
                 'description': {'en': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
                                 'de': 'Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn ein High-Signal am Kanal anliegt und sonst aus.'},
             },])

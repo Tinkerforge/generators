@@ -402,8 +402,9 @@ com['openhab'] = {
 
             'name': 'Distance Moving Average Length',
             'type': 'integer',
-            'label': 'Distance Moving Average Length',
-            'description': 'The length of a moving averaging for the distance.',
+            'label': {'en': 'Distance Moving Average Length', 'de': 'Länge des gleitenden Distanz-Mittelwerts'},
+            'description': {'en': 'The length of a moving averaging for the distance.',
+                            'de': 'Die Länge eines gleitenden Mittelwerts für die Distanz'},
             'groupName': 'average'
         }, {
             'packet': 'Set Moving Average',
@@ -411,8 +412,9 @@ com['openhab'] = {
 
             'name': 'Velocity Moving Average Length',
             'type': 'integer',
-            'label': 'Velocity Moving Average Length',
-            'description': 'The length of a moving averaging for the velocity.',
+            'label': {'en': 'Velocity Moving Average Length', 'de': 'Länge des gleitenden Geschwindigkeits-Mittelwerts'},
+            'description': {'en': 'The length of a moving averaging for the velocity.',
+                            'de': 'Die Länge eines gleitenden Mittelwerts für die Geschwindigkeit'},
             'groupName': 'average'
         }, {
             'packet': 'Set Configuration',
@@ -421,8 +423,9 @@ com['openhab'] = {
             'name': 'Acquisition Count',
             'type': 'integer',
             'label': 'Acquisition Count',
-            'description': 'The Acquisition Count defines the number of times the Laser Range Finder Bricklet will integrate acquisitions to find a correlation record peak. With a higher count, the Bricklet can measure longer distances. With a lower count, the rate increases. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
-            'groupName': 'sensor'
+            'label': {'en': 'Acquisition Count', 'de': 'Datenerfassungs-Anzahl'},
+            'description': {'en': 'The acquisition count defines the number of times the Laser Range Finder Bricklet will integrate acquisitions to find a correlation record peak. With a higher count, the Bricklet can measure longer distances. With a lower count, the rate increases.',
+                            'de': 'Die Datenerfassungs-Anzahl definiert die Anzahl der Datenerfassungen die integriert werden, um eine Korrelation zu finden. Mit einer größeren Anzahl kann das Bricklet höhere Distanzen messen, mit einer kleineren Anzahl ist die Messrate höher. Erlaubte Werte sind 1-255.'},
         }, {
             'packet': 'Set Configuration',
             'element': 'Enable Quick Termination',
@@ -430,27 +433,27 @@ com['openhab'] = {
             'name': 'Enable Quick Termination',
             'type': 'boolean',
 
-            'label': 'Enable Quick Termination',
-            'description': 'If you enable Quick Termination, the distance measurement will be terminated early if a high peak was already detected. This means that a higher measurement rate can be achieved and long distances can be measured at the same time. However, the chance of false-positive distance measurements increases. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
-            'groupName': 'sensor'
+            'label': {'en': 'Quick Termination', 'de': 'Schnellterminierung'},
+            'description': {'en': 'If you enable Quick Termination, the distance measurement will be terminated early if a high peak was already detected. This means that a higher measurement rate can be achieved and long distances can be measured at the same time. However, the chance of false-positive distance measurements increases.',
+                            'de': 'Wenn die Schnellterminierung aktiviert wird, wird die Distanzmessung abgeschlossen, sobald das erste mal ein hoher Peak erfasst wird. Dadurch kann eine höhere Messrate erreicht werden wobei gleichzeitig Messungen mit langer Distanz möglich sind. Die Wahrscheinlichkeit einer Falschmessung erhöht sich allerdings.'},
         }, {
             'packet': 'Set Configuration',
             'element': 'Threshold Value',
 
             'name': 'Threshold Value',
             'type': 'integer',
-            'label': 'Threshold Value',
-            'description': 'Normally the distance is calculated with a detection algorithm that uses peak value, signal strength and noise. You can however also define a fixed Threshold Value. Set this to a low value if you want to measure the distance to something that has very little reflection (e.g. glass) and set it to a high value if you want to measure the distance to something with a very high reflection (e.g. mirror). Set this to 0 to use the default algorithm. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
-            'groupName': 'sensor'
+            'label': {'en': 'Threshold Value', 'de': 'Schwellwert'},
+            'description': {'en': 'Normally the distance is calculated with a detection algorithm that uses peak value, signal strength and noise. You can however also define a fixed Threshold Value. Set this to a low value if you want to measure the distance to something that has very little reflection (e.g. glass) and set it to a high value if you want to measure the distance to something with a very high reflection (e.g. mirror). Set this to 0 to use the default algorithm.',
+                            'de': 'Normalerweise wird die Distanz mit Hilfe eines Detektionsalgorithmus berechnet. Dieser verwendet Peak-Werte, Signalstärke und Rauschen. Es ist möglich stattdessen einen festen Schwellwert zu setzen der zur Distanzbestimmung genutzt werden soll. Um den Abstand zu einem Objekt mit sehr niedriger Reflektivität zu messen (z.B. Glas) kann der Wert niedrig gesetzt werden. Um den Abstand zu einem Objekt mit sehr hoher Reflektivität zu messen (z.B. Spiegel) kann der Wert sehr hoch gesetzt werden. Mit einem Wert von 0 wird der Standardalgorithmus genutzt.'},
         }, {
             'virtual': True,
             'name': 'Enable Fixed Measurement Frequency',
             'type': 'boolean',
             'default': 'false',
 
-            'label': 'Enable Fixed Measurement Frequency',
-            'description': 'For a stable velocity measurement you should set a fixed measurement frequency. See Measurement Frequency for details. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
-            'groupName': 'sensor'
+            'label': {'en': 'Fixed Measurement Frequency', 'de': 'Feste Messfrequenz'},
+            'description': {'en': 'For a stable velocity measurement you should set a fixed measurement frequency. See Measurement Frequency for details.',
+                            'de': 'Für eine stabile Geschwindigkeitsmessung sollte die feste Messfrequenz aktiviert werden. Siehe die Messfrequenz-Konfiguration für Details.'},
         }, {
             'packet': 'Set Configuration',
             'element': 'Measurement Frequency',
@@ -460,9 +463,9 @@ com['openhab'] = {
             'min': 10,
             'default': 10,
 
-            'label': 'Measurement Frequency',
-            'description': 'Set the Measurement Frequency in Hz to force a fixed measurement rate. If set to 0, the Laser Range Finder Bricklet will use the optimal frequency according to the other configurations and the actual measured distance. Since the rate is not fixed in this case, the velocity measurement is not stable. For a stable velocity measurement you should set a fixed measurement frequency. The lower the frequency, the higher is the resolution of the calculated velocity. The allowed values are 10Hz-500Hz. This setting will be ignored if you have a LIDAR-Lite sensor with hardware version 1.',
-            'groupName': 'sensor'
+            'label': {'en': 'Measurement Frequency', 'de': 'Messfrequenz'},
+            'description': {'en': 'If the fixed measurement frequency is enabled, the measurement frequency is forced to this value. If it is disabled, the Laser Range Finder Bricklet will use the optimal frequency according to the other configurations and the actual measured distance. Since the rate is not fixed in this case, the velocity measurement is not stable. For a stable velocity measurement you should set a fixed measurement frequency. The lower the frequency, the higher is the resolution of the calculated velocity.',
+                            'de': 'Wenn die feste Messfrequenz aktiviert ist, wird eine Messfrequenz von diesem Wert erzwungen. Wenn sie deaktiviert ist, nutzt das Laser Range Finder Bricklet die optimale Frequenz je nach Konfiguration und aktuell gemessener Distanz. Da die Messrate in diesem Fall nicht fest ist, ist die Geschwindigkeitsmessung nicht stabil. Für eine stabile Geschwindigkeitsmessung sollte eine feste Messfrequenz eingestellt werden. Je niedriger die Frequenz ist, desto größer ist die Auflösung der Geschwindigkeitsmessung.'},
         }, {
             'packet': 'Set Distance LED Config',
             'element': 'Config',
@@ -470,18 +473,15 @@ com['openhab'] = {
             'name': 'Distance LED Config',
             'type': 'integer',
 
-            'label': 'Distance LED Configuration',
-            'description': 'Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).',
+            'label': {'en': 'Distance LED', 'de': 'Distanz-LED'},
+            'description': {'en': 'Configures the distance LED to be either turned off, turned on, blink in heartbeat mode or show the distance (brighter = object is nearer).',
+                            'de': 'Konfiguriert die Distanz-LED. Die LED kann ausgeschaltet, eingeschaltet, im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option mit der LED die Distanz anzuzeigen (heller = Objekt näher).'}
         }],
     'param_groups': oh_generic_channel_param_groups() + [{
             'name': 'average',
             'label': 'Averaging',
             'description': 'Sets the different averaging parameters. It is possible to set the length of a normal averaging for the temperature and pressure, as well as an additional length of a moving average for the pressure. The moving average is calculated from the normal averages. There is no moving average for the temperature.\n\nThe maximum length for the pressure average is 10, for the temperature average is 255 and for the moving average is 25.\n\nSetting the all three parameters to 0 will turn the averaging completely off. If the averaging is off, there is lots of noise on the data, but the data is without delay. Thus we recommend to turn the averaging off if the Barometer Bricklet data is to be used for sensor fusion with other sensors.\n\nThe default values are 10 for the normal averages and 25 for the moving average.',
             'advanced': 'true'
-        }, {
-            'name': 'sensor3',
-            'label': 'Sensor Version 3',
-            'description': 'Configuration for LIDAR-Lite sensors with hardware version 3',
         }
     ],
     'init_code': """
@@ -492,8 +492,8 @@ com['openhab'] = {
         oh_generic_channel('Distance', 'Distance'),
         oh_generic_channel('Velocity', 'Velocity'),
         {
-            'id': 'Enable Laser',
-            'type': 'Enable Laser',
+            'id': 'Laser',
+            'type': 'Laser',
 
             'setters': [{
                 'packet': 'Set Enable',
@@ -502,7 +502,6 @@ com['openhab'] = {
                 'command_type': "OnOffType",
             }],
 
-
             'getters': [{
                 'packet': 'Get Enable',
                 'element': 'Enable',
@@ -510,17 +509,20 @@ com['openhab'] = {
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Distance', 'Number', 'Distance',
+        oh_generic_channel_type('Distance', 'Number', {'en': 'Distance', 'de': 'Distanz'},
                     update_style='Callback Configuration',
-                    description='The measured distance. Sensor hardware version 1 cannot measure distance and velocity at the same time. Therefore, the distance mode has to be enabled. Sensor hardware version 3 can measure distance and velocity at the same time. Also the laser has to be enabled.'),
+                    description={'en': 'The measured distance. The laser has to be enabled.',
+                                 'de': 'Die gemessene Distanz. Der Laser muss aktiviert sein.'}),
         oh_generic_channel_type('Velocity', 'Number', 'Velocity',
                     update_style='Callback Configuration',
-                    description='The measured velocity. Sensor hardware version 1 cannot measure distance and velocity at the same time. Therefore, the velocity mode has to be enabled. Sensor hardware version 3 can measure distance and velocity at the same time, but the velocity measurement only produces stables results if a fixed measurement rateis configured. Also the laser has to be enabled.'),
-        oh_generic_channel_type('Enable Laser', 'Switch', 'Enable Laser',
+                    description={'en': 'The measured velocity. The velocity measurement only produces stables results if a fixed measurement frequency is configured. Also the laser has to be enabled.',
+                                 'de': 'Die gemessene Geschwindigkeit. Die Geschwindigkeitsmessung liefert nur stabile Werte, wenn eine feste Messfrequenz konfiguriert ist. Außerdem muss der Laser aktiviert sein.'}),
+        oh_generic_channel_type('Laser', 'Switch', {'en': 'Laser', 'de': 'Laser'},
                     update_style=None,
-                    description='Activates the laser of the LIDAR.'),
+                    description={'en': 'Activates/Deactivates the laser of the LIDAR.',
+                                 'de': 'Aktiviert/Deaktiviert den Laser des LIDARs.'}),
     ],
     'actions': ['Get Distance', 'Get Velocity',
-                {'fn': 'Set Enable', 'refreshs': ['Enable Laser']}, 'Get Enable',
+                {'fn': 'Set Enable', 'refreshs': ['Laser']}, 'Get Enable',
                 'Get Configuration', 'Get Distance LED Config', 'Get Moving Average', 'Get Offset Calibration']
 }

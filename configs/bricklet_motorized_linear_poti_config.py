@@ -251,8 +251,7 @@ com['openhab'] = {
         oh_generic_channel('Position', 'Position'),
         {
             'id': 'Motor Position',
-            'label': 'Motor Position',
-            'description': 'The motor position of the potentiometer. The motorized potentiometer will immediately start to approach the position. Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.\n\nThe position has to be between 0 (slider down) and 100 (slider up).',
+
             'type': 'Motor Position',
 
             'getters': [{
@@ -271,8 +270,9 @@ com['openhab'] = {
             'id': 'Position Reached',
             'type': 'system.trigger',
 
-            'label': 'Position Reached',
-            'description': 'This channel is triggered if a new position as set by the Motor Position Channel is reached.',
+            'label': {'en': 'Position Reached', 'de': 'Position erreicht'},
+            'description': {'en': 'This channel is triggered if a new position as set by the Motor Position Channel is reached.',
+                            'de': 'Dieser Channel wird ausgelöst, wenn eine neue Position, die vom Motor Position Channel gesetzt wurde, erreicht ist.'},
 
             'callbacks': [{
                 'packet': 'Position Reached',
@@ -280,12 +280,14 @@ com['openhab'] = {
         },
     ],
     'channel_types': [
-        oh_generic_channel_type('Position', 'Number', 'Position',
+        oh_generic_channel_type('Position', 'Number', {'en': 'Position', 'de': 'Position'},
                     update_style='Callback Configuration',
-                    description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).'),
-        oh_generic_channel_type('Motor Position', 'Number', 'Motor Position',
+                    description={'en': 'The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).',
+                                 'de': 'Die Position des Linearpotentiometers zurück. Der Wertebereich ist von 0 (Schieberegler unten) und 100 (Schieberegler oben).'}),
+        oh_generic_channel_type('Motor Position', 'Number', {'en': 'Motor Position', 'de': 'Motor-Position'},
                     update_style=None,
-                    description='The motor position of the potentiometer. The value is between 0 (slider down) and 100 (slider up).',
+                    description={'en': 'The target position of the potentiometer. The motorized potentiometer will immediately start to approach the position. Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.\n\nThe position has to be between 0 (slider down) and 100 (slider up).',
+                                 'de': 'Die Ziel-Position des Potentiometers. Das Potentiometer wird sofort diese Position anfahren. Abhängig von dem gewählten Fahrmodus wird die Position entweder so schnell wie möglich angefahren oder langsam dafür aber gleichmäßig. Die Position kann zwischen 0 (Regler unten) und 100 (Regler oben) festgelegt werden.'},
                     params=[{
                         'packet': 'Set Motor Position',
                         'element': 'Drive Mode',
@@ -294,8 +296,9 @@ com['openhab'] = {
                         'type': 'boolean',
                         'default': 'false',
 
-                        'label': 'Smooth Drive Mode',
-                        'description': ' Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.',
+                        'label': {'en': 'Smooth Drive Mode', 'de': 'Gleichmäßiger Fahrmodus'},
+                        'description': {'en': 'Depending on the chosen drive mode, the position will either be reached as fast as possible or in a slow but smooth motion.',
+                                        'de': 'Abhängig vom gewählten Fahrmodus wird die Position entweder so schnell wie möglich oder in einer langsamen aber gleichmäßigen Bewegung angefahren.'}
                     }, {
                         'packet': 'Set Motor Position',
                         'element': 'Hold Position',
@@ -304,8 +307,10 @@ com['openhab'] = {
                         'type': 'boolean',
                         'default': 'false',
 
-                        'label': 'Hold Position',
-                        'description': 'If you enable the hold position flag, the position will automatically be retained. If a user changes the position of the potentiometer, it will automatically drive back to the original set point.\n\nIf the hold position flag disabled, the potentiometer can be changed again by the user as soon as the set point was reached once.',
+                        'label':{'en': 'Hold Position',
+                                 'de': 'Position halten'},
+                        'description': {'en': 'If you enable the hold position flag, the position will automatically be retained. If a user changes the position of the potentiometer, it will automatically drive back to the original set point.\n\nIf the hold position flag disabled, the potentiometer can be changed again by the user as soon as the set point was reached once.',
+                                        'de': 'Wenn die Position gehalten wird, wird wenn ein Nutzer die Position ändert, das Potentiometer die alte Position anschließend wieder anfahren.\n\nWenn die Position nicht gehalten wird, kann die Position vom Nutzer geändert werden, nachdem die Sollposition erreicht wurde.'}
                     }])
     ],
     'actions': ['Get Position', {'fn': 'Set Motor Position', 'refreshs': ['Motor Position']}, 'Get Motor Position']

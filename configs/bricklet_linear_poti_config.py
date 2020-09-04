@@ -490,9 +490,10 @@ com['openhab'] = {
         oh_analog_value_channel()
     ],
     'channel_types': [
-        oh_generic_channel_type('Position', 'Number', 'Position',
+        oh_generic_channel_type('Position', 'Number', {'en': 'Position', 'de': 'Position'},
                     update_style='Callback Period',
-                    description='The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).'),
+                    description={'en': 'The position of the linear potentiometer. The value is between 0 (slider down) and 100 (slider up).',
+                                 'de': 'Die Position des Linearpotentiometers. Der Wertebereich ist von 0 (Schieberegler unten) und 100 (Schieberegler oben).'}),
         oh_analog_value_channel_type(analog_value_desc)
     ],
     'actions': ['Get Position', 'Get Analog Value']

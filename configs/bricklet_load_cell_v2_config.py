@@ -301,8 +301,9 @@ com['openhab'] = {
 
             'name': 'Moving Average',
             'type': 'integer',
-            'label': 'Moving Average',
-            'description': 'The length of a moving averaging for the weight value.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.'
+            'label': {'en': 'Moving Average Length', 'de': 'Länge des gleitenden Mittelwerts'},
+            'description': {'en': 'The length of a moving averaging for the weight value.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.',
+                            'de': 'Die Länge eines gleitenden Mittelwerts für den Gewichtswert.\n\nWenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Rate',
@@ -310,8 +311,9 @@ com['openhab'] = {
             'name': 'Measurement Rate',
             'type': 'integer',
 
-            'label': 'Measurement Rate',
-            'description': 'The rate can be either 10Hz or 80Hz. A faster rate will produce more noise.',
+            'label': {'en': 'Measurement Rate', 'de': 'Messrate'},
+            'description': {'en': 'The rate can be either 10Hz or 80Hz. A faster rate will produce more noise.',
+                            'de': 'Die Rate kann auf 10Hz oder 80Hz gesetzt werden. Eine schnellere Rate erzeugt mehr Störungen.'}
         }, {
             'packet': 'Set Configuration',
             'element': 'Gain',
@@ -319,16 +321,18 @@ com['openhab'] = {
             'name': 'Gain',
             'type': 'integer',
 
-            'label': 'Gain',
-            'description': "The gain can be 128x, 64x or 32x. It represents a measurement range of ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an excitation voltage of 5V and most load cells use an output of 2mV/V. That means the voltage range is ±15mV for most load cells (i.e. gain of 128x is best). If you don't know what all of this means you should keep it at 128x, it will most likely be correct.",
+            'label': {'en': 'Gain', 'de': 'Verstärkung'},
+            'description': {'en': "The gain can be 128x, 64x or 32x. It represents a measurement range of ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an excitation voltage of 5V and most load cells use an output of 2mV/V. That means the voltage range is ±15mV for most load cells (i.e. gain of 128x is best). If you don't know what all of this means you should keep it at 128x, it will most likely be correct.",
+                            'de': 'Der Gain kann zwischen 128x, 64x und 32x konfiguriert werden. Er repräsentiert einen Messbereich von ±20mV, ±40mV und ±80mV respektive. Das Load Cell Bricklet nutzt eine Erregerspannung (Excitation Voltage) von 5V und die meisten Wägezellen haben eine Ausgabe von 2mV/V. Dies bedeutet, der Spannungsbereich ist ±15mV für die meisten Wägezellen (d.h. ein Gain von 128x ist am geeignetsten). Falls nicht klar ist was dies alles bedeutet, ein Gain von 128x ist höchstwahrscheinlich korrekt.'}
         }, {
             'packet': 'Set Info LED Config',
             'element': 'Config',
 
             'name': 'Info LED',
             'type': 'integer',
-            'label': 'Info LED',
-            'description': 'Configures the info LED to be either turned off, turned on, or blink in heartbeat mode.',
+            'label': {'en': 'Info LED', 'de': 'Info-LED'},
+            'description': {'en': 'Configures the info LED to be either turned off, turned on, or blink in heartbeat mode.',
+                            'de': 'Konfiguriert die Info-LED. Die LED kann ausgeschaltet, eingeschaltet oder im Herzschlagmodus betrieben werden.'}
         },
     ],
     'init_code': """this.setConfiguration(cfg.measurementRate, cfg.gain);
@@ -352,14 +356,16 @@ this.setInfoLEDConfig(cfg.infoLED);""",
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Weight', 'Number', 'Weight',
+        oh_generic_channel_type('Weight', 'Number', {'en': 'Weight', 'de': 'Gewicht'},
                     update_style='Callback Configuration',
-                    description='The currently measured weight'),
+                    description={'en': 'The measured weight',
+                                 'de': 'Das gemessene Gewicht'}),
         {
             'id': 'Tare',
             'item_type': 'String',
-            'label': 'Tare',
-            'description':'Sets the currently measured weight as tare weight.',
+            'label': {'en': 'Tare', 'de': 'Leergewicht'},
+            'description': {'en': 'Sets the currently measured weight as tare weight.',
+                            'de': 'Setzt das aktuell gemessene Gewicht als Leergewicht.'},
             'command_options': [('Tare', 'TARE')]
         }
     ],

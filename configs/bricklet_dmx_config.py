@@ -582,7 +582,7 @@ com['openhab'] = {
             'name': 'Communication LED Config',
             'type': 'integer',
 
-            'label': {'en': 'Communication LED Configuration', 'de': 'Kommunikations-LED-Konfiguration'},
+            'label': {'en': 'Communication LED', 'de': 'Kommunikations-LED'},
             'description': {'en': "By default the LED shows communication traffic, it flickers once for every 10 received data packets. You can also turn the LED permanently on/off or show a heartbeat. If the Bricklet is in bootloader mode, the LED is off.",
                             'de': "Standardmäßig zeigt die LED die Kommunikationsdatenmenge an. Sie blinkt einmal auf pro 10 empfangenen Datenpaketen zwischen Brick und Bricklet.\n\nDie LED kann auch permanent an/aus gestellt werden oder einen Herzschlag anzeigen. Wenn das Bricklet sich im Bootloadermodus befindet ist die LED aus."}
         }, {

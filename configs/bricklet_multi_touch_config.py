@@ -255,7 +255,7 @@ def electrode_channel(idx):
     return {
         'predicate': 'cfg.electrode{}Enabled'.format(idx),
         'id': 'Electrode {}'.format(idx),
-        'label': 'Electrode {}'.format(idx),
+        'label': {'en': 'Electrode {}'.format(idx), 'de': 'Elektrode {}'.format(idx)},
         'type': 'Electrode',
         'getters': [{
             'packet': 'Get Touch State',
@@ -277,8 +277,9 @@ def electrode_config(idx):
             'name': 'Electrode {} Enabled'.format(idx),
             'type': 'boolean',
 
-            'label': 'Electrode {} Enabled'.format(idx),
-            'description': "True enables the electrode, false disables the electrode. A disabled electrode will always return false as its state. If you don't need all electrodes you can disable the electrodes that are not needed. Disabling electrodes will also reduce power consumption.",
+            'label': {'en': 'Electrode {} Enabled'.format(idx), 'de': 'Elektrode {} aktiviert'.format(idx)},
+            'description': {'en': "A disabled electrode will always return false as its state. If you don't need all electrodes you can disable the electrodes that are not needed. Disabling electrodes will also reduce power consumption.",
+                            'de': 'Eine deaktivierte Elektrode hat immer den Zustand false. Wenn nicht alle Elektroden gebraucht werden können die ungebrauchten deaktiviert werden. Eine deaktivierte Elektrode verringert zusätzlich den Stromverbrauch.'}
         }
 
 com['openhab'] = {
@@ -290,8 +291,9 @@ com['openhab'] = {
 
             'name': 'Sensitivity',
             'type': 'integer',
-            'label': 'Sensitivity',
-            'description': 'The sensitivity of the electrodes. An electrode with a high sensitivity will register a touch earlier then an electrode with a low sensitivity.\n\nIf you build a big electrode you might need to decrease the sensitivity, since the area that can be charged will get bigger. If you want to be able to activate an electrode from further away you need to increase the sensitivity.'
+            'label': {'en': 'Sensitivity', 'de': 'Empfindlichkeit'},
+            'description': {'en': 'The sensitivity of the electrodes. An electrode with a high sensitivity will register a touch earlier then an electrode with a low sensitivity.\n\nIf you build a big electrode you might need to decrease the sensitivity, since the area that can be charged will get bigger. If you want to be able to activate an electrode from further away you need to increase the sensitivity.',
+                            'de': 'Die Empfindlichkeit der Elektroden. Eine Elektrode mit einer hohen Empfindlichkeit registriert eine Berührung früher als eine Elektrode mit einer niedrigen Empfindlichkeit.\n\nWenn eine große Elektrode verwendet wird sollte die Empfindlichkeit verringert werden, da eine größere Fläche aufgeladen werden kann. Wenn eine Elektrode aus größerem Abstand aktivierbar seien soll, muss die Empfindlichkeit vergrößert werden.'}
         }, {
             'packet': 'Set Electrode Config',
             'element': 'Enabled Electrodes',
@@ -300,8 +302,9 @@ com['openhab'] = {
             'name': 'Proximity Enabled',
             'type': 'boolean',
 
-            'label': 'Proximity Enabled',
-            'description': "True enables the proximity feature, false disables it. It is recommended that you disable the proximity feature if not needed. This will reduce the amount of traffic that is produced.",
+            'label': {'en': 'Proximity Detection', 'de': 'Proximity(Nähe)-Detektion'},
+            'description': {'en': "It is recommended that you disable the proximity feature if not needed. This will reduce the amount of traffic that is produced.",
+                            'de': "Wir empfehlen die Proximity-Detektion zu deaktivieren wenn das Proximity-Feature nicht benötigt wird. Das verringert den Datenverkehr der ausgelöst wird."}
         }
     ] + [electrode_config(i) for i in range(0, 12)],
     'init_code': """this.setElectrodeSensitivity(cfg.sensitivity.shortValue());
@@ -311,8 +314,9 @@ com['openhab'] = {
         {
             'predicate': 'cfg.proximityEnabled',
             'id': 'Proximity',
-            'label': 'Proximity',
-            'description': 'The current touch state. If a hand or similar is in proximity to the electrodes, this channel is toggled. The proximity is activated with a distance of 1-2cm. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.',
+            'label': {'en': 'Proximity', 'de': 'Proximity'},
+            'description': {'en': 'If a hand or similar is in proximity to the electrodes, this channel is toggled. The proximity is activated with a distance of 1-2cm. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.',
+                            'de': 'Wenn eine Hand oder vergleichbares in der Nähe der Elektroden ist wird dieser Channel ausgelöst.\n\nDas Proximity Bit wird ab einer Distanz von ca. 1-2cm aktiviert. Eine Elektrode wird schon als berührt gezählt wenn ein Finger sie beinahe berührt. Dadurch ist es möglich ein Stück Papier oder Folie über die Elektrode zu kleben um damit ein Touchpanel mit einem professionellen Aussehen zu bauen.'},
             'type': 'Electrode',
             'getters': [{
                 'packet': 'Get Touch State',
@@ -337,12 +341,14 @@ com['openhab'] = {
     'channel_types': [
         oh_generic_channel_type('Electrode', 'Switch', 'NOT USED',
                     update_style=None,
-                    description='The current touch state. An electrode is already counted as touched if a finger is nearly touching the electrode. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.'),
+                    description={'en': 'The current touch state. An electrode is already counted as touched if a finger is nearly touching the electrode. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.',
+                                 'de': 'Eine Elektrode wird schon als berührt gezählt wenn ein Finger sie beinahe berührt. Dadurch ist es möglich ein Stück Papier oder Folie über die Elektrode zu kleben um damit ein Touchpanel mit einem professionellen Aussehen zu bauen.'}),
         {
             'id': 'Recalibrate',
             'item_type': 'String',
-            'label': 'Recalibrate Electrodes',
-            'description':'Recalibrates the electrodes. Trigger this channel whenever you changed or moved you electrodes.',
+            'label': {'en': 'Recalibrate Electrodes', 'de': 'Elektroden rekalibrieren'},
+            'description': {'en': 'Recalibrates the electrodes. Trigger this channel whenever you changed or moved you electrodes.',
+                            'de': 'Rekalibriert die Elektroden. Löse diesen Channel aus auf wenn die Elektroden verändert oder bewegt wurden.'},
             'command_options': [('Trigger', 'TRIGGER')]
         }
     ],

@@ -439,7 +439,7 @@ com['openhab'] = {
             'name': 'Out LED Config',
             'type': 'integer',
 
-            'label': {'en': 'Output LED Configuration', 'de': 'Output-LED-Konfiguration'},
+            'label': {'en': 'Output LED', 'de': 'Output-LED'},
             'description': {'en': 'You can turn the Out LED off, on or show a heartbeat. You can also set the LED to Out Status. In this mode the LED can either be turned on with a pre-defined threshold or the intensity of the LED can change with the output value (voltage or current).',
                             'de': 'Die Out LED kann an- oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der "Out-Status" angezeigt werden. Falls Out-Status gewählt wird kann die LED entweder ab einem vordefinierten Schwellwert eingeschaltet werden oder ihre Helligkeit anhand des Ausgabewertes (Spannung oder Strom) skaliert werden.'},
         }, {

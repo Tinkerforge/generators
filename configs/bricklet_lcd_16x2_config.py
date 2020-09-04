@@ -350,8 +350,10 @@ com['examples'].append({
 def button_channel(idx):
     return {
             'id': 'Button {}'.format(idx),
-            'label': 'Button {}'.format(idx),
-            'description': 'This channel triggers if button {} is pressed or released'.format(idx),
+            'label': {'en': 'Button {}'.format(idx),
+                      'de': 'Taste {}'.format(idx)},
+            'description': {'en': 'This channel triggers if button {} is pressed or released'.format(idx),
+                            'de': 'Dieser Channel löst aus, wenn die Taste {} gedrückt oder losgelassen wird'.format(idx)},
             'type': 'system.rawbutton',
             'getters': [{
                 'packet': 'Is Button Pressed',
@@ -384,8 +386,9 @@ com['openhab'] = {
             'name': 'Show Cursor',
             'type': 'boolean',
 
-            'label': 'Show Cursor',
-            'description': "Configures if the cursor (shown as '_') should be visible. The cursor position is one character behind the the last text written.",
+            'label': {'en': 'Show Cursor', 'de': 'Cursor anzeigen'},
+            'description': {'en': "Configures if the cursor (shown as '_') should be visible. The cursor position is one character behind the the last text written.",
+                            'de': 'Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist. Die Cursor Position ist ein Zeichen hinter dem zuletzt geschriebenen Text.'}
         },
         {
             'packet': 'Set Config',
@@ -394,10 +397,12 @@ com['openhab'] = {
             'name': 'Show Blinking Cursor',
             'type': 'boolean',
 
-            'label': 'Show Blinking Cursor',
-            'description': 'Configures if the blinking cursor (shown as a blinking block) should be visible. The cursor position is one character behind the the last text written.',
+            'label': {'en': 'Show Blinking Cursor',
+                      'de': 'Blinkenden Cursor anzeigen'},
+            'description': {'en': 'Configures if the blinking cursor (shown as a blinking block) should be visible. The cursor position is one character behind the the last text written.',
+                            'de': 'Konfiguriert ob der blinkende Cursor (angezeigt als blinkender Block) sichtbar ist. Die Cursor Position ist ein Zeichen hinter dem zuletzt geschriebenen Text.'}
         },
-    ] ,
+    ],
     'init_code': """this.setConfig(cfg.showCursor, cfg.showBlinkingCursor);""",
     'channels': [
             {
@@ -440,19 +445,22 @@ com['openhab'] = {
             }
     ] + button_channels,
     'channel_types': [
-        oh_generic_channel_type('Text', 'String', 'Text',
+        oh_generic_channel_type('Text', 'String', {'en': 'Text', 'de': 'Text'},
                     update_style=None,
-                    description="Text to display on the LCD. Command format is [line],[position],[text].\n\nAdditional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly."),
+                    description={'en': "Text to display on the LCD. Command format is [line],[position],[text].\n\nAdditional ',' are handled as part of the text. Unicode characters are converted to the LCD character set if possible. Additionally you can use \\\\x[two hex digits] to use a character of the LCD character set directly.",
+                                 'de': "Text der auf dem LCD angezeigt werden soll. Das Kommandoformat ist [Zeile],[Position],[Text].\n\nWeitere ',' werden als Teil des Texts behandelt. Unicodezeichen werden in den Zeichensatz des LCDs konvertiert, falls möglich. Zusätzlich kann mit \\\\x[zwei Hex-Zahlen] ein Zeichen des LCD-Zeichensatzes direkt benutzt werden."}),
         {
             'id': 'Clear Display',
             'item_type': 'String',
-            'label': 'Clear Display',
-            'description':'Deletes all characters from the display.',
+            'label': {'en': 'Clear Display', 'de': 'Display leeren'},
+            'description': {'en': 'Deletes all characters from the display.',
+                            'de': 'Löscht alle Zeichen auf dem Display.'},
             'command_options': [('Clear', 'CLEAR')]
         },
-        oh_generic_channel_type('Backlight', 'Switch', 'Backlight',
+        oh_generic_channel_type('Backlight', 'Switch', {'en': 'Backlight', 'de': 'Hintergrundbeleuchtung'},
                     update_style=None,
-                    description="Toggles the LCD's backlight"),
+                    description={'en': "Toggles the LCD's backlight.",
+                                 'de': 'Schaltet die Hintergrundbeleuchtung des LCDs an oder aus.'}),
     ],
     'actions': ['Write Line', 'Clear Display',
                 {'fn': 'Backlight On', 'refreshs': ['Backlight']}, {'fn': 'Backlight Off', 'refreshs': ['Backlight']}, 'Is Backlight On',
