@@ -400,7 +400,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Power Statistics',
 'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
-             ('Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere'})],
+             ('Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere'}),
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 10), 'unit': 'Degree'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
