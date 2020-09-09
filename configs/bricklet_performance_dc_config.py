@@ -4,15 +4,15 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# DC Bricklet 2.0 communication config
+# Performance DC Bricklet communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 2156,
-    'name': 'DC V2',
-    'display_name': 'DC 2.0',
+    'name': 'Performance DC',
+    'display_name': 'Performance DC',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'TBD',
