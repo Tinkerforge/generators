@@ -401,7 +401,7 @@ int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us) {
         if(tfp == NULL)
             return TF_E_OK;
 
-        int result = tf_tfp_callback_tick(tfp, 0);
+        int result = tf_tfp_callback_tick(tfp, tf_hal_current_time_us(hal));
         if(result != TF_E_OK)
             return result;
     } while(!tf_hal_deadline_elapsed(hal, deadline_us));
