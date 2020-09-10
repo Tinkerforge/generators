@@ -31,3 +31,6 @@
 - Remove tf_strerror, use tf_hal_strerror instead
 - Rename tf_hal_*_init to tf_hal_create
 - Fix bugs to allow running multiple HAL instances at the same time
+
+2020-09-10: 2.0.0 Beta 8 (<unknown>)
+- Fix bug where callbacks stopped working after 35 minutes
