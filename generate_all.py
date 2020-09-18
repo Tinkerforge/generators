@@ -57,7 +57,7 @@ bindings = []
 
 for d in os.listdir(generators_dir):
     if os.path.isdir(d):
-        if d not in ['configs', 'stubs', '.git', '__pycache__', '.vscode']:
+        if d not in ['configs', 'stubs', '.git', '__pycache__', '.vscode', 'openhab']:
             bindings.append(d)
 
 bindings = sorted(bindings)
