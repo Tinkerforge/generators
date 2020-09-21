@@ -252,6 +252,7 @@ if socket.gethostname() == 'tinkerforge.com':
                 print(' * {0}/{1}/{2}'.format(category, device, model))
 
 print('')
+print("Removing stale files:")
 
 for lang in ['en', 'de']:
     for t in doc_copy:
@@ -265,6 +266,7 @@ for lang in ['en', 'de']:
 
             p = os.path.join("doc", lang, "source", "Software", t[1], x)
             os.remove(os.path.join(start_path, p))
-            print("Removed stale file {}".format(p))
+            print(' * {0}'.format(p))
 
+print('')
 print('>>> Done <<<')
