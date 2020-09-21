@@ -65,6 +65,7 @@ bindings = []
 
 for d in os.listdir(path):
     if os.path.isdir(d):
+        # Remove "if x.endswith('_openHAB.rst') or x.endswith('.rules'):" when removing openhab here
         if not d in ('configs', 'json', 'stubs', '.git', '__pycache__', '.vscode', 'saleae', 'openhab'):
             bindings.append(d)
 
@@ -104,6 +105,9 @@ if socket.gethostname() != 'tinkerforge.com':
 doc_copy = [('_Brick_', 'Bricks'),
             ('_Bricklet_', 'Bricklets'),
             ('IPConnection_', '.')]
+
+to_delete = {'en': {}, 'de': {}}
+
 doc_path = 'doc/{0}/source/Software'
 labview_image_path = 'doc/en/source/Images/Screenshots/LabVIEW'
 
@@ -116,6 +120,8 @@ for lang in ['en', 'de']:
 
         if not os.path.exists(dest_dir):
             os.makedirs(dest_dir)
+
+        to_delete[lang][t[1]] = os.listdir(dest_dir)
 
     for binding in bindings:
         if binding == 'tvpl':
@@ -139,6 +145,10 @@ for lang in ['en', 'de']:
                         dest_path = os.path.join(start_path, labview_image_path)
                     else:
                         dest_path = os.path.join(start_path, doc_path.format(lang), t[1])
+                        try:
+                            to_delete[lang][t[1]].remove(f)
+                        except:
+                            pass
 
                     if files_are_not_the_same(src_file, dest_path):
                         shutil.copy(src_file, dest_path)
@@ -242,4 +252,19 @@ if socket.gethostname() == 'tinkerforge.com':
                 print(' * {0}/{1}/{2}'.format(category, device, model))
 
 print('')
+
+for lang in ['en', 'de']:
+    for t in doc_copy:
+        if t[1] == '.':
+            continue
+        for x in to_delete[lang][t[1]]:
+            if x.endswith('_openHAB.rst') or x.endswith('.rules'):
+                continue
+            if x.endswith('.table'):
+                continue
+
+            p = os.path.join("doc", lang, "source", "Software", t[1], x)
+            os.remove(os.path.join(start_path, p))
+            print("Removed stale file {}".format(p))
+
 print('>>> Done <<<')
