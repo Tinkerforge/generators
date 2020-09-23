@@ -148,7 +148,7 @@ The return values are:
 * Humidity,
 * Wind Speed,
 * Gust Speed,
-* Rain Fall,
+* Rain Fall (accumulated since station power-up),
 * Wind Direction,
 * Battery Low (true if battery is low) and
 * Last Change (seconds since the reception of this data).
@@ -164,7 +164,7 @@ Die Rückgabewerte sind:
 * Luftfeuchte,
 * Windgeschwindigkeit,
 * Windböengeschwindigkeit,
-* Niederschlag,
+* Niederschlag (kumuliert seit dem Einschalten der Station),
 * Windrichtung,
 * Batteriewarnung (true wenn der Batteriestand niedrig ist) und
 * Letzte Änderung (Sekunden seitdem diese Daten empfangen wurden).
