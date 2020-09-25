@@ -177,3 +177,40 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Calibrate ADC',
+'elements': [('Password', 'uint32', 1, 'in'),
+             ('Calibration Started', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get ADC Calibration',
+'elements': [('Calibration Ongoing', 'bool', 1, 'out'),
+             ('Min ADC Value', 'uint16', 1, 'out'),  # -12V
+             ('Max ADC Value', 'uint16', 1, 'out')], # +12V
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
