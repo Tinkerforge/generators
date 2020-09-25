@@ -52,6 +52,7 @@ IPConnection.ERROR_NON_ASCII_CHAR_IN_SECRET = 71;
 IPConnection.ERROR_WRONG_DEVICE_TYPE = 81; // keep in sync with Device.ERROR_WRONG_DEVICE_TYPE
 IPConnection.ERROR_DEVICE_REPLACED = 82; // keep in sync with Device.ERROR_DEVICE_REPLACED
 IPConnection.ERROR_WRONG_RESPONSE_LENGTH = 83;
+IPConnection.ERROR_INT64_NOT_SUPPORTED = 91;
 
 IPConnection.TASK_KIND_CONNECT = 0;
 IPConnection.TASK_KIND_DISCONNECT = 1;
@@ -580,12 +581,12 @@ function IPConnection() {
                         continue;
                     case 'q':
                         var tmpPackedBuffer = buffer_wrapper(8);
-                        tmpPackedBuffer.writeDoubleLE(data[i], 0);
+                        tmpPackedBuffer.writeBigInt64LE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'Q':
                         var tmpPackedBuffer = buffer_wrapper(8);
-                        tmpPackedBuffer.writeDoubleLE(data[i], 0);
+                        tmpPackedBuffer.writeBigUInt64LE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
                     case 'f':
@@ -689,12 +690,12 @@ function IPConnection() {
                             continue;
                         case 'q':
                             var tmpPackedBuffer = buffer_wrapper(8);
-                            tmpPackedBuffer.writeDoubleLE(data[i][j], 0);
+                            tmpPackedBuffer.writeBigInt64LE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'Q':
                             var tmpPackedBuffer = buffer_wrapper(8);
-                            tmpPackedBuffer.writeDoubleLE(data[i][j], 0);
+                            tmpPackedBuffer.writeBigUInt64LE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
                         case 'f':
@@ -777,11 +778,11 @@ function IPConnection() {
                         payloadReadOffset += 4;
                         continue;
                     case 'q':
-                        returnArguments.push(unpackPayload.readDoubleLE(payloadReadOffset));
+                        returnArguments.push(unpackPayload.readBigInt64LE(payloadReadOffset));
                         payloadReadOffset += 8;
                         continue;
                     case 'Q':
-                        returnArguments.push(unpackPayload.readDoubleLE(payloadReadOffset));
+                        returnArguments.push(unpackPayload.readBigUInt64LE(payloadReadOffset));
                         payloadReadOffset += 8;
                         continue;
                     case 'f':
@@ -880,11 +881,11 @@ function IPConnection() {
                             payloadReadOffset += 4;
                             continue;
                         case 'q':
-                            returnSubArray.push(unpackPayload.readDoubleLE(payloadReadOffset));
+                            returnSubArray.push(unpackPayload.readBigInt64LE(payloadReadOffset));
                             payloadReadOffset += 8;
                             continue;
                         case 'Q':
-                            returnSubArray.push(unpackPayload.readDoubleLE(payloadReadOffset));
+                            returnSubArray.push(unpackPayload.readBigUInt64LE(payloadReadOffset));
                             payloadReadOffset += 8;
                             continue;
                         case 'f':
@@ -926,6 +927,19 @@ function IPConnection() {
         if (this.getConnectionState() !== IPConnection.CONNECTION_STATE_CONNECTED) {
             if (sendRequestErrorCB !== undefined) {
                 sendRequestErrorCB(IPConnection.ERROR_NOT_CONNECTED);
+            }
+
+            return;
+        }
+
+        // Support for 64 bit integers exists only in node 10.2 or higher
+        if ((typeof Buffer.alloc(0).writeBigInt64LE !== "function")
+            && ((sendRequestPackFormat.indexOf('q') > -1)
+            || (sendRequestPackFormat.indexOf('Q') > -1)
+            || (sendRequestUnpackFormat.indexOf('q') > -1)
+            || (sendRequestUnpackFormat.indexOf('Q') > -1))) {
+            if (sendRequestErrorCB !== undefined) {
+                sendRequestErrorCB(IPConnection.ERROR_INT64_NOT_SUPPORTED);
             }
 
             return;

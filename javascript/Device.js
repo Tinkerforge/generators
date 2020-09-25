@@ -85,7 +85,17 @@ function Device(that, uid, ipcon, deviceIdentifier, deviceDisplayName) {
             return this.APIVersion;
         };
 
-        this.on = function (callbackID, function_) {
+        this.on = function (callbackID, function_, errorCallback) {
+            // Support for 64 bit integers exists only in node 10.2 or higher
+            if ((typeof Buffer.alloc(0).writeBigInt64LE !== "function")
+                && ((callbackFormats[callbackID].indexOf('q') > -1)
+                || (callbackFormats[callbackID].indexOf('Q') > -1))) {
+                if (errorCallback !== undefined) {
+                    errorCallback(IPConnection.ERROR_INT64_NOT_SUPPORTED);
+                }
+
+                return;
+            }
             this.registeredCallbacks[callbackID] = function_;
         };
 
