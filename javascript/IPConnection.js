@@ -133,7 +133,7 @@ function TFSocket(PORT, HOST, ipcon) {
         }
     };
 
-    this.write = function (data, reset_disconnect_probe = true) {
+    this.write = function (data, reset_disconnect_probe) {
         if (process.browser) {
             // Some browers can't send a nodejs Buffer through a websocket,
             // we copy it into an ArrayBuffer
@@ -228,7 +228,7 @@ function IPConnection() {
     this.disconnectProbe = function () {
         if (this.socket !== undefined) {
             try {
-                this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE), reset_disconnect_probe = false);
+                this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE), false);
             }
             catch(e) {
                 // Initiating a normal disconnect will ensure autoreconnect decision and connection management
@@ -1020,7 +1020,7 @@ function IPConnection() {
             }
         }
 
-        this.socket.write(sendRequestPacket, reset_disconnect_probe = true);
+        this.socket.write(sendRequestPacket, true);
 
         if (!responseExpected && sendRequestReturnCB !== undefined) {
             eval('sendRequestReturnCB();');
@@ -1396,7 +1396,7 @@ function IPConnection() {
             return;
         }
 
-        this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE), reset_disconnect_probe = true);
+        this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE), true);
     };
 
     this.getRandomUInt32 = function (returnCallback) {
