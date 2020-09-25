@@ -88,20 +88,16 @@ com['constant_groups'].append({
               ('Unconfigured', 8)]
 })
 
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
 'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
-             ('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
-             ('Resistance', 'uint32', 2, 'out'),
-             ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
-             ('GPIO', 'bool', 4, 'out'),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
-             ('Jumper Configuration', 'uint8', 1, 'out', {'constant_group': 'Jumper Configuration'}),
-             ('Has Lock Switch', 'bool', 1, 'out'),
-             ('Uptime', 'uint32', 1, 'out')],
+             ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -117,8 +113,53 @@ TODO
 
 com['packets'].append({
 'type': 'function',
+'name': 'Get Hardware Configuration',
+'elements': [('Jumper Configuration', 'uint8', 1, 'out', {'constant_group': 'Jumper Configuration'}),
+             ('Has Lock Switch', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Low Level State',
+'elements': [('Low Level Mode Enabled', 'bool', 1, 'out'),
+             ('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
+             ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
+             ('ADC Values', 'uint16', 2, 'out'),
+             ('Voltages', 'int16', 3, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # pe-cp, pe-pp, high voltage pe-cp
+             ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}),
+             ('GPIO', 'bool', 5, 'out'), # XMC_GPIO_GetInput(EVSE_INPUT_GP_PIN) | (XMC_GPIO_GetInput(EVSE_OUTPUT_GP_PIN) << 1) | (XMC_GPIO_GetInput(EVSE_MOTOR_INPUT_SWITCH_PIN) << 2) | (XMC_GPIO_GetInput(EVSE_RELAY_PIN) << 3) | (XMC_GPIO_GetInput(EVSE_MOTOR_FAULT_PIN) << 4)
+             ('Motor Direction', 'uint16', 1, 'out'),
+             ('Motor Duty Cycle', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
 'name': 'Set Low Level Output',
-'elements': [('Low Level Mode Enabled', 'bool', 1, 'in'),
+'elements': [('Low Level Mode Enabled', 'bool', 1, 'in'), # Make persistent
              ('CP Duty Cycle', 'uint16', 1, 'in'), # 1 khz
              ('Motor Direction', 'bool', 1, 'in'),
              ('Motor Duty Cycle', 'uint16', 1, 'in'),
@@ -136,31 +177,3 @@ TODO
 """
 }]
 })
-
-com['packets'].append({
-'type': 'function',
-'name': 'Get Low Level Status',
-'elements': [('Low Level Mode Enabled', 'bool', 1, 'out'),
-             ('CP Duty Cycle', 'uint16', 1, 'out'),
-             ('Motor Direction', 'uint16', 1, 'out'),
-             ('Motor Duty Cycle', 'uint16', 1, 'out'),
-             ('Relay Enabled', 'uint16', 1, 'out'),
-             ('CP Voltage', 'int16', 1, 'out'), # mV
-             ('PP Voltage', 'int16', 1, 'out'), # mv
-             ('AC Input', 'bool', 2, 'out'),
-             ('GP Input', 'bool', 1, 'out'),
-             ('Motor Fault', 'bool', 1, 'out'),
-             ('Motor Switch', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
