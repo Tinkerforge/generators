@@ -50,17 +50,16 @@ com['packets'].append({
 """
 This function is equivalent to the normal enumerate function.
 It is used to trigger the initial enumeration of CoMCU-Bricklets.
-See :cb:`Enumerate`.
+See :cb:`Enumerate` callback.
 """,
 'de':
 """
 Diese Funktion ist äquivalent zur normalen Enumerate-Funktion.
 Sie wird verwendet, um die initiale Enumerierung von CoMCU-Bricklets auszulösen.
-Siehe :cb:`Enumerate`.
+Siehe :cb:`Enumerate` Callback.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'callback',
