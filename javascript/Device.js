@@ -87,7 +87,7 @@ function Device(that, uid, ipcon, deviceIdentifier, deviceDisplayName) {
 
         this.on = function (callbackID, function_, errorCallback) {
             // Support for 64 bit integers exists only in node 10.2 or higher
-            if ((typeof Buffer.alloc(0).writeBigInt64LE !== "function")
+            if ((typeof BigInt == undefined)
                 && ((callbackFormats[callbackID].indexOf('q') > -1)
                 || (callbackFormats[callbackID].indexOf('Q') > -1))) {
                 if (errorCallback !== undefined) {

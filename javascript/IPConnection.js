@@ -933,7 +933,7 @@ function IPConnection() {
         }
 
         // Support for 64 bit integers exists only in node 10.2 or higher
-        if ((typeof Buffer.alloc(0).writeBigInt64LE !== "function")
+        if ((typeof BigInt == undefined)
             && ((sendRequestPackFormat.indexOf('q') > -1)
             || (sendRequestPackFormat.indexOf('Q') > -1)
             || (sendRequestUnpackFormat.indexOf('q') > -1)
@@ -1611,21 +1611,55 @@ function IPConnection() {
     // as described here: https://nodejs.org/en/docs/guides/buffer-constructor-deprecation
     // Fallback to buffer constructor to be compatible to v0.10.x.
     function buffer_wrapper(size_or_array, encoding) {
+        let result = null;
         if (typeof size_or_array === 'number') {
             if (Buffer.alloc) {
-                return Buffer.alloc(size_or_array);
+                result = Buffer.alloc(size_or_array);
             }
-
-            var buf = new Buffer(size_or_array);
-            buf.fill(0);
-            return buf;
+            else {
+                var buf = new Buffer(size_or_array);
+                buf.fill(0);
+                result = buf;
+            }
         } else {
             if (Buffer.from && Buffer.from !== Uint8Array.from) {
-                return Buffer.from(size_or_array, encoding);
+                result = Buffer.from(size_or_array, encoding);
+            } else {
+                result = new Buffer(size_or_array, encoding);
             }
-
-            return new Buffer(size_or_array, encoding);
         }
+
+        result.writeBigInt64LE = function(value, offset) {
+            for(let i = 0; i < 8; ++i) {
+                this[offset + i] = Number(value & 0xFFn);
+                value >>= 8n;
+            }
+        }
+
+        result.writeBigUInt64LE = function(value, offset) {
+            for(let i = 0; i < 8; ++i) {
+                this[offset + i] = Number(value & 0xFFn);
+                value >>= 8n;
+            }
+        }
+
+        result.readBigInt64LE = function(offset) {
+            let result = BigInt(0);
+            for(let i = 0; i < 7; ++i) {
+                result |= BigInt(this[offset + i]) << BigInt((i * 8));
+            }
+            return (BigInt(this[offset + 7] << 24) << 32n) + result;
+        }
+
+        result.readBigUInt64LE = function(offset) {
+            let result = BigInt(0);
+            for(let i = 0; i < 8; ++i) {
+                result |= BigInt(this[offset + i]) << BigInt((i * 8));
+            }
+            return result;
+        }
+
+        return result;
     }
 }
 
