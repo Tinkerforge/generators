@@ -200,8 +200,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get ADC Calibration',
 'elements': [('Calibration Ongoing', 'bool', 1, 'out'),
-             ('Min ADC Value', 'uint16', 1, 'out'),  # -12V
-             ('Max ADC Value', 'uint16', 1, 'out')], # +12V
+             ('Min Value', 'int16', 1, 'out'),  # -12V
+             ('Max Value', 'int16', 1, 'out')], # +12V
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
