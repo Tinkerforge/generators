@@ -9,7 +9,7 @@
 from generators.configs.openhab_commonconfig import *
 
 # see COUNTER_{MIN,MAX}_VALUE in software/src/counter.h
-COUNTER_RANGE = (((2 ** 16) - 1) * (-(2 ** 31)), ((2 ** 16) - 1) * ((2 ** 31) - 1) + ((2 ** 16) - 1) - 1)
+COUNTER_RANGE = (-(2**47), 2**47 - 1)
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
