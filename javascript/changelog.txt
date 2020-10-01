@@ -168,6 +168,6 @@
 2020-06-09: 2.1.29 (4b7c531)
 - Fix authenticate function
 
-2020-10-01: 2.1.30 (<unknown>)
+2020-10-01: 2.1.30 (69423bd)
 - Restore ECMAScript 5 compatibility
 - Add 64-bit integer support using BigInt
