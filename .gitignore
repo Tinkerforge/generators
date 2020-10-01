@@ -24,6 +24,7 @@ delphi/*.o
 delphi/*.ppu
 javascript/Tinkerforge.js
 javascript/tinkerforge-*.tgz
+javascript/browserify
 perl/Tinkerforge-*.tar.gz
 ruby/tinkerforge-*.gem
 tvpl/build_deploy_tvpl.py
