@@ -1611,7 +1611,7 @@ function IPConnection() {
     // as described here: https://nodejs.org/en/docs/guides/buffer-constructor-deprecation
     // Fallback to buffer constructor to be compatible to v0.10.x.
     function buffer_wrapper(size_or_array, encoding) {
-        let result = null;
+        var result = null;
         if (typeof size_or_array === 'number') {
             if (Buffer.alloc) {
                 result = Buffer.alloc(size_or_array);
@@ -1630,31 +1630,31 @@ function IPConnection() {
         }
 
         result.writeBigInt64LE = function(value, offset) {
-            for(let i = 0; i < 8; ++i) {
-                this[offset + i] = Number(value & 0xFFn);
-                value >>= 8n;
+            for(var i = 0; i < 8; ++i) {
+                this[offset + i] = Number(value & BigInt(0xFF));
+                value >>= BigInt(8);
             }
         }
 
         result.writeBigUInt64LE = function(value, offset) {
-            for(let i = 0; i < 8; ++i) {
-                this[offset + i] = Number(value & 0xFFn);
-                value >>= 8n;
+            for(var i = 0; i < 8; ++i) {
+                this[offset + i] = Number(value & BigInt(0xFF));
+                value >>= BigInt(8);
             }
         }
 
         result.readBigInt64LE = function(offset) {
-            let result = BigInt(0);
-            for(let i = 0; i < 7; ++i) {
-                result |= BigInt(this[offset + i]) << BigInt((i * 8));
+            var result = BigInt(0);
+            for(var i = 0; i < 7; ++i) {
+                result |= BigInt(this[offset + i]) << BigInt(i * 8);
             }
-            return (BigInt(this[offset + 7] << 24) << 32n) + result;
+            return (BigInt(this[offset + 7] << 24) << BigInt(32)) + result;
         }
 
         result.readBigUInt64LE = function(offset) {
-            let result = BigInt(0);
-            for(let i = 0; i < 8; ++i) {
-                result |= BigInt(this[offset + i]) << BigInt((i * 8));
+            var result = BigInt(0);
+            for(var i = 0; i < 8; ++i) {
+                result |= BigInt(this[offset + i]) << BigInt(i * 8);
             }
             return result;
         }

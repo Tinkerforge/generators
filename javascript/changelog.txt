@@ -169,4 +169,5 @@
 - Fix authenticate function
 
 2020-09-30: 2.1.30 (<unknown>)
+- Restore ECMAScript 5 compatibility
 - Fix 64-bit integer support
