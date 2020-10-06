@@ -80,27 +80,20 @@ com['constant_groups'].append({
 })
 
 com['constant_groups'].append({
-'name': 'Buffer',
-'type': 'uint8',
-'constants': [('Anything', 0), # any        buffer (currently not used)
-              ('Prio1', 1),    # priority 1 buffer
-              ('Prio2', 2),    # priority 2 buffer
-              ('Prio3', 3),    # priority 3 buffer
-              ('FIFO',  4)]    # FIFO       buffer
-})
-
-com['constant_groups'].append({
 'name': 'SDI',
 'type': 'uint8',
-'constants': [('Data',     0), # SD bits used for data
-              ('Address',  1)] # SD bits used for label extension
+'constants': [('SDI0',     0), # SDI bits used for address extension, SDI 0
+              ('SDI1',     1), # SDI bits used for address extension, SDI 0
+              ('SDI2',     2), # SDI bits used for address extension, SDI 0
+              ('SDI3',     3), # SDI bits used for address extension, SDI 0
+              ('SDI Data', 4)] # SDI bits used for data
 })
 
 com['constant_groups'].append({
 'name': 'Parity',
 'type': 'uint8',
-'constants': [('Transparent', 0),  # parity bit used for data
-              ('Parity',      1)]  #                 for parity
+'constants': [('Parity Data', 0),  # parity bit is used for data or parity provided by user
+              ('Parity Auto', 1)]  # parity bit is set automatically
 })
 
 com['constant_groups'].append({
@@ -113,39 +106,37 @@ com['constant_groups'].append({
 com['constant_groups'].append({
 'name': 'Channel Mode',
 'type': 'uint8',
-'constants': [('Uninit',  0),   # uninitialized
-              ('Passive', 1),   # initialized, but output stage in HI-Z
-              ('Active',  2),   # initialized, ready to receive / ready for direct transmit
-              ('Filter',  3),   # RX channels only: active and filtering on configured labels
-              ('Running', 4)]   # TX channels only: active and scheduler running
+'constants': [('Passive', 0), # initialized, but output stage in HI-Z
+              ('Active',  1), # initialized, ready to receive / ready for direct transmit
+              ('Run',     2)] # TX channels only: active and scheduler running
 })
 
 com['constant_groups'].append({
 'name': 'Frame Status',
 'type': 'uint8',
-'constants': [('Timeout', 0),   # frame is overdue (frame data are last data received)
-              ('Update',  1)]   # new frame received
+'constants': [('Update',  0),   # frame is overdue (frame data are last data received)
+              ('Timeout', 1)]   # new or updated frame received
 })
 
 com['constant_groups'].append({
 'name': 'Scheduler Job',
 'type': 'uint8',
-'constants': [('Mute',   0),    # no     transmit
-              ('Single', 1),    # single transmit (is set to mute after the transmit)
-              ('Cyclic', 2)]    # cyclic transmit
+'constants': [('Empty',  0),    # no     transmit, no dwell
+              ('Mute',   1),    # no     transmit, do dwell
+              ('Single', 2),    # send frame once       and dwell
+              ('Cyclic', 3)]    # send frame repeatedly and dwell
 })
 
 com['packets'].append({
 'type': 'function',
 'name': 'Debug Get Discretes',
 'elements': [('RX Discretes', 'uint16', 1, 'out', {'range': (0, 1023)}),
-             ('TX Discretes', 'uint16', 1, 'out', {'range': (0, 3)})],
+             ('TX Discretes', 'uint16', 1, 'out', {'range': (0,    3)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Debug function to read the discrete signals from the A429 chip.
-
 RX Discretes Bit   9: MB2-1   - pending frame in RX2, PRIO 1
                    8: MB2-2   -                            2
                    7: MB2-3   -                            3
@@ -156,7 +147,6 @@ RX Discretes Bit   9: MB2-1   - pending frame in RX2, PRIO 1
                    2: MB1-3   -                            3
                    1: R1FLAG  -                       FIFO
                    0: R1INT   -                       FIFO
-
 TX Discretes Bit 2-7: unused
                    1: TFULL   - TX buffer full
                    0: TEMPTY  - TX buffer empty
@@ -180,7 +170,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Debug function to read from a SPI register of the A429 chip.
+Debug function to execute a direct SPI read access on the A429 chip.
 """,
 'de':
 """
@@ -201,7 +191,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Debug function to write to a SPI register of the A429 chip.
+Debug function to execute a direct SPI write access on the A429 chip.
 """,
 'de':
 """
@@ -212,38 +202,40 @@ Debug function to write to a SPI register of the A429 chip.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Capabilities',
-'elements': [('RX Channels',        'uint8',  1, 'out', {'range': (0, 16)}),
-             ('RX Filter Frames',   'uint16', 1, 'out'),
-             ('TX Channels',        'uint8',  1, 'out', {'range': (0,  8)}),
-             ('TX Schedule Slots',  'uint16', 1, 'out'),
-             ('TX Schedule Frames', 'uint16', 1, 'out')],
+'elements': [('RX Channels',         'uint8',  1, 'out', {'range': (0, 16)}),
+             ('RX Filter Frames',    'uint16', 1, 'out'),
+             ('TX Channels',         'uint8',  1, 'out', {'range': (0,  8)}),
+             ('TX Schedule Entries', 'uint16', 1, 'out'),
+             ('TX Schedule Frames',  'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Get the number of RX and TX channels available on this device,
-plus the max number of scheduler slots and scheduled frames.
+Get the number of RX and TX channels available on this bricklet,
+along with the maximum number of available RX frame filters and
+TX scheduler entries and scheduled frames.
 """,
 'de':
 """
-
 """
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Heartbeat Callback Configuration',
-'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Period',  'uint8', 1, 'in',  {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
-             ('Value Has To Change', 'bool',  1, 'in', {'default': False})],
+'elements': [('Period',              'uint8',  1, 'in', {'scale': (1, 60), 'unit': 'Second', 'default': 0}),
+             ('Value Has To Change', 'bool',   1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-The period is the period with which the :cb:`Heartbeat` callback is triggered periodically.
-A value of 0 turns the callback off.
+Set the bricklet heartbeat which reports the statistics counter for
+processed frames and lost frames.
+The period is the period with which the :cb:`Heartbeat` callback
+is triggered periodically. A value of 0 turns the callback off.
+When 'Value Has To Change' is enabled, the heartbeat will only be
+sent if there is a change in the statistics numbers.
 """,
 'de':
 """
@@ -254,13 +246,13 @@ A value of 0 turns the callback off.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Heartbeat Callback Configuration',
-'elements': [('Channel', 'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Period',  'uint8', 1, 'out',  {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
+'elements': [('Period',              'uint8', 1, 'out', {'scale': (1, 60), 'unit': 'Second', 'default': 0}),
              ('Value Has To Change', 'bool',  1, 'out', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
+Get the configuration of the bricklet heartbeat reporting the satistics counters.
 """,
 'de':
 """
@@ -271,17 +263,16 @@ com['packets'].append({
 com['packets'].append({
 'type': 'callback',
 'name': 'Heartbeat',
-'elements': [('Channel',          'uint8',  1, 'out', {'constant_group': 'Channel'}),
-             ('Sequence Number',  'uint8',  1, 'out'),
-             ('Channel Mode',     'uint8',  1, 'out', {'constant_group': 'Channel Mode'}),
-             ('Frames Processed', 'uint16', 1, 'out'),
-             ('Frames Lost',      'uint16', 1, 'out')],
+'elements': [('Sequence Number',  'uint8',  1, 'out'),
+             ('Frames Processed', 'uint16', 3, 'out'),
+             ('Frames Lost',      'uint16', 3, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
 This callback is triggered periodically according to the configuration set by
-:func:`Set Heartbeat Callback Configuration`.
+:func:`Set Heartbeat Callback Configuration`. It reports the statistics counters
+for processed frames and lost frames for all TX and RX channels.
 """,
 'de':
 """
@@ -293,15 +284,14 @@ This callback is triggered periodically according to the configuration set by
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel Configuration',
-'elements': [('Channel',   'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Parity',    'uint8',  1, 'in',  {'constant_group': 'Parity'}),
-             ('Speed',     'uint8',  1, 'in',  {'constant_group': 'Speed'})],
+'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+             ('Parity',  'uint8',  1, 'in',  {'constant_group': 'Parity' }),
+             ('Speed',   'uint8',  1, 'in',  {'constant_group': 'Speed'  })],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Configure the selected channel:
-
+Set the physical properties of the selected channel:
  * Channel:   channel to configure
  * Parity:    'parity' for automatic parity adjustment, 'transparent' for transparent mode
  * Speed:     'hs' for high speed (100 kbit/s), 'ls' for low speed (12.5 kbit/s)
@@ -315,14 +305,14 @@ Configure the selected channel:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel Configuration',
-'elements': [('Channel',   'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Parity',    'uint8',  1, 'out',  {'constant_group': 'Parity'}),
-             ('Speed',     'uint8',  1, 'out',  {'constant_group': 'Speed'})],
+'elements': [('Channel', 'uint8',  1, 'in',   {'constant_group': 'Channel'}),
+             ('Parity',  'uint8',  1, 'out',  {'constant_group': 'Parity' }),
+             ('Speed',   'uint8',  1, 'out',  {'constant_group': 'Speed'  })],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-
+Get the physical properties of the selected channel.
 """,
 'de':
 """
@@ -339,9 +329,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Set the channel to active or passive mode. In passive mode, the TX channel output becomes high-Z.
-This may happen while still frames are sent from the TX FIFO, effectively trashing these frames.
-RX channels are not affected by this setting.
+Set the operating mode of the selected channel:
+ * passive: the TX channel stops transmitting and becomes high-Z, the RX channel will not receive frames
+ * active:  the TX channel is ready to send frames and the RX channel will receive frames
+ * filtering: RX channels only - the bricklet will only forward frames that match with the set filters
+ * running:   TX channels only - the scheduler will run and transmit labels according to the set schedule
 """,
 'de':
 """
@@ -352,20 +344,13 @@ RX channels are not affected by this setting.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel Mode',
-'elements': [('Channel',   'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+'elements': [('Channel',   'uint8',  1, 'in',   {'constant_group': 'Channel'}),
              ('Mode',      'uint8',  1, 'out',  {'constant_group': 'Channel Mode'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Set the channel to active or passive mode. In passive mode, the TX channel output becomes high-Z.
-This may happen while still frames are sent from the TX FIFO, effectively trashing these frames.
-RX channels are not affected by this setting.
-
-Returns an error if:
- * the selected channel is not a valid channel,
- * the selected channel is not initialized yet,
- * the mode is neither 'active' nor 'passive'.
+Get the operating mode of the selected channel.
 """,
 'de':
 """
@@ -382,7 +367,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Disables the priority receive buffers of the selected channel.
+Disable the priority filters on the given channel(s).
 """,
 'de':
 """
@@ -400,7 +385,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Set the labels for the priority receive buffers of the selected channel.
+Set the labels for the priority receive filters in the given channel(s).
 """,
 'de':
 """
@@ -418,7 +403,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Read the labels configured on the priority receive buffers of the selected channel.
+Read the labels configured for the priority receive filters on the selected channel.
 """,
 'de':
 """
@@ -428,13 +413,13 @@ Read the labels configured on the priority receive buffers of the selected chann
 
 com['packets'].append({
 'type': 'function',
-'name': 'Clear RX Labels',
+'name': 'Clear All RX Filters',
 'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Clear all RX label configurations for the given channel(s).
+Clear all RX filters in the given channel(s).
 """,
 'de':
 """
@@ -442,51 +427,17 @@ Clear all RX label configurations for the given channel(s).
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
-'name': 'Set RX Label Configuration',
-'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Label',   'uint8',  1, 'in',),
-             ('SDI',     'uint8',  1, 'in',  {'constant_group': 'SDI'}),
-             ('Timeout', 'uint16', 1, 'in',  {'scale': (1, 100), 'unit': 'Second', 'default': 0})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Set the function of the SDI bits and the timeout for a specific label on the selected channel.
-The timeout value is in multiples of 10 ms, a timeout value of zero disables the timeout.
-
-Returns an error if:
- * the selected channel is not a valid channel
- * the value for SDI     is not valid
- * the value for timeout is not valid (> 250)
-""",
-'de':
-"""
-"""
-}]
-})
-
-
-com['packets'].append({
-'type': 'function',
-'name': 'Get RX Label Configuration',
+'name': 'Clear RX Filter',
 'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'}),
              ('Label',   'uint8',  1, 'in'),
-             ('SDI',     'uint8',  1, 'out', {'constant_group': 'SDI'}),
-             ('Timeout', 'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Second', 'default': 0})],
+             ('SDI',     'uint8',  1, 'in',  {'constant_group': 'SDI'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Set the function of the SDI bits and the timeout for a specific label on the selected channel.
-The timeout value is in multiples of 10 ms, a timeout value of zero disables the timeout.
-
-Returns an error if:
- * the selected channel is not a valid channel
- * the value for SDI     is not valid
- * the value for timeout is not valid (> 250)
+Clear one RX filter in the given channel(s).
 """,
 'de':
 """
@@ -496,16 +447,61 @@ Returns an error if:
 
 com['packets'].append({
 'type': 'function',
-'name': 'Read Next Frame',
-'elements': [('Channel', 'uint8',  1, 'in', {'constant_group': 'Channel'}),
-             ('Buffer',  'uint8',  1, 'in', {'constant_group': 'Buffer' }),
-             ('Status',  'bool',  1,  'out'),
-             ('Frame',   'uint32', 1, 'out')],
+'name': 'Set RX Filter',
+'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+             ('Label',   'uint8',  1, 'in',),
+             ('SDI',     'uint8',  1, 'in',  {'constant_group': 'SDI'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Do a direct read of a A429 frame from the selected receive channel and buffer.
+Set a RX filter configuration for the selected channel(s):
+ * Label: Arinc429 label
+ * SDI:   when set to 'Address', 4 filters will be created, one for each possible SDI value
+ * Timeout: time span with no new frame received after which a timeout message will be generated.
+            A timeout value of zero disables the timeout.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get RX Filter',
+'elements': [('Channel',    'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+             ('Label',      'uint8',  1, 'in'),
+             ('SDI',        'uint8',  1, 'in',  {'constant_group': 'SDI'}),
+             ('Configured', 'bool',   1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Get the configuration of a RX filter.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Read Frame',
+'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+             ('Label',   'uint8',  1, 'in'),
+             ('SDI',     'uint8',  1, 'in',  {'constant_group': 'SDI'}),
+             ('Status',  'bool',   1, 'out'),
+             ('Frame',   'uint32', 1, 'out'),
+             ('Age',     'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second', 'default': 0})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Do a direct read from one of the RX channels and receive buffers. If a new frame
+was received 'Status' will return as 'true', else it will have a vlaue of 'false'
+and the last frame received will be repeated.
 """,
 'de':
 """
@@ -516,17 +512,17 @@ Do a direct read of a A429 frame from the selected receive channel and buffer.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Receive Frame Callback Configuration',
-'elements': [('Channel',             'uint8', 1, 'in', {'constant_group': 'Channel'}),
-             ('Period',              'uint8', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
-             ('Value Has To Change', 'bool',  1, 'in', {'default': False})],
+'name': 'Set RX Callback Configuration',
+'elements': [('Channel',             'uint8',  1, 'in', {'constant_group': 'Channel'}),
+             ('Enabled',             'bool',   1, 'in', {'default': False}),
+             ('Value Has To Change', 'bool',   1, 'in', {'default': False}),
+             ('Timeout',             'uint16', 1, 'in', {'scale': (1, 60000), 'unit': 'Second', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Enables or disables the generation of callbacks on receiving A429 frames.
-
-If the `value has to change`-parameter is set to TRUE, the callback is only
+Enable or disable the generation of callbacks on receiving A429 frames.
+If the `value has to change` parameter is set to TRUE, the callback is only
 triggered when the frame data have changed, else it is triggered on every
 reception of a new frame.
 """,
@@ -538,44 +534,38 @@ reception of a new frame.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Receive Frame Callback Configuration',
-'elements': [('Channel',             'uint8', 1, 'in',  {'constant_group': 'Channel'}),
-             ('Period',              'uint8', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
-             ('Value Has To Change', 'bool',  1, 'out', {'default': False})],
+'name': 'Get RX Callback Configuration',
+'elements': [('Channel',             'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+             ('Enabled',             'bool',   1, 'out', {'default': False}),
+             ('Value Has To Change', 'bool',   1, 'out', {'default': False}),
+             ('Timeout',             'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second', 'default': 1000})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Enables or disables the generation of callbacks on receiving A429 frames.
-
-If the `value has to change`-parameter is set to TRUE, the callback is only
-triggered when the frame data have changed, else it is triggered on every
-reception of a new frame.
+Get the configuration of the RX frame callback.
 """,
 'de':
 """
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Receive Frame',
-'elements': [('Channel',      'uint8',  1, 'out', {'constant_group': 'Channel'}),
-             ('Buffer',       'uint8',  1, 'out', {'constant_group': 'Buffer'}),
-             ('Frame Status', 'uint8',  1, 'out', {'constant_group': 'Frame Status'}),
-             ('Frame',        'uint32', 1, 'out'),
-             ('Age',          'uint8',  1, 'out', {'range':  (0, 250)})],
+'name': 'Frame Message',
+'elements': [('Channel',         'uint8',  1, 'out', {'constant_group': 'Channel'}),
+             ('Sequence Number', 'uint8',  1, 'out'),
+             ('Frame Status',    'uint8',  1, 'out', {'constant_group': 'Frame Status'}),
+             ('Frame',           'uint32', 1, 'out'),
+             ('Age',             'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
-This callback is triggered according to the configuration set by :func:`Set Receive Frame Callback Configuration`.
-
+This callback is triggered according to the configuration set by :func:`Set RX Callback Configuration`.
 The parameter 'Frame Status' indicates if a new frame was received, or if a timeout encountered.
-The timeout can be configured with the :func:'Configure Label', default is timeout disabled.
-The other :word:`parameters` are the same as with :func:`Read Next Frame`.
+The timeout can be configured with the :func:'Set RX Filter', default is timeout disabled.
 """,
 'de':
 """
@@ -592,12 +582,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Immediate write of an A429 frame to the selected transmit channel.
-
-Returns an error if:
- * the selected channel is not a valid TX channel,
- * the selected channel is not configured yet,
- * the transmit queue   is full.
+Do an immediate transmit of an A429 frame on the selected transmit channel.
 """,
 'de':
 """
@@ -605,20 +590,40 @@ Returns an error if:
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Write Frame Scheduled',
-'elements': [('Frame Index', 'uint16', 1, 'in'),
+'elements': [('Channel',     'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+             ('Frame Index', 'uint16', 1, 'in'),
              ('Frame',       'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Set or update the value of a frame that is transmitted by the scheduler.
-
+Set or update a frame that is transmitted by the scheduler.
  * Frame Index: index number of the frame (the scheduler picks the frames by this index number)
  * Frame:       the A429 frame itself
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Clear Schedule Entries',
+'elements': [('Channel',          'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+             ('Task Index First', 'uint16', 1, 'in'),
+             ('Task Index Last',  'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Clear a range of TX scheduler entries.
+ * Channel:   selected TX channel
+ * First:     first schedule entry to be cleared
+ * Last:      last  schedule entry to be cleared
 """,
 'de':
 """
@@ -631,26 +636,20 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Schedule Entry',
 'elements': [('Channel',     'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Slot Index',  'uint16', 1, 'in'),
+             ('Task Index',  'uint16', 1, 'in'),
              ('Job',         'uint8',  1, 'in',  {'constant_group': 'Scheduler Job'}),
              ('Frame Index', 'uint16', 1, 'in'),
-             ('Dwell Time',  'uint8',  1, 'in',  {'scale': (1, 1000), 'unit': 'Second', 'default': 10})],
+             ('Dwell Time',  'uint8',  1, 'in',  {'scale': (1, 250), 'unit': 'Second', 'default': 10})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Program a TX schedule entry for the selected TX channel:
-
+Set a TX scheduler entry:
  * Channel:     selected TX channel
- * Slot_Index:  schedule entry
- * Job:         activity assigned to this job
- * Frame_Index: frame    assigned to this slot (by frame index)
- * Dwell_Time:   time in ms to wait before executing the next slot
-
-Returns an error if:
- * the selected channel is not a valid TX channel,
- * the slot  index number is outside of the valid range.
- * the frame index number is outside of the valid range.
+ * Task Index:   schedule entry index
+ * Job:         activity assigned to this entry
+ * Frame Index: frame    assigned to this slot by frame index
+ * Dwell_Time:  time to wait before executing the next job
 """,
 'de':
 """
@@ -663,55 +662,19 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Schedule Entry',
 'elements': [('Channel',     'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Slot Index',  'uint16', 1, 'in'),
+             ('Job Index',   'uint16', 1, 'in'),
              ('Job',         'uint8',  1, 'out', {'constant_group': 'Scheduler Job'}),
              ('Frame Index', 'uint16', 1, 'out'),
              ('Frame',       'uint32', 1, 'out'),
-             ('Dwell Time',  'uint8',  1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 10})],
+             ('Dwell Time',  'uint8',  1, 'out', {'scale': (1, 250), 'unit': 'Second', 'default': 10})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Read a TX schedule entry.
-
- * Channel:     selected TX channel
- * Slot Index:  schedule entry (0..num_tx_slots-1)
- * Job:         activity done in this job
- * Frame Index: index of the frame assigned to this slot
- * Frame:       value of the frame assigned to this slot
- * Dwell Time:  time in ms waited before the next slot is executed
+Get a TX scheduler entry.
 """,
 'de':
 """
 """
 }]
 })
-
-
-com['packets'].append({
-'type': 'function',
-'name': 'Clear Schedule Entries',
-'elements': [('Channel',          'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Slot Index First', 'uint16', 1, 'in'),
-             ('Slot Index Last',  'uint16', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Clear a range of TX schedule entries.
-
- * Channel:   selected TX channel
- * First:     first schedule entry (0..num_tx_slots-1) to be cleared
- * Last:      last  schedule entry (0..num_tx_slots-1) to be cleared
-
-Returns an error if:
- * the selected channel is not a valid TX channel,
- * the selected slot numbers are outside of the valid range,
- * the slot numbers are in wrong order (last < first)
-""",
-'de':
-"""
-"""
-}]
-})
-
