@@ -203,7 +203,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Capabilities',
 'elements': [('RX Channels',         'uint8',  1, 'out', {'range': (0, 16)}),
-             ('RX Filter Frames',    'uint16', 1, 'out'),
+             ('RX Frame Filters',    'uint16', 1, 'out'),
              ('TX Channels',         'uint8',  1, 'out', {'range': (0,  8)}),
              ('TX Schedule Entries', 'uint16', 1, 'out'),
              ('TX Schedule Frames',  'uint16', 1, 'out')],
@@ -263,7 +263,7 @@ Get the configuration of the bricklet heartbeat reporting the satistics counters
 com['packets'].append({
 'type': 'callback',
 'name': 'Heartbeat',
-'elements': [('Sequence Number',  'uint8',  1, 'out'),
+'elements': [('Seq Number',       'uint8',  1, 'out'),
              ('Frames Processed', 'uint16', 3, 'out'),
              ('Frames Lost',      'uint16', 3, 'out')],
 'since_firmware': [1, 0, 0],
@@ -494,7 +494,7 @@ com['packets'].append({
              ('SDI',     'uint8',  1, 'in',  {'constant_group': 'SDI'}),
              ('Status',  'bool',   1, 'out'),
              ('Frame',   'uint32', 1, 'out'),
-             ('Age',     'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second', 'default': 0})],
+             ('Age',     'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second', 'default': 0})],  # TODO 1 - 60.000 milli-seconds
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -516,7 +516,7 @@ com['packets'].append({
 'elements': [('Channel',             'uint8',  1, 'in', {'constant_group': 'Channel'}),
              ('Enabled',             'bool',   1, 'in', {'default': False}),
              ('Value Has To Change', 'bool',   1, 'in', {'default': False}),
-             ('Timeout',             'uint16', 1, 'in', {'scale': (1, 60000), 'unit': 'Second', 'default': 1000})],
+             ('Timeout',             'uint16', 1, 'in', {'scale': (1, 60000), 'unit': 'Second', 'default': 1000})],   # TODO 1 - 60.000 milli-seconds
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -538,7 +538,7 @@ com['packets'].append({
 'elements': [('Channel',             'uint8',  1, 'in',  {'constant_group': 'Channel'}),
              ('Enabled',             'bool',   1, 'out', {'default': False}),
              ('Value Has To Change', 'bool',   1, 'out', {'default': False}),
-             ('Timeout',             'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second', 'default': 1000})],
+             ('Timeout',             'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second', 'default': 1000})],  # TODO 1 - 60.000 milli-seconds
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -555,10 +555,10 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Frame Message',
 'elements': [('Channel',         'uint8',  1, 'out', {'constant_group': 'Channel'}),
-             ('Sequence Number', 'uint8',  1, 'out'),
+             ('Seq Number',      'uint8',  1, 'out'),
              ('Frame Status',    'uint8',  1, 'out', {'constant_group': 'Frame Status'}),
              ('Frame',           'uint32', 1, 'out'),
-             ('Age',             'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second'})],
+             ('Age',             'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second'})],  # TODO 1 - 60.000 milli-seconds
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -639,7 +639,7 @@ com['packets'].append({
              ('Task Index',  'uint16', 1, 'in'),
              ('Job',         'uint8',  1, 'in',  {'constant_group': 'Scheduler Job'}),
              ('Frame Index', 'uint16', 1, 'in'),
-             ('Dwell Time',  'uint8',  1, 'in',  {'scale': (1, 250), 'unit': 'Second', 'default': 10})],
+             ('Dwell Time',  'uint8',  1, 'in',  {'scale': (1, 250), 'unit': 'Second', 'default': 10})],  # TODO 1 - 250 milli-seconds
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -662,11 +662,11 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Schedule Entry',
 'elements': [('Channel',     'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Job Index',   'uint16', 1, 'in'),
+             ('Task Index',  'uint16', 1, 'in'),
              ('Job',         'uint8',  1, 'out', {'constant_group': 'Scheduler Job'}),
              ('Frame Index', 'uint16', 1, 'out'),
              ('Frame',       'uint32', 1, 'out'),
-             ('Dwell Time',  'uint8',  1, 'out', {'scale': (1, 250), 'unit': 'Second', 'default': 10})],
+             ('Dwell Time',  'uint8',  1, 'out', {'scale': (1, 250), 'unit': 'Second', 'default': 10})],   # TODO 1 - 250 milli-seconds
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
