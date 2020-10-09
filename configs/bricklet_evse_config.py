@@ -155,6 +155,44 @@ TODO
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Max Charging Current',
+'elements': [('Max Current', 'uint16', 1, 'in')], # mA (default 32A?)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Max Charging Current',
+'elements': [('Max Current Configured', 'uint16', 1, 'in'),      # mA
+             ('Max Current Incoming Cable', 'uint16', 1, 'in'),  # mA
+             ('Max Current Outgoing Cable', 'uint16', 1, 'in')], # mA
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+* Max Current Configured -> set with :func:`Set Max Charging Current`
+* Max Current Incoming Cable -> set with jumper on EVSE
+* Max Current Outgoing Cable -> set with resistor between PP/PE (if fixed cable is used)
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -180,28 +218,11 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Calibrate ADC',
-'elements': [('Password', 'uint32', 1, 'in'),
-             ('Calibration Started', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Get ADC Calibration',
-'elements': [('Calibration Ongoing', 'bool', 1, 'out'),
-             ('Min Value', 'int16', 1, 'out'),  # -12V
-             ('Max Value', 'int16', 1, 'out')], # +12V
+'name': 'Calibrate',
+'elements': [('State', 'uint8', 1, 'in'),       # 1, 2
+             ('Password', 'uint32', 1, 'in'),   # state 1 = 0x0BB03201, state 2 = 0x0BB03202
+             ('Value', 'int32', 1, 'in'),       # high voltage, offset
+             ('Success', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
