@@ -197,28 +197,6 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Low Level Output',
-'elements': [('Low Level Mode Enabled', 'bool', 1, 'in'), # Make persistent
-             ('CP Duty Cycle', 'uint16', 1, 'in'), # 1 khz
-             ('Motor Direction', 'bool', 1, 'in'),
-             ('Motor Duty Cycle', 'uint16', 1, 'in'),
-             ('Relay Enabled', 'uint16', 1, 'in'), # Monoflop
-             ('Password', 'uint32', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': 'Calibrate',
 'elements': [('State', 'uint8', 1, 'in'),       # 1, 2
              ('Password', 'uint32', 1, 'in'),   # state 1 = 0x0BB03201, state 2 = 0x0BB03202
