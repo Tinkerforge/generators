@@ -176,9 +176,9 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get Max Charging Current',
-'elements': [('Max Current Configured', 'uint16', 1, 'in'),      # mA
-             ('Max Current Incoming Cable', 'uint16', 1, 'in'),  # mA
-             ('Max Current Outgoing Cable', 'uint16', 1, 'in')], # mA
+'elements': [('Max Current Configured', 'uint16', 1, 'out'),      # mA
+             ('Max Current Incoming Cable', 'uint16', 1, 'out'),  # mA
+             ('Max Current Outgoing Cable', 'uint16', 1, 'out')], # mA
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
