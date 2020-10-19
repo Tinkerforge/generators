@@ -510,7 +510,7 @@ class MQTTBindings:
                 low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
 
                 response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, low_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
-                if isinstance(response, dict) and "_ERROR" in response:
+                if self.is_error(response):
                     return response
 
                 if short_write:
@@ -524,7 +524,7 @@ class MQTTBindings:
                     low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
 
                     response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, low_level_request_data, format_in, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
-                    if isinstance(response, dict) and "_ERROR" in response:
+                    if self.is_error(response):
                         return response
 
                     if short_write:
@@ -784,7 +784,7 @@ class MQTTBindings:
 
         response = self.handle_ipcon_exceptions(wrapper, dict([(name, None) for name in fnInfo.result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
 
-        if isinstance(response, dict) and "_ERROR" in response:
+        if self.is_error(response):
             return response
 
         logging.debug("Calling function {} for device {} of type {} succedded.".format(fnName, uid, device_name))
