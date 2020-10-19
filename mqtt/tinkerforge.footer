@@ -5,6 +5,10 @@ def json_error(message, resultDict=None):
         return json.dumps(resultDict)
     return json.dumps({'_ERROR': message})
 
+def is_string(x):
+    return (sys.hexversion < 0x03000000 and isinstance(x, basestring)) \
+        or (sys.hexversion >= 0x03000000 and isinstance(x, str))
+
 message_tup = namedtuple('message_tup', ['topic', 'payload'])
 
 class MQTTBindings:
@@ -316,7 +320,7 @@ class MQTTBindings:
             global_prefix, request_type, device, uid, function, suffix, response_path = path_info
 
             # msg.payload could be from an init file, then it is already decoded.
-            if isinstance(msg.payload, str):
+            if is_string(msg.payload):
                 payload = msg.payload
             else:
                 try:
@@ -406,9 +410,7 @@ class MQTTBindings:
                         return "Argument {name}[{idx}] was not of expected type {type}.".format(name=n, idx=idx, type=t_name)
             else:
                 if t == 'char' or t == 'string':
-                    if sys.hexversion < 0x03000000 and not isinstance(a, basestring):
-                        return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
-                    elif sys.hexversion >= 0x03000000 and not isinstance(a, str):
+                    if not is_string(a):
                         return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
                     if t == 'char' and len(a) > 1:
                         return "Argument {name} was a string of length {len}, but a single character was expected.".format(name=n, len=len(a))
@@ -416,7 +418,7 @@ class MQTTBindings:
                     return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
 
     def is_error(self, response):
-        if isinstance(response, str) or isinstance(response, basestring):
+        if is_string(response):
             d = json.loads(response)
             return "_ERROR" in d
         return False
@@ -492,12 +494,9 @@ class MQTTBindings:
             stream_data_index = high_level_roles_in.index('stream_data')
             stream_data = request_data[stream_data_index]
 
-            if sys.hexversion < 0x03000000:
-                if isinstance(stream_data, basestring):
-                    stream_data = create_char_list(stream_data)
-            else:
-                if isinstance(stream_data, str):
-                    stream_data = create_char_list(stream_data)
+            if is_string(stream_data):
+                stream_data = create_char_list(stream_data)
+
             stream_length = len(stream_data)
             stream_chunk_offset = 0
 
