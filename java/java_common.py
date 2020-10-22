@@ -322,7 +322,7 @@ class JavaElement(common.Element):
 
     def get_java_default_item_value(self):
         if self.get_generator().is_octave() and self.get_type() == 'char':
-            value = '""'
+            value = '"\\0"'
         else:
             value = JavaElement.java_default_item_values[self.get_type()]
 
