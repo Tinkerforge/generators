@@ -1309,7 +1309,7 @@ the position, the hardware and firmware version as well as the
 device identifier.
 
 The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
-A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always at
 position 'z'.
 
 The device identifier numbers can be found :ref:`here <device_identifier>`.
