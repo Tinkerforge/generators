@@ -42,7 +42,7 @@ com['constant_groups'].append({
 'name': 'GPIO Action',
 'type': 'uint32',
 'constants': [('None', 0),
-              ('Normal Stop Rising Edge', 1 << 0),   
+              ('Normal Stop Rising Edge', 1 << 0),
               ('Normal Stop Falling Edge', 1 << 1),
               ('Full Brake Rising Edge', 1 << 2),
               ('Full Brake Falling Edge', 1 << 3),
@@ -514,7 +514,7 @@ com['packets'].append({
 Configures the touch LED to be either turned off, turned on, blink in
 heartbeat mode or show TBD.
 
-TODO: 
+TODO:
 
 * one second interval blink: Input voltage too small
 * 250ms interval blink: Overtemperature warning

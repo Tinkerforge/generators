@@ -50,7 +50,7 @@ kann einen Servo über die Servo-Kanal (0 bis 9) adressieren. Falls es sich um
 eine Setter-Funktion handelt können mehrere Servos gleichzeitig mit einer
 Bitmaske adressiert werden. Um dies zu kennzeichnen muss das höchstwertigste
 Bit gesetzt werden. Beispiel: ``1`` adressiert den Servo 1,
-``(1 << 1) | (1 << 5) | (1 << 15)`` adressiert die Servos 1 und 5. 
+``(1 << 1) | (1 << 5) | (1 << 15)`` adressiert die Servos 1 und 5.
 Das ermöglicht es Konfigurationen von
 verschiedenen Servos mit einem Funktionsaufruf durchzuführen. Es ist
 sichergestellt das die Änderungen in der selben PWM Periode vorgenommen werden,
@@ -225,7 +225,7 @@ com['packets'].append({
 """
 TODO: Acc/Dec in °/100s²
 
-Sets the maximum velocity of the specified servo in °/100s. 
+Sets the maximum velocity of the specified servo in °/100s.
 
 The minimum velocity is 0 (no movement) and the maximum velocity is 65535.
 With a value of 65535 the position will be set immediately (no velocity).

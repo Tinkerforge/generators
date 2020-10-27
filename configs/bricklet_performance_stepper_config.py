@@ -290,7 +290,7 @@ com['packets'].append({
 """
 Returns the current position of the stepper motor in steps. On startup
 the position is 0. The steps are counted with all possible driving
-functions (:func:`Set Target Position`, :func:`Set Steps`). 
+functions (:func:`Set Target Position`, :func:`Set Steps`).
 It also is possible to reset the steps to 0 or
 set them to any other desired value with :func:`Set Current Position`.
 """,
@@ -298,7 +298,7 @@ set them to any other desired value with :func:`Set Current Position`.
 """
 Gibt die aktuelle Position des Schrittmotors in Schritten zurück. Nach dem
 Hochfahren ist die Position 0. Die Schritte werden bei Verwendung aller möglichen
-Fahrfunktionen gezählt (:func:`Set Target Position`, :func:`Set Steps`). 
+Fahrfunktionen gezählt (:func:`Set Target Position`, :func:`Set Steps`).
 Es ist auch möglich den Schrittzähler auf 0 oder jeden anderen
 gewünschten Wert zu setzen mit :func:`Set Current Position`.
 """
@@ -1293,7 +1293,7 @@ com['packets'].append({
 Configures the touch LED to be either turned off, turned on, blink in
 heartbeat mode or show TBD.
 
-TODO: 
+TODO:
 
 * one second interval blink: Input voltage too small
 * 250ms interval blink: Overtemperature warning
