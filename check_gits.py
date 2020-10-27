@@ -131,6 +131,7 @@ for git_name in sorted(os.listdir('..')):
         description = configs[git_name]['description']['en']
         released = configs[git_name]['released']
         category = configs[git_name]['category']
+        display_name = configs[git_name]['display_name']
         comcu = 'comcu_bricklet' in configs[git_name]['features']
 
         print('>>>', git_name, '(released)' if released else '(not released)')
@@ -138,15 +139,17 @@ for git_name in sorted(os.listdir('..')):
         if len(description.strip()) == 0 or 'FIXME' in description or 'TBD' in description or 'TODO' in description:
             warning('invalid description: ' + description)
 
-        if configs[git_name]['display_name'].endswith(' 2.0'):
-            full_display_name = configs[git_name]['display_name'][:-4] + ' ' + configs[git_name]['category'] + ' 2.0'
-        elif configs[git_name]['display_name'].endswith(' 3.0'):
-            full_display_name = configs[git_name]['display_name'][:-4] + ' ' + configs[git_name]['category'] + ' 3.0'
+        if display_name.endswith(' 2.0'):
+            full_display_name = display_name[:-4] + ' ' + configs[git_name]['category'] + ' 2.0'
+        elif display_name.endswith(' 3.0'):
+            full_display_name = display_name[:-4] + ' ' + configs[git_name]['category'] + ' 3.0'
         else:
-            full_display_name = configs[git_name]['display_name'] + ' ' + configs[git_name]['category']
+            full_display_name = display_name + ' ' + configs[git_name]['category']
 
         if not config_contents[git_name].startswith(config_header.format(full_display_name)):
             error('wrong header comment in config')
+
+        homepage_part = display_name.replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
     else:
         description = None
 
@@ -169,7 +172,17 @@ for git_name in sorted(os.listdir('..')):
         else:
             comcu = None
 
+        homepage_part = None
+
         print('>>>', git_name, '(no config)')
+
+    homepage = None
+
+    if category != None and homepage_part != None:
+        if category == 'Brick':
+            homepage = 'https://www.tinkerforge.com/en/doc/Hardware/Bricks/{0}_Brick.html'.format(homepage_part)
+        elif category == 'Bricklet':
+            homepage = 'https://www.tinkerforge.com/en/doc/Hardware/Bricklets/{0}.html'.format(homepage_part)
 
     git_path = os.path.join('..', git_name)
 
@@ -182,7 +195,14 @@ for git_name in sorted(os.listdir('..')):
             else:
                 print('github description:', github_repo['description'])
 
-            print('github homepage:', github_repo['homepage'])
+            if github_repo['homepage'] == None or len(github_repo['homepage']) == 0:
+                warning('github homepage is missing')
+            elif not github_repo['homepage'].startswith('https://'):
+                warning('github homepage is not using HTTPS: {0}'.format(github_repo['homepage']))
+            elif homepage != None and github_repo['homepage'] != homepage:
+                warning('github homepage mismatch: {0} (github) != {1} (config)'.format(github_repo['homepage'], homepage))
+            else:
+                print('github homepage:', github_repo['homepage'])
 
             github_teams = json.loads(subprocess.check_output(['curl', 'https://{0}@api.github.com/repos/Tinkerforge/{1}/teams'.format(github_token, git_name)], stderr=subprocess.DEVNULL))
             teams = sorted(['{0} [{1}]'.format(team['name'], team['permission']) for team in github_teams])
