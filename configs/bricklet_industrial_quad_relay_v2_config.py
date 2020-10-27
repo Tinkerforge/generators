@@ -271,7 +271,6 @@ com['examples'].append({
               ('loop_footer',)]
 })
 
-
 def relay_channel(channel):
     return {
         'id': 'Relay {}'.format(channel),
@@ -298,7 +297,6 @@ def relay_channel(channel):
             'packet_params': [str(channel), 'cmd == OnOffType.ON'],
             'command_type': "OnOffType",
         }],
-
 
         'init_code': """this.setChannelLEDConfig({}, channelCfg.channelLEDConfig);""".format(channel)
     }
@@ -342,7 +340,6 @@ relay_channel_type['params'] = [
                     'de': 'Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn ein High-Signal am Kanal anliegt und sonst aus.'}
 },
 ]
-
 
 com['openhab'] = {
     'imports': oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],

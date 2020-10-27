@@ -63,7 +63,6 @@ com['packets'].append({
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Value',

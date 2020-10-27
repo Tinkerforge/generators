@@ -481,7 +481,6 @@ com['examples'].append({
 'incomplete': True # because of special logic in callback
 })
 
-
 state_list = """
     <ul><li>STATE_INITIALIZATION = 0</li>
     <li>STATE_IDLE = 128</li>

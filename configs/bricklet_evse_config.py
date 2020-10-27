@@ -88,7 +88,6 @@ com['constant_groups'].append({
               ('Unconfigured', 8)]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
@@ -129,7 +128,6 @@ TODO
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

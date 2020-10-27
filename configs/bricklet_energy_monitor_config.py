@@ -378,7 +378,6 @@ com['examples'].append({
               ('callback_configuration', ('Energy Data', 'energy data'), [], 1000, False, None, [])]
 })
 
-
 integration_info_en = 'Integrated over 10 zero-crossings of the voltage sine wave. With a standard AC mains voltage frequency of 50Hz this results in a 5 measurements per second (or an integration time of 200ms per measurement). If no voltage transformer is connected, the Bricklet will use the current waveform to calculate the frequency and it will use an integration time of 10 zero-crossings of the current waveform.'
 integration_info_de = 'Über 10 Nulldurchgänge der Spannungs-Sinuskurve integriert. Mit einer Standard Netzspannungsfrequenz von 50Hz entspricht das 5 Messungen pro Sekunde (oder einer Integrationszeit von 200ms pro Messung). Wenn kein Spannungstransformator angeschlossen ist, nutzt das Bricklet den Kurvenverlauf des Stroms, um die Frequenz zu bestimmen und die Integrationszeit beträgt 10 Nulldurchläufe der Strom-Sinuskurve.'
 

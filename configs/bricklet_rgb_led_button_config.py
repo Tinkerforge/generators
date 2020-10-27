@@ -194,7 +194,6 @@ com['openhab'] = {
                 'command_type': "HSBType",
             }],
 
-
             'getters': [{
                 'packet': 'Get {title_words}',
                 'transform': 'HSBType.fromRGB(value.red, value.green, value.blue)'}],

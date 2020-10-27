@@ -1470,7 +1470,6 @@ com['openhab'] = {
                 'command_type': "OnOffType",
             },],
 
-
             'getters': [{
                 'packet': 'Are Leds On',
                 'element': 'Leds',

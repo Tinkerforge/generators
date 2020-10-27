@@ -71,7 +71,6 @@ com['examples'].append({
               ('callback_configuration', ('Position', 'position'), [], 250, False, 'x', [(0, 0)])]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),

@@ -395,7 +395,6 @@ com['openhab'] = {
                 'command_type': 'Number',
             }],
 
-
             'java_unit': 'SmartHomeUnits.BAR',
             'divisor': 1000.0,
         }

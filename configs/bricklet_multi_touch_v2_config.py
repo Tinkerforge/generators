@@ -249,7 +249,6 @@ Gibt die Elektrodenkonfiguration zurück, wie von :func:`Set Electrode Config` g
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Electrode Sensitivity',
@@ -351,7 +350,6 @@ com['examples'].append({
 'functions': [('callback', ('Touch State', 'touch state'), [(('State', ['Electrode {}'.format(i) for i in range(0, 12)] + ['Proximity']), 'bool', 13, None, None, None)], None, None),
               ('callback_configuration', ('Touch State', 'touch state'), [], 10, True, None, [])],
 })
-
 
 def electrode_channel(idx):
     return {

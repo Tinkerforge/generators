@@ -184,7 +184,6 @@ com['examples'].append({
 'incomplete': True # because of array parameter
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
 

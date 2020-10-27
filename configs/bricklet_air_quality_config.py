@@ -533,8 +533,6 @@ com['examples'].append({
               ('callback_configuration', ('All Values', 'all values'), [], 1000, False, None, [])]
 })
 
-
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),

@@ -552,7 +552,6 @@ TBD
 }]
 })
 
-
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Value', 'value'), [(('Value', ['Channel 0', 'Channel 1', 'Channel 2', 'Channel 3']), 'bool', 4, None, None, None)], [])]
@@ -613,7 +612,6 @@ def edge_count_channel(index):
                 'transform': 'new {number_type}(value{unit})'}],
 
         }
-
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],

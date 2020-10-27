@@ -1161,7 +1161,6 @@ aktiviert werden.
 # }]
 # })
 
-
 com['examples'].append({
 'name': 'Loopback',
 'functions': [('setter', 'Set Transceiver Configuration', [('uint32', 1000000), ('uint16', 625), ('uint8:constant', 1)], 'Configure transceiver for loopback mode', None),
@@ -1171,7 +1170,6 @@ com['examples'].append({
 'cleanups': [('setter', 'Set Frame Read Callback Configuration', [('bool', False)], None, None)],
 'incomplete': True # because of callback with array parameter and write-frame function success output parameter
 })
-
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),

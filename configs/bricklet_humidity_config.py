@@ -493,7 +493,6 @@ com['examples'].append({
               ('callback_threshold', ('Humidity', 'humidity'), [], 'o', [(30, 60)])]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),

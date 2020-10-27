@@ -867,7 +867,6 @@ com['openhab'] = {
             'packet': 'Set Configuration',
             'element': 'Enable Quick Termination',
 
-
             'name': 'Enable Quick Termination',
             'type': 'boolean',
 
@@ -955,7 +954,6 @@ com['openhab'] = {
                     'packet': 'Disable Laser',
                     'command_type': "OnOffType",
                 }],
-
 
             'getters': [{
                 'packet': 'Is Laser Enabled',

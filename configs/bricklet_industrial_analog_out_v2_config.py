@@ -388,8 +388,6 @@ com['examples'].append({
 'cleanups': [('setter', 'Set Enabled', [('bool', False)], None, None)]
 })
 
-
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups() + [{
@@ -495,7 +493,6 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
                 'command_type': "OnOffType"
             }],
 
-
             'getters': [{
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
@@ -514,7 +511,6 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
                 'command_type': "Number"
             }],
 
-
             'getters': [{
                 'packet': 'Get {title_words}',
                 'element': '{title_words}',
@@ -532,7 +528,6 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
                 'packet_params': ['(int)(cmd.doubleValue(){divisor})'],
                 'command_type': "Number",
             }],
-
 
             'getters': [{
                 'packet': 'Get {title_words}',
@@ -556,5 +551,4 @@ this.setOutLEDStatusConfig((int)(cfg.outLEDStatusMinimum.doubleValue() * (cfg.co
     ],
     'actions': [{'fn': 'Set Enabled', 'refreshs': ['Enabled']}, 'Get Enabled', 'Get Voltage', 'Get Current', 'Get Configuration', 'Get Out LED Config', 'Get Out LED Status Config']
 }
-
 

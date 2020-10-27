@@ -209,7 +209,6 @@ com['examples'].append({
 'functions': [('setter', 'Set Indicator', [('uint8', 255), ('uint8', 255), ('uint8', 255)], 'Turn blue backlight LEDs on (maximum brightness)', None)]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),

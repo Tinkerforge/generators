@@ -587,7 +587,6 @@ com['examples'].append({
               ('setter', 'Set Interrupt', [('uint8:bitmask:4', 1 << 0)], 'Enable interrupt on pin 0', None)]
 })
 
-
 def input_channel(idx):
     return {
             'predicate': 'cfg.pinConfiguration{} > 1'.format(idx),
@@ -634,7 +633,6 @@ def output_channel(idx):
                 'command_type': "OnOffType",
             }],
 
-
             'callbacks': [{
                 'packet': 'Monoflop Done',
                 'element': 'Value Mask',
@@ -669,7 +667,6 @@ def monoflop_channel(idx):
             'delay': '0'
         }]
     }
-
 
 def edge_count_channel(index):
     return {

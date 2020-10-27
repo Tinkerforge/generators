@@ -157,7 +157,6 @@ TX Discretes Bit 2-7: unused
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Debug Read Register Low Level',
@@ -177,7 +176,6 @@ Debug function to execute a direct SPI read access on the A429 chip.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -280,7 +278,6 @@ for processed frames and lost frames for all TX and RX channels.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel Configuration',
@@ -358,7 +355,6 @@ Get the operating mode of the selected channel.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Clear Prio Labels',
@@ -374,7 +370,6 @@ Disable the priority filters on the given channel(s).
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -509,7 +504,6 @@ and the last frame received will be repeated.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set RX Callback Configuration',
@@ -631,7 +625,6 @@ Clear a range of TX scheduler entries.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Schedule Entry',
@@ -656,7 +649,6 @@ Set a TX scheduler entry:
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

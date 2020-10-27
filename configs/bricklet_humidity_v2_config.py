@@ -271,9 +271,6 @@ com['examples'].append({
               ('callback_configuration', ('Humidity', 'humidity'), [], 10000, False, 'o', [(30, 60)])]
 })
 
-
-
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups() +  [{
@@ -336,7 +333,6 @@ this.setMovingAverageConfiguration(cfg.humidityMovingAverageLength, cfg.temperat
                 'packet_params': ['cmd == OnOffType.ON ? BrickletHumidityV2.HEATER_CONFIG_ENABLED : BrickletHumidityV2.HEATER_CONFIG_DISABLED'],
                 'command_type': "OnOffType",
             }],
-
 
             'getters': [{
                 'packet': 'Get Heater Configuration',

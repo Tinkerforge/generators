@@ -269,7 +269,6 @@ com['examples'].append({
               ('callback_configuration', ('Distance', 'distance'), [], 1000, False, '<', [(30, 0)])]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),

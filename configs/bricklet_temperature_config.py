@@ -348,8 +348,6 @@ com['examples'].append({
               ('callback_threshold', ('Temperature', 'temperature'), [], '>', [(30, 0)])]
 })
 
-
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),

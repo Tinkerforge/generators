@@ -104,7 +104,6 @@ XMC_GPIO_GetInput-Aufrufs für den gegebenen Port/Pin zurück.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set ADC Channel Config',

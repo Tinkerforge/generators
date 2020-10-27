@@ -119,7 +119,6 @@ com['examples'].append({
               ('callback_configuration', ('Temperature', 'temperature'), [], 1000, False, '>', [(30, 0)])]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),

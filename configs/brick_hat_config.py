@@ -318,7 +318,6 @@ com['openhab'] = {
                 'command_type': "OnOffType",
             }],
 
-
             'getters': [{
                 'packet': 'Get Bricklet Power',
                 'element': 'Bricklet Power',

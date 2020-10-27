@@ -43,7 +43,6 @@ com['constant_groups'].append({
               ('Slow', 1)]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Air Pressure',

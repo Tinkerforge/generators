@@ -565,7 +565,6 @@ com['examples'].append({
               ('callback_threshold', ('Current', 'current'), [], '>', [(5, 0)])]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),

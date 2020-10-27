@@ -380,7 +380,6 @@ com['openhab'] = {
                 'command_type': "Number"
             }],
 
-
             'getters': [{
                 'packet': 'Get Beep',
                 'element': 'Volume',

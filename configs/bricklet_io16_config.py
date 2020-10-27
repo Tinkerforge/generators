@@ -660,7 +660,6 @@ def output_channel(idx):
                 'command_type': "OnOffType"
             }],
 
-
             'callbacks': [{
                 'packet': 'Monoflop Done',
                 'element': 'Value Mask',
@@ -677,7 +676,6 @@ def monoflop_channel(idx):
         'label': {'en': 'Monoflop {}'.format(idx),
                   'de': 'Monoflop {}'.format(idx)},
         'type': 'Monoflop',
-
 
         'getters': [{
             'packet': 'Get Port Monoflop',

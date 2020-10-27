@@ -520,7 +520,6 @@ com['examples'].append({
               ('callback_threshold', ('Voltage', 'voltage'), [], '<', [(5, 0)])]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),

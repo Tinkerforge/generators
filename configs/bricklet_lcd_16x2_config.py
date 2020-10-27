@@ -345,8 +345,6 @@ com['examples'].append({
 'incomplete': True # because of Unicode handling
 })
 
-
-
 def button_channel(idx):
     return {
             'id': 'Button {}'.format(idx),

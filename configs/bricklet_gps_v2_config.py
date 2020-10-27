@@ -817,7 +817,6 @@ com['examples'].append({
               ('callback_period', ('Coordinates', 'coordinates'), [], 1000)]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +
                 ['org.eclipse.smarthome.core.library.types.StringType',

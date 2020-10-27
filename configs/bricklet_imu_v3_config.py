@@ -611,8 +611,6 @@ Gibt den aktuellen Sensor-Fusion-Modus zurück, wie von
 }]
 })
 
-
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Acceleration Callback Configuration',

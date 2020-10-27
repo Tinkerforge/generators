@@ -284,7 +284,6 @@ ausgelöst wird.
 }]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),

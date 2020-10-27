@@ -210,8 +210,6 @@ com['examples'].append({
               ('loop_footer',)]
 })
 
-
-
 def relay_channel(channel):
     return {
         'id': 'Relay {}'.format(channel),

@@ -2293,7 +2293,6 @@ Timeout bei der Anfrage gab. Die Länge dieses Timeouts kann per
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Frame Readable Callback Configuration',
@@ -2356,7 +2355,6 @@ wenn das Callback ausgelöst wird, X Bytes mit der :func:`Read`-Funktion gelesen
 """
 }]
 })
-
 
 com['examples'].append({
 'name': 'Loopback',

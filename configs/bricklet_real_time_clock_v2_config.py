@@ -436,7 +436,6 @@ com['examples'].append({
               ('callback_configuration', ('Date Time', 'date and time'), [], 5000, None, None, [])]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['java.time.ZonedDateTime', 'java.time.ZoneId', 'org.eclipse.smarthome.core.library.types.DateTimeType'],
     'param_groups': oh_generic_channel_param_groups(),
@@ -466,7 +465,6 @@ com['openhab'] = {
                                         'cmd.getZonedDateTime().withZoneSameInstant(ZoneId.of("UTC")).getDayOfWeek().getValue()'],
                 'command_type': 'DateTimeType',
             }],
-
 
             'callbacks': [{
                 'packet': 'Date Time',

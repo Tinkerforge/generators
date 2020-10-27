@@ -358,7 +358,6 @@ Im Startzustand ist der Callback deaktiviert.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Frame Readable Callback Configuration',

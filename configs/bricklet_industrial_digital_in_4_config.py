@@ -467,7 +467,6 @@ def edge_count_channel(index):
 
         }
 
-
 channels = [input_channel(i) for i in range(0, 4)] + [edge_count_channel(i) for i in range(0, 4)]
 
 com['openhab'] = {

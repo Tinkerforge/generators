@@ -291,7 +291,6 @@ com['examples'].append({
               ('callback_configuration', ('Weight', 'weight'), [], 1000, False, '>', [(200, 0)])]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),

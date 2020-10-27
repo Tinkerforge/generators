@@ -192,7 +192,6 @@ Die :word:`parameters` sind die gleichen wie bei :func:`Get Position`.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Pressed Callback Configuration',

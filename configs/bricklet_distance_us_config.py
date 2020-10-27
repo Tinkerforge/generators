@@ -344,7 +344,6 @@ com['examples'].append({
               ('callback_threshold', ('Distance', 'distance value'), [], '<', [(200, 0)])]
 })
 
-
 distance_channel = oh_generic_old_style_channel('Distance', 'Distance')
 distance_channel['getters'][0]['packet'] = 'Get Distance Value'
 

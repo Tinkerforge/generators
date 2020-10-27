@@ -410,8 +410,6 @@ com['examples'].append({
               ('callback_threshold', ('Voltage', 'voltage (channel 1)'), [('uint8', 1)], '>', [(10, 0)])]
 })
 
-
-
 def voltage_channel(index):
     return {
             'id': 'Voltage Channel {0}'.format(index),

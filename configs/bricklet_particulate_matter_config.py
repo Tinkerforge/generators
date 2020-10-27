@@ -413,7 +413,6 @@ def count_channel(size):
             # Not using the divisor placeholder here is a hack to prevent the auto-deduce-logic from converting the value to particles per cubic meter.
             'transform': 'new {{number_type}}(value.greater{:02}um{{unit}})'.format(size)}],
 
-
         'callbacks': [{
             'packet': 'PM Count',
             'element': 'Greater{:02}um'.format(size),

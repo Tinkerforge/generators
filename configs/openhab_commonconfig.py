@@ -5,7 +5,6 @@ def oh_generic_channel_imports():
             'org.eclipse.smarthome.core.library.unit.SIUnits',
             'org.eclipse.smarthome.core.library.unit.SmartHomeUnits']
 
-
 def oh_generic_channel(id_, type_, unit=None, divisor=1, label=None, description=None, element_name='{title_words}'):
     return {
         'id': id_,

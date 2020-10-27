@@ -309,7 +309,6 @@ com['examples'].append({
               ('callback_configuration', ('Decibel', 'decibel'), [], 1000, False, '>', [(60, 0)])]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports(),
     'param_groups': oh_generic_channel_param_groups(),

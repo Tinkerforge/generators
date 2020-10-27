@@ -67,7 +67,6 @@ Gibt den selektierten Eingangswert als Bool zurück, *true* bedeutet logisch 1 u
 }]
 })
 
-
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Values', 'values'), [(('Values', ['Channel 0', 'Channel 1', 'Channel 2', 'Channel 3', 'Channel 4', 'Channel 5', 'Channel 6', 'Channel 7']), 'bool', 8, None, None, None)], [])]

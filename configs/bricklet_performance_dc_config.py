@@ -89,8 +89,6 @@ com['constant_groups'].append({
               ('Show GPIO Active Low', 4)]
 })
 
-
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Enabled',
@@ -395,7 +393,6 @@ Gibt die PWM Frequenz zurück, wie gesetzt von :func:`Set PWM Frequency`.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Power Statistics',
@@ -617,7 +614,6 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set CCW LED Config` gesetzt.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

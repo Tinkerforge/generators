@@ -666,13 +666,11 @@ def output_channel(idx):
                 'command_type': "OnOffType",
             }],
 
-
             'callbacks': [{
                 'packet': 'Monoflop Done',
                 'element': 'Value',
                 'filter': 'channel == {}'.format(idx),
                 'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
-
 
             'init_code':"""this.setConfiguration({0}, 'o', cfg.pinConfiguration{0} % 2 == 1);""".format(idx),
     }
@@ -702,7 +700,6 @@ def monoflop_channel(idx):
             'delay': '0'
         }]
     }
-
 
 def edge_count_channel(idx):
     return {

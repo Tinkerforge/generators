@@ -361,7 +361,6 @@ com['examples'].append({
               ('callback_configuration', ('Current', 'current (channel 0)'), [('uint8', 0)], 10000, False, '>', [(10, 0)])]
 })
 
-
 def current_channel(index):
     return {
             'id': 'Current Sensor {0}'.format(index),

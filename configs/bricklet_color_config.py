@@ -695,8 +695,6 @@ com['examples'].append({
               ('callback_threshold', ('Color', 'color'), [], '>', [(100, 0), (200, 0), (300, 0), (400, 0)])]
 })
 
-
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.HSBType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
     'params': [{

@@ -605,7 +605,6 @@ com['examples'].append({
 
 # FIXME: all-signal-data callback example
 
-
 def signal_data_channel(idx, data_words, data_headless):
     return {
         'predicate': 'cfg.enableChannel{}'.format(idx),
@@ -647,7 +646,6 @@ def value_channel(idx):
             'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)
         }],
     }
-
 
 def counter_channel(idx):
     return {

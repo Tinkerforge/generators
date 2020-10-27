@@ -325,7 +325,6 @@ Gibt die PWM Konfiguration zurück, wie von :func:`Set PWM Configuration` gesetz
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Write Wiegand Data Low Level',
@@ -379,7 +378,6 @@ TBD
 }]
 })
 
-
 com['examples'].append({
 'name': 'Simple',
 'functions': [('loop_header', 10, 'Set channels alternating high/low 10 times with 100 ms delay'),
@@ -413,7 +411,6 @@ def output_channel(idx):
                 'packet_params': [str(idx), 'cmd == OnOffType.ON'],
                 'command_type': "OnOffType"
             }],
-
 
             'callbacks': [{
                 'packet': 'Monoflop Done',

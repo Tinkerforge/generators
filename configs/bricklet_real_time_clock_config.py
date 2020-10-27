@@ -472,7 +472,6 @@ com['openhab'] = {
                 'command_type': 'DateTimeType'
             }],
 
-
             'callbacks': [{
                 'packet': 'Date Time',
                 'transform': 'new DateTimeType(ZonedDateTime.of(year, month, day, hour, minute, second, centisecond * 10 * 1000 * 1000, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()))'}]

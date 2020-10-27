@@ -267,7 +267,6 @@ com['examples'].append({
 'cleanups': [('setter', 'Disable', [], None, None)]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'params': [
@@ -324,7 +323,6 @@ com['openhab'] = {
                 }
             ],
 
-
             'getters': [{
                 'packet': 'Is Enabled',
                 'element': '{title_words}',
@@ -342,7 +340,6 @@ com['openhab'] = {
                 'packet_params': ['(int)(cmd.doubleValue(){divisor})'],
                 'command_type': "Number"
             }],
-
 
             'getters': [{
                 'packet': 'Get {title_words}',

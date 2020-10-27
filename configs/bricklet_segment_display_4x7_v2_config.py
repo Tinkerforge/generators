@@ -332,8 +332,6 @@ com['examples'].append({
               ('setter', 'Set Segments', [('bool', [True]*8), ('bool', [True]*8), ('bool', [True]*8), ('bool', [True]*8), ('bool', [True]*2), ('bool', True)], 'Activate all segments', None)],
 })
 
-
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
 

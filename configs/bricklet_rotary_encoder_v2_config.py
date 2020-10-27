@@ -142,7 +142,6 @@ com['examples'].append({
               ('callback_configuration', ('Count', 'count'), [], 1000, False, 'x', [(0, 0)])]
 })
 
-
 count_channel = oh_generic_channel('Count', 'Count')
 count_channel['getters'][0]['packet_params'] = ['false']
 

@@ -211,7 +211,6 @@ com['examples'].append({
 'functions': [('callback', ('State Changed', 'state changed'), [(('Button L', 'Left Button'), 'uint8:constant', 1, None, None, None), (('Button R', 'Right Button'), 'uint8:constant', 1, None, None, None), (('LED L', None), 'uint8:constant', 1, None, None, None), (('LED R', None), 'uint8:constant', 1, None, None, None)], None, None)]
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_trigger_channel_imports() + oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
     'params': [

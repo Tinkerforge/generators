@@ -646,7 +646,6 @@ com['examples'].append({
 'incomplete': True # because of callback with array parameters
 })
 
-
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
     'param_groups': oh_generic_channel_param_groups(),
@@ -882,7 +881,6 @@ com['openhab'] = {
             'packet_params': [],
             'transform': 'value.temperatureWarning[1] ? OnOffType.ON : OnOffType.OFF'}],
     },
-
 
     ],
     'channel_types': [

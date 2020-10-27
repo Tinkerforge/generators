@@ -942,7 +942,6 @@ com['openhab'] = {
                 }
             ],
 
-
             'getters': [{
                 'packet': 'Is Enabled',
                 'element': '{title_words}',

@@ -322,7 +322,6 @@ TBD
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Target Position',
@@ -1439,7 +1438,6 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set GPIO LED Config` gesetzt.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

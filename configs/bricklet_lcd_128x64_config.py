@@ -1692,7 +1692,6 @@ com['examples'].append({
 
 # FIXME: add pixel-matrix example
 
-
 def gui_button_pressed_channel(index):
     return {
         'id': 'GUI Button {}'.format(index),

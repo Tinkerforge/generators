@@ -669,7 +669,6 @@ com['examples'].append({
               ('callback_configuration', ('Input Value', 'input value (channel 1)'), [('uint8', 1)], 500, False, None, [])]
 })
 
-
 def input_channel(idx):
     return {
             'predicate': 'cfg.pinConfiguration{} > 1'.format(idx),
@@ -711,7 +710,6 @@ def output_channel(idx):
                 'packet_params': [str(idx), 'cmd == OnOffType.ON'],
                 'command_type': "OnOffType",
             }],
-
 
             'callbacks': [{
                 'packet': 'Monoflop Done',

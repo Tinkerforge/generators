@@ -665,7 +665,6 @@ normalem Nutzerprogramm sollte diese Funktion nicht benötigt werden.
 }]
 })
 
-
 common_packets.append({
 'feature': 'tng',
 'type': 'function',
@@ -1389,7 +1388,6 @@ def openhab_spitfp_baudrate(port):
         'label': '(Maximum) SPITFP Baudrate Port {}'.format(port),
         'description': 'The baudrate for Bricklet port {}.\n\nIf you want to increase the throughput of Bricklets you can increase the baudrate. If you get a high error count because of high interference you can decrease the baudrate.\n\nIf the dynamic baudrate feature is enabled, this is the maximum baudrate.\n\nRegulatory testing is done with the default baudrate. If CE compatibility or similar is necessary in your applications we recommend to not change the baudrate.'.format(port),
     }
-
 
 common_openhab = {
     'bricklet_get_identity': {

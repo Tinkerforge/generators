@@ -145,7 +145,6 @@ com['packets'].append({
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Selected Voltage',
@@ -179,7 +178,6 @@ com['packets'].append({
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

@@ -371,7 +371,6 @@ def output_channel(idx):
                 'command_type': "OnOffType"
             }],
 
-
             'callbacks': [{
                 'packet': 'Monoflop Done',
                 'element': 'Value Mask',

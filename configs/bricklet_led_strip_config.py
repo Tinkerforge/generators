@@ -721,7 +721,6 @@ com['examples'].append({
 'incomplete': True # because of array parameters and special logic in callback
 })
 
-
 def rgb_setter(offset):
     return {
         'predicate': 'channelCfg.ledCount > {} && Arrays.asList(6, 9, 33, 36, 18, 24).contains(cfg.channelMapping)'.format(offset),
