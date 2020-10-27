@@ -258,7 +258,7 @@ static uint32_t sha1_transform(SHA1 *sha1, const uint8_t buffer[SHA1_BLOCK_LENGT
 	// wipe variables
 	a = b = c = d = e = 0;
 
-	return a; // return a to avoid dead-store warning from clang static analyzer
+	return a + b + c + d + e; // return to avoid dead-store warning from clang static analyzer
 }
 
 static void sha1_init(SHA1 *sha1) {
