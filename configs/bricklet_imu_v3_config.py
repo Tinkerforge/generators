@@ -20,7 +20,7 @@ com = {
         'en': 'Full fledged AHRS with 9 degrees of freedom',
         'de': 'Voll ausgestattetes AHRS mit 9 Freiheitsgraden'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'features': [

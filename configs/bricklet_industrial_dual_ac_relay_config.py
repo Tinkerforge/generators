@@ -20,7 +20,7 @@ com = {
         'en': 'Two relays to switch AC devices',
         'de': 'Zwei Relais um Wechselstromgeräte zu schalten'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'features': [
