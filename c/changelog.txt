@@ -339,3 +339,6 @@
 - Add get_all_voltages and set/get_all_voltages_callback_configuration functions
   and ALL_VOLTAGES callback to Industrial Dual Analog In Bricklet 2.0 API
 - Add set/get_i2c_mode functions to Barometer Bricklet API
+
+2020-10-27: 2.1.30 (<unknown>)
+- Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet

@@ -89,3 +89,9 @@
 2020-06-26: 2.0.11 (cfcd08b)
 - Add --cmdline-file, --broker-tls-secure, --no-debug, --symbolic-response,
   --hide-payload and --no-init-file commandline options
+
+2020-10-27: 2.0.12 (<unknown>)
+- Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
+- Log API bindings version on start-up
+- Fix timeout error handling
+- Improve Python 2 compatibility

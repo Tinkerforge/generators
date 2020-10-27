@@ -335,3 +335,6 @@
 
 2020-06-25: 2.1.28 (a013b35)
 - Use Maven to build all JAR file variants
+
+2020-10-27: 2.1.29 (<unknown>)
+- Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
