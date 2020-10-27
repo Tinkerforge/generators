@@ -153,7 +153,7 @@ If this function is called with the parameters (1, true, 1500):
 Relay 1 will turn on and in 1.5s it will turn off again.
 
 A monoflop can be used as a failsafe mechanism. For example: Lets assume you
-have a RS485 bus and a Industrial Dual Relay Bricklet connected to one of the
+have a RS485 bus and a Industrial Dual AC Relay Bricklet connected to one of the
 slave stacks. You can now call this function every second, with a time parameter
 of two seconds. The relay will be on all the time. If now the RS485
 connection is lost, the relay will turn off in at most two seconds.
@@ -169,7 +169,7 @@ Wenn diese Funktion mit den Parametern (1, true, 1500) aufgerufen wird:
 Relais 1 wird angeschaltet und nach 1,5s wieder ausgeschaltet.
 
 Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
-Angenommen ein RS485 Bus und ein Industrial Dual Relay Bricklet ist an ein Slave
+Angenommen ein RS485 Bus und ein Industrial Dual AC Relay Bricklet ist an ein Slave
 Stapel verbunden. Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter
 von 2 Sekunden, aufgerufen werden. Das Relais wird die gesamte Zeit ein sein.
 Wenn jetzt die RS485 Verbindung getrennt wird, wird das Relais nach spätestens
