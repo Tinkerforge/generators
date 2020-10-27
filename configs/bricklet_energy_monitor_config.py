@@ -355,7 +355,7 @@ Die :word:`parameters` sind der gleiche wie :func:`Get Energy Data`.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Energy Data', 'Energy Data'), [(('Voltage', 'Voltage'), 'int32', 1, 100, 'V', None),
+'functions': [('getter', ('Get Energy Data', 'energy data'), [(('Voltage', 'Voltage'), 'int32', 1, 100, 'V', None),
                                                               (('Current', 'Current'), 'int32', 1, 100, 'A', None),
                                                               (('Energy', 'Energy'), 'int32', 1, 100, 'Wh', None),
                                                               (('Real Power', 'Real Power'), 'int32', 1, 100, 'h', None),
@@ -367,7 +367,7 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Energy Data', 'Energy Data'), [(('Voltage', 'Voltage'), 'int32', 1, 100, 'V', None),
+'functions': [('callback', ('Energy Data', 'energy data'), [(('Voltage', 'Voltage'), 'int32', 1, 100, 'V', None),
                                                             (('Current', 'Current'), 'int32', 1, 100, 'A', None),
                                                             (('Energy', 'Energy'), 'int32', 1, 100, 'Wh', None),
                                                             (('Real Power', 'Real Power'), 'int32', 1, 100, 'h', None),
@@ -375,7 +375,7 @@ com['examples'].append({
                                                             (('Reactive Power', 'Reactive Power'), 'int32', 1, 100, 'var', None),
                                                             (('Power Factor', 'Power Factor'), 'uint16', 1, 1000, None, None),
                                                             (('Frequency', 'Frequency'), 'uint16', 1, 100, 'Hz', None)], None, None),
-              ('callback_configuration', ('Energy Data', 'Energy Data'), [], 1000, False, None, [])]
+              ('callback_configuration', ('Energy Data', 'energy data'), [], 1000, False, None, [])]
 })
 
 
