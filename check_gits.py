@@ -205,11 +205,12 @@ for git_name in sorted(os.listdir('..')):
 
         if released != None:
             in_development = '\n**This {0} is currently in development.**\n'.format(category) in readme_data
+            development_stopped = '\n**The development of this Bricklet was stopped.**\n' in readme_data
 
-            if released and (in_development or '*This' in readme_data):
-                error('README.rst has in-development marker but config says released')
-            elif not released and not in_development:
-                error('config says not released but README.rst misses in-development marker')
+            if released and (in_development or development_stopped or '*This' in readme_data):
+                error('README.rst has in-development or development-stopped marker but config says released')
+            elif not released and not in_development and not development_stopped:
+                error('config says not released but README.rst misses in-development or development-stopped marker')
 
         if '\n If you want to ' in readme_data:
             warning('wrong indentation in README.rst')
