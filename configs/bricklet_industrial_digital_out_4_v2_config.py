@@ -10,7 +10,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Ishraq Ibne Ashraf <ishraq@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 2124,
     'name': 'Industrial Digital Out 4 V2',
@@ -42,12 +42,12 @@ com['constant_groups'].append({
               ('Show Channel Status', 3)]
 })
 
-com['constant_groups'].append({
-'name': 'Wiegand State',
-'type': 'uint8',
-'constants': [('Idle', 0),
-              ('Busy', 1)]
-})
+# com['constant_groups'].append({
+# 'name': 'Wiegand State',
+# 'type': 'uint8',
+# 'constants': [('Idle', 0),
+              # ('Busy', 1)]
+# })
 
 com['packets'].append({
 'type': 'function',
@@ -325,58 +325,58 @@ Gibt die PWM Konfiguration zurück, wie von :func:`Set PWM Configuration` gesetz
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Write Wiegand Data Low Level',
-'elements': [('Data Length', 'uint16', 1, 'in', {}),
-             ('Data Data', 'bool', 256, 'in', {})],
-'high_level': {'stream_in': {'name': 'Data', 'single_chunk': True}},
-'since_firmware': [2, 0, 3],
-'doc': ['af', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Write Wiegand Data Low Level',
+# 'elements': [('Data Length', 'uint16', 1, 'in', {}),
+             # ('Data Data', 'bool', 256, 'in', {})],
+# 'high_level': {'stream_in': {'name': 'Data', 'single_chunk': True}},
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['af', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Wiegand State',
-'elements': [('Wiegand State', 'uint8', 1, 'out', {'constant_group': 'Wiegand State'})],
-'since_firmware': [2, 0, 3],
-'doc': ['af', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Get Wiegand State',
+# 'elements': [('Wiegand State', 'uint8', 1, 'out', {'constant_group': 'Wiegand State'})],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['af', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'callback',
-'name': 'Wiegand Done',
-'elements': [],
-'since_firmware': [2, 0, 3],
-'doc': ['c', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'callback',
+# 'name': 'Wiegand Done',
+# 'elements': [],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['c', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
 com['examples'].append({
 'name': 'Simple',

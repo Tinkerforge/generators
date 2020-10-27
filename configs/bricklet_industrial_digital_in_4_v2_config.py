@@ -10,7 +10,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 2100,
     'name': 'Industrial Digital In 4 V2',
@@ -385,172 +385,172 @@ Die :word:`parameters` sind der gleiche wie :func:`Get Value`. Zusätzlich ist d
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Set Wiegand Reader Config',
-'elements': [('Reader Enabled', 'bool', 1, 'in', {'default': False}),
-             ('Bit Count', 'uint16', 1, 'in', {'default': 26}),
-             ('Bit Timeout', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 50})],
-'since_firmware': [2, 0, 3],
-'doc': ['bf', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Set Wiegand Reader Config',
+# 'elements': [('Reader Enabled', 'bool', 1, 'in', {'default': False}),
+             # ('Bit Count', 'uint16', 1, 'in', {'default': 26}),
+             # ('Bit Timeout', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 50})],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['bf', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Wiegand Reader Config',
-'elements': [('Reader Enabled', 'bool', 1, 'out', {'default': False}),
-             ('Bit Count', 'uint16', 1, 'out', {'default': 26}),
-             ('Bit Timeout', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 50})],
-'since_firmware': [2, 0, 3],
-'doc': ['bf', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Get Wiegand Reader Config',
+# 'elements': [('Reader Enabled', 'bool', 1, 'out', {'default': False}),
+             # ('Bit Count', 'uint16', 1, 'out', {'default': 26}),
+             # ('Bit Timeout', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 50})],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['bf', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Read Wiegand Data Low Level',
-'elements': [('Data Length', 'uint16', 1, 'out', {}),
-             ('Data Data', 'bool', 256, 'out', {})],
-'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
-'since_firmware': [2, 0, 3],
-'doc': ['bf', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Read Wiegand Data Low Level',
+# 'elements': [('Data Length', 'uint16', 1, 'out', {}),
+             # ('Data Data', 'bool', 256, 'out', {})],
+# 'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['bf', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Set Wiegand Callback Config',
-'elements': [('Data Callback Enabled', 'bool', 1, 'in', {'default': False}),
-             ('Data Available Callback Enabled', 'bool', 1, 'in', {'default': False}),
-             ('Error Count Callback Enabled', 'bool', 1, 'in', {'default': False})],
-'since_firmware': [2, 0, 3],
-'doc': ['ccf', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Set Wiegand Callback Config',
+# 'elements': [('Data Callback Enabled', 'bool', 1, 'in', {'default': False}),
+             # ('Data Available Callback Enabled', 'bool', 1, 'in', {'default': False}),
+             # ('Error Count Callback Enabled', 'bool', 1, 'in', {'default': False})],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['ccf', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Wiegand Callback Config',
-'elements': [('Data Callback Enabled', 'bool', 1, 'out', {'default': False}),
-             ('Data Available Callback Enabled', 'bool', 1, 'out', {'default': False}),
-             ('Error Count Callback Enabled', 'bool', 1, 'out', {'default': False})],
-'since_firmware': [2, 0, 3],
-'doc': ['ccf', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Get Wiegand Callback Config',
+# 'elements': [('Data Callback Enabled', 'bool', 1, 'out', {'default': False}),
+             # ('Data Available Callback Enabled', 'bool', 1, 'out', {'default': False}),
+             # ('Error Count Callback Enabled', 'bool', 1, 'out', {'default': False})],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['ccf', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'function',
-'name': 'Get Wiegand Error Count',
-'elements': [('Framing Error Count', 'uint32', 1, 'out'),
-             ('Overflow Error Count', 'uint32', 1, 'out')],
-'since_firmware': [2, 0, 3],
-'doc': ['bf', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'function',
+# 'name': 'Get Wiegand Error Count',
+# 'elements': [('Framing Error Count', 'uint32', 1, 'out'),
+             # ('Overflow Error Count', 'uint32', 1, 'out')],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['bf', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'callback',
-'name': 'Wiegand Data Low Level',
-'elements': [('Data Length', 'uint16', 1, 'out', {}),
-             ('Data Data', 'bool', 256, 'out', {})],
-'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
-'since_firmware': [2, 0, 3],
-'doc': ['c', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'callback',
+# 'name': 'Wiegand Data Low Level',
+# 'elements': [('Data Length', 'uint16', 1, 'out', {}),
+             # ('Data Data', 'bool', 256, 'out', {})],
+# 'high_level': {'stream_out': {'name': 'Data', 'single_chunk': True}},
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['c', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'callback',
-'name': 'Wiegand Data Available',
-'elements': [],
-'since_firmware': [2, 0, 3],
-'doc': ['c', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'callback',
+# 'name': 'Wiegand Data Available',
+# 'elements': [],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['c', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
-com['packets'].append({
-'type': 'callback',
-'name': 'Wiegand Error Count',
-'elements': [('Framing Error Count', 'uint32', 1, 'out'),
-             ('Overflow Error Count', 'uint32', 1, 'out')],
-'since_firmware': [2, 0, 3],
-'doc': ['c', {
-'en':
-"""
-TBD
-""",
-'de':
-"""
-TBD
-"""
-}]
-})
+# com['packets'].append({
+# 'type': 'callback',
+# 'name': 'Wiegand Error Count',
+# 'elements': [('Framing Error Count', 'uint32', 1, 'out'),
+             # ('Overflow Error Count', 'uint32', 1, 'out')],
+# 'since_firmware': [2, 0, 3],
+# 'doc': ['c', {
+# 'en':
+# """
+# TBD
+# """,
+# 'de':
+# """
+# TBD
+# """
+# }]
+# })
 
 com['examples'].append({
 'name': 'Simple',
