@@ -8,7 +8,7 @@ Description=<<CONFIG_NAME_SPACE>> MQTT API Bindings
 #After=mosquitto.service
 
 [Service]
-ExecStart=/usr/local/bin/<<CONFIG_NAME_UNDER>>
+ExecStart=/usr/local/bin/<<CONFIG_NAME_UNDER>>_mqtt
 
 [Install]
 WantedBy=multi-user.target
