@@ -2,13 +2,15 @@ Source: tinkerforge-python-bindings
 Section: python
 Priority: optional
 Maintainer: Matthias Bolte <matthias@tinkerforge.com>
-Build-Depends: debhelper (>= 10), dh-python, python, python-setuptools, python3, python3-setuptools
+Build-Depends: debhelper (>= 10), dh-python, python | python2, python-setuptools, python3, python3-setuptools
 Standards-Version: 4.1.2
 Homepage: https://www.tinkerforge.com/
 
 Package: python-tinkerforge
 Architecture: all
-Depends: ${python:Depends}, ${misc:Depends}
+# FIXME: should depend on ${python:Depends} here, but the Python 2 package name
+#        differs between Debian (python) and Ubuntu (python2) since Ubuntu 20.04
+Depends: python | python2, ${misc:Depends}
 Description: Tinkerforge Python API Bindings (Python 2)
  The Python API bindings allow you to control Tinkerforge Bricks and Bricklets
  from your Python programs.
@@ -17,7 +19,9 @@ Description: Tinkerforge Python API Bindings (Python 2)
 
 Package: python3-tinkerforge
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}
+# FIXME: should depend on ${python3:Depends} here, but don't want to leak
+#        specific build system details into the package
+Depends: python3, ${misc:Depends}
 Description: Tinkerforge Python API Bindings (Python 3)
  The Python API bindings allow you to control Tinkerforge Bricks and Bricklets
  from your Python programs.
