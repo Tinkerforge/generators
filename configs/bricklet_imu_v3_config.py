@@ -27,12 +27,11 @@ com = {
         'device',
         'comcu_bricklet',
         'bricklet_get_identity'
-     ],
+    ],
     'constant_groups': [],
     'packets': [],
     'examples': []
 }
-
 
 com['constant_groups'].append({
 'name': 'Magnetometer Rate',
