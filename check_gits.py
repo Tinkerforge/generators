@@ -1,12 +1,35 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
 import sys
+
+if sys.hexversion < 0x3040000:
+    print('Python >= 3.4 required')
+    sys.exit(1)
+
+import os
 import glob
 import configparser
 import json
 import subprocess
+import importlib.util
+import importlib.machinery
+
+generators_dir = os.path.dirname(os.path.realpath(__file__))
+
+def create_generators_module():
+    if sys.hexversion < 0x3050000:
+        generators_module = importlib.machinery.SourceFileLoader('generators', os.path.join(generators_dir, '__init__.py')).load_module()
+    else:
+        generators_spec = importlib.util.spec_from_file_location('generators', os.path.join(generators_dir, '__init__.py'))
+        generators_module = importlib.util.module_from_spec(generators_spec)
+
+        generators_spec.loader.exec_module(generators_module)
+
+    sys.modules['generators'] = generators_module
+
+if 'generators' not in sys.modules:
+    create_generators_module()
 
 def error(message):
     print('\033[01;31m{0}\033[0m'.format(message))
@@ -48,8 +71,6 @@ def check_file(git_path, glob_pattern, expected_name, others_allowed=False):
                    .format(git_path, path.replace(git_path, '').lstrip('/'))) != 0:
         error('{0} is not tracked by git'.format(path.replace(git_path, '').lstrip('/')))
 
-sys.path.append(os.path.realpath('configs'))
-
 configs = {}
 config_contents = {}
 example_names = {}
@@ -73,7 +94,7 @@ for config_name in sorted(os.listdir('configs')):
     if not config_name.endswith('_config.py'):
         continue
 
-    config = __import__(config_name[:-3]).com
+    config = importlib.import_module('generators.configs.' + config_name[:-3]).com
     git_name = config['name'].lower().replace(' ', '-') + '-' + config['category'].lower()
     configs[git_name] = config
 
