@@ -1319,3 +1319,20 @@ gleichen wie bei :func:`Get All Data`.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('W', 'Quaternion [W]'), 'int16', 1, 16383.0, None, None), (('X', 'Quaternion [X]'), 'int16', 1, 16383.0, None, None), (('Y', 'Quaternion [Y]'), 'int16', 1, 16383.0, None, None), (('Z', 'Quaternion [Z]'), 'int16', 1, 16383.0, None, None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Quaternion', 'quaternion'), [(('W', 'Quaternion [W]'), 'int16', 1, 16383.0, None, None), (('X', 'Quaternion [X]'), 'int16', 1, 16383.0, None, None), (('Y', 'Quaternion [Y]'), 'int16', 1, 16383.0, None, None), (('Z', 'Quaternion [Z]'), 'int16', 1, 16383.0, None, None)], None, None),
+              ('callback_configuration', ('Quaternion', 'quaternion'), [], 100, False, None, [])]
+})
+
+com['examples'].append({
+'name': 'All Data',
+'functions': [('callback', ('All Data', 'all data'), [(('Acceleration', ['Acceleration [X]', 'Acceleration [Y]', 'Acceleration [Z]']), 'int16', 3, 100.0, 'm/s²', None), (('Magnetic Field', ['Magnetic Field [X]', 'Magnetic Field [Y]', 'Magnetic Field [Z]']), 'int16', 3, 16.0, 'µT', None), (('Angular Velocity', ['Angular Velocity [X]', 'Angular Velocity [Y]', 'Angular Velocity [Z]']), 'int16', 3, 16.0, '°/s', None), (('Euler Angle', ['Euler Angle [Heading]', 'Euler Angle [Roll]', 'Euler Angle [Pitch]']), 'int16', 3, 16.0, '°', None), (('Quaternion', ['Quaternion [W]', 'Quaternion [X]', 'Quaternion [Y]', 'Quaternion [Z]']), 'int16', 4, 16383.0, None, None), (('Linear Acceleration', ['Linear Acceleration [X]', 'Linear Acceleration [Y]', 'Linear Acceleration [Z]']), 'int16', 3, 100.0, 'm/s²', None), (('Gravity Vector', ['Gravity Vector [X]', 'Gravity Vector [Y]', 'Gravity Vector [Z]']), 'int16', 3, 100.0, 'm/s²', None), (('Temperature', 'Temperature'), 'int8', 1, None, '°C', None), (('Calibration Status', 'Calibration Status'), 'uint8:bitmask:8', 1, None, None, None)], None, None),
+              ('callback_configuration', ('All Data', 'all data'), [], 100, False, None, [])]
+})
