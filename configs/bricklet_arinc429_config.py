@@ -82,50 +82,58 @@ com['constant_groups'].append({
 com['constant_groups'].append({
 'name': 'SDI',
 'type': 'uint8',
-'constants': [('SDI0',     0), # SDI bits used for address extension, SDI 0
-              ('SDI1',     1), # SDI bits used for address extension, SDI 0
-              ('SDI2',     2), # SDI bits used for address extension, SDI 0
-              ('SDI3',     3), # SDI bits used for address extension, SDI 0
-              ('SDI Data', 4)] # SDI bits used for data
+'constants': [('SDI0', 0),     # SDI bits used for address extension, SDI 0
+              ('SDI1', 1),     # SDI bits used for address extension, SDI 0
+              ('SDI2', 2),     # SDI bits used for address extension, SDI 0
+              ('SDI3', 3),     # SDI bits used for address extension, SDI 0
+              ('Data', 4)]     # SDI bits used for data
 })
 
 com['constant_groups'].append({
 'name': 'Parity',
 'type': 'uint8',
-'constants': [('Parity Data', 0),  # parity bit is used for data or parity provided by user
-              ('Parity Auto', 1)]  # parity bit is set automatically
+'constants': [('Data', 0),     # parity bit is used for data or parity provided by user
+              ('Auto', 1)]     # parity bit is set automatically
 })
 
 com['constant_groups'].append({
 'name': 'Speed',
 'type': 'uint8',
-'constants': [('HS', 0),        # high speed
-              ('LS', 1)]        # low  speed
+'constants': [('HS', 0),       # high speed
+              ('LS', 1)]       # low  speed
 })
 
 com['constant_groups'].append({
 'name': 'Channel Mode',
 'type': 'uint8',
-'constants': [('Passive', 0), # initialized, but output stage in HI-Z
-              ('Active',  1), # initialized, ready to receive / ready for direct transmit
-              ('Run',     2)] # TX channels only: active and scheduler running
+'constants': [('Passive', 0),  # initialized, but output stage in HI-Z
+              ('Active',  1),  # initialized, ready to receive / ready for direct transmit
+              ('Run',     2)]  # TX channels only: active and scheduler running
 })
 
 com['constant_groups'].append({
 'name': 'Frame Status',
 'type': 'uint8',
-'constants': [('Update',  0),   # frame is overdue (frame data are last data received)
-              ('Timeout', 1)]   # new or updated frame received
+'constants': [('Update',  0),  # frame is overdue (frame data are last data received)
+              ('Timeout', 1)]  # new or updated frame received
 })
 
 com['constant_groups'].append({
 'name': 'Scheduler Job',
 'type': 'uint8',
-'constants': [('Empty',  0),    # no     transmit, no dwell
-              ('Mute',   1),    # no     transmit, do dwell
-              ('Single', 2),    # send frame once       and dwell
-              ('Cyclic', 3)]    # send frame repeatedly and dwell
+'constants': [('Empty',  0),   # no     transmit, no dwell
+              ('Mute',   1),   # no     transmit, do dwell
+              ('Single', 2),   # send frame once       and dwell
+              ('Cyclic', 3)]   # send frame repeatedly and dwell
 })
+
+com['constant_groups'].append({
+'name': 'A429 Mode',
+'type': 'uint8',
+'constants': [('Normal',  0),  # normal RX/TX operations
+              ('Debug',   1)]  # high-level FW functions stopped 
+})
+
 
 com['packets'].append({
 'type': 'function',
@@ -157,6 +165,7 @@ TX Discretes Bit 2-7: unused
 }]
 })
 
+
 com['packets'].append({
 'type': 'function',
 'name': 'Debug Read Register Low Level',
@@ -176,6 +185,7 @@ Debug function to execute a direct SPI read access on the A429 chip.
 """
 }]
 })
+
 
 com['packets'].append({
 'type': 'function',
@@ -200,18 +210,15 @@ Debug function to execute a direct SPI write access on the A429 chip.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Capabilities',
-'elements': [('RX Channels',         'uint8',  1, 'out', {'range': (0, 16)}),
-             ('RX Frame Filters',    'uint16', 1, 'out'),
-             ('TX Channels',         'uint8',  1, 'out', {'range': (0,  8)}),
-             ('TX Schedule Entries', 'uint16', 1, 'out'),
-             ('TX Schedule Frames',  'uint16', 1, 'out')],
+'elements': [('TX Total Scheduler Tasks', 'uint16', 1, 'out'),
+             ('TX Used Scheduler Tasks',  'uint16', 1, 'out'),
+             ('RX Total Frame Filters',   'uint16', 1, 'out'),
+             ('RX Used Frame Filters',    'uint16', 2, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Get the number of RX and TX channels available on this bricklet,
-along with the maximum number of available RX frame filters and
-TX scheduler entries and scheduled frames.
+
 """,
 'de':
 """
@@ -262,6 +269,7 @@ com['packets'].append({
 'type': 'callback',
 'name': 'Heartbeat',
 'elements': [('Seq Number',       'uint8',  1, 'out'),
+             ('Timestamp',        'uint16', 1, 'out'),
              ('Frames Processed', 'uint16', 3, 'out'),
              ('Frames Lost',      'uint16', 3, 'out')],
 'since_firmware': [1, 0, 0],
@@ -277,6 +285,7 @@ for processed frames and lost frames for all TX and RX channels.
 """
 }]
 })
+
 
 com['packets'].append({
 'type': 'function',
@@ -357,57 +366,6 @@ Get the operating mode of the selected channel.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Clear Prio Labels',
-'elements': [('Channel', 'uint8',  1, 'in', {'constant_group': 'Channel'})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Disable the priority filters on the given channel(s).
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Set Prio Labels',
-'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Label',   'uint8',  3, 'in',)],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Set the labels for the priority receive filters in the given channel(s).
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Get Prio Labels',
-'elements': [('Channel',      'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Prio Enabled', 'bool',   1, 'out'),
-             ('Label',        'uint8',  3, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Read the labels configured for the priority receive filters on the selected channel.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': 'Clear All RX Filters',
 'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'})],
 'since_firmware': [1, 0, 0],
@@ -427,7 +385,8 @@ com['packets'].append({
 'name': 'Clear RX Filter',
 'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'}),
              ('Label',   'uint8',  1, 'in'),
-             ('SDI',     'uint8',  1, 'in',  {'constant_group': 'SDI'})],
+             ('SDI',     'uint8',  1, 'in',  {'constant_group': 'SDI'}),
+             ('Success', 'bool',   1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -442,10 +401,27 @@ Clear one RX filter in the given channel(s).
 
 com['packets'].append({
 'type': 'function',
+'name': 'Set RX Standard Filters',
+'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Set a SDI_DATA filter for every label (0-255). Existing filters will be overwritten.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Set RX Filter',
 'elements': [('Channel', 'uint8',  1, 'in',  {'constant_group': 'Channel'}),
              ('Label',   'uint8',  1, 'in',),
-             ('SDI',     'uint8',  1, 'in',  {'constant_group': 'SDI'})],
+             ('SDI',     'uint8',  1, 'in',  {'constant_group': 'SDI'}),
+             ('Success', 'bool',   1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -504,6 +480,7 @@ and the last frame received will be repeated.
 }]
 })
 
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set RX Callback Configuration',
@@ -550,6 +527,7 @@ com['packets'].append({
 'name': 'Frame Message',
 'elements': [('Channel',         'uint8',  1, 'out', {'constant_group': 'Channel'}),
              ('Seq Number',      'uint8',  1, 'out'),
+             ('Timestamp',       'uint16', 1, 'out'),
              ('Frame Status',    'uint8',  1, 'out', {'constant_group': 'Frame Status'}),
              ('Frame',           'uint32', 1, 'out'),
              ('Age',             'uint16', 1, 'out', {'scale': (1, 60000), 'unit': 'Second'})],  # TODO 1 - 60.000 milli-seconds
@@ -625,6 +603,7 @@ Clear a range of TX scheduler entries.
 }]
 })
 
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set Schedule Entry',
@@ -650,6 +629,7 @@ Set a TX scheduler entry:
 }]
 })
 
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get Schedule Entry',
@@ -670,3 +650,21 @@ Get a TX scheduler entry.
 """
 }]
 })
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Reset A429',
+'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'A429 Mode', 'default': 0})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Resets all A429 operations.
+""",
+'de':
+"""
+"""
+}]
+})
+
