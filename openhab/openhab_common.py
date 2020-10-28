@@ -1151,6 +1151,3 @@ class OpenHABDevice(java_common.JavaDevice):
                         action.refreshs[i] = next(c for c in self.oh.channels if c.id.space.replace(self.get_category().space + ' ' + self.get_name().space + ' ', '', 1) == refresh)
                     except StopIteration:
                         raise common.GeneratorError('openhab: Device {}: Action {}: Unknown channel {}.'.format(self.get_long_display_name(), action.fn.get_name().space, refresh))
-
-
-

@@ -159,8 +159,6 @@ def run(root_dir):
     if not UCExamplesTester(root_dir, 'mingw32-g++', extra_paths).run():
         return False
 
-
-
     return UCExamplesTester(root_dir, 'scan-build clang', extra_paths).run()
 
 if __name__ == '__main__':
