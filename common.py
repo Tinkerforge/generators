@@ -1456,8 +1456,8 @@ def execute(args, **kwargs):
     try:
         if subprocess.call(args, **kwargs) != 0:
             sys.exit(1)
-    except:
-        print(error)
+    except Exception as e:
+        print(error + '\n' + str(e))
         sys.exit(1)
 
 def generate(root_dir, language, generator_class):
