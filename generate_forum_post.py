@@ -83,5 +83,5 @@ def main(base_path):
 </p>
 """.format(',\n'.join(display_names), ',\n'.join(downloads)))
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main(os.getcwd())

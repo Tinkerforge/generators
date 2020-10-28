@@ -28,92 +28,96 @@ def create_generators_module():
 if 'generators' not in sys.modules:
     create_generators_module()
 
-positive = set()
-negative = set()
-actions = {'bindings', 'examples', 'doc', 'zip'}
+def main():
+    positive = set()
+    negative = set()
+    actions = {'bindings', 'examples', 'doc', 'zip'}
 
-for arg in sys.argv[1:]:
-    if arg.startswith('-'):
-        negative.add(arg[1:])
+    for arg in sys.argv[1:]:
+        if arg.startswith('-'):
+            negative.add(arg[1:])
+        else:
+            positive.add(arg)
+
+    if not positive.issubset(actions) or not negative.issubset(actions):
+        print('Error: Invalid argument')
+
+    if len(positive) > 0 and len(negative) > 0:
+        print('Error: Cannot mix positive and negative arguments')
+
+    if len(positive) > 0:
+        actions = positive
     else:
-        positive.add(arg)
+        actions -= negative
 
-if not positive.issubset(actions) or not negative.issubset(actions):
-    print('Error: Invalid argument')
+    # exclude examples if not explicitly specified
+    if 'examples' not in positive and 'examples' in actions:
+        actions.remove('examples')
 
-if len(positive) > 0 and len(negative) > 0:
-    print('Error: Cannot mix positive and negative arguments')
+    bindings = []
 
-if len(positive) > 0:
-    actions = positive
-else:
-    actions -= negative
+    for d in os.listdir(generators_dir):
+        if os.path.isdir(d):
+            if d not in ['configs', 'stubs', '.git', '__pycache__', '.vscode', 'openhab']:
+                bindings.append(d)
 
-# exclude examples if not explicitly specified
-if 'examples' not in positive and 'examples' in actions:
-    actions.remove('examples')
+    bindings = sorted(bindings)
 
-bindings = []
+    # bindings
+    if 'bindings' in actions and socket.gethostname() != 'tinkerforge.com':
+        for binding in bindings:
+            if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
+                continue
 
-for d in os.listdir(generators_dir):
-    if os.path.isdir(d):
-        if d not in ['configs', 'stubs', '.git', '__pycache__', '.vscode', 'openhab']:
-            bindings.append(d)
+            module = importlib.import_module('generators.{0}.generate_{0}_bindings'.format(binding))
 
-bindings = sorted(bindings)
+            print('\nGenerating bindings for {0}:'.format(binding))
 
-# bindings
-if 'bindings' in actions and socket.gethostname() != 'tinkerforge.com':
-    for binding in bindings:
-        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
-            continue
+            module.generate(os.path.join(generators_dir, binding))
 
-        module = importlib.import_module('generators.{0}.generate_{0}_bindings'.format(binding))
+    # examples
+    if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
+        for binding in bindings:
+            if binding in ['tcpip', 'modbus', 'stubs', 'tvpl', 'saleae']:
+                continue
 
-        print('\nGenerating bindings for {0}:'.format(binding))
+            try:
+                module = importlib.import_module('generators.{0}.generate_{0}_examples'.format(binding))
+            except ImportError:
+                print("\nNo example generator for {0}".format(binding))
+                continue
 
-        module.generate(os.path.join(generators_dir, binding))
+            print('\nGenerating examples for {0}:'.format(binding))
 
-# examples
-if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
-    for binding in bindings:
-        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl', 'saleae']:
-            continue
+            module.generate(os.path.join(generators_dir, binding))
 
-        try:
-            module = importlib.import_module('generators.{0}.generate_{0}_examples'.format(binding))
-        except ImportError:
-            print("\nNo example generator for {0}".format(binding))
-            continue
+    # doc
+    if 'doc' in actions:
+        for binding in bindings:
+            if binding in ['json', 'stubs', 'tvpl', 'saleae']:
+                continue
 
-        print('\nGenerating examples for {0}:'.format(binding))
+            module = importlib.import_module('generators.{0}.generate_{0}_doc'.format(binding))
 
-        module.generate(os.path.join(generators_dir, binding))
+            for lang in ['en', 'de']:
+                print('\nGenerating {0} documentation for {1}:'.format(lang, binding))
 
-# doc
-if 'doc' in actions:
-    for binding in bindings:
-        if binding in ['json', 'stubs', 'tvpl', 'saleae']:
-            continue
+                module.generate(os.path.join(generators_dir, binding), lang)
 
-        module = importlib.import_module('generators.{0}.generate_{0}_doc'.format(binding))
+    # zip
+    if 'zip' in actions and socket.gethostname() != 'tinkerforge.com':
+        for binding in bindings:
+            if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
+                continue
 
-        for lang in ['en', 'de']:
-            print('\nGenerating {0} documentation for {1}:'.format(lang, binding))
+            module = importlib.import_module('generators.{0}.generate_{0}_zip'.format(binding))
 
-            module.generate(os.path.join(generators_dir, binding), lang)
+            print('\nGenerating ZIP for {0}:'.format(binding))
 
-# zip
-if 'zip' in actions and socket.gethostname() != 'tinkerforge.com':
-    for binding in bindings:
-        if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
-            continue
+            module.generate(os.path.join(generators_dir, binding))
 
-        module = importlib.import_module('generators.{0}.generate_{0}_zip'.format(binding))
+    print('')
+    print('>>> Done <<<')
 
-        print('\nGenerating ZIP for {0}:'.format(binding))
-
-        module.generate(os.path.join(generators_dir, binding))
-
-print('')
-print('>>> Done <<<')
+if __name__ == '__main__':
+    main()

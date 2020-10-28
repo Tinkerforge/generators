@@ -27,49 +27,53 @@ def create_generators_module():
 if 'generators' not in sys.modules:
     create_generators_module()
 
-positive = set()
-negative = set()
-bindings = set()
+def main():
+    positive = set()
+    negative = set()
+    bindings = set()
 
-for arg in sys.argv[1:]:
-    if arg.startswith('-'):
-        negative.add(arg[1:])
+    for arg in sys.argv[1:]:
+        if arg.startswith('-'):
+            negative.add(arg[1:])
+        else:
+            positive.add(arg)
+
+    for d in os.listdir(generators_dir):
+        if os.path.isdir(d):
+            if d not in ['configs', '.git', '__pycache__', '.vscode']:
+                bindings.add(d)
+
+    if not positive <= bindings or not negative <= bindings:
+        print('Error: Invalid argument')
+
+    if len(positive) > 0 and len(negative) > 0:
+        print('Error: Cannot mix positive and negative arguments')
+
+    if len(positive) > 0:
+        bindings = positive
     else:
-        positive.add(arg)
+        bindings -= negative
 
-for d in os.listdir(generators_dir):
-    if os.path.isdir(d):
-        if d not in ['configs', '.git', '__pycache__', '.vscode']:
-            bindings.add(d)
+    bindings = sorted(list(bindings))
 
-if not positive <= bindings or not negative <= bindings:
-    print('Error: Invalid argument')
+    for binding in bindings:
+        if binding in ['stubs', 'tvpl']:
+            continue
 
-if len(positive) > 0 and len(negative) > 0:
-    print('Error: Cannot mix positive and negative arguments')
+        module = importlib.import_module('generators.{0}.test_{0}_bindings'.format(binding))
 
-if len(positive) > 0:
-    bindings = positive
-else:
-    bindings -= negative
+        print("### testing {0} bindings:".format(binding))
 
-bindings = sorted(list(bindings))
+        success = module.run(os.path.join(generators_dir, binding))
 
-for binding in bindings:
-    if binding in ['stubs', 'tvpl']:
-        continue
+        if not isinstance(success, bool):
+            raise Exception('test_{0}_bindings.py returns wrong type from its run() function'.format(binding))
 
-    module = importlib.import_module('generators.{0}.test_{0}_bindings'.format(binding))
+        if not success:
+            sys.exit(1)
 
-    print("### testing {0} bindings:".format(binding))
+    print('')
+    print('>>> Done <<<')
 
-    success = module.run(os.path.join(generators_dir, binding))
-
-    if not isinstance(success, bool):
-        raise Exception('test_{0}_bindings.py returns wrong type from its run() function'.format(binding))
-
-    if not success:
-        sys.exit(1)
-
-print('')
-print('>>> Done <<<')
+if __name__ == '__main__':
+    main()
