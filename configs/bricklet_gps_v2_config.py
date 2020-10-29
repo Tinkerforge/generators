@@ -1031,7 +1031,7 @@ com['openhab'] = {
                     command_options=[('Hot Start', '0'),
                                      ('Warm Start', '1'),
                                      ('Cold Start', '2'),
-                                     ({'en': 'Factory reset', 'de': 'Reset auf Werkszustand'}, '3')])
+                                     ('Factory reset', '3')])
     ],
     'actions': ['Get Coordinates', 'Get Status', 'Get Altitude', 'Get Motion', 'Get Date Time', 'Get Satellite System Status', 'Get Satellite Status', 'Restart', 'Get Fix LED Config', 'Get SBAS Config']
 }
