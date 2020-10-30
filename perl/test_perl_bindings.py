@@ -143,5 +143,5 @@ def run(root_dir):
 
     return PerlCriticExamplesTester(root_dir).run()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(os.getcwd())

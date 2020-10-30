@@ -119,5 +119,5 @@ class PythonZipGenerator(python_common.PythonGeneratorTrait, common.ZipGenerator
 def generate(root_dir):
     common.generate(root_dir, 'en', PythonZipGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

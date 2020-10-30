@@ -754,5 +754,5 @@ def get_device_display_name(device_identifier):
 def generate(root_dir):
     common.generate(root_dir, 'en', PythonBindingsGenerator)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())

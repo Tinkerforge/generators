@@ -89,5 +89,5 @@ def generate(root_dir):
                         'verify'],
                        env=env)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate(os.getcwd())
