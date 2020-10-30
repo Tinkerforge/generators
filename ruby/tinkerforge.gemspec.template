@@ -3,7 +3,6 @@ spec = Gem::Specification.new do |s|
   s.version = '<<VERSION>>'
   s.summary = 'Ruby API Bindings for Tinkerforge Bricks and Bricklets'
   s.files = Dir['lib/*.rb'] + Dir['lib/tinkerforge/*.rb']
-  s.has_rdoc = true
   s.rdoc_options << '--title' << 'Tinkerforge'
   s.required_ruby_version = '>= 1.9.0'
   s.license = 'CC0-1.0'
