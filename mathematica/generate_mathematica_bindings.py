@@ -31,6 +31,7 @@ if sys.hexversion < 0x3040000:
     sys.exit(1)
 
 import os
+import importlib.util
 import importlib.machinery
 
 def create_generators_module():
