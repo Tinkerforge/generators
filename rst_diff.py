@@ -110,10 +110,6 @@ def main():
                 print('skipping {0}, no doc directory'.format(b))
                 continue
 
-            if not os.path.isdir(doc_old_path):
-                print('skipping {0}, no old doc directory'.format(b))
-                continue
-
             print('preparing ' + b)
 
             if os.path.isdir(doc_old_path):
