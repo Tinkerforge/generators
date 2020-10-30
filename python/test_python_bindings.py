@@ -116,15 +116,15 @@ def run(root_dir):
     if not PythonTester(root_dir, 'python', extra_paths).run():
         return False
 
+    # FIXME: doesn't handle PyQt related super false-positves yet
+    if not PylintTester(root_dir, 'python', 'pylint', []).run():#extra_paths).run():
+        return False
+
     if not PythonTester(root_dir, 'python3', extra_paths).run():
         return False
 
     # FIXME: doesn't handle PyQt related super false-positves yet
-    if not PylintTester(root_dir, 'python', 'pylint', []).run():#extra_paths).run()
-        return False
-
-    # FIXME: doesn't handle unicode false-positves yet
-    return True #PylintTester(root_dir, 'python3', 'pylint3', extra_paths).run()
+    return PylintTester(root_dir, 'python3', 'pylint3', []).run()#extra_paths).run()
 
 if __name__ == '__main__':
     run(os.getcwd())
