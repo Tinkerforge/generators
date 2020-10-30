@@ -4757,14 +4757,14 @@ class Tester(object):
         if sys.stdout.isatty(): # only print color codes if stdout is not piped
             if success:
                 self.success_count += 1
-                print('\033[01;32m>>> test succeded\033[0m\n')
+                print('\033[01;32m>>> test succeeded\033[0m\n')
             else:
                 self.failure_count += 1
                 print('\033[01;31m>>> test failed\033[0m\n')
         else:
             if success:
                 self.success_count += 1
-                print('>>> test succeded\n')
+                print('>>> test succeeded\n')
             else:
                 self.failure_count += 1
                 print('>>> test failed\n')
@@ -4825,10 +4825,10 @@ class Tester(object):
 
         # report
         if self.comment != None:
-            print('### [{0}] {1} file(s) tested, {2} test(s) succeded, {3} failure(s) occurred'
+            print('### [{0}] {1} file(s) tested, {2} test(s) succeeded, {3} failure(s) occurred'
                   .format(self.comment, self.test_count, self.success_count, self.failure_count))
         else:
-            print('### {0} file(s) tested, {1} test(s) succeded, {2} failure(s) occurred'
+            print('### {0} file(s) tested, {1} test(s) succeeded, {2} failure(s) occurred'
                   .format(self.test_count, self.success_count, self.failure_count))
 
         return self.failure_count == 0
