@@ -67,9 +67,9 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--prepare', action='store_true', help='prepare unreleased zip as old diff input')
-    parser.add_argument('--unreleased', action='store_true', help='use unreleased zip as old diff input')
-    parser.add_argument('--diff-tool', default='geany', help='program to open diff with')
+    parser.add_argument('-p', '--prepare', action='store_true', help='prepare unreleased zip as old diff input')
+    parser.add_argument('-u', '--unreleased', action='store_true', help='use unreleased zip as old diff input')
+    parser.add_argument('-d', '--diff-tool', default='geany', help='program to open diff with')
     parser.add_argument('bindings', nargs='?', help='bindings to create diff for')
 
     args = parser.parse_args(argv)

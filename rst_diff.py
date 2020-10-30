@@ -67,8 +67,8 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--prepare', action='store_true', help='prepare current rst as old diff input')
-    parser.add_argument('--diff-tool', default='geany', help='program to open diff file with')
+    parser.add_argument('-p', '--prepare', action='store_true', help='prepare current rst as old diff input')
+    parser.add_argument('-d', '--diff-tool', default='geany', help='program to open diff file with')
     parser.add_argument('bindings', nargs='?', help='bindings to create diff file for')
 
     args = parser.parse_args(argv)
