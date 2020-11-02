@@ -73,8 +73,10 @@ class PerlCheckExamplesTester(common.Tester):
     def check_success(self, exit_code, output):
         output = output.strip('\r\n')
 
-        # FIXME: filter out some internal Perl problems with the Math::Complex module
-        filtered_output = [line for line in output.split('\n') if not line.startswith('Prototype mismatch: sub Math::Complex::')]
+        # FIXME: filter out some internal Perl problems with the Math::Complex and Math::BigInt module
+        filtered_output = [line for line in output.split('\n')
+                           if not line.startswith('Prototype mismatch: sub Math::Complex::') and
+                              not line.startswith("overload arg '..' is invalid at /usr/share/perl/5.24/Math/BigInt.pm line 158.")]
 
         return exit_code == 0 and len(filtered_output) == 1 and 'syntax OK' in output
 
