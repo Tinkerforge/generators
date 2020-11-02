@@ -35,3 +35,4 @@ tvpl/build_deploy_tvpl.py
 */zip/
 */zip_*/
 .m2/
+ui_diff_view.py
