@@ -172,5 +172,5 @@
 - Restore ECMAScript 5 compatibility
 - Add 64-bit integer support using BigInt
 
-2020-11-02: 2.1.31 (<unknown>)
+2020-11-02: 2.1.31 (6399602)
 - Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet

@@ -192,5 +192,5 @@
 2020-06-26: 2.1.27 (0df8e2b)
 - Add missing options to bash-completion logic
 
-2020-11-02: 2.1.28 (<unknown>)
+2020-11-02: 2.1.28 (6399602)
 - Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
