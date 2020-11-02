@@ -31,5 +31,5 @@
   API
 - Add "Set/Get I2C Mode" functions to Barometer Bricklet API
 
-2020-10-27: 2.0.4 (<unknown>)
+2020-11-02: 2.0.4 (<unknown>)
 - Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
