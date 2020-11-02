@@ -50,13 +50,15 @@ DISPLAY_NAMES = {
 'vbnet':       'Visual Basic .NET'
 }
 
-def main(base_path):
+def main():
     bindings = []
 
-    for d in sorted(os.listdir(base_path)):
-        if os.path.isdir(d):
-            if not d in ['tcpip', 'modbus', 'configs', '.git', '__pycache__', 'tvpl', 'json', 'stubs', 'openhab']:
-                bindings.append(d)
+    for binding in sorted(os.listdir(generators_dir)):
+        if not os.path.isdir(binding) or os.path.exists(os.path.join(generators_dir, binding, 'skip_generate_forum_post')):
+            continue
+
+        if binding not in ['.git', '.vscode', '.m2', '__pycache__', 'configs', 'docker']:
+            bindings.append(binding)
 
     display_names = []
     downloads = []
@@ -65,7 +67,7 @@ def main(base_path):
         if len(sys.argv) > 1 and binding not in sys.argv[1:]:
             continue
 
-        path = os.path.join(base_path, binding)
+        path = os.path.join(generators_dir, binding)
         version = common.get_changelog_version(path)
 
         display_names.append('{0} {1}.{2}.{3}'.format(DISPLAY_NAMES[binding], *version))
@@ -84,4 +86,4 @@ def main(base_path):
 """.format(',\n'.join(display_names), ',\n'.join(downloads)))
 
 if __name__ == '__main__':
-    main(os.getcwd())
+    main()

@@ -1,0 +1,1 @@
+remove "if x.endswith('_openHAB.rst') or x.endswith('.rules'):" from copy_all.py when removing this file

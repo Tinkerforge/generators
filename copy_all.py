@@ -78,17 +78,18 @@ def files_are_not_the_same(src_file, dest_path):
         return text_files_are_not_the_same(src_file, dest_path)
 
 def main():
-    path = os.getcwd()
-    start_path = '/'.join([part for part in path.split('/') if not part.startswith('generators')])
+    path = generators_dir
+    start_path = os.path.realpath(os.path.join(generators_dir, '..'))
     brickv_path_bindings = os.path.join(start_path, 'brickv/src/brickv/bindings')
     flash_test_path_bindings = os.path.join(start_path, 'flash-test/src/flash-test/plugin_system/tinkerforge')
     bindings = []
 
-    for d in os.listdir(path):
-        if os.path.isdir(d):
-            # Remove "if x.endswith('_openHAB.rst') or x.endswith('.rules'):" when removing openhab here
-            if not d in ['configs', 'json', 'stubs', '.git', '__pycache__', '.vscode', '.m2', 'docker', 'saleae', 'openhab']:
-                bindings.append(d)
+    for binding in os.listdir(generators_dir):
+        if not os.path.isdir(binding) or os.path.exists(os.path.join(generators_dir, binding, 'skip_copy_all')):
+            continue
+
+        if binding not in ['.git', '.m2', '.vscode', '__pycache__', 'configs', 'docker']:
+            bindings.append(binding)
 
     bindings = sorted(bindings)
 
@@ -145,9 +146,6 @@ def main():
             to_delete[lang][t[1]] = os.listdir(dest_dir)
 
         for binding in bindings:
-            if binding == 'tvpl':
-                continue
-
             path_binding = os.path.join(path, binding)
             src_file_path = os.path.join(path_binding, 'doc', lang)
 
@@ -279,9 +277,11 @@ def main():
         for t in doc_copy:
             if t[1] == '.':
                 continue
+
             for x in to_delete[lang][t[1]]:
                 if x.endswith('_openHAB.rst') or x.endswith('.rules'):
                     continue
+
                 if x.endswith('.table'):
                     continue
 
