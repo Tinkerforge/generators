@@ -494,8 +494,10 @@ class MQTTExamplesGenerator(mqtt_common.MQTTGeneratorTrait, common.ExamplesGener
             with open(filepath, 'w') as f:
                 f.write(example.get_mqtt_source())
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', MQTTExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, MQTTExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('mqtt', __file__)
+
+    generate(os.getcwd(), 'en')

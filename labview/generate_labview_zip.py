@@ -142,8 +142,10 @@ class LabVIEWZipGenerator(labview_common.LabVIEWGeneratorTrait, common.ZipGenera
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', LabVIEWZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, LabVIEWZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('labview', __file__)
+
+    generate(os.getcwd(), 'en')

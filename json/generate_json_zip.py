@@ -86,8 +86,10 @@ class JSONZipGenerator(JSONGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', JSONZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, JSONZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('json', __file__)
+
+    generate(os.getcwd(), 'en')

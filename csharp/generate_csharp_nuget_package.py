@@ -133,4 +133,6 @@ def generate(root_dir):
                 os.path.join(root_dir, 'tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)))
 
 if __name__ == '__main__':
+    common.dockerize('csharp', __file__)
+
     generate(os.getcwd())

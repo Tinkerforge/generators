@@ -75,8 +75,10 @@ class GoExamplesTester(common.Tester):
         #print(">>> Compiling examples, this will take a while...")
         self.execute(cookie, args, env={'GOPATH': os.path.normpath(root_dir), 'GOCACHE': self.go_cache_dir})
 
-def run(root_dir):
+def test(root_dir):
     return GoExamplesTester(root_dir, None).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('go', __file__)
+
+    test(os.getcwd())

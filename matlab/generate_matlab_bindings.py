@@ -77,12 +77,14 @@ class OcatveBindingsGenerator(matlab_common.MATLABGeneratorTrait, JavaBindingsGe
     def is_octave(self):
         return True
 
-def generate(root_dir):
-    print('=== Generating MATLAB ===')
-    common.generate(root_dir, 'en', MATLABBindingsGenerator)
+def generate(root_dir, language):
+    print('=== flavor: matlab')
+    common.generate(root_dir, language, MATLABBindingsGenerator)
 
-    print('=== Generating Octave ===')
-    common.generate(root_dir, 'en', OcatveBindingsGenerator)
+    print('=== flavor: octave')
+    common.generate(root_dir, language, OcatveBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('matlab', __file__)
+
+    generate(os.getcwd(), 'en')

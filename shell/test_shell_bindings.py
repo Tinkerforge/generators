@@ -76,8 +76,10 @@ class ShellExamplesTester(common.Tester):
     def check_success(self, exit_code, output):
         return exit_code == 0 and output.strip() in ['', 'Press key to exit']
 
-def run(root_dir):
+def test(root_dir):
     return ShellExamplesTester(root_dir).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('shell', __file__)
+
+    test(os.getcwd())

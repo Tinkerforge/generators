@@ -120,8 +120,10 @@ class DelphiZipGenerator(delphi_common.DelphiGeneratorTrait, common.ZipGenerator
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', DelphiZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, DelphiZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('delphi', __file__)
+
+    generate(os.getcwd(), 'en')

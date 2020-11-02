@@ -92,7 +92,7 @@ class PylintTester(common.Tester):
 
         self.execute(cookie, args)
 
-def run(root_dir):
+def test(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/demo/starter_kit_weather_station_demo/main.py'),
                    os.path.join(root_dir, '../../weather-station/write_to_lcd/python/weather_station.py'),
                    os.path.join(root_dir, '../../hardware-hacking/remote_switch/python/remote_switch.py'),
@@ -127,4 +127,6 @@ def run(root_dir):
     return PylintTester(root_dir, 'python3', 'pylint3', []).run()#extra_paths).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('python', __file__)
+
+    test(os.getcwd())

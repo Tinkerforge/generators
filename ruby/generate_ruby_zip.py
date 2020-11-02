@@ -147,8 +147,10 @@ end
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', RubyZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, RubyZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('ruby', __file__)
+
+    generate(os.getcwd(), 'en')

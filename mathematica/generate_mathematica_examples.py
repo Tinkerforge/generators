@@ -727,8 +727,10 @@ class MathematicaExamplesGenerator(mathematica_common.MathematicaGeneratorTrait,
 
             txt2nb(filepath)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', MathematicaExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, MathematicaExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('mathematica', __file__)
+
+    generate(os.getcwd(), 'en')

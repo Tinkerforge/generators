@@ -207,8 +207,10 @@ class SaleaeBindingsGenerator(saleae_common.SaleaeGeneratorTrait, common.Binding
         })
 
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', SaleaeBindingsGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, SaleaeBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('saleae', __file__)
+
+    generate(os.getcwd(), 'en')

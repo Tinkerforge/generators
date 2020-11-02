@@ -1431,8 +1431,10 @@ class CBindingsGenerator(c_common.CGeneratorTrait, common.BindingsGenerator):
             self.released_files.append(filename + '.h')
             self.released_files.append(filename + '.symbols')
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', CBindingsGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, CBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('c', __file__)
+
+    generate(os.getcwd(), 'en')

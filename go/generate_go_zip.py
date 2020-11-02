@@ -152,8 +152,10 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', GoZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, GoZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('go', __file__)
+
+    generate(os.getcwd(), 'en')

@@ -123,8 +123,10 @@ class MathematicaZipGenerator(mathematica_common.MathematicaGeneratorTrait, comm
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', MathematicaZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, MathematicaZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('mathematica', __file__)
+
+    generate(os.getcwd(), 'en')

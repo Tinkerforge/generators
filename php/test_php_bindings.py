@@ -62,7 +62,7 @@ class PHPTester(common.Tester):
 
         self.execute(cookie, args)
 
-def run(root_dir):
+def test(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/website/php/WeatherStationWebsite.php'),
                    os.path.join(root_dir, '../../weather-station/write_to_lcd/php/WeatherStation.php'),
                    os.path.join(root_dir, '../../hardware-hacking/remote_switch/php/RemoteSwitch.php'),
@@ -71,4 +71,6 @@ def run(root_dir):
     return PHPTester(root_dir, extra_paths).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('php', __file__)
+
+    test(os.getcwd())

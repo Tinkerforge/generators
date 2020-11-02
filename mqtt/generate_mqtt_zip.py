@@ -111,8 +111,10 @@ class MQTTZipGenerator(mqtt_common.MQTTGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', MQTTZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, MQTTZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('mqtt', __file__)
+
+    generate(os.getcwd(), 'en')

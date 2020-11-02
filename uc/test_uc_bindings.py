@@ -141,7 +141,7 @@ class UCExamplesTester(common.Tester):
 
         return exit_code == 0
 
-def run(root_dir):
+def test(root_dir):
     extra_paths = []
 
     if not UCExamplesTester(root_dir, 'clang', extra_paths).run():
@@ -162,4 +162,6 @@ def run(root_dir):
     return UCExamplesTester(root_dir, 'scan-build clang', extra_paths).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('uc', __file__)
+
+    test(os.getcwd())

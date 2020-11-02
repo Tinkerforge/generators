@@ -658,8 +658,10 @@ class PythonExamplesGenerator(python_common.PythonGeneratorTrait, common.Example
             with open(filepath, 'w') as f:
                 f.write(example.get_python_source())
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', PythonExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, PythonExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('python', __file__)
+
+    generate(os.getcwd(), 'en')

@@ -54,7 +54,7 @@ if 'generators' not in sys.modules:
 
 from generators import common
 
-def generate(root_dir):
+def generate(root_dir, language):
     version                       = common.get_changelog_version(root_dir)
     debian_dir                    = os.path.join(root_dir, 'debian')
     tmp_dir                       = os.path.join(root_dir, 'debian_package')
@@ -99,4 +99,6 @@ def generate(root_dir):
         common.execute(['lintian', '--pedantic'] + glob.glob('*.deb'))
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('javascript', __file__)
+
+    generate(os.getcwd(), 'en')

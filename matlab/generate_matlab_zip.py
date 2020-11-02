@@ -213,8 +213,10 @@ class MATLABZipGenerator(matlab_common.MATLABGeneratorTrait, common.ZipGenerator
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', MATLABZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, MATLABZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('matlab', __file__)
+
+    generate(os.getcwd(), 'en')

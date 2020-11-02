@@ -132,7 +132,7 @@ class CExamplesTester(common.Tester):
 
         return exit_code == 0
 
-def run(root_dir):
+def test(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/c/weather_station.c'),
                    os.path.join(root_dir, '../../hardware-hacking/remote_switch/c/remote_switch.c'),
                    os.path.join(root_dir, '../../hardware-hacking/smoke_detector/c/smoke_detector.c')]
@@ -155,4 +155,6 @@ def run(root_dir):
     return CExamplesTester(root_dir, 'scan-build clang', extra_paths).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('c', __file__)
+
+    test(os.getcwd())

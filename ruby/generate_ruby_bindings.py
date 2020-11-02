@@ -714,8 +714,10 @@ end
 
         common.BindingsGenerator.finish(self)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', RubyBindingsGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, RubyBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('ruby', __file__)
+
+    generate(os.getcwd(), 'en')

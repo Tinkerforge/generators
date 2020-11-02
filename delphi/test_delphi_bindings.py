@@ -81,7 +81,7 @@ class DelphiExamplesTester(common.Tester):
     def check_success(self, exit_code, output):
         return exit_code == 0 and 'warning(s) issued' not in output.strip('\r\n')
 
-def run(root_dir):
+def test(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/write_to_lcd/delphi/WeatherStation.pas'),
                    os.path.join(root_dir, '../../hardware-hacking/remote_switch/delphi/RemoteSwitch.pas'),
                    os.path.join(root_dir, '../../hardware-hacking/smoke_detector/delphi/SmokeDetector.pas')]
@@ -89,4 +89,6 @@ def run(root_dir):
     return DelphiExamplesTester(root_dir, extra_paths).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('delphi', __file__)
+
+    test(os.getcwd())

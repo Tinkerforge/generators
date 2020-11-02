@@ -126,7 +126,7 @@ class JavaDocTester(common.Tester):
     def check_success(self, exit_code, output):
         return exit_code == 0 and len(output.strip('\r\n')) == 0
 
-def run(root_dir):
+def test(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/examples/GuitarStation.java'),
                    os.path.join(root_dir, '../../weather-station/write_to_lcd/java/WeatherStation.java'),
                    os.path.join(root_dir, '../../hardware-hacking/remote_switch/java/RemoteSwitch.java'),
@@ -138,4 +138,6 @@ def run(root_dir):
     return JavaDocTester(root_dir).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('java', __file__)
+
+    test(os.getcwd())

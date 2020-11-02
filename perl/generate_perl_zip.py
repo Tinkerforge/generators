@@ -118,8 +118,10 @@ class PerlZipGenerator(perl_common.PerlGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', PerlZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, PerlZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('perl', __file__)
+
+    generate(os.getcwd(), 'en')

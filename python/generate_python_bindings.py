@@ -751,8 +751,10 @@ def get_device_display_name(device_identifier):
 
         common.BindingsGenerator.finish(self)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', PythonBindingsGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, PythonBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('python', __file__)
+
+    generate(os.getcwd(), 'en')

@@ -146,8 +146,10 @@ class CSharpZipGenerator(csharp_common.CSharpGeneratorTrait, common.ZipGenerator
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', CSharpZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, CSharpZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('csharp', __file__)
+
+    generate(os.getcwd(), 'en')

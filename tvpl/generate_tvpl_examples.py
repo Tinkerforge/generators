@@ -716,9 +716,10 @@ class TVPLExamplesGenerator(tvpl_common.TVPLGeneratorTrait, common.ExamplesGener
             with open(filepath, 'w') as f:
                 f.write(example.get_tvpl_source().encode('utf-8'))
 
-def generate(root_dir):
-    print('### disabled')
-    #common.generate(root_dir, 'en', TVPLExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, TVPLExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('tvpl', __file__)
+
+    generate(os.getcwd(), 'en')

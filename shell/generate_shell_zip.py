@@ -100,8 +100,10 @@ class ShellZipGenerator(shell_common.ShellGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', ShellZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, ShellZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('shell', __file__)
+
+    generate(os.getcwd(), 'en')

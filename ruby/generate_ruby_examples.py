@@ -637,8 +637,10 @@ class RubyExamplesGenerator(ruby_common.RubyGeneratorTrait, common.ExamplesGener
             with open(filepath, 'w') as f:
                 f.write(example.get_ruby_source())
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', RubyExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, RubyExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('ruby', __file__)
+
+    generate(os.getcwd(), 'en')

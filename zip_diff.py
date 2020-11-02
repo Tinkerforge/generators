@@ -76,7 +76,7 @@ def main():
 
     diff_tool = args.diff_tool
 
-    ignored = ['configs', 'stubs', 'modbus', 'tcpip', 'tvpl', '.git', '__pycache__', '.vscode']
+    ignored = ['.git', '.vscode', '.m2', '__pycache__', 'configs', 'docker', 'modbus', 'tcpip', 'stubs', 'tvpl', 'openhab', 'uc']
 
     if args.bindings != None:
         b = args.bindings.rstrip('/')

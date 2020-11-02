@@ -697,8 +697,10 @@ class GoExamplesGenerator(go_common.GoGeneratorTrait, common.ExamplesGenerator):
                 print(out)
                 print(err)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', GoExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, GoExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('go', __file__)
+
+    generate(os.getcwd(), 'en')

@@ -65,7 +65,7 @@ class RustZipGenerator(rust_common.RustGeneratorTrait, common.ZipGenerator):
 
     def prepare(self):
         if self.get_config_name().space != 'Tinkerforge':
-            print("Custom configs not supported yet.")
+            print('### custom configs not supported yet')
             return
 
         super().prepare()
@@ -153,8 +153,10 @@ class RustZipGenerator(rust_common.RustGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', RustZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, RustZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('rust', __file__)
+
+    generate(os.getcwd(), 'en')

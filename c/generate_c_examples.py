@@ -893,8 +893,10 @@ class CExamplesGenerator(c_common.CGeneratorTrait, common.ExamplesGenerator):
             with open(filepath, 'w') as f:
                 f.write(example.get_c_source())
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', CExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, CExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('c', __file__)
+
+    generate(os.getcwd(), 'en')

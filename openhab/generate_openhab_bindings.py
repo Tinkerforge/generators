@@ -883,8 +883,10 @@ class OpenHABBindingsGenerator(openhab_common.OpenHABGeneratorTrait, JavaBinding
                                         '{devices}': ',\n\t\t\t'.join(d.get_java_class_name() + 'Wrapper.DEVICE_INFO' for d in self.released_devices)
                                     })
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', OpenHABBindingsGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, OpenHABBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('openhab', __file__)
+
+    generate(os.getcwd(), 'en')

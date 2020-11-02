@@ -28,96 +28,106 @@ def create_generators_module():
 if 'generators' not in sys.modules:
     create_generators_module()
 
-def main():
-    positive = set()
-    negative = set()
-    actions = {'bindings', 'examples', 'doc', 'zip'}
+from generators import common
 
-    for arg in sys.argv[1:]:
-        if arg.startswith('-'):
-            negative.add(arg[1:])
+def modify_items(kind, active_items, all_items, action, item):
+    if item == 'all':
+        if action == '+':
+            active_items |= set(all_items)
+        elif action == '-':
+            active_items -= set(all_items)
         else:
-            positive.add(arg)
-
-    if not positive.issubset(actions) or not negative.issubset(actions):
-        print('Error: Invalid argument')
-
-    if len(positive) > 0 and len(negative) > 0:
-        print('Error: Cannot mix positive and negative arguments')
-
-    if len(positive) > 0:
-        actions = positive
+            print('error: invalid --{0}s item: {1}'.format(kind, action + item))
+            return None
     else:
-        actions -= negative
+        if item not in all_items:
+            print('error: unknown {0}: {1}'.format(kind, item))
+            return None
 
-    # exclude examples if not explicitly specified
-    if 'examples' not in positive and 'examples' in actions:
-        actions.remove('examples')
+        if action == '+':
+            active_items.add(item)
+        elif action == '-':
+            active_items.remove(item)
+        elif action == '>':
+            active_items |= set(all_items[all_items.index(item):])
+        elif action == '<':
+            active_items |= set(all_items[:all_items.index(item) + 1])
 
-    bindings = []
+    return active_items
 
-    for d in os.listdir(generators_dir):
-        if os.path.isdir(d):
-            if d not in ['configs', 'stubs', '.git', '__pycache__', '.vscode', 'openhab']:
-                bindings.append(d)
+def main(args):
+    all_generators = ['bindings', 'examples', 'doc', 'zip', 'debian_package']
 
-    bindings = sorted(bindings)
+    if socket.gethostname() == 'tinkerforge.com':
+        active_generators = {'doc'}
+    else:
+        active_generators = {'bindings', 'doc', 'zip'}
 
-    # bindings
-    if 'bindings' in actions and socket.gethostname() != 'tinkerforge.com':
-        for binding in bindings:
-            if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
+    if args.generators != None:
+        for item in args.generators[0].split(','):
+            if len(item) == 0 or item[0] not in ['+', '-', '>', '<']:
+                print('error: invalid --generators item: {0}'.format(item))
+                return 1
+
+            active_generators = modify_items('generator', active_generators, all_generators, item[0], item[1:])
+
+            if active_generators == None:
+                return 1
+
+    all_bindings = []
+
+    for binding in os.listdir(generators_dir):
+        if not os.path.isdir(binding):
+            continue
+
+        if binding not in ['.git', '.vscode', '.m2', '__pycache__', 'configs', 'docker', 'stubs', 'tvpl', 'openhab']:
+            all_bindings.append(binding)
+
+    all_bindings = sorted(all_bindings)
+    active_bindings = set(all_bindings)
+
+    if args.bindings != None:
+        for item in args.bindings[0].split(','):
+            if len(item) == 0 or item[0] not in ['+', '-', '>', '<']:
+                print('error: invalid --bindings item: {0}'.format(item))
+                return 1
+
+            active_bindings = modify_items('binding', active_bindings, all_bindings, item[0], item[1:])
+
+            if active_bindings == None:
+                return 1
+
+    languages = {
+        'bindings': ['en'],
+        'examples': ['en'],
+        'doc': ['en', 'de'],
+        'zip': ['en'],
+        'debian_package': ['en']
+    }
+
+    for generator in all_generators:
+        if generator not in active_generators:
+            continue
+
+        for binding in all_bindings:
+            if binding not in active_bindings:
                 continue
 
-            module = importlib.import_module('generators.{0}.generate_{0}_bindings'.format(binding))
-
-            print('\nGenerating bindings for {0}:'.format(binding))
-
-            module.generate(os.path.join(generators_dir, binding))
-
-    # examples
-    if 'examples' in actions and socket.gethostname() != 'tinkerforge.com':
-        for binding in bindings:
-            if binding in ['tcpip', 'modbus', 'stubs', 'tvpl', 'saleae']:
-                continue
+            print('\033[01;32m>>> running {0} generator for {1} bindings\033[0m'.format(generator, binding))
 
             try:
-                module = importlib.import_module('generators.{0}.generate_{0}_examples'.format(binding))
-            except ImportError:
-                print("\nNo example generator for {0}".format(binding))
-                continue
+                module = importlib.import_module('generators.{0}.generate_{0}_{1}'.format(binding, generator))
+            except ImportError: # FIXME: Python 3.6 has ModuleNotFoundError, which would be better to use here, but Debian Stretch has only Python 3.5
+                print('\033[01;36m### generator missing\033[0m')
+            else:
+                for language in languages[generator]:
+                    module.generate(os.path.join(generators_dir, binding), language)
 
-            print('\nGenerating examples for {0}:'.format(binding))
-
-            module.generate(os.path.join(generators_dir, binding))
-
-    # doc
-    if 'doc' in actions:
-        for binding in bindings:
-            if binding in ['json', 'stubs', 'tvpl', 'saleae']:
-                continue
-
-            module = importlib.import_module('generators.{0}.generate_{0}_doc'.format(binding))
-
-            for lang in ['en', 'de']:
-                print('\nGenerating {0} documentation for {1}:'.format(lang, binding))
-
-                module.generate(os.path.join(generators_dir, binding), lang)
-
-    # zip
-    if 'zip' in actions and socket.gethostname() != 'tinkerforge.com':
-        for binding in bindings:
-            if binding in ['tcpip', 'modbus', 'stubs', 'tvpl']:
-                continue
-
-            module = importlib.import_module('generators.{0}.generate_{0}_zip'.format(binding))
-
-            print('\nGenerating ZIP for {0}:'.format(binding))
-
-            module.generate(os.path.join(generators_dir, binding))
-
-    print('')
-    print('>>> Done <<<')
+    print('\033[01;35m>>> done\033[0m')
 
 if __name__ == '__main__':
-    main()
+    def add_arguments(parser):
+        parser.add_argument('-g', '--generators', nargs=1, help='comma separated list of generators, each prefixed by +/-/>/<')
+        parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-/>/<')
+
+    sys.exit(main(common.dockerize('', __file__, add_arguments=add_arguments)))

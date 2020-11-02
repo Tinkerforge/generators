@@ -1090,8 +1090,10 @@ class CSharpBindingsGenerator(csharp_common.CSharpGeneratorTrait, common.Binding
         if device.is_released():
             self.released_files.append(filename)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', CSharpBindingsGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, CSharpBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('csharp', __file__)
+
+    generate(os.getcwd(), 'en')

@@ -111,4 +111,6 @@ def generate(root_dir):
     shutil.copy(os.path.join(tmp_cpan_dir, 'Tinkerforge-{0}.{1}.{2}.tar.gz'.format(*version)), root_dir)
 
 if __name__ == '__main__':
+    common.dockerize('perl', __file__)
+
     generate(os.getcwd())

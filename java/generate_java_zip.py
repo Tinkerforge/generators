@@ -168,8 +168,10 @@ class JavaZipGenerator(java_common.JavaGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', JavaZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, JavaZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('java', __file__)
+
+    generate(os.getcwd(), 'en')

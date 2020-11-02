@@ -734,8 +734,10 @@ class RustExamplesGenerator(rust_common.RustGeneratorTrait, common.ExamplesGener
                 print(out)
                 print(err)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', RustExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, RustExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('rust', __file__)
+
+    generate(os.getcwd(), 'en')

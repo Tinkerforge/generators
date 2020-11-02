@@ -136,7 +136,7 @@ class PerlCriticExamplesTester(common.Tester):
 
         self.execute(cookie, args)
 
-def run(root_dir):
+def test(root_dir):
     if not PerlCheckExamplesTester(root_dir).run():
         return False
 
@@ -146,4 +146,6 @@ def run(root_dir):
     return PerlCriticExamplesTester(root_dir).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('perl', __file__)
+
+    test(os.getcwd())

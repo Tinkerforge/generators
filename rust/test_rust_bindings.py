@@ -99,8 +99,10 @@ runner = ["/tmp/tester/rust/nothing.sh"]""")
 
         self.execute(cookie, args)
 
-def run(root_dir):
+def test(root_dir):
     return RustExamplesTester(root_dir, None).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('rust', __file__)
+
+    test(os.getcwd())

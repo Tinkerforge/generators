@@ -76,7 +76,7 @@ class CSharpExamplesTester(common.Tester):
 
         self.execute(cookie, args)
 
-def run(root_dir):
+def test(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/button_control/csharp/WeatherStationButton.cs'),
                    os.path.join(root_dir, '../../weather-station/write_to_lcd/csharp/WeatherStation.cs'),
                    os.path.join(root_dir, '../../hardware-hacking/remote_switch/csharp/RemoteSwitch.cs'),
@@ -85,4 +85,6 @@ def run(root_dir):
     return CSharpExamplesTester(root_dir, extra_paths).run()
 
 if __name__ == '__main__':
-    run(os.getcwd())
+    common.dockerize('csharp', __file__)
+
+    test(os.getcwd())

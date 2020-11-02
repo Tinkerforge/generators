@@ -34,3 +34,4 @@ tvpl/build_deploy_tvpl.py
 *tinkerforge*_all.deb
 */zip/
 */zip_*/
+.m2/

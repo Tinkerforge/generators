@@ -27,53 +27,82 @@ def create_generators_module():
 if 'generators' not in sys.modules:
     create_generators_module()
 
-def main():
-    positive = set()
-    negative = set()
-    bindings = set()
+from generators import common
 
-    for arg in sys.argv[1:]:
-        if arg.startswith('-'):
-            negative.add(arg[1:])
+def modify_items(kind, active_items, all_items, action, item):
+    if item == 'all':
+        if action == '+':
+            active_items |= set(all_items)
+        elif action == '-':
+            active_items -= set(all_items)
         else:
-            positive.add(arg)
-
-    for d in os.listdir(generators_dir):
-        if os.path.isdir(d):
-            if d not in ['configs', '.git', '__pycache__', '.vscode']:
-                bindings.add(d)
-
-    if not positive <= bindings or not negative <= bindings:
-        print('Error: Invalid argument')
-
-    if len(positive) > 0 and len(negative) > 0:
-        print('Error: Cannot mix positive and negative arguments')
-
-    if len(positive) > 0:
-        bindings = positive
+            print('error: invalid --{0}s item: {1}'.format(kind, action + item))
+            return None
     else:
-        bindings -= negative
+        if item not in all_items:
+            print('error: unknown {0}: {1}'.format(kind, item))
+            return None
 
-    bindings = sorted(list(bindings))
+        if action == '+':
+            active_items.add(item)
+        elif action == '-':
+            active_items.remove(item)
+        elif action == '>':
+            active_items |= set(all_items[all_items.index(item):])
+        elif action == '<':
+            active_items |= set(all_items[:all_items.index(item) + 1])
 
-    for binding in bindings:
-        if binding in ['stubs', 'tvpl']:
+    return active_items
+
+# FIXME: test custom bindings too
+
+def main(args):
+    all_bindings = []
+
+    for binding in os.listdir(generators_dir):
+        if not os.path.isdir(binding):
             continue
 
-        module = importlib.import_module('generators.{0}.test_{0}_bindings'.format(binding))
+        if binding not in ['.git', '.vscode', '.m2', '__pycache__', 'configs', 'docker', 'stubs', 'tvpl', 'openhab']:
+            all_bindings.append(binding)
 
-        print("### testing {0} bindings:".format(binding))
+    all_bindings = sorted(all_bindings)
+    active_bindings = set(all_bindings)
 
-        success = module.run(os.path.join(generators_dir, binding))
+    if args.bindings != None:
+        for item in args.bindings[0].split(','):
+            if len(item) == 0 or item[0] not in ['+', '-', '>', '<']:
+                print('error: invalid --bindings item: {0}'.format(item))
+                return 1
 
-        if not isinstance(success, bool):
-            raise Exception('test_{0}_bindings.py returns wrong type from its run() function'.format(binding))
+            active_bindings = modify_items('binding', active_bindings, all_bindings, item[0], item[1:])
 
-        if not success:
-            sys.exit(1)
+            if active_bindings == None:
+                return 1
 
-    print('')
-    print('>>> Done <<<')
+    for binding in all_bindings:
+        if binding not in active_bindings:
+            continue
+
+        print('\033[01;32m>>> running tests for {0} bindings\033[0m'.format(binding))
+
+        try:
+            module = importlib.import_module('generators.{0}.test_{0}_bindings'.format(binding))
+        except ImportError: # FIXME: Python 3.6 has ModuleNotFoundError, which would be better to use here, but Debian Stretch has only Python 3.5
+            print('\033[01;36m### tests missing\033[0m')
+        else:
+            success = module.test(os.path.join(generators_dir, binding))
+
+            if not isinstance(success, bool):
+                print('error: test_{0}_bindings.py returns wrong type from its test() function'.format(binding))
+
+            if not success:
+                sys.exit(1)
+
+    print('\033[01;35m>>> done\033[0m')
 
 if __name__ == '__main__':
-    main()
+    def add_arguments(parser):
+        parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-')
+
+    sys.exit(main(common.dockerize('', __file__, add_arguments=add_arguments)))

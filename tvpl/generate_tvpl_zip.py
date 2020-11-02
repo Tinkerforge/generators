@@ -234,8 +234,10 @@ goog.require(\'Blockly.Python\');
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', TVPLZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, TVPLZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('tvpl', __file__)
+
+    generate(os.getcwd(), 'en')

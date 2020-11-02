@@ -36,6 +36,8 @@ import multiprocessing.dummy
 import functools
 from collections import namedtuple
 import importlib
+import argparse
+import shlex
 
 from generators.configs import device_commonconfig
 
@@ -150,6 +152,11 @@ Funktionen direkt zu verwenden.
 }
 
 lang = 'en'
+enable_verbose = False
+
+def print_verbose(*args, **kwargs):
+    if enable_verbose:
+        print(*args, **kwargs)
 
 def html_escape(text):
     return text.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace(">", "&gt;").replace("<", "&lt;")
@@ -500,7 +507,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
     files = find_device_examples(device, filename_regex)
     if len(files) == 0:
-        print('   \033[01;31m! No examples\033[0m')
+        print_verbose('    \033[01;31m! no examples\033[0m')
         return ''
 
     examples = select_lang(ex).format(ref)
@@ -1043,16 +1050,16 @@ def find_device_examples(device, filename_regex):
 def copy_examples(copy_files, path):
     doc_path = os.path.join(path, 'doc', lang)
 
-    print('  * Copying examples:')
+    print_verbose('    * examples')
 
     for copy_file in copy_files:
         doc_dest = os.path.join(doc_path, copy_file[1])
         doc_src = copy_file[0]
         shutil.copy(doc_src, doc_dest)
-        print('   - {0}'.format(copy_file[1]))
+        print_verbose('      - {0}'.format(copy_file[1]))
 
     if len(copy_files) == 0:
-        print('   \033[01;31m! No examples\033[0m')
+        print_verbose('      \033[01;31m! no examples\033[0m')
 
 re_camel_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])|([a-zA-Z][0-9])')
 
@@ -1451,7 +1458,7 @@ def wrap_non_empty(prefix, middle, suffix):
     return prefix + middle + suffix
 
 def execute(args, **kwargs):
-    error = 'Command failed: {0}'.format(' '.join(args) if isinstance(args, list) else args)
+    error = 'command failed: {0}'.format(' '.join(args) if isinstance(args, list) else args)
 
     try:
         if subprocess.call(args, **kwargs) != 0:
@@ -1461,6 +1468,8 @@ def execute(args, **kwargs):
         sys.exit(1)
 
 def generate(root_dir, language, generator_class):
+    print('=== language: {0}'.format(language))
+
     # default config
     subgenerate(root_dir, language, generator_class, 'tinkerforge')
 
@@ -1545,13 +1554,13 @@ def subgenerate(root_dir, language, generator_class, config_name):
             raise GeneratorError('{0} is marked as documented, but as not released'.format(config[:-10]))
 
         if not com['released'] and not com['documented']:
-            print(' * {0} \033[01;36m(not released, not documented)\033[0m'.format(config[:-10]))
+            print_verbose('  * {0} \033[01;36m(not released, not documented)\033[0m'.format(config[:-10]))
         elif not com['released']:
-            print(' * {0} \033[01;36m(not released)\033[0m'.format(config[:-10]))
+            print_verbose('  * {0} \033[01;36m(not released)\033[0m'.format(config[:-10]))
         elif not com['documented']:
-            print(' * {0} \033[01;36m(not documented)\033[0m'.format(config[:-10]))
+            print_verbose('  * {0} \033[01;36m(not documented)\033[0m'.format(config[:-10]))
         else:
-            print(' * {0}'.format(config[:-10]))
+            print_verbose('  * {0}'.format(config[:-10]))
 
         if 'common_included' not in com:
             com['constant_groups'].extend(prepare_common_constant_groups(com, copy.deepcopy(common_constant_groups)))
@@ -4625,7 +4634,7 @@ class DocGenerator(Generator):
         example_regex = self.get_doc_example_regex()
 
         if example_regex != None:
-            print(' * ip_connection')
+            print_verbose('  * ip_connection')
 
             examples = find_examples(self.get_root_dir(), example_regex, sort_key=self.get_example_sort_key)
             copy_files = []
@@ -4845,3 +4854,69 @@ class ChangedDirectory(object):
 
     def __exit__(self, type_, value, traceback):
         os.chdir(self.previous_path)
+
+def dockerize(bindings_name, script_path, add_arguments=None):
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-d', '--docker', action='store_true', help='run this script in docker container')
+    parser.add_argument('-D', '--no-docker', action='store_false', help='run this script normally [default]', dest='docker')
+    parser.add_argument('-v', '--verbose', action='store_true', help='enable verbose prints')
+    parser.add_argument('-V', '--no-verbose', action='store_false', help='disable verbose prints [default]', dest='verbose')
+
+    if add_arguments != None:
+        add_arguments(parser)
+
+    args = parser.parse_args()
+
+    global enable_verbose
+    enable_verbose = args.verbose
+
+    if args.docker:
+        if shutil.which('docker') == None:
+            print('error: docker is not installed')
+            sys.exit(1)
+
+        image_name = 'tinkerforge/builder-generators-debian:1.0.0'
+
+        if len(subprocess.check_output(['docker', 'images', '-q', image_name]).strip()) == 0:
+            print('error: docker image {0} is missing'.format(image_name))
+            sys.exit(1)
+
+        script_name = os.path.split(script_path)[-1]
+
+        print('\033[01;35m>>> running {0} in docker container\033[0m'.format(script_name))
+
+        generators_host_dir = os.path.dirname(os.path.realpath(__file__))
+        generators_container_dir = generators_host_dir
+
+        root_host_dir = os.path.realpath(os.path.join(generators_host_dir, '..'))
+        root_container_dir = root_host_dir
+
+        m2_host_dir = os.path.join(generators_host_dir, '.m2')
+        m2_container_dir = '/home/foobar/.m2'
+
+        gnupg_host_dir = os.path.expanduser('~/.gnupg')
+        gnupg_container_dir = '/home/foobar/.gnupg'
+
+        os.makedirs(m2_host_dir, exist_ok=True)
+
+        sys.exit(subprocess.call(['docker',
+                                  'run',
+                                  '--rm',
+                                  '-it',
+                                  '-v',
+                                  '{0}:{1}'.format(root_host_dir, root_container_dir),
+                                  '-v',
+                                  '{0}:{1}'.format(m2_host_dir, m2_container_dir),
+                                  '-v',
+                                  '{0}:{1}'.format(gnupg_host_dir, gnupg_container_dir),
+                                  '-u',
+                                  '{0}:{1}'.format(os.getuid(), os.getgid()),
+                                  image_name,
+                                  'bash',
+                                  '-c',
+                                  'cd {0}; python3 -u {1} {2}'.format(os.path.join(generators_container_dir, bindings_name),
+                                                                      script_name,
+                                                                      shlex.join(sys.argv[1:] + ['--no-docker']))]))
+
+    return args

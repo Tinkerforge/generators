@@ -138,7 +138,7 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
 
     def prepare(self):
         if self.get_config_name().space != 'Tinkerforge':
-            print("Custom configs not supported yet.")
+            print('### custom configs not supported yet')
             return
 
         super().prepare()
@@ -229,8 +229,10 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
 
         self.create_zip_file(zip_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', OpenHABZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, OpenHABZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('openhab', __file__)
+
+    generate(os.getcwd(), 'en')

@@ -833,8 +833,10 @@ class JavaScriptExamplesGenerator(javascript_common.JavascriptGeneratorTrait, co
             with open(filepath, 'w') as f:
                 f.write(example.get_html_source())
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', JavaScriptExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, JavaScriptExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('javascript', __file__)
+
+    generate(os.getcwd(), 'en')

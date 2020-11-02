@@ -849,8 +849,10 @@ class UCExamplesGenerator(uc_common.UCGeneratorTrait, common.ExamplesGenerator):
             with open(filepath, 'w') as f:
                 f.write(example.get_c_source())
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', UCExamplesGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, UCExamplesGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('uc', __file__)
+
+    generate(os.getcwd(), 'en')

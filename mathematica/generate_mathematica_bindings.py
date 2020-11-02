@@ -57,8 +57,10 @@ from generators.mathematica import mathematica_common
 class MathematicaBindingsGenerator(mathematica_common.MathematicaGeneratorTrait, CSharpBindingsGenerator):
     pass
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', MathematicaBindingsGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, MathematicaBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('mathematica', __file__)
+
+    generate(os.getcwd(), 'en')

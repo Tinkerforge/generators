@@ -410,6 +410,7 @@ def generate(root_dir, language):
     common.generate(root_dir, language, DelphiDocGenerator)
 
 if __name__ == '__main__':
+    common.dockerize('delphi', __file__)
+
     for language in ['en', 'de']:
-        print('=== Generating {0} ==='.format(language))
         generate(os.getcwd(), language)

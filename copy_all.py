@@ -14,6 +14,26 @@ import socket
 import zipfile
 import tempfile
 import glob
+import importlib.util
+import importlib.machinery
+
+generators_dir = os.path.dirname(os.path.realpath(__file__))
+
+def create_generators_module():
+    if sys.hexversion < 0x3050000:
+        generators_module = importlib.machinery.SourceFileLoader('generators', os.path.join(generators_dir, '__init__.py')).load_module()
+    else:
+        generators_spec = importlib.util.spec_from_file_location('generators', os.path.join(generators_dir, '__init__.py'))
+        generators_module = importlib.util.module_from_spec(generators_spec)
+
+        generators_spec.loader.exec_module(generators_module)
+
+    sys.modules['generators'] = generators_module
+
+if 'generators' not in sys.modules:
+    create_generators_module()
+
+from generators import common
 
 def text_files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
@@ -67,7 +87,7 @@ def main():
     for d in os.listdir(path):
         if os.path.isdir(d):
             # Remove "if x.endswith('_openHAB.rst') or x.endswith('.rules'):" when removing openhab here
-            if not d in ['configs', 'json', 'stubs', '.git', '__pycache__', '.vscode', 'saleae', 'openhab']:
+            if not d in ['configs', 'json', 'stubs', '.git', '__pycache__', '.vscode', '.m2', 'docker', 'saleae', 'openhab']:
                 bindings.append(d)
 
     bindings = sorted(bindings)
@@ -270,7 +290,9 @@ def main():
                 print(' * {0}'.format(p))
 
     print('')
-    print('>>> Done <<<')
+    print('\033[01;35m>>> done\033[0m')
 
 if __name__ == '__main__':
+    common.dockerize('', __file__)
+
     main()

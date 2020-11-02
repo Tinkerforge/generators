@@ -77,8 +77,10 @@ class SaleaeZipGenerator(saleae_common.SaleaeGeneratorTrait, common.ZipGenerator
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', SaleaeZipGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, SaleaeZipGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('saleae', __file__)
+
+    generate(os.getcwd(), 'en')

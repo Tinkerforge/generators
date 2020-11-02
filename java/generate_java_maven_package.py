@@ -90,4 +90,6 @@ def generate(root_dir):
                        env=env)
 
 if __name__ == '__main__':
+    common.dockerize('java', __file__)
+
     generate(os.getcwd())

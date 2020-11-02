@@ -1643,8 +1643,10 @@ end.
 
         common.BindingsGenerator.finish(self)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', DelphiBindingsGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, DelphiBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('delphi', __file__)
+
+    generate(os.getcwd(), 'en')

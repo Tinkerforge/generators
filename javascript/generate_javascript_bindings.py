@@ -1271,8 +1271,10 @@ module.exports = new Tinkerforge();""")
 
         common.BindingsGenerator.finish(self)
 
-def generate(root_dir):
-    common.generate(root_dir, 'en', JavaScriptBindingsGenerator)
+def generate(root_dir, language):
+    common.generate(root_dir, language, JavaScriptBindingsGenerator)
 
 if __name__ == '__main__':
-    generate(os.getcwd())
+    common.dockerize('javascript', __file__)
+
+    generate(os.getcwd(), 'en')
