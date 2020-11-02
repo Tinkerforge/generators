@@ -195,20 +195,20 @@ class ShellElement(common.Element):
         constant_group = self.get_constant_group(index=self.get_indices()[0])
 
         if constant_group != None:
-            symbols = {}
+            symbols = []
 
             for constant in constant_group.get_constants():
-                symbols['{0}-{1}'.format(constant_group.get_name().dash, constant.get_name().dash)] = constant.get_value()
+                symbols.append("'{0}-{1}': {2}".format(constant_group.get_name().dash, constant.get_name().dash, repr(constant.get_value())))
 
             if self.get_cardinality() != 1 and type_converter != 'string':
                 if self.get_cardinality() < 0:
                     default_item = None
 
-                return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2}, {3})'.format(type_converter, symbols, default_item, self.get_cardinality())
+                return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {{{1}}}), {2}, {3})'.format(type_converter, ', '.join(symbols), default_item, self.get_cardinality())
             elif type_converter == 'string':
-                return 'create_string_converter(ctx, create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, self.get_cardinality())
+                return 'create_string_converter(ctx, create_symbol_converter(ctx, str, {{{0}}}), {1})'.format(', '.join(symbols), self.get_cardinality())
             else:
-                return 'create_symbol_converter(ctx, {0}, {1})'.format(type_converter, symbols)
+                return 'create_symbol_converter(ctx, {0}, {{{1}}})'.format(type_converter, ', '.join(symbols))
         else:
             if self.get_cardinality() != 1 and type_converter != 'string':
                 if self.get_cardinality() < 0:
