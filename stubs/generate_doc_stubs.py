@@ -374,10 +374,10 @@ Beschreibung.
         format0 = device.get_long_display_name()
         format1 = device.get_name().under + '_' + device.get_category().under
         format2 = device.get_name().under
-        format3 = device.get_name().space.replace(' ', '_')
+        format3 = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2').replace('3.0', 'V3')
         format4 = device.get_name().dash + '-' + device.get_category().dash
         format5 = device.get_name().dash
-        filename = format3.replace('Real_Time_Clock', 'RealTime_Clock')
+        filename = format3
 
         if device.get_category().space == 'Brick':
             filename += '_Brick.rst'
