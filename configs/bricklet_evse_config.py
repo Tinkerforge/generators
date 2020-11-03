@@ -184,6 +184,7 @@ com['packets'].append({
 * Max Current Configured -> set with :func:`Set Max Charging Current`
 * Max Current Incoming Cable -> set with jumper on EVSE
 * Max Current Outgoing Cable -> set with resistor between PP/PE (if fixed cable is used)
+
 TODO
 """,
 'de':
