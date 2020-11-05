@@ -62,10 +62,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Status',
 'elements': [('Enabled', 'bool', 10, 'out'),
-             ('Current Position', 'int16', 10, 'out'),
-             ('Current Velocity', 'int16', 10, 'out'),
-             ('Current', 'uint16', 10, 'out'),
-             ('Input Voltage', 'uint16', 1, 'out')],
+             ('Current Position', 'int16', 10, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': 'dynamic'}),
+             ('Current Velocity', 'int16', 10, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second', 'range': (0, 500000)}),
+             ('Current', 'uint16', 10, 'out', {'scale': (1, 1000), 'unit': 'Ampere'}),
+             ('Input Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -634,8 +634,8 @@ wird über die schwarze Stromversorgungsbuchse, in den Servo Brick, eingespeist.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Calibrate Servo Current',
-'elements': [],
+'name': 'Set Current Calibration',
+'elements': [('Offset', 'int16', 10, 'in', {'scale': (1, 1000), 'unit': 'Ampere'})],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -648,6 +648,24 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Current Calibration',
+'elements': [('Offset', 'int16', 10, 'out', {'scale': (1, 1000), 'unit': 'Ampere'})],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
 
 com['packets'].append({
 'type': 'function',
@@ -706,7 +724,7 @@ You can enable this callback with :func:`Set Position Reached Callback Configura
 
 .. note::
  Since we can't get any feedback from the servo, this only works if the
- velocity (see :func:`Set Velocity`) is set smaller or equal to the
+ velocity (see :func:`Set Motion Configuration`) is set smaller or equal to the
  maximum velocity of the servo. Otherwise the servo will lag behind the
  control value and the callback will be triggered too early.
 """,
@@ -722,7 +740,7 @@ Dieser Callback kann mit :func:`Set Position Reached Callback Configuration` akt
 
 .. note::
  Da es nicht möglich ist eine Rückmeldung vom Servo zu erhalten,
- funktioniert dies nur wenn die konfigurierte Geschwindigkeit (siehe :func:`Set Velocity`)
+ funktioniert dies nur wenn die konfigurierte Geschwindigkeit (siehe :func:`Set Motion Configuration`)
  kleiner oder gleich der maximalen Geschwindigkeit des Motors ist. Andernfalls
  wird der Motor hinter dem Vorgabewert zurückbleiben und der Callback wird
  zu früh ausgelöst.
