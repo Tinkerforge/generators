@@ -15,8 +15,8 @@ com = {
     'display_name': 'Servo 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': 'Drives up to 10 RC Servos',
+        'de': 'Steuert bis zu 10 RC Servos'
     },
     'released': False,
     'documented': False,
@@ -34,8 +34,8 @@ com = {
 com['doc'] = {
 'en':
 """
-Every function of the Servo Brick API that has a *servo_num* parameter can
-address a servo with the servo number (0 to 9). If it is a setter function then
+Every function of the Servo Brick API that has a *servo_channel* parameter can
+address a servo with the servo channel (0 to 9). If it is a setter function then
 multiple servos can be addressed at once with a bitmask for the
 servos, if the highest bit is set. For example: ``1`` will address servo 1,
 ``(1 << 1) | (1 << 5) | (1 << 15)`` will address servos 1 and 5.
@@ -45,7 +45,7 @@ effect in the same PWM period for all servos you specified in the bitmask.
 """,
 'de':
 """
-Jede Funktion der Servo Brick API, welche den *servo_num* Parameter verwendet,
+Jede Funktion der Servo Brick API, welche den *servo_channel* Parameter verwendet,
 kann einen Servo über die Servo-Kanal (0 bis 9) adressieren. Falls es sich um
 eine Setter-Funktion handelt können mehrere Servos gleichzeitig mit einer
 Bitmaske adressiert werden. Um dies zu kennzeichnen muss das höchstwertigste
@@ -70,11 +70,33 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the status information of the Servo Bricklet 2.0.
+
+The status includes
+
+* for each channel if it is enabled or disabled,
+* for each channel the current position,
+* for each channel the current velocity,
+* for each channel the current usage and
+* the input voltage.
+
+Please note that the position and the velocity is a snapshot of the
+current position and velocity of the servo in motion.
 """,
 'de':
 """
-TODO
+Gibt die Status-Informationen des Servo Bricklet 2.0 zurück.
+
+Der Status umfasst
+
+* für jeden Kanal die Information ob dieser gerade aktiviert oder deaktiviert ist,
+* für jeden Kanal die aktuelle Position
+* für jeden Kanal die aktuelle Geschwindigkeit,
+* für jeden Kanal den Stromverbrauch und
+* die Eingangsspannung
+
+Hinweis: Die Position und Geschwindigkeit ist eine Momentaufnahme der
+aktuellen Position und Geschwendigkeit eines sich in Bewegung befindlichen Servos.
 """
 }]
 })
@@ -82,18 +104,18 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set Enable',
-'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, None)]}),
+'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, 32768 | 0x3ff)]}),
              ('Enable', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Enables a servo (0 to 9). If a servo is enabled, the configured position,
+Enables a servo channel (0 to 9). If a servo is enabled, the configured position,
 velocity, acceleration, etc. are applied immediately.
 """,
 'de':
 """
-Aktiviert einen Servo (0 bis 9). Wenn ein Servo aktiviert wird, wird die
+Aktiviert einen Servo-Kanal (0 bis 9). Wenn ein Servo aktiviert wird, wird die
 konfigurierte Position, Geschwindigkeit, Beschleunigung, etc. sofort übernommen.
 """
 }]
@@ -108,11 +130,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns *true* if the specified servo is enabled, *false* otherwise.
+Returns *true* if the specified servo channel is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt zurück ob ein Servo aktiviert ist.
+Gibt zurück ob ein Servo-Kanal aktiviert ist.
 """
 }]
 })
@@ -120,13 +142,13 @@ Gibt zurück ob ein Servo aktiviert ist.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Position',
-'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, None)]}),
+'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, 32768 | 0x3ff)]}),
              ('Position', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the position in °/100 for the specified servo.
+Sets the position in °/100 for the specified servo channel.
 
 The default range of the position is -9000 to 9000, but it can be specified
 according to your servo with :func:`Set Degree`.
@@ -137,7 +159,7 @@ similar with the Servo Brick, you can also define lengths or speeds with
 """,
 'de':
 """
-Setzt die Position in °/100 für den angegebenen Servo.
+Setzt die Position in °/100 für den angegebenen Servo-Kanal.
 
 Der Standardbereich für die Position ist -9000 bis 9000, aber dies kann,
 entsprechend dem verwendetem Servo, mit :func:`Set Degree` definiert werden.
@@ -158,11 +180,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the position of the specified servo as set by :func:`Set Position`.
+Returns the position of the specified servo channel as set by :func:`Set Position`.
 """,
 'de':
 """
-Gibt die Position des angegebenen Servos zurück, wie von :func:`Set Position`
+Gibt die Position des angegebenen Servo-Kanals zurück, wie von :func:`Set Position`
 gesetzt.
 """
 }]
@@ -177,13 +199,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the *current* position of the specified servo. This may not be the
+Returns the *current* position of the specified servo channel. This may not be the
 value of :func:`Set Position` if the servo is currently approaching a
 position goal.
 """,
 'de':
 """
-Gibt die *aktuelle* Position des angegebenen Servos zurück. Dies kann vom Wert
+Gibt die *aktuelle* Position des angegebenen Servo-Kanals zurück. Dies kann vom Wert
 von :func:`Set Position` abweichen, wenn der Servo gerade sein Positionsziel
 anfährt.
 """
@@ -199,15 +221,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the *current* velocity of the specified servo. This may not be the
-value of TBD if the servo is currently approaching a
-velocity goal.
+Returns the *current* velocity of the specified servo channel. This may not be the
+velocity specified by :func:`Set Motion Configuration`. if the servo is 
+currently approaching a velocity goal.
 """,
 'de':
 """
-Gibt die *aktuelle* Geschwindigkeit des angegebenen Servos zurück. Dies kann
-vom Wert von TBD abweichen, wenn der Servo gerade sein
-Geschwindigkeitsziel anfährt.
+Gibt die *aktuelle* Geschwindigkeit des angegebenen Servo-Kanals zurück. Dies kann
+von der Geschwindigkeit die per :func:`Set Motion Configuration` gesetzt wurde
+abweichen, wenn der Servo gerade sein Geschwindigkeitsziel anfährt.
 """
 }]
 })
@@ -215,7 +237,7 @@ Geschwindigkeitsziel anfährt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Motion Configuration',
-'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, None)]}),
+'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, 32768 | 0x3ff)]}),
              ('Velocity', 'uint32', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Per Second', 'range': (0, 500000), 'default': 100000}),
              ('Acceleration', 'uint32', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Per Second Squared', 'range': (0, 500000), 'default': 50000}),
              ('Deceleration', 'uint32', 1, 'in', {'scale': (1, 100), 'unit': 'Degree Per Second Squared', 'range': (0, 500000), 'default': 50000})],
@@ -223,25 +245,21 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO: Acc/Dec in °/100s²
+Sets the maximum velocity of the specified servo channel in °/100s as well as
+the acceleration and deceleration in °/100s²
 
-Sets the maximum velocity of the specified servo in °/100s.
+With a velocity of 0 °/100s the position will be set immediately (no velocity).
 
-The minimum velocity is 0 (no movement) and the maximum velocity is 65535.
-With a value of 65535 the position will be set immediately (no velocity).
-
-The default value is 65535.
+With an acc-/deceleration of 0 °/100s² the velocity will be set immediately (no acc-/deceleration).
 """,
 'de':
 """
-Setzt die maximale Geschwindigkeit des angegebenen Servos in °/100s.
-Die Geschwindigkeit wird entsprechend mit dem Wert, wie von
-TBD gesetzt, beschleunigt.
+Setzt die maximale Geschwindigkeit des angegebenen Servo-Kanals in °/100s sowie die
+Beschleunigung und Verzögerung in °/100s².
 
-Die minimale Geschwindigkeit ist 0 (keine Bewegung) und die maximale ist 65535.
-Mit einem Wert von 65535 wird die Position sofort gesetzt (keine Geschwindigkeit).
+Mit einer Geschwindigkeit von 0 °/100s wird die Position sofort gesetzt (keine Geschwindigkeit).
 
-Der Standardwert ist 65535.
+Mit einer Beschleunigung/Verzögerung von 0 °/100s² wird die Geschwindigkeit sofort gesetzt (keine Beschleunigung/Verzögerung).
 """
 }]
 })
@@ -257,13 +275,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO: Acc/Dec
-Returns the velocity of the specified servo as set by :func:`Set Motion Configuration`.
+Returns the motion configuration as set by :func:`Set Motion Configuration`.
 """,
 'de':
 """
-Gibt die Geschwindigkeit des angegebenen Servos zurück, wie von
-:func:`Set Motion Configuration` gesetzt.
+Gibt die 'Motion Configuration' zurück, wie von :func:`Set Motion Configuration` gesetzt.
 """
 }]
 })
@@ -271,14 +287,14 @@ Gibt die Geschwindigkeit des angegebenen Servos zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Pulse Width',
-'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, None)]}),
+'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, 32768 | 0x3ff)]}),
              ('Min', 'uint32', 1, 'in', {'scale': (1, 10**6), 'unit': 'Second', 'default': 1000}),
              ('Max', 'uint32', 1, 'in', {'scale': (1, 10**6), 'unit': 'Second', 'default': 2000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the minimum and maximum pulse width of the specified servo in µs.
+Sets the minimum and maximum pulse width of the specified servo channel in µs.
 
 Usually, servos are controlled with a
 `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__, whereby the
@@ -298,7 +314,7 @@ maximum pulse width.
 """,
 'de':
 """
-Setzt die minimale und maximale Pulsweite des angegebenen Servos in µs.
+Setzt die minimale und maximale Pulsweite des angegebenen Servo-Kanals in µs.
 
 Normalerweise werden Servos mit einer
 `PWM <https://de.wikipedia.org/wiki/Pulsweitenmodulation>`__ angesteuert,
@@ -330,12 +346,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the minimum and maximum pulse width for the specified servo as set by
+Returns the minimum and maximum pulse width for the specified servo channel as set by
 :func:`Set Pulse Width`.
 """,
 'de':
 """
-Gibt die minimale und maximale Pulsweite des angegebenen Servos zurück, wie von
+Gibt die minimale und maximale Pulsweite des angegebenen Servo-Kanals zurück, wie von
 :func:`Set Pulse Width` gesetzt.
 """
 }]
@@ -344,14 +360,14 @@ Gibt die minimale und maximale Pulsweite des angegebenen Servos zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Degree',
-'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, None)]}),
+'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, 32768 | 0x3ff)]}),
              ('Min', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree', 'default': -9000}),
              ('Max', 'int16', 1, 'in', {'scale': (1, 100), 'unit': 'Degree', 'default': 9000})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the minimum and maximum degree for the specified servo (by default
+Sets the minimum and maximum degree for the specified servo channel (by default
 given as °/100).
 
 This only specifies the abstract values between which the minimum and maximum
@@ -384,7 +400,7 @@ The default values are -9000 and 9000 for the minimum and maximum degree.
 """,
 'de':
 """
-Setzt den minimalen und maximalen Winkel des angegebenen Servos (standardmäßig
+Setzt den minimalen und maximalen Winkel des angegebenen Servo-Kanals (standardmäßig
 in °/100).
 
 Dies definiert die abstrakten Werte zwischen welchen die minimale und maximale
@@ -432,12 +448,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the minimum and maximum degree for the specified servo as set by
+Returns the minimum and maximum degree for the specified servo channel as set by
 :func:`Set Degree`.
 """,
 'de':
 """
-Gibt den minimalen und maximalen Winkel für den angegebenen Servo zurück,
+Gibt den minimalen und maximalen Winkel für den angegebenen Servo-Kanals zurück,
 wie von :func:`Set Degree` gesetzt.
 """
 }]
@@ -446,13 +462,13 @@ wie von :func:`Set Degree` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Period',
-'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, None)]}),
+'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, 32768 | 0x3ff)]}),
              ('Period', 'uint32', 1, 'in', {'scale': (1, 10**6), 'unit': 'Second', 'range': (1, 1000000), 'default': 19500})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Sets the period of the specified servo in µs.
+Sets the period of the specified servo channel in µs.
 
 Usually, servos are controlled with a
 `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__. Different
@@ -470,7 +486,7 @@ The default value is 19.5ms (19500µs).
 """,
 'de':
 """
-Setzt die Periode des angegebenen Servos in µs.
+Setzt die Periode des angegebenen Servo-Kanals in µs.
 
 Normalerweise werden Servos mit einer
 `PWM <https://de.wikipedia.org/wiki/Pulsweitenmodulation>`__ angesteuert.
@@ -498,11 +514,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the period for the specified servo as set by :func:`Set Period`.
+Returns the period for the specified servo channel as set by :func:`Set Period`.
 """,
 'de':
 """
-Gibt die Periode für den angegebenen Servo zurück, wie von :func:`Set Period`
+Gibt die Periode für den angegebenen Servo-Kanal zurück, wie von :func:`Set Period`
 gesetzt.
 """
 }]
@@ -517,11 +533,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current consumption of the specified servo in mA.
+Returns the current consumption of the specified servo channel in mA.
 """,
 'de':
 """
-Gibt den Stromverbrauch des angegebenen Servos in mA zurück.
+Gibt den Stromverbrauch des angegebenen Servo-Kanals in mA zurück.
 """
 }]
 })
@@ -529,17 +545,17 @@ Gibt den Stromverbrauch des angegebenen Servos in mA zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Servo Current Configuration',
-'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, None)]}),
+'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, 32768 | 0x3ff)]}),
              ('Averaging Duration', 'uint8', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 255, 'range': (1, 255)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the averaging duration of the current measurement for the specified servo channel in ms.
 """,
 'de':
 """
-TODO
+Setzt die Durchschnittsberechnungsdauer der Strommessung des angegebenen Servo-Kanals in ms.
 """
 }]
 })
@@ -553,11 +569,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the servo current configuration for the specified servo channel as set by :func:`Set Servo Current Configuration`.
 """,
 'de':
 """
-TODO
+Gibt die Servo-Stromverbrauchskonfiguration für den angegebenen Servo-Kanal zurück, wie von :func:`Set Servo Current Configuration` gesetzt.
 """
 }]
 })
@@ -570,11 +586,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the averaging duration of the input voltage measurement for the specified servo channel in ms.
 """,
 'de':
 """
-TODO
+Setzt die Durchschnittsberechnungsdauer der Eingangsspannungsmessung des angegebenen Servo-Kanals in ms.
 """
 }]
 })
@@ -587,11 +603,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the input voltage configuration as set by :func:`Set Input Voltage Configuration`.
 """,
 'de':
 """
-TODO
+Gibt die Servo-Eingangsspannungskonfiguration zurück, wie von :func:`Set Input Voltage Configuration` gesetzt.
 """
 }]
 })
@@ -640,11 +656,15 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Sets an offset value (in mA) for each channel.
+
+Note: On delivery the Servo Bricklet 2.0 is already calibrated.
 """,
 'de':
 """
-TODO
+Setzt einen Offset-Wert (in mA) für jeden Kanal.
+
+Hinweis: Im Auslieferungszustand ist das Servo Bricklet 2.0 bereits kalibriert.
 """
 }]
 })
@@ -657,11 +677,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Returns the current calibration as set by :func:`Set Current Calibration`.
 """,
 'de':
 """
-TODO
+Gibt die Stromkalibrierung zurück, wie von :func:`Set Current Calibration`.
 """
 }]
 })
@@ -670,7 +690,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set Position Reached Callback Configuration',
-'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, None)]}),
+'elements': [('Servo Channel', 'uint16', 1, 'in', {'range': [(0, 9), (32768, 32768 | 0x3ff)]}),
              ('Enabled', 'bool', 1, 'in', {'default': False})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -709,7 +729,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Position Reached',
-'elements': [('Servo Num', 'uint8', 1, 'out', {'range': (0, 6)}),
+'elements': [('Servo Channel', 'uint8', 1, 'out', {'range': (0, 6)}),
              ('Position', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
