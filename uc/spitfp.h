@@ -13,16 +13,9 @@
 #include <stdint.h>
 
 #include "packetbuffer.h"
+#include "macros.h"
 
-#define TF_TFP_MESSAGE_MIN_LENGTH 8
-#define TF_TFP_MESSAGE_MAX_LENGTH 80
 
-#define TF_SPITFP_HEADER_LENGTH 2 // Length, Sequence numbers
-#define TF_SPITFP_FOOTER_LENGTH 1 // Checksum
-#define TF_SPITFP_PROTOCOL_OVERHEAD (TF_SPITFP_HEADER_LENGTH + TF_SPITFP_FOOTER_LENGTH) // 3 byte overhead for Brick <-> Bricklet SPI protocol
-
-#define TF_SPITFP_MIN_MESSAGE_LENGTH (TF_TFP_MESSAGE_MIN_LENGTH + TF_SPITFP_PROTOCOL_OVERHEAD)
-#define TF_SPITFP_MAX_MESSAGE_LENGTH (TF_TFP_MESSAGE_MAX_LENGTH + TF_SPITFP_PROTOCOL_OVERHEAD)
 
 #ifdef __cplusplus
 extern "C" {
