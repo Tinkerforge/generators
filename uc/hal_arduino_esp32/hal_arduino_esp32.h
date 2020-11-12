@@ -6,8 +6,8 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
-#ifndef TF_HAL_ARDUINO_H
-#define TF_HAL_ARDUINO_H
+#ifndef TF_HAL_ARDUINO_ESP32_H
+#define TF_HAL_ARDUINO_ESP32_H
 
 #include <stdbool.h>
 #include <stdint.h>

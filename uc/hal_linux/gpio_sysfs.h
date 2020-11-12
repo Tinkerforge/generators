@@ -6,8 +6,8 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
-#ifndef TF_GPIO_SYSFS_H
-#define TF_GPIO_SYSFS_H
+#ifndef TF_HAL_LINUX_GPIO_SYSFS_H
+#define TF_HAL_LINUX_GPIO_SYSFS_H
 
 #include "../bindings/macros.h"
 

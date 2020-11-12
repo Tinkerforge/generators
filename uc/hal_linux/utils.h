@@ -6,8 +6,8 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
-#ifndef TF_UTILS_H
-#define TF_UTILS_H
+#ifndef TF_HAL_LINUX_UTILS_H
+#define TF_HAL_LINUX_UTILS_H
 
 #include <stdbool.h>
 #include <stdint.h>
