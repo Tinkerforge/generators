@@ -414,6 +414,40 @@ TBD
 
 com['packets'].append({
 'type': 'function',
+'name': 'Set Thermal Shutdown',
+'elements': [('Temperature', 'uint8', 1, 'in', {'unit': 'Degree'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TBD
+""",
+'de':
+"""
+TBD
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Thermal Shutdown',
+'elements': [('Temperature', 'uint8', 1, 'out', {'unit': 'Degree'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TBD
+""",
+'de':
+"""
+TBD
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Set GPIO Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Debounce', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 200}),
@@ -650,6 +684,248 @@ Returns the LED configuration as set by :func:`Set GPIO LED Config`
 'de':
 """
 Gibt die LED-Konfiguration zurück, wie von :func:`Set GPIO LED Config` gesetzt.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Emergency Shutdown Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Enable/Disable :cb:`Emergency Shutdown` callback.
+""",
+'de':
+"""
+Aktiviert/Deaktiviert :cb:`Emergency Shutdown` Callback.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Emergency Shutdown Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'out', {'default': True})],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set Emergency Shutdown Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Emergency Shutdown Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Velocity Reached Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Enable/Disable :cb:`Velocity Reached` callback.
+""",
+'de':
+"""
+Aktiviert/Deaktiviert :cb:`Velocity Reached` Callback.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Velocity Reached Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False})],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set Velocity Reached Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Velocity Reached Callback Configuration` gesetzt.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Current Velocity Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
+             ('Value Has To Change', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+The period is the period with which the :cb:`Current Velocity`
+callback is triggered periodically. A value of 0 turns the callback off.
+
+If the `value has to change`-parameter is set to true, the callback is only
+triggered after the value has changed. If the value didn't change within the
+period, the callback is triggered immediately on change.
+
+If it is set to false, the callback is continuously triggered with the period,
+independent of the value.
+""",
+'de':
+"""
+Die Periode ist die Periode mit der der :cb:`Current Velocity`
+Callback ausgelöst wird. Ein Wert von 0 schaltet den Callback ab.
+
+Wenn der `value has to change`-Parameter auf True gesetzt wird, wird der
+Callback nur ausgelöst, wenn der Wert sich im Vergleich zum letzten mal geändert
+hat. Ändert der Wert sich nicht innerhalb der Periode, so wird der Callback
+sofort ausgelöst, wenn der Wert sich das nächste mal ändert.
+
+Wird der Parameter auf False gesetzt, so wird der Callback dauerhaft mit der
+festen Periode ausgelöst unabhängig von den Änderungen des Werts.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Current Velocity Callback Configuration',
+'elements': [('Period', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
+             ('Value Has To Change', 'bool', 1, 'out', {'default': False})],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set Current Velocity Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Current Velocity Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Emergency Shutdown',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO
+
+This callback is triggered if either the current consumption
+is too high (above 5A) or the temperature of the driver chip is too high
+(above 175°C). These two possibilities are essentially the same, since the
+temperature will reach this threshold immediately if the motor consumes too
+much current. In case of a voltage below 3.3V (external or stack) this
+callback is triggered as well.
+
+If this callback is triggered, the driver chip gets disabled at the same time.
+That means, :func:`Set Enabled` has to be called to drive the motor again.
+
+.. note::
+ This callback only works in Drive/Brake mode (see :func:`Set Drive Mode`). In
+ Drive/Coast mode it is unfortunately impossible to reliably read the
+ overcurrent/overtemperature signal from the driver chip.
+""",
+'de':
+"""
+TODO
+
+Dieser Callback wird ausgelöst, wenn entweder der Stromverbrauch (über 5A)
+oder die Temperatur der Treiberstufe zu hoch ist (über 175°C). Beide
+Möglichkeiten sind letztendlich gleichbedeutend, da die Temperatur
+ihren Schwellwert überschreitet sobald der Motor zu viel Strom verbraucht.
+Im Falle einer Spannung unter 3,3V (Stapel- oder externe
+Spannungsversorgung) wird dieser Callback auch ausgelöst.
+
+Sobald dieser Callback ausgelöst wird, wird die Treiberstufe deaktiviert.
+Das bedeutet :func:`Set Enabled` muss aufgerufen werden, um den Motor
+erneut zu fahren.
+
+.. note::
+ Dieser Callback funktioniert nur im Fahren/Bremsen Modus (siehe
+ :func:`Set Drive Mode`). Im Fahren/Leerlauf Modus ist es leider nicht möglich
+ das Überstrom/Übertemperatur-Signal zuverlässig aus dem Chip der Treiberstufe
+ auszulesen.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Velocity Reached',
+'elements': [('Velocity', 'int16', 1, 'out', {'scale': (100, 32767), 'unit': 'Percent', 'range': (-32767, 32767)})],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered whenever a set velocity is reached. For example:
+If a velocity of 0 is present, acceleration is set to 5000 and velocity
+to 10000, the :cb:`Velocity Reached` callback will be triggered after about
+2 seconds, when the set velocity is actually reached.
+
+.. note::
+ Since we can't get any feedback from the DC motor, this only works if the
+ acceleration (see :func:`Set Motion`) is set smaller or equal to the
+ maximum acceleration of the motor. Otherwise the motor will lag behind the
+ control value and the callback will be triggered too early.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst immer wenn eine konfigurierte Geschwindigkeit
+erreicht wird. Beispiel: Wenn die aktuelle Geschwindigkeit 0 ist, die
+Beschleunigung auf 5000 und die Geschwindigkeit auf 10000 konfiguriert ist,
+wird der :cb:`Velocity Reached` Callback nach ungefähr 2 Sekunden ausgelöst,
+wenn die konfigurierte Geschwindigkeit letztendlich erreicht ist.
+
+.. note::
+ Da es nicht möglich ist eine Rückmeldung vom Gleichstrommotor zu erhalten,
+ funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe
+ :func:`Set Motion`) kleiner oder gleich der maximalen Beschleunigung
+ des Motors ist. Andernfalls wird der Motor hinter dem Vorgabewert
+ zurückbleiben und der Callback wird zu früh ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Current Velocity',
+'elements': [('Velocity', 'int16', 1, 'out', {'scale': (100, 32767), 'unit': 'Percent', 'range': (-32767, 32767)})],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered with the period that is set by
+:func:`Set Current Velocity Callback Configuration`. The :word:`parameter` is the *current*
+velocity used by the motor.
+
+The :cb:`Current Velocity` callback is only triggered after the set period
+if there is a change in the velocity.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`Set Current Velocity Callback Configuration`, ausgelöst. Der :word:`parameter` ist die
+*aktuelle* vom Motor genutzte Geschwindigkeit.
+
+Der :cb:`Current Velocity` Callback wird nur nach Ablauf der Periode
+ausgelöst, wenn sich die Geschwindigkeit geändert hat.
 """
 }]
 })
