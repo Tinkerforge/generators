@@ -25,7 +25,8 @@ implementation
 
 function UInt64Add(const a: uint64; const b: uint64; out c: uint64): boolean;
 begin
-  if (High(uint64) - a < b) then begin
+  { Workaround broken uint64 type in Delphi 7: a = 0 --> High(uint64) - a = -1 }
+  if (uint64(High(uint64) - a) < b) then begin
     result := false;
   end
   else begin
