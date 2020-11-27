@@ -1,5 +1,5 @@
 {
-  Copyright (C) 2012, 2019 Matthias Bolte <matthias@tinkerforge.com>
+  Copyright (C) 2012, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
 
   Redistribution and use in source and binary forms of this file,
   with or without modification, are permitted. See the Creative
@@ -37,16 +37,16 @@ end;
 function UInt64Multiply(const a: uint64; const b: uint64; out c: uint64): boolean;
 var a0, a1, b0, b1, c0, c1: uint64;
 begin
-  a0 := a and High(longword);
+  a0 := a and High(cardinal);
   a1 := a shr 32;
-  b0 := b and High(longword);
+  b0 := b and High(cardinal);
   b1 := b shr 32;
   if ((a1 > 0) and (b1 > 0)) then begin
     result := false;
     exit;
   end;
   c1 := a1 * b0 + a0 * b1;
-  if (c1 > High(longword)) then begin
+  if (c1 > High(cardinal)) then begin
     result := false;
     exit;
   end;
