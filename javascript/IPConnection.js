@@ -933,7 +933,7 @@ function IPConnection() {
         }
 
         // Support for 64 bit integers exists only in node 10.2 or higher
-        if ((typeof BigInt == undefined)
+        if ((typeof BigInt == 'undefined')
             && ((sendRequestPackFormat.indexOf('q') > -1)
             || (sendRequestPackFormat.indexOf('Q') > -1)
             || (sendRequestUnpackFormat.indexOf('q') > -1)
