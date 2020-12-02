@@ -1673,8 +1673,7 @@ com['packets'].append({
 'elements': [('Current Velocity', 'uint16', 1, 'out', {'unit': 'Steps Per Second'}),
              ('Current Position', 'int32', 1, 'out', {}),
              ('Remaining Steps', 'int32', 1, 'out', {}),
-             ('Stack Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
-             ('External Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('Input Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
              ('Current Consumption', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
