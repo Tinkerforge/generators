@@ -680,7 +680,7 @@ acceleration, etc) but the motor is not driven until it is enabled again.
  before disabling the motor power. The :func:`Stop` function will **not**
  wait until the motor is actually stopped. You have to explicitly wait for the
  appropriate time after calling the :func:`Stop` function before calling
- the :func:`Disable` function.
+ the :func:`Set Enabled` with false function.
 """,
 'de':
 """
@@ -699,8 +699,8 @@ Aktivierung erfolgt.
  :func:`Stop` Funktion gestoppt werden, bevor die Treiberstufe deaktiviert
  wird. Die :func:`Stop` Funktion wartet **nicht** bis der Motor wirklich
  zum Stillstand gekommen ist. Dazu muss nach dem Aufruf der :func:`Stop`
- Funktion eine angemessen Zeit gewartet werden bevor die :func:`Disable` Funktion
- aufgerufen wird.
+ Funktion eine angemessen Zeit gewartet werden bevor die Funktion :func:`Set Enabled`
+ mit false aufgerufen wird.
 """
 }]
 })
