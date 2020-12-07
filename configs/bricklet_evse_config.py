@@ -51,7 +51,8 @@ com['constant_groups'].append({
 'constants': [('Off', 0),
               ('On', 1),
               ('Blinking', 2),
-              ('Breathing', 3)]
+              ('Flicker', 3),
+              ('Breathing', 4)]
 })
 
 com['constant_groups'].append({
