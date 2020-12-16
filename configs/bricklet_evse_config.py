@@ -56,6 +56,15 @@ com['constant_groups'].append({
 })
 
 com['constant_groups'].append({
+'name': 'Vehicle State',
+'type': 'uint8',
+'constants': [('Not Connected', 0),
+              ('Connected', 1),
+              ('Charging', 2),
+              ('Error', 3)]
+})
+
+com['constant_groups'].append({
 'name': 'Contactor State',
 'type': 'uint8',
 'constants': [('AC1 NLive AC2 NLive', 0),
@@ -93,6 +102,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get State',
 'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
+             ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
@@ -204,6 +214,74 @@ com['packets'].append({
              ('Success', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Start Charging',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Stop Charging',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Charging Autostart',
+'elements': [('Autostart', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Charging Autostart',
+'elements': [('Autostart', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
 'en':
 """
 TODO
