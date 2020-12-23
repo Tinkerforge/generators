@@ -175,7 +175,7 @@ Beispiel: Ein Aufruf mit [-2, -1, 4, 2] erzeugt eine Anzeige auf dem Display von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Selected Segment',
-'elements': [('Segment', 'uint8', 1, 'in', {'range': (0, 31)}),
+'elements': [('Segment', 'uint8', 1, 'in', {'range': (0, 34)}),
              ('Value', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -209,7 +209,7 @@ Die Indizes sind wie folgt aufgeteilt:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Selected Segment',
-'elements': [('Segment', 'uint8', 1, 'in', {'range': (0, 31)}),
+'elements': [('Segment', 'uint8', 1, 'in', {'range': (0, 34)}),
              ('Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
