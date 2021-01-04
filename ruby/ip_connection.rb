@@ -143,7 +143,8 @@ module Tinkerforge
           u = []
 
           if f0 == '?'
-            r = data.unpack "C#{f1}a*"
+            n1 = (Integer(f1) / 8.0).ceil()
+            r = data.unpack "C#{n1}a*"
             data = r[-1]
             r.delete_at(-1)
 
