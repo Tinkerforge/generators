@@ -15,8 +15,8 @@ com = {
     'display_name': 'Performance DC',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': 'Drives one brushed DC motor with up to 36V and 10A',
+        'de': 'Steuert einen Gleichstrommotor mit bis zu 36V und 10A'
     },
     'released': False,
     'documented': False,
@@ -97,11 +97,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Enables/Disables the driver chip. The driver parameters can be configured (velocity,
+acceleration, etc) before it is enabled.
 """,
 'de':
 """
-TBD
+Aktiviert/Deaktiviert die Treiberstufe. Die Treiberparameter können vor der Aktivierung
+konfiguriert werden (Geschwindigkeit, Beschleunigung, etc.).
 """
 }]
 })
@@ -114,11 +116,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns *true* if the driver chip is enabled, *false* otherwise.
 """,
 'de':
 """
-TBD
+Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 """
 }]
 })
@@ -133,26 +135,26 @@ com['packets'].append({
 """
 Sets the velocity of the motor. Whereas -32767 is full speed backward,
 0 is stop and 32767 is full speed forward. Depending on the
-acceleration (see TBD), the motor is not immediately
+acceleration (see :func:`Set Motion`), the motor is not immediately
 brought to the velocity but smoothly accelerated.
 
 The velocity describes the duty cycle of the PWM with which the motor is
 controlled, e.g. a velocity of 3277 sets a PWM with a 10% duty cycle.
 You can not only control the duty cycle of the PWM but also the frequency,
-see TBD.
+see :func:`Set PWM Frequency`.
 """,
 'de':
 """
 Setzt die Geschwindigkeit des Motors. Hierbei sind -32767 maximale
 Geschwindigkeit rückwärts, 0 ist Halt und 32767 maximale Geschwindigkeit
-vorwärts. In Abhängigkeit von der Beschleunigung (siehe TBD)
+vorwärts. In Abhängigkeit von der Beschleunigung (siehe :func:`Set Motion`)
 wird der Motor nicht direkt auf die Geschwindigkeit gebracht sondern
 gleichmäßig beschleunigt.
 
 Die Geschwindigkeit beschreibt das Tastverhältnis der PWM für die
 Motoransteuerung. Z.B. entspricht ein Geschwindigkeitswert von 3277 einer PWM
 mit einem Tastverhältnis von 10%. Weiterhin kann neben dem Tastverhältnis auch
-die Frequenz der PWM verändert werden, siehe TBD.
+die Frequenz der PWM verändert werden, siehe :func:`Set PWM Frequency`.
 """
 }]
 })
@@ -204,7 +206,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the acceleration of the motor. It is given in *velocity/s*. An
+Sets the acceleration and deceleration of the motor. It is given in *velocity/s*. An
 acceleration of 10000 means, that every second the velocity is increased
 by 10000 (or about 30% duty cycle).
 
@@ -212,12 +214,12 @@ For example: If the current velocity is 0 and you want to accelerate to a
 velocity of 16000 (about 50% duty cycle) in 10 seconds, you should set
 an acceleration of 1600.
 
-If acceleration is set to 0, there is no speed ramping, i.e. a new velocity
+If acceleration and deceleration is set to 0, there is no speed ramping, i.e. a new velocity
 is immediately given to the motor.
 """,
 'de':
 """
-Setzt die Beschleunigung des Motors. Die Einheit dieses Wertes ist
+Setzt die Beschleunigung/Debeschleunigung des Motors. Die Einheit dieses Wertes ist
 *Geschwindigkeit/s*. Ein Beschleunigungswert von 10000 bedeutet, dass jede
 Sekunde die Geschwindigkeit um 10000 erhöht wird (entspricht rund 30%
 Tastverhältnis).
@@ -226,8 +228,8 @@ Beispiel: Soll die Geschwindigkeit von 0 auf 16000 (entspricht ungefähr
 50% Tastverhältnis) in 10 Sekunden beschleunigt werden, so ist die
 Beschleunigung auf 1600 einzustellen.
 
-Eine Beschleunigung von 0 bedeutet ein direkter Sprung des Motors auf die
-Zielgeschwindigkeit. Es Wird keine Beschleunigungsrampe gefahren.
+Eine Beschleunigung/Debeschleunigung von 0 bedeutet ein direkter Sprung des Motors auf die
+Zielgeschwindigkeit. Es Wird keine Rampe gefahren.
 """
 }]
 })
@@ -241,11 +243,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the acceleration as set by :func:`Set Motion`.
+Returns the acceleration/deceleration as set by :func:`Set Motion`.
 """,
 'de':
 """
-Gibt die Beschleunigung zurück, wie gesetzt von :func:`Set Motion`.
+Gibt die Beschleunigung/Debeschleunigung zurück, wie gesetzt von :func:`Set Motion`.
 """
 }]
 })
@@ -403,11 +405,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns input voltage, current usage and temperature of the driver.
 """,
 'de':
 """
-TBD
+Gibt die Eingangsspannung, den Stromverbrauch und die Temperatur des Treibers zurück.
 """
 }]
 })
@@ -415,16 +417,24 @@ TBD
 com['packets'].append({
 'type': 'function',
 'name': 'Set Thermal Shutdown',
-'elements': [('Temperature', 'uint8', 1, 'in', {'unit': 'Degree'})],
+'elements': [('Temperature', 'uint8', 1, 'in', {'unit': 'Degree', 'default': 125})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-TBD
+Sets a temperature threshold that is used for thermal shutdown.
+
+Additionally to this user defined threshold the driver chip will shut down at a temperature of 150°C.
+
+If a thermal sthudown is triggered the driver is disabled and has to be explicitely re-enabled with :func:`Set Enabled`.
 """,
 'de':
 """
-TBD
+Setzt den Temperatur-Grenzwert für eine thermale Abschaltung.
+
+Neben diesem nutzerdefinierten Grenzwert schaltet er Treiber selbst ab einer Temperatur von 150° ab.
+
+Wenn es zu einer thermalen Abschaltung kommt wird der Treiber deaktiviert und er muss explizit per :func:`Set Enabled` wieder aktiviert werden.
 """
 }]
 })
@@ -437,11 +447,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns the thermal shutdown temperature as set by :func:`Set Thermal Shutdown`.
 """,
 'de':
 """
-TBD
+Gibt die thermale Abschalttemperatur zurück, wie von :func:`Set Thermal Shutdown` gesetzt.
 """
 }]
 })
@@ -451,16 +461,18 @@ com['packets'].append({
 'name': 'Set GPIO Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Debounce', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 200}),
-             ('Stop Deceleration', 'uint16', 1, 'in', {'default': 0xFFFF, 'unit': 'Steps Per Second Squared'})],
+             ('Stop Deceleration', 'uint16', 1, 'in', {'scale': (100, 32767), 'unit': 'Percent Per Second', 'default': 0xFFFF})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-TBD
+Sets the GPIO configuration for the given channel. 
+You can configure a debounce and the deceleration that is used if the action is configured as ``normal stop``. See :func:`Set GPIO Action`.
 """,
 'de':
 """
-TBD
+Setzt die GPIO-Konfiguration für einen Kanal.
+Es kann ein Debounce und eine Debeschleunigung gesetzt werden. Letzteres wird genutzt wenn die Action auf ``normal stop`` konfiguriert ist. Siehe :func:`Set GPIO Action`.
 """
 }]
 })
@@ -470,16 +482,16 @@ com['packets'].append({
 'name': 'Get GPIO Configuration',
 'elements': [('Channel', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Debounce', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 200}),
-             ('Stop Deceleration', 'uint16', 1, 'out', {'default': 0xFFFF, 'unit': 'Steps Per Second Squared'})],
+             ('Stop Deceleration', 'uint16', 1, 'out', {'scale': (100, 32767), 'unit': 'Percent Per Second', 'default': 0xFFFF})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns the GPIO configuration for a channel as set by :func:`Set GPIO Configuration`.
 """,
 'de':
 """
-TBD
+Gibt die GPIO-Konfiguration für einen Kanal zurück, wie von :func:`Set GPIO Configuration` gesetzt.
 """
 }]
 })
@@ -493,11 +505,23 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Sets the GPIO action for the given channel. 
+
+The action can be a normal stop, a full brake or a callback. Each for a rising edge or falling edge.
+The actions are a bitmask they can be used at the same time. 
+You can for example trigger a full brake and a callback at the same time or for rising and falling edge.
+
+The deceleration speed for the normal stop can be configured with :func:`Set GPIO Configuration`.
 """,
 'de':
 """
-TBD
+Setzt die GPIO-Action für einen Kanal.
+
+Die Action kann ein ``normal stop``, ein ``full brake`` oder ein ``callback`` sein. Jeweils für eine steigende oder fallende Flanke.
+Die Actions sind eine Bitmaske und sie können simultan verwendet werden.
+Es ist zum Beispiel möglich einen ``full brake`` und ``callback`` gleichzeitig zu triggern oder eine auf eine steigende und fallende Flanke gleichzeitig.
+
+Die Debeschleunigung für den ``normal stop`` kann über :func:`Set GPIO Configuration` konfiguriert werden.
 """
 }]
 })
@@ -511,11 +535,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns the GPIO action for a channel as set by :func:`Set GPIO Action`.
 """,
 'de':
 """
-TBD
+Gibt die GPIO-Action für einen Kanal zurück, wie von :func:`Set GPIO Action` gesetzt.
 """
 }]
 })
@@ -528,11 +552,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns the GPIO state for both channels. True if the state is ``high`` and false if the state is ``low``.
 """,
 'de':
 """
-TBD
+Gibt den GPIO-Zustand für beide Kanäle zurück. True wenn der der Zustand ``high`` ist und false wenn der Zustand ``low`` ist.
 """
 }]
 })
@@ -545,21 +569,27 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Configures the touch LED to be either turned off, turned on, blink in
-heartbeat mode or show TBD.
+Configures the error LED to be either turned off, turned on, blink in
+heartbeat mode or show an error.
 
-TODO:
+If the LED is configured to show errors it has three different states:
 
-* one second interval blink: Input voltage too small
-* 250ms interval blink: Overtemperature warning
-* full red: motor disabled because of short to ground in phase a or b or because of overtemperature
+* Off: No error present.
+* 1s interval blinking: Input voltage too low (below 6V).
+* 250ms interval blinking: Overtemperature or overcurrent.
 
 """,
 'de':
 """
 Konfiguriert die Touch-LED. Die LED kann ausgeschaltet, eingeschaltet,
-im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
-TBD
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option den Fehler-Status anzuzueigen.
+
+Wenn die LED konfiguriert ist um Fehler anzuzueigen gibt es drei unterschiedliche Zustände:
+
+* Aus: Es liegt kein Fehler vor.
+* 1s Intervall-Blinken: Eingangsspannung zu klein (unter 6V).
+* 250ms Intervall-Blinken: Übertertemperatur oder Überstrom.
+
 """
 }]
 })
@@ -589,11 +619,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TBD
+Configures the CW LED to be either turned off, turned on, blink in
+heartbeat mode or if the motor turn clockwise.
 """,
 'de':
 """
-TBD
+Konfiguriert die CW-LED. Die LED kann ausgeschaltet, eingeschaltet,
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option anzuzeigen ob der Motor im Uhrzeigersinn dreht.
 """
 }]
 })
@@ -623,11 +655,14 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TBD
+Configures the CCW LED to be either turned off, turned on, blink in
+heartbeat mode or if the motor turn counter-clockwise.
 """,
 'de':
 """
-TBD
+Konfiguriert die CCW-LED. Die LED kann ausgeschaltet, eingeschaltet,
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option anzuzeigen ob der Motor gegen den Uhrzeigersinn dreht.
+
 """
 }]
 })
@@ -658,14 +693,17 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Configures the touch LED to be either turned off, turned on, blink in
-heartbeat mode or show TBD.
+Configures the GPIO LED to be either turned off, turned on, blink in
+heartbeat mode or the GPIO state.
+
+The GPIO LED can be configured for both channels.
 """,
 'de':
 """
-Konfiguriert die Touch-LED. Die LED kann ausgeschaltet, eingeschaltet,
-im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
-TBD
+Konfiguriert die GPIO-LED. Die LED kann ausgeschaltet, eingeschaltet,
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option den GPIO-Zustand anzuzeigen.
+
+Die GPIO-LED kann für beide Kanäle konfiguriert werden.
 """
 }]
 })
@@ -825,43 +863,26 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
 
 This callback is triggered if either the current consumption
-is too high (above 5A) or the temperature of the driver chip is too high
-(above 175°C). These two possibilities are essentially the same, since the
-temperature will reach this threshold immediately if the motor consumes too
-much current. In case of a voltage below 3.3V (external or stack) this
+is too high or the temperature of the driver chip is too high
+(above 150°C) or the user defined thermal shutdown is triggered (see :func:`Set Thermal Shutdown`). 
+n case of a voltage below 6V (input voltage) this
 callback is triggered as well.
 
 If this callback is triggered, the driver chip gets disabled at the same time.
 That means, :func:`Set Enabled` has to be called to drive the motor again.
-
-.. note::
- This callback only works in Drive/Brake mode (see :func:`Set Drive Mode`). In
- Drive/Coast mode it is unfortunately impossible to reliably read the
- overcurrent/overtemperature signal from the driver chip.
 """,
 'de':
 """
-TODO
-
-Dieser Callback wird ausgelöst, wenn entweder der Stromverbrauch (über 5A)
-oder die Temperatur der Treiberstufe zu hoch ist (über 175°C). Beide
-Möglichkeiten sind letztendlich gleichbedeutend, da die Temperatur
-ihren Schwellwert überschreitet sobald der Motor zu viel Strom verbraucht.
-Im Falle einer Spannung unter 3,3V (Stapel- oder externe
-Spannungsversorgung) wird dieser Callback auch ausgelöst.
+Dieser Callback wird ausgelöst, wenn entweder der Stromverbrauch 
+oder die Temperatur der Treiberstufe zu hoch ist (über 150°C) oder die
+nutzerdefinierte thermale Abschaltungstemperatur überstiegen wird (siehe :func:`Set Thermal Shutdown`). 
+Im Falle einer Spannung unter 6V (Eingangsspannung) wird dieser Callback auch ausgelöst.
 
 Sobald dieser Callback ausgelöst wird, wird die Treiberstufe deaktiviert.
 Das bedeutet :func:`Set Enabled` muss aufgerufen werden, um den Motor
 erneut zu fahren.
-
-.. note::
- Dieser Callback funktioniert nur im Fahren/Bremsen Modus (siehe
- :func:`Set Drive Mode`). Im Fahren/Leerlauf Modus ist es leider nicht möglich
- das Überstrom/Übertemperatur-Signal zuverlässig aus dem Chip der Treiberstufe
- auszulesen.
 """
 }]
 })
