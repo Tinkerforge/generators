@@ -18,7 +18,7 @@ com = {
         'en': 'Drives up to 10 RC Servos',
         'de': 'Steuert bis zu 10 RC Servos'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'features': [

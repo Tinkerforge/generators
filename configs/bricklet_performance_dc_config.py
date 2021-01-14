@@ -18,7 +18,7 @@ com = {
         'en': 'Drives one brushed DC motor with up to 36V and 10A',
         'de': 'Steuert einen Gleichstrommotor mit bis zu 36V und 10A'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'features': [
