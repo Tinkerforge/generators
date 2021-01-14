@@ -67,7 +67,7 @@ def main(args):
     all_bindings = []
 
     for binding in os.listdir(generators_dir):
-        if not os.path.isdir(binding) or os.path.exist(os.path.join(generators_dir, binding, 'skip_test_all')):
+        if not os.path.isdir(binding) or os.path.exists(os.path.join(generators_dir, binding, 'skip_test_all')):
             continue
 
         if binding not in ['.git', '.m2', '.vscode', '__pycache__', 'configs', 'docker']:
