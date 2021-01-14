@@ -829,14 +829,14 @@ class MATLABExamplesGenerator(matlab_common.MATLABGeneratorTrait, common.Example
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
-            print('  \033[01;31m- skipped\033[0m')
+            common.print_verbose('    \033[01;31m- skipped\033[0m')
             return
 
         examples_dir = self.get_examples_dir(device)
         examples = device.get_examples()
 
         if len(examples) == 0:
-            print('  \033[01;31m- no examples\033[0m')
+            common.print_verbose('    \033[01;31m- no examples\033[0m')
             return
 
         if not os.path.exists(examples_dir):
@@ -853,17 +853,17 @@ class MATLABExamplesGenerator(matlab_common.MATLABGeneratorTrait, common.Example
             filepath = os.path.join(examples_dir, filename)
 
             if device.get_git_name() + '/' + example.get_name().dash in blacklist:
-                print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
+                common.print_verbose('    - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
                 continue
 
             if example.is_incomplete():
                 if os.path.exists(filepath) and self.skip_existing_incomplete_example:
-                    print('  - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
+                    common.print_verbose('    - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
                     continue
                 else:
-                    print('  - ' + filename + ' \033[01;31m(incomplete)\033[0m')
+                    common.print_verbose('    - ' + filename + ' \033[01;31m(incomplete)\033[0m')
             else:
-                print('  - ' + filename)
+                common.print_verbose('    - ' + filename)
 
             with open(os.path.join(examples_dir, filename), 'w') as f:
                 f.write(example.get_matlab_source())
@@ -874,17 +874,17 @@ class MATLABExamplesGenerator(matlab_common.MATLABGeneratorTrait, common.Example
             filepath = os.path.join(examples_dir, filename)
 
             if device.get_git_name() + '/' + example.get_name().dash in blacklist:
-                print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
+                common.print_verbose('    - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
                 continue
 
             if example.is_incomplete():
                 if os.path.exists(filepath) and self.skip_existing_incomplete_example:
-                    print('  - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
+                    common.print_verbose('    - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
                     continue
                 else:
-                    print('  - ' + filename + ' \033[01;31m(incomplete)\033[0m')
+                    common.print_verbose('    - ' + filename + ' \033[01;31m(incomplete)\033[0m')
             else:
-                print('  - ' + filename)
+                common.print_verbose('    - ' + filename)
 
             with open(filepath, 'w') as f:
                 f.write(example.get_octave_source())

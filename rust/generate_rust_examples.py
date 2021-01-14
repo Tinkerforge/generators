@@ -693,14 +693,14 @@ class RustExamplesGenerator(rust_common.RustGeneratorTrait, common.ExamplesGener
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
-            print('  \033[01;31m- skipped\033[0m')
+            common.print_verbose('    \033[01;31m- skipped\033[0m')
             return
 
         examples_dir = self.get_examples_dir(device)
         examples = device.get_examples()
 
         if len(examples) == 0:
-            print('  \033[01;31m- no examples\033[0m')
+            common.print_verbose('    \033[01;31m- no examples\033[0m')
             return
 
         if not os.path.exists(examples_dir):
@@ -712,23 +712,25 @@ class RustExamplesGenerator(rust_common.RustGeneratorTrait, common.ExamplesGener
 
             if example.is_incomplete():
                 if os.path.exists(filepath) and self.skip_existing_incomplete_example:
-                    print('  - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
+                    common.print_verbose('    - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
                     continue
                 else:
-                    print('  - ' + filename + ' \033[01;31m(incomplete)\033[0m')
+                    common.print_verbose('    - ' + filename + ' \033[01;31m(incomplete)\033[0m')
             else:
-                print('  - ' + filename)
+                common.print_verbose('    - ' + filename)
 
             with open(filepath, 'w') as f:
                 f.write(example.get_rust_source())
 
             version = subprocess.check_output(["rustfmt", "--version"])
+
             if not 'nightly' in version.decode('utf-8'):
                 print("Please set your rust toolchain to nightly (e.g. with 'rustup default nightly'), as the example generator currently depends on unstable rustfmt features.")
                 return
 
             p = subprocess.Popen(["rustfmt", filename, "--config-path", self.root_dir], cwd=examples_dir, stdout = subprocess.PIPE)
             out, err = p.communicate() #block until rustfmt has finished
+
             if len(out) > 0 or err is not None:
                 print("Got the following output from rustfmt:")
                 print(out)

@@ -661,14 +661,14 @@ class GoExamplesGenerator(go_common.GoGeneratorTrait, common.ExamplesGenerator):
 
     def generate(self, device):
         if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_name().camel) != device.get_name().camel:
-            print('  \033[01;31m- skipped\033[0m')
+            common.print_verbose('    \033[01;31m- skipped\033[0m')
             return
 
         examples_dir = self.get_examples_dir(device)
         examples = device.get_examples()
 
         if len(examples) == 0:
-            print('  \033[01;31m- no examples\033[0m')
+            common.print_verbose('    \033[01;31m- no examples\033[0m')
             return
 
         if not os.path.exists(examples_dir):
@@ -680,18 +680,19 @@ class GoExamplesGenerator(go_common.GoGeneratorTrait, common.ExamplesGenerator):
 
             if example.is_incomplete():
                 if os.path.exists(filepath) and self.skip_existing_incomplete_example:
-                    print('  - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
+                    common.print_verbose('    - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
                     continue
                 else:
-                    print('  - ' + filename + ' \033[01;31m(incomplete)\033[0m')
+                    common.print_verbose('    - ' + filename + ' \033[01;31m(incomplete)\033[0m')
             else:
-                print('  - ' + filename)
+                common.print_verbose('    - ' + filename)
 
             with open(filepath, 'w') as f:
                 f.write(example.get_go_source())
 
             p = subprocess.Popen(["go", "fmt", filename], cwd=examples_dir, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
             out, err = p.communicate() # block until gofmt has finished
+
             if p.returncode != 0:
                 print("Got the following output from go fmt:")
                 print(out)
