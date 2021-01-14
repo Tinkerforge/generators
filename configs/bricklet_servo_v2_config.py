@@ -770,3 +770,36 @@ Dieser Callback kann mit :func:`Set Position Reached Callback Configuration` akt
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Configuration',
+'functions': [('setter', 'Set Degree', [('uint16', 0), ('int16', -10000), ('int16', 10000)], 'Servo 1: Connected to port 0, period of 19.5ms, pulse width of 1 to 2ms\n         and operating angle -100 to 100°', None),
+              ('setter', 'Set Pulse Width', [('uint16', 0), ('uint32', 1000), ('uint32', 2000)], None, None),
+              ('setter', 'Set Period', [('uint16', 0), ('uint32', 19500)], None, None),
+              ('setter', 'Set Motion Configuration', [('uint16', 0), ('uint32', 500000), ('uint32', 1000), ('uint32', 1000)], None, 'Full velocity with slow ac-/deceleration'),
+              ('empty',),
+              ('setter', 'Set Degree', [('uint16', 5), ('int16', -9000), ('int16', 9000)], 'Servo 2: Connected to port 5, period of 20ms, pulse width of 0.95 to 1.95ms\n         and operating angle -90 to 90°', None),
+              ('setter', 'Set Pulse Width', [('uint16', 5), ('uint32', 950), ('uint32', 1950)], None, None),
+              ('setter', 'Set Period', [('uint16', 5), ('uint32', 20000)], None, None),
+              ('setter', 'Set Motion Configuration', [('uint16', 5), ('uint32', 500000), ('uint32', 500000), ('uint32', 500000)], None, 'Full velocity with full ac-/deceleration'),
+              ('empty',),
+              ('setter', 'Set Position', [('uint16', 0), ('int16', 10000)], None, 'Set to most right position'),
+              ('setter', 'Set Enable', [('uint16', 0), ('bool', True)], None, None),
+              ('empty',),
+              ('setter', 'Set Position', [('uint16', 5), ('int16', -9000)], None, 'Set to most left position'),
+              ('setter', 'Set Enable', [('uint16', 5), ('bool', True)], None, None),
+              ('wait',)],
+'cleanups': [('setter', 'Set Enable', [('uint16', 0), ('bool', False)], None, None),
+             ('setter', 'Set Enable', [('uint16', 5), ('bool', False)], None, None)]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Position Reached', 'position reached'), [(('Servo Channel', 'Servo Channel'), 'uint16', 1, None, None, None), (('Position', 'Position'), 'int16', 1, None, None, None)], 'Use position reached callback to swing back and forth', None),
+              ('setter', 'Set Position Reached Callback Configuration', [('bool', True)], 'Enable position reached callback', None),
+              ('setter', 'Set Motion Configuration', [('uint16', 0), ('uint32', 10000), ('uint32', 500000), ('uint32', 500000)], 'Set velocity to 100°/s. This has to be smaller or equal to the\nmaximum velocity of the servo you are using, otherwise the position\nreached callback will be called too early', None),
+              ('setter', 'Set Position', [('uint16', 0), ('int16', 9000)], None, None),
+              ('setter', 'Set Enable', [('uint16', 0), ('bool', True)], None, None)],
+'cleanups': [('setter', 'Set Enable', [('uint16', 0), ('bool', False)], None, None)],
+'incomplete': True # because of special ping/pong logic in callback
+})
