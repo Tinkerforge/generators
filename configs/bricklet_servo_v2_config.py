@@ -61,7 +61,7 @@ für alle Servos entsprechend der Bitmaske.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Status',
-'elements': [('Enabled', 'bool', 10, 'out'),
+'elements': [('Enabled', 'bool', 10, 'out', {}),
              ('Current Position', 'int16', 10, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': 'dynamic'}),
              ('Current Velocity', 'int16', 10, 'out', {'scale': (1, 100), 'unit': 'Degree Per Second', 'range': (0, 500000)}),
              ('Current', 'uint16', 10, 'out', {'scale': (1, 1000), 'unit': 'Ampere'}),
@@ -96,7 +96,7 @@ Der Status umfasst
 * die Eingangsspannung
 
 Hinweis: Die Position und Geschwindigkeit ist eine Momentaufnahme der
-aktuellen Position und Geschwendigkeit eines sich in Bewegung befindlichen Servos.
+aktuellen Position und Geschwindigkeit eines sich in Bewegung befindlichen Servos.
 """
 }]
 })
@@ -222,7 +222,7 @@ com['packets'].append({
 'en':
 """
 Returns the *current* velocity of the specified servo channel. This may not be the
-velocity specified by :func:`Set Motion Configuration`. if the servo is 
+velocity specified by :func:`Set Motion Configuration`. if the servo is
 currently approaching a velocity goal.
 """,
 'de':
@@ -250,16 +250,19 @@ the acceleration and deceleration in °/100s²
 
 With a velocity of 0 °/100s the position will be set immediately (no velocity).
 
-With an acc-/deceleration of 0 °/100s² the velocity will be set immediately (no acc-/deceleration).
+With an acc-/deceleration of 0 °/100s² the velocity will be set immediately
+(no acc-/deceleration).
 """,
 'de':
 """
 Setzt die maximale Geschwindigkeit des angegebenen Servo-Kanals in °/100s sowie die
 Beschleunigung und Verzögerung in °/100s².
 
-Mit einer Geschwindigkeit von 0 °/100s wird die Position sofort gesetzt (keine Geschwindigkeit).
+Mit einer Geschwindigkeit von 0 °/100s wird die Position sofort gesetzt (keine
+Geschwindigkeit).
 
-Mit einer Beschleunigung/Verzögerung von 0 °/100s² wird die Geschwindigkeit sofort gesetzt (keine Beschleunigung/Verzögerung).
+Mit einer Beschleunigung/Verzögerung von 0 °/100s² wird die Geschwindigkeit
+sofort gesetzt (keine Beschleunigung/Verzögerung).
 """
 }]
 })
@@ -569,11 +572,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the servo current configuration for the specified servo channel as set by :func:`Set Servo Current Configuration`.
+Returns the servo current configuration for the specified servo channel as set
+by :func:`Set Servo Current Configuration`.
 """,
 'de':
 """
-Gibt die Servo-Stromverbrauchskonfiguration für den angegebenen Servo-Kanal zurück, wie von :func:`Set Servo Current Configuration` gesetzt.
+Gibt die Servo-Stromverbrauchskonfiguration für den angegebenen Servo-Kanal
+zurück, wie von :func:`Set Servo Current Configuration` gesetzt.
 """
 }]
 })
@@ -686,7 +691,6 @@ Gibt die Stromkalibrierung zurück, wie von :func:`Set Current Calibration`.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Position Reached Callback Configuration',
@@ -724,7 +728,6 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'callback',
