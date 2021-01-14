@@ -8,6 +8,7 @@ if sys.hexversion < 0x3040000:
     sys.exit(1)
 
 import os
+import re
 import importlib.util
 import importlib.machinery
 
@@ -47,10 +48,16 @@ def modify_items(kind, active_items, all_items, action, item):
             active_items.add(item)
         elif action == '-':
             active_items.remove(item)
-        elif action == '>':
+        elif action == '>=':
             active_items |= set(all_items[all_items.index(item):])
-        elif action == '<':
+        elif action == '>':
+            active_items |= set(all_items[all_items.index(item) + 1:])
+        elif action == '<=':
             active_items |= set(all_items[:all_items.index(item) + 1])
+        elif action == '<':
+            active_items |= set(all_items[:all_items.index(item)])
+        else:
+            assert False, action
 
     return active_items
 
@@ -71,11 +78,19 @@ def main(args):
 
     if args.bindings != None:
         for item in args.bindings[0].split(','):
-            if len(item) == 0 or item[0] not in ['+', '-', '>', '<']:
+            if len(item) == 0:
+                print('error: empty --bindings item')
+                return 1
+
+            m = re.match(r'^(\+|-|>=|>|<=|<)(.*)$', item)
+
+            if m == None:
                 print('error: invalid --bindings item: {0}'.format(item))
                 return 1
 
-            active_bindings = modify_items('binding', active_bindings, all_bindings, item[0], item[1:])
+            action = m.group(1)
+            binding = m.group(2)
+            active_bindings = modify_items('binding', active_bindings, all_bindings, action, binding)
 
             if active_bindings == None:
                 return 1
