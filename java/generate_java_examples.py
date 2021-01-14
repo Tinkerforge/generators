@@ -687,7 +687,7 @@ class JavaExamplesGenerator(java_common.JavaGeneratorTrait, common.ExamplesGener
                 f.write(example.get_java_source())
 
 def generate(root_dir, language):
-    common.generate(root_di, language, JavaExamplesGenerator)
+    common.generate(root_dir, language, JavaExamplesGenerator)
 
 if __name__ == '__main__':
     common.dockerize('java', __file__)
