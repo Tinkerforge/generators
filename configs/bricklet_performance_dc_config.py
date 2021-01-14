@@ -97,13 +97,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Enables/Disables the driver chip. The driver parameters can be configured (velocity,
-acceleration, etc) before it is enabled.
+Enables/Disables the driver chip. The driver parameters can be configured
+(velocity, acceleration, etc) before it is enabled.
 """,
 'de':
 """
-Aktiviert/Deaktiviert die Treiberstufe. Die Treiberparameter können vor der Aktivierung
-konfiguriert werden (Geschwindigkeit, Beschleunigung, etc.).
+Aktiviert/Deaktiviert die Treiberstufe. Die Treiberparameter können vor der
+Aktivierung konfiguriert werden (Geschwindigkeit, Beschleunigung, etc.).
 """
 }]
 })
@@ -206,21 +206,21 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the acceleration and deceleration of the motor. It is given in *velocity/s*. An
-acceleration of 10000 means, that every second the velocity is increased
+Sets the acceleration and deceleration of the motor. It is given in *velocity/s*.
+An acceleration of 10000 means, that every second the velocity is increased
 by 10000 (or about 30% duty cycle).
 
 For example: If the current velocity is 0 and you want to accelerate to a
 velocity of 16000 (about 50% duty cycle) in 10 seconds, you should set
 an acceleration of 1600.
 
-If acceleration and deceleration is set to 0, there is no speed ramping, i.e. a new velocity
-is immediately given to the motor.
+If acceleration and deceleration is set to 0, there is no speed ramping, i.e. a
+new velocity is immediately given to the motor.
 """,
 'de':
 """
-Setzt die Beschleunigung/Debeschleunigung des Motors. Die Einheit dieses Wertes ist
-*Geschwindigkeit/s*. Ein Beschleunigungswert von 10000 bedeutet, dass jede
+Setzt die Beschleunigung/Debeschleunigung des Motors. Die Einheit dieses Wertes
+ist *Geschwindigkeit/s*. Ein Beschleunigungswert von 10000 bedeutet, dass jede
 Sekunde die Geschwindigkeit um 10000 erhöht wird (entspricht rund 30%
 Tastverhältnis).
 
@@ -228,8 +228,8 @@ Beispiel: Soll die Geschwindigkeit von 0 auf 16000 (entspricht ungefähr
 50% Tastverhältnis) in 10 Sekunden beschleunigt werden, so ist die
 Beschleunigung auf 1600 einzustellen.
 
-Eine Beschleunigung/Debeschleunigung von 0 bedeutet ein direkter Sprung des Motors auf die
-Zielgeschwindigkeit. Es Wird keine Rampe gefahren.
+Eine Beschleunigung/Debeschleunigung von 0 bedeutet ein direkter Sprung des
+Motors auf die Zielgeschwindigkeit. Es Wird keine Rampe gefahren.
 """
 }]
 })
@@ -361,7 +361,6 @@ most motors lower frequencies enable higher torque.
 
 If you have no idea what all this means, just ignore this function and use
 the default frequency, it will very likely work fine.
-
 """,
 'de':
 """
@@ -424,17 +423,21 @@ com['packets'].append({
 """
 Sets a temperature threshold that is used for thermal shutdown.
 
-Additionally to this user defined threshold the driver chip will shut down at a temperature of 150°C.
+Additionally to this user defined threshold the driver chip will shut down at a
+temperature of 150°C.
 
-If a thermal sthudown is triggered the driver is disabled and has to be explicitely re-enabled with :func:`Set Enabled`.
+If a thermal shutdown is triggered the driver is disabled and has to be
+explicitly re-enabled with :func:`Set Enabled`.
 """,
 'de':
 """
 Setzt den Temperatur-Grenzwert für eine thermale Abschaltung.
 
-Neben diesem nutzerdefinierten Grenzwert schaltet er Treiber selbst ab einer Temperatur von 150° ab.
+Neben diesem nutzerdefinierten Grenzwert schaltet er Treiber selbst ab einer
+Temperatur von 150° ab.
 
-Wenn es zu einer thermalen Abschaltung kommt wird der Treiber deaktiviert und er muss explizit per :func:`Set Enabled` wieder aktiviert werden.
+Wenn es zu einer thermalen Abschaltung kommt wird der Treiber deaktiviert und er
+muss explizit per :func:`Set Enabled` wieder aktiviert werden.
 """
 }]
 })
@@ -466,13 +469,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the GPIO configuration for the given channel. 
-You can configure a debounce and the deceleration that is used if the action is configured as ``normal stop``. See :func:`Set GPIO Action`.
+Sets the GPIO configuration for the given channel.
+You can configure a debounce and the deceleration that is used if the action is
+configured as ``normal stop``. See :func:`Set GPIO Action`.
 """,
 'de':
 """
 Setzt die GPIO-Konfiguration für einen Kanal.
-Es kann ein Debounce und eine Debeschleunigung gesetzt werden. Letzteres wird genutzt wenn die Action auf ``normal stop`` konfiguriert ist. Siehe :func:`Set GPIO Action`.
+Es kann ein Debounce und eine Debeschleunigung gesetzt werden. Letzteres wird
+genutzt wenn die Action auf ``normal stop`` konfiguriert ist. Siehe
+:func:`Set GPIO Action`.
 """
 }]
 })
@@ -505,23 +511,28 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the GPIO action for the given channel. 
+Sets the GPIO action for the given channel.
 
-The action can be a normal stop, a full brake or a callback. Each for a rising edge or falling edge.
-The actions are a bitmask they can be used at the same time. 
-You can for example trigger a full brake and a callback at the same time or for rising and falling edge.
+The action can be a normal stop, a full brake or a callback. Each for a rising
+edge or falling edge. The actions are a bitmask they can be used at the same time.
+You can for example trigger a full brake and a callback at the same time or for
+rising and falling edge.
 
-The deceleration speed for the normal stop can be configured with :func:`Set GPIO Configuration`.
+The deceleration speed for the normal stop can be configured with
+:func:`Set GPIO Configuration`.
 """,
 'de':
 """
 Setzt die GPIO-Action für einen Kanal.
 
-Die Action kann ein ``normal stop``, ein ``full brake`` oder ein ``callback`` sein. Jeweils für eine steigende oder fallende Flanke.
+Die Action kann ein ``normal stop``, ein ``full brake`` oder ein ``callback``
+sein. Jeweils für eine steigende oder fallende Flanke.
 Die Actions sind eine Bitmaske und sie können simultan verwendet werden.
-Es ist zum Beispiel möglich einen ``full brake`` und ``callback`` gleichzeitig zu triggern oder eine auf eine steigende und fallende Flanke gleichzeitig.
+Es ist zum Beispiel möglich einen ``full brake`` und ``callback`` gleichzeitig
+zu triggern oder eine auf eine steigende und fallende Flanke gleichzeitig.
 
-Die Debeschleunigung für den ``normal stop`` kann über :func:`Set GPIO Configuration` konfiguriert werden.
+Die Debeschleunigung für den ``normal stop`` kann über
+:func:`Set GPIO Configuration` konfiguriert werden.
 """
 }]
 })
@@ -547,16 +558,18 @@ Gibt die GPIO-Action für einen Kanal zurück, wie von :func:`Set GPIO Action` g
 com['packets'].append({
 'type': 'function',
 'name': 'Get GPIO State',
-'elements': [('GPIO State', 'bool', 2, 'out')],
+'elements': [('GPIO State', 'bool', 2, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the GPIO state for both channels. True if the state is ``high`` and false if the state is ``low``.
+Returns the GPIO state for both channels. True if the state is ``high`` and
+false if the state is ``low``.
 """,
 'de':
 """
-Gibt den GPIO-Zustand für beide Kanäle zurück. True wenn der der Zustand ``high`` ist und false wenn der Zustand ``low`` ist.
+Gibt den GPIO-Zustand für beide Kanäle zurück. True wenn der der Zustand
+``high`` ist und false wenn der Zustand ``low`` ist.
 """
 }]
 })
@@ -582,13 +595,15 @@ If the LED is configured to show errors it has three different states:
 'de':
 """
 Konfiguriert die Touch-LED. Die LED kann ausgeschaltet, eingeschaltet,
-im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option den Fehler-Status anzuzueigen.
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option den
+Fehler-Status anzuzeigen.
 
-Wenn die LED konfiguriert ist um Fehler anzuzueigen gibt es drei unterschiedliche Zustände:
+Wenn die LED konfiguriert ist um Fehler anzuzeigen gibt es drei unterschiedliche
+Zustände:
 
 * Aus: Es liegt kein Fehler vor.
 * 1s Intervall-Blinken: Eingangsspannung zu klein (unter 6V).
-* 250ms Intervall-Blinken: Übertertemperatur oder Überstrom.
+* 250ms Intervall-Blinken: Übertemperatur oder Überstrom.
 
 """
 }]
@@ -625,7 +640,8 @@ heartbeat mode or if the motor turn clockwise.
 'de':
 """
 Konfiguriert die CW-LED. Die LED kann ausgeschaltet, eingeschaltet,
-im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option anzuzeigen ob der Motor im Uhrzeigersinn dreht.
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option anzuzeigen
+ob der Motor im Uhrzeigersinn dreht.
 """
 }]
 })
@@ -661,8 +677,8 @@ heartbeat mode or if the motor turn counter-clockwise.
 'de':
 """
 Konfiguriert die CCW-LED. Die LED kann ausgeschaltet, eingeschaltet,
-im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option anzuzeigen ob der Motor gegen den Uhrzeigersinn dreht.
-
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option anzuzeigen
+ob der Motor gegen den Uhrzeigersinn dreht.
 """
 }]
 })
@@ -701,7 +717,8 @@ The GPIO LED can be configured for both channels.
 'de':
 """
 Konfiguriert die GPIO-LED. Die LED kann ausgeschaltet, eingeschaltet,
-im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option den GPIO-Zustand anzuzeigen.
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option den
+GPIO-Zustand anzuzeigen.
 
 Die GPIO-LED kann für beide Kanäle konfiguriert werden.
 """
@@ -725,7 +742,6 @@ Gibt die LED-Konfiguration zurück, wie von :func:`Set GPIO LED Config` gesetzt.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -799,7 +815,6 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Velocity Callback Configuration',
@@ -863,10 +878,9 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-
 This callback is triggered if either the current consumption
 is too high or the temperature of the driver chip is too high
-(above 150°C) or the user defined thermal shutdown is triggered (see :func:`Set Thermal Shutdown`). 
+(above 150°C) or the user defined thermal shutdown is triggered (see :func:`Set Thermal Shutdown`).
 n case of a voltage below 6V (input voltage) this
 callback is triggered as well.
 
@@ -875,9 +889,9 @@ That means, :func:`Set Enabled` has to be called to drive the motor again.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst, wenn entweder der Stromverbrauch 
+Dieser Callback wird ausgelöst, wenn entweder der Stromverbrauch
 oder die Temperatur der Treiberstufe zu hoch ist (über 150°C) oder die
-nutzerdefinierte thermale Abschaltungstemperatur überstiegen wird (siehe :func:`Set Thermal Shutdown`). 
+nutzerdefinierte Abschaltungstemperatur überstiegen wird (siehe :func:`Set Thermal Shutdown`).
 Im Falle einer Spannung unter 6V (Eingangsspannung) wird dieser Callback auch ausgelöst.
 
 Sobald dieser Callback ausgelöst wird, wird die Treiberstufe deaktiviert.
