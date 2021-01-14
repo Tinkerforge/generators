@@ -732,7 +732,7 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 com['packets'].append({
 'type': 'callback',
 'name': 'Position Reached',
-'elements': [('Servo Channel', 'uint8', 1, 'out', {'range': (0, 6)}),
+'elements': [('Servo Channel', 'uint16', 1, 'out', {'range': (0, 9)}),
              ('Position', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree', 'range': 'dynamic'})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
