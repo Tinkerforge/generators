@@ -964,3 +964,32 @@ ausgelöst, wenn sich die Geschwindigkeit geändert hat.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Configuration',
+'functions': [('setter', 'Set Drive Mode', [('uint8:constant', 1)], None, None),
+              ('setter', 'Set PWM Frequency', [('uint16', 10000)], None, 'Use PWM frequency of 10 kHz'),
+              ('setter', 'Set Motion', [('uint16', 4096), ('uint16', 4096)], None, 'Slow ac-/deceleration (12.5 %/s)'),
+              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward (100 %)'),
+              ('setter', 'Set Enabled', [('bool', True)], None, 'Enable motor power'),
+              ('wait',)],
+'cleanups': [('setter', 'Set Motion', [('uint16', 4096), ('uint16', 16384)], 'Stop motor before disabling motor power', 'Fast decceleration (50 %/s) for stopping'),
+             ('setter', 'Set Velocity', [('int16', 0)], None, 'Request motor stop'),
+             ('sleep', 2000, None, 'Wait for motor to actually stop: velocity (100 %) / decceleration (50 %/s) = 2 s'),
+             ('setter', 'Set Enabled', [('bool', False)], None, 'Disable motor power')]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Velocity Reached', 'velocity reached'), [(('Velocity', 'Velocity'), 'int16', 1, None, None, None)], 'Use velocity reached callback to swing back and forth\nbetween full speed forward and full speed backward', None),
+              ('setter', 'Set Velocity Reached Callback Configuration', [('bool', True)], 'Enable velocity reached callback', None),
+              ('setter', 'Set Motion', [('uint16', 4096), ('uint16', 4096)], 'The acceleration has to be smaller or equal to the maximum\nacceleration of the DC motor, otherwise the velocity reached\ncallback will be called too early', 'Slow acceleration (12.5 %/s)'),
+              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward (100 %)'),
+              ('setter', 'Set Enabled', [('bool', True)], 'Enable motor power', None),
+              ('wait',)],
+'cleanups': [('setter', 'Set Motion', [('uint16', 4096), ('uint16', 16384)], 'Stop motor before disabling motor power', 'Fast decceleration (50 %/s) for stopping'),
+             ('setter', 'Set Velocity', [('int16', 0)], None, 'Request motor stop'),
+             ('sleep', 2000, None, 'Wait for motor to actually stop: velocity (100 %) / decceleration (50 %/s) = 2 s'),
+             ('setter', 'Set Enabled', [('bool', False)], None, 'Disable motor power')],
+'incomplete': False # because of special drive logic in callback
+})
