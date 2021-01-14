@@ -165,3 +165,6 @@
 2020-11-02: 2.0.29 (6399602)
 - Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
 - Fix array handling in RS232 2.0 and RS485 Bricklet write methods in Octave
+
+2021-01-15: 2.0.30 (<unknown>)
+- Add support for Performance DC Bricklet and Servo Bricklet 2.0

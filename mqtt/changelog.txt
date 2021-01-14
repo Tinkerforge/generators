@@ -95,3 +95,6 @@
 - Log API bindings version on start-up
 - Fix timeout error handling
 - Improve Python 2 compatibility
+
+2021-01-15: 2.0.13 (<unknown>)
+- Add support for Performance DC Bricklet and Servo Bricklet 2.0
