@@ -808,6 +808,8 @@ impl FromByteSlice for [bool; {count}] {{
         template = """#![forbid(unsafe_code)]
 #![allow(clippy::too_many_arguments)]
 #![allow(unstable_name_collisions)]
+#![allow(deprecated)]
+#![allow(array_into_iter)]
 #![cfg_attr(feature = "fail-on-warnings", deny(warnings))]
 #![cfg_attr(feature = "fail-on-warnings", deny(clippy::all))]
 #![doc(html_root_url = "https://docs.rs/tinkerforge/{version}")]
