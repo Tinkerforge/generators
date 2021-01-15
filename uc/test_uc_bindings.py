@@ -59,7 +59,7 @@ class UCExamplesTester(common.Tester):
 
         self.compiler = compiler
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         uses_libgd = False
 
         with open(path, 'r') as f:
@@ -71,14 +71,14 @@ class UCExamplesTester(common.Tester):
             return
 
         if extra:
-            shutil.copy(path, '/tmp/tester/uc')
-            path = os.path.join('/tmp/tester/uc', os.path.split(path)[1])
+            shutil.copy(path, tmp_dir)
+            path = os.path.join(tmp_dir, os.path.split(path)[-1])
 
         output = path[:-2]
 
         if not extra and '/brick' in path:
             dirname = os.path.split(path)[0]
-            device = '/tmp/tester/uc/source/bindings/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
+            device = os.path.join(tmp_dir, 'source/bindings/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1]))
         else:
             device = ''
 
@@ -103,25 +103,25 @@ class UCExamplesTester(common.Tester):
                  '-Wextra',
                  '-Werror',
                  '-O2',
-                 '-I/tmp/tester/uc/source',
+                 '-I' + os.path.join(tmp_dir, 'source'),
                  '-o',
                  output,
-                 '/tmp/tester/uc/source/bindings/base58.c',
-                 '/tmp/tester/uc/source/bindings/bricklet_unknown.c',
-                 '/tmp/tester/uc/source/bindings/endian_convert.c',
-                 '/tmp/tester/uc/source/bindings/hal_common.c',
-                 '/tmp/tester/uc/source/bindings/packetbuffer.c',
-                 '/tmp/tester/uc/source/bindings/pearson_hash.c',
-                 '/tmp/tester/uc/source/bindings/spitfp.c',
-                 '/tmp/tester/uc/source/bindings/tfp.c',
-                 '/tmp/tester/uc/source/hal_fake/hal_fake.c',
-                 '/tmp/tester/uc/source/hal_fake/example_driver.c',]
+                 os.path.join(tmp_dir, 'source/bindings/base58.c'),
+                 os.path.join(tmp_dir, 'source/bindings/bricklet_unknown.c'),
+                 os.path.join(tmp_dir, 'source/bindings/endian_convert.c'),
+                 os.path.join(tmp_dir, 'source/bindings/hal_common.c'),
+                 os.path.join(tmp_dir, 'source/bindings/packetbuffer.c'),
+                 os.path.join(tmp_dir, 'source/bindings/pearson_hash.c'),
+                 os.path.join(tmp_dir, 'source/bindings/spitfp.c'),
+                 os.path.join(tmp_dir, 'source/bindings/tfp.c'),
+                 os.path.join(tmp_dir, 'source/hal_fake/hal_fake.c'),
+                 os.path.join(tmp_dir, 'source/hal_fake/example_driver.c')]
 
         if len(device) > 0:
             args.append(device)
         elif extra:
-            dependencies = glob.glob('/tmp/tester/uc/source/*.c')
-            dependencies.remove('/tmp/tester/uc/source/ip_connection.c')
+            dependencies = glob.glob(os.path.join(tmp_dir, 'source/*.c')
+            dependencies.remove(os.path.join(tmp_dir, 'source/ip_connection.c')
             args.append('-Wno-error=unused-parameter')
             args += dependencies
 

@@ -55,27 +55,24 @@ from generators import common
 
 class GoExamplesTester(common.Tester):
     def __init__(self, root_dir, extra_paths):
-        common.Tester.__init__(self, 'go', '.go', root_dir, subdirs=["examples"])#, subdirs=["src"])
+        common.Tester.__init__(self, 'go', '.go', root_dir, subdirs=['examples'])
 
-        self.firstRun = True
         self.go_cache_dir = subprocess.check_output(['go', 'env', 'GOCACHE']).strip()
 
-    def test(self, cookie, path, extra):
-        root_dir = os.path.join(os.path.dirname(path), '..')
+    def after_unzip(self, tmp_dir):
+        shutil.rmtree(os.path.join(tmp_dir, 'src', 'github.com'), ignore_errors=True)
+        shutil.move(os.path.join(tmp_dir, 'github.com'), os.path.join(tmp_dir, 'src', 'github.com'))
 
-        # ipconnection examples are one level higher than the rest.
-        if not ("example_enumerate.go" in path or "example_authenticate.go" in path):
-            root_dir = os.path.join(root_dir, "..")
+        return True
 
-        if self.firstRun:
-            shutil.rmtree(os.path.join(root_dir, "src", "github.com"), ignore_errors=True)
-            shutil.move(os.path.join(root_dir, "github.com"), os.path.join(root_dir, "src", "github.com"))
-            self.firstRun = False
+    def test(self, cookie, tmp_dir, path, extra):
+        args = ['go',
+                'build',
+                '-o',
+                os.path.join(os.path.dirname(path), 'example'),
+                path]
 
-        args = ['go', 'build', '-o', os.path.join(os.path.dirname(path), 'example'), path]
-        #args = ['pwd']
-        #print(">>> Compiling examples, this will take a while...")
-        self.execute(cookie, args, env={'GOPATH': os.path.normpath(root_dir), 'GOCACHE': self.go_cache_dir})
+        self.execute(cookie, args, env={'GOPATH': os.path.normpath(tmp_dir), 'GOCACHE': self.go_cache_dir})
 
 def test(root_dir):
     return GoExamplesTester(root_dir, None).run()

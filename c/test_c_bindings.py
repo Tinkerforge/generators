@@ -59,7 +59,7 @@ class CExamplesTester(common.Tester):
 
         self.compiler = compiler
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         uses_libgd = False
 
         with open(path, 'r') as f:
@@ -71,14 +71,14 @@ class CExamplesTester(common.Tester):
             return
 
         if extra:
-            shutil.copy(path, '/tmp/tester/c')
-            path = os.path.join('/tmp/tester/c', os.path.split(path)[1])
+            shutil.copy(path, tmp_dir)
+            path = os.path.join(tmp_dir, os.path.split(path)[-1])
 
         output = path[:-2]
 
         if not extra and '/brick' in path:
             dirname = os.path.split(path)[0]
-            device = '/tmp/tester/c/source/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
+            device = os.path.join(tmp_dir, 'source/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1]))
         else:
             device = ''
 
@@ -103,16 +103,16 @@ class CExamplesTester(common.Tester):
                  '-Wextra',
                  '-Werror',
                  '-O2',
-                 '-I/tmp/tester/c/source',
+                 '-I' + os.path.join(tmp_dir, 'source'),
                  '-o',
                  output,
-                 '/tmp/tester/c/source/ip_connection.c']
+                 os.path.join(tmp_dir, 'source/ip_connection.c')]
 
         if len(device) > 0:
             args.append(device)
         elif extra:
-            dependencies = glob.glob('/tmp/tester/c/source/*.c')
-            dependencies.remove('/tmp/tester/c/source/ip_connection.c')
+            dependencies = glob.glob(os.path.join(tmp_dir, 'source/*.c'))
+            dependencies.remove(os.path.join(tmp_dir, 'source/ip_connection.c'))
             args.append('-Wno-error=unused-parameter')
             args += dependencies
 

@@ -55,14 +55,14 @@ class PerlCheckExamplesTester(common.Tester):
     def __init__(self, root_dir):
         common.Tester.__init__(self, 'perl', '.pl', root_dir, comment='check')
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         path_check = path.replace('.pl', '_check.pl')
 
         with open(path, 'r') as f:
             code = f.read()
 
         with open(path_check, 'w') as f:
-            f.write('use lib "/tmp/tester/perl/source/lib"; use strict; use warnings; CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n')
+            f.write('use lib "{0}"; use strict; use warnings; CHECK {{ sub __check__ {{ {1}\n\n}}}}\n\n__check__;\n'.format(os.path.join(tmp_dir, 'source/lib'), code))
 
         args = ['perl',
                 '-cWT',
@@ -84,14 +84,14 @@ class PerlLintExamplesTester(common.Tester):
     def __init__(self, root_dir):
         common.Tester.__init__(self, 'perl', '.pl', root_dir, comment='lint')
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         path_lint = path.replace('.pl', '_lint.pl')
 
         with open(path, 'r') as f:
             code = f.read()
 
         with open(path_lint, 'w') as f:
-            f.write('use lib "/tmp/tester/perl/source/lib";' + code)
+            f.write('use lib "{0}"; use strict; {1}'.format(os.path.join(tmp_dir, 'source/lib'), code))
 
         args = ['perl',
                 '-MO=Lint,all',
@@ -126,7 +126,7 @@ class PerlCriticExamplesTester(common.Tester):
     def __init__(self, root_dir):
         common.Tester.__init__(self, 'perl', '.pl', root_dir, comment='critic')
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         args = ['perlcritic',
                 #'--brutal', # FIXME
                 '--verbose',

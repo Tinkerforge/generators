@@ -4745,9 +4745,9 @@ class Tester(object):
 
         self.pool.apply_async(tester_worker, args=(cookie, args, env, setup, teardown), callback=callback)
 
-    def handle_source(self, path, extra):
+    def handle_source(self, tmp_dir, path, extra):
         self.test_count += 1
-        self.test((path,), path, extra)
+        self.test((path,), tmp_dir, path, extra)
 
     def handle_result(self, cookie, exit_code, output):
         if exit_code == None: # FIXME: add better handling
@@ -4784,10 +4784,10 @@ class Tester(object):
                 self.failure_count += 1
                 print('>>> test failed\n')
 
-    def after_unzip(self):
+    def after_unzip(self, tmp_dir):
         return True
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         raise NotImplementedError()
 
     def check_success(self, exit_code, output):
@@ -4820,7 +4820,7 @@ class Tester(object):
 
             print('>>> unpacking {0} done\n'.format(self.zipname))
 
-            if not self.after_unzip():
+            if not self.after_unzip(tmp_dir):
                 return False
 
             # test
@@ -4830,10 +4830,10 @@ class Tester(object):
                         if not name.endswith(self.extension):
                             continue
 
-                        self.handle_source(os.path.join(root, name), False)
+                        self.handle_source(tmp_dir, os.path.join(root, name), False)
 
             for extra_path in self.extra_paths:
-                self.handle_source(extra_path, True)
+                self.handle_source(tmp_dir, extra_path, True)
 
             self.pool.close()
             self.pool.join()

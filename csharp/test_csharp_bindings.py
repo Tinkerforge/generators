@@ -56,10 +56,10 @@ class CSharpExamplesTester(common.Tester):
     def __init__(self, root_dir, extra_paths):
         common.Tester.__init__(self, 'csharp', '.cs', root_dir, extra_paths=extra_paths)
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         if extra:
-            shutil.copy(path, '/tmp/tester/csharp')
-            path = os.path.join('/tmp/tester/csharp', os.path.split(path)[1])
+            shutil.copy(path, tmp_dir)
+            path = os.path.join(tmp_dir, os.path.split(path)[-1])
 
         output = path[:-3] + '.exe'
 
@@ -71,7 +71,7 @@ class CSharpExamplesTester(common.Tester):
                 '/out:' + output,
                 '/reference:System.Drawing.dll',
                 '/reference:System.Windows.Forms.dll',
-                '/reference:/tmp/tester/csharp/Tinkerforge.dll',
+                '/reference:' + os.path.join(tmp_dir, 'Tinkerforge.dll'),
                 path]
 
         self.execute(cookie, args)

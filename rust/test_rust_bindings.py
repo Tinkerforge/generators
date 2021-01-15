@@ -54,26 +54,27 @@ from generators import common
 
 class RustExamplesTester(common.Tester):
     def __init__(self, root_dir, extra_paths):
-        common.Tester.__init__(self, 'rust', 'Cargo.toml', root_dir, subdirs=".")#, subdirs=["src"])
+        common.Tester.__init__(self, 'rust', 'Cargo.toml', root_dir, subdirs='.')
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         example_path = os.path.join(os.path.dirname(path), 'examples')
 
-        for (dirpath, _dirnames, filenames) in os.walk(example_path):
-            for file in filenames:
-                shutil.move(os.path.join(dirpath, file), os.path.join(example_path, dirpath+'_'+file))
+        for dirpath, _dirnames, filenames in os.walk(example_path):
+            for name in filenames:
+                shutil.move(os.path.join(dirpath, name), os.path.join(example_path, dirpath + '_' + name))
 
-        cargo_folder = os.path.join(os.path.dirname(path), ".cargo")
+        cargo_folder = os.path.join(os.path.dirname(path), '.cargo')
 
         os.makedirs(cargo_folder)
-        with open(os.path.join(cargo_folder, "config"), 'w+') as f:
-            f.write("""[target.x86_64-unknown-linux-gnu]
-runner = ["/tmp/tester/rust/nothing.sh"]""")
 
-        with open(os.path.join(os.path.dirname(path), "nothing.sh"), 'w+') as f:
-            f.write("#!/bin/sh\n")
+        with open(os.path.join(cargo_folder, 'config'), 'w') as f:
+            f.write('''[target.x86_64-unknown-linux-gnu]
+runner = ["{0}"]'''.format(os.path.join(tmp_dir, 'nothing.sh')))
 
-        os.chmod(os.path.join(os.path.dirname(path), "nothing.sh"), 0o777)
+        with open(os.path.join(os.path.dirname(path), 'nothing.sh'), 'w') as f:
+            f.write('#!/bin/sh\n')
+
+        os.chmod(os.path.join(os.path.dirname(path), 'nothing.sh'), 0o777)
         
         with open(os.path.join(os.path.dirname(path), 'Cargo.toml'), 'r') as f:
             content = f.readlines()

@@ -55,7 +55,7 @@ class ShellExamplesTester(common.Tester):
     def __init__(self, root_dir):
         common.Tester.__init__(self, 'shell', '.sh', root_dir)
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         path_check = path.replace('.sh', '-check.sh')
 
         with open(path, 'r') as f:
@@ -69,7 +69,7 @@ class ShellExamplesTester(common.Tester):
 
         args = [path_check]
         env = {'TINKERFORGE_SHELL_BINDINGS_DRY_RUN': '1',
-               'PATH': '/tmp/tester/shell:{0}'.format(os.environ['PATH'])}
+               'PATH': '{0}:{1}'.format(tmp_dir, os.environ['PATH'])}
 
         self.execute(cookie, args, env, teardown=lambda: [os.remove(path_check)])
 

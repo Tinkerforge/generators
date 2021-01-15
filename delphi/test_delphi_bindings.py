@@ -66,15 +66,15 @@ class DelphiExamplesTester(common.Tester):
 
         self.lib_path = os.path.dirname(output)
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         if extra:
-            shutil.copy(path, '/tmp/tester/delphi')
-            path = os.path.join('/tmp/tester/delphi', os.path.split(path)[1])
+            shutil.copy(path, tmp_dir)
+            path = os.path.join(tmp_dir, os.path.split(path)[-1])
 
         args = ['fpc',
                 '-vw',
                 '-Fl{}/'.format(self.lib_path),
-                '-Fu/tmp/tester/delphi/source',
+                '-Fu' + os.path.join(tmp_dir, 'source'),
                 '-l',
                 path]
 

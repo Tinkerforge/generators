@@ -59,27 +59,27 @@ class JavaExamplesTester(common.Tester):
     def __init__(self, root_dir, extra_paths):
         common.Tester.__init__(self, 'java', '.java', root_dir, extra_paths=extra_paths)
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         # create unique copy of the Tinkerforge.jar to avoid Java from randomly
         # complaining about the JAR being missing if Java is started multiple
         # times concurrently
-        jar_path = '/tmp/tester/java/Tinkerforge.jar'
+        jar_path = os.path.join(tmp_dir, 'Tinkerforge.jar')
         tries = 100
 
         while os.path.exists(jar_path) and tries > 0:
             r = int(round(random.random() * 10000000000))
-            jar_path = '/tmp/tester/java/Tinkerforge_{:010X}.jar'.format(r)
+            jar_path = os.path.join(tmp_dir, 'Tinkerforge_{:010X}.jar'.format(r))
             tries -= 1
 
         if os.path.exists(jar_path):
             self.handle_result(cookie, 1, 'cloud not create unique copy of Tinkerforge.jar')
             return
 
-        shutil.copy('/tmp/tester/java/Tinkerforge.jar', jar_path)
+        shutil.copy(os.path.join(tmp_dir, 'Tinkerforge.jar'), jar_path)
 
         if extra:
-            shutil.copy(path, '/tmp/tester/java')
-            path = os.path.join('/tmp/tester/java', os.path.split(path)[1])
+            shutil.copy(path, tmp_dir)
+            path = os.path.join(tmp_dir, os.path.split(path)[-1])
 
         args = [os.path.join(java_common.detect_java_home(), 'bin/javac'),
                 '-Xlint:all',
@@ -94,15 +94,15 @@ class JavaDocTester(common.Tester):
     def __init__(self, root_dir):
         common.Tester.__init__(self, 'java', '.html', root_dir, subdirs=['javadoc/com/tinkerforge'])
 
-    def after_unzip(self):
+    def after_unzip(self, tmp_dir):
         print('>>> generating javadoc')
 
         args = [os.path.join(java_common.detect_java_home(), 'bin/javadoc'),
                 '-quiet',
                 '-d',
-                '/tmp/tester/java/javadoc',
+                os.path.join(tmp_dir, 'javadoc'),
                 '-classpath',
-                '/tmp/tester/java/source/src/main/java',
+                os.path.join(tmp_dir, 'source/src/main/java'),
                 'com.tinkerforge']
 
         rc = subprocess.call(args)
@@ -114,7 +114,7 @@ class JavaDocTester(common.Tester):
 
         return rc == 0
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         args = ['xmllint',
                 '--noout',
                 '--valid',

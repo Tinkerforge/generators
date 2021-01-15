@@ -57,7 +57,7 @@ class PythonTester(common.Tester):
 
         self.python = python
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         args = [self.python,
                 '-c',
                 'import py_compile; py_compile.compile("{0}", doraise=True)'.format(path)]
@@ -70,7 +70,7 @@ class PylintTester(common.Tester):
 
         self.python = python
 
-    def test(self, cookie, path, extra):
+    def test(self, cookie, tmp_dir, path, extra):
         teardown = None
 
         if self.python == 'python3':
@@ -88,7 +88,7 @@ class PylintTester(common.Tester):
 
         args = [self.python,
                 '-c',
-                'import sys; sys.path.insert(0, "/tmp/tester/python/source"); import pylint; pylint.run_pylint()',
+                'import sys; sys.path.insert(0, "{0}"); import pylint; pylint.run_pylint()'.format(os.path.join(tmp_dir, 'source')),
                 '-E',
                 '--disable=no-name-in-module',
                 path]
