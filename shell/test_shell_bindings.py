@@ -66,7 +66,7 @@ class ShellExamplesTester(common.Tester):
             code = f.read()
 
         with open(path_check + '.tmp', 'w') as f:
-            f.write(code.replace('; read dummy', '').replace('kill -- -$$', 'kill $(jobs -p)'))
+            f.write(code.replace('#!/bin/sh', '#!/bin/bash').replace('; read dummy', '').replace('kill -- -$$', 'kill $(jobs -p)'))
 
         os.chmod(path_check + '.tmp', 0o755)
         os.rename(path_check + '.tmp', path_check)
