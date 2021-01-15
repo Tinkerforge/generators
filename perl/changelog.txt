@@ -183,5 +183,5 @@
 - Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
 - Fix inline documentation syntax errors
 
-2021-01-15: 2.1.29 (<unknown>)
+2021-01-15: 2.1.29 (797d61e)
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0

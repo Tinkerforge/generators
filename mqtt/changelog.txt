@@ -96,5 +96,5 @@
 - Fix timeout error handling
 - Improve Python 2 compatibility
 
-2021-01-15: 2.0.13 (<unknown>)
+2021-01-15: 2.0.13 (797d61e)
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0
