@@ -56,19 +56,21 @@ from generators import common
 class GoExamplesTester(common.Tester):
     def __init__(self, root_dir, extra_paths):
         common.Tester.__init__(self, 'go', '.go', root_dir, subdirs=["examples"])#, subdirs=["src"])
+
         self.firstRun = True
         self.go_cache_dir = subprocess.check_output(['go', 'env', 'GOCACHE']).strip()
 
     def test(self, cookie, path, extra):
         root_dir = os.path.join(os.path.dirname(path), '..')
+
         # ipconnection examples are one level higher than the rest.
         if not ("example_enumerate.go" in path or "example_authenticate.go" in path):
             root_dir = os.path.join(root_dir, "..")
+
         if self.firstRun:
             shutil.rmtree(os.path.join(root_dir, "src", "github.com"), ignore_errors=True)
             shutil.move(os.path.join(root_dir, "github.com"), os.path.join(root_dir, "src", "github.com"))
             self.firstRun = False
-
 
         args = ['go', 'build', '-o', os.path.join(os.path.dirname(path), 'example'), path]
         #args = ['pwd']
