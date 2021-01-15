@@ -97,7 +97,7 @@ class PerlLintExamplesTester(common.Tester):
                 '-MO=Lint,all',
                 path_lint]
 
-        self.execute(cookie, args)
+        self.execute(cookie, args, teardown=lambda: [os.remove(path_lint)])
 
     def check_success(self, exit_code, output):
         output = output.strip('\r\n')

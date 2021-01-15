@@ -4707,11 +4707,17 @@ class ExamplesGenerator(Generator):
             git_dir = os.path.join(override_git_dir, device.get_git_name())
         return os.path.join(git_dir, 'software', 'examples', self.get_bindings_name())
 
-def tester_worker(cookie, args, env):
+def tester_worker(cookie, args, env, setup, teardown):
+    if setup != None:
+        setup()
+
     try:
         exit_code, output = check_output_and_error(args, env=env)
     except Exception as e:
         return cookie, None, 'Tester Exception: ' + str(e)
+    finally:
+        if teardown != None:
+            teardown()
 
     return cookie, exit_code, output
 
@@ -4733,11 +4739,11 @@ class Tester(object):
         self.failure_count = 0
         self.pool = multiprocessing.dummy.Pool(processes=self.PROCESSES)
 
-    def execute(self, cookie, args, env=None):
+    def execute(self, cookie, args, env=None, setup=None, teardown=None):
         def callback(result):
             self.handle_result(*result)
 
-        self.pool.apply_async(tester_worker, args=(cookie, args, env), callback=callback)
+        self.pool.apply_async(tester_worker, args=(cookie, args, env, setup, teardown), callback=callback)
 
     def handle_source(self, path, extra):
         self.test_count += 1

@@ -71,6 +71,8 @@ class PylintTester(common.Tester):
         self.python = python
 
     def test(self, cookie, path, extra):
+        teardown = None
+
         if self.python == 'python3':
             with open(path, 'r') as f:
                 code = f.read()
@@ -82,6 +84,7 @@ class PylintTester(common.Tester):
                 f.write(code)
 
             path = path_check
+            teardown = lambda: [os.remove(path)]
 
         args = [self.python,
                 '-c',
@@ -90,7 +93,7 @@ class PylintTester(common.Tester):
                 '--disable=no-name-in-module',
                 path]
 
-        self.execute(cookie, args)
+        self.execute(cookie, args, teardown=teardown)
 
 def test(root_dir):
     extra_paths = [os.path.join(root_dir, '../../weather-station/demo/starter_kit_weather_station_demo/main.py'),

@@ -71,7 +71,7 @@ class ShellExamplesTester(common.Tester):
         env = {'TINKERFORGE_SHELL_BINDINGS_DRY_RUN': '1',
                'PATH': '/tmp/tester/shell:{0}'.format(os.environ['PATH'])}
 
-        self.execute(cookie, args, env)
+        self.execute(cookie, args, env, teardown=lambda: [os.remove(path_check)])
 
     def check_success(self, exit_code, output):
         return exit_code == 0 and output.strip() in ['', 'Press key to exit']
