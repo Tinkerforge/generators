@@ -114,6 +114,18 @@ class MQTTBindings:
 
     def run_config(self, config):
         for topic, payload in config:
+            if len(topic) == 0:
+                print("Could not read init file: Empty topic name is not allowed. (MQTT-4.7.3-1)")
+                sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
+            if '#' in topic:
+                print("Could not read init file: Topic '{}' contains the wildcard character '#'. (MQTT-4.7.1-1)".format(topic))
+                sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
+            if '+' in topic:
+                print("Could not read init file: Topic '{}' contains the wildcard character '+'. (MQTT-4.7.1-1)".format(topic))
+                sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
+            if topic.startswith('$'):
+                print("Could not read init file: Topic '{}' starts with the reserved character '$'. (MQTT-4.7.2-1)".format(topic))
+                sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
             if isinstance(payload, list):
                 payload = dict(payload)
             self.on_message(self.mqttc, len(self.global_prefix), message_tup(topic, json.dumps(payload)))
