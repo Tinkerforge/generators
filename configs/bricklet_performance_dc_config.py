@@ -19,7 +19,7 @@ com = {
         'de': 'Steuert einen Gleichstrommotor mit bis zu 36V und 10A'
     },
     'released': True,
-    'documented': False,
+    'documented': True,
     'discontinued': False,
     'features': [
         'device',
