@@ -948,6 +948,16 @@ def main():
     if len(global_topic_prefix) > 0 and not global_topic_prefix.endswith('/'):
         global_topic_prefix += '/'
 
+    if '#' in global_topic_prefix:
+        print("Global topic prefix invalid: '{}' contains the wildcard character '#'. (MQTT-4.7.1-1)".format(global_topic_prefix))
+        sys.exit(ERROR_INVALID_GLOBAL_TOPIC_PREFIX)
+    if '+' in global_topic_prefix:
+        print("Global topic prefix invalid: '{}' contains the wildcard character '+'. (MQTT-4.7.1-1)".format(global_topic_prefix))
+        sys.exit(ERROR_INVALID_GLOBAL_TOPIC_PREFIX)
+    if global_topic_prefix.startswith('$'):
+        print("Global topic prefix invalid: '{}' starts with the reserved character '$'. (MQTT-4.7.2-1)".format(global_topic_prefix))
+        sys.exit(ERROR_INVALID_GLOBAL_TOPIC_PREFIX)
+
     if args.init_file is not None:
         try:
             with open(args.init_file) as f:
