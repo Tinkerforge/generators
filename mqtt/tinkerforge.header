@@ -58,19 +58,19 @@ def fatal_error(message, exit_code):
 try:
     import paho.mqtt
 except ImportError:
-    fatal_error('Requiring paho 1.3.1 or newer', ERROR_PAHO_MISSING)
+    fatal_error('Requiring paho-mqtt 1.3.1 or newer', ERROR_PAHO_MISSING)
 
 from distutils.version import LooseVersion, StrictVersion
-if paho.mqtt.__version__ < StrictVersion("1.3.1"):
-    fatal_error('Paho version has to be at least 1.3.1, but was ' + str(paho.mqtt.__version__), ERROR_PAHO_VERSION)
+if paho.mqtt.__version__ < StrictVersion('1.3.1'):
+    fatal_error('Requiring paho-mqtt 1.3.1 or newer, but found ' + str(paho.mqtt.__version__), ERROR_PAHO_VERSION)
 
 import paho.mqtt.client as mqtt
 
 if sys.hexversion < 0x02070900:
-    fatal_error('Requiring python 2.7.9 or 3.4 or newer', ERROR_PYTHON_VERSION)
+    fatal_error('Requiring Python 2.7.9 or 3.4 or newer', ERROR_PYTHON_VERSION)
 
 if sys.hexversion > 0x03000000 and sys.hexversion < 0x03040000:
-    fatal_error('Requiring python 2.7.9 or 3.4 or newer', ERROR_PYTHON_VERSION)
+    fatal_error('Requiring Python 2.7.9 or 3.4 or newer', ERROR_PYTHON_VERSION)
 
 try:
     import argparse
