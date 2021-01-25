@@ -25,7 +25,8 @@ class MQTTBindings:
         self.handle_ipcon_exceptions(lambda i: i.set_timeout(ipcon_timeout))
 
         self.mqttc = mqtt.Client(userdata=len(global_prefix))
-        logging.basicConfig(format='%(asctime)s <%(levelname)s> %(name)s: %(message)s', level=logging.DEBUG if debug else logging.INFO)
+
+        logging.getLogger().setLevel(logging.DEBUG if debug else logging.INFO)
 
         if debug:
             self.mqttc.enable_logger()
