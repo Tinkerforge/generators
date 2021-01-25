@@ -6,9 +6,8 @@
 
 # ARINC429 Breakout Bricklet communication config
 
-from generators.configs.commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from generators.configs.commonconstants import add_callback_value_function
-
+from generators.configs.commonconstants      import THRESHOLD_OPTION_CONSTANT_GROUP
+from generators.configs.commonconstants      import add_callback_value_function
 from generators.configs.openhab_commonconfig import *
 
 com = {
@@ -35,17 +34,6 @@ com = {
     'packets': [],
     'examples': []
 }
-
-com['constant_groups'].append({
-'name': 'RW Error',
-'type': 'uint8',
-'constants': [('OK',               0),  # everything went OK
-              ('No Write',         1),  # write register, but OP code is for read
-              ('No Read',          2),  # read  register, but OP code is for write
-              ('Invalid OP Code',  3),  # invalid OP code
-              ('Invalid Length',   4),  # invalid length of OP code argument
-              ('SPI',              5)], # error during SPI communication
-})
 
 com['constant_groups'].append({
 'name': 'Channel',
@@ -114,125 +102,42 @@ com['constant_groups'].append({
 com['constant_groups'].append({
 'name': 'Frame Status',
 'type': 'uint8',
-'constants': [('Update',  0),  # frame is overdue (frame data are last data received)
-              ('Timeout', 1)]  # new or updated frame received
+'constants': [('New',     0),  # new     frame received (or 1st frame after a timeout)
+              ('Update',  1),  # updated frame received
+              ('Timeout', 1)]  # frame is overdue (frame data are last data received)
 })
 
 com['constant_groups'].append({
 'name': 'Scheduler Job',
 'type': 'uint8',
-'constants': [('Skip',        0),   # no transmit, no   dwell
-              ('Dwell',       1),   # no transmit, only dwell
-              ('Single',      2),   # send a frame once            and dwell
-              ('Cyclic',      3),   # send a frame repeatedly      and dwell
-              ('Retrans RX1', 4),   # send a frame received on RX1 and dwell
-              ('Retrans RX2', 5)]   # send a frame received on RX1 and dwell
-})
-
-com['constant_groups'].append({
-'name': 'A429 Mode',
-'type': 'uint8',
-'constants': [('Normal',  0),  # normal RX/TX operations
-              ('Debug',   1)]  # high-level FW functions stopped
-})
-
-
-com['packets'].append({
-'type': 'function',
-'name': 'Debug Get Discretes',
-'elements': [('RX Discretes', 'uint16', 1, 'out', {'range': (0, 1023)}),
-             ('TX Discretes', 'uint16', 1, 'out', {'range': (0,    3)})],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Low-level debug function to read the discrete signals from the A429 chip.
-RX Discretes Bit   9: MB2-1   - pending frame in RX2, PRIO 1 mailbox
-                   8: MB2-2   -                            2 mailbox
-                   7: MB2-3   -                            3 mailbox
-                   6: R2FLAG  -                       FIFO
-                   5: R2INT   -                       FIFO (pulse only)
-                   4: MB1-1   - pending frame in RX1, PRIO 1 mailbox
-                   3: MB1-2   -                            2 mailbox
-                   2: MB1-3   -                            3 mailbox
-                   1: R1FLAG  -                       FIFO
-                   0: R1INT   -                       FIFO (pulse only)
-TX Discretes Bit 2-7: unused
-                   1: TFULL   - TX buffer full
-                   0: TEMPTY  - TX buffer empty
-""",
-'de':
-"""
-"""
-}]
-})
-
-
-com['packets'].append({
-'type': 'function',
-'name': 'Debug Read Register Low Level',
-'elements': [('OP Code',      'uint8', 1,  'in',  {}),
-             ('Value Length', 'uint8', 1,  'out', {}),
-             ('Value Data',   'uint8', 32, 'out', {}),
-             ('RW Error',     'uint8', 1,  'out',  {'constant_group': 'RW Error'})],
-'high_level': {'stream_out': {'name': 'Value', 'single_chunk': True}},
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Low-level debug function to execute a direct SPI read access on the A429 chip.
- * OP Code:      code number of the SPI read command
- * Value Length: number of bytes read
- * Value Data:   data bytes read
- * RW Error:     'OK' if the read access was successful, else error code
-""",
-'de':
-"""
-"""
-}]
-})
-
-
-com['packets'].append({
-'type': 'function',
-'name': 'Debug Write Register Low Level',
-'elements': [('OP Code',      'uint8', 1,  'in', {}),
-             ('Value Length', 'uint8', 1,  'in', {}),
-             ('Value Data',   'uint8', 32, 'in', {}),
-             ('RW Error',     'uint8', 1,  'out',  {'constant_group': 'RW Error'})],
-'high_level': {'stream_in': {'name': 'Value', 'single_chunk': True}},
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-Low-level debug function to execute a direct SPI write access on the A429 chip.
- * OP Code:      code number of the SPI read command
- * Value Length: number of bytes to write
- * Value Data:   data bytes to write
- * RW Error:     'OK' if the write access was successful, else error code
-""",
-'de':
-"""
-"""
-}]
+'constants': [('Skip',        0),   # skip job        (no transmit, no dwell)
+              ('Callback',    1),   # send a callback              (no dwell)
+              ('Stop',        2),   # stop scheduler  (no transmit, no dwell)
+              ('Jump',        3),   # jump to given job index, dwell with next return
+              ('Return',      4),   # return to last Jump source   (no dwell)
+              ('Dwell',       5),   # dwell only      (no transmit)
+              ('Single',      6),   # send a frame once            and dwell
+              ('Cyclic',      7),   # send a frame repeatedly      and dwell
+              ('Retrans RX1', 8),   # send a frame received on RX1 and dwell
+              ('Retrans RX2', 9)]   # send a frame received on RX2 and dwell
 })
 
 com['packets'].append({
 'type': 'function',
 'name': 'Get Capabilities',
-'elements': [('TX Total Scheduler Tasks', 'uint16', 1, 'out'),
-             ('TX Used Scheduler Tasks',  'uint16', 1, 'out'),
-             ('RX Total Frame Filters',   'uint16', 1, 'out'),
-             ('RX Used Frame Filters',    'uint16', 2, 'out')],
+'elements': [('TX Total Scheduler Jobs', 'uint16', 1, 'out'),
+             ('TX Used Scheduler Jobs',  'uint16', 1, 'out'),
+             ('RX Total Frame Filters',  'uint16', 1, 'out'),
+             ('RX Used Frame Filters',   'uint16', 2, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Get the TX and RX capabilities and their current usage:
- * TX Total Scheduler Tasks: total number of task entries in the scheduling table.
- * TX Used Scheduler Tasks:  number of task entries that are currently in use.
- * RX Total Frame Filters:   total number of frame filters that can be defined per channel.
- * RX Used Frame Filters:    number of frame filters that are currently in use per each channel.
+ * TX Total Scheduler Jobs: total number of job entries in the scheduling table.
+ * TX Used Scheduler Jobs:  number of job entries that are currently in use.
+ * RX Total Frame Filters:  total number of frame filters that can be defined per channel.
+ * RX Used Frame Filters:   number of frame filters that are currently in use per each channel.
 """,
 'de':
 """
@@ -354,7 +259,7 @@ com['packets'].append({
 Set the operating mode of the selected channel:
  * passive: TX channel: all transmissions are stopped and the hardware interface becomes high-Z. RX channels: all arriving frames will be discarded.
  * active:  TX channel: Arinc429 frames can be sent via the 'Write Frame Direct' function. RX channels: arriving frames will be processed according to the frame filter and callback settings.
- * run:     TX channels only: the scheduler will run and transmit frames according to the entries made in the scheduler task table.
+ * run:     TX channels only: the scheduler will run and transmit frames according to the entries made in the scheduler job table.
 """,
 'de':
 """
@@ -611,9 +516,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Set or update an Arinc429 frame that is transmitted by the scheduler using the task types 'Single' and 'Cyclic'.
+Set or update an Arinc429 frame that is transmitted by the scheduler using the job types 'Single' and 'Cyclic'.
  * Channel:     selected transmit channel.
- * Frame Index: index number that will be used in the transmit scheduler task table to refer to this frame.
+ * Frame Index: index number that will be used in the transmit scheduler job table to refer to this frame.
  * frame:       complete Arinc429 frame including the label and SDI bits. If 'parity_auto' is set for the channel, the parity bit will be set (adjusted) automatically.
 """,
 'de':
@@ -625,14 +530,14 @@ Set or update an Arinc429 frame that is transmitted by the scheduler using the t
 com['packets'].append({
 'type': 'function',
 'name': 'Clear Schedule Entries',
-'elements': [('Channel',          'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Task Index First', 'uint16', 1, 'in'),
-             ('Task Index Last',  'uint16', 1, 'in')],
+'elements': [('Channel',         'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+             ('Job Index First', 'uint16', 1, 'in'),
+             ('Job Index Last',  'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Clear a range of transmit scheduler task table entries:
+Clear a range of transmit scheduler job table entries:
  * Channel: selected TX channel.
  * First:   index of the first table entry to be cleared.
  * Last:    index of the last  table entry to be cleared.
@@ -649,7 +554,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Schedule Entry',
 'elements': [('Channel',     'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Task Index',  'uint16', 1, 'in'),
+             ('Job Index',   'uint16', 1, 'in'),
              ('Job',         'uint8',  1, 'in',  {'constant_group': 'Scheduler Job'}),
              ('Frame Index', 'uint16', 1, 'in'),
              ('Dwell Time',  'uint8',  1, 'in',  {'scale': (1, 250), 'unit': 'Second', 'default': 10})],  # TODO 1 - 250 milli-seconds
@@ -657,22 +562,37 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Set an entry in the transmit scheduler task table:
+Set an entry in the transmit scheduler job table:
  * Channel:     selected TX channel
- * Task Index:  index number of the task, the scheduler processes the task table in ascending order of these index numbers.
+ * Job Index:   index number of the job, the scheduler processes the job table in ascending order of these index numbers.
  * Job:         activity assigned to this entry, see below.
- * Frame Index: frame assigned to this task, either the 'Frame Index' used along with the :func: `Write Frame Scheduled` or the extended label (label + SDI) in case of RX1/RX2 retransmits.
- * Dwell Time:  time to wait before executing the next task table entry (0-250 milliseconds).
+ * Frame Index: generally, the frame assigned to this job by the 'Frame Index' used along with the :func: `Write Frame Scheduled`.
+                In case of a RX1 or RX2 retransmit job, the extended label (label + SDI) of the frame to be retransmitted.
+                In case of the Jump command, the Job Index at which execution shall continue.
+                In case of the Callback command, this number will be sent as 'Token' code (values 0-255 only).
+                In all other cases (Skip, Stop, Dwell, Return) this parameter is not used.
+ * Dwell Time:  time to wait before executing the next job table entry (0-250 milliseconds).
 
-When the scheduler is set to 'run' mode via the :func:`Set Channel Mode`, it continuously loops through the task table and executes the assigned tasks.
-It starts with the task stored at task index 0.
+When the scheduler is set to 'run' mode via the :func:`Set Channel Mode`, it continuously loops through the job table and executes
+the assigned tasks. It starts with the job stored at job index 0.
 The scheduler can execute the following activity types (jobs):
- * Skip:        the task is skipped, i.e. no frame is transmitted and no dwelling is done. The frame index and dwell time are not used.
+ * Skip:        the job is skipped, i.e. no frame is transmitted and no dwelling is done. The frame index and dwell time are not used.
+ * Stop:        the scheduler is stopped, i.e. the channel mode is reverted from 'run' to 'active'. The frame index and dwell time are not used.
+ * Jump:        the scheduler immediately continues at the Job Index position given by the Frame Index parameter. The assigned dwell time will be executed when the scheduler runs into the next Return job.
+ * Return:      the scheduler immediately continues at the next Job Index position following the last Jump command. Nested Jumps are not supported. The frame index and dwell time are not used.
+ * Callback:    the scheduler triggers a callback message and immediately continues with executing the next job (dwell time is not used).
  * Dwell        the scheduler executes the dwelling but does not transmit any frame. The frame index is not used.
  * Single:      the scheduler transmits the referenced frame, but only once. On subsequent executions the frame is not sent until it is renewed via the :func:`Write Frame Scheduled`, then the process repeats.
  * Cyclic:      the scheduler transmits the referenced frame and executed the dwelling on each round.
  * Retrans RX1: the scheduler retransmits a frame that was previously received on the RX1 channel. The frame to send is referenced by setting the 'Frame Index' to its extended label code, which is a 10 bit number made of the label code in the lower bits and the two SDI bits in the upper bits. If the SDI bits are used for data, set the SDI bits to zero. As long as the referenced frame was not received yet, or if it is in timeout, no frame will be sent.
  * Retrans RX2: same as before, but for frames received on the RX2 channel.
+
+The value assigned to the 'Frame Index' parameter varies with the activity type (job):
+
+ * Single or Cyclic: frame index as used with the :func: `Write Frame Scheduled` of the frame to transmit. Valid range: 0-255
+ * Retrans RX1/RX2:  extended label (label + SDI) of the frame to re-transmit. Valid range: 0-1023
+ * Callback:         arbitrary number decided by the user, it will be reported in the callback via the 'Token' value. Valid range: 0-255
+ * Jump:             next job index to jump to.
 """,
 'de':
 """
@@ -685,7 +605,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Schedule Entry',
 'elements': [('Channel',     'uint8',  1, 'in',  {'constant_group': 'Channel'}),
-             ('Task Index',  'uint16', 1, 'in'),
+             ('Job Index',   'uint16', 1, 'in'),
              ('Job',         'uint8',  1, 'out', {'constant_group': 'Scheduler Job'}),
              ('Frame Index', 'uint16', 1, 'out'),
              ('Frame',       'uint32', 1, 'out'),
@@ -694,7 +614,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Get a transmit scheduler task table entry.
+Get a transmit scheduler job table entry.
 """,
 'de':
 """
@@ -705,15 +625,13 @@ Get a transmit scheduler task table entry.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Reset A429',
-'elements': [('Mode', 'uint8', 1, 'in', {'constant_group': 'A429 Mode', 'default': 0})],
-'since_firmware': [1, 0, 0],
+'name': 'Restart',
+'elements': [],
+'since_firmware': [2, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Reset the A429 bricklet. The bricklet will restart in the selected mode:
- * 'Normal': normal operating mode with all high-level Arinc429 frame processing being executed.
- * 'Debug':  debug mode with all high-level processing suspended, for use in conjunction with the low-level debug functions.
+Sets the whole bricklet into its power-up default state.
 """,
 'de':
 """
@@ -721,3 +639,26 @@ Reset the A429 bricklet. The bricklet will restart in the selected mode:
 }]
 })
 
+com['packets'].append({
+'type': 'callback',
+'name': 'Scheduler Message',
+'elements': [('Channel',    'uint8',  1, 'out', {'constant_group': 'Channel'}),
+             ('Seq Number', 'uint8',  1, 'out'),
+             ('Timestamp',  'uint16', 1, 'out'),
+             ('Token',      'uint8',  1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered by respective jobs in the transmit schedule.
+ * Channel:    TX channel sending the callback
+ * Seq Number: running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the scheduler is stopped and started again. This counter can be used to detect lost callbacks.
+ * Timestamp:  running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
+ * Token:      number assigned in the 'Frame Index' field when setting up the callback job.
+
+""",
+'de':
+"""
+"""
+}]
+})
