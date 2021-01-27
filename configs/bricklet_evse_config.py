@@ -85,6 +85,16 @@ com['constant_groups'].append({
 })
 
 com['constant_groups'].append({
+'name': 'Error State',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('Switch', 2),
+              ('Calibration', 3),
+              ('Contactor', 4),
+              ('Communication', 5)]
+})
+
+com['constant_groups'].append({
 'name': 'Jumper Configuration',
 'type': 'uint8',
 'constants': [('6A', 0),
@@ -106,6 +116,7 @@ com['packets'].append({
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
+             ('Error State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
              ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
