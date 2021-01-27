@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True,
+    'discontinued': True, # replaced by DC Bricklet 2.0 and Performance DC Bricklet
     'features': [
         'device',
         'brick_get_identity',

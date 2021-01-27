@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True,
+    'discontinued': True, # replaced by Servo Bricklet 2.0
     'features': [
         'device',
         'brick_get_identity',
