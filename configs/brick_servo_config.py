@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': True,
     'features': [
         'device',
         'brick_get_identity',
