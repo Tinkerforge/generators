@@ -1213,7 +1213,7 @@ class UCBindingsPacket(uc_common.UCPacket):
             if self.get_function_id() == 255 and element.get_name().under == 'connected_uid':
                 dest = 'tmp_connected_uid'
                 # Overriding the template fixes clang's "comparison of array 'tmp_connected_uid' not equal to a null pointer is always true" warning
-                t = '*{dest} = tf_packetbuffer_read_{type_}({packetbuffer});'
+                t = 'tf_packetbuffer_pop_n({packetbuffer}, (uint8_t*){dest}, {count});'
 
             return_list.append(t.format(packetbuffer=packetbuffer_name,
                                         dest=dest,
