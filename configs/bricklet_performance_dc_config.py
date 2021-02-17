@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2156,
     'name': 'Performance DC',
@@ -961,6 +961,24 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 
 Der :cb:`Current Velocity` Callback wird nur nach Ablauf der Periode
 ausgelöst, wenn sich die Geschwindigkeit geändert hat.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'callback',
+'name': 'GPIO State',
+'elements': [('GPIO State', 'bool', 2, 'out', {})],
+'since_firmware': [2, 0, 1],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered by GPIO changes if it is activated through :func:`Set GPIO Action`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst durch GPIO-Änderungen wenn er über :func:`Set GPIO Action` aktiviert wurde.
 """
 }]
 })

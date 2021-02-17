@@ -1715,3 +1715,19 @@ zurückgegeben.
 }]
 })
 
+com['packets'].append({
+'type': 'callback',
+'name': 'GPIO State',
+'elements': [('GPIO State', 'bool', 2, 'out', {})],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered by GPIO changes if it is activated through :func:`Set GPIO Action`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst durch GPIO-Änderungen wenn er über :func:`Set GPIO Action` aktiviert wurde.
+"""
+}]
+})
