@@ -98,3 +98,7 @@
 
 2021-01-15: 2.0.13 (797d61e)
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0
+
+<unknown>: 2.0.14 (<unknown>)
+- Don't allow MQTT topic placeholders in init-file topics and topic prefix
+- Force Python 3 in shebang line and deprecate Python 2 support
