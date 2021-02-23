@@ -76,16 +76,7 @@ def generate(root_dir, language):
     os.makedirs(tmp_source_dir)
     os.makedirs(tmp_source_bashcompletion_dir)
 
-    with open(os.path.join(tmp_dir, 'tinkerforge'), 'r') as f:
-        script = f.read()
-
-    assert script.startswith('#!/usr/bin/env python\n')
-
-    script = '#!/usr/bin/python3 -u\n' + script.split('\n', 1)[1]
-
-    with open(os.path.join(tmp_source_dir, 'tinkerforge'), 'w') as f:
-        f.write(script)
-
+    shutil.copy(os.path.join(tmp_dir, 'tinkerforge'), tmp_source_dir)
     shutil.copy(os.path.join(tmp_dir, 'tinkerforge-bash-completion.sh'), os.path.join(tmp_source_bashcompletion_dir, 'tinkerforge'))
 
     shutil.copytree(debian_dir, tmp_source_debian_dir)
