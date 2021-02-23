@@ -74,16 +74,7 @@ def generate(root_dir, language):
 
     os.makedirs(tmp_source_dir)
 
-    with open(os.path.join(tmp_dir, 'tinkerforge_mqtt'), 'r') as f:
-        script = f.read()
-
-    assert script.startswith('#!/usr/bin/env python\n')
-
-    script = '#!/usr/bin/python3 -u\n' + script.split('\n', 1)[1]
-
-    with open(os.path.join(tmp_source_dir, 'tinkerforge_mqtt'), 'w') as f:
-        f.write(script)
-
+    shutil.copy(os.path.join(tmp_dir, 'tinkerforge_mqtt'), tmp_source_dir)
     shutil.copy(os.path.join(root_dir, 'tinkerforge_mqtt.cmdline'), tmp_source_dir)
     shutil.copy(os.path.join(root_dir, 'tinkerforge_mqtt.debian-service'), os.path.join(tmp_source_dir, 'tinkerforge_mqtt.service'))
 
