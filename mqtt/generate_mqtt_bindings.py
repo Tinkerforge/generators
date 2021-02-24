@@ -190,7 +190,7 @@ class {0}(MQTTCallbackDevice):
                     single_read = stream_out.has_single_chunk()
                     fixed_length = stream_out.get_fixed_length()
 
-                entries.append("'{mqtt_name}': HighLevelFunctionInfo({low_level_id}, '{direction}', {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, {arg_names}, {arg_types}, {arg_symbols}, '{format_in}', {result_names}, {result_symbols}, '{format_out}',{chunk_padding}, {chunk_cardinality}, {chunk_max_offset},{short_write}, {single_read}, {fixed_length})".format(
+                entries.append("'{mqtt_name}': HighLevelFunctionInfo({low_level_id}, '{direction}', {high_level_roles_in}, {high_level_roles_out}, {low_level_roles_in}, {low_level_roles_out}, {arg_names}, {arg_types}, {arg_symbols}, '{format_in}', {result_names}, {result_symbols}, {response_size}, '{format_out}',{chunk_padding}, {chunk_cardinality}, {chunk_max_offset},{short_write}, {single_read}, {fixed_length})".format(
                     mqtt_name=packet.get_mqtt_name(skip=-2),
                     low_level_id=packet.get_function_id(),
                     direction=direction,
@@ -204,6 +204,7 @@ class {0}(MQTTCallbackDevice):
                     format_in=packet.get_mqtt_format_list('in'),
                     result_names=output_names,
                     result_symbols=output_symbols,
+                    response_size=packet.get_response_size(),
                     format_out=packet.get_mqtt_format_list('out'),
                     chunk_padding=chunk_padding,
                     chunk_cardinality=chunk_cardinality,
