@@ -71,8 +71,11 @@ up to about 100000lux, but above 64000lux the precision starts to drop.
 The illuminance is given in lux/100, i.e. a value of 450000 means that an
 illuminance of 4500lux is measured.
 
-An illuminance of 0lux indicates that the sensor is saturated and the
-configuration should be modified, see :func:`Set Configuration`.
+An illuminance of 0lux indicates an error condition where the sensor cannot
+perform a reasonable measurement. This can happen with very dim or very bright
+light conditions. In bright light conditions this might indicate that the sensor
+is saturated and the configuration should be modified (:func:`Set Configuration`)
+to better match the conditions.
 """,
 'de':
 """
@@ -81,9 +84,12 @@ erstreckt sich bis über 100000Lux, aber ab 64000Lux nimmt die Messgenauigkeit
 ab. Die Beleuchtungsstärke ist in Lux/100 angegeben, d.h. bei einem Wert von
 450000 wurde eine Beleuchtungsstärke von 4500Lux gemessen.
 
-Eine Beleuchtungsstärke von 0Lux bedeutet, dass der Sensor gesättigt
-(saturated) ist und die Konfiguration angepasst werden sollte, siehe
-:func:`Set Configuration`.
+Eine Beleuchtungsstärke von 0Lux bedeutet eine Ausnahmesituation in der der
+Sensor keine sinnvolle Messung durchführen kann. Dies kann bei sehr schwacher
+oder sehr starker Beleuchtung auftreten. Bei starker Beleuchtung bedeutet diese
+möglicherweise, dass der Sensor gesättigt (saturated) ist und die Konfiguration
+angepasst werden sollte (:func:`Set Configuration`), um besser der Beleuchtung
+zu entsprechen.
 """
 }
 
