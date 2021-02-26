@@ -35,6 +35,8 @@ if 'generators' not in sys.modules:
 
 from generators import common
 
+doc_git = 'doc'
+
 def text_files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
 
@@ -130,8 +132,8 @@ def main():
 
     to_delete = {'en': {}, 'de': {}}
 
-    doc_path = 'doc/{0}/source/Software'
-    labview_image_path = 'doc/en/source/Images/Screenshots/LabVIEW'
+    doc_path = os.path.join(doc_git, '{0}/source/Software')
+    labview_image_path = os.path.join(doc_git, 'en/source/Images/Screenshots/LabVIEW')
 
     for lang in ['en', 'de']:
         print('')
@@ -176,7 +178,7 @@ def main():
     if socket.gethostname() != 'tinkerforge.com':
         for lang in ['en', 'de']:
             print('')
-            print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
+            print('Copying Tinkerforge.js to {0}:'.format(os.path.join(doc_git, lang)))
 
             src_file = os.path.join(path, 'javascript', 'Tinkerforge.js')
             dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
@@ -196,7 +198,7 @@ def main():
 
         for lang in ['en', 'de']:
             print('')
-            print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
+            print('Copying Tinkerforge.js to {0}:'.format(os.path.join(doc_git, lang)))
 
             src_file = os.path.join(tmp_dir, 'browser', 'source', 'Tinkerforge.js')
             dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
@@ -285,7 +287,7 @@ def main():
                 if x.endswith('.table'):
                     continue
 
-                p = os.path.join("doc", lang, "source", "Software", t[1], x)
+                p = os.path.join(doc_git, lang, "source", "Software", t[1], x)
                 os.remove(os.path.join(start_path, p))
                 print(' * {0}'.format(p))
 
