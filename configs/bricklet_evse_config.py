@@ -116,7 +116,7 @@ com['packets'].append({
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
-             ('Error State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
+             ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
              ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
