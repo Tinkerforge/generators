@@ -12,9 +12,10 @@ def is_string(x):
 message_tup = namedtuple('message_tup', ['topic', 'payload'])
 
 class MQTTBindings:
-    def __init__(self, debug, symbolic_response, show_payload, global_prefix, ipcon_timeout,
+    def __init__(self, debug, symbolic_response, int64_as_string, show_payload, global_prefix, ipcon_timeout,
                  broker_username, broker_password, broker_certificate, broker_tls_insecure):
         self.symbolic_response = symbolic_response
+        self.int64_as_string = int64_as_string
         self.show_payload = show_payload
 
         self.broker_connected_event = threading.Event()
@@ -466,7 +467,7 @@ class MQTTBindings:
 
         function_id, direction, high_level_roles_in, high_level_roles_out, \
             low_level_roles_in, low_level_roles_out, arg_names, arg_types, arg_symbols, \
-            format_in, result_names, result_symbols, response_size, format_out, chunk_padding, \
+            format_in, result_names, result_types, result_symbols, response_size, format_out, chunk_padding, \
             chunk_cardinality, chunk_max_offset, short_write, single_read, fixed_length = fnInfo
 
         request_data = []
@@ -666,6 +667,24 @@ class MQTTBindings:
             if self.symbolic_response:
                 response = self.translate_symbols(fnInfo.result_symbols, response)
 
+            response = list(response)
+
+            if self.int64_as_string:
+                for idx, tup in enumerate(zip(result_types, response)):
+                    t, val = tup
+                    if isinstance(t, tuple):
+                        t, t_len = t
+
+                    if t != 'uint64' and t != 'int64':
+                        continue
+
+                    if isinstance(val, tuple):
+                        val = [str(x) for x in val]
+                    else:
+                        val = str(val)
+
+                    response[idx] = val
+
             response = json.dumps(dict(zip(result_names, response)))
             logging.debug("Stream call {} for device {} of type {} succeded.".format(fnName, uid, device_name))
 
@@ -744,7 +763,7 @@ class MQTTBindings:
             if not success:
                 return callback_device
 
-            callback_device.add_callback(callbackInfo.id, callbackInfo.fmt, callbackInfo.names, callbackInfo.symbols, callbackInfo.high_level_info)
+            callback_device.add_callback(callbackInfo.id, callbackInfo.fmt, callbackInfo.names, callbackInfo.symbols, callbackInfo.types, callbackInfo.high_level_info)
             callback_device.register_callback(self, callbackInfo.id, path)
 
             logging.debug("Registered callback {} for device {} of type {}. Will publish messages to {}.".format(callbackName, uid, device_name, path))
@@ -822,6 +841,22 @@ class MQTTBindings:
             if self.symbolic_response:
                 response = self.translate_symbols(fnInfo.result_symbols, response)
 
+            if self.int64_as_string:
+                for idx, tup in enumerate(zip(fnInfo.result_types, response)):
+                    t, val = tup
+                    if isinstance(t, tuple):
+                        t, t_len = t
+
+                    if t != 'uint64' and t != 'int64':
+                        continue
+
+                    if isinstance(val, list):
+                        val = [str(x) for x in val]
+                    else:
+                        val = str(val)
+
+                    response[idx] = val
+
             d = dict(zip(fnInfo.result_names, response))
 
             if fnName == "get_identity" and "device_identifier" in d:
@@ -839,11 +874,28 @@ class MQTTBindings:
         names = mqtt_callback_device.callback_names[callback_id]
         paths = mqtt_callback_device.publish_paths[callback_id]
         symbols = mqtt_callback_device.callback_symbols[callback_id]
+        types = mqtt_callback_device.callback_types[callback_id]
 
         if self.symbolic_response:
             response = self.translate_symbols(symbols, args)
         else:
             response = args
+
+        if self.int64_as_string:
+            for idx, tup in enumerate(zip(types, response)):
+                t, val = tup
+                if isinstance(t, tuple):
+                    t, t_len = t
+
+                if t != 'uint64' and t != 'int64':
+                    continue
+
+                if isinstance(val, tuple):
+                    val = [str(x) for x in val]
+                else:
+                    val = str(val)
+
+                response[idx] = val
 
         payload = json.dumps(dict(zip(names, response)))
 
@@ -932,6 +984,10 @@ def main():
                         help='translate constant values into string constants for responses (enabled by default)')
     parser.add_argument('--no-symbolic-response', dest='symbolic_response', action='store_const', const=False,
                         help='do not translate constants values for responses')
+    parser.add_argument('--int64-as-string', dest='int64_as_string', action='store_const', const=True,
+                        help='output 64 bit integers as strings. Useful for languages without a 64 bit integer type.')
+    parser.add_argument('--no-int64-as-string', dest='int64_as_string', action='store_const', const=False,
+                        help='do not output 64 bit integers as strings. (enabled by default)')
     parser.add_argument('--show-payload', dest='show_payload', action='store_const', const=True,
                         help='show received payload if JSON parsing fails')
     parser.add_argument('--hide-payload', dest='show_payload', action='store_const', const=False,
@@ -987,6 +1043,11 @@ def main():
     if symbolic_response == None:
         symbolic_response = True
 
+    int64_as_string = args.int64_as_string
+
+    if int64_as_string == None:
+        int64_as_string = False
+
     show_payload = args.show_payload
 
     if show_payload == None:
@@ -997,7 +1058,7 @@ def main():
     if broker_tls_insecure == None:
         broker_tls_insecure = False
 
-    bindings = MQTTBindings(args.debug, symbolic_response, show_payload, global_topic_prefix,
+    bindings = MQTTBindings(args.debug, symbolic_response, int64_as_string, show_payload, global_topic_prefix,
                             float(args.ipcon_timeout) / 1000, args.broker_username, args.broker_password,
                             args.broker_certificate, broker_tls_insecure)
     bindings.connect_to_broker(args.broker_host, args.broker_port)
