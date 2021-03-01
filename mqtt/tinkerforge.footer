@@ -407,20 +407,27 @@ class MQTTBindings:
             'char': str
         }
 
-        for a, n, t in zip(args, arg_names, arg_types):
+        for idx, tup in enumerate(zip(args, arg_names, arg_types)):
+            a, n, t = tup
             if isinstance(t, tuple):
-                t_name, t_len = t
-                t = type_map[t_name]
+                t, t_len = t
+                element_type = type_map[t]
                 if not isinstance(a, list):
-                    return "Argument {name} was not of expected type list of {type}.".format(name=n, type=t_name)
+                    return "Argument {name} was not of expected type list of {type}.".format(name=n, type=t)
                 if t_len < 0 and len(a) > abs(t_len):
                     return "Argument {name} was a list of length {have}, but max length of {want} is allowed.".format(name=n, have=len(a), want=abs(t_len))
                 if t_len > 0 and not len(a) == t_len:
                     return "Argument {name} was a list of length {have}, but length {want} was expected.".format(name=n, have=len(a), want=t_len)
 
-                for idx, a_elem in enumerate(a):
-                    if type(a_elem) != t:
-                        return "Argument {name}[{idx}] was not of expected type {type}.".format(name=n, idx=idx, type=t_name)
+                for inner_idx, a_elem in enumerate(a):
+                    if type(a_elem) != element_type:
+                        if t != 'int':
+                            return "Argument {name}[{inner_idx}] was not of expected type {type}.".format(name=n, inner_idx=inner_idx, type=t)
+
+                        try:
+                            a[inner_idx] = int(a_elem, 0)
+                        except Exception as e:
+                            return "Argument {name}[{inner_idx}] was not of expected type {type} and could not converted because: {e}.".format(name=n, inner_idx=inner_idx, type=t, e=str(e))
             else:
                 if t == 'char' or t == 'string':
                     if not is_string(a):
@@ -428,7 +435,12 @@ class MQTTBindings:
                     if t == 'char' and len(a) > 1:
                         return "Argument {name} was a string of length {len}, but a single character was expected.".format(name=n, len=len(a))
                 elif type(a) != type_map[t]:
-                    return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                    if t != 'int':
+                        return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+                    try:
+                        args[idx] = int(a, 0)
+                    except Exception as e:
+                        return "Argument {name} was not of expected type {type} and could not converted because: {e}.".format(name=n, type=t, e=str(e))
 
     def is_error(self, response):
         if is_string(response):
