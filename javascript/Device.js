@@ -86,7 +86,7 @@ function Device(that, uid, ipcon, deviceIdentifier, deviceDisplayName) {
         };
 
         this.on = function (callbackID, function_, errorCallback) {
-            // Support for 64 bit integers exists only in node 10.2 or higher
+            // Support for 64 bit integers exists only in node 10.4 or higher
             if ((typeof BigInt == 'undefined')
                 && ((this.callbackFormats[callbackID].indexOf('q') > -1)
                     || (this.callbackFormats[callbackID].indexOf('Q') > -1))) {
