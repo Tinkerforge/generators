@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True, 
+    'discontinued': True, # replaced by Dual Button Bricklet 2.0
     'features': [
         'device',
         'bricklet_get_identity'
