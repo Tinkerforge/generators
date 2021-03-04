@@ -171,7 +171,7 @@ void tf_packetbuffer_pop_n(TF_Packetbuffer *rb, uint8_t* dest, uint8_t count) {
 
 void tf_packetbuffer_peek_offset_n(TF_Packetbuffer *rb, uint8_t* dest, uint8_t count, uint8_t offset) {
     for(int i = 0; i < count; ++i) {
-        tf_packetbuffer_peek_offset(rb, dest + i, offset + i);
+        tf_packetbuffer_peek_offset(rb, dest + i, (uint8_t)(offset + i));
     }
 }
 
@@ -252,67 +252,67 @@ void tf_packetbuffer_read_bool_array(TF_Packetbuffer *rb, bool* dest, uint16_t c
 }
 
 uint8_t tf_packetbuffer_peek_uint8_t(TF_Packetbuffer *rb, uint8_t offset) {
-    uint8_t result;
+    uint8_t result = 0;
     tf_packetbuffer_peek_offset(rb, &result, offset);
     return result;
 }
 
 int8_t tf_packetbuffer_peek_int8_t(TF_Packetbuffer *rb, uint8_t offset) {
-    int8_t result;
+    int8_t result = 0;
     tf_packetbuffer_peek_offset(rb, (uint8_t*)(&result), offset);
     return result;
 }
 
 uint16_t tf_packetbuffer_peek_uint16_t(TF_Packetbuffer *rb, uint8_t offset) {
-    uint16_t result;
+    uint16_t result = 0;
     tf_packetbuffer_peek_offset_n(rb, (uint8_t*)(&result), sizeof(result), offset);
     return tf_leconvert_uint16_from(result);
 }
 
 uint32_t tf_packetbuffer_peek_uint32_t(TF_Packetbuffer *rb, uint8_t offset) {
-    uint32_t result;
+    uint32_t result = 0;
     tf_packetbuffer_peek_offset_n(rb, (uint8_t*)(&result), sizeof(result), offset);
     return tf_leconvert_uint32_from(result);
 }
 
 uint64_t tf_packetbuffer_peek_uint64_t(TF_Packetbuffer *rb, uint8_t offset) {
-    uint64_t result;
+    uint64_t result = 0;
     tf_packetbuffer_peek_offset_n(rb, (uint8_t*)(&result), sizeof(result), offset);
     return tf_leconvert_uint64_from(result);
 }
 
 int16_t tf_packetbuffer_peek_int16_t(TF_Packetbuffer *rb, uint8_t offset) {
-    int16_t result;
+    int16_t result = 0;
     tf_packetbuffer_peek_offset_n(rb, (uint8_t*)(&result), sizeof(result), offset);
     return tf_leconvert_int16_from(result);
 }
 
 int32_t tf_packetbuffer_peek_int32_t(TF_Packetbuffer *rb, uint8_t offset) {
-    int32_t result;
+    int32_t result = 0;
     tf_packetbuffer_peek_offset_n(rb, (uint8_t*)(&result), sizeof(result), offset);
     return tf_leconvert_int32_from(result);
 }
 
 int64_t tf_packetbuffer_peek_int64_t(TF_Packetbuffer *rb, uint8_t offset) {
-    int64_t result;
+    int64_t result = 0;
     tf_packetbuffer_peek_offset_n(rb, (uint8_t*)(&result), sizeof(result), offset);
     return tf_leconvert_int64_from(result);
 }
 
 char tf_packetbuffer_peek_char(TF_Packetbuffer *rb, uint8_t offset) {
-    char result;
+    char result = 0;
     tf_packetbuffer_peek_offset_n(rb, (uint8_t*)(&result), sizeof(result), offset);
     return result;
 }
 
 float tf_packetbuffer_peek_float(TF_Packetbuffer *rb, uint8_t offset){
-    float result;
+    float result = 0;
     tf_packetbuffer_peek_offset_n(rb, (uint8_t*)(&result), sizeof(result), offset);
     return tf_leconvert_float_from(result);
 }
 
 bool tf_packetbuffer_peek_bool(TF_Packetbuffer *rb, uint8_t offset) {
-    bool result;
+    bool result = false;
     tf_packetbuffer_peek_offset_n(rb, (uint8_t*)(&result), sizeof(result), offset);
     return result;
 }
