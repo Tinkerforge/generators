@@ -120,8 +120,8 @@ class UCExamplesTester(common.Tester):
         if len(device) > 0:
             args.append(device)
         elif extra:
-            dependencies = glob.glob(os.path.join(tmp_dir, 'source/*.c')
-            dependencies.remove(os.path.join(tmp_dir, 'source/ip_connection.c')
+            dependencies = glob.glob(os.path.join(tmp_dir, 'source/*.c'))
+            dependencies.remove(os.path.join(tmp_dir, 'source/ip_connection.c'))
             args.append('-Wno-error=unused-parameter')
             args += dependencies
 
