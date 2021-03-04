@@ -116,6 +116,7 @@ static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
             // checksum was wrong, advance one byte
             tf_packetbuffer_remove(buf, 1);
             ++spitfp->error_count_checksum;
+
         }
     }
     return false;
@@ -291,6 +292,9 @@ static int tf_spitfp_wait_for_ack(TF_SpiTfpContext *spitfp, uint8_t seq_num, uin
 
 static int tf_spitfp_filter_duplicates(TF_SpiTfpContext *spitfp) {
     if(spitfp->last_sequence_number_given_to_tfp == spitfp->last_sequence_number_seen) {
+        uint8_t packet_len = 0;
+        tf_packetbuffer_peek_offset(&spitfp->recv_buf, &packet_len, TFP_HEADER_LENGTH_OFFSET);
+        tf_packetbuffer_remove(&spitfp->recv_buf, packet_len + 1);
         return 0;
     }
     spitfp->last_sequence_number_given_to_tfp = spitfp->last_sequence_number_seen;
