@@ -99,6 +99,12 @@
 2021-01-15: 2.0.13 (797d61e)
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0
 
-<unknown>: 2.0.14 (<unknown>)
+2021-03-05: 2.0.14 (<unknown>)
 - Don't allow MQTT topic placeholders in init-file topics and topic prefix
 - Force Python 3 in shebang line and deprecate Python 2 support
+- Add gpio_state callback to Performance DC Bricklet API
+- Fix streaming
+- Accept integer parameters formatted as strings to allow JavaScript to properly
+  send [u]int64 arguments
+- Add --int64-string-response commandline option to translate [u]int64 results
+  to string to allow JavaScript to properly receive [u]int64 parameters
