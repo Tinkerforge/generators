@@ -12,10 +12,10 @@ def is_string(x):
 message_tup = namedtuple('message_tup', ['topic', 'payload'])
 
 class MQTTBindings:
-    def __init__(self, debug, symbolic_response, int64_as_string, show_payload, global_prefix, ipcon_timeout,
+    def __init__(self, debug, symbolic_response, int64_string_response, show_payload, global_prefix, ipcon_timeout,
                  broker_username, broker_password, broker_certificate, broker_tls_insecure):
         self.symbolic_response = symbolic_response
-        self.int64_as_string = int64_as_string
+        self.int64_string_response = int64_string_response
         self.show_payload = show_payload
 
         self.broker_connected_event = threading.Event()
@@ -687,7 +687,7 @@ class MQTTBindings:
             if self.symbolic_response:
                 response = self.translate_symbols(result_symbols, response)
 
-            if self.int64_as_string:
+            if self.int64_string_response:
                 response = self.translate_int64(result_types, response)
 
             response = json.dumps(dict(zip(result_names, response)))
@@ -846,7 +846,7 @@ class MQTTBindings:
             if self.symbolic_response:
                 response = self.translate_symbols(fnInfo.result_symbols, response)
 
-            if self.int64_as_string:
+            if self.int64_string_response:
                 response = self.translate_int64(fnInfo.result_types, response)
 
             d = dict(zip(fnInfo.result_names, response))
@@ -873,7 +873,7 @@ class MQTTBindings:
         else:
             response = args
 
-        if self.int64_as_string:
+        if self.int64_string_response:
             response = self.translate_int64(types, response)
 
         payload = json.dumps(dict(zip(names, response)))
@@ -963,10 +963,10 @@ def main():
                         help='translate constant values into string constants for responses (enabled by default)')
     parser.add_argument('--no-symbolic-response', dest='symbolic_response', action='store_const', const=False,
                         help='do not translate constants values for responses')
-    parser.add_argument('--int64-as-string', dest='int64_as_string', action='store_const', const=True,
-                        help='output 64 bit integers as strings. Useful for languages without a 64 bit integer type.')
-    parser.add_argument('--no-int64-as-string', dest='int64_as_string', action='store_const', const=False,
-                        help='do not output 64 bit integers as strings. (enabled by default)')
+    parser.add_argument('--int64-string-response', dest='int64_string_response', action='store_const', const=True,
+                        help='translate [u]int64 values into strings for responses')
+    parser.add_argument('--no-int64-string-response', dest='int64_string_response', action='store_const', const=False,
+                        help='do not translate [u]int64 values into strings for responses (enabled by default)')
     parser.add_argument('--show-payload', dest='show_payload', action='store_const', const=True,
                         help='show received payload if JSON parsing fails')
     parser.add_argument('--hide-payload', dest='show_payload', action='store_const', const=False,
@@ -1022,10 +1022,10 @@ def main():
     if symbolic_response == None:
         symbolic_response = True
 
-    int64_as_string = args.int64_as_string
+    int64_string_response = args.int64_string_response
 
-    if int64_as_string == None:
-        int64_as_string = False
+    if int64_string_response == None:
+        int64_string_response = False
 
     show_payload = args.show_payload
 
@@ -1037,7 +1037,7 @@ def main():
     if broker_tls_insecure == None:
         broker_tls_insecure = False
 
-    bindings = MQTTBindings(args.debug, symbolic_response, int64_as_string, show_payload, global_topic_prefix,
+    bindings = MQTTBindings(args.debug, symbolic_response, int64_string_response, show_payload, global_topic_prefix,
                             float(args.ipcon_timeout) / 1000, args.broker_username, args.broker_password,
                             args.broker_certificate, broker_tls_insecure)
     bindings.connect_to_broker(args.broker_host, args.broker_port)

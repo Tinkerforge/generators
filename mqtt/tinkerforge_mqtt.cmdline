@@ -83,6 +83,16 @@
 #--no-symbolic-response
 
 ##
+## translate [u]int64 values into strings for responses
+##
+#--int64-string-response
+
+##
+## do not translate [u]int64 values into strings for responses (enabled by default)
+##
+#--no-int64-string-response
+
+##
 ## show received payload if JSON parsing fails
 ##
 #--show-payload
