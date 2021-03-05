@@ -453,6 +453,26 @@ class MQTTBindings:
         return [(symbols[data] if isinstance(data, Hashable) and data in symbols else data)
                  for symbols, data in zip(symbol_list, data_list)]
 
+    def translate_int64(self, result_types, response):
+        response = list(response)
+
+        for idx, tup in enumerate(zip(result_types, response)):
+            t, val = tup
+            if isinstance(t, tuple):
+                t, t_len = t
+
+            if t != 'uint64' and t != 'int64':
+                continue
+
+            if isinstance(val, tuple):
+                val = [str(x) for x in val]
+            else:
+                val = str(val)
+
+            response[idx] = val
+
+        return tuple(response)
+
     def device_stream_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Starting stream call {} for device {} of type {}.".format(fnName, uid, device_name))
         if len(json_args) > 0:
@@ -665,25 +685,10 @@ class MQTTBindings:
                 response = (response,)
 
             if self.symbolic_response:
-                response = self.translate_symbols(fnInfo.result_symbols, response)
-
-            response = list(response)
+                response = self.translate_symbols(result_symbols, response)
 
             if self.int64_as_string:
-                for idx, tup in enumerate(zip(result_types, response)):
-                    t, val = tup
-                    if isinstance(t, tuple):
-                        t, t_len = t
-
-                    if t != 'uint64' and t != 'int64':
-                        continue
-
-                    if isinstance(val, tuple):
-                        val = [str(x) for x in val]
-                    else:
-                        val = str(val)
-
-                    response[idx] = val
+                response = self.translate_int64(result_types, response)
 
             response = json.dumps(dict(zip(result_names, response)))
             logging.debug("Stream call {} for device {} of type {} succeded.".format(fnName, uid, device_name))
@@ -842,20 +847,7 @@ class MQTTBindings:
                 response = self.translate_symbols(fnInfo.result_symbols, response)
 
             if self.int64_as_string:
-                for idx, tup in enumerate(zip(fnInfo.result_types, response)):
-                    t, val = tup
-                    if isinstance(t, tuple):
-                        t, t_len = t
-
-                    if t != 'uint64' and t != 'int64':
-                        continue
-
-                    if isinstance(val, list):
-                        val = [str(x) for x in val]
-                    else:
-                        val = str(val)
-
-                    response[idx] = val
+                response = self.translate_int64(fnInfo.result_types, response)
 
             d = dict(zip(fnInfo.result_names, response))
 
@@ -882,20 +874,7 @@ class MQTTBindings:
             response = args
 
         if self.int64_as_string:
-            for idx, tup in enumerate(zip(types, response)):
-                t, val = tup
-                if isinstance(t, tuple):
-                    t, t_len = t
-
-                if t != 'uint64' and t != 'int64':
-                    continue
-
-                if isinstance(val, tuple):
-                    val = [str(x) for x in val]
-                else:
-                    val = str(val)
-
-                response[idx] = val
+            response = self.translate_int64(types, response)
 
         payload = json.dumps(dict(zip(names, response)))
 
