@@ -53,6 +53,11 @@ IPCONNECTION_ERROR_OFFSET = 200
 
 logging.basicConfig(format='%(asctime)s <%(levelname)s> %(name)s: %(message)s')
 
+try:
+    logging.root.name = 'MQTT bindings'
+except:
+    pass
+
 def fatal_error(message, exit_code):
     logging.critical(message)
     sys.exit(exit_code)

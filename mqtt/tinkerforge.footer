@@ -32,11 +32,6 @@ class MQTTBindings:
         if debug:
             self.mqttc.enable_logger()
 
-        try:
-            logging.root.name = 'MQTT bindings'
-        except:
-            pass
-
         logging.info("Starting <<CONFIG_NAME_SPACE>> MQTT bindings <<VERSION>>")
 
         if broker_username is not None:
