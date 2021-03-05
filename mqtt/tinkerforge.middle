@@ -4,17 +4,17 @@ class MQTTCallbackDevice(Device):
 
         self.publish_paths = {}
         self.callback_names = {}
-        self.callback_symbols = {}
         self.callback_types = {}
+        self.callback_symbols = {}
         self.device_class_name = device_class_name
         self.device_class = device_class
         self.mqttc = mqttc
 
-    def add_callback(self, callback_id, callback_format, callback_names, callback_symbols, callback_types, high_level_info):
+    def add_callback(self, callback_id, callback_format, callback_names, callback_types, callback_symbols, high_level_info):
         self.callback_formats[callback_id] = callback_format
         self.callback_names[callback_id] = callback_names
-        self.callback_symbols[callback_id] = callback_symbols
         self.callback_types[callback_id] = callback_types
+        self.callback_symbols[callback_id] = callback_symbols
 
         if high_level_info is not None:
             self.high_level_callbacks[-callback_id] = high_level_info
