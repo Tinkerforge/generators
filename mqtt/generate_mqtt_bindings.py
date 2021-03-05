@@ -104,7 +104,7 @@ class {0}(MQTTCallbackDevice):
                  arg_types=[elem.get_mqtt_type() for elem in packet.get_elements(direction='in')],
                  arg_symbols=', '.join([elem.get_symbols() for elem in packet.get_elements(direction='in')]),
                  result_names=[elem.get_name().under for elem in packet.get_elements(direction='out')],
-                 result_types=[elem.get_mqtt_type() for elem in packet.get_elements(direction='out')],
+                 result_types=[elem.get_type() for elem in packet.get_elements(direction='out')],
                  result_symbols=', '.join([elem.get_symbols() for elem in packet.get_elements(direction='out')]),
                  payload_fmt=packet.get_mqtt_format_list('in'),
                  response_size=packet.get_response_size(),
