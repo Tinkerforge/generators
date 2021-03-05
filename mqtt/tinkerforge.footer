@@ -89,6 +89,7 @@ class MQTTBindings:
         logging.debug("Connecting to brickd at {}:{}".format(ipcon_host, ipcon_port))
 
         self.ipcon.register_callback(self.ipcon.CALLBACK_CONNECTED, self.ipcon_connect_unblocker)
+
         try:
             self.ipcon.connect(ipcon_host, ipcon_port)
         except:
@@ -99,17 +100,20 @@ class MQTTBindings:
         self.ipcon.register_callback(IPConnection.CALLBACK_DISCONNECTED, lambda *args: self.ip_connection_callback_fn(IPConnection.CALLBACK_DISCONNECTED, *args))
         self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, lambda *args: self.ip_connection_callback_fn(IPConnection.CALLBACK_ENUMERATE, *args))
         logging.debug("Connected to brickd at {}:{}".format(ipcon_host, ipcon_port))
+
         if ipcon_auth_secret != "":
             self.authenticate(ipcon_auth_secret, "Could not authenticate.")
 
     def connect_to_broker(self, broker_host, broker_port):
         logging.debug("Configuring connection to MQTT broker at {}:{}".format(broker_host, broker_port))
+
         try:
             self.mqttc.will_set(self.global_prefix + 'callback/bindings/last_will', 'null')
             # Don't use connect: connect_async + loop_start support retrying to connect.
             self.mqttc.connect_async(broker_host, broker_port)
         except Exception as e:
             fatal_error("Connecting to MQTT broker failed: " + str(e), ERROR_NO_CONNECTION_TO_BROKER)
+
         logging.debug("Connected to MQTT broker at {}:{}".format(broker_host, broker_port))
         self.mqttc.loop_start()
         self.broker_connected_event.wait()
@@ -119,17 +123,22 @@ class MQTTBindings:
             if len(topic) == 0:
                 print("Could not read init file: Empty topic name is not allowed. (MQTT-4.7.3-1)")
                 sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
+
             if '#' in topic:
                 print("Could not read init file: Topic '{}' contains the wildcard character '#'. (MQTT-4.7.1-1)".format(topic))
                 sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
+
             if '+' in topic:
                 print("Could not read init file: Topic '{}' contains the wildcard character '+'. (MQTT-4.7.1-1)".format(topic))
                 sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
+
             if topic.startswith('$'):
                 print("Could not read init file: Topic '{}' starts with the reserved character '$'. (MQTT-4.7.2-1)".format(topic))
                 sys.exit(ERROR_COULD_NOT_READ_INIT_FILE)
+
             if isinstance(payload, list):
                 payload = dict(payload)
+
             self.on_message(self.mqttc, len(self.global_prefix), message_tup(topic, json.dumps(payload)))
 
     def run(self):
@@ -154,12 +163,14 @@ class MQTTBindings:
         }
 
         message = ''
+
         if callback_id == IPConnection.CALLBACK_CONNECTED:
             message = 'Connected to Brick Daemon: {}'.format(d_con[args[0]])
         elif callback_id == IPConnection.CALLBACK_DISCONNECTED:
             message = 'Disconnected from Brick Daemon: {}'.format(d_dis[args[0]])
         elif callback_id == IPConnection.CALLBACK_ENUMERATE:
             uid, conn_uid, pos, hw_ver, fw_ver, dev_id, reason = args
+
             if reason == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
                 message = '{}: UID: {}'.format(d_enum[reason], uid)
             else:
@@ -197,6 +208,7 @@ class MQTTBindings:
             d["_display_name"] = device_names[dev_id]
 
         payload = json.dumps(d)
+
         for path in self.ip_connection_response_paths[callback_id]:
             self.mqttc.publish(path, payload)
 
@@ -219,6 +231,7 @@ class MQTTBindings:
                     self.ipcon.CONNECTION_STATE_DISCONNECTED: "disconnected",
                     self.ipcon.CONNECTION_STATE_CONNECTED: "connected",
                     self.ipcon.CONNECTION_STATE_PENDING: "pending"}], [state])[0]
+
                 return json.dumps({'connection_state': state})
             else:
                 return json_error("Unknown ip connection function " + function)
@@ -226,18 +239,21 @@ class MQTTBindings:
         elif request_type == "register":
             if function not in self.ip_connection_callbacks.keys():
                 return json_error("Unknown ip connection callback " + function)
+
             callback_id = self.ip_connection_callbacks[function]
 
             try:
                 should_register = json.loads(json_args)
             except Exception as e:
                 payload = ""
+
                 if self.show_payload:
                     payload = ". \n\tPayload was: " + repr(json_args)
+
                 return json_error("Could not parse payload for {} callback registration as JSON encoding a boolean: {}{}".format(function, str(e), payload))
 
             if not isinstance(should_register, bool):
-                #also support {"register": true/false} in addition to a top-level boolean
+                # also support {"register": true/false} in addition to a top-level boolean
                 if isinstance(should_register, dict) and 'register' in should_register and type(should_register['register']) == bool:
                     should_register = should_register['register']
                 else:
@@ -278,9 +294,11 @@ class MQTTBindings:
             logging.debug("Connected to mqtt broker.")
             self.mqttc.subscribe(self.global_prefix + "request/#")
             self.mqttc.subscribe(self.global_prefix + "register/#")
+
             if not self.was_connected:
                 self.mqttc.publish(self.global_prefix + "callback/bindings/restart", "null")
                 self.was_connected = True
+
             self.mqttc.subscribe(self.global_prefix + "callback/bindings/restart")
             self.broker_connected_event.set()
         else:
@@ -302,6 +320,7 @@ class MQTTBindings:
         request_type = splt.pop(0)
         device = splt.pop(0)
         uid_less_device = device in ["ip_connection", "bindings"]
+
         if not uid_less_device and len(splt) < 2:
             logging.error("malformed topic: Expected at least [request_type; was: {}]/[device_type; was: {}]/[uid]/[function], but got: {}".format(request_type, device, path))
             return
@@ -316,7 +335,9 @@ class MQTTBindings:
 
         if uid is not None:
             to_join.append(uid)
+
         to_join.append(function)
+
         if suffix is not None:
             to_join.append(suffix)
 
@@ -328,6 +349,7 @@ class MQTTBindings:
         try:
             logging.debug("\n")
             path_info = self.parse_path(global_prefix_len, msg.topic)
+
             if path_info is None:
                 return
 
@@ -356,12 +378,12 @@ class MQTTBindings:
 
             if response is None:
                 return
+
             logging.debug("Publishing response to {}".format(response_path))
             self.mqttc.publish(response_path, response)
             logging.debug("\n")
         except:
             traceback.print_exc()
-
 
     def handle_ipcon_exceptions(self, function, resultDict=None, infoString = None):
         try:
@@ -370,20 +392,24 @@ class MQTTBindings:
             if e.value in [Error.INVALID_PARAMETER, Error.NOT_SUPPORTED, Error.UNKNOWN_ERROR_CODE, Error.STREAM_OUT_OF_SYNC, Error.TIMEOUT, Error.NOT_CONNECTED, Error.WRONG_DEVICE_TYPE]:
                 if infoString is not None:
                     return json_error(e.description + " " + infoString, resultDict)
+
                 return json_error(e.description, resultDict)
 
             fatal_error(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
         except struct.error as e:
             if infoString is not None:
                 return json_error(e.args[0] + " " + infoString, resultDict)
+
             return json_error(e.args[0], resultDict)
         except socket.error as e:
             fatal_error(str(e).lower(), ERROR_SOCKET_ERROR)
         except Exception as e:
             if sys.hexversion < 0x03000000 and isinstance(e, ValueError) and "JSON" in str(e):
                 return json_error(str(e), resultDict)
+
             if sys.hexversion >= 0x03000000 and isinstance(e, json.JSONDecodeError):
                 return json_error(str(e), resultDict)
+
             fatal_error(str(e).lower(), ERROR_OTHER_EXCEPTION)
 
     def authenticate(self, secret, message):
@@ -413,10 +439,13 @@ class MQTTBindings:
             if isinstance(t, tuple):
                 t, t_len = t
                 element_type = type_map[t]
+
                 if not isinstance(a, list):
                     return "Argument {name} was not of expected type list of {type}.".format(name=n, type=t)
+
                 if t_len < 0 and len(a) > abs(t_len):
                     return "Argument {name} was a list of length {have}, but max length of {want} is allowed.".format(name=n, have=len(a), want=abs(t_len))
+
                 if t_len > 0 and not len(a) == t_len:
                     return "Argument {name} was a list of length {have}, but length {want} was expected.".format(name=n, have=len(a), want=t_len)
 
@@ -433,11 +462,13 @@ class MQTTBindings:
                 if t == 'char' or t == 'string':
                     if not is_string(a):
                         return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+
                     if t == 'char' and len(a) > 1:
                         return "Argument {name} was a string of length {len}, but a single character was expected.".format(name=n, len=len(a))
                 elif type(a) != type_map[t]:
                     if t != 'int':
                         return "Argument {name} was not of expected type {type}.".format(name=n, type=t)
+
                     try:
                         args[idx] = int(a, 0)
                     except Exception as e:
@@ -447,6 +478,7 @@ class MQTTBindings:
         if is_string(response):
             d = json.loads(response)
             return "_ERROR" in d
+
         return False
 
     def translate_symbols(self, symbol_list, data_list):
@@ -475,15 +507,17 @@ class MQTTBindings:
 
     def device_stream_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Starting stream call {} for device {} of type {}.".format(fnName, uid, device_name))
+
         if len(json_args) > 0:
             try:
                 obj = json.loads(json_args)
             except Exception as e:
                 payload = ""
+
                 if self.show_payload:
                     payload = ". \n\tPayload was: " + repr(json_args)
-                return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
 
+                return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
 
         function_id, direction, high_level_roles_in, high_level_roles_out, \
             low_level_roles_in, low_level_roles_out, arg_names, arg_types, arg_symbols, \
@@ -492,6 +526,7 @@ class MQTTBindings:
 
         request_data = []
         missing_args = []
+
         for a in arg_names:
             if a not in obj:
                 missing_args.append(a)
@@ -501,7 +536,6 @@ class MQTTBindings:
         if len(missing_args) > 0:
             return json_error("The arguments {} where missing for a call of {} of device {} of type {}.".format(str(missing_args), fnName, uid, device_name), dict([(name, None) for name in fnInfo.result_names]))
 
-
         normal_level_request_data = [data for role, data in zip(high_level_roles_in, request_data) if role == None]
 
         reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
@@ -510,11 +544,13 @@ class MQTTBindings:
         request_data = [arg if fnInfo.arg_types[i] not in ['string', 'char'] else create_string(arg) for i, arg in enumerate(request_data)]
 
         type_error = MQTTBindings.type_check_args(request_data, arg_names, arg_types)
+
         if type_error is not None:
             return json_error("Call {} of {} {}: {}".format(fnName, device_name, uid, type_error),  dict([(name, None) for name in result_names]))
 
         if device.response_expected[function_id] != 1 and "_response_expected" in obj:
             re = obj["_response_expected"]
+
             if isinstance(re, bool):
                 device.set_response_expected(function_id, re)
             else:
@@ -557,6 +593,7 @@ class MQTTBindings:
                 low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
 
                 response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, low_level_request_data, format_in, response_size, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+
                 if self.is_error(response):
                     return response
 
@@ -571,6 +608,7 @@ class MQTTBindings:
                     low_level_request_data = create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data)
 
                     response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, low_level_request_data, format_in, response_size, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+
                     if self.is_error(response):
                         return response
 
@@ -606,6 +644,7 @@ class MQTTBindings:
                     response = tuple(high_level_response)
         else: # out
             low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, response_size, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+
             if self.is_error(low_level_response):
                 return low_level_response
 
@@ -653,6 +692,7 @@ class MQTTBindings:
             if stream_out_of_sync: # discard remaining stream to bring it back in-sync
                 while stream_chunk_offset + chunk_cardinality < stream_length:
                     low_level_response = self.handle_ipcon_exceptions(lambda i: i.send_request(device, function_id, normal_level_request_data, format_in, response_size, format_out), dict([(name, None) for name in result_names]), "(call of {} of {} {})".format(fnName, device_name, uid))
+
                     if self.is_error(low_level_response):
                         return low_level_response
 
@@ -726,13 +766,17 @@ class MQTTBindings:
     def dispatch_call(self, call_type, device_class_name, uid, fnName, json_args, response_path):
         if device_class_name not in devices:
             return json_error("Unknown device type " + device_class_name,)
+
         device_class = devices[device_class_name]
+
         if call_type == 'request':
             if fnName not in device_class.functions:
                 return json_error("Unknown function {} for device {} of type {}".format(fnName, uid, device_class_name),)
+
             fnInfo = device_class.functions[fnName]
 
             success, device = self.ensure_dev_exists(uid, device_class, device_class_name, self.mqttc)
+
             if not success:
                 return device
 
@@ -743,6 +787,7 @@ class MQTTBindings:
         elif call_type == 'register':
             if fnName not in device_class.callbacks:
                 return json_error("Unknown callback {} for device {} of type {}".format(fnName, uid, device_class_name),)
+
             fnInfo = device_class.callbacks[fnName]
 
             return self.device_callback_registration(device_class, device_class_name, uid, fnName, fnInfo, json_args, response_path)
@@ -752,12 +797,14 @@ class MQTTBindings:
             should_register = json.loads(json_args)
         except Exception as e:
             payload = ""
+
             if self.show_payload:
                 payload = ". \n\tPayload was: " + repr(json_args)
+
             return json_error("Could not parse payload for {} callback registration of {} {} as JSON encoding a boolean: {}{}".format(callbackName, device_class, device_name, str(e), payload))
 
         if not isinstance(should_register, bool):
-            #also support {"register": true/false} in addition to a top-level boolean
+            # also support {"register": true/false} in addition to a top-level boolean
             if isinstance(should_register, dict) and 'register' in should_register:
                 should_register = should_register['register']
             else:
@@ -765,6 +812,7 @@ class MQTTBindings:
 
         if should_register:
             success, callback_device = self.ensure_dev_exists(uid, device_class, device_name, self.mqttc)
+
             if not success:
                 return callback_device
 
@@ -790,19 +838,23 @@ class MQTTBindings:
 
     def device_call(self, device, device_name, uid, fnName, fnInfo, json_args):
         logging.debug("Calling function {} for device {} of type {}.".format(fnName, uid, device_name))
+
         if len(json_args) > 0:
             try:
                 obj = json.loads(json_args)
             except Exception as e:
                 payload = ""
+
                 if self.show_payload:
                     payload = ". \n\tPayload was: " + repr(json_args)
+
                 return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
         else:
             obj = {}
-        args = []
 
+        args = []
         missing_args = []
+
         for a in fnInfo.arg_names:
             if a not in obj:
                 missing_args.append(a)
@@ -812,17 +864,17 @@ class MQTTBindings:
         if len(missing_args) > 0:
             return json_error("The arguments {} where missing for a call of {} of device {} of type {}.".format(str(missing_args), fnName, uid, device_name), dict([(name, None) for name in fnInfo.result_names]))
 
-        reversed_symbols = [{v: k for k, v in d.items()}  for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
+        reversed_symbols = [{v: k for k, v in d.items()} for d in fnInfo.arg_symbols] # reverse dict to map from constant to it's value
         args = self.translate_symbols(reversed_symbols, args)
-
         args = [arg if fnInfo.arg_types[i] not in ['string', 'char'] else create_string(arg) for i, arg in enumerate(args)]
-
         type_error = MQTTBindings.type_check_args(args, fnInfo.arg_names, fnInfo.arg_types)
+
         if type_error is not None:
             return json_error("Call {} of {} {}: {}".format(fnName, device_name, uid, type_error),  dict([(name, None) for name in fnInfo.result_names]))
 
         if device.response_expected[fnInfo.id] != 1 and "_response_expected" in obj:
             re = obj["_response_expected"]
+
             if isinstance(re, bool):
                 device.set_response_expected(fnInfo.id, re)
             else:
