@@ -108,6 +108,15 @@ com['constant_groups'].append({
               ('Unconfigured', 8)]
 })
 
+com['constant_groups'].append({
+'name': 'Charge Release',
+'type': 'uint8',
+'constants': [('Automatic', 0),
+              ('Manual', 1),
+              ('Deactivated', 2)]
+})
+
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
@@ -115,6 +124,7 @@ com['packets'].append({
              ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
+             ('Charge Release', 'uint8', 1, 'out', {'constant_group': 'Charge Release'}),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
