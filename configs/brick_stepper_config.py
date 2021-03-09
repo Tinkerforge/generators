@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True,
+    'discontinued': True, # replaced by Silent Stepper Brick
     'features': [
         'device',
         'brick_get_identity',
