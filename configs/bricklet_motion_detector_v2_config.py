@@ -50,17 +50,11 @@ com['packets'].append({
 """
 Returns 1 if a motion was detected. It returns 1 approx. for 1.8 seconds
 until the sensor checks for a new movement.
-
-There is also a blue LED on the Bricklet that is on as long as the Bricklet is
-in the "motion detected" state.
 """,
 'de':
 """
 Gibt 1 zurück wenn eine Bewegung detektiert wurde. 1 wird für ca. 1,8 Sekunden
 zurückgegeben bevor der Sensor wieder erneut eine Bewegung detektieren kann.
-
-Auf dem Bricklet selbst ist eine blaue LED, die leuchtet solange das Bricklet
-im "Bewegung detektiert" Zustand ist.
 """
 }]
 })
