@@ -295,9 +295,9 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get Energy Meter Values',
-'elements': [('Power', 'float', 1, 'out'),
-             ('Energy Relative', 'float', 1, 'out'),
-             ('Energy Absolute', 'float', 1, 'out')],
+'elements': [('Power', 'uint32', 1, 'out'),
+             ('Energy Relative', 'uint32', 1, 'out'),
+             ('Energy Absolute', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
