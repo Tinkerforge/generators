@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# EVSE Bricklet communication config
+# EVSE Bricklet 2.0 communication config
 
 from generators.configs.commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
 from generators.configs.commonconstants import add_callback_value_function
@@ -380,3 +380,40 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GPIO Configuration',
+'elements': [('Input Configuration', 'uint8', 1, 'in'),
+             ('Output Configuration', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get GPIO Configuration',
+'elements': [('Input Configuration', 'uint8', 1, 'out'),
+             ('Output Configuration', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
