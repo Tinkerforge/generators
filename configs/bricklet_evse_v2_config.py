@@ -315,7 +315,59 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Energy Meter State',
 'elements': [('Available', 'bool', 1, 'out'),
-             ('Error Count', 'uint32_t', 6, 'out')], # local timeout, global timeout, illigal function, illegal data address, illegal data value, slave device failure
+             ('Error Count', 'uint32', 6, 'out')], # local timeout, global timeout, illigal function, illegal data address, illegal data value, slave device failure
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Reset Energy Meter',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get DC Fault Current State',
+'elements': [('DC Fault Current State', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Reset DC Fault Current',
+'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
