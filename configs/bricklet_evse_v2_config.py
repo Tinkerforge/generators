@@ -1,0 +1,330 @@
+# -*- coding: utf-8 -*-
+
+# Redistribution and use in source and binary forms of this file,
+# with or without modification, are permitted. See the Creative
+# Commons Zero (CC0 1.0) License for more details.
+
+# EVSE Bricklet communication config
+
+from generators.configs.commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
+from generators.configs.commonconstants import add_callback_value_function
+from generators.configs.openhab_commonconfig import *
+
+com = {
+    'author': 'Olaf Lüke <olaf@tinkerforge.com>',
+    'api_version': [2, 0, 0],
+    'category': 'Bricklet',
+    'device_identifier': 2167,
+    'name': 'EVSE V2',
+    'display_name': 'EVSE 2.0',
+    'manufacturer': 'Tinkerforge',
+    'description': {
+        'en': 'TBD',
+        'de': 'TBD'
+    },
+    'released': False,
+    'documented': False,
+    'discontinued': False,
+    'features': [
+        'device',
+        'comcu_bricklet',
+        'bricklet_get_identity'
+    ],
+    'constant_groups': [],
+    'packets': [],
+    'examples': []
+}
+
+com['constant_groups'].append({
+'name': 'IEC61851 State',
+'type': 'uint8',
+'constants': [('A', 0),
+              ('B', 1),
+              ('C', 2),
+              ('D', 3),
+              ('EF', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'LED State',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Blinking', 2),
+              ('Flicker', 3),
+              ('Breathing', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'Vehicle State',
+'type': 'uint8',
+'constants': [('Not Connected', 0),
+              ('Connected', 1),
+              ('Charging', 2),
+              ('Error', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Contactor State',
+'type': 'uint8',
+'constants': [('AC1 NLive AC2 NLive', 0),
+              ('AC1 Live AC2 NLive', 1),
+              ('AC1 NLive AC2 Live', 2),
+              ('AC1 Live AC2 Live', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Lock State',
+'type': 'uint8',
+'constants': [('Init', 0),
+              ('Open', 1),
+              ('Closing', 2),
+              ('Close', 3),
+              ('Opening', 4),
+              ('Error', 5)]
+})
+
+com['constant_groups'].append({
+'name': 'Error State',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('Switch', 2),
+              ('Calibration', 3),
+              ('Contactor', 4),
+              ('Communication', 5)]
+})
+
+com['constant_groups'].append({
+'name': 'Jumper Configuration',
+'type': 'uint8',
+'constants': [('6A', 0),
+              ('10A', 1),
+              ('13A', 2),
+              ('16A', 3),
+              ('20A', 4),
+              ('25A', 5),
+              ('32A', 6),
+              ('Software', 7),
+              ('Unconfigured', 8)]
+})
+
+com['constant_groups'].append({
+'name': 'Charge Release',
+'type': 'uint8',
+'constants': [('Automatic', 0),
+              ('Manual', 1),
+              ('Deactivated', 2)]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get State',
+'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
+             ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
+             ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
+             ('Contactor Error', 'uint8', 1, 'out'),
+             ('Charge Release', 'uint8', 1, 'out', {'constant_group': 'Charge Release'}),
+             ('Allowed Charging Current', 'uint16', 1, 'out'),
+             ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
+             ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
+             ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Hardware Configuration',
+'elements': [('Jumper Configuration', 'uint8', 1, 'out', {'constant_group': 'Jumper Configuration'}),
+             ('Has Lock Switch', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Low Level State',
+'elements': [('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
+             ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
+             ('ADC Values', 'uint16', 5, 'out'), # CP/PE before resistor, CP/PE after resistor, PP/PE, +12V rail, -12V rail
+             ('Voltages', 'int16', 5, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # CP/PE before resistor, CP/PE after resistor, PP/PE, +12V rail, -12V rail
+             ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}), # CP/PE resistance, PP/PE resistance
+             ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (counted 19 for now)
+],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Max Charging Current',
+'elements': [('Max Current', 'uint16', 1, 'in')], # mA (default 32A?)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Max Charging Current',
+'elements': [('Max Current Configured', 'uint16', 1, 'out'),      # mA
+             ('Max Current Incoming Cable', 'uint16', 1, 'out'),  # mA
+             ('Max Current Outgoing Cable', 'uint16', 1, 'out')], # mA
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+* Max Current Configured -> set with :func:`Set Max Charging Current`
+* Max Current Incoming Cable -> set with jumper on EVSE
+* Max Current Outgoing Cable -> set with resistor between PP/PE (if fixed cable is used)
+
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Start Charging',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Stop Charging',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Charging Autostart',
+'elements': [('Autostart', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Charging Autostart',
+'elements': [('Autostart', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Energy Meter Values',
+'elements': [('Power', 'float', 1, 'out'),
+             ('Energy Relative', 'float', 1, 'out'),
+             ('Energy Absolute', 'float', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Energy Meter State',
+'elements': [('Available', 'bool', 1, 'out'),
+             ('Error Count', 'uint32_t', 6, 'out')], # local timeout, global timeout, illigal function, illegal data address, illegal data value, slave device failure
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
