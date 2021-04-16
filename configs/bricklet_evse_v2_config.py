@@ -172,6 +172,29 @@ TODO
 }]
 })
 
+"""
+GPIO:
+	response->gpio[0] = (get_bit(port0, 0)  << 0) | //  0: Config Jumper 0
+	                    (get_bit(port0, 1)  << 1) | //  1: Motor Fault
+	                    (get_bit(port0, 3)  << 2) | //  2: DC Error
+	                    (get_bit(port0, 5)  << 3) | //  3: Config Jumper 1
+	                    (get_bit(port0, 8)  << 4) | //  4: DC Test
+	                    (get_bit(port0, 9)  << 5) | //  5: Enable
+	                    (get_bit(port0, 12) << 6) | //  6: Switch
+	                    (get_bit(port1, 0)  << 7);  //  7: CP PWM
+
+	response->gpio[1] = (get_bit(port1, 1)  << 0) | //  8: Input Motor Switch
+	                    (get_bit(port1, 2)  << 1) | //  9: Relay (Contactor)
+	                    (get_bit(port1, 3)  << 2) | // 10: GP Output
+	                    (get_bit(port1, 4)  << 3) | // 11: CP Disconnect
+	                    (get_bit(port1, 5)  << 4) | // 12: Motor Enable
+	                    (get_bit(port1, 6)  << 5) | // 13: Motor Phase
+	                    (get_bit(port2, 9)  << 6) | // 14: GP Input
+	                    (get_bit(port4, 4)  << 7);  // 15: DC X6
+
+	response->gpio[2] = (get_bit(port4, 5)  << 0) | // 16: DC X30
+	                    (get_bit(port4, 6)  << 1);  // 17: LED
+"""
 com['packets'].append({
 'type': 'function',
 'name': 'Get Low Level State',
@@ -180,7 +203,7 @@ com['packets'].append({
              ('ADC Values', 'uint16', 5, 'out'), # CP/PE before resistor, CP/PE after resistor, PP/PE, +12V rail, -12V rail
              ('Voltages', 'int16', 5, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # CP/PE before resistor, CP/PE after resistor, PP/PE, +12V rail, -12V rail
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}), # CP/PE resistance, PP/PE resistance
-             ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (counted 19 for now)
+             ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (18 for now)
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
