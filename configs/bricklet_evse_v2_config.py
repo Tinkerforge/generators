@@ -116,6 +116,17 @@ com['constant_groups'].append({
               ('Deactivated', 2)]
 })
 
+com['constant_groups'].append({
+'name': 'DC Fault Current State',
+'type': 'uint8',
+'constants': [('Normal Condition', 0),
+              ('6 MA', 1),
+              ('System', 2),
+              ('Unknown', 3),
+              ('Calibration', 4)]
+})
+
+
 
 com['packets'].append({
 'type': 'function',
@@ -350,7 +361,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get DC Fault Current State',
-'elements': [('DC Fault Current State', 'uint8', 1, 'out')],
+'elements': [('DC Fault Current State', 'uint8', 1, 'out', {'constant_group': 'DC Fault Current State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
