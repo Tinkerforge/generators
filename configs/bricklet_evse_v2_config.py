@@ -189,11 +189,12 @@ GPIO:
 	                    (get_bit(port1, 4)  << 3) | // 11: CP Disconnect
 	                    (get_bit(port1, 5)  << 4) | // 12: Motor Enable
 	                    (get_bit(port1, 6)  << 5) | // 13: Motor Phase
-	                    (get_bit(port2, 9)  << 6) | // 14: GP Input
-	                    (get_bit(port4, 4)  << 7);  // 15: DC X6
+	                    (get_bit(port2, 6)  << 6) | // 14: AC 2
+	                    (get_bit(port2, 7)  << 7);  // 15: AC 1
 
-	response->gpio[2] = (get_bit(port4, 5)  << 0) | // 16: DC X30
-	                    (get_bit(port4, 6)  << 1);  // 17: LED
+	response->gpio[2] = (get_bit(port2, 9)  << 0) | // 16: GP Input
+	                    (get_bit(port4, 4)  << 1) | // 17: DC X6
+	                    (get_bit(port4, 5)  << 2) | // 18: DC X3
 """
 com['packets'].append({
 'type': 'function',
@@ -203,7 +204,7 @@ com['packets'].append({
              ('ADC Values', 'uint16', 5, 'out'), # CP/PE before resistor, CP/PE after resistor, PP/PE, +12V rail, -12V rail
              ('Voltages', 'int16', 5, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # CP/PE before resistor, CP/PE after resistor, PP/PE, +12V rail, -12V rail
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}), # CP/PE resistance, PP/PE resistance
-             ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (18 for now)
+             ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (20 for now)
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
