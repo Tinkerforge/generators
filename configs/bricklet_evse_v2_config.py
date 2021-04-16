@@ -189,8 +189,8 @@ GPIO:
 	                    (get_bit(port1, 4)  << 3) | // 11: CP Disconnect
 	                    (get_bit(port1, 5)  << 4) | // 12: Motor Enable
 	                    (get_bit(port1, 6)  << 5) | // 13: Motor Phase
-	                    (get_bit(port2, 6)  << 6) | // 14: AC 2
-	                    (get_bit(port2, 7)  << 7);  // 15: AC 1
+	                    (get_bit(port2, 6)  << 6) | // 14: AC 1
+	                    (get_bit(port2, 7)  << 7);  // 15: AC 2
 
 	response->gpio[2] = (get_bit(port2, 9)  << 0) | // 16: GP Input
 	                    (get_bit(port4, 4)  << 1) | // 17: DC X6
