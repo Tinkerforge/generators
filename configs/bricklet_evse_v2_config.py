@@ -367,7 +367,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Reset DC Fault Current',
-'elements': [],
+'elements': [('Password', 'uint32', 1, 'in')], # Password: 0xDC42FA23
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
