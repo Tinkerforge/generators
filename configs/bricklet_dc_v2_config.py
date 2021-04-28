@@ -15,8 +15,8 @@ com = {
     'display_name': 'DC 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': 'Drives one brushed DC motor with up to 28V and 5A (peak)',
+        'de': 'Steuert einen Gleichstrommotor mit bis zu 28V und 5A (Peak)'
     },
     'released': False,
     'documented': False,
@@ -55,11 +55,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Enables/Disables the driver chip. The driver parameters can be configured
+(velocity, acceleration, etc) before it is enabled.
 """,
 'de':
 """
-TBD
+Aktiviert/Deaktiviert die Treiberstufe. Die Treiberparameter können vor der
+Aktivierung konfiguriert werden (Geschwindigkeit, Beschleunigung, etc.).
 """
 }]
 })
@@ -72,11 +74,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns *true* if the driver chip is enabled, *false* otherwise.
 """,
 'de':
 """
-TBD
+Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 """
 }]
 })
@@ -97,7 +99,7 @@ brought to the velocity but smoothly accelerated.
 The velocity describes the duty cycle of the PWM with which the motor is
 controlled, e.g. a velocity of 3277 sets a PWM with a 10% duty cycle.
 You can not only control the duty cycle of the PWM but also the frequency,
-see TBD.
+see :func:`Set PWM Frequency`.
 """,
 'de':
 """
@@ -110,7 +112,7 @@ gleichmäßig beschleunigt.
 Die Geschwindigkeit beschreibt das Tastverhältnis der PWM für die
 Motoransteuerung. Z.B. entspricht ein Geschwindigkeitswert von 3277 einer PWM
 mit einem Tastverhältnis von 10%. Weiterhin kann neben dem Tastverhältnis auch
-die Frequenz der PWM verändert werden, siehe TBD.
+die Frequenz der PWM verändert werden, siehe :func:`Set PWM Frequency`.
 """
 }]
 })
@@ -162,21 +164,21 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the acceleration of the motor. It is given in *velocity/s*. An
-acceleration of 10000 means, that every second the velocity is increased
+Sets the acceleration and deceleration of the motor. It is given in *velocity/s*.
+An acceleration of 10000 means, that every second the velocity is increased
 by 10000 (or about 30% duty cycle).
 
 For example: If the current velocity is 0 and you want to accelerate to a
 velocity of 16000 (about 50% duty cycle) in 10 seconds, you should set
 an acceleration of 1600.
 
-If acceleration is set to 0, there is no speed ramping, i.e. a new velocity
-is immediately given to the motor.
+If acceleration and deceleration is set to 0, there is no speed ramping, i.e. a
+new velocity is immediately given to the motor.
 """,
 'de':
 """
-Setzt die Beschleunigung des Motors. Die Einheit dieses Wertes ist
-*Geschwindigkeit/s*. Ein Beschleunigungswert von 10000 bedeutet, dass jede
+Setzt die Beschleunigung/Debeschleunigung des Motors. Die Einheit dieses Wertes
+ist *Geschwindigkeit/s*. Ein Beschleunigungswert von 10000 bedeutet, dass jede
 Sekunde die Geschwindigkeit um 10000 erhöht wird (entspricht rund 30%
 Tastverhältnis).
 
@@ -184,8 +186,8 @@ Beispiel: Soll die Geschwindigkeit von 0 auf 16000 (entspricht ungefähr
 50% Tastverhältnis) in 10 Sekunden beschleunigt werden, so ist die
 Beschleunigung auf 1600 einzustellen.
 
-Eine Beschleunigung von 0 bedeutet ein direkter Sprung des Motors auf die
-Zielgeschwindigkeit. Es Wird keine Beschleunigungsrampe gefahren.
+Eine Beschleunigung/Debeschleunigung von 0 bedeutet ein direkter Sprung des
+Motors auf die Zielgeschwindigkeit. Es Wird keine Rampe gefahren.
 """
 }]
 })
@@ -199,11 +201,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the acceleration as set by :func:`Set Motion`.
+Returns the acceleration/deceleration as set by :func:`Set Motion`.
 """,
 'de':
 """
-Gibt die Beschleunigung zurück, wie gesetzt von :func:`Set Motion`.
+Gibt die Beschleunigung/Debeschleunigung zurück, wie gesetzt von :func:`Set Motion`.
 """
 }]
 })
@@ -360,11 +362,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns input voltage and current usage of the driver.
 """,
 'de':
 """
-TBD
+Gibt die Eingangsspannung und den Stromverbrauch des Treibers zurück.
 """
 }]
 })
@@ -377,21 +379,29 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Configures the touch LED to be either turned off, turned on, blink in
-heartbeat mode or show TBD.
+Configures the error LED to be either turned off, turned on, blink in
+heartbeat mode or show an error.
 
-TODO:
+If the LED is configured to show errors it has three different states:
 
-* one second interval blink: Input voltage too small
-* 250ms interval blink: Overtemperature warning
-* full red: motor disabled because of short to ground in phase a or b or because of overtemperature
+* Off: No error present.
+* 1s interval blinking: Input voltage too low (below 6V).
+* 250ms interval blinking: Overtemperature or overcurrent.
 
 """,
 'de':
 """
 Konfiguriert die Touch-LED. Die LED kann ausgeschaltet, eingeschaltet,
-im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
-TBD
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option den
+Fehler-Status anzuzeigen.
+
+Wenn die LED konfiguriert ist um Fehler anzuzeigen gibt es drei unterschiedliche
+Zustände:
+
+* Aus: Es liegt kein Fehler vor.
+* 1s Intervall-Blinken: Eingangsspannung zu klein (unter 6V).
+* 250ms Intervall-Blinken: Übertemperatur oder Überstrom.
+
 """
 }]
 })
@@ -549,8 +559,6 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
-
 This callback is triggered if either the current consumption
 is too high (above 5A) or the temperature of the driver chip is too high
 (above 175°C). These two possibilities are essentially the same, since the
@@ -568,8 +576,6 @@ That means, :func:`Set Enabled` has to be called to drive the motor again.
 """,
 'de':
 """
-TODO
-
 Dieser Callback wird ausgelöst, wenn entweder der Stromverbrauch (über 5A)
 oder die Temperatur der Treiberstufe zu hoch ist (über 175°C). Beide
 Möglichkeiten sind letztendlich gleichbedeutend, da die Temperatur
@@ -653,3 +659,4 @@ ausgelöst, wenn sich die Geschwindigkeit geändert hat.
 """
 }]
 })
+
