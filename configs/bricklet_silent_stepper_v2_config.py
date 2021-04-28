@@ -15,8 +15,8 @@ com = {
     'display_name': 'Silent Stepper 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': 'Silently drives one bipolar stepper motor with up to 46V and 1.6A per phase',
+        'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu 46V und 1.6A pro Phase'
     },
     'released': False,
     'documented': False,
@@ -666,13 +666,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
-
-Enables the driver chip. The driver parameters can be configured (maximum velocity,
+Enables/Disables the driver chip. The driver parameters can be configured (maximum velocity,
 acceleration, etc) before it is enabled.
-
-Disables the driver chip. The configurations are kept (maximum velocity,
-acceleration, etc) but the motor is not driven until it is enabled again.
 
 .. warning::
  Disabling the driver chip while the motor is still turning can damage the
@@ -684,14 +679,8 @@ acceleration, etc) but the motor is not driven until it is enabled again.
 """,
 'de':
 """
-TODO
-
-Aktiviert die Treiberstufe. Die Treiberparameter können vor der Aktivierung
+Aktiviert/Deaktiviert die Treiberstufe. Die Treiberparameter können vor der Aktivierung
 konfiguriert werden (maximale Geschwindigkeit, Beschleunigung, etc.).
-
-Deaktiviert die Treiberstufe. Die Konfiguration (Geschwindigkeit, Beschleunigung,
-etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis eine erneute
-Aktivierung erfolgt.
 
 .. warning::
  Die Treiberstufe zu deaktivieren während der Motor sich noch dreht kann zur
@@ -713,11 +702,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns *true* if the stepper driver is enabled, *false* otherwise.
 """,
 'de':
 """
-TODO
+Gibt zurück ob der Schrittmotortreiber aktiviert ist.
 """
 }]
 })
@@ -1235,21 +1224,31 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Configures the touch LED to be either turned off, turned on, blink in
-heartbeat mode or show TBD.
+Configures the error LED to be either turned off, turned on, blink in
+heartbeat mode or show an error.
 
-TODO:
+If the LED is configured to show errors it has three different states:
 
-* one second interval blink: Input voltage too small
-* 250ms interval blink: Overtemperature warning
-* full red: motor disabled because of short to ground in phase a or b or because of overtemperature
+* Off: No error present.
+* 250ms interval blink: Overtemperature warning.
+* 1s interval blink: Input voltage too small.
+* full red: motor disabled because of short to ground in phase a or b or because of overtemperature.
 
 """,
 'de':
 """
 Konfiguriert die Touch-LED. Die LED kann ausgeschaltet, eingeschaltet,
-im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option
-TBD
+im Herzschlagmodus betrieben werden. Zusätzlich gibt es die Option den
+Fehler-Status anzuzeigen.
+
+Wenn die LED konfiguriert ist um Fehler anzuzeigen gibt es drei unterschiedliche
+Zustände:
+
+* Aus: Es liegt kein Fehler vor.
+* 250ms Intervall-Blinken: Übertemperaturwarnung.
+* 1s Intervall-Blinken: Eingangsspannung zu gering.
+* Durchgängig rot: Motor deaktiviert auf Grund von Kurzschluss mit Ground in Phase A oder B oder auf Grund von zu hoher temperatur.
+
 """
 }]
 })
@@ -1585,11 +1584,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Sets the GPIO configuration for the given channel.
+You can configure a debounce and the deceleration that is used if the action is
+configured as ``normal stop``. See :func:`Set GPIO Action`.
 """,
 'de':
 """
-TBD
+Setzt die GPIO-Konfiguration für einen Kanal.
+Es kann ein Debounce und eine Debeschleunigung gesetzt werden. Letzteres wird
+genutzt wenn die Action auf ``normal stop`` konfiguriert ist. Siehe
+:func:`Set GPIO Action`.
 """
 }]
 })
@@ -1604,11 +1608,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns the GPIO configuration for a channel as set by :func:`Set GPIO Configuration`.
 """,
 'de':
 """
-TBD
+Gibt die GPIO-Konfiguration für einen Kanal zurück, wie von :func:`Set GPIO Configuration` gesetzt.
 """
 }]
 })
@@ -1622,11 +1626,28 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Sets the GPIO action for the given channel.
+
+The action can be a normal stop, a full brake or a callback. Each for a rising
+edge or falling edge. The actions are a bitmask they can be used at the same time.
+You can for example trigger a full brake and a callback at the same time or for
+rising and falling edge.
+
+The deceleration speed for the normal stop can be configured with
+:func:`Set GPIO Configuration`.
 """,
 'de':
 """
-TBD
+Setzt die GPIO-Action für einen Kanal.
+
+Die Action kann ein ``normal stop``, ein ``full brake`` oder ein ``callback``
+sein. Jeweils für eine steigende oder fallende Flanke.
+Die Actions sind eine Bitmaske und sie können simultan verwendet werden.
+Es ist zum Beispiel möglich einen ``full brake`` und ``callback`` gleichzeitig
+zu triggern oder eine auf eine steigende und fallende Flanke gleichzeitig.
+
+Die Debeschleunigung für den ``normal stop`` kann über
+:func:`Set GPIO Configuration` konfiguriert werden.
 """
 }]
 })
@@ -1640,11 +1661,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns the GPIO action for a channel as set by :func:`Set GPIO Action`.
 """,
 'de':
 """
-TBD
+Gibt die GPIO-Action für einen Kanal zurück, wie von :func:`Set GPIO Action` gesetzt.
 """
 }]
 })
@@ -1657,11 +1678,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns the GPIO state for both channels. True if the state is ``high`` and
+false if the state is ``low``.
 """,
 'de':
 """
-TBD
+Gibt den GPIO-Zustand für beide Kanäle zurück. True wenn der der Zustand
+``high`` ist und false wenn der Zustand ``low`` ist.
 """
 }]
 })
