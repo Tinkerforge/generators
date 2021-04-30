@@ -20,7 +20,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'ARINC429 single transmitter and dual receiver',
-        'de': 'ARINC429 1 Kanel Sender und 2 Kanal Empfänger'
+        'de': 'ARINC429 1 Kanal Sender und 2 Kanal Empfänger'
     },
     'released': False,
     'documented': False,
@@ -166,7 +166,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Set the bricklet heartbeat which reports the statistics counters for processed frames and lost frames.
+Set the Bricklet heartbeat which reports the statistics counters for processed frames and lost frames.
 The period is the period with which the :cb:`Heartbeat Message` callback is triggered periodically. A value of 0 turns the callback off.
 When 'Value Has To Change' is enabled, the heartbeat will only be sent if there is a change in the statistics numbers.
 """,
@@ -187,7 +187,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Get the configuration of the bricklet heartbeat reporting the statistics counters.
+Get the configuration of the Bricklet heartbeat reporting the statistics counters.
 """,
 'de':
 """
@@ -215,7 +215,7 @@ for processed frames and lost frames for all TX and RX channels.
 * Channel:          channel to which the heartbeat belongs
 * Status:           will be 'statistics'
 * Seq Number:       running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the callback is turned off and on again. This counter can be used to detect lost callbacks.
-* Timestamp:        running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
+* Timestamp:        running counter that is incremented on every millisecond, starting when the Bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
 * Frames Processed: number of Arinc429 frames that are transmitted or received on the respective channels TX, RX1 and RX2.
 * Frames Lost:      TX channel: number of Arinc429 frames that could not be transmitted due to a full transmit buffer, RX channels: number of received Arinc429 frames that could not be reported due to a full callback buffer.
 """,
@@ -502,7 +502,7 @@ This callback is triggered according to the configuration set by :func:`Set RX C
 * Channel:      channel on which the frame was received.
 * Status:       'update' signals that a new frame (new data) was received, whereas 'timeout' signals that the frame (label and SDI combination) encountered the timeout state.
 * Seq Number:   running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the callback is turned off and on again. This counter can be used to detect lost callbacks.
-* Timestamp:    running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
+* Timestamp:    running counter that is incremented on every millisecond, starting when the Bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
 * Frame:        the complete Arinc429 frame including the label and SDI bits. If 'parity_auto' is set for the channel, the parity bit will always come as 0.
 * Age:          time in milliseconds since this frame (label + SDI combination) was received last. If not received for so far or after a previous timeout, 60000 or the timeout value set with the 'Set RX Callback Configuration' function will be returned.
 """,
@@ -630,7 +630,6 @@ The value assigned to the 'Frame Index' parameter varies with the activity type 
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Schedule Entry',
@@ -652,7 +651,6 @@ Get a transmit scheduler job table entry.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Restart',
@@ -661,7 +659,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the whole bricklet into its power-up default state.
+Sets the whole Bricklet into its power-up default state.
 """,
 'de':
 """
@@ -685,7 +683,7 @@ This callback is triggered by respective jobs in the transmit schedule.
 * Userdata:         8 bit number as set in the scheduler callback job
 * Status:           will be 'scheduler'
 * Seq Number:       running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the callback is turned off and on again. This counter can be used to detect lost callbacks.
-* Timestamp:        running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
+* Timestamp:        running counter that is incremented on every millisecond, starting when the Bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
 """,
 'de':
 """
