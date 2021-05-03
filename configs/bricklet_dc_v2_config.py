@@ -93,7 +93,7 @@ com['packets'].append({
 """
 Sets the velocity of the motor. Whereas -32767 is full speed backward,
 0 is stop and 32767 is full speed forward. Depending on the
-acceleration (see TBD), the motor is not immediately
+acceleration (see :func:`Set Motion`), the motor is not immediately
 brought to the velocity but smoothly accelerated.
 
 The velocity describes the duty cycle of the PWM with which the motor is
@@ -105,7 +105,7 @@ see :func:`Set PWM Frequency`.
 """
 Setzt die Geschwindigkeit des Motors. Hierbei sind -32767 maximale
 Geschwindigkeit rückwärts, 0 ist Halt und 32767 maximale Geschwindigkeit
-vorwärts. In Abhängigkeit von der Beschleunigung (siehe TBD)
+vorwärts. In Abhängigkeit von der Beschleunigung (siehe :func:`Set Motion`)
 wird der Motor nicht direkt auf die Geschwindigkeit gebracht sondern
 gleichmäßig beschleunigt.
 
