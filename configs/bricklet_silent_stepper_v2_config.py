@@ -16,7 +16,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Silently drives one bipolar stepper motor with up to 46V and 1.6A per phase',
-        'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu 46V und 1.6A pro Phase'
+        'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu 46V und 1,6A pro Phase'
     },
     'released': False,
     'documented': False,
@@ -466,7 +466,7 @@ com['packets'].append({
 """
 Sets the step resolution from full-step up to 1/256-step.
 
-If interpolation is turned on, the Silent Stepper Brick will always interpolate
+If interpolation is turned on, the Silent Stepper Bricklet 2.0 will always interpolate
 your step inputs as 1/256-step. If you use full-step mode with interpolation, each
 step will generate 256 1/256 steps.
 
@@ -480,7 +480,7 @@ interpolation off.
 """
 Setzt die Schrittauflösung von Vollschritt bis zu 1/256 Schritt.
 
-Wenn Interpolation aktiviert ist, führt der Silent Stepper Brick immer 1/256
+Wenn Interpolation aktiviert ist, führt der Silent Stepper Bricklet 2.0 immer 1/256
 interpolierte Schritte aus. Wenn zum Beispiel Vollschritt mit Interpolation
 genutzt wird, führt jeder Schritt zu 256 1/256 Schritten beim Motor.
 
@@ -584,7 +584,7 @@ com['packets'].append({
 'en':
 """
 Returns the external input voltage. The external input voltage is
-given via the black power input connector on the Silent Stepper Brick.
+given via the black power input connector on the Silent Stepper Bricklet 2.0.
 
 If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack
@@ -599,7 +599,7 @@ voltage present, the motor will be driven by this voltage.
 'de':
 """
 Gibt die externe Eingangsspannung zurück. Die externe Eingangsspannung
-wird über die schwarze Stromversorgungsbuchse, in den Silent Stepper Brick,
+wird über die schwarze Stromversorgungsbuchse, in den Silent Stepper Bricklet 2.0,
 eingespeist.
 
 Sobald eine externe Eingangsspannung und die Spannungsversorgung des Stapels anliegt,
@@ -729,7 +729,7 @@ com['packets'].append({
 Sets the basic configuration parameters for the different modes (Stealth, Coolstep, Classic).
 
 * Standstill Current: This value can be used to lower the current during stand still. This might
-  be reasonable to reduce the heating of the motor and the Brick. When the motor is in standstill
+  be reasonable to reduce the heating of the motor and the Bricklet 2.0. When the motor is in standstill
   the configured motor phase current will be driven until the configured
   Power Down Time is elapsed. After that the phase current will be reduced to the standstill
   current. The elapsed time for this reduction can be configured with the Standstill Delay Time.
@@ -1247,7 +1247,7 @@ Zustände:
 * Aus: Es liegt kein Fehler vor.
 * 250ms Intervall-Blinken: Übertemperaturwarnung.
 * 1s Intervall-Blinken: Eingangsspannung zu gering.
-* Durchgängig rot: Motor deaktiviert auf Grund von Kurzschluss mit Ground in Phase A oder B oder auf Grund von zu hoher temperatur.
+* Durchgängig rot: Motor deaktiviert auf Grund von Kurzschluss mit Masse in Phase A oder B oder auf Grund von zu hoher Temperatur.
 
 """
 }]
@@ -1322,7 +1322,7 @@ Gibt den aktuellen Treiberstatus zurück.
   In dem Fall kann es ein Problem mit der Verkabelung des Motors geben. Es kann aber auch Fehlmeldungen geben,
   wenn der Motor sich schnell bewegt oder sich im Stillstand befindet.
 
-* Short To Ground: Gibt an, dass es einen Kurzschlus zwischen einer Phase (A,B) oder beiden Phasen nach Masse gibt.
+* Short To Ground: Gibt an, dass es einen Kurzschluss zwischen einer Phase (A,B) oder beiden Phasen nach Masse gibt.
   Wenn dies erkannt wird, wird der Treiber automatisch deaktiviert und muss wieder manuell aktiviert werden.
 
 * Over Temperature: Wenn der Treiber sich aufwärmt gibt dieser Status "Warning" aus. Dies ist erwartet, wenn
@@ -1360,7 +1360,7 @@ com['packets'].append({
 """
 Sets the minimum voltage, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the Silent Stepper
-Brick is 8V.
+Bricklet 2.0 is 8V.
 You can use this function to detect the discharge of a battery that is used
 to drive the stepper motor. If you have a fixed power supply, you likely do
 not need this functionality.
@@ -1368,7 +1368,7 @@ not need this functionality.
 'de':
 """
 Setzt die minimale Spannung, bei welcher der :cb:`Under Voltage` Callback
-ausgelöst wird. Der kleinste mögliche Wert mit dem der Silent Stepper Brick noch
+ausgelöst wird. Der kleinste mögliche Wert mit dem der Silent Stepper Bricklet 2.0 noch
 funktioniert,
 ist 8V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
@@ -1455,7 +1455,7 @@ com['packets'].append({
 'en':
 """
 Sets the time base of the velocity and the acceleration of the Silent Stepper
-Brick.
+Bricklet 2.0.
 
 For example, if you want to make one step every 1.5 seconds, you can set
 the time base to 15 and the velocity to 10. Now the velocity is
@@ -1464,7 +1464,7 @@ the time base to 15 and the velocity to 10. Now the velocity is
 'de':
 """
 Setzt die Zeitbasis der Geschwindigkeit und Beschleunigung des Silent Stepper
-Brick.
+Bricklet 2.0.
 
 Beispiel: Wenn aller 1,5 Sekunden ein Schritt gefahren werden soll, kann
 die Zeitbasis auf 15 und die Geschwindigkeit auf 10 gesetzt werden. Damit ist die
@@ -1726,12 +1726,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered whenever the Silent Stepper Brick enters a new state.
+This callback is triggered whenever the Silent Stepper Bricklet 2.0 enters a new state.
 It returns the new state as well as the previous state.
 """,
 'de':
 """
-Dieser Callback wird immer dann ausgelöst, wenn der Silent Stepper Brick einen
+Dieser Callback wird immer dann ausgelöst, wenn der Silent Stepper Bricklet 2.0 einen
 neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand
 zurückgegeben.
 """

@@ -18,7 +18,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Silently drives one bipolar stepper motor with up to 46V and 1.6A per phase',
-        'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu 46V und 1.6A pro Phase'
+        'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu 46V und 1,6A pro Phase'
     },
     'released': True,
     'documented': True,
@@ -1295,7 +1295,7 @@ Gibt den aktuellen Treiberstatus zurück.
   In dem Fall kann es ein Problem mit der Verkabelung des Motors geben. Es kann aber auch Fehlmeldungen geben,
   wenn der Motor sich schnell bewegt oder sich im Stillstand befindet.
 
-* Short To Ground: Gibt an, dass es einen Kurzschlus zwischen einer Phase (A,B) oder beiden Phasen nach Masse gibt.
+* Short To Ground: Gibt an, dass es einen Kurzschluss zwischen einer Phase (A,B) oder beiden Phasen nach Masse gibt.
   Wenn dies erkannt wird, wird der Treiber automatisch deaktiviert und muss wieder manuell aktiviert werden.
 
 * Over Temperature: Wenn der Treiber sich aufwärmt gibt dieser Status "Warning" aus. Dies ist erwartet, wenn
