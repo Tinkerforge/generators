@@ -660,3 +660,28 @@ ausgelöst, wenn sich die Geschwindigkeit geändert hat.
 }]
 })
 
+com['examples'].append({
+'name': 'Configuration',
+'functions': [('setter', 'Set Drive Mode', [('uint8:constant', 1)], None, None),
+              ('setter', 'Set PWM Frequency', [('uint16', 10000)], None, 'Use PWM frequency of 10 kHz'),
+              ('setter', 'Set Motion', [('uint16', 4096), ('uint16', 16384)], None, 'Slow acceleration (12.5 %/s), fast decceleration (50 %/s) for stopping'),
+              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward (100 %)'),
+              ('setter', 'Set Enabled', [('bool', True)], None, 'Enable motor power'),
+              ('wait',)],
+'cleanups': [('setter', 'Set Velocity', [('int16', 0)], None, 'Stop motor before disabling motor power'),
+             ('sleep', 2000, None, 'Wait for motor to actually stop: velocity (100 %) / decceleration (50 %/s) = 2 s'),
+             ('setter', 'Set Enabled', [('bool', False)], None, 'Disable motor power')]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('setter', 'Set Motion', [('uint16', 4096), ('uint16', 16384)], 'The acceleration has to be smaller or equal to the maximum\nacceleration of the DC motor, otherwise the velocity reached\ncallback will be called too early', 'Slow acceleration (12.5 %/s), fast decceleration (50 %/s) for stopping'),
+              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward (100 %)'),
+              ('callback', ('Velocity Reached', 'velocity reached'), [(('Velocity', 'Velocity'), 'int16', 1, None, None, None)], 'Use velocity reached callback to swing back and forth\nbetween full speed forward and full speed backward', None),
+              ('setter', 'Set Enabled', [('bool', True)], 'Enable motor power', None),
+              ('wait',)],
+'cleanups': [('setter', 'Set Velocity', [('int16', 0)], None, 'Stop motor before disabling motor power'),
+             ('sleep', 2000, None, 'Wait for motor to actually stop: velocity (100 %) / decceleration (50 %/s) = 2 s'),
+             ('setter', 'Set Enabled', [('bool', False)], None, 'Disable motor power')],
+'incomplete': True # because of special drive logic in callback
+})
