@@ -1754,3 +1754,33 @@ Dieser Callback wird ausgelöst durch GPIO-Änderungen wenn er über :func:`Set 
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Configuration',
+'functions': [('setter', 'Set Motor Current', [('uint16', 800)], None, '800 mA'),
+              ('setter', 'Set Step Configuration', [('uint8:constant', 5), ('bool', True)], None, '1/8 steps (interpolated)'),
+              ('setter', 'Set Max Velocity', [('uint16', 2000)], None, 'Velocity 2000 steps/s'),
+              ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], 'Slow acceleration (500 steps/s^2),\nFast deacceleration (5000 steps/s^2)', None),
+              ('empty',),
+              ('setter', 'Set Enabled', [('bool', True)], None, 'Enable motor power'),
+              ('setter', 'Set Steps', [('int32', 60000)], None, 'Drive 60000 steps forward'),
+              ('wait',)],
+'cleanups': [('setter', 'Stop', [], 'Stop motor before disabling motor power', 'Request motor stop'),
+             ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], None, 'Fast deacceleration (5000 steps/s^2) for stopping'),
+             ('sleep', 400, None, 'Wait for motor to actually stop: max velocity (2000 steps/s) / decceleration (5000 steps/s^2) = 0.4 s'),
+             ('setter', 'Set Enabled', [('bool', False)], None, 'Disable motor power')]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Position Reached', 'position reached'), [(('Position', 'Position'), 'int32', 1, None, None, None)], 'Use position reached callback to program random movement', None),
+              ('empty',),
+              ('setter', 'Set Step Configuration', [('uint8:constant', 5), ('bool', True)], None, '1/8 steps (interpolated)'),
+              ('setter', 'Set Enabled', [('bool', True)], None, 'Enable motor power'),
+              ('setter', 'Set Steps', [('int32', 1)], None, 'Drive one step forward to get things going')],
+'cleanups': [('setter', 'Stop', [], 'Stop motor before disabling motor power', 'Request motor stop'),
+             ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], None, 'Fast deacceleration (5000 steps/s^2) for stopping'),
+             ('sleep', 400, None, 'Wait for motor to actually stop: max velocity (2000 steps/s) / decceleration (5000 steps/s^2) = 0.4 s'),
+             ('setter', 'Set Enabled', [('bool', False)], None, 'Disable motor power')],
+'incomplete': True # because of special random movement logic in callback
+})
