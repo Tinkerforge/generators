@@ -3293,7 +3293,10 @@ class Device(object):
         self.all_packets = sorted(self.all_packets, key=lambda packet: packet.get_function_id() if packet.get_function_id() > 0 else 1000)
         self.all_packets_without_doc_only = sorted(self.all_packets_without_doc_only, key=lambda packet: packet.get_function_id() if packet.get_function_id() > 0 else 1000)
 
-        if not self.is_released() and self.get_api_version() != [2, 0, 0]:
+        # Skip this check for the EVSE bricklet: The API was broken several times while the (unreleased) EVSE Bricklets
+        # were already in the field as part of the WARP charger. This is save, because the Charger flashes a matching
+        # firmware when updating itself.
+        if not self.is_released() and self.get_api_version() != [2, 0, 0] and self.get_device_identifier() != 2159:
             raise GeneratorError('Unreleased device must have API version 2.0.0')
 
         since_firmwares = set()
