@@ -12,7 +12,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 2],
     'category': 'Bricklet',
     'device_identifier': 2159,
     'name': 'EVSE',
@@ -131,7 +131,7 @@ com['packets'].append({
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
              ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 5],
 'doc': ['bf', {
 'en':
 """
@@ -210,7 +210,7 @@ com['packets'].append({
              ('Max Current Incoming Cable', 'uint16', 1, 'out'),     # mA
              ('Max Current Outgoing Cable', 'uint16', 1, 'out'),     # mA
              ('Max Current Charge Management', 'uint16', 1, 'out')], # mA
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
 """
@@ -319,7 +319,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Charge Management Enabled',
 'elements': [('Enabled', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
 """
@@ -337,7 +337,7 @@ com['packets'].append({
 'name': 'Set Charge Management Enabled',
 'elements': [('Enabled', 'bool', 1, 'in'),
              ('Password', 'uint32', 1, 'in')], # To enable: 0x00363702 (mgmt on), to disable: 0x036370FF (mgmt off)
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
 """
@@ -354,7 +354,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Charge Management Current',
 'elements': [('Current', 'uint16', 1, 'in')], # mA (default 0A)
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
 """
