@@ -3420,6 +3420,9 @@ class Device(object):
         if name in ['IO4', 'IO16']:
             name = 'IO'
 
+        if name == 'Industrial PTC':
+            name = 'PTC'
+
         name = re.sub('[0-9]+x[0-9]+', '', name).replace('  ', ' ').strip()
 
         if ' ' not in name and (name.isupper() or self.is_brick()):
