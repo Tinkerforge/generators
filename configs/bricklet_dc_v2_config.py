@@ -18,7 +18,7 @@ com = {
         'en': 'Drives one brushed DC motor with up to 28V and 5A (peak)',
         'de': 'Steuert einen Gleichstrommotor mit bis zu 28V und 5A (Peak)'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'features': [

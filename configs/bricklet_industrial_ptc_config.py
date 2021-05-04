@@ -23,7 +23,7 @@ com = {
         'en': 'Reads temperatures from Pt100 und Pt1000 sensors',
         'de': 'Liest Temperaturen von Pt100 und Pt1000 Sensoren'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'features': [
