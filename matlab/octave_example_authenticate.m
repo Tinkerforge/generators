@@ -31,9 +31,9 @@ function cb_connected(e)
 
     global SECRET;
 
-    if short2int(e.connectReason) == short2int(ipcon.CONNECT_REASON_REQUEST)
+    if java2int(e.connectReason) == java2int(ipcon.CONNECT_REASON_REQUEST)
         fprintf("Connected by request\n");
-    elseif short2int(e.connectReason) == short2int(ipcon.CONNECT_REASON_AUTO_RECONNECT)
+    elseif java2int(e.connectReason) == java2int(ipcon.CONNECT_REASON_AUTO_RECONNECT)
         fprintf("Auto-Reconnect\n");
     end
 
@@ -58,10 +58,10 @@ function cb_enumerate(e)
     fprintf("UID: %s, Enumeration Type: %d\n", e.uid, e.enumerationType);
 end
 
-function int = short2int(short)
+function int = java2int(value)
     if compare_versions(version(), "3.8", "<=")
-        int = short.intValue();
+        int = value.intValue();
     else
-        int = short;
+        int = value;
     end
 end
