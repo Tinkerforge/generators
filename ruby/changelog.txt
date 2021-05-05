@@ -280,3 +280,6 @@
 2021-01-15: 2.1.28 (797d61e)
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0
 - Fix bool array unpacking
+
+2021-05-05: 2.1.29 (<unknown>)
+- Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0

@@ -108,3 +108,6 @@
   send [u]int64 arguments
 - Add --int64-string-response commandline option to translate [u]int64 results
   to string to allow JavaScript to properly receive [u]int64 parameters
+
+2021-05-05: 2.0.15 (<unknown>)
+- Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
