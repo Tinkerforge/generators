@@ -291,5 +291,6 @@
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0
 - Fix Base58 decoding in Delphi 7
 
-2021-05-05: 2.1.31 (<unknown>)
+2021-05-06: 2.1.31 (<unknown>)
+- Add GPIOState callback to Performance DC Bricklet API
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
