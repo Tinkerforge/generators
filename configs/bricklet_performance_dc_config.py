@@ -965,7 +965,6 @@ ausgelöst, wenn sich die Geschwindigkeit geändert hat.
 }]
 })
 
-
 com['packets'].append({
 'type': 'callback',
 'name': 'GPIO State',

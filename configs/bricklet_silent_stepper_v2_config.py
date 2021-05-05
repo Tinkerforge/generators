@@ -1215,7 +1215,6 @@ Gibt die Konfiguration zurück, wie von :func:`Set Misc Configuration` gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Error LED Config',
@@ -1688,7 +1687,6 @@ Gibt den GPIO-Zustand für beide Kanäle zurück. True wenn der der Zustand
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'callback',

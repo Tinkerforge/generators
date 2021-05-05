@@ -495,7 +495,6 @@ Gibt die Callback-Konfiguration zurück, wie mittels
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Current Velocity Callback Configuration',

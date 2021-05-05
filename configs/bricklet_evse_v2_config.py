@@ -126,8 +126,6 @@ com['constant_groups'].append({
               ('Calibration', 4)]
 })
 
-
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
@@ -380,7 +378,6 @@ TODO
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

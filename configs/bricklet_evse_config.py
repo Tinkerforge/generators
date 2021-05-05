@@ -117,7 +117,6 @@ com['constant_groups'].append({
               ('Charge Management', 3)]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
