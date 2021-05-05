@@ -1008,5 +1008,5 @@ com['examples'].append({
              ('setter', 'Set Velocity', [('int16', 0)], None, 'Request motor stop'),
              ('sleep', 2000, None, 'Wait for motor to actually stop: velocity (100 %) / decceleration (50 %/s) = 2 s'),
              ('setter', 'Set Enabled', [('bool', False)], None, 'Disable motor power')],
-'incomplete': False # because of special drive logic in callback
+'incomplete': True # because of special drive logic in callback
 })
