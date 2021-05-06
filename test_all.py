@@ -118,6 +118,6 @@ def main(args):
 
 if __name__ == '__main__':
     def add_arguments(parser):
-        parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-')
+        parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-/>=/>/<=/<')
 
     sys.exit(main(common.dockerize('', __file__, add_arguments=add_arguments)))
