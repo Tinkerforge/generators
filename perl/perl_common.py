@@ -120,7 +120,7 @@ class PerlElement(common.Element):
         if self.get_cardinality() == 1 or self.get_type() == 'string' or index != None:
             prefix = '$'
         else:
-            prefix = '@'
+            prefix = '\\@'
 
         return prefix + name
 
