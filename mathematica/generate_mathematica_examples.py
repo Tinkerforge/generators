@@ -347,7 +347,7 @@ class MathematicaExampleResult(common.ExampleResult):
                                               value=value,
                                               label=self.get_label_name(index=index),
                                               quantity=quantity,
-                                              index='{0}'.format(index + 1) if self.get_label_count() > 1 else '',
+                                              index='[[{0}]]'.format(index + 1) if self.get_label_count() > 1 else '',
                                               divisor=divisor,
                                               bitmask_length=bitmask_length,
                                               comment=self.get_formatted_comment('(*{0}*)')))
@@ -373,7 +373,7 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
         arguments = self.get_mathematica_arguments()
         results = self.get_results()
 
-        if len(results) == 1 and results[0].get_type().split(':')[-1] != 'constant':
+        if len(results) == 1 and results[0].get_type().split(':')[-1] != 'constant' and results[0].get_cardinality() == 1:
             getter_call = template1.format(global_line_prefix=global_line_prefix,
                                            device_name=self.get_device().get_initial_name(),
                                            function_name=self.get_name().camel,
@@ -381,7 +381,6 @@ class MathematicaExampleGetterFunction(common.ExampleGetterFunction, Mathematica
         else:
             getter_call = None
 
-        comments = []
         variable_names = []
         prints = []
 
