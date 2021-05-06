@@ -294,7 +294,9 @@ def main():
     print('')
     print('\033[01;35m>>> done\033[0m')
 
+    return 0
+
 if __name__ == '__main__':
     common.dockerize('', __file__)
 
-    main()
+    sys.exit(main())

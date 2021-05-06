@@ -73,6 +73,8 @@ def main(args):
 
     print('\033[01;35m>>> done\033[0m')
 
+    return 0
+
 if __name__ == '__main__':
     def add_arguments(parser):
         parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-/>=/>/<=/<')
