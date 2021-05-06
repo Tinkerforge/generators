@@ -594,8 +594,8 @@ zurück, wie von :func:`Set Edge Count Config` gesetzt.
 
 com['examples'].append({
 'name': 'Input',
-'functions': [('getter', ('Get Port', 'value from port A as bitmask'), [(('Value Mask', 'Value Mask (Port A)'), 'uint8:bitmask:8', 1, None, None, None)], [('char', 'a')]),
-              ('getter', ('Get Port', 'value from port B as bitmask'), [(('Value Mask', 'Value Mask (Port B)'), 'uint8:bitmask:8', 1, None, None, None)], [('char', 'b')])]
+'functions': [('getter', ('Get Port', 'value from port A as bitmask'), [(('Value Mask A', 'Value Mask (Port A)'), 'uint8:bitmask:8', 1, None, None, None)], [('char', 'a')]),
+              ('getter', ('Get Port', 'value from port B as bitmask'), [(('Value Mask B', 'Value Mask (Port B)'), 'uint8:bitmask:8', 1, None, None, None)], [('char', 'b')])]
 })
 
 com['examples'].append({
