@@ -99,7 +99,8 @@ class PerlDocDevice(perl_common.PerlDevice):
             meta_table = common.make_rst_meta_table(meta)
             desc = packet.get_perl_formatted_doc()
 
-            functions.append(template.format(cls, name, params, meta_table, desc))
+            # FIXME: Sphinx Perl domain requires r"\@value" to be formatted as r"\\@value" to come through correctly
+            functions.append(template.format(cls, name, params.replace('\\', '\\\\'), meta_table, desc))
 
         return ''.join(functions)
 
