@@ -69,7 +69,7 @@ def main(args):
                 print('error: test_{0}_bindings.py returns wrong type from its test() function'.format(binding))
 
             if not success:
-                sys.exit(1)
+                return 1
 
     print('\033[01;35m>>> done\033[0m')
 
