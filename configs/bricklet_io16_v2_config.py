@@ -601,9 +601,14 @@ Dieser Callback wird ausgelöst, wenn ein Monoflop Timer abläuft (0 erreicht).
 })
 
 com['examples'].append({
+'name': 'Input',
+'functions': [('getter', ('Get Value', 'value'), [(('Value', list(['Channel {0} [A{0}]'.format(x) for x in range(8)] + ['Channel {0} [B{1}]'.format(8 + x, x) for x in range(8)])), 'bool', 16, None, None, None)], [])]
+})
+
+com['examples'].append({
 'name': 'Output',
-'functions': [('setter', 'Set Configuration', [('uint8', 7), ('char', 'o'), ('bool', False)], 'Configure channel 7 as output low', None),
-              ('loop_header', 10, 'Set channel 7 alternating high/low 10 times with 100 ms delay'),
+'functions': [('setter', 'Set Configuration', [('uint8', 7), ('char', 'o'), ('bool', False)], 'Configure channel 7 [A7] as output low', None),
+              ('loop_header', 10, 'Set channel 7 [A7] alternating high/low 10 times with 100 ms delay'),
               ('sleep', 100, None, None),
               ('setter', 'Set Selected Value', [('uint8', 7), ('bool', True)], None, None),
               ('sleep', 100, None, None),
@@ -614,7 +619,7 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Interrupt',
 'functions': [('callback', ('Input Value', 'input value'), [(('Channel', 'Channel'), 'uint8', 1, None, None, None), (('Changed', 'Changed'), 'bool', 1, None, None, None), (('Value', 'Value'), 'bool', 1, None, None, None)], None, None),
-              ('callback_configuration', ('Input Value', 'input value (channel 4)'), [('uint8', 4)], 500, False, None, [])]
+              ('callback_configuration', ('Input Value', 'input value (channel 4 [A4])'), [('uint8', 4)], 500, False, None, [])]
 })
 
 def pin_name(idx):

@@ -653,6 +653,11 @@ Zustand des Kanals (der Zustand nach dem Monoflop).
 })
 
 com['examples'].append({
+'name': 'Input',
+'functions': [('getter', ('Get Value', 'value'), [(('Value', ['Channel 0', 'Channel 1', 'Channel 2', 'Channel 3']), 'bool', 4, None, None, None)], [])]
+})
+
+com['examples'].append({
 'name': 'Output',
 'functions': [('setter', 'Set Configuration', [('uint8', 3), ('char', 'o'), ('bool', False)], 'Configure channel 3 as output low', None),
               ('loop_header', 10, 'Set channel 3 alternating high/low 10 times with 100 ms delay'),
