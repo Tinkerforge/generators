@@ -233,6 +233,51 @@ def get_changelog_version(root_dir):
 
     return version
 
+def modify_items(kind, active_items, all_items, action, item):
+    if item == 'all':
+        if action == '+':
+            active_items |= set(all_items)
+        elif action == '-':
+            active_items -= set(all_items)
+        else:
+            raise Exception('invalid --{0}s item: {1}'.format(kind, action + item))
+    else:
+        if item not in all_items:
+            raise Exception('unknown {0}: {1}'.format(kind, item))
+
+        if action == '+':
+            active_items.add(item)
+        elif action == '-':
+            active_items.remove(item)
+        elif action == '>=':
+            active_items |= set(all_items[all_items.index(item):])
+        elif action == '>':
+            active_items |= set(all_items[all_items.index(item) + 1:])
+        elif action == '<=':
+            active_items |= set(all_items[:all_items.index(item) + 1])
+        elif action == '<':
+            active_items |= set(all_items[:all_items.index(item)])
+        else:
+            assert False, action
+
+    return active_items
+
+def apply_item_changes(kind, active_items, all_items, item_changes):
+    for item_change in item_changes:
+        if len(item_change) == 0:
+            raise Exception('empty --{0}s item'.format(kind))
+
+        m = re.match(r'^(\+|-|>=|>|<=|<)(.*)$', item_change)
+
+        if m == None:
+            raise Exception('invalid --{0}s item: {1}'.format(kind, item_change))
+
+        action = m.group(1)
+        item = m.group(2)
+        active_items = modify_items(kind, active_items, all_items, action, item)
+
+    return active_items
+
 def get_image_size(path):
     from PIL import Image
 

@@ -31,37 +31,6 @@ if 'generators' not in sys.modules:
 
 from generators import common
 
-def modify_items(kind, active_items, all_items, action, item):
-    if item == 'all':
-        if action == '+':
-            active_items |= set(all_items)
-        elif action == '-':
-            active_items -= set(all_items)
-        else:
-            print('error: invalid --{0}s item: {1}'.format(kind, action + item))
-            return None
-    else:
-        if item not in all_items:
-            print('error: unknown {0}: {1}'.format(kind, item))
-            return None
-
-        if action == '+':
-            active_items.add(item)
-        elif action == '-':
-            active_items.remove(item)
-        elif action == '>=':
-            active_items |= set(all_items[all_items.index(item):])
-        elif action == '>':
-            active_items |= set(all_items[all_items.index(item) + 1:])
-        elif action == '<=':
-            active_items |= set(all_items[:all_items.index(item) + 1])
-        elif action == '<':
-            active_items |= set(all_items[:all_items.index(item)])
-        else:
-            assert False, action
-
-    return active_items
-
 def main(args):
     all_generators = ['bindings', 'examples', 'doc', 'zip', 'debian_package']
 
@@ -71,23 +40,11 @@ def main(args):
         active_generators = {'bindings', 'doc', 'zip'}
 
     if args.generators != None:
-        for item in args.generators[0].split(','):
-            if len(item) == 0:
-                print('error: empty --generators item')
-                return 1
-
-            m = re.match(r'^(\+|-|>=|>|<=|<)(.*)$', item)
-
-            if m == None:
-                print('error: invalid --generators item: {0}'.format(item))
-                return 1
-
-            action = m.group(1)
-            generator = m.group(2)
-            active_generators = modify_items('generator', active_generators, all_generators, action, generator)
-
-            if active_generators == None:
-                return 1
+        try:
+            active_generators = common.apply_item_changes('generator', active_generators, all_generators, args.generators[0].split(','))
+        except Exception as e:
+            print('error: {0}'.format(e))
+            return 1
 
     all_bindings = []
 
@@ -102,23 +59,11 @@ def main(args):
     active_bindings = set(all_bindings)
 
     if args.bindings != None:
-        for item in args.bindings[0].split(','):
-            if len(item) == 0:
-                print('error: empty --bindings item')
-                return 1
-
-            m = re.match(r'^(\+|-|>=|>|<=|<)(.*)$', item)
-
-            if m == None:
-                print('error: invalid --bindings item: {0}'.format(item))
-                return 1
-
-            action = m.group(1)
-            binding = m.group(2)
-            active_bindings = modify_items('binding', active_bindings, all_bindings, action, binding)
-
-            if active_bindings == None:
-                return 1
+        try:
+            active_bindings = common.apply_item_changes('binding', active_bindings, all_bindings, args.bindings[0].split(','))
+        except Exception as e:
+            print('error: {0}'.format(e))
+            return 1
 
     languages = {
         'bindings': ['en'],
