@@ -202,5 +202,5 @@
 - Force Python 3 in shebang line and deprecate Python 2 support
 - Add gpio-state callback to Performance DC Bricklet API
 
-2021-05-06: 2.1.31 (<unknown>)
+2021-05-06: 2.1.31 (7cd6fa2)
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0

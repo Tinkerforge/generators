@@ -84,6 +84,6 @@
 2021-01-15: 2.0.17 (797d61e)
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0
 
-2021-05-06: 2.0.18 (<unknown>)
+2021-05-06: 2.0.18 (7cd6fa2)
 - Add gpio_state callback to Performance DC Bricklet API
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
