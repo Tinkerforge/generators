@@ -70,48 +70,46 @@ def main():
 
     parser.add_argument('-p', '--prepare', action='store_true', help='prepare current doc as old diff input')
     parser.add_argument('-d', '--diff-tool', default='./diff_view.py', help='program to open diff file with')
-    parser.add_argument('bindings', nargs='?', help='bindings to create diff file for')
+    parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-/>=/>/<=/<')
 
     args = parser.parse_args(argv)
 
-    diff_tool = args.diff_tool
+    all_bindings = []
 
-    ignored = ['.git', '.vscode', '.m2', '__pycache__', 'configs', 'docker', 'json', 'saleae', 'tvpl']
+    for binding in os.listdir(generators_dir):
+        if not os.path.isdir(binding) or os.path.exists(os.path.join(generators_dir, binding, 'skip_doc_diff')):
+            continue
+
+        if binding not in ['.git', '.m2', '.vscode', '__pycache__', 'configs', 'docker']:
+            all_bindings.append(binding)
+
+    all_bindings = sorted(all_bindings)
+    active_bindings = set(all_bindings)
 
     if args.bindings != None:
-        b = args.bindings.rstrip('/')
-
-        if not os.path.isdir(os.path.join(generators_dir, b)):
-            print('error: {0} is not a directory'.format(b))
-            sys.exit(1)
-
-        bindings = [b]
-    elif os.path.samefile(generators_dir, os.getcwd()):
-        bindings = sorted([x for x in os.listdir(generators_dir) if x not in ignored])
-    else:
-        parent_dir, b = os.path.split(os.getcwd())
-
-        if parent_dir != generators_dir:
-            print('error: wrong working directory, cannot auto-detect bindings')
-            sys.exit(1)
-
-        bindings = [b]
+        try:
+            active_bindings = common.apply_item_changes('binding', active_bindings, all_bindings, args.bindings[0].split(','))
+        except Exception as e:
+            print('error: {0}'.format(e))
+            return 1
 
     if args.prepare:
-        for b in bindings:
-            path = os.path.join(generators_dir, b)
+        for binding in all_bindings:
+            if binding not in active_bindings:
+                continue
 
             if not os.path.isdir(path):
+                print('skipping {0}, no {0} directory'.format(binding))
                 continue
 
             doc_path = os.path.join(path, 'doc')
             doc_old_path = os.path.join(path, 'doc_old')
 
             if not os.path.isdir(doc_path):
-                print('skipping {0}, no doc directory'.format(b))
+                print('skipping {0}, no doc directory'.format(binding))
                 continue
 
-            print('preparing ' + b)
+            print('preparing ' + binding)
 
             if os.path.isdir(doc_old_path):
                 shutil.rmtree(doc_old_path)
@@ -131,27 +129,31 @@ def main():
 
         print('using tmpdir ' + tmp)
 
-        for b in bindings:
-            path = os.path.join(generators_dir, b)
+        for binding in all_bindings:
+            if binding not in active_bindings:
+                continue
+
+            path = os.path.join(generators_dir, binding)
 
             if not os.path.isdir(path):
+                print('skipping {0}, no {0} directory'.format(binding))
                 continue
 
             if not os.path.isdir(os.path.join(path, 'doc')):
-                print('skipping {0}, no doc directory'.format(b))
+                print('skipping {0}, no doc directory'.format(binding))
                 continue
 
             if not os.path.isdir(os.path.join(path, 'doc_old')):
-                print('skipping {0}, no doc_old directory'.format(b))
+                print('skipping {0}, no doc_old directory'.format(binding))
                 continue
 
-            print('diffing ' + b)
+            print('diffing ' + binding)
 
-            if os.system('bash -c "pushd {0} > /dev/null && diff -ru15 doc_old/ doc/ > {1}/diff_{2}.diff; popd > /dev/null"'.format(path, tmp, b)) != 0:
-                print('diff old vs new failed')
-                sys.exit(1)
+            if os.system('bash -c "pushd {0} > /dev/null && diff -ru15 doc_old/ doc/ > {1}/diff_{2}.diff; popd > /dev/null"'.format(path, tmp, binding)) != 0:
+                print('error: diff old vs new failed')
+                return 1
 
-            with open(os.path.join(tmp, 'diff_{0}.diff'.format(b)), 'r') as f:
+            with open(os.path.join(tmp, 'diff_{0}.diff'.format(binding)), 'r') as f:
                 diffs = [[[]]] # list of diffs as lists of lines
 
                 for line in f.readlines():
@@ -194,9 +196,11 @@ def main():
             with open(os.path.join(tmp, 'diff.diff'), 'a') as f:
                 f.writelines(filtered)
 
-        if os.system('bash -ce "{0} {1}/diff.diff"'.format(diff_tool, tmp)) != 0:
-            print('{0} diff.diff failed'.format(diff_tool))
-            sys.exit(1)
+        if os.system('bash -ce "{0} {1}/diff.diff"'.format(args.diff_tool, tmp)) != 0:
+            print('{0} diff.diff failed'.format(args.diff_tool))
+            return 1
+
+    return 0
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

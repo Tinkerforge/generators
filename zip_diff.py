@@ -3,7 +3,7 @@
 
 """
 ZIP Diff
-Copyright (C) 2017-2020 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2017-2021 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2019 Erik Fleckstein <erik@tinkerforge.com>
 
 zip_diff.py: Tool for diffing API bindings ZIP files
@@ -70,48 +70,48 @@ def main():
     parser.add_argument('-p', '--prepare', action='store_true', help='prepare unreleased zip as old diff input')
     parser.add_argument('-u', '--unreleased', action='store_true', help='use unreleased zip as old diff input')
     parser.add_argument('-d', '--diff-tool', default='./diff_view.py', help='program to open diff with')
-    parser.add_argument('bindings', nargs='?', help='bindings to create diff for')
+    parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-/>=/>/<=/<')
 
     args = parser.parse_args(argv)
 
-    diff_tool = args.diff_tool
+    all_bindings = []
 
-    ignored = ['.git', '.vscode', '.m2', '__pycache__', 'configs', 'docker', 'modbus', 'tcpip', 'stubs', 'tvpl', 'openhab', 'uc']
+    for binding in os.listdir(generators_dir):
+        if not os.path.isdir(binding) or os.path.exists(os.path.join(generators_dir, binding, 'skip_zip_diff')):
+            continue
+
+        if binding not in ['.git', '.m2', '.vscode', '__pycache__', 'configs', 'docker']:
+            all_bindings.append(binding)
+
+    all_bindings = sorted(all_bindings)
+    active_bindings = set(all_bindings)
 
     if args.bindings != None:
-        b = args.bindings.rstrip('/')
-
-        if not os.path.isdir(os.path.join(generators_dir, b)):
-            print('error: {0} is not a directory'.format(b))
-            sys.exit(1)
-
-        bindings = [b]
-    elif os.path.samefile(generators_dir, os.getcwd()):
-        bindings = sorted([x for x in os.listdir(generators_dir) if x not in ignored])
-    else:
-        parent_dir, b = os.path.split(os.getcwd())
-
-        if parent_dir != generators_dir:
-            print('error: wrong working directory, cannot auto-detect bindings')
-            sys.exit(1)
-
-        bindings = [b]
+        try:
+            active_bindings = common.apply_item_changes('binding', active_bindings, all_bindings, args.bindings[0].split(','))
+        except Exception as e:
+            print('error: {0}'.format(e))
+            return 1
 
     if args.prepare:
-        for b in bindings:
-            path = os.path.join(generators_dir, b)
+        for binding in all_bindings:
+            if binding not in active_bindings:
+                continue
+
+            path = os.path.join(generators_dir, binding)
 
             if not os.path.isdir(path):
+                print('skipping {0}, no {0} directory'.format(binding))
                 continue
 
             zip_path = os.path.join(path, 'zip')
             zip_old_path = os.path.join(path, 'zip_old')
 
             if not os.path.isdir(zip_path):
-                print('skipping {0}, no zip directory'.format(d))
+                print('skipping {0}, no zip directory'.format(binding))
                 continue
 
-            print('preparing ' + d)
+            print('preparing ' + binding)
 
             if os.path.isdir(zip_old_path):
                 shutil.rmtree(zip_old_path)
@@ -340,46 +340,50 @@ def main():
 
         print('using tmpdir ' + tmp)
 
-        for b in bindings:
-            path = os.path.join(generators_dir, b)
+        for binding in all_bindings:
+            if binding not in active_bindings:
+                continue
+
+            path = os.path.join(generators_dir, binding)
 
             if not os.path.isdir(path):
+                print('skipping {0}, no {0} directory'.format(binding))
                 continue
 
             if not os.path.isdir(os.path.join(path, 'zip')):
-                print('skipping {0}, no zip directory'.format(b))
+                print('skipping {0}, no zip directory'.format(binding))
                 continue
 
             version = common.get_changelog_version(path)
 
             if args.unreleased:
                 if not os.path.isdir(os.path.join(path, 'zip_old')):
-                    print('skipping {0}, no zip_old directory'.format(b))
+                    print('skipping {0}, no zip_old directory'.format(binding))
                     continue
 
-                print('diffing ' + b)
+                print('diffing ' + binding)
 
-                shutil.copytree(os.path.join(path, 'zip_old'), os.path.join(tmp, 'old_{0}'.format(b)))
+                shutil.copytree(os.path.join(path, 'zip_old'), os.path.join(tmp, 'old_{0}'.format(binding)))
             else:
-                print('diffing ' + b)
+                print('diffing ' + binding)
 
-                if os.system('bash -ce "curl -sf https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/old_{0}.zip"'.format(b, tmp)) != 0:
-                    print('download latest.zip failed')
-                    sys.exit(1)
+                if os.system('bash -ce "curl -sf https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_latest.zip -o {1}/old_{0}.zip"'.format(binding, tmp)) != 0:
+                    print('error: download latest.zip failed')
+                    return 1
 
-                if os.system('bash -ce "pushd {1} > /dev/null && unzip -q -d old_{0} old_{0}.zip && popd > /dev/null"'.format(b, tmp)) != 0:
-                    print('unzip latest.zip failed')
-                    sys.exit(1)
+                if os.system('bash -ce "pushd {1} > /dev/null && unzip -q -d old_{0} old_{0}.zip && popd > /dev/null"'.format(binding, tmp)) != 0:
+                    print('error: unzip latest.zip failed')
+                    return 1
 
-            if os.system('bash -ce "cp {0}/tinkerforge_{1}_bindings_{3}_{4}_{5}.zip {2} && pushd {2} > /dev/null && unzip -q -d new_{1} tinkerforge_{1}_bindings_{3}_{4}_{5}.zip && popd > /dev/null"'.format(path, b, tmp, *version)) != 0:
-                print('copy and unzip new.zip failed')
-                sys.exit(1)
+            if os.system('bash -ce "cp {0}/tinkerforge_{1}_bindings_{3}_{4}_{5}.zip {2} && pushd {2} > /dev/null && unzip -q -d new_{1} tinkerforge_{1}_bindings_{3}_{4}_{5}.zip && popd > /dev/null"'.format(path, binding, tmp, *version)) != 0:
+                print('error: copy and unzip new.zip failed')
+                return 1
 
-            if os.system('bash -c "pushd {1} > /dev/null && diff -ru6 old_{0}/ new_{0}/ > diff_{0}.diff; popd > /dev/null"'.format(b, tmp)) != 0:
-                print('diff old vs new failed')
-                sys.exit(1)
+            if os.system('bash -c "pushd {1} > /dev/null && diff -ru6 old_{0}/ new_{0}/ > diff_{0}.diff; popd > /dev/null"'.format(binding, tmp)) != 0:
+                print('error: diff old vs new failed')
+                return 1
 
-            with open(os.path.join(tmp, 'diff_{0}.diff'.format(b)), 'r') as f:
+            with open(os.path.join(tmp, 'diff_{0}.diff'.format(binding)), 'r') as f:
                 diffs = [[[]]] # list of diffs as lists of lines
 
                 for line in f.readlines():
@@ -437,9 +441,11 @@ def main():
             with open(os.path.join(tmp, 'diff.diff'), 'a') as f:
                 f.writelines(filtered)
 
-        if os.system('bash -ce "{0} {1}/diff.diff"'.format(diff_tool, tmp)) != 0:
-            print('{0} diff.diff failed'.format(diff_tool))
-            sys.exit(1)
+        if os.system('bash -ce "{0} {1}/diff.diff"'.format(args.diff_tool, tmp)) != 0:
+            print('{0} diff.diff failed'.format(args.diff_tool))
+            return 1
+
+    return 0
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
