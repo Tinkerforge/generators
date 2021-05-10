@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-rST Diff
-Copyright (C) 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
+Documentation Diff
+Copyright (C) 2019-2021 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2019-2020 Erik Fleckstein <erik@tinkerforge.com>
 
-rst_diff.py: Tool for diffing API bindings documentation rST files
+doc_diff.py: Tool for diffing API bindings documentation rST files
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -60,14 +60,15 @@ from generators import common
 def main():
     argv = sys.argv[1:]
 
-    for path in [os.path.expanduser('~/.rst_diffrc'), './.rst_diffrc']:
+    # check old .rst_diffrc file for backward compatibility
+    for path in [os.path.expanduser('~/.doc_diffrc'), './.doc_diffrc', os.path.expanduser('~/.rst_diffrc'), './.rst_diffrc']:
         if os.path.exists(path):
             with open(path, 'r') as f:
                 argv += shlex.split(f.read(), comments=True)
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-p', '--prepare', action='store_true', help='prepare current rst as old diff input')
+    parser.add_argument('-p', '--prepare', action='store_true', help='prepare current doc as old diff input')
     parser.add_argument('-d', '--diff-tool', default='geany', help='program to open diff file with')
     parser.add_argument('bindings', nargs='?', help='bindings to create diff file for')
 
