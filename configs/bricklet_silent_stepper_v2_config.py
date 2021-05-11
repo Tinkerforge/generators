@@ -19,7 +19,7 @@ com = {
         'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu 46V und 1,6A pro Phase'
     },
     'released': True,
-    'documented': False,
+    'documented': True,
     'discontinued': False,
     'features': [
         'device',

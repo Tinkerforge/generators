@@ -21,7 +21,7 @@ com = {
         'de': 'Zwei Relais um Wechselstromgeräte zu schalten'
     },
     'released': True,
-    'documented': False,
+    'documented': True,
     'discontinued': False,
     'features': [
         'device',
