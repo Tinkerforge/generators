@@ -119,7 +119,7 @@ class JavaDocDevice(java_common.JavaDevice):
             'de': """
 .. java:function:: class {0}::{1}Listener()
 
- Dieser Listener kann mit der Funktion ``add{1}Listener()`` hinzugefügt werde.
+ Dieser Listener kann mit der Funktion ``add{1}Listener()`` hinzugefügt werden.
  Ein hinzugefügter Listener kann mit der Funktion ``remove{1}Listener()`` wieder
  entfernt werden.
 

@@ -144,7 +144,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
  Callback-Function zuzuweisen.
 
  In Octave kann diesem Callback mit ``add{1}Callback()`` eine Callback-Function
- hinzugefügt werde. Eine hinzugefügter Callback-Function kann mit
+ hinzugefügt werden. Eine hinzugefügter Callback-Function kann mit
  ``remove{1}Callback()`` wieder entfernt werden.
 
 """
