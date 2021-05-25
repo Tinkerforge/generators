@@ -375,7 +375,7 @@ com['packets'].append({
              ('Voltage Mul', 'int16', 1, 'out'),
              ('Voltage Div', 'int16', 1, 'out'),
              ('Resistance 2700', 'int16', 1, 'out'),
-             ('Resistance 888', 'int16', 14, 'out')],
+             ('Resistance 880', 'int16', 14, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -398,7 +398,7 @@ com['packets'].append({
              ('Voltage Mul', 'int16', 1, 'in'),
              ('Voltage Div', 'int16', 1, 'in'),
              ('Resistance 2700', 'int16', 1, 'in'),
-             ('Resistance 888', 'int16', 14, 'in')],
+             ('Resistance 880', 'int16', 14, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
