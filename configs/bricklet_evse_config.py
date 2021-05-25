@@ -365,3 +365,49 @@ TODO
 """
 }]
 })
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get User Calibration',
+'elements': [('User Calibration Active', 'bool', 1, 'out'),
+             ('Voltage Diff', 'int16', 1, 'out'),
+             ('Voltage Mul', 'int16', 1, 'out'),
+             ('Voltage Div', 'int16', 1, 'out'),
+             ('Resistance 2700', 'int16', 1, 'out'),
+             ('Resistance 888', 'int16', 14, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set User Calibration',
+'elements': [('Password', 'uint32', 1, 'in'), # 0xCA11B4A0
+             ('User Calibration Active', 'bool', 1, 'in'),
+             ('Voltage Diff', 'int16', 1, 'in'),
+             ('Voltage Mul', 'int16', 1, 'in'),
+             ('Voltage Div', 'int16', 1, 'in'),
+             ('Resistance 2700', 'int16', 1, 'in'),
+             ('Resistance 888', 'int16', 14, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
