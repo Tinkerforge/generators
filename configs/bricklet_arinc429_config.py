@@ -732,7 +732,7 @@ Reverts the whole bricklet into its power-up default state.
 com['packets'].append({
 'type': 'callback',
 'name': 'Scheduler Message',
-'elements': [('Channel',    'uint8',  1, 'in',  {'constant_group': 'Channel'}),
+'elements': [('Channel',    'uint8',  1, 'out', {'constant_group': 'Channel'}),
              ('Status',     'uint8',  1, 'out', {'constant_group': 'Status' }),
              ('Seq Number', 'uint8',  1, 'out'),
              ('Timestamp',  'uint16', 1, 'out'),
