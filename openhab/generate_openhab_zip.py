@@ -229,10 +229,10 @@ class OpenHABZipGenerator(openhab_common.OpenHABGeneratorTrait, common.ZipGenera
 
         self.create_zip_file(zip_dir)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, OpenHABZipGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, OpenHABZipGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('openhab', __file__)
+    args = common.dockerize('openhab', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

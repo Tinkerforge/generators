@@ -429,11 +429,11 @@ class RubyDocGenerator(ruby_common.RubyGeneratorTrait, common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_ruby_doc())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, RubyDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, RubyDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('ruby', __file__)
+    args = common.dockerize('ruby', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

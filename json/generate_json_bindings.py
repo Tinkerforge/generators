@@ -222,10 +222,10 @@ class JSONBindingsGenerator(JSONGeneratorTrait, common.BindingsGenerator):
         if device.is_released():
             self.released_files.append(filename)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, JSONBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, JSONBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('json', __file__)
+    args = common.dockerize('json', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

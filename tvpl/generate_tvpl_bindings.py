@@ -847,10 +847,10 @@ class TVPLBindingsGenerator(tvpl_common.TVPLGeneratorTrait, common.BindingsGener
         if device.is_released():
             self.released_files.append('_'.join([device.get_category().under, device.get_name().under]))
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, TVPLBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, TVPLBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('tvpl', __file__)
+    args = common.dockerize('tvpl', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

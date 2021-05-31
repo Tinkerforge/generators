@@ -889,10 +889,10 @@ class MATLABExamplesGenerator(matlab_common.MATLABGeneratorTrait, common.Example
             with open(filepath, 'w') as f:
                 f.write(example.get_octave_source())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, MATLABExamplesGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, MATLABExamplesGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('matlab', __file__)
+    args = common.dockerize('matlab', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

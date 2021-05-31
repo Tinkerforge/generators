@@ -1603,10 +1603,10 @@ class JavaBindingsGenerator(java_common.JavaGeneratorTrait, common.BindingsGener
     def is_octave(self):
         return False
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, JavaBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, JavaBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('java', __file__)
+    args = common.dockerize('java', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

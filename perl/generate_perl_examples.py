@@ -667,10 +667,10 @@ class PerlExamplesGenerator(perl_common.PerlGeneratorTrait, common.ExamplesGener
             with open(filepath, 'w') as f:
                 f.write(example.get_perl_source())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, PerlExamplesGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, PerlExamplesGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('perl', __file__)
+    args = common.dockerize('perl', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

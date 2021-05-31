@@ -617,7 +617,7 @@ class OpenHABDocGenerator(openhab_common.OpenHABGeneratorTrait, common.DocGenera
     def is_octave(self):
         return False
 
-def generate(root_dir, language):
+def generate(root_dir, language, internal):
     if language != 'en':
         print("Generating {} is not implemented yet.".format(language))
         import shutil
@@ -634,10 +634,10 @@ def generate(root_dir, language):
 
         return
 
-    common.generate(root_dir, 'en', OpenHABDocGenerator)
+    common.generate(root_dir, 'en', internal, OpenHABDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('openhab', __file__)
+    args = common.dockerize('openhab', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

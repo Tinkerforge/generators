@@ -257,10 +257,10 @@ class JavaScriptZipGenerator(javascript_common.JavascriptGeneratorTrait, common.
         # copy Tinkerforge.js to bindings root dir so copy_all.py can pick it up
         shutil.copy(os.path.join(self.tmp_browser_source_dir, 'Tinkerforge.js'), root_dir)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, JavaScriptZipGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, JavaScriptZipGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('javascript', __file__)
+    args = common.dockerize('javascript', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

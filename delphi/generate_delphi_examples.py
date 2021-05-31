@@ -794,10 +794,10 @@ class DelphiExamplesGenerator(delphi_common.DelphiGeneratorTrait, common.Example
             with open(filepath, 'w') as f:
                 f.write(example.get_delphi_source())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, DelphiExamplesGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, DelphiExamplesGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('delphi', __file__)
+    args = common.dockerize('delphi', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

@@ -845,10 +845,10 @@ pub mod low_level_traits;
 
         common.BindingsGenerator.finish(self)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, RustBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, RustBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('rust', __file__)
+    args = common.dockerize('rust', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

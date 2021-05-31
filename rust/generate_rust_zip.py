@@ -153,10 +153,10 @@ class RustZipGenerator(rust_common.RustGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, RustZipGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, RustZipGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('rust', __file__)
+    args = common.dockerize('rust', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

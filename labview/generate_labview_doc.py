@@ -464,11 +464,11 @@ class LabVIEWDocGenerator(labview_common.LabVIEWGeneratorTrait, common.DocGenera
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_labview_doc())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, LabVIEWDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, LabVIEWDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('labview', __file__)
+    args = common.dockerize('labview', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

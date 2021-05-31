@@ -487,10 +487,10 @@ class ShellExamplesGenerator(shell_common.ShellGeneratorTrait, common.ExamplesGe
 
             os.chmod(filepath, 0o755)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, ShellExamplesGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, ShellExamplesGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('shell', __file__)
+    args = common.dockerize('shell', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

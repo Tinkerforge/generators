@@ -57,10 +57,10 @@ from generators.csharp.generate_csharp_bindings import CSharpBindingsGenerator
 class LabVIEWBindingsGenerator(labview_common.LabVIEWGeneratorTrait, CSharpBindingsGenerator):
     pass
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, LabVIEWBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, LabVIEWBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('labview', __file__)
+    args = common.dockerize('labview', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

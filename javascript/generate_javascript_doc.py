@@ -522,11 +522,11 @@ class JavaScriptDocGenerator(javascript_common.JavascriptGeneratorTrait, common.
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_javascript_doc())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, JavaScriptDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, JavaScriptDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('javascript', __file__)
+    args = common.dockerize('javascript', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

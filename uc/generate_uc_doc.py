@@ -477,11 +477,11 @@ class UCDocGenerator(uc_common.UCGeneratorTrait, common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_c_doc())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, UCDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, UCDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('uc', __file__)
+    args = common.dockerize('uc', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

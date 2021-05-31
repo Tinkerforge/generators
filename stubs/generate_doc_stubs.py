@@ -390,10 +390,10 @@ Beschreibung.
         with open(os.path.join(folder, 'de', device.get_category().camel + 's', filename), 'w') as doc:
             doc.write(self.template_de.format(format0, format1, format2, format3, format4, format5, device.get_category().under, '='*len(format0)))
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, DocStubGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, DocStubGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('stubs', __file__)
+    args = common.dockerize('stubs', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

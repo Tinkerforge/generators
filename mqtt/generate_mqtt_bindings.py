@@ -355,10 +355,10 @@ def get_device_display_name(device_identifier):
 
         common.BindingsGenerator.finish(self)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, MQTTBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, MQTTBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('mqtt', __file__)
+    args = common.dockerize('mqtt', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

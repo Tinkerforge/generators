@@ -1001,10 +1001,10 @@ function getDeviceDisplayName($device_identifier)
 
         common.BindingsGenerator.finish(self)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, PHPBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, PHPBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('php', __file__)
+    args = common.dockerize('php', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

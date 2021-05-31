@@ -710,10 +710,10 @@ class CSharpExamplesGenerator(csharp_common.CSharpGeneratorTrait, common.Example
             with open(filepath, 'w') as f:
                 f.write(example.get_csharp_source())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, CSharpExamplesGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, CSharpExamplesGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('csharp', __file__)
+    args = common.dockerize('csharp', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

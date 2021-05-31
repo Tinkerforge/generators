@@ -406,11 +406,11 @@ class DelphiDocGenerator(delphi_common.DelphiGeneratorTrait, common.DocGenerator
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_delphi_doc())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, DelphiDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, DelphiDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('delphi', __file__)
+    args = common.dockerize('delphi', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

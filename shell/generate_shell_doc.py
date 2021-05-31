@@ -479,11 +479,11 @@ class ShellDocGenerator(shell_common.ShellGeneratorTrait, common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_shell_doc())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, ShellDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, ShellDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('shell', __file__)
+    args = common.dockerize('shell', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

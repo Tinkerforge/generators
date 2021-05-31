@@ -1258,10 +1258,10 @@ class UCBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
             self.released_files.append(filename + '.c')
             self.released_files.append(filename + '.h')
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, UCBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, UCBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('uc', __file__)
+    args = common.dockerize('uc', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

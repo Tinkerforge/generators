@@ -553,11 +553,11 @@ class MathematicaDocGenerator(mathematica_common.MathematicaGeneratorTrait, comm
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_mathematica_doc())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, MathematicaDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, MathematicaDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('mathematica', __file__)
+    args = common.dockerize('mathematica', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

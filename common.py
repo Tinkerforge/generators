@@ -1512,11 +1512,11 @@ def execute(args, **kwargs):
         print(error + '\n' + str(e))
         sys.exit(1)
 
-def generate(root_dir, language, generator_class):
+def generate(root_dir, language, internal, generator_class):
     print('=== language: {0}'.format(language))
 
     # default config
-    subgenerate(root_dir, language, generator_class, 'tinkerforge')
+    subgenerate(root_dir, language, internal, generator_class, 'tinkerforge')
 
     # custom configs
     config_base_path = os.path.join(root_dir, '..', 'configs')
@@ -1533,9 +1533,9 @@ def generate(root_dir, language, generator_class):
         if re.match('^[a-z0-9_]+$', config_name) == None:
             raise GeneratorError('Invalid config name: {0}'.format(config_name))
 
-        subgenerate(root_dir, language, generator_class, config_name)
+        subgenerate(root_dir, language, internal, generator_class, config_name)
 
-def subgenerate(root_dir, language, generator_class, config_name):
+def subgenerate(root_dir, language, internal, generator_class, config_name):
     global lang
     lang = language
 
@@ -1559,7 +1559,7 @@ def subgenerate(root_dir, language, generator_class, config_name):
     tng_infos = []
     device_identifiers = set()
 
-    generator = generator_class(root_dir, config_name, language)
+    generator = generator_class(root_dir, language, internal, config_name)
     generator.prepare()
 
     def prepare_common_constant_groups(com, common_constant_groups):
@@ -3404,7 +3404,7 @@ class Device(object):
         return 'comcu_bricklet' in self.raw_data['features']
 
     def is_released(self):
-        return self.raw_data['released']
+        return self.raw_data['released'] or self.generator.internal
 
     def is_documented(self):
         return self.raw_data['documented']
@@ -4474,10 +4474,11 @@ class Generator:
     is_doc_generator = False
     is_openhab_doc_generator = False
 
-    def __init__(self, root_dir, config_name, language):
+    def __init__(self, root_dir, language, internal, config_name):
         self.root_dir = root_dir
-        self.config_name = FlavoredName(' '.join([word[0].upper() + word[1:] for word in config_name.split('_')]))
         self.language = language # en or de
+        self.internal = internal
+        self.config_name = FlavoredName(' '.join([word[0].upper() + word[1:] for word in config_name.split('_')]))
         self.date = datetime.datetime.now().strftime("%Y-%m-%d")
 
         if self.check_root_dir_name:
@@ -4912,13 +4913,17 @@ class ChangedDirectory(object):
     def __exit__(self, type_, value, traceback):
         os.chdir(self.previous_path)
 
-def dockerize(bindings_name, script_path, add_arguments=None):
+def dockerize(bindings_name, script_path, add_internal_argument=False, add_arguments=None):
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-d', '--docker', action='store_true', help='run this script in docker container')
     parser.add_argument('-D', '--no-docker', action='store_false', help='run this script normally [default]', dest='docker')
     parser.add_argument('-v', '--verbose', action='store_true', help='enable verbose prints')
     parser.add_argument('-V', '--no-verbose', action='store_false', help='disable verbose prints [default]', dest='verbose')
+
+    if add_internal_argument:
+        parser.add_argument('-i', '--internal', action='store_true', help='handle all devices as if they were released')
+        parser.add_argument('-I', '--no-internal', action='store_false', help='handle all devices according to their released marker [default]', dest='internal')
 
     if add_arguments != None:
         add_arguments(parser)

@@ -490,11 +490,11 @@ class JavaDocGenerator(java_common.JavaGeneratorTrait, common.DocGenerator):
     def is_octave(self):
         return False
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, JavaDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, JavaDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('java', __file__)
+    args = common.dockerize('java', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

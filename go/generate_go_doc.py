@@ -426,11 +426,11 @@ class GoDocGenerator(go_common.GoGeneratorTrait, common.DocGenerator):
     def get_doc_formatted_param(self, element):
         return element.get_go_name()
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, GoDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, GoDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('go', __file__)
+    args = common.dockerize('go', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

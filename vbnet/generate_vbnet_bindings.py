@@ -57,10 +57,10 @@ from generators.csharp.generate_csharp_bindings import CSharpBindingsGenerator
 class VBNETBindingsGenerator(vbnet_common.VBNETGeneratorTrait, CSharpBindingsGenerator):
     pass
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, VBNETBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, VBNETBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('vbnet', __file__)
+    args = common.dockerize('vbnet', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

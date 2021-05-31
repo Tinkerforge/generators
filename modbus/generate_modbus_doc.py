@@ -336,11 +336,11 @@ class ModbusDocGenerator(common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_modbus_doc())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, ModbusDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, ModbusDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('modbus', __file__)
+    args = common.dockerize('modbus', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

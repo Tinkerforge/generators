@@ -125,10 +125,10 @@ class VBNETZipGenerator(vbnet_common.VBNETGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, VBNETZipGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, VBNETZipGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('vbnet', __file__)
+    args = common.dockerize('vbnet', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

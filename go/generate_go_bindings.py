@@ -667,10 +667,10 @@ func getDeviceDisplayName(deviceIdentifier uint16) string {{
             f.write(template.format(header=self.get_header_comment('asterisk'),
                                     entries=',\n    '.join(entries)))
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, GoBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, GoBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('go', __file__)
+    args = common.dockerize('go', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

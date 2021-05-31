@@ -658,10 +658,10 @@ class PHPExamplesGenerator(php_common.PHPGeneratorTrait, common.ExamplesGenerato
             with open(filepath, 'w') as f:
                 f.write(example.get_php_source())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, PHPExamplesGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, PHPExamplesGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('php', __file__)
+    args = common.dockerize('php', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

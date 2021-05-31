@@ -493,11 +493,11 @@ class VBNETDocGenerator(vbnet_common.VBNETGeneratorTrait, common.DocGenerator):
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_vbnet_doc())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, VBNETDocGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, VBNETDocGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('vbnet', __file__)
+    args = common.dockerize('vbnet', __file__, add_internal_argument=True)
 
     for language in ['en', 'de']:
-        generate(os.getcwd(), language)
+        generate(os.getcwd(), language, args.internal)

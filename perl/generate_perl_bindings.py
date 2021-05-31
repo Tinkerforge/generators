@@ -906,10 +906,10 @@ sub get_device_display_name
 
         common.BindingsGenerator.finish(self)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, PerlBindingsGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, PerlBindingsGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('perl', __file__)
+    args = common.dockerize('perl', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

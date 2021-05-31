@@ -73,6 +73,13 @@ def main(args):
         'debian_package': ['en']
     }
 
+    has_internal_argument = [
+        'bindings',
+        'examples',
+        'doc',
+        'zip'
+    ]
+
     for generator in all_generators:
         if generator not in active_generators:
             continue
@@ -89,7 +96,12 @@ def main(args):
                 print('\033[01;36m### generator missing\033[0m')
             else:
                 for language in languages[generator]:
-                    module.generate(os.path.join(generators_dir, binding), language)
+                    root_dir = os.path.join(generators_dir, binding)
+
+                    if generator in has_internal_argument:
+                        module.generate(root_dir, language, args.internal)
+                    else:
+                        module.generate(root_dir, language)
 
     print('\033[01;35m>>> done\033[0m')
 
@@ -100,4 +112,4 @@ if __name__ == '__main__':
         parser.add_argument('-g', '--generators', nargs=1, help='comma separated list of generators, each prefixed by +/-/>=/>/<=/<')
         parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-/>=/>/<=/<')
 
-    sys.exit(main(common.dockerize('', __file__, add_arguments=add_arguments)))
+    sys.exit(main(common.dockerize('', __file__, add_internal_argument=True, add_arguments=add_arguments)))

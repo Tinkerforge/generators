@@ -572,10 +572,10 @@ void communication_init(void);
         with open(os.path.join(folder, 'software', 'src', 'communication.h'), 'w') as h:
             h.write(self.h_file.format(device_name_dash, year, name, email, h_constants_string, h_defines_string, h_structs_string, h_function_prototypes_string, h_callback_prototypes_string, h_callback_list_string))
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, CoMCUStubGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, CoMCUStubGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('stubs', __file__)
+    args = common.dockerize('stubs', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

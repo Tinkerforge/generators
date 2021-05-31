@@ -145,10 +145,10 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
         # Make zip
         self.create_zip_file(self.tmp_dir)
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, UCZipGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, UCZipGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('uc', __file__)
+    args = common.dockerize('uc', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)

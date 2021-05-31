@@ -747,10 +747,10 @@ class VBNETExamplesGenerator(vbnet_common.VBNETGeneratorTrait, common.ExamplesGe
             with open(filepath, 'w') as f:
                 f.write(example.get_vbnet_source())
 
-def generate(root_dir, language):
-    common.generate(root_dir, language, VBNETExamplesGenerator)
+def generate(root_dir, language, internal):
+    common.generate(root_dir, language, internal, VBNETExamplesGenerator)
 
 if __name__ == '__main__':
-    common.dockerize('vbnet', __file__)
+    args = common.dockerize('vbnet', __file__, add_internal_argument=True)
 
-    generate(os.getcwd(), 'en')
+    generate(os.getcwd(), 'en', args.internal)
