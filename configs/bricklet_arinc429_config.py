@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# ARINC429 Breakout Bricklet communication config
+# ARINC429 Bricklet communication config
 
 from generators.configs.commonconstants      import THRESHOLD_OPTION_CONSTANT_GROUP
 from generators.configs.commonconstants      import add_callback_value_function
