@@ -143,10 +143,11 @@ com['packets'].append({
 'en':
 """
 Gets the capabilities of the ARINC429 Bricklet as of the currently loaded firmware:
- * TX Total Scheduler Jobs: total number of job entries in the scheduling table.
- * TX Used Scheduler Jobs:  number of job entries that are currently in use.
- * RX Total Frame Filters:  total number of frame filters that can be defined per channel.
- * RX Used Frame Filters:   number of frame filters that are currently in use per each channel.
+
+* TX Total Scheduler Jobs: total number of job entries in the scheduling table.
+* TX Used Scheduler Jobs:  number of job entries that are currently in use.
+* RX Total Frame Filters:  total number of frame filters that can be defined per channel.
+* RX Used Frame Filters:   number of frame filters that are currently in use per each channel.
 """,
 'de':
 """
@@ -210,12 +211,13 @@ com['packets'].append({
 This callback is triggered periodically according to the configuration set by
 :func:`Set Heartbeat Callback Configuration`. It reports the statistics counters
 for processed frames and lost frames for all TX and RX channels.
- * Channel:          channel from which this heartbeat messages originates.
- * Status:           will always be 'statistics'.
- * Seq Number:       running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the callback is turned off and on again. This counter can be used to detect lost callbacks.
- * Timestamp:        running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
- * Frames Processed: number of Arinc429 frames that are transmitted or received on the respective channels TX, RX1 and RX2.
- * Frames Lost:      TX channel: number of Arinc429 frames that could not be transmitted due to a full transmit FIFO buffer, RX channels: number of received Arinc429 frames that could not be reported due to a full callback FIFO buffer.
+
+* Channel:          channel from which this heartbeat messages originates.
+* Status:           will always be 'statistics'.
+* Seq Number:       running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the callback is turned off and on again. This counter can be used to detect lost callbacks.
+* Timestamp:        running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
+* Frames Processed: number of Arinc429 frames that are transmitted or received on the respective channels TX, RX1 and RX2.
+* Frames Lost:      TX channel: number of Arinc429 frames that could not be transmitted due to a full transmit FIFO buffer, RX channels: number of received Arinc429 frames that could not be reported due to a full callback FIFO buffer.
 """,
 'de':
 """
@@ -234,9 +236,11 @@ com['packets'].append({
 'en':
 """
 Sets the data transmission properties of the selected channel:
- * Channel: channel to configure
- * Parity:  'parity_auto' for automatic parity adjustment, 'parity_data' for parity bit supplied by the application or if used for data.
- * Speed:   'speed_hs' for high speed mode (100 kbit/s), 'speed_ls' for low speed mode (12.5 kbit/s).
+
+* Channel: channel to configure
+* Parity:  'parity_auto' for automatic parity adjustment, 'parity_data' for parity bit supplied by the application or if used for data.
+* Speed:   'speed_hs' for high speed mode (100 kbit/s), 'speed_ls' for low speed mode (12.5 kbit/s).
+
 When parity set to 'parity_auto', frames received with a parity error will be counted in the lost frames counter but discarded otherwise.
 """,
 'de':
@@ -274,9 +278,10 @@ com['packets'].append({
 'en':
 """
 Sets the operating mode of the selected channel(s):
- * passive: TX channel: all transmissions are stopped and the hardware interface becomes high-Z. RX channels: all arriving frames will be discarded.
- * active:  TX channel: Arinc429 frames can be sent via the 'Write Frame Direct' function. RX channels: arriving frames will be processed according to the frame filter and callback settings.
- * run:     TX channels only: the scheduler will run and transmit frames according to the entries made in the scheduler job table.
+
+* passive: TX channel: all transmissions are stopped and the hardware interface becomes high-Z. RX channels: all arriving frames will be discarded.
+* active:  TX channel: Arinc429 frames can be sent via the 'Write Frame Direct' function. RX channels: arriving frames will be processed according to the frame filter and callback settings.
+* run:     TX channels only: the scheduler will run and transmit frames according to the entries made in the scheduler job table.
 """,
 'de':
 """
@@ -333,9 +338,11 @@ com['packets'].append({
 """
 Clears a specific receive filter on the selected RX channel(s). The RX channels will only process those Arinc429 frames that pass
 the input filtering stage. With this command, an Arinc429 frame matching the given parameters will be blocked by the filter.
- * Channel: selected channel.
- * Label:   label code of the filter.
- * SDI:     SDI code of the filter (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits are used for data).
+
+* Channel: selected channel.
+* Label:   label code of the filter.
+* SDI:     SDI code of the filter (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits are used for data).
+
 The function either returns 'True' if the filter was cleared or 'False' if a respective filter was not set.
 """,
 'de':
@@ -372,9 +379,11 @@ com['packets'].append({
 'en':
 """
 Sets a specific receive filter on the selected channel(s):
- * Channel: selected channel.
- * Label:   label code for the filter.
- * SDI:     SDI code for the filter (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits are used for data).
+
+* Channel: selected channel.
+* Label:   label code for the filter.
+* SDI:     SDI code for the filter (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits are used for data).
+
 The function either returns 'True' if the filter was set or 'False' if a respective filter could not be created e.g. because the given combination
 of label and SDI collides with an already existing filter, or because all available filters are used up (see the get_capabilities() function.
 """,
@@ -396,9 +405,11 @@ com['packets'].append({
 'en':
 """
 Queries if a filter for the given combination of label and SDI is set up or not:
- * Channel:    channel to query.
- * Label:      label code to query for.
- * SDI:        SDI usage to query for (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits shall be used for data).
+
+* Channel:    channel to query.
+* Label:      label code to query for.
+* SDI:        SDI usage to query for (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits shall be used for data).
+
 The function will return 'True' if the queried filter filter exists, else 'False'.
 """,
 'de':
@@ -422,14 +433,16 @@ com['packets'].append({
 """
 Executes a direct read of an Arinc429 frame, i.e. without using the callback mechanism.
 In order to be able to do a direct read of a frame with a certain label and SDI combination, a respective receive filter needs to be set up beforehand.
-  * Channel: RX channel to read from.
-  * Label:   label code of the frame to read. Beware that the label codes are usually given in octal notation, so make sure to use the correct notation (i.e. 0o377).
-  * SDI:     SDI code of the frame to read (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits are used for data).
+
+* Channel: RX channel to read from.
+* Label:   label code of the frame to read. Beware that the label codes are usually given in octal notation, so make sure to use the correct notation (i.e. 0o377).
+* SDI:     SDI code of the frame to read (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits are used for data).
 
 The function return the following data:
-  * Status:  returns 'True' if a respective frame was received, else 'False'.
-  * Frame:   returns the complete Arinc429 frame including the label and SDI bits as a 32 bit integer. If 'parity_auto' is set for the channel, the parity bit will always come as 0. Opposite to the line transmission format, in the API functions the label code is mirrored such that the label code can directly be extracted from the frame by simply grabbing the lower 8 bits.
-  * Age:     time in milliseconds since a frame matching the label & SDI combination was received last. If no frame was received so far or after a previous timeout, either 60000 or the timeout value set with the :func:`Set RX Callback Configuration` will be returned.
+
+* Status:  returns 'True' if a respective frame was received, else 'False'.
+* Frame:   returns the complete Arinc429 frame including the label and SDI bits as a 32 bit integer. If 'parity_auto' is set for the channel, the parity bit will always come as 0. Opposite to the line transmission format, in the API functions the label code is mirrored such that the label code can directly be extracted from the frame by simply grabbing the lower 8 bits.
+* Age:     time in milliseconds since a frame matching the label & SDI combination was received last. If no frame was received so far or after a previous timeout, either 60000 or the timeout value set with the :func:`Set RX Callback Configuration` will be returned.
 """,
 'de':
 """
@@ -449,10 +462,11 @@ com['packets'].append({
 'en':
 """
 Sets the configuration of the Arinc429 frame reception callback:
- * Channel:             selected RX channel.
- * Enabled:             select 'True' for activating the frame callbacks and 'False' for deactivating them.
- * Value Has To Change: select 'True' if callbacks shall only be sent for frames whose data have changed. With 'False' a callback will be sent on every frame reception.
- * Timeout:             time period for all frames (label and SDI combinations) on this channel.
+
+* Channel:             selected RX channel.
+* Enabled:             select 'True' for activating the frame callbacks and 'False' for deactivating them.
+* Value Has To Change: select 'True' if callbacks shall only be sent for frames whose data have changed. With 'False' a callback will be sent on every frame reception.
+* Timeout:             time period for all frames (label and SDI combinations) on this channel.
 
 Despite on frame reception, a callback is also generated if a frame encounters a timeout, i.e. if it is not periodically received again before
 the set timeout period has expired. In order to have callbacks being generated at all, respective receive filters need to be set up.
@@ -496,12 +510,13 @@ com['packets'].append({
 'en':
 """
 This callback is triggered according to the configuration set by :func:`Set RX Callback Configuration`.
- * Channel:      channel from which this frame messages originates.
- * Status:       'new' signals that the frame (label + SDI combination) was received for the first time ever or again after a previous timeout. 'update' signals that a new frame was received. 'timeout' signals that the frame (label and SDI combination) encountered the timeout state.
- * Seq Number:   running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the callback is turned off and on again. This counter can be used to detect lost callbacks.
- * Timestamp:    running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
- * Frame:        holds the complete Arinc429 frame including the label and SDI bits as a 32 bit integer. If 'parity_auto' is set for the channel, the parity bit will always come as 0. Opposite to the line transmission format, in the API functions the label code is mirrored such that the label code can directly be extracted from the frame by simply grabbing the lower 8 bits.
- * Age:          time in milliseconds since this frame (label + SDI combination) was received last. If not received for so far or after a previous timeout, 60000 or the timeout value set with the :func:`Set RX Callback Configuration` will be returned.
+
+* Channel:      channel from which this frame messages originates.
+* Status:       'new' signals that the frame (label + SDI combination) was received for the first time ever or again after a previous timeout. 'update' signals that a new frame was received. 'timeout' signals that the frame (label and SDI combination) encountered the timeout state.
+* Seq Number:   running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the callback is turned off and on again. This counter can be used to detect lost callbacks.
+* Timestamp:    running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
+* Frame:        holds the complete Arinc429 frame including the label and SDI bits as a 32 bit integer. If 'parity_auto' is set for the channel, the parity bit will always come as 0. Opposite to the line transmission format, in the API functions the label code is mirrored such that the label code can directly be extracted from the frame by simply grabbing the lower 8 bits.
+* Age:          time in milliseconds since this frame (label + SDI combination) was received last. If not received for so far or after a previous timeout, 60000 or the timeout value set with the :func:`Set RX Callback Configuration` will be returned.
 """,
 'de':
 """
@@ -521,8 +536,8 @@ com['packets'].append({
 Immediately transmits an Arinc429 frame, given that the channel is in either ACTIVE or RUN mode. If the channel is in RUN mode and frames are sent
 as per programmed schedule, using this function will inject additional frames into the transmission, independent of the scheduler's activities.
 
- * Channel: selected transmit channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
- * frame:   complete Arinc429 frame including the label and SDI bits.
+* Channel: selected transmit channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
+* frame:   complete Arinc429 frame including the label and SDI bits.
 
 The frame needs to be passed as a 32 bit integer. Opposite to the line transmission format, in the API functions
 the label code is mirrored such that the label code can directly be written 1:1 into the lower 8 bits.
@@ -550,9 +565,10 @@ com['packets'].append({
 'en':
 """
 Sets or updates an Arinc429 frame that is to be transmitted via the scheduler using the scheduler job types 'Single' or 'Cyclic'.
- * Channel:     selected transmit channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
- * Frame Index: index number (0-255) that will be used in the transmit scheduler job table to refer to this frame.
- * Frame:       complete Arinc429 frame including the label and SDI bits.
+
+* Channel:     selected transmit channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
+* Frame Index: index number (0-255) that will be used in the transmit scheduler job table to refer to this frame.
+* Frame:       complete Arinc429 frame including the label and SDI bits.
 
 The frame needs to be passed as a 32 bit integer. Opposite to the line transmission format, in the API functions
 the label code is mirrored such that the label code can directly be written 1:1 into the lower 8 bits.
@@ -579,9 +595,11 @@ com['packets'].append({
 'en':
 """
 Clears a range of transmit scheduler job table entries:
- * Channel: selected TX channel.
- * First:   index of the first table entry to be cleared.
- * Last:    index of the last  table entry to be cleared.
+
+* Channel: selected TX channel.
+* First:   index of the first table entry to be cleared.
+* Last:    index of the last  table entry to be cleared.
+
 To clear a single entry, set 'First' and 'Last' to the one index of the one entry to be cleared.
 Clearing scheduler entries actually means they are set to the job command 'Skip'.
 """,
@@ -604,36 +622,38 @@ com['packets'].append({
 'en':
 """
 Sets an entry in the transmit scheduler job table:
- * Channel:     selected TX channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
- * Job Index:   index number of the job, the scheduler processes the job table in ascending order of these index numbers. The index starts with 0, see the output of the get_capabilities() function for the total number of job indexes available. In firmware 2.3.0 it is 1000.
- * Job:         activity assigned to this entry, see below.
- * Frame Index: generally, the frame assigned to this job by the 'Frame Index' used along with the :func: `Write Frame Scheduled`.
-                In case of a RX1 or RX2 retransmit job, the extended label (label + SDI) of the frame to be retransmitted.
-                In case of the Jump command, the Job Index at which execution shall continue.
-                In case of the Callback command, this number will be sent as 'Token' code (values 0-255 only).
-                In all other cases (Skip, Stop, Dwell, Return) this parameter is not used.
- * Dwell Time:  time to wait before executing the next job table entry (0-250 milliseconds).
+
+* Channel:     selected TX channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
+* Job Index:   index number of the job, the scheduler processes the job table in ascending order of these index numbers. The index starts with 0, see the output of the get_capabilities() function for the total number of job indexes available. In firmware 2.3.0 it is 1000.
+* Job:         activity assigned to this entry, see below.
+* Frame Index: generally, the frame assigned to this job by the 'Frame Index' used along with the :func: `Write Frame Scheduled`.
+               In case of a RX1 or RX2 retransmit job, the extended label (label + SDI) of the frame to be retransmitted.
+               In case of the Jump command, the Job Index at which execution shall continue.
+               In case of the Callback command, this number will be sent as 'Token' code (values 0-255 only).
+               In all other cases (Skip, Stop, Dwell, Return) this parameter is not used.
+* Dwell Time:  time to wait before executing the next job table entry (0-250 milliseconds).
 
 When the scheduler is set to 'run' mode via the :func:`Set Channel Mode`, it continuously loops through the job table and executes
 the assigned tasks. It starts with the job stored at job index 0.
 The scheduler can execute the following activity types (jobs):
- * Skip:        the job is skipped, i.e. no frame is transmitted and no dwelling is done. The frame index and dwell time are not used.
- * Stop:        the scheduler is stopped, i.e. the channel mode is reverted from 'run' to 'active'. The frame index and dwell time are not used.
- * Jump:        the scheduler immediately continues at the Job Index position given by the Frame Index parameter. The assigned dwell time will be executed when the scheduler runs into the next Return job.
- * Return:      the scheduler immediately continues at the next Job Index position following the last Jump command. Nested Jumps are not supported. The frame index and dwell time are not used.
- * Callback:    the scheduler triggers a callback message and immediately continues with executing the next job (dwell time is not used).
- * Dwell        the scheduler executes the dwelling but does not transmit any frame. The frame index is not used.
- * Single:      the scheduler transmits the referenced frame, but only once. On subsequent executions the frame is not sent until it is renewed via the :func:`Write Frame Scheduled`, then the process repeats.
- * Cyclic:      the scheduler transmits the referenced frame and executed the dwelling on each round.
- * Retrans RX1: the scheduler retransmits a frame that was previously received on the RX1 channel. The frame to send is referenced by setting the 'Frame Index' to its extended label code, which is a 10 bit number made of the label code in the lower bits and the two SDI bits in the upper bits. If the SDI bits are used for data, set the SDI bits to zero. As long as the referenced frame was not received yet, or if it is in timeout, no frame will be sent.
- * Retrans RX2: same as before, but for frames received on the RX2 channel.
+
+* Skip:        the job is skipped, i.e. no frame is transmitted and no dwelling is done. The frame index and dwell time are not used.
+* Stop:        the scheduler is stopped, i.e. the channel mode is reverted from 'run' to 'active'. The frame index and dwell time are not used.
+* Jump:        the scheduler immediately continues at the Job Index position given by the Frame Index parameter. The assigned dwell time will be executed when the scheduler runs into the next Return job.
+* Return:      the scheduler immediately continues at the next Job Index position following the last Jump command. Nested Jumps are not supported. The frame index and dwell time are not used.
+* Callback:    the scheduler triggers a callback message and immediately continues with executing the next job (dwell time is not used).
+* Dwell        the scheduler executes the dwelling but does not transmit any frame. The frame index is not used.
+* Single:      the scheduler transmits the referenced frame, but only once. On subsequent executions the frame is not sent until it is renewed via the :func:`Write Frame Scheduled`, then the process repeats.
+* Cyclic:      the scheduler transmits the referenced frame and executed the dwelling on each round.
+* Retrans RX1: the scheduler retransmits a frame that was previously received on the RX1 channel. The frame to send is referenced by setting the 'Frame Index' to its extended label code, which is a 10 bit number made of the label code in the lower bits and the two SDI bits in the upper bits. If the SDI bits are used for data, set the SDI bits to zero. As long as the referenced frame was not received yet, or if it is in timeout, no frame will be sent.
+* Retrans RX2: same as before, but for frames received on the RX2 channel.
 
 The value assigned to the 'Frame Index' parameter varies with the activity type (job):
 
- * Single or Cyclic: frame index as used with the :func:`Write Frame Scheduled` of the frame to transmit. Valid range: 0-255
- * Retrans RX1/RX2:  extended label (label + SDI) of the frame to re-transmit. Valid range: 0-1023
- * Callback:         arbitrary number decided by the user, it will be reported in the callback via the 'Userdata' parameter. Valid range: 0-255
- * Jump:             next job index to jump to.
+* Single or Cyclic: frame index as used with the :func:`Write Frame Scheduled` of the frame to transmit. Valid range: 0-255
+* Retrans RX1/RX2:  extended label (label + SDI) of the frame to re-transmit. Valid range: 0-1023
+* Callback:         arbitrary number decided by the user, it will be reported in the callback via the 'Userdata' parameter. Valid range: 0-255
+* Jump:             next job index to jump to.
 
 The :func:`Set Schedule Entry` can be called while the TX scheduler is running, i.e. the channel mode is set to 'RUN'.
 Any change will take immediate effect once the scheduler passes along and executes the changed job entry.
@@ -722,11 +742,12 @@ com['packets'].append({
 'en':
 """
 This callback is triggered by the 'Callback' job in the transmit schedule.
- * Channel:          channel from which this frame messages originates, will always be 'CHANNEL_TX1'.
- * Status:           will always be 'scheduler'
- * Seq Number:       running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the callback is turned off and on again. This counter can be used to detect lost callbacks.
- * Timestamp:        running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
- * Userdata:         8 bit number as set in the scheduler callback job
+
+* Channel:          channel from which this frame messages originates, will always be 'CHANNEL_TX1'.
+* Status:           will always be 'scheduler'
+* Seq Number:       running counter that is incremented with each callback, starting with 0 and rolling over after 255 to 1. It will restart from 0 whenever the callback is turned off and on again. This counter can be used to detect lost callbacks.
+* Timestamp:        running counter that is incremented on every millisecond, starting when the bricklet is powered up and rolling over after 65535 to 0. This counter can be used to measure the relative timing between frame receptions.
+* Userdata:         8 bit number as set in the scheduler callback job
 """,
 'de':
 """
@@ -746,9 +767,10 @@ com['packets'].append({
 """
 Stops / resumes the transmission of a specific frame or trigger another single-transmit. This
 function only works on frames that are sent via the TX scheduler jobs 'single' and 'cyclic'.
- * Channel:     selected transmit channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
- * Frame Index: index number that will be used in the transmit scheduler job table to refer to this frame.
- * Mode :       either 'Transmit' to transmit the frame / trigger a new single transmit, or 'Mute' to stop the transmission of the frame.
+
+* Channel:     selected transmit channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
+* Frame Index: index number that will be used in the transmit scheduler job table to refer to this frame.
+* Mode :       either 'Transmit' to transmit the frame / trigger a new single transmit, or 'Mute' to stop the transmission of the frame.
 """,
 'de':
 """
