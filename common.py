@@ -2996,6 +2996,9 @@ class Packet(object):
                 raise GeneratorError("'in' element cannot come after 'out' element")
 
             if element.get_direction() == 'in':
+                if self.get_type() == 'callback':
+                    raise GeneratorError("'in' element not allowed for callback")
+
                 payload_in_size += element.get_size()
             else:
                 payload_out_size += element.get_size()
