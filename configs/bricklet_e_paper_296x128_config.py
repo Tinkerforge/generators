@@ -10,7 +10,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2146,
     'name': 'E Paper 296x128',
@@ -84,6 +84,13 @@ com['constant_groups'].append({
 'type': 'uint8',
 'constants': [('Black White Red', 0),
               ('Black White Gray', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Display Driver',
+'type': 'uint8',
+'constants': [('SSD1675A', 0),
+              ('SSD1680', 1)]
 })
 
 com['packets'].append({
@@ -604,6 +611,47 @@ black/white/red or black/white/gray.
 """
 Gibt den Typ des E-Paper Displays zurück. Der Typ kann entweder
 schwarz/weiß/rot oder schwarz/weiß/grau sein.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Display Driver',
+'elements': [('Display Driver', 'uint8', 1, 'in', {'constant_group': 'Display Driver'})],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Sets the type of display driver. The Bricklet can currently support
+SSD1675A and SSD1680. This will be factory set
+during the flashing and testing phase. The value is saved in
+non-volatile memory and will stay after a power cycle.
+""",
+'de':
+"""
+Setzt den Typ des Display-Treibers. Das unterstützt aktuell
+SSD1675A und SSD1680. Dar korrekte Display-Treiber
+wird bereits werksseitig während des Flashens und Testens
+gesetzt. Der Wert wird in nicht-flüchtigem Speicher gespeichert und
+bleibt bei einem Neustart unverändert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Display Driver',
+'elements': [('Display Driver', 'uint8', 1, 'out', {'constant_group': 'Display Driver'})],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Returns the e-paper display driver.
+""",
+'de':
+"""
+Gibt den E-Paper Display-Treibers zurück.
 """
 }]
 })
