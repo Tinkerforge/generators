@@ -102,8 +102,8 @@ import java.util.List;
  * {1}
  */
 public class {0} extends Device {{
-	public final static int DEVICE_IDENTIFIER = {2};
-	public final static String DEVICE_DISPLAY_NAME = "{3}";
+	public static final int DEVICE_IDENTIFIER = {2};
+	public static final String DEVICE_DISPLAY_NAME = "{3}";
 
 """
 
@@ -689,8 +689,8 @@ public class {0} extends Device {{
 
     def get_java_function_id_definitions(self):
         function_ids = ''
-        template_function = '\tpublic final static byte FUNCTION_{0} = (byte){1};\n'
-        template_callback = '\tprivate final static int CALLBACK_{0} = {1};\n'
+        template_function = '\tpublic static final byte FUNCTION_{0} = (byte){1};\n'
+        template_callback = '\tprivate static final int CALLBACK_{0} = {1};\n'
 
         for packet in self.get_packets('function'):
             function_ids += template_function.format(packet.get_name().upper,
@@ -708,7 +708,7 @@ public class {0} extends Device {{
         return function_ids
 
     def get_java_constants(self):
-        template = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
+        template = '\tpublic static final {0} {1}_{2} = {3}{4};\n'
         constants = []
 
         for constant_group in self.get_constant_groups():
