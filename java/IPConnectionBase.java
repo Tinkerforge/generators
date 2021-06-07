@@ -325,8 +325,8 @@ class DisconnectProbeThread extends Thread {
 	byte[] request = null;
 	LinkedBlockingQueue<Boolean> queue = new LinkedBlockingQueue<Boolean>();
 
-	final static byte FUNCTION_DISCONNECT_PROBE = (byte)128;
-	final static int DISCONNECT_PROBE_INTERVAL = 5000;
+	static final byte FUNCTION_DISCONNECT_PROBE = (byte)128;
+	static final int DISCONNECT_PROBE_INTERVAL = 5000;
 
 	DisconnectProbeThread(IPConnectionBase ipcon) {
 		super("Disconnect-Prober");
@@ -379,38 +379,38 @@ class DisconnectProbeThread extends Thread {
 }
 
 public abstract class IPConnectionBase implements java.io.Closeable {
-	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+	private static final String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
-	public final static byte FUNCTION_ENUMERATE = (byte)254;
-	public final static byte CALLBACK_ENUMERATE = (byte)253;
+	public static final byte FUNCTION_ENUMERATE = (byte)254;
+	public static final byte CALLBACK_ENUMERATE = (byte)253;
 
-	public final static byte CALLBACK_CONNECTED = 0;
-	public final static byte CALLBACK_DISCONNECTED = 1;
+	public static final byte CALLBACK_CONNECTED = 0;
+	public static final byte CALLBACK_DISCONNECTED = 1;
 
-	private final static int BROADCAST_UID = 0;
+	private static final int BROADCAST_UID = 0;
 
 	// enumeration_type parameter to the enumerate callback
-	public final static short ENUMERATION_TYPE_AVAILABLE = 0;
-	public final static short ENUMERATION_TYPE_CONNECTED = 1;
-	public final static short ENUMERATION_TYPE_DISCONNECTED = 2;
+	public static final short ENUMERATION_TYPE_AVAILABLE = 0;
+	public static final short ENUMERATION_TYPE_CONNECTED = 1;
+	public static final short ENUMERATION_TYPE_DISCONNECTED = 2;
 
 	// connect_reason parameter to the connected callback
-	public final static short CONNECT_REASON_REQUEST = 0;
-	public final static short CONNECT_REASON_AUTO_RECONNECT = 1;
+	public static final short CONNECT_REASON_REQUEST = 0;
+	public static final short CONNECT_REASON_AUTO_RECONNECT = 1;
 
 	// disconnect_reason parameter to the disconnected callback
-	public final static short DISCONNECT_REASON_REQUEST = 0;
-	public final static short DISCONNECT_REASON_ERROR = 1;
-	public final static short DISCONNECT_REASON_SHUTDOWN = 2;
+	public static final short DISCONNECT_REASON_REQUEST = 0;
+	public static final short DISCONNECT_REASON_ERROR = 1;
+	public static final short DISCONNECT_REASON_SHUTDOWN = 2;
 
 	// returned by get_connection_state
-	public final static short CONNECTION_STATE_DISCONNECTED = 0;
-	public final static short CONNECTION_STATE_CONNECTED = 1;
-	public final static short CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
+	public static final short CONNECTION_STATE_DISCONNECTED = 0;
+	public static final short CONNECTION_STATE_CONNECTED = 1;
+	public static final short CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
 
-	final static int QUEUE_EXIT = 0;
-	final static int QUEUE_META = 1;
-	final static int QUEUE_PACKET = 2;
+	static final int QUEUE_EXIT = 0;
+	static final int QUEUE_META = 1;
+	static final int QUEUE_PACKET = 2;
 
 	BrickDaemon brickd = null;
 
@@ -426,7 +426,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	private String host;
 	private int port;
 
-	private final static int SEQUENCE_NUMBER_POS = 4;
+	private static final int SEQUENCE_NUMBER_POS = 4;
 	private int nextSequenceNumber = 0; // protected by sequenceNumberMutex
 	private Object sequenceNumberMutex = new Object();
 

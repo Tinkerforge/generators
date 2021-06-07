@@ -13,8 +13,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 class BrickDaemon extends Device {
-	public final static byte FUNCTION_GET_AUTHENTICATION_NONCE = (byte)1;
-	public final static byte FUNCTION_AUTHENTICATE = (byte)2;
+	public static final byte FUNCTION_GET_AUTHENTICATION_NONCE = (byte)1;
+	public static final byte FUNCTION_AUTHENTICATE = (byte)2;
 
 	public BrickDaemon(String uid, IPConnection ipcon) {
 		super(uid, ipcon);

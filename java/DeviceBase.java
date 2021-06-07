@@ -17,14 +17,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public abstract class DeviceBase {
-	final static byte DEVICE_IDENTIFIER_CHECK_PENDING = 0;
-	final static byte DEVICE_IDENTIFIER_CHECK_MATCH = 1;
-	final static byte DEVICE_IDENTIFIER_CHECK_MISMATCH = 2;
+	static final byte DEVICE_IDENTIFIER_CHECK_PENDING = 0;
+	static final byte DEVICE_IDENTIFIER_CHECK_MATCH = 1;
+	static final byte DEVICE_IDENTIFIER_CHECK_MISMATCH = 2;
 
-	final static byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
-	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE = 1; // getter
-	final static byte RESPONSE_EXPECTED_FLAG_TRUE = 2; // setter
-	final static byte RESPONSE_EXPECTED_FLAG_FALSE = 3; // setter, default
+	static final byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
+	static final byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE = 1; // getter
+	static final byte RESPONSE_EXPECTED_FLAG_TRUE = 2; // setter
+	static final byte RESPONSE_EXPECTED_FLAG_FALSE = 3; // setter, default
 
 	boolean replaced;
 	long uidNumber;
