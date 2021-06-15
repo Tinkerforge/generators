@@ -4916,7 +4916,7 @@ class ChangedDirectory(object):
     def __exit__(self, type_, value, traceback):
         os.chdir(self.previous_path)
 
-def dockerize(bindings_name, script_path, add_internal_argument=False, add_arguments=None):
+def dockerize(bindings_name, script_path, add_internal_argument=False, add_arguments=None, mount_m2_volume=False, mount_gnupg_volume=False):
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-d', '--docker', action='store_true', help='run this script in docker container')
@@ -4957,31 +4957,46 @@ def dockerize(bindings_name, script_path, add_internal_argument=False, add_argum
         root_host_dir = os.path.realpath(os.path.join(generators_host_dir, '..'))
         root_container_dir = root_host_dir
 
-        m2_host_dir = os.path.join(generators_host_dir, '.m2')
-        m2_container_dir = '/home/foobar/.m2'
+        command = [
+            'docker',
+            'run',
+            '--rm',
+            '-it',
+            '-v',
+            '{0}:{1}'.format(root_host_dir, root_container_dir)
+        ]
 
-        gnupg_host_dir = os.path.expanduser('~/.gnupg')
-        gnupg_container_dir = '/home/foobar/.gnupg'
+        if mount_m2_volume:
+            m2_host_dir = os.path.join(generators_host_dir, '.m2')
+            m2_container_dir = '/home/foobar/.m2'
 
-        os.makedirs(m2_host_dir, exist_ok=True)
+            os.makedirs(m2_host_dir, exist_ok=True)
 
-        sys.exit(subprocess.call(['docker',
-                                  'run',
-                                  '--rm',
-                                  '-it',
-                                  '-v',
-                                  '{0}:{1}'.format(root_host_dir, root_container_dir),
-                                  '-v',
-                                  '{0}:{1}'.format(m2_host_dir, m2_container_dir),
-                                  '-v',
-                                  '{0}:{1}'.format(gnupg_host_dir, gnupg_container_dir),
-                                  '-u',
-                                  '{0}:{1}'.format(os.getuid(), os.getgid()),
-                                  image_name,
-                                  'bash',
-                                  '-c',
-                                  'cd {0}; python3 -u {1} {2}'.format(os.path.join(generators_container_dir, bindings_name),
-                                                                      script_name,
-                                                                      shlex.join(sys.argv[1:] + ['--no-docker']))]))
+            command += [
+                '-v',
+                '{0}:{1}'.format(m2_host_dir, m2_container_dir)
+            ]
+
+        if mount_gnupg_volume:
+            gnupg_host_dir = os.path.expanduser('~/.gnupg')
+            gnupg_container_dir = '/home/foobar/.gnupg'
+
+            command += [
+                '-v',
+                '{0}:{1}'.format(gnupg_host_dir, gnupg_container_dir)
+            ]
+
+        command += [
+            '-u',
+            '{0}:{1}'.format(os.getuid(), os.getgid()),
+            image_name,
+            'bash',
+            '-c',
+            'cd {0}; python3 -u {1} {2}'.format(os.path.join(generators_container_dir, bindings_name),
+                                                script_name,
+                                                shlex.join(sys.argv[1:] + ['--no-docker']))
+        ]
+
+        sys.exit(subprocess.call(command))
 
     return args

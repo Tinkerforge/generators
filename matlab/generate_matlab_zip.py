@@ -217,6 +217,6 @@ def generate(root_dir, language, internal):
     common.generate(root_dir, language, internal, MATLABZipGenerator)
 
 if __name__ == '__main__':
-    args = common.dockerize('matlab', __file__, add_internal_argument=True)
+    args = common.dockerize('matlab', __file__, add_internal_argument=True, mount_m2_volume=True)
 
     generate(os.getcwd(), 'en', args.internal)

@@ -112,4 +112,5 @@ if __name__ == '__main__':
         parser.add_argument('-g', '--generators', nargs=1, help='comma separated list of generators, each prefixed by +/-/>=/>/<=/<')
         parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-/>=/>/<=/<')
 
-    sys.exit(main(common.dockerize('', __file__, add_internal_argument=True, add_arguments=add_arguments)))
+    # FIXME: set mount_m2_volume and mount_gnupg_volume based on -g/-b
+    sys.exit(main(common.dockerize('', __file__, add_internal_argument=True, add_arguments=add_arguments, mount_m2_volume=True, mount_gnupg_volume=True)))
