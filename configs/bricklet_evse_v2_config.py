@@ -113,7 +113,8 @@ com['constant_groups'].append({
 'type': 'uint8',
 'constants': [('Automatic', 0),
               ('Manual', 1),
-              ('Deactivated', 2)]
+              ('Deactivated', 2),
+              ('Managed', 3)]
 })
 
 com['constant_groups'].append({
@@ -237,9 +238,10 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get Max Charging Current',
-'elements': [('Max Current Configured', 'uint16', 1, 'out'),      # mA
-             ('Max Current Incoming Cable', 'uint16', 1, 'out'),  # mA
-             ('Max Current Outgoing Cable', 'uint16', 1, 'out')], # mA
+'elements': [('Max Current Configured', 'uint16', 1, 'out'),     # mA
+             ('Max Current Incoming Cable', 'uint16', 1, 'out'), # mA
+             ('Max Current Outgoing Cable', 'uint16', 1, 'out'), # mA
+             ('Max Current Managed', 'uint16', 1, 'out')],       # mA
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -449,3 +451,54 @@ TODO
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Managed',
+'elements': [('Managed', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Managed',
+'elements': [('Managed', 'bool', 1, 'in'),
+             ('Password', 'uint32', 1, 'in')], # To enable: 0x00363702 (mgmt on), to disable: 0x036370FF (mgmt off)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Managed Current',
+'elements': [('Current', 'uint16', 1, 'in')], # mA (default 0A)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
