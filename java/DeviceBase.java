@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
- * Copyright (C) 2012-2013, 2019-2020 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013, 2019-2021 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -103,7 +103,7 @@ public abstract class DeviceBase {
 		byte flag = responseExpected[IPConnectionBase.unsignedByte(functionId)];
 
 		if (flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
-			throw new IllegalArgumentException("Invalid function ID " + functionId);
+			throw new IllegalArgumentException("Invalid function ID " + IPConnectionBase.unsignedByte(functionId));
 		}
 
 		return flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
@@ -127,11 +127,11 @@ public abstract class DeviceBase {
 		byte flag = this.responseExpected[index];
 
 		if (flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
-			throw new IllegalArgumentException("Invalid function ID " + functionId);
+			throw new IllegalArgumentException("Invalid function ID " + IPConnectionBase.unsignedByte(functionId));
 		}
 
 		if (flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE) {
-			throw new IllegalArgumentException("Response Expected flag cannot be changed for function ID " + functionId);
+			throw new IllegalArgumentException("Response Expected flag cannot be changed for function ID " + IPConnectionBase.unsignedByte(functionId));
 		}
 
 		if (responseExpected) {
@@ -204,6 +204,7 @@ public abstract class DeviceBase {
 
 		if (IPConnectionBase.getResponseExpectedFromData(request)) {
 			byte functionID = IPConnectionBase.getFunctionIDFromData(request);
+			String functionName = "ID " + IPConnectionBase.unsignedByte(functionID);
 
 			synchronized (requestMutex) {
 				expectedResponseFunctionID = functionID;
@@ -222,7 +223,7 @@ public abstract class DeviceBase {
 						}
 
 						if (response == null) {
-							throw new TimeoutException("Did not receive response in time for function ID " + functionID);
+							throw new TimeoutException("Did not receive response in time for function " + functionName);
 						}
 
 						if (expectedResponseFunctionID == IPConnectionBase.getFunctionIDFromData(response) &&
@@ -248,19 +249,19 @@ public abstract class DeviceBase {
 					}
 
 					if (response.length != expectedResponseLength) {
-						throw new WrongResponseLengthException("Expected response of " + expectedResponseLength + " byte for function ID " + functionID + ", got " + response.length + " byte instead");
+						throw new WrongResponseLengthException("Expected response of " + expectedResponseLength + " byte for function " + functionName + ", got " + response.length + " byte instead");
 					}
 
 					break;
 
 				case 1:
-					throw new InvalidParameterException("Got invalid parameter for function ID " + functionID);
+					throw new InvalidParameterException("Got invalid parameter for function " + functionName);
 
 				case 2:
-					throw new NotSupportedException("Function ID " + functionID + " is not supported");
+					throw new NotSupportedException("Function " + functionName + " is not supported");
 
 				default:
-					throw new UnknownErrorCodeException("Function ID " + functionID + " returned an unknown error");
+					throw new UnknownErrorCodeException("Function " + functionName + " returned an unknown error");
 			}
 		} else {
 			ipcon.sendRequest(request);

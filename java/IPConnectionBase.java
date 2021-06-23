@@ -910,7 +910,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		}
 
 		if (sequenceNumber == 0) {
-			if (device.callbacks[functionID] != null) {
+			if (device.callbacks[IPConnectionBase.unsignedByte(functionID)] != null) {
 				try {
 					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
 					                                          (short)0, 0, packet));

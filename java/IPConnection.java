@@ -155,8 +155,10 @@ public class IPConnection extends IPConnectionBase {
 
 	@Override
 	protected void callDeviceListener(Device device, byte functionID, byte[] packet) {
-		if (device.callbacks[functionID] != null) {
-			device.callbacks[functionID].callback(packet);
+		DeviceCallbackListener listener = device.callbacks[unsignedByte(functionID)];
+
+		if (listener != null) {
+			listener.callback(packet);
 		}
 	}
 }
