@@ -127,7 +127,7 @@ public class IPConnection extends IPConnectionBase {
 	protected void callEnumerateListeners(String uid, String connectedUid, char position,
 	                                      short[] hardwareVersion, short[] firmwareVersion,
 	                                      int deviceIdentifier, short enumerationType) {
-		for (IPConnection.EnumerateListener listener: listenerEnumerate) {
+		for (EnumerateListener listener: listenerEnumerate) {
 			listener.enumerate(uid, connectedUid, position,
 			                   hardwareVersion, firmwareVersion,
 			                   deviceIdentifier, enumerationType);
@@ -141,14 +141,14 @@ public class IPConnection extends IPConnectionBase {
 
 	@Override
 	protected void callConnectedListeners(short connectReason) {
-		for (IPConnection.ConnectedListener listener: listenerConnected) {
+		for (ConnectedListener listener: listenerConnected) {
 			listener.connected(connectReason);
 		}
 	}
 
 	@Override
 	protected void callDisconnectedListeners(short disconnectReason) {
-		for (IPConnection.DisconnectedListener listener: listenerDisconnected) {
+		for (DisconnectedListener listener: listenerDisconnected) {
 			listener.disconnected(disconnectReason);
 		}
 	}
