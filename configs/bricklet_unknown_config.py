@@ -39,6 +39,7 @@ com['constant_groups'].append({
               ('Disconnected', 2)]
 })
 
+# FIXME: is this really necessary to expose enumerate in this non-standard way for the uc bindings?
 com['packets'].append({
 'type': 'function',
 'function_id': 252,
@@ -61,6 +62,7 @@ Siehe :cb:`Enumerate` Callback.
 }]
 })
 
+# FIXME: is this really necessary to expose enumerate in this non-standard way for the uc bindings?
 com['packets'].append({
 'type': 'callback',
 'function_id': 253,
@@ -141,6 +143,7 @@ Der Callback empfängt sieben Parameter:
 }]
 })
 
+# FIXME: is this really necessary to expose enumerate in this non-standard way for the uc bindings?
 com['packets'].append({
 'type': 'function',
 'function_id': 254,
