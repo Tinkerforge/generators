@@ -10,7 +10,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 2],
     'category': 'Bricklet',
     'device_identifier': 286,
     'name': 'NFC',
@@ -39,7 +39,8 @@ com['constant_groups'].append({
 'constants': [('Off', 0),
               ('Cardemu', 1),
               ('P2P', 2),
-              ('Reader', 3)]
+              ('Reader', 3),
+              ('Simple', 4)]
 })
 
 com['constant_groups'].append({
@@ -1268,6 +1269,30 @@ Gibt das Timeout zurück, wie von :func:`Set Maximum Timeout` gesetzt.
 """
 }]
 })
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Simple Get Tag ID Low Level',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Tag Type', 'uint8', 1, 'out', {'constant_group': 'Tag Type'}),
+             ('Tag ID Length', 'uint8', 1, 'out', {'range': (0, 10)}),
+             ('Tag ID Data', 'uint8', 10, 'out', {}),
+             ('Last Seen', 'uint32', 1, 'out')],
+'high_level': {'stream_out': {'name': 'Tag ID', 'single_chunk': True}},
+'since_firmware': [2, 0, 6],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
 
 com['examples'].append({
 'name': 'Scan For Tags',
