@@ -348,6 +348,25 @@ TODO
 
 com['packets'].append({
 'type': 'function',
+'name': 'Get Energy Meter Detailed Values Low Level',
+'elements': [('Values Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Values Chunk Data', 'float', 15, 'out', {})],
+'high_level': {'stream_out': {'name': 'Values', 'fixed_length': 84}},
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TBD
+""",
+'de':
+"""
+TBD
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Get Energy Meter State',
 'elements': [('Available', 'bool', 1, 'out'),
              ('Error Count', 'uint32', 6, 'out')], # local timeout, global timeout, illigal function, illegal data address, illegal data value, slave device failure
