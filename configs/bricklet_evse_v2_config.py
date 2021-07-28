@@ -401,6 +401,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Reset DC Fault Current',
+'response_expected': 'true',
 'elements': [('Password', 'uint32', 1, 'in')], # Password: 0xDC42FA23
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -471,6 +472,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set Managed',
+'response_expected': 'true',
 'elements': [('Managed', 'bool', 1, 'in'),
              ('Password', 'uint32', 1, 'in')], # To enable: 0x00363702 (mgmt on), to disable: 0x036370FF (mgmt off)
 'since_firmware': [1, 0, 0],

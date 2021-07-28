@@ -230,6 +230,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Calibrate',
+'response_expected': 'true',
 'elements': [('State', 'uint8', 1, 'in'),       # 1, 2
              ('Password', 'uint32', 1, 'in'),   # state 1 = 0x0BB03201, state 2 = 0x0BB03202
              ('Value', 'int32', 1, 'in'),       # high voltage, offset
@@ -335,6 +336,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set Managed',
+'response_expected': 'true',
 'elements': [('Managed', 'bool', 1, 'in'),
              ('Password', 'uint32', 1, 'in')], # To enable: 0x00363702 (mgmt on), to disable: 0x036370FF (mgmt off)
 'since_firmware': [2, 0, 6],
@@ -393,6 +395,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set User Calibration',
+'response_expected': 'true',
 'elements': [('Password', 'uint32', 1, 'in'), # 0xCA11B4A0
              ('User Calibration Active', 'bool', 1, 'in'),
              ('Voltage Diff', 'int16', 1, 'in'),
