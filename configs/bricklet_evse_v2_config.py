@@ -127,6 +127,13 @@ com['constant_groups'].append({
               ('Unknown Error', 3),
               ('Calibration Error', 4)]
 })
+
+com['constant_groups'].append({
+'name': 'Enable Input',
+'type': 'uint8',
+'constants': [('Enable Input Deactivated', 0),
+              ('Enable Input Active Open', 1),
+              ('Enable Input Active Close', 2)]
 })
 
 com['packets'].append({
@@ -440,7 +447,8 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set GPIO Configuration',
-'elements': [('Input Configuration', 'uint8', 1, 'in'),
+'elements': [('Enable Input Configuration', 'uint8', 1, 'in', {'constant_group': 'Enable Input'}),
+             ('Input Configuration', 'uint8', 1, 'in'),
              ('Output Configuration', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -458,7 +466,8 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get GPIO Configuration',
-'elements': [('Input Configuration', 'uint8', 1, 'out'),
+'elements': [('Enable Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Enable Input'}),
+             ('Input Configuration', 'uint8', 1, 'out'),
              ('Output Configuration', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
