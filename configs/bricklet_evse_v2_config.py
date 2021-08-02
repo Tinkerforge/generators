@@ -91,7 +91,8 @@ com['constant_groups'].append({
               ('Switch', 2),
               ('Calibration', 3),
               ('Contactor', 4),
-              ('Communication', 5)]
+              ('Communication', 5),
+              ('DC Fault', 6)]
 })
 
 com['constant_groups'].append({
@@ -121,10 +122,11 @@ com['constant_groups'].append({
 'name': 'DC Fault Current State',
 'type': 'uint8',
 'constants': [('Normal Condition', 0),
-              ('6 MA', 1),
-              ('System', 2),
-              ('Unknown', 3),
-              ('Calibration', 4)]
+              ('6 MA Error', 1),
+              ('System Error', 2),
+              ('Unknown Error', 3),
+              ('Calibration Error', 4)]
+})
 })
 
 com['packets'].append({
