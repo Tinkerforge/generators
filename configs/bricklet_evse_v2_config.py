@@ -131,9 +131,9 @@ com['constant_groups'].append({
 com['constant_groups'].append({
 'name': 'Enable Input',
 'type': 'uint8',
-'constants': [('Enable Input Deactivated', 0),
-              ('Enable Input Active Open', 1),
-              ('Enable Input Active Close', 2)]
+'constants': [('Deactivated', 0),
+              ('Active Open', 1),
+              ('Active Close', 2)]
 })
 
 com['packets'].append({
