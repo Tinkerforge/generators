@@ -202,7 +202,8 @@ GPIO:
 
 	response->gpio[2] = (get_bit(port2, 9)  << 0) | // 16: GP Input
 	                    (get_bit(port4, 4)  << 1) | // 17: DC X6
-	                    (get_bit(port4, 5)  << 2) | // 18: DC X3
+	                    (get_bit(port4, 5)  << 2) | // 18: DC X30
+	                    (get_bit(port4, 6)  << 3);  // 19: LED
 """
 com['packets'].append({
 'type': 'function',
