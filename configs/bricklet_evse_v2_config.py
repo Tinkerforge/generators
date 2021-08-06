@@ -89,10 +89,9 @@ com['constant_groups'].append({
 'type': 'uint8',
 'constants': [('OK', 0),
               ('Switch', 2),
-              ('Calibration', 3),
+              ('DC Fault', 3),
               ('Contactor', 4),
-              ('Communication', 5),
-              ('DC Fault', 6)]
+              ('Communication', 5)]
 })
 
 com['constant_groups'].append({
