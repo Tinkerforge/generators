@@ -209,8 +209,8 @@ com['packets'].append({
 'name': 'Get Low Level State',
 'elements': [('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
              ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
-             ('ADC Values', 'uint16', 5, 'out'), # CP/PE before resistor, CP/PE after resistor, PP/PE, +12V rail, -12V rail
-             ('Voltages', 'int16', 5, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # CP/PE before resistor, CP/PE after resistor, PP/PE, +12V rail, -12V rail
+             ('ADC Values', 'uint16', 7, 'out'), # CP/PE before resistor (PWM high), CP/PE after resistor (PWM high), CP/PE before resistor (PWM low), CP/PE after resistor (PWM low), PP/PE, +12V rail, -12V rail
+             ('Voltages', 'int16', 7, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # CP/PE before resistor (PWM high), CP/PE after resistor (PWM high), CP/PE before resistor (PWM low), CP/PE after resistor (PWM low), PP/PE, +12V rail, -12V rail
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}), # CP/PE resistance, PP/PE resistance
              ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (20 for now)
 ],
