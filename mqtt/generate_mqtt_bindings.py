@@ -169,7 +169,7 @@ class {0}(MQTTCallbackDevice):
                     low_level_roles_out.append(element.get_role())
 
                 if stream_in != None:
-                    chunk_padding = "'0'"
+                    chunk_padding = "0" if not stream_in.get_chunk_data_element().get_type() == "char" else "'\\0'"
                     chunk_cardinality = stream_in.get_chunk_data_element().get_cardinality()
 
                     if stream_in.get_fixed_length() != None:
