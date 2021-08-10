@@ -551,7 +551,9 @@ class MQTTBindings:
             else:
                 logging.debug("Ignoring _response_expected, it was not of boolean type. (Call of {} of device {} of type {}.)".format(fnName, uid, device_name))
 
-        device.check_validity()
+        response = self.handle_ipcon_exceptions(lambda ipcon: device.check_validity())
+        if response is not None:
+            return response
 
         if direction == 'in':
             def create_low_level_request_data(stream_length, stream_chunk_offset, stream_chunk_data):
