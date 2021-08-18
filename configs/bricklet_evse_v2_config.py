@@ -135,6 +135,15 @@ com['constant_groups'].append({
               ('Active Close', 2)]
 })
 
+com['constant_groups'].append({
+'name': 'Button Configuration',
+'type': 'uint8',
+'constants': [('Deactivated', 0),
+              ('Start Charging', 1),
+              ('Stop Charging', 2),
+              ('Start And Stop Charging', 3)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
@@ -597,6 +606,40 @@ com['packets'].append({
 'elements': [('Indication', 'int16', 1, 'in'), #-1 = led controled by EVSE, 0 = Off, 255 = on, 1-254 = pwm, 1001 = ack indication, 1002 = nack indication, 1003 = nag indication
              ('Duration', 'uint16', 1, 'in'), # max 2^16 ms
              ('Status', 'uint8', 1, 'out')], # OK = 0, Sonst nicht OK wegen X (Blinking=2, Flickering=3, Breathing=4)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Button Configuration',
+'elements': [('Button Configuration', 'uint8', 1, 'in', {'constant_group': 'Button Configuration'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Button Configuration',
+'elements': [('Button Configuration', 'uint8', 1, 'out', {'constant_group': 'Button Configuration'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
