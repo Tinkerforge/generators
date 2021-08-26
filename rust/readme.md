@@ -2,7 +2,7 @@
 
 [![Latest version](https://img.shields.io/crates/v/tinkerforge.svg)](https://crates.io/crates/tinkerforge)
 [![Documentation](https://docs.rs/tinkerforge/badge.svg)](https://docs.rs/tinkerforge)
-[![Minimum rustc version](https://img.shields.io/badge/rustc-1.31+-blue.svg)](https://github.com/tinkerforge/generators/blob/master/rust/readme.md#rust-version-requirements)
+[![Minimum rustc version](https://img.shields.io/badge/rustc-1.41+-blue.svg)](https://github.com/tinkerforge/generators/blob/master/rust/readme.md#rust-version-requirements)
 [![License](https://img.shields.io/crates/l/tinkerforge.svg)](https://github.com/tinkerforge/generators/blob/master/rust/readme.md#license)
 
 This crate provides API bindings for [Tinkerforge](https://www.tinkerforge.com) bricks and bricklets.
@@ -35,7 +35,7 @@ Further examples can be found [here](https://www.tinkerforge.com/en/doc/Software
 
 ## Rust version requirements
 
-The bindings require the rust compiler in version 1.31 or higher.
+The bindings require the rust compiler in version 1.41 or higher.
 
 ## License
 

@@ -16,8 +16,10 @@ use std::{
 
 use crate::{byte_converter::*, converting_callback_receiver::*, converting_receiver::*};
 
-use hmac::{Hmac, Mac};
-use rand::{self, FromEntropy, Rng};
+use hmac::{Hmac, Mac, NewMac};
+use rand::{RngCore, SeedableRng};
+use rand_chacha::ChaChaRng;
+
 use sha1::Sha1;
 
 /// The IP Connection manages the communication between the API bindings and the Brick Daemon or a WIFI/Ethernet Extension.
@@ -901,23 +903,23 @@ impl IpConnectionRequestSender {
             Err(_) => return Err(AuthenticateError::CouldNotGetServerNonce),
         };
 
-        let mut rng = rand::prng::ChaChaRng::from_entropy();
+        let mut rng = ChaChaRng::from_entropy();
         let mut client_nonce = [0u8; 4];
-        rng.fill(&mut client_nonce);
+        rng.fill_bytes(&mut client_nonce);
 
         let mut to_hash = [0u8; 8];
         //bytes::copy_memory(to_hash.mut_slice_to(4), )
         to_hash[0..4].copy_from_slice(&server_nonce.0);
         to_hash[4..=7].copy_from_slice(&client_nonce);
 
-        let mut mac = Hmac::<Sha1>::new_varkey(secret.as_bytes()).expect("");
-        mac.input(&to_hash);
-        let result = mac.result();
+        let mut mac = Hmac::<Sha1>::new_from_slice(secret.as_bytes()).expect("");
+        mac.update(&to_hash);
+        let result = mac.finalize();
 
         let (auth_sent_tx, auth_sent_rx) = channel();
         let mut payload = [0u8; 24];
         payload[0..4].copy_from_slice(&client_nonce);
-        let hashed = result.code();
+        let hashed = result.into_bytes();
         payload[4..24].copy_from_slice(&hashed);
         let (auth_tx, auth_rx) = channel();
         self.socket_thread_tx
