@@ -88,7 +88,7 @@
 - Add gpio_state callback to Performance DC Bricklet API
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
 
-2021-08-26: 2.0.19 (<unknown>)
+2021-08-26: 2.0.19 (f83a1b6)
 - Fix compilation issues caused by yanked dependency
 - Add set/get_display_driver functions and DISPLAY_DRIVER constants to E-Paper 296x128 Bricklet API
 - Add simple_get_tag_id function and NFC_BRICKLET_MODE_SIMPLE constant to NFC Bricklet API
