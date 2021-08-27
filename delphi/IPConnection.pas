@@ -1020,8 +1020,7 @@ begin
   while (true) do begin
     SetLength(data, 0);
     if (not callback_^.queue.Dequeue(kind, data, -1)) then begin
-      { FIXME: What to do here? try again? exit? }
-      break;
+      continue;
     end;
     if (kind = IPCON_QUEUE_KIND_EXIT) then begin
       break;
