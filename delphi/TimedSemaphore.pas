@@ -142,10 +142,10 @@ begin
   mutex.Acquire;
   try
     Inc(available);
+    event.SetEvent();
   finally
     mutex.Release;
   end;
-  event.SetEvent();
 {$endif}
 end;
 
