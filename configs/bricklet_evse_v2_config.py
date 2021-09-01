@@ -136,6 +136,13 @@ com['constant_groups'].append({
 })
 
 com['constant_groups'].append({
+'name': 'Output',
+'type': 'uint8',
+'constants': [('Low', 0),
+              ('High', 1)]
+})
+
+com['constant_groups'].append({
 'name': 'Button Configuration',
 'type': 'uint8',
 'constants': [('Deactivated', 0),
@@ -478,7 +485,7 @@ com['packets'].append({
 'name': 'Get GPIO Configuration',
 'elements': [('Enable Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Enable Input'}),
              ('Input Configuration', 'uint8', 1, 'out'),
-             ('Output Configuration', 'uint8', 1, 'out')],
+             ('Output Configuration', 'uint8', 1, 'out', {'constant_group': 'Output'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
