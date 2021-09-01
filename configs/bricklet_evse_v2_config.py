@@ -128,11 +128,11 @@ com['constant_groups'].append({
 })
 
 com['constant_groups'].append({
-'name': 'Enable Input',
+'name': 'Shutdown Input',
 'type': 'uint8',
-'constants': [('Deactivated', 0),
-              ('Active Open', 1),
-              ('Active Close', 2)]
+'constants': [('Ignored', 0),
+              ('Shutdown On Open', 1),
+              ('Shutdown On Close', 2)]
 })
 
 com['constant_groups'].append({
@@ -464,7 +464,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set GPIO Configuration',
-'elements': [('Enable Input Configuration', 'uint8', 1, 'in', {'constant_group': 'Enable Input'}),
+'elements': [('Shutdown Input Configuration', 'uint8', 1, 'in', {'constant_group': 'Shutdown Input'}),
              ('Input Configuration', 'uint8', 1, 'in'),
              ('Output Configuration', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -483,7 +483,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get GPIO Configuration',
-'elements': [('Enable Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Enable Input'}),
+'elements': [('Shutdown Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Shutdown Input'}),
              ('Input Configuration', 'uint8', 1, 'out'),
              ('Output Configuration', 'uint8', 1, 'out', {'constant_group': 'Output'})],
 'since_firmware': [1, 0, 0],
