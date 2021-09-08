@@ -358,7 +358,8 @@ com['packets'].append({
 'elements': [('Power', 'float', 1, 'out'),            # W
              ('Energy Relative', 'float', 1, 'out'),  # Wh
              ('Energy Absolute', 'float', 1, 'out'),  # Wh
-             ('Phases Active', 'bool', 3, 'out')],
+             ('Phases Active', 'bool', 3, 'out'),
+             ('Phases Connected', 'bool', 3, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
