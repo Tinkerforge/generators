@@ -378,7 +378,7 @@ com['packets'].append({
 'name': 'Get Energy Meter Detailed Values Low Level',
 'elements': [('Values Chunk Offset', 'uint16', 1, 'out', {}),
              ('Values Chunk Data', 'float', 15, 'out', {})],
-'high_level': {'stream_out': {'name': 'Values', 'fixed_length': 84}},
+'high_level': {'stream_out': {'name': 'Values', 'fixed_length': 85}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
