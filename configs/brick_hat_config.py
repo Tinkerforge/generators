@@ -10,7 +10,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 2],
     'category': 'Brick',
     'device_identifier': 111,
     'name': 'HAT',
@@ -32,6 +32,13 @@ com = {
     'packets': [],
     'examples': []
 }
+
+com['constant_groups'].append({
+'name': 'RTC Driver',
+'type': 'uint8',
+'constants': [('PCF8523T', 0),
+              ('DS1338Z', 1)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -274,6 +281,51 @@ Dieser Callback wird periodisch ausgelöst abhängig von der mittels
 :func:`Set Voltages Callback Configuration` gesetzten Konfiguration
 
 Die :word:`parameters` sind der gleiche wie :func:`Get Voltages`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set RTC Driver',
+'elements': [('RTC Driver', 'uint8', 1, 'in', {'constant_group': 'RTC Driver'})],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Configures the RTC driver that is given to the Raspberry Pi to be used.
+Currently there are two different RTCs used:
+
+* Hardware version <= 1.5: PCF8523T
+* Hardware version 1.6: DS1338Z
+
+The correct driver will be set during factory flashing by Tinkerforge.
+""",
+'de':
+"""
+Konfiguriert den RTC-Treiber der dem Raspberry Pi zur Nutzung gegeben wird.
+Aktuell werden zwei unterschiedliche RTCs verbaut:
+* Hardwareversion <= 1.5: PCF8523T
+* Hardwareversion 1.6: DS1338Z
+
+Der korrekte Treiber wird während dem ersten Flashens von Tinkerforge gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get RTC Driver',
+'elements': [('RTC Driver', 'uint8', 1, 'out', {'constant_group': 'RTC Driver'})],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Returns the RTC driver as set by :func:`Set RTC Driver`.
+""",
+'de':
+"""
+Gibt den RTC-Treiber zurück, wie von :func:`Set RTC Driver` gesetzt.
 """
 }]
 })
