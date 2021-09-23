@@ -36,8 +36,8 @@ com = {
 com['constant_groups'].append({
 'name': 'RTC Driver',
 'type': 'uint8',
-'constants': [('PCF8523T', 0),
-              ('DS1338Z', 1)]
+'constants': [('PCF8523', 0),
+              ('DS1338', 1)]
 })
 
 com['packets'].append({
