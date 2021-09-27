@@ -296,8 +296,8 @@ com['packets'].append({
 Configures the RTC driver that is given to the Raspberry Pi to be used.
 Currently there are two different RTCs used:
 
-* Hardware version <= 1.5: PCF8523T
-* Hardware version 1.6: DS1338Z
+* Hardware version <= 1.5: PCF8523
+* Hardware version 1.6: DS1338
 
 The correct driver will be set during factory flashing by Tinkerforge.
 """,
@@ -305,8 +305,9 @@ The correct driver will be set during factory flashing by Tinkerforge.
 """
 Konfiguriert den RTC-Treiber der dem Raspberry Pi zur Nutzung gegeben wird.
 Aktuell werden zwei unterschiedliche RTCs verbaut:
-* Hardwareversion <= 1.5: PCF8523T
-* Hardwareversion 1.6: DS1338Z
+
+* Hardwareversion <= 1.5: PCF8523
+* Hardwareversion 1.6: DS1338
 
 Der korrekte Treiber wird während dem ersten Flashens von Tinkerforge gesetzt.
 """
