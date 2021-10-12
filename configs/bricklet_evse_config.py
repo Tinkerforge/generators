@@ -231,7 +231,6 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Calibrate',
-'response_expected': 'true',
 'elements': [('State', 'uint8', 1, 'in'),       # 1, 2
              ('Password', 'uint32', 1, 'in'),   # state 1 = 0x0BB03201, state 2 = 0x0BB03202
              ('Value', 'int32', 1, 'in'),       # high voltage, offset
