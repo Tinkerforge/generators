@@ -171,7 +171,8 @@ com['packets'].append({
              ('Voltages', 'int16', 3, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # pe-cp, pe-pp, high voltage pe-cp
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}),
              ('GPIO', 'bool', 5, 'out'), # XMC_GPIO_GetInput(EVSE_INPUT_GP_PIN) | (XMC_GPIO_GetInput(EVSE_OUTPUT_GP_PIN) << 1) | (XMC_GPIO_GetInput(EVSE_MOTOR_INPUT_SWITCH_PIN) << 2) | (XMC_GPIO_GetInput(EVSE_RELAY_PIN) << 3) | (XMC_GPIO_GetInput(EVSE_MOTOR_FAULT_PIN) << 4)
-             ('Hardware Version', 'uint8', 1, 'out')
+             ('Hardware Version', 'uint8', 1, 'out'),
+             ('Time Since CP PWM Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
