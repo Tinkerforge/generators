@@ -1332,7 +1332,7 @@ def normalize_scale(scale, unit):
 
     return tuple(scale), unit_title, unit_symbol
 
-def format_since_firmware(device, packet):
+def format_since_firmware(device, packet, nbsp='$nbsp;'):
     since = packet.get_since_firmware()
 
     if since == None or since <= [2, 0, 0]:
@@ -1347,7 +1347,7 @@ def format_since_firmware(device, packet):
     else:
         assert False
 
-    return '\n.. versionadded:: {1}.{2}.{3}$nbsp;({0})\n'.format(suffix, *since)
+    return '\n.. versionadded:: {2}.{3}.{4}{1}({0})\n'.format(suffix, nbsp, *since)
 
 def format_constant_default(prefix, constant_group, constant, value):
     if prefix.endswith('_'):
