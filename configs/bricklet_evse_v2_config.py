@@ -229,6 +229,7 @@ com['packets'].append({
              ('Voltages', 'int16', 7, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # CP/PE before resistor (PWM high), CP/PE after resistor (PWM high), CP/PE before resistor (PWM low), CP/PE after resistor (PWM low), PP/PE, +12V rail, -12V rail
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}), # CP/PE resistance, PP/PE resistance
              ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (20 for now)
+             ('Charging Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -648,6 +649,119 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Button Configuration',
 'elements': [('Button Configuration', 'uint8', 1, 'out', {'constant_group': 'Button Configuration'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Button State',
+'elements': [('Button Press Time', 'uint32', 1, 'out'),
+             ('Button Release Time', 'uint32', 1, 'out'),
+             ('Button Pressed', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Data 1',
+'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
+             ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
+             ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
+             ('Contactor Error', 'uint8', 1, 'out'),
+             ('Charge Release', 'uint8', 1, 'out', {'constant_group': 'Charge Release'}),
+             ('Allowed Charging Current', 'uint16', 1, 'out'),
+             ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
+             ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
+             ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Jumper Configuration', 'uint8', 1, 'out', {'constant_group': 'Jumper Configuration'}),
+             ('Has Lock Switch', 'bool', 1, 'out'),
+],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Data 2',
+'elements': [('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
+             ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
+             ('ADC Values', 'uint16', 7, 'out'), # CP/PE before resistor (PWM high), CP/PE after resistor (PWM high), CP/PE before resistor (PWM low), CP/PE after resistor (PWM low), PP/PE, +12V rail, -12V rail
+             ('Voltages', 'int16', 7, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # CP/PE before resistor (PWM high), CP/PE after resistor (PWM high), CP/PE before resistor (PWM low), CP/PE after resistor (PWM low), PP/PE, +12V rail, -12V rail
+             ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}), # CP/PE resistance, PP/PE resistance
+             ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (20 for now)
+             ('Charging Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Max Current Configured', 'uint16', 1, 'out'),     # mA
+             ('Max Current Incoming Cable', 'uint16', 1, 'out'), # mA
+             ('Max Current Outgoing Cable', 'uint16', 1, 'out'), # mA
+             ('Max Current Managed', 'uint16', 1, 'out'),
+             ('Autostart', 'bool', 1, 'out'),
+],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Data 3',
+'elements': [('Power', 'float', 1, 'out'),            # W
+             ('Energy Relative', 'float', 1, 'out'),  # Wh
+             ('Energy Absolute', 'float', 1, 'out'),  # Wh
+             ('Phases Active', 'bool', 3, 'out'),
+             ('Phases Connected', 'bool', 3, 'out'),
+             ('Available', 'bool', 1, 'out'),
+             ('Error Count', 'uint32', 6, 'out'),
+             ('DC Fault Current State', 'uint8', 1, 'out', {'constant_group': 'DC Fault Current State'}),
+             ('Shutdown Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Shutdown Input'}),
+             ('Input Configuration', 'uint8', 1, 'out'),
+             ('Output Configuration', 'uint8', 1, 'out', {'constant_group': 'Output'}),
+             ('Managed', 'bool', 1, 'out'),
+             ('Indication', 'int16', 1, 'out'),
+             ('Duration', 'uint16', 1, 'out'),
+             ('Button Configuration', 'uint8', 1, 'out', {'constant_group': 'Button Configuration'}),
+             ('Button Press Time', 'uint32', 1, 'out'),
+             ('Button Release Time', 'uint32', 1, 'out'),
+             ('Button Pressed', 'bool', 1, 'out')
+],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

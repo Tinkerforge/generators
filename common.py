@@ -3004,7 +3004,7 @@ class Packet(object):
                 payload_out_size += element.get_size()
 
             if not self.is_virtual() and (payload_in_size > 64 or payload_out_size > 64):
-                raise GeneratorError('Payload too long: ' + raw_data['name'])
+                raise GeneratorError('Payload too long (in {0}, out {1}): '.format(payload_in_size, payload_out_size) + raw_data['name'])
 
             self.elements.append(element)
 
@@ -3162,15 +3162,16 @@ class Packet(object):
         return '.'.join([str(x) for x in self.get_since_firmware()])
 
     def get_response_expected(self):
-        response_expected = self.raw_data.get('response_expected')
+        if len(self.get_elements(direction='out')) > 0:
+            assert 'response_expected' not in self.raw_data, 'cannot change response_expected away from always_true'
 
-        if response_expected == None:
-            if len(self.get_elements(direction='out')) > 0:
-                response_expected = 'always_true'
-            elif self.get_doc_type() == 'ccf' or self.get_high_level('stream_in') != None:
-                response_expected = 'true'
-            else:
-                response_expected = 'false'
+            response_expected = 'always_true'
+        elif self.get_doc_type() == 'ccf' or self.get_high_level('stream_in') != None:
+            assert 'response_expected' not in self.raw_data, 'cannot change response_expected away from true'
+
+            response_expected = 'true'
+        else:
+            response_expected = self.raw_data.get('response_expected', 'false')
 
         return response_expected
 

@@ -171,7 +171,8 @@ com['packets'].append({
              ('Voltages', 'int16', 3, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # pe-cp, pe-pp, high voltage pe-cp
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}),
              ('GPIO', 'bool', 5, 'out'), # XMC_GPIO_GetInput(EVSE_INPUT_GP_PIN) | (XMC_GPIO_GetInput(EVSE_OUTPUT_GP_PIN) << 1) | (XMC_GPIO_GetInput(EVSE_MOTOR_INPUT_SWITCH_PIN) << 2) | (XMC_GPIO_GetInput(EVSE_RELAY_PIN) << 3) | (XMC_GPIO_GetInput(EVSE_MOTOR_FAULT_PIN) << 4)
-             ('Hardware Version', 'uint8', 1, 'out')
+             ('Hardware Version', 'uint8', 1, 'out'),
+             ('Charging Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -230,7 +231,6 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Calibrate',
-'response_expected': 'true',
 'elements': [('State', 'uint8', 1, 'in'),       # 1, 2
              ('Password', 'uint32', 1, 'in'),   # state 1 = 0x0BB03201, state 2 = 0x0BB03202
              ('Value', 'int32', 1, 'in'),       # high voltage, offset
@@ -439,6 +439,134 @@ com['packets'].append({
 'name': 'Set Data Storage',
 'elements': [('Page', 'uint8', 1, 'in'),
              ('Data', 'uint8', 63, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Indicator LED',
+'elements': [('Indication', 'int16', 1, 'out'),
+             ('Duration', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Indicator LED',
+'elements': [('Indication', 'int16', 1, 'in'), #-1 = led controled by EVSE, 0 = Off, 255 = on, 1-254 = pwm, 1001 = ack indication, 1002 = nack indication, 1003 = nag indication
+             ('Duration', 'uint16', 1, 'in'), # max 2^16 ms
+             ('Status', 'uint8', 1, 'out')], # OK = 0, Sonst nicht OK wegen X (Blinking=2, Flickering=3, Breathing=4)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Button State',
+'elements': [('Button Press Time', 'uint32', 1, 'out'),
+             ('Button Release Time', 'uint32', 1, 'out'),
+             ('Button Pressed', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Data 1',
+'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
+             ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
+             ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
+             ('Contactor Error', 'uint8', 1, 'out'),
+             ('Charge Release', 'uint8', 1, 'out', {'constant_group': 'Charge Release'}),
+             ('Allowed Charging Current', 'uint16', 1, 'out'),
+             ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
+             ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
+             ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Jumper Configuration', 'uint8', 1, 'out', {'constant_group': 'Jumper Configuration'}),
+             ('Has Lock Switch', 'bool', 1, 'out'),
+             ('Low Level Mode Enabled', 'bool', 1, 'out'),
+             ('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
+             ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
+             ('ADC Values', 'uint16', 2, 'out'),
+             ('Voltages', 'int16', 3, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # pe-cp, pe-pp, high voltage pe-cp
+             ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}),
+             ('GPIO', 'bool', 5, 'out'), # XMC_GPIO_GetInput(EVSE_INPUT_GP_PIN) | (XMC_GPIO_GetInput(EVSE_OUTPUT_GP_PIN) << 1) | (XMC_GPIO_GetInput(EVSE_MOTOR_INPUT_SWITCH_PIN) << 2) | (XMC_GPIO_GetInput(EVSE_RELAY_PIN) << 3) | (XMC_GPIO_GetInput(EVSE_MOTOR_FAULT_PIN) << 4)
+             ('Hardware Version', 'uint8', 1, 'out'),
+             ('Charging Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Max Current Configured', 'uint16', 1, 'out'),     # mA
+             ('Max Current Incoming Cable', 'uint16', 1, 'out'), # mA
+             ('Max Current Outgoing Cable', 'uint16', 1, 'out'), # mA
+             ('Max Current Managed', 'uint16', 1, 'out'),
+             ('Autostart', 'bool', 1, 'out'),
+             ('Managed', 'bool', 1, 'out'),
+],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Data 2',
+'elements': [('User Calibration Active', 'bool', 1, 'out'),
+             ('Voltage Diff', 'int16', 1, 'out'),
+             ('Voltage Mul', 'int16', 1, 'out'),
+             ('Voltage Div', 'int16', 1, 'out'),
+             ('Resistance 2700', 'int16', 1, 'out'),
+             ('Resistance 880', 'int16', 14, 'out'),
+             ('Indication', 'int16', 1, 'out'),
+             ('Duration', 'uint16', 1, 'out'),
+             ('Button Press Time', 'uint32', 1, 'out'),
+             ('Button Release Time', 'uint32', 1, 'out'),
+             ('Button Pressed', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
