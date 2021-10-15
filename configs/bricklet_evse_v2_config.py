@@ -661,3 +661,23 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Button State',
+'elements': [('Button Press Time', 'uint32', 1, 'out'),
+             ('Button Release Time', 'uint32', 1, 'out'),
+             ('Button Pressed', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
