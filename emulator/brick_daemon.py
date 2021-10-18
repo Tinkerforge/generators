@@ -200,7 +200,7 @@ def _create_error_response(request, error_code):
 async def _cancel_task(task):
     if task.done():
         try:
-            task.result() # propagate exceptions
+            task.result() # propagate exception
         except asyncio.CancelledError:
             pass
     else:
@@ -272,8 +272,9 @@ async def _run(get_things, create_thing_coroutine, create_interrupt_coroutine=No
 
             tasks.pop(thing)
 
-            task.result() # propagates exceptions
+            task.result() # propagate exception
 
+# decorator
 def autorun(callable_):
     assert inspect.iscoroutinefunction(callable_)
 
@@ -281,6 +282,7 @@ def autorun(callable_):
 
     return callable_
 
+# decorator
 def function(function_id, input_format, output_format):
     assert function_id >= 1 and function_id <= 255, function_id
 
@@ -296,6 +298,7 @@ def function(function_id, input_format, output_format):
 
     return helper
 
+# decorator
 def passthrough(function_id, format_):
     assert function_id >= 1 and function_id <= 255, function_id
 
@@ -870,7 +873,7 @@ class Device(metaclass=MetaDevice):
     def _broadcast_response(self, response):
         if self._broadcast_response_cb == None:
             if self._debug:
-                _logger.warning('Dropping {0} to be broadcasted, device not added to a brick daemon'.format(response))
+                _logger.warning('Dropping {0} to be broadcasted, device not added to a Brick Daemon'.format(response))
 
             return
 
