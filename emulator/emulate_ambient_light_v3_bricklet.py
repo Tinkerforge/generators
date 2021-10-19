@@ -14,8 +14,10 @@ if sys.hexversion < 0x3070000:
 import asyncio
 import logging
 
-from brick_daemon import BrickDaemon, autorun, function, set_global_debug
+from brick_daemon import BrickDaemon, autorun, set_global_debug
 from ambient_light_v3_bricklet_skeleton import AmbientLightV3BrickletSkeleton
+
+DEBUG = False
 
 class AmbientLightV3Bricklet(AmbientLightV3BrickletSkeleton):
     def __init__(self, *args, **kwargs):
@@ -46,11 +48,12 @@ class AmbientLightV3Bricklet(AmbientLightV3BrickletSkeleton):
         return self._illuminance_range, self._integration_time
 
 async def main():
-    logging.basicConfig(level=logging.DEBUG)
-    set_global_debug(True)
+    if DEBUG:
+        logging.basicConfig(level=logging.DEBUG)
+        set_global_debug(True)
 
     async with BrickDaemon('0.0.0.0', 5555) as brickd:
         await brickd.add_device(AmbientLightV3Bricklet('EALV3'))
         await brickd.run_forever()
 
-asyncio.run(main(), debug=True)
+asyncio.run(main(), debug=DEBUG)
