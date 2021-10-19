@@ -61,7 +61,7 @@ from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
-except ValueError:
+except (ValueError, ImportError):
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 """
@@ -689,7 +689,7 @@ class PythonBindingsGenerator(python_common.PythonGeneratorTrait, common.Binding
     def finish(self):
         template_import = """try:
     from .{0} import {1}
-except ValueError:
+except (ValueError, ImportError):
     from {0} import {1}
 """
         template = """# -*- coding: utf-8 -*-
