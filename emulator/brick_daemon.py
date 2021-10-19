@@ -1003,7 +1003,12 @@ class BrickDaemon:
 
         self._device_change_queue.put_nowait((self._add_device, device, return_queue))
 
-        return await return_queue.get() # cancellation is okay here
+        success, result = await return_queue.get() # cancellation is okay here
+
+        if not success:
+            raise result
+
+        return result
 
     def _remove_device(self, device):
         known_device = self._devices.get(device._uid_number)
@@ -1038,12 +1043,24 @@ class BrickDaemon:
 
         self._device_change_queue.put_nowait((self._remove_device, device, return_queue))
 
-        return await return_queue.get() # cancellation is okay here
+        success, result = await return_queue.get() # cancellation is okay here
+
+        if not success:
+            raise result
+
+        return result
 
     async def _handle_device_change(self):
         callable_, device, return_queue = await self._device_change_queue.get() # cancellation is okay here
 
-        return_queue.put_nowait(callable_(device))
+        try:
+            result = callable_(device)
+            success = True
+        except Exception as e:
+            result = e
+            success = False
+
+        return_queue.put_nowait((success, result))
 
     def _enqueue_request(self, request, response_queue):
         uid_number = _get_uid_number_from_data(request.data)
@@ -1200,17 +1217,12 @@ class BrickDaemon:
             return
 
         self._run_task = asyncio.create_task(self._run(), name='BrickDaemon:run')
-        self._run_task.add_done_callback(self._clear_run_task)
 
     async def stop_running(self):
         if self._run_task == None:
             return
 
         await _cancel_task(self._run_task) # FIXME: what to do if awaiting cancellation gets cancelled?
-
-    def _clear_run_task(self, task):
-        if self._run_task != task:
-            return
 
         self._run_task = None
 
@@ -1222,17 +1234,16 @@ class BrickDaemon:
             clients_task = asyncio.create_task(_run(lambda: self._clients, lambda client: self._handle_client(client), create_interrupt_coroutine=self._handle_client_addition), name='BrickDaemon:run_clients')
 
             try:
-                await asyncio.wait({devices_task, clients_task})
-            except asyncio.CancelledError:
+                # FIXME: use asyncio.gather instead here?
+                await asyncio.wait({devices_task, clients_task}, return_when=asyncio.FIRST_COMPLETED)
+            finally:
                 await _cancel_task(clients_task) # FIXME: what to do if awaiting cancellation gets cancelled?
                 await _cancel_task(devices_task) # FIXME: what to do if awaiting cancellation gets cancelled?
-
-                raise
 
     async def run_forever(self):
         self.start_running()
 
-        await self._run_task
+        await self._run_task # cancellation is okay here
 
     async def __aenter__(self):
         return self
