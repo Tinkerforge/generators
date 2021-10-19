@@ -238,13 +238,13 @@ async def _run(get_things, create_thing_coroutine, create_interrupt_coroutine=No
             if thing in tasks:
                 continue
 
-            task = asyncio.create_task(create_thing_coroutine(thing))
+            task = asyncio.create_task(create_thing_coroutine(thing), name='run:thing')
 
             tasks[thing] = task
             things[task] = thing
 
         if interrupt_thing not in tasks:
-            task = asyncio.create_task(create_interrupt_coroutine())
+            task = asyncio.create_task(create_interrupt_coroutine(), name='run:interrupt')
 
             tasks[interrupt_thing] = task
             things[task] = interrupt_thing
@@ -674,10 +674,10 @@ class Device(metaclass=MetaDevice):
 
             while not disconnect:
                 if request_task == None:
-                    request_task = asyncio.create_task(self._passthrough_queue.get())
+                    request_task = asyncio.create_task(self._passthrough_queue.get(), name='Device:passthrough_queue:get')
 
                 if response_task == None:
-                    response_task = asyncio.create_task(reader.read(8192))
+                    response_task = asyncio.create_task(reader.read(8192), name='Device:passthrough_socket:read')
 
                 try:
                     await asyncio.wait({request_task, response_task}, return_when=asyncio.FIRST_COMPLETED)
@@ -1109,10 +1109,10 @@ class BrickDaemon:
 
         while not disconnect:
             if request_task == None:
-                request_task = asyncio.create_task(reader.read(8192))
+                request_task = asyncio.create_task(reader.read(8192), name='Client:socket:read')
 
             if response_task == None:
-                response_task = asyncio.create_task(response_queue.get())
+                response_task = asyncio.create_task(response_queue.get(), name='Client:response_queue:get')
 
             try:
                 await asyncio.wait({request_task, response_task}, return_when=asyncio.FIRST_COMPLETED)
@@ -1199,7 +1199,7 @@ class BrickDaemon:
         if self._run_task != None:
             return
 
-        self._run_task = asyncio.create_task(self._run())
+        self._run_task = asyncio.create_task(self._run(), name='BrickDaemon:run')
         self._run_task.add_done_callback(self._clear_run_task)
 
     async def stop_running(self):
@@ -1218,8 +1218,8 @@ class BrickDaemon:
         server = await asyncio.start_server(lambda *client: self._client_addition_queue.put_nowait(client), self._host, self._port) # cancellation is okay here
 
         async with server:
-            devices_task = asyncio.create_task(_run(self._devices.values, lambda device: device._run(), create_interrupt_coroutine=self._handle_device_change))
-            clients_task = asyncio.create_task(_run(lambda: self._clients, lambda client: self._handle_client(client), create_interrupt_coroutine=self._handle_client_addition))
+            devices_task = asyncio.create_task(_run(self._devices.values, lambda device: device._run(), create_interrupt_coroutine=self._handle_device_change), name='BrickDaemon:run_devices')
+            clients_task = asyncio.create_task(_run(lambda: self._clients, lambda client: self._handle_client(client), create_interrupt_coroutine=self._handle_client_addition), name='BrickDaemon:run_clients')
 
             try:
                 await asyncio.wait({devices_task, clients_task})
