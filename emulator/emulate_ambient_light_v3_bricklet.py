@@ -56,4 +56,5 @@ async def main():
         await brickd.add_device(AmbientLightV3Bricklet('EALV3'))
         await brickd.run_forever()
 
-asyncio.run(main(), debug=DEBUG)
+if __name__ == '__main__':
+    asyncio.run(main(), debug=DEBUG)

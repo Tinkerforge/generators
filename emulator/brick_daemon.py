@@ -1009,7 +1009,8 @@ class BrickDaemon:
 
         self._devices[device._uid_number] = device
 
-        # FIXME: send enumerate-connected callback
+        if isinstance(device, EnumerateFeature):
+            device.enqueue_enumerate_callback(device.ENUMERATION_TYPE_CONNECTED)
 
         return True
 
@@ -1043,7 +1044,8 @@ class BrickDaemon:
 
             return False
 
-        # FIXME: send enumerate-disconnected callback
+        if isinstance(device, EnumerateFeature):
+            device.enqueue_enumerate_callback(device.ENUMERATION_TYPE_DISCONNECTED)
 
         self._devices.pop(device._uid_number)
 
