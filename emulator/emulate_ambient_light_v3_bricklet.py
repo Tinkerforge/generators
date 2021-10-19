@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
 
+# Copyright (C) 2021 Matthias Bolte <matthias@tinkerforge.com>
+#
+# Redistribution and use in source and binary forms of this file,
+# with or without modification, are permitted. See the Creative
+# Commons Zero (CC0 1.0) License for more details.
+
+import sys
+
+if sys.hexversion < 0x3070000:
+    raise Exception('Python >= 3.7 required')
+
 import asyncio
 import logging
 
