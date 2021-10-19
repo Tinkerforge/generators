@@ -908,9 +908,28 @@ class EnumerateFeature:
         return self._uid, self._connected_uid, self._position, self._hardware_version, self._firmware_version, self._device_identifier
 
     def enqueue_enumerate_callback(self, enumeration_type):
-        self.enqueue_callback(253, 'enumerate', ['8s', '8s', 'c', '3B', '3B', 'H', 'B'],
-                              [self._uid, self._connected_uid, self._position, self._hardware_version,
-                               self._firmware_version, self._device_identifier, enumeration_type])
+        if enumeration_type == self.ENUMERATION_TYPE_DISCONNECTED:
+            output_values = [
+                self._uid,
+                '',
+                '\0',
+                (0, 0, 0),
+                (0, 0, 0),
+                0,
+                enumeration_type
+            ]
+        else:
+            output_values = [
+                self._uid,
+                self._connected_uid,
+                self._position,
+                self._hardware_version,
+                self._firmware_version,
+                self._device_identifier,
+                enumeration_type
+            ]
+
+        self.enqueue_callback(253, 'enumerate', ['8s', '8s', 'c', '3B', '3B', 'H', 'B'], output_values)
 
 class CoMCUBrickletFeature:
     BOOTLOADER_MODE_BOOTLOADER = 0
