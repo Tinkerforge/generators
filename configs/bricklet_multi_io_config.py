@@ -4,12 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# XMC1400 Breakout Bricklet communication config
-
-from generators.configs.commonconstants import THRESHOLD_OPTION_CONSTANT_GROUP
-from generators.configs.commonconstants import add_callback_value_function
-
-from generators.configs.openhab_commonconfig import *
+# Multi IO Bricklet communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
