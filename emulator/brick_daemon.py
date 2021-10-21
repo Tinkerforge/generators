@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2021 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
@@ -238,13 +237,13 @@ async def _run(get_things, create_thing_coroutine, create_interrupt_coroutine=No
             if thing in tasks:
                 continue
 
-            task = asyncio.create_task(create_thing_coroutine(thing))
+            task = asyncio.create_task(create_thing_coroutine(thing), name='run:thing')
 
             tasks[thing] = task
             things[task] = thing
 
         if interrupt_thing not in tasks:
-            task = asyncio.create_task(create_interrupt_coroutine())
+            task = asyncio.create_task(create_interrupt_coroutine(), name='run:interrupt')
 
             tasks[interrupt_thing] = task
             things[task] = interrupt_thing
@@ -674,10 +673,10 @@ class Device(metaclass=MetaDevice):
 
             while not disconnect:
                 if request_task == None:
-                    request_task = asyncio.create_task(self._passthrough_queue.get())
+                    request_task = asyncio.create_task(self._passthrough_queue.get(), name='Device:passthrough_queue:get')
 
                 if response_task == None:
-                    response_task = asyncio.create_task(reader.read(8192))
+                    response_task = asyncio.create_task(reader.read(8192), name='Device:passthrough_socket:read')
 
                 try:
                     await asyncio.wait({request_task, response_task}, return_when=asyncio.FIRST_COMPLETED)
@@ -909,9 +908,28 @@ class EnumerateFeature:
         return self._uid, self._connected_uid, self._position, self._hardware_version, self._firmware_version, self._device_identifier
 
     def enqueue_enumerate_callback(self, enumeration_type):
-        self.enqueue_callback(253, 'enumerate', ['8s', '8s', 'c', '3B', '3B', 'H', 'B'],
-                              [self._uid, self._connected_uid, self._position, self._hardware_version,
-                               self._firmware_version, self._device_identifier, enumeration_type])
+        if enumeration_type == self.ENUMERATION_TYPE_DISCONNECTED:
+            output_values = [
+                self._uid,
+                '',
+                '\0',
+                (0, 0, 0),
+                (0, 0, 0),
+                0,
+                enumeration_type
+            ]
+        else:
+            output_values = [
+                self._uid,
+                self._connected_uid,
+                self._position,
+                self._hardware_version,
+                self._firmware_version,
+                self._device_identifier,
+                enumeration_type
+            ]
+
+        self.enqueue_callback(253, 'enumerate', ['8s', '8s', 'c', '3B', '3B', 'H', 'B'], output_values)
 
 class CoMCUBrickletFeature:
     BOOTLOADER_MODE_BOOTLOADER = 0
@@ -991,7 +1009,8 @@ class BrickDaemon:
 
         self._devices[device._uid_number] = device
 
-        # FIXME: send enumerate-connected callback
+        if isinstance(device, EnumerateFeature):
+            device.enqueue_enumerate_callback(device.ENUMERATION_TYPE_CONNECTED)
 
         return True
 
@@ -1003,7 +1022,12 @@ class BrickDaemon:
 
         self._device_change_queue.put_nowait((self._add_device, device, return_queue))
 
-        return await return_queue.get() # cancellation is okay here
+        success, result = await return_queue.get() # cancellation is okay here
+
+        if not success:
+            raise result
+
+        return result
 
     def _remove_device(self, device):
         known_device = self._devices.get(device._uid_number)
@@ -1020,7 +1044,8 @@ class BrickDaemon:
 
             return False
 
-        # FIXME: send enumerate-disconnected callback
+        if isinstance(device, EnumerateFeature):
+            device.enqueue_enumerate_callback(device.ENUMERATION_TYPE_DISCONNECTED)
 
         self._devices.pop(device._uid_number)
 
@@ -1038,12 +1063,24 @@ class BrickDaemon:
 
         self._device_change_queue.put_nowait((self._remove_device, device, return_queue))
 
-        return await return_queue.get() # cancellation is okay here
+        success, result = await return_queue.get() # cancellation is okay here
+
+        if not success:
+            raise result
+
+        return result
 
     async def _handle_device_change(self):
         callable_, device, return_queue = await self._device_change_queue.get() # cancellation is okay here
 
-        return_queue.put_nowait(callable_(device))
+        try:
+            result = callable_(device)
+            success = True
+        except Exception as e:
+            result = e
+            success = False
+
+        return_queue.put_nowait((success, result))
 
     def _enqueue_request(self, request, response_queue):
         uid_number = _get_uid_number_from_data(request.data)
@@ -1109,10 +1146,10 @@ class BrickDaemon:
 
         while not disconnect:
             if request_task == None:
-                request_task = asyncio.create_task(reader.read(8192))
+                request_task = asyncio.create_task(reader.read(8192), name='Client:socket:read')
 
             if response_task == None:
-                response_task = asyncio.create_task(response_queue.get())
+                response_task = asyncio.create_task(response_queue.get(), name='Client:response_queue:get')
 
             try:
                 await asyncio.wait({request_task, response_task}, return_when=asyncio.FIRST_COMPLETED)
@@ -1199,8 +1236,7 @@ class BrickDaemon:
         if self._run_task != None:
             return
 
-        self._run_task = asyncio.create_task(self._run())
-        self._run_task.add_done_callback(self._clear_run_task)
+        self._run_task = asyncio.create_task(self._run(), name='BrickDaemon:run')
 
     async def stop_running(self):
         if self._run_task == None:
@@ -1208,31 +1244,26 @@ class BrickDaemon:
 
         await _cancel_task(self._run_task) # FIXME: what to do if awaiting cancellation gets cancelled?
 
-    def _clear_run_task(self, task):
-        if self._run_task != task:
-            return
-
         self._run_task = None
 
     async def _run(self):
         server = await asyncio.start_server(lambda *client: self._client_addition_queue.put_nowait(client), self._host, self._port) # cancellation is okay here
 
         async with server:
-            devices_task = asyncio.create_task(_run(self._devices.values, lambda device: device._run(), create_interrupt_coroutine=self._handle_device_change))
-            clients_task = asyncio.create_task(_run(lambda: self._clients, lambda client: self._handle_client(client), create_interrupt_coroutine=self._handle_client_addition))
+            devices_task = asyncio.create_task(_run(self._devices.values, lambda device: device._run(), create_interrupt_coroutine=self._handle_device_change), name='BrickDaemon:run_devices')
+            clients_task = asyncio.create_task(_run(lambda: self._clients, lambda client: self._handle_client(client), create_interrupt_coroutine=self._handle_client_addition), name='BrickDaemon:run_clients')
 
             try:
-                await asyncio.wait({devices_task, clients_task})
-            except asyncio.CancelledError:
+                # FIXME: use asyncio.gather instead here?
+                await asyncio.wait({devices_task, clients_task}, return_when=asyncio.FIRST_COMPLETED)
+            finally:
                 await _cancel_task(clients_task) # FIXME: what to do if awaiting cancellation gets cancelled?
                 await _cancel_task(devices_task) # FIXME: what to do if awaiting cancellation gets cancelled?
-
-                raise
 
     async def run_forever(self):
         self.start_running()
 
-        await self._run_task
+        await self._run_task # cancellation is okay here
 
     async def __aenter__(self):
         return self

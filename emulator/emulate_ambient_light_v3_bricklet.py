@@ -1,10 +1,23 @@
 #!/usr/bin/env python3
 
+# Copyright (C) 2021 Matthias Bolte <matthias@tinkerforge.com>
+#
+# Redistribution and use in source and binary forms of this file,
+# with or without modification, are permitted. See the Creative
+# Commons Zero (CC0 1.0) License for more details.
+
+import sys
+
+if sys.hexversion < 0x3070000:
+    raise Exception('Python >= 3.7 required')
+
 import asyncio
 import logging
 
-from brick_daemon import BrickDaemon, autorun, function, set_global_debug
+from brick_daemon import BrickDaemon, autorun, set_global_debug
 from ambient_light_v3_bricklet_skeleton import AmbientLightV3BrickletSkeleton
+
+DEBUG = False
 
 class AmbientLightV3Bricklet(AmbientLightV3BrickletSkeleton):
     def __init__(self, *args, **kwargs):
@@ -35,11 +48,13 @@ class AmbientLightV3Bricklet(AmbientLightV3BrickletSkeleton):
         return self._illuminance_range, self._integration_time
 
 async def main():
-    logging.basicConfig(level=logging.DEBUG)
-    set_global_debug(True)
+    if DEBUG:
+        logging.basicConfig(level=logging.DEBUG)
+        set_global_debug(True)
 
     async with BrickDaemon('0.0.0.0', 5555) as brickd:
         await brickd.add_device(AmbientLightV3Bricklet('EALV3'))
         await brickd.run_forever()
 
-asyncio.run(main(), debug=True)
+if __name__ == '__main__':
+    asyncio.run(main(), debug=DEBUG)

@@ -26,7 +26,11 @@ if not 'INTERNAL_DEVICE_DISPLAY_NAMES' in globals():
     try:
         from .device_display_names import get_device_display_name
     except (ValueError, ImportError):
-        from device_display_names import get_device_display_name
+        try:
+            from device_display_names import get_device_display_name
+        except ImportError:
+            def get_device_display_name(device_identifier):
+                return 'Unknown Device [{0}]'.format(device_identifier)
 
 # internal
 def get_uid_from_data(data):
