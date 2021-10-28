@@ -151,6 +151,15 @@ com['constant_groups'].append({
               ('Start And Stop Charging', 3)]
 })
 
+com['constant_groups'].append({
+'name': 'Control Pilot',
+'type': 'uint8',
+'constants': [('Disconnected', 0),
+              ('Connected', 1),
+              ('Automatic', 2)]
+})
+
+
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
@@ -681,6 +690,40 @@ TODO
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Control Pilot Configuration',
+'elements': [('Control Pilot', 'uint8', 1, 'in', {'constant_group': 'Control Pilot'})], # Default Automatic
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Control Pilot Configuration',
+'elements': [('Control Pilot', 'uint8', 1, 'out', {'constant_group': 'Control Pilot'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
 
 com['packets'].append({
 'type': 'function',
@@ -760,7 +803,8 @@ com['packets'].append({
              ('Button Configuration', 'uint8', 1, 'out', {'constant_group': 'Button Configuration'}),
              ('Button Press Time', 'uint32', 1, 'out'),
              ('Button Release Time', 'uint32', 1, 'out'),
-             ('Button Pressed', 'bool', 1, 'out')
+             ('Button Pressed', 'bool', 1, 'out'),
+             ('Control Pilot', 'uint8', 1, 'out', {'constant_group': 'Control Pilot'})
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
