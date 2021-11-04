@@ -2382,7 +2382,7 @@ int ipcon_disconnect(IPConnection *ipcon) {
 	return E_OK;
 }
 
-int ipcon_authenticate(IPConnection *ipcon, const char secret[64]) {
+int ipcon_authenticate(IPConnection *ipcon, const char *secret) {
 	IPConnectionPrivate *ipcon_p = ipcon->p;
 	int ret;
 	uint32_t nonces[2]; // server, client
@@ -2689,6 +2689,23 @@ float leconvert_float_from(float little) {
 
 	return c.f;
 }
+
+char *string_copy(char *dest, const char *src, size_t n) {
+	size_t idx = 0;
+
+	while(src[idx] != '\0' && idx < n) {
+		dest[idx] = src[idx];
+		++idx;
+	}
+
+	while (idx < n) {
+		dest[idx] = '\0';
+		++idx;
+	}
+
+	return dest;
+}
+
 
 #ifdef __cplusplus
 }

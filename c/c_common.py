@@ -52,8 +52,11 @@ class CPacket(common.Packet):
                     modifier = '*'
 
             if role != 'stream_data' and element.get_cardinality() > 1:
-                modifier = ''
-                array = '[{0}]'.format(element.get_cardinality())
+                if element.get_type() == 'string' and direction == 'in':
+                    modifier = '*'
+                else:
+                    modifier = ''
+                    array = '[{0}]'.format(element.get_cardinality())
 
             parameters.append('{0} {1}{2}{3}'.format(element_type, modifier, name, array))
 
@@ -173,7 +176,10 @@ class CElement(common.Element):
 
         if context == 'meta':
             if cardinality > 1:
-                type_ += '[{}]'.format(cardinality)
+                if type_ == 'string' and self.get_direction() == 'in':
+                    type_ += ' *'
+                else:
+                    type_ += '[{}]'.format(cardinality)
             elif cardinality < 0:
                 type_ += ' *'
 

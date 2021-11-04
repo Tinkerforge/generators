@@ -1321,17 +1321,14 @@ class CBindingsPacket(c_common.CPacket):
             sf = 'request'
 
             if element.get_type() == 'string':
-                # use memcpy for string instead of strncpy. strncpy would work
-                # just fine for our strings that might no be null-terminated if
-                # they have full length. but MSVC complains about strncpy being
-                # unsafe, because it might not copy the null-terminator
-                # resulting in an unterminated string. MSVC wants us to use
-                # strncpy_s instead, but we cannot do that. just use memcpy to
-                # copy the string. our strings are short, so there is no point
-                # in trying to do an optimized copy operation here. also memcpy
-                # will copy the null-terminator if there is one and MSVC has
-                # nothing to complain anymore
-                temp = '\n\tmemcpy({0}.{1}, {1}, {2});\n'
+                # Use custom string_copy function here. This is strncpy in all
+                # but name, but compilers will not complain that it is unsafe
+                # to use. We don't need a null terminator, but can't just use
+                # memcpy in case the parameter is not as long as the
+                # destination buffer.
+                # This happens for example when passing a string literal that
+                # is shorter than the destination buffer length.
+                temp = '\n\tstring_copy({0}.{1}, {1}, {2});\n'
                 struct_list += temp.format(sf, element.get_name().under, element.get_cardinality())
             elif element.get_type() == 'bool':
                 if element.get_cardinality() > 1:
