@@ -404,6 +404,110 @@ static TF_TfpContext *next_callback_tick_tfp(TF_HalContext *hal) {
     return NULL;
 }
 
+static uint8_t enumerate_request[8] = {
+    0, 0, 0, 0, //uid 1
+    8, // length 8
+    254, // fid 254
+    0x40, // seq num 4
+    0 // no error
+};
+
+static TF_TfpHeader enumerate_request_header = {
+    .uid=0,
+    .length=8,
+    .fid=254,
+    .seq_num=4,
+    .response_expected=false,
+    .options=0,
+    .error_code=0,
+    .flags=0
+};
+
+int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
+    uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
+    TF_HalCommon *hal_common = tf_hal_get_common(hal);
+    TF_NetContext *net = hal_common->net;
+    uint8_t ignored;
+
+    if(net != NULL) {
+        tf_net_tick(net);
+
+        // Skip index 0: the unknown bricklet
+        for(int i = 1; i < (int)hal_common->used; ++i) {
+            if(hal_common->send_enumerate_request[i]) {
+                if(hal_common->tfps[i].spitfp->send_buf[0] == 0) {
+                    tf_tfp_inject_packet(&hal_common->tfps[i], &enumerate_request_header, enumerate_request);
+                    //TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count
+                    tf_tfp_transmit_packet(&hal_common->tfps[i], false, deadline_us, &ignored);
+                    hal_common->send_enumerate_request[i] = false;
+                }
+            }
+        }
+
+        TF_TfpHeader header;
+        int packet_id = -1;
+        while(tf_net_get_available_packet_header(net, &header, &packet_id)) {
+            // We should never get callback packets from the network side of things. Drop them.
+            if(header.seq_num == 0) {
+                tf_net_drop_packet(net, packet_id);
+                continue;
+            }
+
+            // Handle enumerate requests
+            if (header.fid == 254 && header.uid == 0 && header.length == 8) {
+                for(int i = 1; i < (int)hal_common->used; ++i) {
+                    hal_common->send_enumerate_request[i] = true;
+                }
+                tf_net_drop_packet(net, packet_id);
+                continue;
+            }
+
+            // Handle UID 1 (brick daemon)
+            if (header.uid == 1 && header.response_expected) {
+                uint8_t buf[TF_SPITFP_MAX_MESSAGE_LENGTH] = {0};
+                tf_net_get_packet(net, packet_id, buf);
+                tf_net_drop_packet(net, packet_id);
+
+                header.error_code = 2;
+                // Set error code in buffer to 2 (function not supported)
+                buf[7] = (2 << 6) | (buf[7] & 0x3F);
+
+                tf_net_send_packet(net, &header, buf);
+                continue;
+            }
+            bool device_found = false;
+            bool dispatched = false;
+            for(int i = 1; i < (int)hal_common->used; ++i) {
+                if(header.uid != hal_common->uids[i])
+                    continue;
+
+                device_found = true;
+                // Intentionally don't use get_payload_buffer here: the payload buffer is at send_buf + SPITFP_HEADER_SIZE
+                // But the "is the buffer filled" marker is just the SPITFP packet length, i.e. before the SPITFP payload.
+                if (hal_common->tfps[i].spitfp->send_buf[0] != 0) {
+                    // send buffer is not empty.
+                    continue;
+                }
+
+                uint8_t buf[TF_TFP_MESSAGE_MAX_LENGTH] = {0};
+                tf_net_get_packet(net, packet_id, buf);
+                tf_tfp_inject_packet(&hal_common->tfps[i], &header, buf);
+                //TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count
+                tf_tfp_transmit_packet(&hal_common->tfps[i], false, deadline_us, &ignored);
+                //tf_spitfp_build_packet(&hal_common->tfps[i].spitfp, false);
+                dispatched = true;
+            }
+
+            if(!device_found || (device_found && dispatched)) {
+                tf_net_drop_packet(net, packet_id);
+            }
+        }
+    }
+
+    tf_hal_callback_tick(hal, timeout_us);
+    return TF_E_OK;
+}
+
 int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us) {
     uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
     TF_TfpContext *tfp = NULL;
@@ -481,4 +585,22 @@ int tf_hal_get_error_counters(TF_HalContext *hal,
         *ret_tfp_error_count_unexpected = tfp_error_count_unexpected;
 
     return port_found ? TF_E_OK : TF_E_PORT_NOT_FOUND;
+}
+
+void tf_hal_set_net(TF_HalContext *hal, TF_NetContext *net) {
+    TF_HalCommon *common = tf_hal_get_common(hal);
+    common->net = net;
+}
+
+int tf_hal_get_tfp(TF_HalContext *hal, TF_TfpContext **tfp_ptr, uint16_t device_id, uint8_t inventory_index) {
+    TF_HalCommon *common = tf_hal_get_common(hal);
+
+    if(device_id != 0 && common->dids[inventory_index] != device_id) {
+        return TF_E_WRONG_DEVICE_TYPE;
+    }
+
+    // TODO: check if tfp->device is already assigned, then return error
+    *tfp_ptr = &common->tfps[inventory_index];
+
+    return TF_E_OK;
 }

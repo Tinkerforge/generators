@@ -18,6 +18,7 @@
 #include "packetbuffer.h"
 #include "macros.h"
 
+#include "tfp_header.h"
 #include "tfp.h"
 
 #include "net_common.h"
@@ -36,6 +37,8 @@ typedef struct TF_HalCommon {
     uint8_t port_ids[TF_INVENTORY_SIZE + 1];
     TF_TfpContext tfps[TF_INVENTORY_SIZE + 1];
     uint16_t dids[TF_INVENTORY_SIZE + 1];
+    bool send_enumerate_request[TF_INVENTORY_SIZE + 1];
+
     uint16_t used;
     uint8_t device_overflow_count;
 
@@ -46,6 +49,8 @@ typedef struct TF_HalCommon {
     size_t callback_tick_index;
 
     uint8_t empty_buf[TF_SPITFP_MAX_MESSAGE_LENGTH];
+
+    TF_NetContext *net;
 } TF_HalCommon;
 
 typedef struct TF_HalContext TF_HalContext;
@@ -54,6 +59,7 @@ void tf_hal_set_timeout(TF_HalContext *hal, uint32_t timeout_us) TF_ATTRIBUTE_NO
 uint32_t tf_hal_get_timeout(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
 int tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id) TF_ATTRIBUTE_NONNULL(1);
 int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) TF_ATTRIBUTE_NONNULL_ALL;
 
 bool tf_hal_deadline_elapsed(TF_HalContext *hal, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL;
 int tf_hal_get_error_counters(TF_HalContext *hal, char port_name, uint32_t *ret_spitfp_error_count_checksum, uint32_t *ret_spitfp_error_count_frame, uint32_t *ret_tfp_error_count_frame, uint32_t *ret_tfp_error_count_unexpected) TF_ATTRIBUTE_NONNULL(1);
@@ -96,7 +102,7 @@ int tf_hal_common_create(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBU
 int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_discovery_timeout_us) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 int tf_hal_get_port_id(TF_HalContext *hal, uint32_t uid, uint8_t *port_id, int *inventory_index) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 bool tf_hal_enumerate_handler(TF_HalContext *hal, uint8_t port_id, TF_Packetbuffer *payload) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
-
+void tf_hal_set_net(TF_HalContext *hal, TF_NetContext *net);
 
 // BEGIN - To be implemented by the specific HAL
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;

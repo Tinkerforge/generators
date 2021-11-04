@@ -16,6 +16,7 @@
 #include "spitfp.h"
 #include "macros.h"
 #include "packetbuffer.h"
+#include "tfp_header.h"
 
 #define TFP_HEADER_UID_OFFSET 0
 #define TFP_HEADER_LENGTH_OFFSET 4
@@ -44,7 +45,7 @@ typedef struct TF_TfpContext {
     uint8_t waiting_for_fid; //0 if waiting for nothing
     uint8_t waiting_for_length; // includes tfp, but not spitfp header, (to be comparable against length field in the tfp header); 0 if waiting for nothing
     uint8_t waiting_for_sequence_number; //0 if waiting for nothing
-    uint8_t last_seen_spitfp_seq_num;
+
     CallbackHandler cb_handler;
     bool needs_callback_tick;
 } TF_TfpContext;
@@ -66,6 +67,8 @@ int tf_tfp_finish_send(TF_TfpContext *tfp, int previous_result, uint32_t deadlin
 int tf_tfp_get_error(uint8_t error_code) TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+
+void tf_tfp_inject_packet(TF_TfpContext *tfp, TF_TfpHeader *header, uint8_t *packet) TF_ATTRIBUTE_NONNULL_ALL;
 
 #ifdef __cplusplus
 }

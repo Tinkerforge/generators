@@ -102,6 +102,8 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
             'hal_common.c',
             'hal_common.h',
             'macros.h',
+            'net_common.c',
+            'net_common.h',
             'packetbuffer.c',
             'packetbuffer.h',
             'pearson_hash.c',
@@ -110,6 +112,8 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
             'spitfp.h',
             'tfp.c',
             'tfp.h',
+            'tfp_header.c',
+            'tfp_header.h',
         ]
 
         # Copy brick(let) specific bindings

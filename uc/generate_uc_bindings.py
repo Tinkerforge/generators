@@ -803,7 +803,6 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
                 return false;
 {i_decl}
 {extract_payload}
-            tf_tfp_packet_processed(&{device_under}->tfp);
             TF_HalCommon *common = tf_hal_get_common({device_under}->tfp->hal);
             common->locked = true;
             fn({device_under}, {params}user_data);
