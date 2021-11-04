@@ -95,6 +95,7 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
             'base58.c',
             'base58.h',
             'config.h',
+            'display_names.h',
             'endian_convert.c',
             'endian_convert.h',
             'error_cases.h',
