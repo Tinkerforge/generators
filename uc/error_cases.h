@@ -28,3 +28,6 @@ case TF_E_LOCKED:
     return "calling device functions while the HAL has yielded or from inside a callback handler is not allowed";
 case TF_E_PORT_NOT_FOUND:
     return "no port with the given port name was found";
+
+case TF_E_NULL:
+    return "NULL was passed as device pointer or as one of the _create parameters";

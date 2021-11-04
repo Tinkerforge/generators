@@ -32,6 +32,8 @@ extern "C" {
 
 #define TF_E_PORT_NOT_FOUND -13
 
+#define TF_E_NULL -14
+
 #ifdef __cplusplus
 }
 #endif
