@@ -17,6 +17,9 @@
 #include "macros.h"
 #include "errors.h"
 
+// Forward declare init here. Is intentionally not defined in tfp.h (see there why)
+int tf_tfp_init(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+
 int tf_hal_common_create(TF_HalContext *hal) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
     memset(hal_common, 0, sizeof(TF_HalCommon));
@@ -32,10 +35,18 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
     hal_common->used = 1;
     hal_common->device_overflow_count = 0;
 
+    int rc = tf_tfp_init(&hal_common->tfps[0], hal, 0);
+    if (rc != TF_E_OK) {
+        return rc;
+    }
+
     for(int i = 0; i < port_count; ++i) {
+        TF_PortCommon *port_common = tf_hal_get_port_common(hal, i);
+        tf_spitfp_init(&port_common->spitfp, hal, i);
+
         tf_unknown_create(&unknown, "1", hal, (uint8_t)i, 0);
 
-        int rc = tf_unknown_comcu_enumerate(&unknown);
+        rc = tf_unknown_comcu_enumerate(&unknown);
         if (rc == TF_E_OK) {
             tf_unknown_callback_tick(&unknown, port_discovery_timeout_us);
         }
@@ -81,8 +92,7 @@ static void enum_handler(TF_HalContext* hal,
         if(hal_common->uids[i] == numeric_uid) {
             hal_common->port_ids[i] = port_id;
             hal_common->dids[i] = dev_id;
-            if(hal_common->tfps[i] != NULL)
-                hal_common->tfps[i]->spitfp.port_id = port_id;
+            hal_common->tfps[i].spitfp->port_id = port_id;
             return;
         }
 
@@ -91,7 +101,9 @@ static void enum_handler(TF_HalContext* hal,
     hal_common->port_ids[hal_common->used] = port_id;
     hal_common->uids[hal_common->used] = numeric_uid;
     hal_common->dids[hal_common->used] = dev_id;
-    ++hal_common->used;
+    if(tf_tfp_init(&hal_common->tfps[hal_common->used], hal, port_id) == TF_E_OK) {
+        ++hal_common->used;
+    }
 }
 
 bool tf_hal_enumerate_handler(TF_HalContext *hal, uint8_t port_id, TF_Packetbuffer *payload) {
@@ -335,7 +347,7 @@ uint32_t tf_hal_get_timeout(TF_HalContext *hal) {
 int tf_hal_get_port_id(TF_HalContext *hal, uint32_t uid, uint8_t *port_id, int *inventory_index) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
 
-    for(int i = 0; i < (int)hal_common->used; ++i) {
+    for(int i = 1; i < (int)hal_common->used; ++i) {
         if(hal_common->uids[i] == uid) {
             *port_id = hal_common->port_ids[i];
             *inventory_index = i;
@@ -382,7 +394,7 @@ static TF_TfpContext *next_callback_tick_tfp(TF_HalContext *hal) {
             // Skip index 0; used for the unknown bricklet
             index -= hal_common->used - 1;
         }
-        tfp = hal_common->tfps[index];
+        tfp = &hal_common->tfps[index];
         if(tfp != NULL && tfp->needs_callback_tick) {
             hal_common->callback_tick_index = index;
             return tfp;
@@ -442,18 +454,18 @@ int tf_hal_get_error_counters(TF_HalContext *hal,
 
     bool port_found = false;
 
-    for(int i = 0; i < (int)hal_common->used; ++i) {
+    for(int i = 1; i < (int)hal_common->used; ++i) {
         if(tf_hal_get_port_name(hal, hal_common->port_ids[i]) != port_name)
             continue;
 
         port_found = true;
 
-        tfp = hal_common->tfps[i];
+        tfp = &hal_common->tfps[i];
         if(tfp == NULL)
             continue;
 
-        spitfp_error_count_checksum += tfp->spitfp.error_count_checksum;
-        spitfp_error_count_frame += tfp->spitfp.error_count_frame;
+        spitfp_error_count_checksum += tfp->spitfp->error_count_checksum;
+        spitfp_error_count_frame += tfp->spitfp->error_count_frame;
 
         tfp_error_count_frame += tfp->error_count_frame;
         tfp_error_count_unexpected += tfp->error_count_unexpected;

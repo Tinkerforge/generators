@@ -18,19 +18,23 @@
 #include "packetbuffer.h"
 #include "macros.h"
 
-#include "spitfp.h"
+#include "tfp.h"
+
+#include "net_common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct TF_TfpContext;
+typedef struct TF_PortCommon {
+    TF_SpiTfpContext spitfp;
+} TF_PortCommon;
 
 typedef struct TF_HalCommon {
     //TF_INVENTORY_SIZE + 1 for the unknown bricklet used for device discovery
     uint32_t uids[TF_INVENTORY_SIZE + 1];
     uint8_t port_ids[TF_INVENTORY_SIZE + 1];
-    struct TF_TfpContext *tfps[TF_INVENTORY_SIZE + 1];
+    TF_TfpContext tfps[TF_INVENTORY_SIZE + 1];
     uint16_t dids[TF_INVENTORY_SIZE + 1];
     uint16_t used;
     uint8_t device_overflow_count;
@@ -53,6 +57,7 @@ int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us) TF_ATTRIBUTE_N
 
 bool tf_hal_deadline_elapsed(TF_HalContext *hal, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL;
 int tf_hal_get_error_counters(TF_HalContext *hal, char port_name, uint32_t *ret_spitfp_error_count_checksum, uint32_t *ret_spitfp_error_count_frame, uint32_t *ret_tfp_error_count_frame, uint32_t *ret_tfp_error_count_unexpected) TF_ATTRIBUTE_NONNULL(1);
+int tf_hal_get_tfp(TF_HalContext *hal, TF_TfpContext **tfp_ptr, uint16_t device_id, uint8_t inventory_index);
 
 #define TF_LOG_LEVEL_NONE 0
 #define TF_LOG_LEVEL_ERROR 1
@@ -100,6 +105,7 @@ uint32_t tf_hal_current_time_us(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
 void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) TF_ATTRIBUTE_NONNULL_ALL;
 TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL;
+TF_PortCommon *tf_hal_get_port_common(TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL;
 
 // These functions have to work without an initialized HAL to be able to report HAL initialization info/errors, so don't pass the handle here.
 void tf_hal_log_message(const char *msg, size_t len) TF_ATTRIBUTE_NONNULL_ALL;

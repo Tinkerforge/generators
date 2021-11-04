@@ -203,50 +203,48 @@ void tf_tfp_packet_processed(TF_TfpContext *tfp) {
     tf_spitfp_packet_processed(&tfp->spitfp);
 }
 
-int tf_tfp_init(TF_TfpContext *tfp, uint32_t uid, uint16_t dev_id, TF_HalContext *hal, uint8_t port_id, int inventory_index, CallbackHandler cb_handler) {
+int tf_tfp_init(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id) {
     memset(tfp, 0, sizeof(TF_TfpContext));
-    int rc = tf_spitfp_init(&tfp->spitfp, hal, port_id);
+    TF_PortCommon *port_common = tf_hal_get_port_common(hal, port_id);
+    tfp->spitfp = &port_common->spitfp;
+
+    /*int rc = tf_spitfp_init(tfp->spitfp, hal, port_id);
     if (rc != TF_E_OK)
-        return rc;
+        return rc;*/
 
     tfp->next_sequence_number = 1;
-    tfp->last_seen_spitfp_seq_num = 0;
-    tfp->uid = uid;
-    tfp->cb_handler = cb_handler;
+    //tfp->uid = uid;
+    tfp->uid = 0;
+    tfp->cb_handler = empty_cb_handler;
     tfp->error_count_frame = 0;
     tfp->error_count_unexpected = 0;
-    TF_HalCommon *common = tf_hal_get_common(hal);
-
-    if(dev_id != 0 && common->dids[inventory_index] != dev_id) {
-        return TF_E_WRONG_DEVICE_TYPE;
-    }
-
-    common->tfps[inventory_index] = tfp;
+    tfp->needs_callback_tick = true;
+    tfp->hal = hal;
 
     return TF_E_OK;
 }
 
 int tf_tfp_destroy(TF_TfpContext *tfp) {
-    TF_HalCommon *common = tf_hal_get_common(tfp->spitfp.hal);
+    TF_HalCommon *common = tf_hal_get_common((TF_HalContext *)tfp->hal);
 
     uint8_t port_id;
     int inventory_index;
-    int rc = tf_hal_get_port_id(tfp->spitfp.hal, tfp->uid, &port_id, &inventory_index);
+    int rc = tf_hal_get_port_id((TF_HalContext *)tfp->hal, tfp->uid, &port_id, &inventory_index);
     if (rc < 0) {
         return rc;
     }
 
-    if(common->tfps[inventory_index] != tfp)
+    if(&common->tfps[inventory_index] != tfp)
         return TF_E_DEVICE_NOT_FOUND;
 
-    common->tfps[inventory_index] = NULL;
+    common->tfps[inventory_index].device = NULL;
 
-    return tf_spitfp_destroy(&tfp->spitfp);
+    return tf_spitfp_destroy(tfp->spitfp);
 }
 
 void tf_tfp_prepare_send(TF_TfpContext *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) {
     //TODO: theoretically, all bytes should be rewritten when sending a new packet, so this is not necessary.
-    uint8_t *buf = tf_spitfp_get_payload_buffer(&tfp->spitfp);
+    uint8_t *buf = tf_spitfp_get_payload_buffer(tfp->spitfp);
     memset(buf, 0, TF_TFP_MESSAGE_MAX_LENGTH);
 
     uint8_t tf_tfp_seq_num = tf_tfp_build_header(tfp, buf, payload_size + TF_TFP_MESSAGE_MIN_LENGTH, fid, response_expected);
@@ -263,26 +261,26 @@ void tf_tfp_prepare_send(TF_TfpContext *tfp, uint8_t fid, uint8_t payload_size, 
 }
 
 uint8_t *tf_tfp_get_payload_buffer(TF_TfpContext *tfp) {
-    return tf_spitfp_get_payload_buffer(&tfp->spitfp) + TF_TFP_MESSAGE_MIN_LENGTH;
+    return tf_spitfp_get_payload_buffer(tfp->spitfp) + TF_TFP_MESSAGE_MIN_LENGTH;
 }
 
 static int tf_tfp_transmit_getter(TF_TfpContext *tfp, uint32_t deadline_us, uint8_t *error_code) {
-    tf_spitfp_build_packet(&tfp->spitfp, false);
+    tf_spitfp_build_packet(tfp->spitfp, false);
 
     int result = TF_TICK_AGAIN;
 
     bool packet_received = false;
 
-    uint32_t last_send = tf_hal_current_time_us(tfp->spitfp.hal);
+    uint32_t last_send = tf_hal_current_time_us((TF_HalContext *)tfp->hal);
 
 
-    while(!tf_hal_deadline_elapsed(tfp->spitfp.hal, deadline_us) && !packet_received) {
-        if (result & TF_TICK_TIMEOUT && tf_hal_deadline_elapsed(tfp->spitfp.hal, last_send + 5000)) {
-            last_send = tf_hal_current_time_us(tfp->spitfp.hal);
-            tf_spitfp_build_packet(&tfp->spitfp, true);
+    while(!tf_hal_deadline_elapsed((TF_HalContext *)tfp->hal, deadline_us) && !packet_received) {
+        if (result & TF_TICK_TIMEOUT && tf_hal_deadline_elapsed((TF_HalContext *)tfp->hal, last_send + 5000)) {
+            last_send = tf_hal_current_time_us((TF_HalContext *)tfp->hal);
+            tf_spitfp_build_packet(tfp->spitfp, true);
         }
 
-        result = tf_spitfp_tick(&tfp->spitfp, deadline_us);
+        result = tf_spitfp_tick(tfp->spitfp, deadline_us);
         if(result < 0)
             return result;
 
@@ -295,7 +293,7 @@ static int tf_tfp_transmit_getter(TF_TfpContext *tfp, uint32_t deadline_us, uint
             }
         }
         if (result & TF_TICK_SLEEP) {
-            tf_hal_sleep_us(tfp->spitfp.hal, TF_TFP_SLEEP_TIME_US);
+            tf_hal_sleep_us((TF_HalContext *)tfp->hal, TF_TFP_SLEEP_TIME_US);
         }
     }
 
@@ -303,16 +301,16 @@ static int tf_tfp_transmit_getter(TF_TfpContext *tfp, uint32_t deadline_us, uint
 }
 
 static int tf_tfp_transmit_setter(TF_TfpContext *tfp, uint32_t deadline_us) {
-    tf_spitfp_build_packet(&tfp->spitfp, false);
+    tf_spitfp_build_packet(tfp->spitfp, false);
 
     int result = TF_TICK_AGAIN;
     bool packet_sent = false;
 
-    while(!tf_hal_deadline_elapsed(tfp->spitfp.hal, deadline_us) && !packet_sent) {
+    while(!tf_hal_deadline_elapsed((TF_HalContext *)tfp->hal, deadline_us) && !packet_sent) {
         if (result & TF_TICK_TIMEOUT)
-            tf_spitfp_build_packet(&tfp->spitfp, true);
+            tf_spitfp_build_packet(tfp->spitfp, true);
 
-        result = tf_spitfp_tick(&tfp->spitfp, deadline_us);
+        result = tf_spitfp_tick(tfp->spitfp, deadline_us);
         if(result < 0)
             return result;
 
@@ -326,7 +324,7 @@ static int tf_tfp_transmit_setter(TF_TfpContext *tfp, uint32_t deadline_us) {
         }
 
         if (result & TF_TICK_SLEEP) {
-            tf_hal_sleep_us(tfp->spitfp.hal, TF_TFP_SLEEP_TIME_US);
+            tf_hal_sleep_us((TF_HalContext *)tfp->hal, TF_TFP_SLEEP_TIME_US);
         }
     }
 
@@ -341,14 +339,14 @@ int tf_tfp_transmit_packet(TF_TfpContext *tfp, bool response_expected, uint32_t 
 int tf_tfp_finish_send(TF_TfpContext *tfp, int previous_result, uint32_t deadline_us) {
     int result = previous_result;
 
-    while(!tf_hal_deadline_elapsed(tfp->spitfp.hal, deadline_us) && (result & TF_TICK_AGAIN)) {
-        result = tf_spitfp_tick(&tfp->spitfp, deadline_us);
+    while(!tf_hal_deadline_elapsed((TF_HalContext *)tfp->hal, deadline_us) && (result & TF_TICK_AGAIN)) {
+        result = tf_spitfp_tick(tfp->spitfp, deadline_us);
         if(result < 0)
             return result;
     }
 
     // Prevent sending the packet again for example in the callback_tick
-    tfp->spitfp.send_buf[0] = 0;
+    tfp->spitfp->send_buf[0] = 0;
 
     return (result & TF_TICK_AGAIN) ? -1 : 0;
 }
@@ -372,9 +370,9 @@ int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) {
 
     do {
         if (result & TF_TICK_SLEEP) {
-            tf_hal_sleep_us(tfp->spitfp.hal, TF_TFP_SLEEP_TIME_US);
+            tf_hal_sleep_us((TF_HalContext *)tfp->hal, TF_TFP_SLEEP_TIME_US);
         }
-        result = tf_spitfp_tick(&tfp->spitfp, deadline_us);
+        result = tf_spitfp_tick(tfp->spitfp, deadline_us);
         if(result < 0)
             return result;
         if (result & TF_TICK_PACKET_RECEIVED) {
@@ -388,6 +386,6 @@ int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) {
     // the state machine has just transmitted an ACK. The then
     // received 3 bytes should not contain a complete packet.
     // (Except an ACK that has not be acked again).
-    } while(!tf_hal_deadline_elapsed(tfp->spitfp.hal, deadline_us) || (result & TF_TICK_AGAIN));
+    } while(!tf_hal_deadline_elapsed((TF_HalContext *)tfp->hal, deadline_us) || (result & TF_TICK_AGAIN));
     return TF_E_OK;
 }

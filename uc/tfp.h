@@ -13,7 +13,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-#include "hal_common.h"
 #include "spitfp.h"
 #include "macros.h"
 #include "packetbuffer.h"
@@ -32,7 +31,9 @@ extern "C" {
 typedef bool (*CallbackHandler)(void *device, uint8_t fid, TF_Packetbuffer *payload);
 
 typedef struct TF_TfpContext {
-    TF_SpiTfpContext spitfp;
+    void *hal;
+    TF_SpiTfpContext *spitfp;
+    void *device;
 
     uint32_t uid;
 
@@ -49,7 +50,10 @@ typedef struct TF_TfpContext {
 } TF_TfpContext;
 
 
-int tf_tfp_init(TF_TfpContext *tfp, uint32_t uid, uint16_t dev_id, TF_HalContext *hal, uint8_t port_id, int inventory_index, CallbackHandler cb_handler) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+// Don't declare the init function here. If we depend on TF_HalContext * (even if forward declared) this collides with the
+// required forward declaration in hal_common.h.
+// We just declare the function itself in hal_common.c (the only caller).
+//int tf_tfp_init(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 int tf_tfp_destroy(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 void tf_tfp_prepare_send(TF_TfpContext *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) TF_ATTRIBUTE_NONNULL_ALL;
