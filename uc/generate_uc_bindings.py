@@ -67,8 +67,6 @@ class UCBindingsDevice(common.Device):
     def get_c_include_c(self):
         template = """{header_comment}
 
-//#define IPCON_EXPOSE_INTERNALS
-
 #include "{category_under}_{device_under}.h"
 #include "base58.h"
 #include "endian_convert.h"
