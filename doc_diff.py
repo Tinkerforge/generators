@@ -98,6 +98,8 @@ def main():
             if binding not in active_bindings:
                 continue
 
+            path = os.path.join(generators_dir, binding)
+
             if not os.path.isdir(path):
                 print('skipping {0}, no {0} directory'.format(binding))
                 continue
