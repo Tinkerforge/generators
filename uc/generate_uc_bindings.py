@@ -1234,6 +1234,11 @@ class UCBindingsPacket(uc_common.UCPacket):
         return return_list, needs_i
 
 class UCBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.device_name_cases = []
+
     def get_device_class(self):
         return UCBindingsDevice
 
@@ -1257,6 +1262,25 @@ class UCBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
         if device.is_released():
             self.released_files.append(filename + '.c')
             self.released_files.append(filename + '.h')
+            self.device_name_cases.append(format("""        case {device_id:4d}: return "{device_display}";""", device))
+
+    def finish(self, *args, **kwargs):
+        with open(os.path.join(self.get_bindings_dir(), 'display_names.c'), 'w') as f:
+            f.write("""{header_comment}
+#include "display_names.h"
+
+#ifdef TF_IMPLEMENT_GET_DEVICE_DISPLAY_NAME
+const char *tf_get_device_display_name(uint16_t device_id) {{
+    switch(device_id) {{
+{cases}
+          default: return "unknown device";
+    }}
+}}
+#endif""".format(header_comment=self.get_header_comment('asterisk'), cases='\n'.join(self.device_name_cases)))
+
+        self.released_files.append('display_names.c')
+
+        super().finish(*args, **kwargs)
 
 def generate(root_dir, language, internal):
     common.generate(root_dir, language, internal, UCBindingsGenerator)

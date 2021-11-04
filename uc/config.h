@@ -30,6 +30,9 @@ extern "C" {
 // Remove this to remove the tf_hal_strerror implementation.
 #define TF_IMPLEMENT_STRERROR
 
+// Remove this to remove the tf_get_device_display_name implementation.
+#define TF_IMPLEMENT_GET_DEVICE_DISPLAY_NAME
+
 #ifdef __cplusplus
 }
 #endif

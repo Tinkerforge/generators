@@ -216,6 +216,7 @@ def format(s, device=None, packet=None, packet_skip=0, **kwargs):
 
         kwargs['device_initial'] = device.get_initial_name()
         kwargs['device_display'] = device.get_long_display_name()
+        kwargs['device_id'] = device.get_device_identifier()
 
         kwargs['category_space'] = device.get_category().space
         kwargs['category_lower'] = device.get_category().lower
