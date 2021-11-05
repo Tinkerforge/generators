@@ -105,6 +105,7 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
             'macros.h',
             'net_common.c',
             'net_common.h',
+            'net_config.h',
             'packetbuffer.c',
             'packetbuffer.h',
             'pearson_hash.c',

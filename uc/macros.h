@@ -31,7 +31,7 @@
     #endif
 #else
 	#define TF_ATTRIBUTE_NONNULL(...)
-    #define TF_ATTRIBUTE_NONNULL_ALL __attribute__((nonnull))
+    #define TF_ATTRIBUTE_NONNULL_ALL
     #define TF_ATTRIBUTE_WARN_UNUSED_RESULT
 #endif
 

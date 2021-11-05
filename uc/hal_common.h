@@ -100,7 +100,7 @@ void tf_hal_printf(const char *format, ...) TF_ATTRIBUTE_NONNULL_ALL;
 // To be used by HAL implementations
 int tf_hal_common_create(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_discovery_timeout_us) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
-int tf_hal_get_port_id(TF_HalContext *hal, uint32_t uid, uint8_t *port_id, int *inventory_index) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_hal_get_port_id(TF_HalContext *hal, uint32_t uid, uint8_t *port_id, uint8_t *inventory_index) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 bool tf_hal_enumerate_handler(TF_HalContext *hal, uint8_t port_id, TF_Packetbuffer *payload) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 void tf_hal_set_net(TF_HalContext *hal, TF_NetContext *net);
 

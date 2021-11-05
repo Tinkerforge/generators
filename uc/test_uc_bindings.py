@@ -114,6 +114,7 @@ class UCExamplesTester(common.Tester):
                  os.path.join(tmp_dir, 'source/bindings/pearson_hash.c'),
                  os.path.join(tmp_dir, 'source/bindings/spitfp.c'),
                  os.path.join(tmp_dir, 'source/bindings/tfp.c'),
+                 os.path.join(tmp_dir, 'source/bindings/tfp_header.c'),
                  os.path.join(tmp_dir, 'source/hal_fake/hal_fake.c'),
                  os.path.join(tmp_dir, 'source/hal_fake/example_driver.c')]
 

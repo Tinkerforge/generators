@@ -54,8 +54,8 @@ void write_packet_header(TF_TfpHeader *header, uint8_t buf[8]) {
     memcpy(buf, &uid, sizeof(uid));
     buf[4] = header->length;
     buf[5] = header->fid;
-    buf[6] = (header->seq_num << 4) | ((header->response_expected ? 1 : 0) << 3) | header->options;
-    buf[7] = header->error_code << 6 | header->flags;
+    buf[6] = (uint8_t)((header->seq_num << 4) | ((header->response_expected ? 1 : 0) << 3) | header->options);
+    buf[7] = (uint8_t)(header->error_code << 6 | header->flags);
 }
 
 void print_packet_header(TF_TfpHeader *header) {

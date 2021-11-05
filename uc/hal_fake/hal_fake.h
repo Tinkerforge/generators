@@ -20,6 +20,7 @@
 typedef struct TF_Port {
     uint8_t chip_select_pin;
     char port_name;
+    TF_PortCommon port_common;
 } TF_Port;
 
 struct TF_HalContext {

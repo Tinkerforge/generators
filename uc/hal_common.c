@@ -41,8 +41,8 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
     }
 
     for(int i = 0; i < port_count; ++i) {
-        TF_PortCommon *port_common = tf_hal_get_port_common(hal, i);
-        tf_spitfp_init(&port_common->spitfp, hal, i);
+        TF_PortCommon *port_common = tf_hal_get_port_common(hal, (uint8_t)i);
+        tf_spitfp_init(&port_common->spitfp, hal, (uint8_t)i);
 
         tf_unknown_create(&unknown, "1", hal, (uint8_t)i, 0);
 
@@ -344,13 +344,13 @@ uint32_t tf_hal_get_timeout(TF_HalContext *hal) {
     return tf_hal_get_common(hal)->timeout;
 }
 
-int tf_hal_get_port_id(TF_HalContext *hal, uint32_t uid, uint8_t *port_id, int *inventory_index) {
+int tf_hal_get_port_id(TF_HalContext *hal, uint32_t uid, uint8_t *port_id, uint8_t *inventory_index) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
 
     for(int i = 1; i < (int)hal_common->used; ++i) {
         if(hal_common->uids[i] == uid) {
             *port_id = hal_common->port_ids[i];
-            *inventory_index = i;
+            *inventory_index = (uint8_t)i;
             return TF_E_OK;
         }
     }
@@ -404,6 +404,7 @@ static TF_TfpContext *next_callback_tick_tfp(TF_HalContext *hal) {
     return NULL;
 }
 
+#ifdef TF_NET_ENABLE
 static uint8_t enumerate_request[8] = {
     0, 0, 0, 0, //uid 1
     8, // length 8
@@ -422,8 +423,10 @@ static TF_TfpHeader enumerate_request_header = {
     .error_code=0,
     .flags=0
 };
+#endif
 
 int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
+#ifdef TF_NET_ENABLE
     uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
     TF_NetContext *net = hal_common->net;
@@ -447,9 +450,10 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
         TF_TfpHeader header;
         int packet_id = -1;
         while(tf_net_get_available_packet_header(net, &header, &packet_id)) {
+            uint8_t pid = (uint8_t) packet_id;
             // We should never get callback packets from the network side of things. Drop them.
             if(header.seq_num == 0) {
-                tf_net_drop_packet(net, packet_id);
+                tf_net_drop_packet(net, pid);
                 continue;
             }
 
@@ -458,15 +462,15 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
                 for(int i = 1; i < (int)hal_common->used; ++i) {
                     hal_common->send_enumerate_request[i] = true;
                 }
-                tf_net_drop_packet(net, packet_id);
+                tf_net_drop_packet(net, pid);
                 continue;
             }
 
             // Handle UID 1 (brick daemon)
             if (header.uid == 1 && header.response_expected) {
                 uint8_t buf[TF_SPITFP_MAX_MESSAGE_LENGTH] = {0};
-                tf_net_get_packet(net, packet_id, buf);
-                tf_net_drop_packet(net, packet_id);
+                tf_net_get_packet(net, pid, buf);
+                tf_net_drop_packet(net, pid);
 
                 header.error_code = 2;
                 // Set error code in buffer to 2 (function not supported)
@@ -490,7 +494,7 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
                 }
 
                 uint8_t buf[TF_TFP_MESSAGE_MAX_LENGTH] = {0};
-                tf_net_get_packet(net, packet_id, buf);
+                tf_net_get_packet(net, pid, buf);
                 tf_tfp_inject_packet(&hal_common->tfps[i], &header, buf);
                 //TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count
                 tf_tfp_transmit_packet(&hal_common->tfps[i], false, deadline_us, &ignored);
@@ -499,11 +503,11 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
             }
 
             if(!device_found || (device_found && dispatched)) {
-                tf_net_drop_packet(net, packet_id);
+                tf_net_drop_packet(net, pid);
             }
         }
     }
-
+#endif
     tf_hal_callback_tick(hal, timeout_us);
     return TF_E_OK;
 }

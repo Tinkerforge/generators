@@ -16,10 +16,9 @@ void check(int e_code, const char *c) {
 static TF_HalContext hal;
 
 int main() {
-    TF_Port ports[1] = {{
-        .chip_select_pin=1,
-        .port_name = 'A'
-    }};
+    TF_Port ports[1];
+    ports[0].chip_select_pin=1;
+    ports[0].port_name= 'A';
 
     check(tf_hal_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
 

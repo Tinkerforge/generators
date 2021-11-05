@@ -5,6 +5,10 @@
 extern "C" {
 #endif
 
+// Uncomment this to enable networking
+// This requires using a TF_NetContext.
+//#define TF_NET_ENABLE
+
 // This is the maximum number of open requests to keep track of in parallel.
 // If this many requests are not fulfilled and another one is created by sending
 // a packet with response_expected = true, the oldest request will be dropped.
