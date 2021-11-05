@@ -688,7 +688,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
 	}}
 
 	memcpy(ret_{stream_name_under}, {stream_name_under}_data, sizeof({chunk_data_type}) * {stream_name_under}_length);
-	memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
+	memset(&ret_{stream_name_under}[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
 
 	*ret_{stream_name_under}_length = {stream_name_under}_length;
 

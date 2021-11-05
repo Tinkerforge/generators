@@ -725,7 +725,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 
     if (ret_{stream_name_under} != NULL) {{
         memcpy(ret_{stream_name_under}, {stream_name_under}_data, sizeof({chunk_data_type}) * {stream_name_under}_length);
-        memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
+        memset(&ret_{stream_name_under}[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
     }}
 
 
