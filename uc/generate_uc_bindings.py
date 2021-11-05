@@ -513,7 +513,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
     {stream_length_type} {stream_name_under}_chunk_length = 0;
     uint8_t {stream_name_under}_chunk_written = 0;
 
-    *ret_{stream_name_under}_written = 0;
+    if (ret_{stream_name_under}_written != NULL) {{
+        *ret_{stream_name_under}_written = 0;
+    }}
 
     if ({stream_name_under}_length == 0) {{
         memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
@@ -524,7 +526,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
             return ret;
         }}
 
-        *ret_{stream_name_under}_written = {stream_name_under}_chunk_written;
+        if (ret_{stream_name_under}_written != NULL) {{
+            *ret_{stream_name_under}_written = {stream_name_under}_chunk_written;
+        }}
     }} else {{
 
         while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
@@ -540,12 +544,16 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
             ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
             if (ret != TF_E_OK) {{
-                *ret_{stream_name_under}_written = 0;
+                if (ret_{stream_name_under}_written != NULL) {{
+                    *ret_{stream_name_under}_written = 0;
+                }}
 
                 break;
             }}
 
-            *ret_{stream_name_under}_written += {stream_name_under}_chunk_written;
+            if (ret_{stream_name_under}_written != NULL) {{
+                *ret_{stream_name_under}_written += {stream_name_under}_chunk_written;
+            }}
 
             if ({stream_name_under}_chunk_written < {chunk_cardinality}) {{
                 break; // either last chunk or short write
@@ -598,7 +606,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
         return ret;
     }}
 
-    *ret_{stream_name_under}_written = {stream_name_under}_written;
+    if (ret_{stream_name_under}_written != NULL) {{
+        *ret_{stream_name_under}_written = {stream_name_under}_written;
+    }}
 
     return ret;
 }}
@@ -609,61 +619,73 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
         return TF_E_NULL;
 
     int ret = TF_E_OK;
-    {stream_length_type} {stream_name_under}_length = {fixed_length};
+    {stream_length_type} max_{stream_name_under}_length = {fixed_length};
+    {stream_length_type} {stream_name_under}_length = 0;
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
     {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
     bool {stream_name_under}_out_of_sync;
     {stream_length_type} {stream_name_under}_chunk_length = 0;
 
-    *ret_{stream_name_under}_length = 0;
-
     ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
     if (ret != TF_E_OK) {{
+        if (ret_{stream_name_under}_length != NULL) {{
+            *ret_{stream_name_under}_length = {stream_name_under}_length;
+        }}
         return ret;
     }}{chunk_offset_check}
 
     {stream_name_under}_out_of_sync = {stream_name_under}_chunk_offset != 0;
 
     if (!{stream_name_under}_out_of_sync) {{
-        {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
+        {stream_name_under}_chunk_length = max_{stream_name_under}_length - {stream_name_under}_chunk_offset;
 
         if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
             {stream_name_under}_chunk_length = {chunk_cardinality};
         }}
 
-        memcpy(ret_{stream_name_under}, {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-        *ret_{stream_name_under}_length = {stream_name_under}_chunk_length;
+        if (ret_{stream_name_under} != NULL) {{
+            memcpy(ret_{stream_name_under}, {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
+        }}
 
-        while (*ret_{stream_name_under}_length < {stream_name_under}_length) {{
+        {stream_name_under}_length = {stream_name_under}_chunk_length;
+
+        while ({stream_name_under}_length < max_{stream_name_under}_length) {{
             ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
             if (ret != TF_E_OK) {{
+                if (ret_{stream_name_under}_length != NULL) {{
+                    *ret_{stream_name_under}_length = {stream_name_under}_length;
+                }}
                 return ret;
             }}
 
-            {stream_name_under}_out_of_sync = {stream_name_under}_chunk_offset != *ret_{stream_name_under}_length;
+            {stream_name_under}_out_of_sync = {stream_name_under}_chunk_offset != {stream_name_under}_length;
 
             if ({stream_name_under}_out_of_sync) {{
                 break;
             }}
 
-            {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
+            {stream_name_under}_chunk_length = max_{stream_name_under}_length - {stream_name_under}_chunk_offset;
 
             if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
                 {stream_name_under}_chunk_length = {chunk_cardinality};
             }}
 
-            memcpy(&ret_{stream_name_under}[*ret_{stream_name_under}_length], {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-            *ret_{stream_name_under}_length += {stream_name_under}_chunk_length;
+            if (ret_{stream_name_under} != NULL) {{
+                memcpy(&ret_{stream_name_under}[{stream_name_under}_length], {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
+            }}
+            {stream_name_under}_length += {stream_name_under}_chunk_length;
         }}
     }}
 
     if ({stream_name_under}_out_of_sync) {{
-        *ret_{stream_name_under}_length = 0; // return empty array
+        if (ret_{stream_name_under}_length != NULL) {{
+            *ret_{stream_name_under}_length = 0; // return empty array
+        }}
 
         // discard remaining stream to bring it back in-sync
-        while ({stream_name_under}_chunk_offset + {chunk_cardinality} < {stream_name_under}_length) {{
+        while ({stream_name_under}_chunk_offset + {chunk_cardinality} < max_{stream_name_under}_length) {{
             ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
             if (ret != TF_E_OK) {{
@@ -691,7 +713,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
     {stream_length_type} {stream_name_under}_length = 0;
     {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
 
-    *ret_{stream_name_under}_length = 0;
+    if (ret_{stream_name_under}_length != NULL) {{
+        *ret_{stream_name_under}_length = 0;
+    }}
 
     ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
 
@@ -699,10 +723,15 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
         return ret;
     }}
 
-    memcpy(ret_{stream_name_under}, {stream_name_under}_data, sizeof({chunk_data_type}) * {stream_name_under}_length);
-    memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
+    if (ret_{stream_name_under} != NULL) {{
+        memcpy(ret_{stream_name_under}, {stream_name_under}_data, sizeof({chunk_data_type}) * {stream_name_under}_length);
+        memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
+    }}
 
-    *ret_{stream_name_under}_length = {stream_name_under}_length;
+
+    if (ret_{stream_name_under}_length != NULL) {{
+        *ret_{stream_name_under}_length = {stream_name_under}_length;
+    }}
 
     return ret;
 }}
