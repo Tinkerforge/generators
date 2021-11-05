@@ -69,7 +69,7 @@ typedef struct TF_SpiTfpContext {
     struct TF_SpiTfpStateMachine state;
 } TF_SpiTfpContext;
 
-int tf_spitfp_init(TF_SpiTfpContext *spitfp, struct TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_spitfp_init(TF_SpiTfpContext *spitfp, struct TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL;
 int tf_spitfp_destroy(TF_SpiTfpContext *spitfp) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 uint8_t *tf_spitfp_get_payload_buffer(TF_SpiTfpContext *spitfp) TF_ATTRIBUTE_NONNULL_ALL;

@@ -6,7 +6,7 @@
 #include "endian_convert.h"
 #include "base58.h"
 
-void parse_header(TF_TfpHeader *header) {
+static void parse_header(TF_TfpHeader *header) {
     header->response_expected = header->seq_num & 0x08;
     header->options = header->seq_num & 0x07;
     header->seq_num >>= 4;

@@ -89,9 +89,9 @@ class UCExamplesTester(common.Tester):
         elif self.compiler == 'g++':
             args += ['g++', '-std=c++98', '-pthread']
         elif self.compiler == 'mingw32-gcc':
-            args += ['x86_64-w64-mingw32-gcc', '-Wno-error=return-type']
+            args += ['x86_64-w64-mingw32-gcc']
         elif self.compiler == 'mingw32-g++':
-            args += ['x86_64-w64-mingw32-g++', '-Wno-error=return-type']
+            args += ['x86_64-w64-mingw32-g++']
         elif self.compiler == 'clang':
             args += ['clang', '-std=c99', '-pthread', '-Weverything', '-Wno-padded']
         elif self.compiler == 'scan-build clang':
