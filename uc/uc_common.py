@@ -159,16 +159,8 @@ class UCElement(common.Element):
         if cardinality == None:
             cardinality = self.get_cardinality()
 
-        if type_ == 'string':
-            if self.get_direction() == 'in' and context in ['signature', 'meta']:
-                type_ = 'const char'
-            else:
-                type_ ='char'
-        elif type_ == 'char':
-            if self.get_direction() == 'in' and self.get_role() == 'stream_data' and context in ['signature', 'meta']:
-                type_ = 'const char'
-            else:
-                type_ = 'char'
+        if type_ in ['string', 'char']:
+            type_ = 'char'
         elif type_ in ['int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64']:
             type_ = type_ + '_t'
         elif type_ == 'bool' and context == 'struct':
@@ -182,6 +174,9 @@ class UCElement(common.Element):
                     type_ += '[{}]'.format(cardinality)
             elif cardinality < 0:
                 type_ += ' *'
+
+        if self.get_direction() == 'in' and cardinality != 1 and context in ['signature', 'meta'] and not type_.startswith("const"):
+            type_ = "const " + type_
 
         return type_
 
