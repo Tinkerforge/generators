@@ -24,8 +24,6 @@ extern "C" {
 typedef struct TF_SpiTfpStateMachine {
     uint32_t deadline_us;
 
-    uint8_t state;
-
     union {
         struct { uint8_t _unused; } idle;
 
@@ -46,14 +44,14 @@ typedef struct TF_SpiTfpStateMachine {
 
         struct { uint8_t _unused; } build_ack;
     } info;
+
+    uint8_t state;
 } TF_SpiTfpStateMachine;
 
 struct TF_HalContext;
 
 typedef struct TF_SpiTfpContext {
     struct TF_HalContext *hal;
-
-    uint8_t port_id;
 
     uint8_t last_sequence_number_seen;
     uint8_t last_sequence_number_acked;
@@ -62,6 +60,8 @@ typedef struct TF_SpiTfpContext {
 
     uint32_t error_count_checksum;
     uint32_t error_count_frame;
+
+    uint8_t port_id;
 
     uint8_t send_buf[TF_SPITFP_MAX_MESSAGE_LENGTH];
     TF_Packetbuffer recv_buf;
