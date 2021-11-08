@@ -28,6 +28,8 @@ import math
 
 from generators import common
 
+UC_KEYWORDS = ['register']
+
 class UCPacket(common.Packet):
     def get_c_parameters(self, high_level=False):
         parameters = []
@@ -117,6 +119,16 @@ class UCPacket(common.Packet):
         return ', '.join(arguments)
 
 class UCElement(common.Element):
+    def get_name(self, *args, **kwargs):
+        name = common.Element.get_name(self, *args, **kwargs)
+
+        # avoid keywords, check as lower because we don't know
+        # yet which variant of the flavored name will be used
+        if name.lower in UC_KEYWORDS:
+            name = common.Element.get_name(self, *args, suffix='_', **kwargs)
+
+        return name
+
     def format_value(self, value):
         if isinstance(value, list):
             result = []
