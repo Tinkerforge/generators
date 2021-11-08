@@ -15,21 +15,21 @@
 #include "endian_convert.h"
 
 uint8_t tf_packetbuffer_get_size(TF_Packetbuffer *rb) {
-	return sizeof(rb->buffer) - 1;
+    return sizeof(rb->buffer) - 1;
 }
 
 uint8_t tf_packetbuffer_get_used(TF_Packetbuffer *rb) {
-	if(rb->end < rb->start) {
-		return sizeof(rb->buffer) + rb->end - rb->start;
-	}
+    if(rb->end < rb->start) {
+        return sizeof(rb->buffer) + rb->end - rb->start;
+    }
 
-	return rb->end - rb->start;
+    return rb->end - rb->start;
 }
 
 uint8_t tf_packetbuffer_get_free(TF_Packetbuffer *rb) {
-	const uint8_t free = tf_packetbuffer_get_size(rb) - tf_packetbuffer_get_used(rb);
+    const uint8_t free = tf_packetbuffer_get_size(rb) - tf_packetbuffer_get_used(rb);
 
-	return free;
+    return free;
 }
 
 bool tf_packetbuffer_is_empty(TF_Packetbuffer *rb) {
@@ -37,67 +37,67 @@ bool tf_packetbuffer_is_empty(TF_Packetbuffer *rb) {
 }
 
 bool tf_packetbuffer_is_full(TF_Packetbuffer *rb) {
-	return tf_packetbuffer_get_free(rb) == 0;
+    return tf_packetbuffer_get_free(rb) == 0;
 }
 
 bool tf_packetbuffer_push(TF_Packetbuffer *rb, const uint8_t data) {
-	rb->buffer[rb->end] = data;
-	rb->end++;
-	if(rb->end >= sizeof(rb->buffer)) {
-		rb->end = 0;
-	}
+    rb->buffer[rb->end] = data;
+    rb->end++;
+    if(rb->end >= sizeof(rb->buffer)) {
+        rb->end = 0;
+    }
 
-	if(rb->end == rb->start) {
-		if(rb->end == 0) {
-			rb->end = sizeof(rb->buffer)-1;
-		} else {
-			rb->end--;
-		}
-		return false;
-	}
+    if(rb->end == rb->start) {
+        if(rb->end == 0) {
+            rb->end = sizeof(rb->buffer)-1;
+        } else {
+            rb->end--;
+        }
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 void tf_packetbuffer_remove(TF_Packetbuffer *rb, const uint8_t num) {
-	// Make sure that we don't remove more then is available in the buffer
-	uint8_t incr = MIN(tf_packetbuffer_get_used(rb), num);
+    // Make sure that we don't remove more then is available in the buffer
+    uint8_t incr = MIN(tf_packetbuffer_get_used(rb), num);
 
-	rb->start += incr;
-	if(rb->start >= sizeof(rb->buffer)) {
-		rb->start -= sizeof(rb->buffer);
-	}
+    rb->start += incr;
+    if(rb->start >= sizeof(rb->buffer)) {
+        rb->start -= sizeof(rb->buffer);
+    }
 }
 
 bool tf_packetbuffer_pop(TF_Packetbuffer *rb, uint8_t *data) {
-	//Silence Wmaybe-uninitialized in the _read_[type] functions.
-	*data = 0;
-	if(tf_packetbuffer_is_empty(rb)) {
-		return false;
-	}
+    //Silence Wmaybe-uninitialized in the _read_[type] functions.
+    *data = 0;
+    if(tf_packetbuffer_is_empty(rb)) {
+        return false;
+    }
 
-	*data = rb->buffer[rb->start];
-	rb->start++;
-	if(rb->start >= sizeof(rb->buffer)) {
-		rb->start = 0;
-	}
+    *data = rb->buffer[rb->start];
+    rb->start++;
+    if(rb->start >= sizeof(rb->buffer)) {
+        rb->start = 0;
+    }
 
-	return true;
+    return true;
 }
 
 bool tf_packetbuffer_peek(TF_Packetbuffer *rb, uint8_t *data) {
-	if(tf_packetbuffer_is_empty(rb)) {
-		return false;
-	}
+    if(tf_packetbuffer_is_empty(rb)) {
+        return false;
+    }
 
-	*data = rb->buffer[rb->start];
-	return true;
+    *data = rb->buffer[rb->start];
+    return true;
 }
 
 bool tf_packetbuffer_peek_offset(TF_Packetbuffer *rb, uint8_t *data, uint8_t offset) {
-	if(tf_packetbuffer_get_used(rb) <= offset) {
-		return false;
-	}
+    if(tf_packetbuffer_get_used(rb) <= offset) {
+        return false;
+    }
 
     if (rb->start + offset >= sizeof(rb->buffer)) {
         *data = rb->buffer[rb->start + offset - sizeof(rb->buffer)];
@@ -105,40 +105,40 @@ bool tf_packetbuffer_peek_offset(TF_Packetbuffer *rb, uint8_t *data, uint8_t off
         *data = rb->buffer[rb->start + offset];
     }
 
-	return true;
+    return true;
 }
 
 void tf_packetbuffer_init(TF_Packetbuffer *rb) {
     //TODO: The context is memsetted by tf_tfp_init, so this could be removed
     memset(rb->buffer, 0, sizeof(rb->buffer));
-	rb->start         = 0;
-	rb->end           = 0;
+    rb->start         = 0;
+    rb->end           = 0;
 }
 
 void tf_packetbuffer_print(TF_Packetbuffer *rb) {
-	int32_t end = rb->end - rb->start;
-	uint8_t i;
+    int32_t end = rb->end - rb->start;
+    uint8_t i;
 
-	if(end < 0) {
-		end += sizeof(rb->buffer);
-	}
+    if(end < 0) {
+        end += sizeof(rb->buffer);
+    }
 
-	printf("TF_Packetbuffer (start %u, end %u, size %u): [\n",
-	       rb->start, rb->end, PACKET_BUFFER_SIZE);
+    printf("TF_Packetbuffer (start %u, end %u, size %u): [\n",
+           rb->start, rb->end, PACKET_BUFFER_SIZE);
 
-	for(i = 0; i < end; i++) {
-		if((i % 16) == 0) {
-			printf("    ");
-		}
+    for(i = 0; i < end; i++) {
+        if((i % 16) == 0) {
+            printf("    ");
+        }
 
-		printf("%x, ", rb->buffer[(rb->start + i) % sizeof(rb->buffer)]);
+        printf("%x, ", rb->buffer[(rb->start + i) % sizeof(rb->buffer)]);
 
-		if((i % 16) == 15) {
-			printf("\n");
-		}
-	}
+        if((i % 16) == 15) {
+            printf("\n");
+        }
+    }
 
-	printf("]\n");
+    printf("]\n");
 }
 
 bool tf_packetbuffer_free_array_view(TF_Packetbuffer *rb, uint8_t length, uint8_t **first_chunk, uint8_t *first_len, uint8_t **second_chunk, uint8_t *second_len) {

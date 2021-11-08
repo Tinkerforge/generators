@@ -44,10 +44,10 @@ int set_tcp_options(int fd, const char **op) {
     }
 
     *op = "enable O_NONBLOCK";
-	int flags = fcntl(fd, F_GETFL, 0);
-	if (flags < 0 || fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
-		return -1;
-	}
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags < 0 || fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
+        return -1;
+    }
     return 0;
 }
 
@@ -306,18 +306,18 @@ void remove_dead_clients(TF_NetContext *net) {
 
 bool is_valid_header(TF_TfpHeader *header) {
     if (header->length < TF_TFP_MIN_MESSAGE_LENGTH) {
-		return false;
-	}
+        return false;
+    }
 
-	if (header->length > TF_TFP_MAX_MESSAGE_LENGTH) {
-		return false;
-	}
+    if (header->length > TF_TFP_MAX_MESSAGE_LENGTH) {
+        return false;
+    }
 
-	if (header->fid == 0) {
-		return false;
-	}
+    if (header->fid == 0) {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 void reassemble_packets(TF_NetContext *net) {

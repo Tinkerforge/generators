@@ -25,13 +25,13 @@ static uint8_t tf_tfp_build_header(TF_TfpContext *tfp, uint8_t *header_buf, uint
     TF_TfpHeader header;
     memset(&header, 0, sizeof(TF_TfpHeader));
 
-	uint8_t sequence_number = tfp->next_sequence_number & 0x0F;
+    uint8_t sequence_number = tfp->next_sequence_number & 0x0F;
     if (sequence_number == 0) {
         sequence_number = 1;
     }
     tfp->next_sequence_number = sequence_number + 1;
 
-	header.uid = tfp->uid;
+    header.uid = tfp->uid;
     header.length = length;
     header.fid = function_id;
     header.seq_num = sequence_number;

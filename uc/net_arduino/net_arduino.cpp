@@ -211,18 +211,18 @@ void remove_dead_clients(TF_NetContext *net) {
 
 bool is_valid_header(TF_TfpHeader *header) {
     if (header->length < TF_TFP_MIN_MESSAGE_LENGTH) {
-		return false;
-	}
+        return false;
+    }
 
-	if (header->length > TF_TFP_MAX_MESSAGE_LENGTH) {
-		return false;
-	}
+    if (header->length > TF_TFP_MAX_MESSAGE_LENGTH) {
+        return false;
+    }
 
-	if (header->fid == 0) {
-		return false;
-	}
+    if (header->fid == 0) {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 void reassemble_packets(TF_NetContext *net) {

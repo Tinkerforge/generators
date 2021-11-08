@@ -167,13 +167,13 @@ static void write_chunk(const char *fmt, const char *cursor) {
 }
 
 void tf_hal_printf(const char *fmt, ...){
-	va_list va;
-	va_start(va, fmt);
+    va_list va;
+    va_start(va, fmt);
 
     char character;
     const char *cursor = fmt;
 
-	while((character = *(cursor++))) {
+    while((character = *(cursor++))) {
         if(character == '\n') {
             write_chunk(fmt, cursor);
             fmt = cursor;
@@ -182,7 +182,7 @@ void tf_hal_printf(const char *fmt, ...){
             continue;
         }
 
-		if(character != '%') {
+        if(character != '%') {
             continue;
         }
 

@@ -116,26 +116,26 @@ int tf_hal_create(struct TF_HalContext *hal, const char *spidev_path, TF_Port *p
 int tf_hal_destroy(TF_HalContext *hal) {
     robust_close(hal->spidev_fd);
     for(int i = 0; i < hal->port_count; ++i) {
-	    robust_close(hal->ports[i].chip_select_pin);
+        robust_close(hal->ports[i].chip_select_pin);
     }
     return TF_E_OK;
 }
 
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
-	// Use direct write call instead of gpio_sysfs_set_output on buffered fd to save some CPU time
-	ssize_t rc = write(hal->ports[port_id]._cs_pin_fd, enable ? "0" : "1", 1);
+    // Use direct write call instead of gpio_sysfs_set_output on buffered fd to save some CPU time
+    ssize_t rc = write(hal->ports[port_id]._cs_pin_fd, enable ? "0" : "1", 1);
     return rc == 1 ? TF_E_OK : TF_E_CHIP_SELECT_FAILED;
 }
 
 int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, const uint32_t length) {
     (void) port_id;
     struct spi_ioc_transfer spi_transfer = {
-		.tx_buf = (unsigned long)write_buffer,
-		.rx_buf = (unsigned long)read_buffer,
-		.len = length,
-	};
+        .tx_buf = (unsigned long)write_buffer,
+        .rx_buf = (unsigned long)read_buffer,
+        .len = length,
+    };
 
-	int rc = ioctl(hal->spidev_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
+    int rc = ioctl(hal->spidev_fd, SPI_IOC_MESSAGE(1), &spi_transfer);
 
     return rc >= 0 ? TF_E_OK : TF_E_TRANSCEIVE_FAILED;
 }

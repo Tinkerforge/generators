@@ -23,10 +23,10 @@ extern "C" {
 
 typedef struct {
     //index of first valid elemnt
-	uint8_t start;
+    uint8_t start;
     //index of first invalid element
-	uint8_t end;
-	uint8_t buffer[PACKET_BUFFER_SIZE];
+    uint8_t end;
+    uint8_t buffer[PACKET_BUFFER_SIZE];
 } TF_Packetbuffer;
 
 uint8_t tf_packetbuffer_get_size(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
