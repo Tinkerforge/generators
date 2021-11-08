@@ -109,7 +109,6 @@ bool tf_packetbuffer_peek_offset(TF_Packetbuffer *rb, uint8_t *data, uint8_t off
 }
 
 void tf_packetbuffer_init(TF_Packetbuffer *rb) {
-    //TODO: The context is memsetted by tf_tfp_init, so this could be removed
     memset(rb->buffer, 0, sizeof(rb->buffer));
     rb->start         = 0;
     rb->end           = 0;
