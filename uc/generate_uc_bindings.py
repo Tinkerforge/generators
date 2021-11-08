@@ -174,7 +174,6 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         return rc;
     }}
 
-    //rc = tf_tfp_init({device_under}->tfp, numeric_uid, TF_{device_upper}_DEVICE_IDENTIFIER, hal, port_id, inventory_index, tf_{device_under}_callback_handler);
     rc = tf_hal_get_tfp(hal, &{device_under}->tfp, TF_{device_upper}_DEVICE_IDENTIFIER, inventory_index);
     if (rc != TF_E_OK) {{
         return rc;
@@ -199,7 +198,6 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         return rc;
     }}
 
-    //rc = tf_tfp_init(&{device_under}->tfp, numeric_uid, 0, hal, port_id, inventory_index, tf_{device_under}_callback_handler);
     rc = tf_hal_get_tfp(hal, &{device_under}->tfp, 0, inventory_index);
     if (rc != TF_E_OK) {{
         return rc;
@@ -207,7 +205,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
     {device_under}->tfp->device = {device_under};
     {device_under}->tfp->cb_handler = tf_{device_under}_callback_handler;
     TF_PortCommon *port_common = tf_hal_get_port_common(hal, port_id);
-    rc = tf_spitfp_init(&port_common->spitfp, hal, port_id);
+    rc = tf_spitfp_create(&port_common->spitfp, hal, port_id);
     if (rc != TF_E_OK) {{
         return rc;
     }}

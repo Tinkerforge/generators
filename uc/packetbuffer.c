@@ -108,7 +108,7 @@ bool tf_packetbuffer_peek_offset(TF_Packetbuffer *rb, uint8_t *data, uint8_t off
     return true;
 }
 
-void tf_packetbuffer_init(TF_Packetbuffer *rb) {
+void tf_packetbuffer_create(TF_Packetbuffer *rb) {
     memset(rb->buffer, 0, sizeof(rb->buffer));
     rb->start         = 0;
     rb->end           = 0;

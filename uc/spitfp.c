@@ -476,7 +476,7 @@ uint8_t *tf_spitfp_get_payload_buffer(TF_SpiTfpContext *spitfp) {
     return spitfp->send_buf + TF_SPITFP_HEADER_LENGTH;
 }
 
-int tf_spitfp_init(TF_SpiTfpContext *spitfp, struct TF_HalContext *hal, uint8_t port_id) {
+int tf_spitfp_create(TF_SpiTfpContext *spitfp, struct TF_HalContext *hal, uint8_t port_id) {
     spitfp->hal = hal;
     spitfp->port_id = port_id;
     spitfp->last_sequence_number_seen = 0;
@@ -489,7 +489,7 @@ int tf_spitfp_init(TF_SpiTfpContext *spitfp, struct TF_HalContext *hal, uint8_t 
     spitfp->error_count_frame = 0;
 
     memset(spitfp->send_buf, 0, sizeof(spitfp->send_buf));
-    tf_packetbuffer_init(&spitfp->recv_buf);
+    tf_packetbuffer_create(&spitfp->recv_buf);
 
     return TF_E_OK;
 }

@@ -39,7 +39,7 @@ void tf_packetbuffer_remove(TF_Packetbuffer *rb, const uint8_t num) TF_ATTRIBUTE
 bool tf_packetbuffer_pop(TF_Packetbuffer *rb, uint8_t *data) TF_ATTRIBUTE_NONNULL_ALL;
 bool tf_packetbuffer_peek(TF_Packetbuffer *rb, uint8_t *data) TF_ATTRIBUTE_NONNULL_ALL;
 bool tf_packetbuffer_peek_offset(TF_Packetbuffer *rb, uint8_t *data, uint8_t offset) TF_ATTRIBUTE_NONNULL_ALL;
-void tf_packetbuffer_init(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_packetbuffer_create(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
 void tf_packetbuffer_print(TF_Packetbuffer *rb) TF_ATTRIBUTE_NONNULL_ALL;
 bool tf_packetbuffer_free_array_view(TF_Packetbuffer *rb, uint8_t length, uint8_t **first_chunk, uint8_t *first_len, uint8_t **second_chunk, uint8_t *second_len) TF_ATTRIBUTE_NONNULL_ALL;
 

@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // Forward declare init here. Is intentionally not defined in tfp.h (see there why)
-int tf_tfp_init(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_tfp_create(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 int tf_hal_common_create(TF_HalContext *hal) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
@@ -35,14 +35,14 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
     hal_common->used = 1;
     hal_common->device_overflow_count = 0;
 
-    int rc = tf_tfp_init(&hal_common->tfps[0], hal, 0);
+    int rc = tf_tfp_create(&hal_common->tfps[0], hal, 0);
     if (rc != TF_E_OK) {
         return rc;
     }
 
     for(int i = 0; i < port_count; ++i) {
         TF_PortCommon *port_common = tf_hal_get_port_common(hal, (uint8_t)i);
-        tf_spitfp_init(&port_common->spitfp, hal, (uint8_t)i);
+        tf_spitfp_create(&port_common->spitfp, hal, (uint8_t)i);
 
         tf_unknown_create(&unknown, "1", hal, (uint8_t)i, 0);
 
@@ -101,7 +101,7 @@ static void enum_handler(TF_HalContext* hal,
     hal_common->port_ids[hal_common->used] = port_id;
     hal_common->uids[hal_common->used] = numeric_uid;
     hal_common->dids[hal_common->used] = dev_id;
-    if(tf_tfp_init(&hal_common->tfps[hal_common->used], hal, port_id) == TF_E_OK) {
+    if(tf_tfp_create(&hal_common->tfps[hal_common->used], hal, port_id) == TF_E_OK) {
         ++hal_common->used;
     }
 }
