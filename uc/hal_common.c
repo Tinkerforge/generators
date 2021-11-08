@@ -493,7 +493,7 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
                     continue;
                 }
 
-                uint8_t buf[TF_TFP_MESSAGE_MAX_LENGTH] = {0};
+                uint8_t buf[TF_TFP_MAX_MESSAGE_LENGTH] = {0};
                 tf_net_get_packet(net, pid, buf);
                 tf_tfp_inject_packet(&hal_common->tfps[i], &header, buf);
                 //TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count

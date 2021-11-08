@@ -210,11 +210,11 @@ void remove_dead_clients(TF_NetContext *net) {
 }
 
 bool is_valid_header(TF_TfpHeader *header) {
-    if (header->length < TF_TFP_MESSAGE_MIN_LENGTH) {
+    if (header->length < TF_TFP_MIN_MESSAGE_LENGTH) {
 		return false;
 	}
 
-	if (header->length > TF_TFP_MESSAGE_MAX_LENGTH) {
+	if (header->length > TF_TFP_MAX_MESSAGE_LENGTH) {
 		return false;
 	}
 
