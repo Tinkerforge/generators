@@ -41,7 +41,8 @@ bool tf_packetbuffer_is_full(TF_Packetbuffer *rb) {
 }
 
 bool tf_packetbuffer_push(TF_Packetbuffer *rb, const uint8_t data) {
-    rb->buffer[rb->end] = data;
+    uint8_t write_idx = rb->end;
+
     rb->end++;
     if(rb->end >= sizeof(rb->buffer)) {
         rb->end = 0;
@@ -56,6 +57,7 @@ bool tf_packetbuffer_push(TF_Packetbuffer *rb, const uint8_t data) {
         return false;
     }
 
+    rb->buffer[write_idx] = data;
     return true;
 }
 
