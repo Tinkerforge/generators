@@ -72,16 +72,10 @@ void tf_packetbuffer_remove(TF_Packetbuffer *rb, const uint8_t num) {
 bool tf_packetbuffer_pop(TF_Packetbuffer *rb, uint8_t *data) {
     //Silence Wmaybe-uninitialized in the _read_[type] functions.
     *data = 0;
-    if(tf_packetbuffer_is_empty(rb)) {
+    if (!tf_packetbuffer_peek(rb, data))
         return false;
-    }
 
-    *data = rb->buffer[rb->start];
-    rb->start++;
-    if(rb->start >= sizeof(rb->buffer)) {
-        rb->start = 0;
-    }
-
+    tf_packetbuffer_remove(rb, 1);
     return true;
 }
 
