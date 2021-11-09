@@ -18,13 +18,6 @@
 #include "packetbuffer.h"
 #include "tfp_header.h"
 
-#define TFP_HEADER_UID_OFFSET 0
-#define TFP_HEADER_LENGTH_OFFSET 4
-#define TFP_HEADER_FID_OFFSET 5
-#define TFP_HEADER_SEQ_NUM_OFFSET 6
-#define TFP_HEADER_FLAGS_OFFSET 7
-#define TFP_HEADER_LENGTH 8
-
 #ifdef __cplusplus
 extern "C" {
 #endif
