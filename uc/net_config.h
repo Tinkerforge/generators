@@ -7,7 +7,7 @@ extern "C" {
 
 // Uncomment this to enable networking
 // This requires using a TF_NetContext.
-//#define TF_NET_ENABLE
+// #define TF_NET_ENABLE
 
 // This is the maximum number of open requests to keep track of in parallel.
 // If this many requests are not fulfilled and another one is created by sending

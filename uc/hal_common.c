@@ -466,19 +466,6 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
                 continue;
             }
 
-            // Handle UID 1 (brick daemon)
-            if (header.uid == 1 && header.response_expected) {
-                uint8_t buf[TF_SPITFP_MAX_MESSAGE_LENGTH] = {0};
-                tf_net_get_packet(net, pid, buf);
-                tf_net_drop_packet(net, pid);
-
-                header.error_code = 2;
-                // Set error code in buffer to 2 (function not supported)
-                buf[7] = (2 << 6) | (buf[7] & 0x3F);
-
-                tf_net_send_packet(net, &header, buf);
-                continue;
-            }
             bool device_found = false;
             bool dispatched = false;
             for(int i = 1; i < (int)hal_common->used; ++i) {
