@@ -29,6 +29,7 @@ if sys.hexversion < 0x3040000:
     print('Python >= 3.4 required')
     sys.exit(1)
 
+import re
 import os
 import glob
 import shutil
@@ -54,10 +55,104 @@ if 'generators' not in sys.modules:
 from generators import common
 
 class UCExamplesTester(common.Tester):
-    def __init__(self, root_dir, compiler, extra_paths):
+    def __init__(self, root_dir, compiler, extra_paths, run_after_unzip):
         common.Tester.__init__(self, 'uc', '.c', root_dir, comment=compiler, extra_paths=extra_paths)
 
         self.compiler = compiler
+        self.run_after_unzip = run_after_unzip
+
+    def after_unzip(self, tmp_dir):
+        if not self.run_after_unzip:
+            return True
+
+        result = True
+
+        with common.ChangedDirectory(tmp_dir):
+            print('>>> building libuc.so')
+            args = ['clang', '-ggdb', '-std=c99', '-shared', '-pthread', '-I', 'source', '-o', 'libuc.so', 'source/hal_fake/hal_fake.c']
+            args += glob.glob(os.path.join(tmp_dir, 'source/bindings/*.c'))
+
+            common.execute(args)
+
+            print('>>> checking symbol prefix')
+            args = ['nm', '-g', '-l', '--defined-only', 'libuc.so']
+            _, output = common.check_output_and_error(args)
+
+            for l in output.splitlines():
+                splt = l.replace("\t", " ").split(" ", 3)
+                symbol = splt[2]
+                if len(splt) == 4:
+                    location = splt[3]
+                else:
+                    location = "unknown location"
+
+                if not symbol.startswith("tf_"):
+                    print("{} Exported symbol {} is missing the tf_ prefix".format(location.replace(tmp_dir, "."), symbol))
+                    result = False
+
+            for type_ in ["struct", "enum"]:
+                print('>>> checking {} names'.format(type_))
+                args = ['grep', '-n', '-r', 'typedef {}'.format(type_), '--include=*.h', '--exclude=bcm2835.h', '.']
+                _, output = common.check_output_and_error(args)
+
+                for l in output.splitlines():
+                    m = re.match(r"(.*):typedef {}(.*)\{{".format(type_), l)
+                    if not m:
+                        # forward declarations won't match the output
+                        if not re.match(r"(.*):typedef {} ([^\s]*) \2".format(type_), l):
+                            print("Failed to parse line {}".format(l))
+                            result = False
+                        continue
+
+                    location, name =  m.groups()
+                    if len(name.strip()) == 0:
+                        print("{0} Found {1} definition not matching to pattern typedef {1} [name] {{...}} [name]. The duplicated name is required to be able to forward declare the {1}.".format(location, type_))
+                        result = False
+                        continue
+                    name = name.strip()
+                    if not name.startswith("TF_"):
+                        print("{} {} {} is missing the TF_ prefix".format(location, type_, name))
+                        result = False
+
+            print('>>> checking enum value names')
+            args = ['grep', '-lr', 'typedef enum', '--include=*.h', '--exclude=bcm2835.h', '.']
+            _, output = common.check_output_and_error(args)
+            files = output.splitlines()
+
+            args = ['sed', '-e', '/typedef enum/,/\}/!d'] + files
+            _, output = common.check_output_and_error(args)
+            for l in output.splitlines():
+                l = l.strip()
+                if l.startswith("typedef") or l.startswith("}"):
+                    continue
+
+                if not l.startswith("TF_"):
+                    print("Enum value {} is missing the TF_ prefix".format(l.split(" ")[0].replace(",", "")))
+                    result = False
+
+            define_whitelist = ["MIN", "MAX", "__GNUC_PREREQ"]
+
+            print('>>> checking define names')
+            args = ['grep', '-n', '-r', '#define ', '--include=*.h', '--exclude=bcm2835.h', '.']
+            _, output = common.check_output_and_error(args)
+            for l in output.splitlines():
+                m = re.search(r"(.*):(?://)?\s*#define ([^\s\(]*)", l)
+                if not m:
+                    print("Failed to parse line {}".format(l))
+                    result = False
+                    continue
+
+                location, name =  m.groups()
+                if not name.startswith("TF_") and not name.startswith("tf_") and not name in define_whitelist:
+                    print("{} Define {} is missing the TF_ prefix".format(location, name))
+                    result = False
+
+
+        if result:
+            print('\033[01;32m>>> test succeeded\033[0m\n')
+        else:
+            print('\033[01;31m>>> test failed\033[0m\n')
+        return result
 
     def test(self, cookie, tmp_dir, path, extra):
         if extra:
@@ -121,7 +216,6 @@ class UCExamplesTester(common.Tester):
         if self.compiler.startswith('mingw32-'):
             args += ['-lws2_32']
 
-
         self.execute(cookie, args)
 
     def check_success(self, exit_code, output):
@@ -133,22 +227,22 @@ class UCExamplesTester(common.Tester):
 def test(root_dir):
     extra_paths = []
 
-    if not UCExamplesTester(root_dir, 'clang', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'clang', extra_paths, True).run():
         return False
 
-    if not UCExamplesTester(root_dir, 'gcc', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'gcc', extra_paths, False).run():
         return False
 
-    if not UCExamplesTester(root_dir, 'g++', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'g++', extra_paths, False).run():
         return False
 
-    if not UCExamplesTester(root_dir, 'mingw32-gcc', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'mingw32-gcc', extra_paths, False).run():
         return False
 
-    if not UCExamplesTester(root_dir, 'mingw32-g++', extra_paths).run():
+    if not UCExamplesTester(root_dir, 'mingw32-g++', extra_paths, False).run():
         return False
 
-    return UCExamplesTester(root_dir, 'scan-build clang', extra_paths).run()
+    return UCExamplesTester(root_dir, 'scan-build clang', extra_paths, False).run()
 
 if __name__ == '__main__':
     common.dockerize('uc', __file__)
