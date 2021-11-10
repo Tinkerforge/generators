@@ -3,7 +3,8 @@
  * 100% Public Domain
  */
 
-#pragma once
+#ifndef TF_SHA1
+#define TF_SHA1
 
 #include <stddef.h>
 #include <stdint.h>
@@ -27,4 +28,6 @@ void tf_sha1_final(TF_SHA1 *sha1, uint8_t digest[TF_SHA1_DIGEST_LENGTH]);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
