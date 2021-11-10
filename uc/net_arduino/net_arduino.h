@@ -25,19 +25,19 @@ typedef struct {
     TF_TfpHeader available_packet;
 } TF_NetClient;
 
-typedef struct Request {
+typedef struct TF_Request {
     uint32_t uid;
     uint32_t client_id;
     uint8_t fid;
     uint8_t seq_num;
-} Request;
+} TF_Request;
 
 typedef struct TF_NetContext {
     TF_NetClient clients[TF_MAX_CLIENT_COUNT];
     uint8_t clients_used;
     WiFiServer server;
 
-    Request open_requests[TF_MAX_OPEN_REQUEST_COUNT];
+    TF_Request open_requests[TF_MAX_OPEN_REQUEST_COUNT];
     uint8_t open_request_count;
     uint16_t send_buf_timeout_us;
     uint32_t recv_timeout_ms;

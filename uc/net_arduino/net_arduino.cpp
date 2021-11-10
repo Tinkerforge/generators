@@ -10,7 +10,7 @@
 #include "../bindings/hal_common.h"
 
 void remove_open_request(TF_NetContext *net, size_t idx) {
-    memmove(net->open_requests + idx, net->open_requests + idx + 1, sizeof(Request) * (net->open_request_count - idx - 1));
+    memmove(net->open_requests + idx, net->open_requests + idx + 1, sizeof(TF_Request) * (net->open_request_count - idx - 1));
     --net->open_request_count;
 }
 
@@ -238,11 +238,11 @@ void reassemble_packets(TF_NetContext *net) {
         uint8_t *buf = client->read_buf;
 
         TF_TfpHeader header;
-        peek_packet_header_plain_buf(buf, &header);
+        tf_peek_packet_header_plain_buf(buf, &header);
 
         if (!is_valid_header(&header)) {
             tf_hal_log_info("invalid request, closing connection\n");
-            print_packet_header(&header);
+            tf_print_packet_header(&header);
             for(int i = 0; i < 80; ++i){
                 printf("%02x ", buf[i]);
             }
@@ -350,10 +350,10 @@ void tf_net_send_packet(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) 
     if(header->seq_num == 0) {
         broadcast(net, header, buf);
     } else {
-        Request *request = NULL;
+        TF_Request *request = NULL;
         size_t request_idx = 0;
         for(; request_idx < net->open_request_count; ++request_idx) {
-            Request *req = &net->open_requests[request_idx];
+            TF_Request *req = &net->open_requests[request_idx];
             if(req->fid == header->fid && req->seq_num == header->seq_num && req->uid == header->uid) {
                 request = req;
                 break;

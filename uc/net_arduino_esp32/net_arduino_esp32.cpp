@@ -351,7 +351,7 @@ void reassemble_packets(TF_NetContext *net) {
         uint8_t *buf = client->read_buf;
 
         TF_TfpHeader header;
-        peek_packet_header_plain_buf(buf, &header);
+        tf_peek_packet_header_plain_buf(buf, &header);
 
         if (!is_valid_header(&header)) {
             tf_hal_log_debug("invalid request, closing connection\n");
@@ -554,8 +554,8 @@ static void tf_net_handle_get_authentication_nonce_request(TF_NetContext *net, u
 
     if (header->response_expected) {
         header->length = TF_GET_AUTHENTICATION_NONCE_RESPONSE_LEN;
-        write_packet_header(header, buf);
-        memcpy(buf + TFP_HEADER_LENGTH, &client->auth_nonce, sizeof(client->auth_nonce));
+        tf_write_packet_header(header, buf);
+        memcpy(buf + TF_TFP_HEADER_LENGTH, &client->auth_nonce, sizeof(client->auth_nonce));
         unicast(net, header, buf, client_id);
     }
 }
@@ -576,7 +576,7 @@ static void tf_net_handle_authenticate_request(TF_NetContext *net, uint8_t clien
     }
 
     uint8_t *buf_read_ptr = buf;
-    buf_read_ptr += TFP_HEADER_LENGTH;
+    buf_read_ptr += TF_TFP_HEADER_LENGTH;
 
     uint32_t nonces[2];
     uint8_t digest[TF_SHA1_DIGEST_LENGTH];
@@ -598,7 +598,7 @@ static void tf_net_handle_authenticate_request(TF_NetContext *net, uint8_t clien
 
     if (header->response_expected) {
         header->length = TF_AUTHENTICATE_RESPONSE_LEN;
-        write_packet_header(header, buf);
+        tf_write_packet_header(header, buf);
         unicast(net, header, buf, client_id);
     }
 }
@@ -629,6 +629,6 @@ static void tf_net_handle_brickd_packet(TF_NetContext *net, uint8_t packet_id, T
     }
 
     header->error_code = 2;
-    write_packet_header(header, buf);
+    tf_write_packet_header(header, buf);
     unicast(net, header, buf, packet_id);
 }

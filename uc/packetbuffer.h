@@ -15,7 +15,7 @@
 
 //TODO: fix circular includes, then use TF_SPITFP_MAX_MESSAGE_LENGTH + 1
 //#include "spitfp.h"
-#define PACKET_BUFFER_SIZE 84
+#define TF_PACKET_BUFFER_SIZE 84
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,7 +26,7 @@ typedef struct {
     uint8_t start;
     //index of first invalid element
     uint8_t end;
-    uint8_t buffer[PACKET_BUFFER_SIZE];
+    uint8_t buffer[TF_PACKET_BUFFER_SIZE];
 } TF_Packetbuffer;
 
 uint8_t tf_packetbuffer_get_size(TF_Packetbuffer *pb) TF_ATTRIBUTE_NONNULL_ALL;

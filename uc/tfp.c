@@ -37,7 +37,7 @@ static uint8_t tf_tfp_build_header(TF_TfpContext *tfp, uint8_t *header_buf, uint
     header.seq_num = sequence_number;
     header.response_expected = response_expected;
 
-    write_packet_header(&header, header_buf);
+    tf_write_packet_header(&header, header_buf);
 
     return sequence_number;
 }
@@ -51,7 +51,7 @@ static bool tf_tfp_dispatch_packet(TF_TfpContext *tfp, TF_TfpHeader *header, TF_
         // The network layer expects a complete copy of the TFP packet (i.e. with header),
         // however we've already removed the header. Write it back here.
         uint8_t net_buf[TF_TFP_MAX_MESSAGE_LENGTH] = {0};
-        write_packet_header(header, net_buf);
+        tf_write_packet_header(header, net_buf);
         tf_packetbuffer_peek_offset_n(packet, net_buf + 8, header->length - 8, 0);
 
         // Patch "position" of enumerate and get_identity packets
@@ -120,7 +120,7 @@ static bool tf_tfp_filter_received_packet(TF_TfpContext *tfp, bool remove_intere
     }
 
     TF_TfpHeader header;
-    read_packet_header(buf, &header);
+    tf_read_packet_header(buf, &header);
 
     // Compare with <= as behind the tfp packet there has to be the SPITFP checksum
     if(used <= header.length) {

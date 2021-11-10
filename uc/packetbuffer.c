@@ -17,12 +17,12 @@
 
 uint8_t tf_packetbuffer_get_size(TF_Packetbuffer *pb) {
     (void)pb;
-    return PACKET_BUFFER_SIZE - 1;
+    return TF_PACKET_BUFFER_SIZE - 1;
 }
 
 uint8_t tf_packetbuffer_get_used(TF_Packetbuffer *pb) {
     if(pb->end < pb->start) {
-        return PACKET_BUFFER_SIZE + pb->end - pb->start;
+        return TF_PACKET_BUFFER_SIZE + pb->end - pb->start;
     }
 
     return pb->end - pb->start;
@@ -46,13 +46,13 @@ bool tf_packetbuffer_push(TF_Packetbuffer *pb, const uint8_t data) {
     uint8_t write_idx = pb->end;
 
     pb->end++;
-    if(pb->end >= PACKET_BUFFER_SIZE) {
+    if(pb->end >= TF_PACKET_BUFFER_SIZE) {
         pb->end = 0;
     }
 
     if(pb->end == pb->start) {
         if(pb->end == 0) {
-            pb->end = PACKET_BUFFER_SIZE-1;
+            pb->end = TF_PACKET_BUFFER_SIZE-1;
         } else {
             pb->end--;
         }
@@ -68,8 +68,8 @@ void tf_packetbuffer_remove(TF_Packetbuffer *pb, const uint8_t num) {
     uint8_t incr = MIN(tf_packetbuffer_get_used(pb), num);
 
     pb->start += incr;
-    if(pb->start >= PACKET_BUFFER_SIZE) {
-        pb->start -= PACKET_BUFFER_SIZE;
+    if(pb->start >= TF_PACKET_BUFFER_SIZE) {
+        pb->start -= TF_PACKET_BUFFER_SIZE;
     }
 }
 
@@ -97,8 +97,8 @@ bool tf_packetbuffer_peek_offset(TF_Packetbuffer *pb, uint8_t *data, uint8_t off
         return false;
     }
 
-    if (pb->start + offset >= PACKET_BUFFER_SIZE) {
-        *data = pb->buffer[pb->start + offset - PACKET_BUFFER_SIZE];
+    if (pb->start + offset >= TF_PACKET_BUFFER_SIZE) {
+        *data = pb->buffer[pb->start + offset - TF_PACKET_BUFFER_SIZE];
     } else {
         *data = pb->buffer[pb->start + offset];
     }
@@ -107,7 +107,7 @@ bool tf_packetbuffer_peek_offset(TF_Packetbuffer *pb, uint8_t *data, uint8_t off
 }
 
 void tf_packetbuffer_create(TF_Packetbuffer *pb) {
-    memset(pb->buffer, 0, PACKET_BUFFER_SIZE);
+    memset(pb->buffer, 0, TF_PACKET_BUFFER_SIZE);
     pb->start         = 0;
     pb->end           = 0;
 }
@@ -117,18 +117,18 @@ void tf_packetbuffer_print(TF_Packetbuffer *pb) {
     uint8_t i;
 
     if(end < 0) {
-        end += PACKET_BUFFER_SIZE;
+        end += TF_PACKET_BUFFER_SIZE;
     }
 
     printf("TF_Packetbuffer (start %u, end %u, size %u): [\n",
-           pb->start, pb->end, PACKET_BUFFER_SIZE);
+           pb->start, pb->end, TF_PACKET_BUFFER_SIZE);
 
     for(i = 0; i < end; i++) {
         if((i % 16) == 0) {
             printf("    ");
         }
 
-        printf("%x, ", pb->buffer[(pb->start + i) % PACKET_BUFFER_SIZE]);
+        printf("%x, ", pb->buffer[(pb->start + i) % TF_PACKET_BUFFER_SIZE]);
 
         if((i % 16) == 15) {
             printf("\n");
@@ -142,11 +142,11 @@ bool tf_packetbuffer_free_array_view(TF_Packetbuffer *pb, uint8_t length, uint8_
     if (length > tf_packetbuffer_get_free(pb))
         return false;
 
-    bool wraps = (pb->end + length) >= PACKET_BUFFER_SIZE;
+    bool wraps = (pb->end + length) >= TF_PACKET_BUFFER_SIZE;
 
     *first_chunk = pb->buffer + pb->end;
     if (wraps) {
-        *first_len = PACKET_BUFFER_SIZE - pb->end;
+        *first_len = TF_PACKET_BUFFER_SIZE - pb->end;
         *second_chunk = pb->buffer;
         *second_len = length - *first_len;
         pb->end = *second_len;

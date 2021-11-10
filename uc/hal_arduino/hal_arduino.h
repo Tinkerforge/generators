@@ -6,8 +6,8 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
-#ifndef HAL_ARDUINO_H
-#define HAL_ARDUINO_H
+#ifndef TF_HAL_ARDUINO_H
+#define TF_HAL_ARDUINO_H
 
 #include <stdbool.h>
 #include <stdint.h>
