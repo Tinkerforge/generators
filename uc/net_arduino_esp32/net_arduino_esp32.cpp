@@ -17,12 +17,12 @@
 
 #include "hmac.h"
 
-void remove_open_request(TF_NetContext *net, size_t idx) {
-    memmove(net->open_requests + idx, net->open_requests + idx + 1, sizeof(Request) * (net->open_request_count - idx - 1));
+static void remove_open_request(TF_NetContext *net, size_t idx) {
+    memmove(net->open_requests + idx, net->open_requests + idx + 1, sizeof(TF_Request) * (net->open_request_count - idx - 1));
     --net->open_request_count;
 }
 
-void add_open_request(TF_NetContext *net, uint32_t client_id, TF_TfpHeader *header) {
+static void add_open_request(TF_NetContext *net, uint32_t client_id, TF_TfpHeader *header) {
     if(net->open_request_count == sizeof(net->open_requests) / sizeof(net->open_requests[0])) {
         // The open_request array is full. Drop the oldest request.
         // Note that this does not mean, that a later response to the dropped request will be
@@ -39,7 +39,7 @@ void add_open_request(TF_NetContext *net, uint32_t client_id, TF_TfpHeader *head
     ++net->open_request_count;
 }
 
-int set_tcp_options(int fd, const char **op) {
+static int set_tcp_options(int fd, const char **op) {
     int one = 1;
 
     *op = "enable TCP_NODELAY";
@@ -56,7 +56,7 @@ int set_tcp_options(int fd, const char **op) {
     return 0;
 }
 
-int build_server_socket() {
+static int build_server_socket() {
     const char *op = "";
     int one = 1;
 
@@ -102,7 +102,7 @@ error:
     return -1;
 }
 
-int server_accept(int server_fd) {
+static int server_accept(int server_fd) {
     struct sockaddr_in client_addr;
     socklen_t client_addr_size = sizeof(client_addr);
 
@@ -123,15 +123,15 @@ int server_accept(int server_fd) {
     return client_fd;
 }
 
-uint32_t tf_net_current_time_us(TF_NetContext *net) {
+static uint32_t tf_net_current_time_us(TF_NetContext *net) {
     return micros();
 }
 
-uint32_t tf_net_current_time_ms(TF_NetContext *net) {
+static uint32_t tf_net_current_time_ms(TF_NetContext *net) {
     return millis();
 }
 
-void remove_client(TF_NetContext *net, uint32_t client_idx) {
+static void remove_client(TF_NetContext *net, uint32_t client_idx) {
     TF_NetClient *client = &net->clients[client_idx];
 
     for(int i = 0; i < net->open_request_count; ++i) {
@@ -154,7 +154,7 @@ void remove_client(TF_NetContext *net, uint32_t client_idx) {
     tf_hal_log_info("disconnect; clients used: %d\n", net->clients_used);
 }
 
-int read_packets(TF_NetContext *net) {
+static int read_packets(TF_NetContext *net) {
     for(size_t i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
 
@@ -188,7 +188,7 @@ int read_packets(TF_NetContext *net) {
     return 0;
 }
 
-int send_from_buf(TF_NetContext *net, int client_idx) {
+static int send_from_buf(TF_NetContext *net, int client_idx) {
     TF_NetClient *client = &net->clients[client_idx];
 
     int written = send(client->fd, client->send_buf, client->send_buf_used, 0);
@@ -209,11 +209,11 @@ int send_from_buf(TF_NetContext *net, int client_idx) {
     return written;
 }
 
-bool deadline_elapsed(uint32_t now, uint32_t deadline_us) {
+static bool deadline_elapsed(uint32_t now, uint32_t deadline_us) {
     return ((uint32_t)(now - deadline_us)) < (UINT32_MAX / 2);
 }
 
-int add_to_send_buf(TF_NetContext *net, int client_idx, uint8_t *buf, uint8_t len) {
+static int add_to_send_buf(TF_NetContext *net, int client_idx, uint8_t *buf, uint8_t len) {
     TF_NetClient *client = &net->clients[client_idx];
     size_t send_buf_size = sizeof(client->send_buf) / sizeof(client->send_buf[0]);
 
@@ -242,7 +242,7 @@ int add_to_send_buf(TF_NetContext *net, int client_idx, uint8_t *buf, uint8_t le
     return len;
 }
 
-void flush_send_buffers(TF_NetContext *net) {
+static void flush_send_buffers(TF_NetContext *net) {
     for(size_t i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
         if(client->send_buf_used == 0) {
@@ -258,7 +258,7 @@ void flush_send_buffers(TF_NetContext *net) {
     }
 }
 
-int accept_connections(TF_NetContext *net) {
+static int accept_connections(TF_NetContext *net) {
     TF_NetClient *clients = net->clients;
     size_t max_clients = sizeof(net->clients)/sizeof(net->clients[0]);
 
@@ -307,7 +307,7 @@ int accept_connections(TF_NetContext *net) {
     return 0;
 }
 
-void remove_dead_clients(TF_NetContext *net) {
+static void remove_dead_clients(TF_NetContext *net) {
     for(size_t i = 0; i < net->clients_used; ++i) {
         if(deadline_elapsed(tf_net_current_time_ms(net), net->clients[i].last_recv_ms + net->recv_timeout_ms)) {
             remove_client(net, i);
@@ -315,7 +315,7 @@ void remove_dead_clients(TF_NetContext *net) {
     }
 }
 
-bool is_valid_header(TF_TfpHeader *header) {
+static bool is_valid_header(TF_TfpHeader *header) {
     if (header->length < TF_TFP_MIN_MESSAGE_LENGTH) {
         return false;
     }
@@ -338,7 +338,140 @@ static void drop_packet(TF_NetClient *client, uint8_t len) {
     client->available_packet_valid = false;
 }
 
-void reassemble_packets(TF_NetContext *net) {
+static void broadcast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) {
+    for(size_t i = 0; i < net->clients_used; ++i) {
+        TF_NetClient *client = &net->clients[i];
+        if (client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_DISABLED &&
+            client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_DONE) {
+            tf_hal_log_info("Client not authenticated. Dropping response");
+            continue;
+        }
+
+        if (add_to_send_buf(net, i, buf, header->length) < 0) {
+            remove_client(net, i);
+            --i;
+            continue;
+        }
+    }
+}
+
+static void unicast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf, size_t client_idx) {
+    if (add_to_send_buf(net, client_idx, buf, header->length) < 0) {
+        remove_client(net, client_idx);
+        return;
+    }
+
+    // TODO: if send_from_buf can't send anything here we will send again in 20 ms. maybe set last_send to a lower value to force more sends.
+    if(send_from_buf(net, client_idx) < 0) {
+        remove_client(net, client_idx);
+        return;
+    }
+}
+
+static void handle_get_authentication_nonce_request(TF_NetContext *net, uint8_t client_id, TF_TfpHeader *header, uint8_t *buf) {
+    TF_NetClient *client = &net->clients[client_id];
+
+    if (client->auth_state == TF_CLIENT_AUTHENTICATION_STATE_DISABLED) {
+        tf_hal_log_info("Client tries to authenticate, but authentication is disabled. Disconnecting client.\n");
+        remove_client(net, client_id);
+        return;
+    }
+
+    if (client->auth_state == TF_CLIENT_AUTHENTICATION_STATE_DONE) {
+        tf_hal_log_info("Already authenticated client tries to authenticate again.");
+        client->auth_state = TF_CLIENT_AUTHENTICATION_STATE_ENABLED;
+    }
+
+    if (client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_ENABLED) {
+        tf_hal_log_info("Client performed invalid authentication sequence (%d -> %d). Disconnecting client.\n", client->auth_state, TF_CLIENT_AUTHENTICATION_STATE_NONCE_SENT);
+        remove_client(net, client_id);
+        return;
+    }
+
+    client->auth_state = TF_CLIENT_AUTHENTICATION_STATE_NONCE_SENT;
+
+    if (header->response_expected) {
+        header->length = TF_GET_AUTHENTICATION_NONCE_RESPONSE_LEN;
+        tf_write_packet_header(header, buf);
+        memcpy(buf + TF_TFP_HEADER_LENGTH, &client->auth_nonce, sizeof(client->auth_nonce));
+        unicast(net, header, buf, client_id);
+    }
+}
+
+static void handle_authenticate_request(TF_NetContext *net, uint8_t client_id, TF_TfpHeader *header, uint8_t *buf) {
+    TF_NetClient *client = &net->clients[client_id];
+
+    if (client->auth_state == TF_CLIENT_AUTHENTICATION_STATE_DISABLED) {
+        tf_hal_log_info("Client tries to authenticate, but authentication is disabled. Disconnecting client.\n");
+        remove_client(net, client_id);
+        return;
+    }
+
+    if (client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_NONCE_SENT) {
+        tf_hal_log_info("Client performed invalid authentication sequence (%d -> %d). Disconnecting client.\n", client->auth_state, TF_CLIENT_AUTHENTICATION_STATE_NONCE_SENT);
+        remove_client(net, client_id);
+        return;
+    }
+
+    uint8_t *buf_read_ptr = buf;
+    buf_read_ptr += TF_TFP_HEADER_LENGTH;
+
+    uint32_t nonces[2];
+    uint8_t digest[TF_SHA1_DIGEST_LENGTH];
+    memcpy(&nonces[0], &client->auth_nonce, sizeof(uint32_t));
+    memcpy(&nonces[1], buf_read_ptr, sizeof(uint32_t));
+    buf_read_ptr += sizeof(uint32_t);
+
+    tf_hmac_sha1((const uint8_t *)net->auth_secret, strlen(net->auth_secret),
+	             (const uint8_t *)nonces, sizeof(nonces), digest);
+
+    if (memcmp(buf_read_ptr, digest, TF_SHA1_DIGEST_LENGTH) != 0) {
+        tf_hal_log_info("Authenticate request from client did not contain the expected data. Disconnecting client\n");
+        remove_client(net, client_id);
+        return;
+    }
+
+    tf_hal_log_info("Client authenticated.\n");
+    client->auth_state = TF_CLIENT_AUTHENTICATION_STATE_DONE;
+
+    if (header->response_expected) {
+        header->length = TF_AUTHENTICATE_RESPONSE_LEN;
+        tf_write_packet_header(header, buf);
+        unicast(net, header, buf, client_id);
+    }
+}
+
+static void handle_brickd_packet(TF_NetContext *net, uint8_t packet_id, TF_TfpHeader *header, uint8_t *buf) {
+    TF_NetClient *client = &net->clients[packet_id];
+
+    if (header->fid == TF_FUNCTION_GET_AUTHENTICATION_NONCE) {
+        if (header->length != TF_GET_AUTHENTICATION_NONCE_REQUEST_LEN) {
+            tf_hal_log_info("Received authentication-nonce request with wrong length. Disconnecting client.\n");
+            remove_client(net, packet_id);
+            return;
+        }
+
+        handle_get_authentication_nonce_request(net, packet_id, header, buf);
+        return;
+    }
+
+    if (header->fid == TF_FUNCTION_AUTHENTICATE) {
+        if (header->length != TF_AUTHENTICATE_REQUEST_LEN) {
+            tf_hal_log_info("Received authenticate request with wrong length. Disconnecting client.\n");
+            remove_client(net, packet_id);
+            return;
+        }
+
+        handle_authenticate_request(net, packet_id, header, buf);
+        return;
+    }
+
+    header->error_code = 2;
+    tf_write_packet_header(header, buf);
+    unicast(net, header, buf, packet_id);
+}
+
+static void reassemble_packets(TF_NetContext *net) {
     for(int i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
         if (client->available_packet_valid)
@@ -365,7 +498,7 @@ void reassemble_packets(TF_NetContext *net) {
         // Handle Brick Daemon packets without copy
         if (header.uid == 1) {
             uint8_t len =  header.length;
-            tf_net_handle_brickd_packet(net, i, &header, buf);
+            handle_brickd_packet(net, i, &header, buf);
             drop_packet(client, len);
             continue;
         } else if (client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_DISABLED
@@ -455,44 +588,14 @@ int tf_net_drop_packet(TF_NetContext *net, uint8_t packet_id) {
     return 0;
 }
 
-void broadcast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) {
-    for(size_t i = 0; i < net->clients_used; ++i) {
-        TF_NetClient *client = &net->clients[i];
-        if (client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_DISABLED &&
-            client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_DONE) {
-            tf_hal_log_info("Client not authenticated. Dropping response");
-            continue;
-        }
-
-        if (add_to_send_buf(net, i, buf, header->length) < 0) {
-            remove_client(net, i);
-            --i;
-            continue;
-        }
-    }
-}
-
-void unicast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf, size_t client_idx) {
-    if (add_to_send_buf(net, client_idx, buf, header->length) < 0) {
-        remove_client(net, client_idx);
-        return;
-    }
-
-    // TODO: if send_from_buf can't send anything here we will send again in 20 ms. maybe set last_send to a lower value to force more sends.
-    if(send_from_buf(net, client_idx) < 0) {
-        remove_client(net, client_idx);
-        return;
-    }
-}
-
 void tf_net_send_packet(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) {
     if(header->seq_num == 0) {
         broadcast(net, header, buf);
     } else {
-        Request *request = NULL;
+        TF_Request *request = NULL;
         size_t request_idx = 0;
         for(; request_idx < net->open_request_count; ++request_idx) {
-            Request *req = &net->open_requests[request_idx];
+            TF_Request *req = &net->open_requests[request_idx];
             if(req->fid == header->fid && req->seq_num == header->seq_num && req->uid == header->uid) {
                 request = req;
                 break;
@@ -528,107 +631,4 @@ void tf_net_send_packet(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) 
 
         unicast(net, header, buf, client_idx);
     }
-}
-
-static void tf_net_handle_get_authentication_nonce_request(TF_NetContext *net, uint8_t client_id, TF_TfpHeader *header, uint8_t *buf) {
-    TF_NetClient *client = &net->clients[client_id];
-
-    if (client->auth_state == TF_CLIENT_AUTHENTICATION_STATE_DISABLED) {
-        tf_hal_log_info("Client tries to authenticate, but authentication is disabled. Disconnecting client.\n");
-        remove_client(net, client_id);
-        return;
-    }
-
-    if (client->auth_state == TF_CLIENT_AUTHENTICATION_STATE_DONE) {
-        tf_hal_log_info("Already authenticated client tries to authenticate again.");
-        client->auth_state = TF_CLIENT_AUTHENTICATION_STATE_ENABLED;
-    }
-
-    if (client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_ENABLED) {
-        tf_hal_log_info("Client performed invalid authentication sequence (%d -> %d). Disconnecting client.\n", client->auth_state, TF_CLIENT_AUTHENTICATION_STATE_NONCE_SENT);
-        remove_client(net, client_id);
-        return;
-    }
-
-    client->auth_state = TF_CLIENT_AUTHENTICATION_STATE_NONCE_SENT;
-
-    if (header->response_expected) {
-        header->length = TF_GET_AUTHENTICATION_NONCE_RESPONSE_LEN;
-        tf_write_packet_header(header, buf);
-        memcpy(buf + TF_TFP_HEADER_LENGTH, &client->auth_nonce, sizeof(client->auth_nonce));
-        unicast(net, header, buf, client_id);
-    }
-}
-
-static void tf_net_handle_authenticate_request(TF_NetContext *net, uint8_t client_id, TF_TfpHeader *header, uint8_t *buf) {
-    TF_NetClient *client = &net->clients[client_id];
-
-    if (client->auth_state == TF_CLIENT_AUTHENTICATION_STATE_DISABLED) {
-        tf_hal_log_info("Client tries to authenticate, but authentication is disabled. Disconnecting client.\n");
-        remove_client(net, client_id);
-        return;
-    }
-
-    if (client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_NONCE_SENT) {
-        tf_hal_log_info("Client performed invalid authentication sequence (%d -> %d). Disconnecting client.\n", client->auth_state, TF_CLIENT_AUTHENTICATION_STATE_NONCE_SENT);
-        remove_client(net, client_id);
-        return;
-    }
-
-    uint8_t *buf_read_ptr = buf;
-    buf_read_ptr += TF_TFP_HEADER_LENGTH;
-
-    uint32_t nonces[2];
-    uint8_t digest[TF_SHA1_DIGEST_LENGTH];
-    memcpy(&nonces[0], &client->auth_nonce, sizeof(uint32_t));
-    memcpy(&nonces[1], buf_read_ptr, sizeof(uint32_t));
-    buf_read_ptr += sizeof(uint32_t);
-
-    tf_hmac_sha1((const uint8_t *)net->auth_secret, strlen(net->auth_secret),
-	             (const uint8_t *)nonces, sizeof(nonces), digest);
-
-    if (memcmp(buf_read_ptr, digest, TF_SHA1_DIGEST_LENGTH) != 0) {
-        tf_hal_log_info("Authenticate request from client did not contain the expected data. Disconnecting client\n");
-        remove_client(net, client_id);
-        return;
-    }
-
-    tf_hal_log_info("Client authenticated.\n");
-    client->auth_state = TF_CLIENT_AUTHENTICATION_STATE_DONE;
-
-    if (header->response_expected) {
-        header->length = TF_AUTHENTICATE_RESPONSE_LEN;
-        tf_write_packet_header(header, buf);
-        unicast(net, header, buf, client_id);
-    }
-}
-
-static void tf_net_handle_brickd_packet(TF_NetContext *net, uint8_t packet_id, TF_TfpHeader *header, uint8_t *buf) {
-    TF_NetClient *client = &net->clients[packet_id];
-
-    if (header->fid == TF_FUNCTION_GET_AUTHENTICATION_NONCE) {
-        if (header->length != TF_GET_AUTHENTICATION_NONCE_REQUEST_LEN) {
-            tf_hal_log_info("Received authentication-nonce request with wrong length. Disconnecting client.\n");
-            remove_client(net, packet_id);
-            return;
-        }
-
-        tf_net_handle_get_authentication_nonce_request(net, packet_id, header, buf);
-        return;
-    }
-
-    if (header->fid == TF_FUNCTION_AUTHENTICATE) {
-        if (header->length != TF_AUTHENTICATE_REQUEST_LEN) {
-            tf_hal_log_info("Received authenticate request with wrong length. Disconnecting client.\n");
-            remove_client(net, packet_id);
-            return;
-        }
-
-        tf_net_handle_authenticate_request(net, packet_id, header, buf);
-        return;
-    }
-
-    header->error_code = 2;
-    tf_write_packet_header(header, buf);
-    unicast(net, header, buf, packet_id);
 }
