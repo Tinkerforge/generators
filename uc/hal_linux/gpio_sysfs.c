@@ -93,7 +93,7 @@ int gpio_sysfs_unexport(int cs_pin) {
     return 0;
 }
 
-int gpio_sysfs_set_direction_out_with_initial_value(char cs_pin_name[32], GPIOSYSFSValue value) {
+int gpio_sysfs_set_direction_out_with_initial_value(char cs_pin_name[32], TF_GPIOSYSFSValue value) {
     int fd;
     char buffer[GPIO_SYSFS_DIR_MAXLEN];
     ssize_t rc;
@@ -124,7 +124,7 @@ int gpio_sysfs_set_direction_out_with_initial_value(char cs_pin_name[32], GPIOSY
     return 0;
 }
 
-int gpio_sysfs_set_output(char cs_pin_name[32], GPIOSYSFSValue value) {
+int gpio_sysfs_set_output(char cs_pin_name[32], TF_GPIOSYSFSValue value) {
     int fd;
     char buffer[GPIO_SYSFS_DIR_MAXLEN];
     ssize_t rc;

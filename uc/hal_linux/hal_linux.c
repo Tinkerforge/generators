@@ -44,7 +44,7 @@ static int open_spi_port(TF_Port *port) {
         return TF_E_EXPORT_GPIO_FAILED;
     }
 
-    if (gpio_sysfs_set_direction_out_with_initial_value(cs_pin_name, GPIO_SYSFS_VALUE_HIGH) < 0) {
+    if (gpio_sysfs_set_direction_out_with_initial_value(cs_pin_name, TF_GPIO_SYSFS_VALUE_HIGH) < 0) {
         return TF_E_SET_GPIO_DIRECTION_FAILED; // FIXME: unexport gpio cs pin
     }
 

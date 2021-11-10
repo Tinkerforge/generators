@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-typedef struct {
+typedef struct TF_Packetbuffer {
     //index of first valid elemnt
     uint8_t start;
     //index of first invalid element

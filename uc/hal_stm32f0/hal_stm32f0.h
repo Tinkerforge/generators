@@ -21,7 +21,7 @@
 // Maximum number of ports handled by the HAL
 #define TF_HAL_STM32F0_MAX_PORT_COUNT 8
 
-typedef struct {
+typedef struct TF_STMGPIO {
 	GPIO_InitTypeDef pin;
 	GPIO_TypeDef *port;
 } TF_STMGPIO;
