@@ -1358,7 +1358,8 @@ const char *tf_get_device_display_name(uint16_t device_id) {{
           default: return "unknown device";
     }}
 }}
-#endif""".format(header_comment=self.get_header_comment('asterisk'), cases='\n'.join(self.device_name_cases)))
+#endif
+""".format(header_comment=self.get_header_comment('asterisk'), cases='\n'.join(self.device_name_cases)))
 
         self.released_files.append('display_names.c')
 
