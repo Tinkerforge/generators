@@ -97,7 +97,7 @@ extern "C" {{
         return common.wrap_non_empty('', defines, '\n')
 
     def get_c_callback_defines(self):
-        defines = '#ifdef TF_IMPLEMENT_CALLBACKS\n'
+        defines = '#if TF_IMPLEMENT_CALLBACKS != 0\n'
         template = """
 /**
  * \\ingroup {category_camel}{device_camel}
@@ -833,7 +833,7 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
 
             result.append(format(template, self, packet, other_handler_checks=other_handler_checks))
 
-        return format('#ifdef TF_IMPLEMENT_CALLBACKS{funcs}#endif', funcs='\n'.join(result))
+        return format('#if TF_IMPLEMENT_CALLBACKS != 0{funcs}#endif', funcs='\n'.join(result))
 
     def get_c_callback_handler(self):
         no_callbacks_template = """
@@ -844,7 +844,7 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
     return false;
 }}"""
         template = """
-#ifdef TF_IMPLEMENT_CALLBACKS
+#if TF_IMPLEMENT_CALLBACKS != 0
 static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packetbuffer *payload) {{
     TF_{device_camel} *{device_under} = (TF_{device_camel} *) dev;
     (void)payload;
@@ -908,7 +908,7 @@ extern "C" {{
  */
 
 struct TF_{device_camel};
-#ifdef TF_IMPLEMENT_CALLBACKS
+#if TF_IMPLEMENT_CALLBACKS != 0
 {callback_typedefs}
 #endif
 /**
@@ -918,7 +918,7 @@ struct TF_{device_camel};
  */
 typedef struct TF_{device_camel} {{
     TF_TfpContext *tfp;
-#ifdef TF_IMPLEMENT_CALLBACKS
+#if TF_IMPLEMENT_CALLBACKS != 0
 {callback_handlers}
 #endif
     uint8_t response_expected[{mapped_bytes}];
@@ -993,7 +993,7 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under});
 
     def get_c_callback_tick_declaration(self):
         template = """
-#ifdef TF_IMPLEMENT_CALLBACKS
+#if TF_IMPLEMENT_CALLBACKS != 0
 /**
  * \\ingroup {category_camel}{device_camel}
  *
@@ -1115,7 +1115,7 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
         for packet in self.get_packets('callback'):
             result.append(format(template, self, packet, doc=packet.get_c_formatted_doc()))
 
-        return '#ifdef TF_IMPLEMENT_CALLBACKS{}#endif'.format('\n'.join(result))
+        return '#if TF_IMPLEMENT_CALLBACKS != 0{}#endif'.format('\n'.join(result))
 
     def get_c_source(self):
         source  = self.get_c_include_c()
@@ -1351,7 +1351,7 @@ class UCBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
             f.write("""{header_comment}
 #include "display_names.h"
 
-#ifdef TF_IMPLEMENT_GET_DEVICE_DISPLAY_NAME
+#if TF_IMPLEMENT_STRERROR != 0
 const char *tf_get_device_display_name(uint16_t device_id) {{
     switch(device_id) {{
 {cases}

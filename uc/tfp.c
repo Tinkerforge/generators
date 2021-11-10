@@ -46,7 +46,7 @@ static bool tf_tfp_dispatch_packet(TF_TfpContext *tfp, TF_TfpHeader *header, TF_
     TF_HalContext *hal = (TF_HalContext *)tfp->hal;
     TF_HalCommon *common = tf_hal_get_common(hal);
 
-#ifdef TF_NET_ENABLE
+#if TF_NET_ENABLE != 0
     if(common->net != NULL) {
         // The network layer expects a complete copy of the TFP packet (i.e. with header),
         // however we've already removed the header. Write it back here.

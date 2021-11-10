@@ -70,7 +70,7 @@ void tf_hal_log_newline() {
 
 }
 
-#ifdef TF_IMPLEMENT_STRERROR
+#if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int rc) {
     switch(rc) {
         #include "../bindings/error_cases.h"

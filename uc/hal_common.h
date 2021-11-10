@@ -117,7 +117,7 @@ TF_PortCommon *tf_hal_get_port_common(TF_HalContext *hal, uint8_t port_id) TF_AT
 void tf_hal_log_message(const char *msg, size_t len) TF_ATTRIBUTE_NONNULL_ALL;
 void tf_hal_log_newline(void);
 
-#ifdef TF_IMPLEMENT_STRERROR
+#if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int e_code);
 #endif
 

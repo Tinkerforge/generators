@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-#ifdef TF_IMPLEMENT_GET_DEVICE_DISPLAY_NAME
+#if TF_IMPLEMENT_STRERROR != 0
 const char *tf_get_device_display_name(uint16_t device_id);
 #endif
 

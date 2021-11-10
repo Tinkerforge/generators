@@ -404,7 +404,7 @@ static TF_TfpContext *next_callback_tick_tfp(TF_HalContext *hal) {
     return NULL;
 }
 
-#ifdef TF_NET_ENABLE
+#if TF_NET_ENABLE != 0
 static uint8_t enumerate_request[8] = {
     0, 0, 0, 0, //uid 1
     8, // length 8
@@ -426,7 +426,7 @@ static TF_TfpHeader enumerate_request_header = {
 #endif
 
 int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
-#ifdef TF_NET_ENABLE
+#if TF_NET_ENABLE != 0
     uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
     TF_NetContext *net = hal_common->net;
