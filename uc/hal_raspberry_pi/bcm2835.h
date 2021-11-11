@@ -3,7 +3,7 @@
  *
  * http://www.airspayce.com/mikem/bcm2835/index.html
  *
- * licensed unter GPLv3
+ * licensed under GPLv3
  */
 
 /* bcm2835.h
@@ -26,7 +26,7 @@
   and for accessing the system timers.
   Pin event detection is supported by polling (interrupts are not supported).
 
-  Works on all versions upt to and including RPI 4.
+  Works on all versions up to and including RPI 4.
   Works with all versions of Debian up to and including Debian Buster 10.
 
   It is C++ compatible, and installs as a header file and non-shared library on
@@ -34,7 +34,7 @@
   BCM 2835).
 
   The version of the package that this documentation refers to can be downloaded
-  from http://www.airspayce.com/mikem/bcm2835/bcm2835-1.68.tar.gz
+  from http://www.airspayce.com/mikem/bcm2835/bcm2835-1.70.tar.gz
   You can find the latest version at http://www.airspayce.com/mikem/bcm2835
 
   Several example programs are provided.
@@ -61,6 +61,11 @@
   hitting a hard loop on those OSs.
   If you must use bcm2835_gpio_len() and friends, make sure you disable the pins with
   bcm2835_gpio_clr_len() and friends after use.
+
+  In order to compile this library, you may need to install:
+   - libc6-dev
+   - libgcc-s-dev
+   - libstdc++-staticdev
 
   \par Running as root
 
@@ -337,12 +342,16 @@
 
   mikem has made Perl bindings available at CPAN:
   http://search.cpan.org/~mikem/Device-BCM2835-1.9/lib/Device/BCM2835.pm
+
   Matthew Baker has kindly made Python bindings available at:
   https:  github.com/mubeta06/py-libbcm2835
+
   Gary Marks has created a Serial Peripheral Interface (SPI) command-line utility
   for Raspberry Pi, based on the bcm2835 library. The
   utility, spincl, is licensed under Open Source GNU GPLv3 by iP Solutions (http://ipsolutionscorp.com), as a
   free download with source included: http://ipsolutionscorp.com/raspberry-pi-spi-utility/
+
+  Bindings for Ada are available courtesy Tama McGlinn at https://github.com/TamaMcGlinn/ada_raspio
 
   \par Open Source Licensing GPL V3
 
@@ -603,6 +612,14 @@
   Fixed an error in bcm2835_i2c_read() where the status byte was not correctly updated with BCM2835_BSC_S_DONE
   Reported by Zihan. Thanks.
 
+  \version 1.69, 2021-03-30
+  Added link to Ada bindings by Tama McGlinn.
+  Fixed problem with undefined off_t on some compilers.
+
+  \version 1.70,
+  Patch to ensure compilation with gcc -std=c99, as reported by John Blaiklock.
+  Fix some inconsistencies in version numbers
+
   \author  Mike McCauley (mikem@airspayce.com) DO NOT CONTACT THE AUTHOR DIRECTLY: USE THE LISTS
 */
 
@@ -613,7 +630,12 @@
 
 #include <stdint.h>
 
-#define BCM2835_VERSION 10066 /* Version 1.66 */
+/* Some compilers need this, as reported by Sam James */
+#include <sys/types.h>
+/* Needed to compile with gcc -std=c99, as reported by John Blaiklock.*/
+#include <fcntl.h>
+
+#define BCM2835_VERSION 10070 /* Version 1.70 */
 
 // Define this if you want to use libcap2 to determine if you have the cap_sys_rawio capability
 // and therefore the capability of opening /dev/mem, even if you are not root.
