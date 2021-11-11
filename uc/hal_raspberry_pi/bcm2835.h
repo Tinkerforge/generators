@@ -663,11 +663,11 @@
 
 /*! Return the minimum of 2 numbers */
 #ifndef MIN
-#define MIN(a, b) (a < b ? a : b)
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 /*! Speed of the core clock core_clk */
-#define BCM2835_CORE_CLK_HZ		250000000	/*!< 250 MHz */
+#define BCM2835_CORE_CLK_HZ bcm2835_core_clk_hz
 
 /*! On all recent OSs, the base of the peripherals is read from a /proc file */
 #define BMC2835_RPI2_DT_FILENAME "/proc/device-tree/soc/ranges"

@@ -132,6 +132,8 @@ static uint8_t bcm2835_byte_reverse_table[] =
     0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff
 };
 
+extern uint32_t bcm2835_core_clk_hz;
+
 static uint8_t bcm2835_correct_order(uint8_t b)
 {
     if (bcm2835_spi_bit_order == BCM2835_SPI_BIT_ORDER_LSBFIRST)
