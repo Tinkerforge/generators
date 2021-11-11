@@ -18,21 +18,82 @@
 #include "../bindings/config.h"
 
 #include "bcm2835.h"
+#include "vcgencmd.h"
 
 #define BRICKLET_STACK_SPI_CONFIG_MODE           SPI_MODE_3
 #define BRICKLET_STACK_SPI_CONFIG_LSB_FIRST      0
 #define BRICKLET_STACK_SPI_CONFIG_BITS_PER_WORD  8
-
-// On RPi 3 make sure to set "core_freq=250" in /boot/config.txt.
-// The SPI clock is scaled with the variable core_freq otherwise
-// and the SPI clock is not stable...
 #define BRICKLET_STACK_SPI_CONFIG_MAX_SPEED_HZ   1400000
+
+uint32_t bcm2835_core_clk_hz;
+
+static int parse_core_freq(const char *name, int *value) {
+	char buffer[128] = {0};
+	int length;
+
+	length = vcgencmd_get_config(name, buffer, sizeof(buffer) - 1);
+
+	if (length < 0) {
+		tf_hal_log_error("Could not read Raspberry Pi %s config\n", name);
+
+		return -1;
+	}
+
+	buffer[length] = '\0';
+
+	char *end_ptr;
+	*value = strtol(buffer, &end_ptr, 10);
+
+	if (buffer == end_ptr) {
+		tf_hal_log_error("Could not parse Raspberry Pi %s value: %s\n", name, buffer);
+
+		return -1;
+	}
+
+	if (*value == 0) {
+		// zero means default value, which is 250 for core_freq and core_freq_min
+		// https://github.com/raspberrypi/userland/issues/653
+		tf_hal_log_debug("Raspberry Pi %s value is zero, assuming 250 MHz\n", name);
+
+		*value = 250;
+	}
+
+	if (*value < 100 || *value > 1000) {
+		tf_hal_log_error("Invalid value for Raspberry Pi %s config: %d\n", name, *value);
+
+		return -1;
+	}
+
+	return 0;
+}
 
 int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
     if (rc != TF_E_OK) {
         return rc;
     }
+
+    int core_freq;
+    if (parse_core_freq("core_freq", &core_freq) < 0) {
+        return -1;
+    }
+
+    int core_freq_min;
+    if (parse_core_freq("core_freq_min", &core_freq_min) < 0) {
+        return -1;
+    }
+
+    if (core_freq != core_freq_min) {
+        tf_hal_log_info("Raspberry Pi core frequency (core_freq: %d, core_freq_min: %d) is unstable, SPI throughput will be unstable too\n",
+                    core_freq, core_freq_min);
+    }
+
+    tf_hal_log_info("Using %d MHz Raspberry Pi core frequency (core_freq: %d, core_freq_min: %d) for BCM2835 backend\n",
+                core_freq, core_freq, core_freq_min);
+
+    // Marked extern in bcm2835.c
+    // Will be read in bcm2835_spi_set_speed_hz to scale the SPI clock.
+    bcm2835_core_clk_hz = core_freq * 1000000; // MHz -> Hz
 
     if(!bcm2835_init()) {
         return TF_E_BCM2835_INIT_FAILED;
