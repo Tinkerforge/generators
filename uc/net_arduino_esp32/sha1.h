@@ -3,8 +3,8 @@
  * 100% Public Domain
  */
 
-#ifndef TF_SHA1
-#define TF_SHA1
+#ifndef TF_SHA1_H
+#define TF_SHA1_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -16,7 +16,7 @@ extern "C" {
 #define TF_SHA1_BLOCK_LENGTH 64
 #define TF_SHA1_DIGEST_LENGTH 20
 
-typedef struct {
+typedef struct TF_SHA1 {
 	uint32_t state[5];
 	uint64_t count;
 	uint8_t buffer[TF_SHA1_BLOCK_LENGTH];

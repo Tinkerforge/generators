@@ -8,8 +8,8 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
-#ifndef TF_HMAC
-#define TF_HMAC
+#ifndef TF_HMAC_H
+#define TF_HMAC_H
 
 #include <stdint.h>
 
