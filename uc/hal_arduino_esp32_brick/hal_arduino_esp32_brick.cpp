@@ -21,37 +21,17 @@ typedef struct TF_Port {
     TF_PortCommon port_common;
 } TF_Port;
 
-static TF_Port ports[6] = {{
-    .chip_select_pin=27,
-    .spi=HSPI,
-    .port_name='F',
-    .port_common.__to_init = 0
-}, {
-    .chip_select_pin=26,
-    .spi=HSPI,
-    .port_name='E',
-    .port_common.__to_init = 0
-}, {
-    .chip_select_pin=25,
-    .spi=HSPI,
-    .port_name='D',
-    .port_common.__to_init = 0
-}, {
-    .chip_select_pin=17,
-    .spi=VSPI,
-    .port_name='C',
-    .port_common.__to_init = 0
-}, {
-    .chip_select_pin=33,
-    .spi=VSPI,
-    .port_name='B',
-    .port_common.__to_init = 0
-}, {
-    .chip_select_pin=16,
-    .spi=VSPI,
-    .port_name='A',
-    .port_common.__to_init = 0
-}};
+#define TF_PORT(chip_select_pin, spi, port_name) {chip_select_pin, spi, port_name,  {._to_init = 0}}
+
+static TF_Port ports[6] = {
+    TF_PORT(27, HSPI, 'F'),
+    TF_PORT(26, HSPI, 'E'),
+    TF_PORT(25, HSPI, 'D'),
+
+    TF_PORT(17, VSPI, 'C'),
+    TF_PORT(13, VSPI, 'B'),
+    TF_PORT(16, VSPI, 'A')
+};
 
 #define PORT_COUNT (sizeof(ports)/sizeof(ports[0]))
 

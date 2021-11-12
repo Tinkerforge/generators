@@ -19,25 +19,15 @@ typedef struct TF_Port {
     TF_PortCommon port_common;
 } TF_Port;
 
-TF_Port ports[6] = {{
-        .port_name = 'A',
-        .port_common.__to_init = 0
-    }, {
-        .port_name = 'B',
-        .port_common.__to_init = 0
-    }, {
-        .port_name = 'C',
-        .port_common.__to_init = 0
-    }, {
-        .port_name = 'D',
-        .port_common.__to_init = 0
-    }, {
-        .port_name = 'E',
-        .port_common.__to_init = 0
-    }, {
-        .port_name = 'F',
-        .port_common.__to_init = 0
-    }
+#define TF_PORT(port_name) {port_name,  {._to_init = 0}}
+
+TF_Port ports[6] = {
+    TF_PORT('A'),
+    TF_PORT('B'),
+    TF_PORT('C'),
+    TF_PORT('D'),
+    TF_PORT('E'),
+    TF_PORT('F')
 };
 
 #define PORT_COUNT (sizeof(ports)/sizeof(ports[0]))
