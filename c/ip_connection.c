@@ -1816,7 +1816,7 @@ static void ipcon_callback_loop(void *opaque) {
 
 	while (true) {
 		if (queue_get(&callback->queue, &kind, &data) < 0) {
-			// FIXME: what to do here? try again? exit?
+			// FIXME: what to do here? try again? exit? -> yes try again, see https://github.com/Tinkerforge/brickd/issues/21
 			break;
 		}
 
