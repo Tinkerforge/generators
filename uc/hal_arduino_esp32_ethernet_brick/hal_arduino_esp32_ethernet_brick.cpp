@@ -20,17 +20,23 @@ typedef struct TF_Port {
 } TF_Port;
 
 TF_Port ports[6] = {{
-        .port_name = 'A'
+        .port_name = 'A',
+        .port_common.__to_init = 0
     }, {
-        .port_name = 'B'
+        .port_name = 'B',
+        .port_common.__to_init = 0
     }, {
-        .port_name = 'C'
+        .port_name = 'C',
+        .port_common.__to_init = 0
     }, {
-        .port_name = 'D'
+        .port_name = 'D',
+        .port_common.__to_init = 0
     }, {
-        .port_name = 'E'
+        .port_name = 'E',
+        .port_common.__to_init = 0
     }, {
-        .port_name = 'F'
+        .port_name = 'F',
+        .port_common.__to_init = 0
     }
 };
 

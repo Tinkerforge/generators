@@ -24,27 +24,33 @@ typedef struct TF_Port {
 static TF_Port ports[6] = {{
     .chip_select_pin=27,
     .spi=HSPI,
-    .port_name='F'
+    .port_name='F',
+    .port_common.__to_init = 0
 }, {
     .chip_select_pin=26,
     .spi=HSPI,
-    .port_name='E'
+    .port_name='E',
+    .port_common.__to_init = 0
 }, {
     .chip_select_pin=25,
     .spi=HSPI,
-    .port_name='D'
+    .port_name='D',
+    .port_common.__to_init = 0
 }, {
     .chip_select_pin=17,
     .spi=VSPI,
-    .port_name='C'
+    .port_name='C',
+    .port_common.__to_init = 0
 }, {
     .chip_select_pin=33,
     .spi=VSPI,
-    .port_name='B'
+    .port_name='B',
+    .port_common.__to_init = 0
 }, {
     .chip_select_pin=16,
     .spi=VSPI,
-    .port_name='A'
+    .port_name='A',
+    .port_common.__to_init = 0
 }};
 
 #define PORT_COUNT (sizeof(ports)/sizeof(ports[0]))
