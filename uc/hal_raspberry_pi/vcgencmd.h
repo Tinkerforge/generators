@@ -19,9 +19,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef BRICKD_VCGENCMD_H
-#define BRICKD_VCGENCMD_H
+#ifndef TF_VCGENCMD_H
+#define TF_VCGENCMD_H
 
-int vcgencmd_get_config(const char *name, char *value, int value_length);
+int tf_vcgencmd_get_config(const char *name, char *value, int value_length);
 
-#endif // BRICKD_VCGENCMD_H
+#endif

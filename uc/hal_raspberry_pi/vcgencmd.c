@@ -162,7 +162,7 @@ typedef struct {
 #define VCHIQ_VERSION_LIB_VERSION      7
 #define VCHIQ_VERSION_CLOSE_DELIVERED  7
 
-int vcgencmd_get_config(const char *name, char *value, int value_length) {
+int tf_vcgencmd_get_config(const char *name, char *value, int value_length) {
 	int fd;
 	int rc;
 	vchiq_get_config_t get_config;

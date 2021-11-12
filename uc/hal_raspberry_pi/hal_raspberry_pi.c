@@ -31,7 +31,7 @@ static int parse_core_freq(const char *name, int *value) {
 	char buffer[128] = {0};
 	int length;
 
-	length = vcgencmd_get_config(name, buffer, sizeof(buffer) - 1);
+	length = tf_vcgencmd_get_config(name, buffer, sizeof(buffer) - 1);
 
 	if (length < 0) {
 		tf_hal_log_error("Could not read Raspberry Pi %s config\n", name);
