@@ -10,13 +10,9 @@ extern "C" void example_loop(TF_HalContext *hal);
 // you have to connect and list all chip select
 // signals, to make sure the signals are separated
 // correctly.
-TF_Port ports[2] = {{
-        .chip_select_pin=9,
-        .port_name = 'A'
-    }, {
-        .chip_select_pin=8,
-        .port_name = 'B'
-    }
+TF_Port ports[2] = {
+    TF_PORT(9, 'A'),
+    TF_PORT(8, 'B')
 };
 
 // Used to report any error encountered while running the example.

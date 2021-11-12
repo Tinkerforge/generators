@@ -10,31 +10,15 @@ extern "C" void example_loop(TF_HalContext *hal);
 // you have to connect and list all chip select
 // signals, to make sure the signals are separated
 // correctly.
-TF_Port ports[6] = {{
-    .chip_select_pin=27,
-    .spi=HSPI,
-    .port_name='F'
-}, {
-    .chip_select_pin=26,
-    .spi=HSPI,
-    .port_name='E'
-}, {
-    .chip_select_pin=25,
-    .spi=HSPI,
-    .port_name='D'
-}, {
-    .chip_select_pin=17,
-    .spi=VSPI,
-    .port_name='C'
-}, {
-    .chip_select_pin=33,
-    .spi=VSPI,
-    .port_name='B'
-}, {
-    .chip_select_pin=16,
-    .spi=VSPI,
-    .port_name='A'
-}};
+TF_Port ports[6] = {
+    TF_PORT(27, HSPI, 'F'),
+    TF_PORT(26, HSPI, 'E'),
+    TF_PORT(25, HSPI, 'D'),
+
+    TF_PORT(17, VSPI, 'C'),
+    TF_PORT(33, VSPI, 'B'),
+    TF_PORT(16, VSPI, 'A')
+};
 
 // Used to report any error encountered while running the example.
 extern "C" void check(int e_code, const char *c) {

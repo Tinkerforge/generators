@@ -2,6 +2,10 @@
 
 #include "hal_fake.h"
 
+static TF_Port ports[1] = {
+    TF_PORT(1, 'A')
+};
+
 void example_setup(TF_HalContext *hal);
 void example_loop(TF_HalContext *hal);
 
@@ -16,10 +20,6 @@ void check(int e_code, const char *c) {
 static TF_HalContext hal;
 
 int main() {
-    TF_Port ports[1];
-    ports[0].chip_select_pin=1;
-    ports[0].port_name= 'A';
-
     check(tf_hal_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
 
     example_setup(&hal);

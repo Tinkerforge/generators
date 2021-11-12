@@ -16,51 +16,26 @@ void check(int e_code, const char *c);
 // correctly.
 
 // HAT Brick
-static TF_Port ports[9] = {{
-    .chip_select_pin=23,
-    .port_name = 'A'
-}, {
-    .chip_select_pin=22,
-    .port_name = 'B'
-}, {
-    .chip_select_pin=25,
-    .port_name = 'C'
-}, {
-    .chip_select_pin=26,
-    .port_name = 'D'
-}, {
-    .chip_select_pin=27,
-    .port_name = 'E'
-}, {
-    .chip_select_pin=24,
-    .port_name = 'F'
-}, {
-    .chip_select_pin=7,
-    .port_name = 'G'
-}, {
-    .chip_select_pin=6,
-    .port_name = 'H'
-}, {
-    .chip_select_pin=5,
-    .port_name = 'I'
-}};
+static TF_Port ports[9] = {
+    TF_PORT(23, 'A'),
+    TF_PORT(22, 'B'),
+    TF_PORT(25, 'C'),
+    TF_PORT(26, 'D'),
+    TF_PORT(27, 'E'),
+    TF_PORT(24, 'F'),
+    TF_PORT(7, 'G'),
+    TF_PORT(6, 'H'),
+    TF_PORT(5, 'I')
+};
+
 // HAT Zero Brick
-/*TF_Port ports[5] = {{
-    .chip_select_pin=27,
-    .port_name = 'A'
-}, {
-    .chip_select_pin=23,
-    .port_name = 'B'
-}, {
-    .chip_select_pin=24,
-    .port_name = 'C'
-}, {
-    .chip_select_pin=22,
-    .port_name = 'D'
-}, {
-    .chip_select_pin=25,
-    .port_name = 'E'
-}};*/
+/*static TF_Port ports[5] = {
+    TF_PORT(27, 'A'),
+    TF_PORT(23, 'B'),
+    TF_PORT(24, 'C'),
+    TF_PORT(22, 'D'),
+    TF_PORT(25, 'I')
+};*/
 
 // Used to report any error encountered while running the example.
 void check(int e_code, const char *c) {

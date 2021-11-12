@@ -16,11 +16,14 @@
 
 #include <SPI.h>
 
+#define TF_PORT(chip_select_pin, spi, port_name) {chip_select_pin, spi, port_name, {._to_init = 0}}
+
 typedef struct TF_Port {
+    // external
     uint8_t chip_select_pin;
     uint8_t spi;
     char port_name;
-
+    // internal
     TF_PortCommon port_common;
 } TF_Port;
 

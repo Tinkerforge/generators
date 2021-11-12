@@ -27,8 +27,11 @@
 extern "C" {
 #endif
 
-typedef struct TF_PortCommon {
+// This is a union to allow easy initialization in the TF_PORT macros.
+// The spitfp context will be initialized per port in tf_hal_common_prepare
+typedef union TF_PortCommon {
     TF_SpiTfpContext spitfp;
+    uint8_t _to_init;
 } TF_PortCommon;
 
 typedef struct TF_HalCommon {

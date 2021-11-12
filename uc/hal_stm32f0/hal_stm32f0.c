@@ -260,3 +260,8 @@ char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
 	return 'a' + port_id;
 }
 
+TF_PortCommon *tf_hal_get_port_common(TF_HalContext *hal, uint8_t port_id) {
+	if(port_id > hal->port_count)
+		return NULL;
+	return &hal->ports[port_id].port_common;
+}

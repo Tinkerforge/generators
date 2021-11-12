@@ -46,6 +46,7 @@ typedef struct TF_Port {
 	SPI_HandleTypeDef spi;
 	DMA_HandleTypeDef hdma_tx;
 	DMA_HandleTypeDef hdma_rx;
+	TF_PortCommon port_common;
 } TF_Port;
 
 struct TF_HalContext {
