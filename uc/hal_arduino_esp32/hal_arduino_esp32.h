@@ -23,6 +23,7 @@ typedef struct TF_Port {
     uint8_t chip_select_pin;
     uint8_t spi;
     char port_name;
+
     // internal
     TF_PortCommon port_common;
 } TF_Port;

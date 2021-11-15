@@ -22,12 +22,15 @@ int tf_tfp_create(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id) TF_AT
 
 int tf_hal_common_create(TF_HalContext *hal) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
+
     memset(hal_common, 0, sizeof(TF_HalCommon));
+
     return TF_E_OK;
 }
 
 int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_discovery_timeout_us) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
+
     hal_common->timeout = port_discovery_timeout_us;
     hal_common->port_count = port_count;
 
@@ -36,7 +39,8 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
     hal_common->device_overflow_count = 0;
 
     int rc = tf_tfp_create(&hal_common->tfps[0], hal, 0);
-    if (rc != TF_E_OK) {
+
+    if(rc != TF_E_OK) {
         return rc;
     }
 
@@ -47,15 +51,17 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
         tf_unknown_create(&unknown, "1", hal, (uint8_t)i, 0);
 
         rc = tf_unknown_comcu_enumerate(&unknown);
-        if (rc == TF_E_OK) {
+
+        if(rc == TF_E_OK) {
             tf_unknown_callback_tick(&unknown, port_discovery_timeout_us);
         }
 
         tf_unknown_destroy(&unknown);
     }
 
-    if (hal_common->device_overflow_count > 0) {
+    if(hal_common->device_overflow_count > 0) {
         tf_hal_log_info("Additional devices found, but the inventory is full. Please increase TF_INVENTORY_SIZE.\n");
+
         return TF_E_TOO_MANY_DEVICES;
     }
 
@@ -64,23 +70,26 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
     return TF_E_OK;
 }
 
-static void enum_handler(TF_HalContext* hal,
-                  uint8_t port_id,
-                  char uid[8],
-                  char connected_uid[8],
-                  char position,
-                  uint8_t hw_version[3],
-                  uint8_t fw_version[3],
-                  uint16_t dev_id,
-                  uint8_t enumeration_type) {
-    (void) connected_uid;
-    (void) position;
-    (void) hw_version;
-    (void) fw_version;
-    (void) enumeration_type;
+static void enum_handler(TF_HalContext *hal,
+                         uint8_t port_id,
+                         char uid[8],
+                         char connected_uid[8],
+                         char position,
+                         uint8_t hw_version[3],
+                         uint8_t fw_version[3],
+                         uint16_t did,
+                         uint8_t enumeration_type) {
+    (void)connected_uid;
+    (void)position;
+    (void)hw_version;
+    (void)fw_version;
+    (void)enumeration_type;
+
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
-    if (hal_common->used >= sizeof(hal_common->uids) / sizeof(hal_common->uids[0])) {
+
+    if(hal_common->used >= sizeof(hal_common->uids) / sizeof(hal_common->uids[0])) {
         ++hal_common->device_overflow_count;
+
         return;
     }
 
@@ -88,19 +97,22 @@ static void enum_handler(TF_HalContext* hal,
     if(tf_base58_decode(uid, &numeric_uid) != TF_E_OK)
         return;
 
-    for(size_t i = 0; i < hal_common->used; ++i)
+    for(size_t i = 0; i < hal_common->used; ++i) {
         if(hal_common->uids[i] == numeric_uid) {
             hal_common->port_ids[i] = port_id;
-            hal_common->dids[i] = dev_id;
+            hal_common->dids[i] = did;
             hal_common->tfps[i].spitfp->port_id = port_id;
+
             return;
         }
+    }
 
     tf_hal_log_info("Found device %s of type %d at port %c\n", uid, dev_id, tf_hal_get_port_name(hal, port_id));
 
     hal_common->port_ids[hal_common->used] = port_id;
     hal_common->uids[hal_common->used] = numeric_uid;
     hal_common->dids[hal_common->used] = dev_id;
+
     if(tf_tfp_create(&hal_common->tfps[hal_common->used], hal, port_id) == TF_E_OK) {
         ++hal_common->used;
     }
@@ -116,7 +128,7 @@ bool tf_hal_enumerate_handler(TF_HalContext *hal, uint8_t port_id, TF_Packetbuff
     uint16_t device_identifier = tf_packetbuffer_read_uint16_t(payload);
     uint8_t enumeration_type = tf_packetbuffer_read_uint8_t(payload);
 
-    //No device before us has patched in the position and connected_uid.
+    // No device before us has patched in the position and connected_uid.
     if(connected_uid[0] == 0)
         position = tf_hal_get_port_name(hal, port_id);
 
@@ -132,10 +144,11 @@ static void log_unsigned(uint64_t value, uint8_t base) {
         return;
 
     char buffer[64] = {0};
-
     uint64_t len = 0;
+
     do {
         uint64_t digit = value % base;
+
         buffer[64 - len - 1] = alphabet[digit];
         ++len;
         value /= base;
@@ -166,7 +179,7 @@ static void write_chunk(const char *fmt, const char *cursor) {
     }
 }
 
-void tf_hal_printf(const char *fmt, ...){
+void tf_hal_printf(const char *fmt, ...) {
     va_list va;
     va_start(va, fmt);
 
@@ -179,6 +192,7 @@ void tf_hal_printf(const char *fmt, ...){
             fmt = cursor;
 
             tf_hal_log_newline();
+
             continue;
         }
 
@@ -192,16 +206,16 @@ void tf_hal_printf(const char *fmt, ...){
         // Parse integer prefixes
         int width = 0;
 
-        if (strncmp(cursor, "I8", 2) == 0) {
+        if(strncmp(cursor, "I8", 2) == 0) {
             width = 1;
             cursor += 2;
-        } else if (strncmp(cursor, "I16", 3) == 0) {
+        } else if(strncmp(cursor, "I16", 3) == 0) {
             width = 2;
             cursor += 3;
-        } else if (strncmp(cursor, "I32", 3) == 0) {
+        } else if(strncmp(cursor, "I32", 3) == 0) {
             width = 4;
             cursor += 3;
-        } else if (strncmp(cursor, "I64", 3) == 0) {
+        } else if(strncmp(cursor, "I64", 3) == 0) {
             width = 8;
             cursor += 3;
         }
@@ -214,31 +228,39 @@ void tf_hal_printf(const char *fmt, ...){
                 write_chunk(fmt, cursor);
                 tf_hal_log_newline();
                 fmt = cursor;
+
                 continue;
             }
+
             case '\0': {
                 write_chunk(fmt, cursor);
                 va_end(va);
+
                 return;
             }
 
-            case 'c' : {
+            case 'c': {
                 char c = (char) va_arg(va, int);
+
                 tf_hal_log_message(&c, 1);
                 fmt = cursor;
+
                 continue;
             }
 
-            case 's' : {
+            case 's': {
                 const char *str = va_arg(va, char*);
+
                 tf_hal_log_message(str, strlen(str));
                 fmt = cursor;
+
                 continue;
             }
 
-            case '%' : {
+            case '%': {
                 tf_hal_log_message("%", 1);
                 fmt = cursor;
+
                 continue;
             }
         }
@@ -253,6 +275,7 @@ void tf_hal_printf(const char *fmt, ...){
                     width = sizeof(unsigned int);
                 base = 10;
                 sign = false;
+
                 break;
             }
 
@@ -261,6 +284,7 @@ void tf_hal_printf(const char *fmt, ...){
                     width = sizeof(unsigned int);
                 base = 2;
                 sign = false;
+
                 break;
             }
 
@@ -269,6 +293,7 @@ void tf_hal_printf(const char *fmt, ...){
                     width = sizeof(int);
                 base = 10;
                 sign = true;
+
                 break;
             }
 
@@ -278,6 +303,7 @@ void tf_hal_printf(const char *fmt, ...){
                     width = sizeof(unsigned int);
                 base = 16;
                 sign = false;
+
                 break;
             }
             default:
@@ -293,39 +319,46 @@ void tf_hal_printf(const char *fmt, ...){
         // double casts fix implicit conversion signedness change warnings
         switch(width) {
             case 1:
-                if (sign) {
-                    value = (uint64_t)((int8_t) va_arg(va, int));
+                if(sign) {
+                    value = (uint64_t)((int8_t)va_arg(va, int));
                 } else {
-                    value = (uint8_t) va_arg(va, unsigned int);
+                    value = (uint8_t)va_arg(va, unsigned int);
                 }
+
                 break;
+
             case 2:
-                if (sign) {
-                    value = (uint64_t)((int16_t) va_arg(va, int));
+                if(sign) {
+                    value = (uint64_t)((int16_t)va_arg(va, int));
                 } else {
-                    value = (uint16_t) va_arg(va, unsigned int);
+                    value = (uint16_t)va_arg(va, unsigned int);
                 }
+
                 break;
+
             case 4:
-                if (sign) {
+                if(sign) {
                     value = (uint64_t)(va_arg(va, int32_t));
                 } else {
                     value = va_arg(va, uint32_t);
                 }
+
                 break;
+
             case 8:
-                if (sign) {
+                if(sign) {
                     value = (uint64_t)(va_arg(va, int64_t));
                 } else {
                     value = va_arg(va, uint64_t);
                 }
+
                 break;
         }
 
-        if (sign) {
-            log_signed((int64_t) value, base);
+        if(sign) {
+            log_signed((int64_t)value, base);
         } else {
-            log_unsigned((uint64_t) value, base);
+            log_unsigned((uint64_t)value, base);
         }
 
         fmt = cursor;
@@ -351,6 +384,7 @@ int tf_hal_get_port_id(TF_HalContext *hal, uint32_t uid, uint8_t *port_id, uint8
         if(hal_common->uids[i] == uid) {
             *port_id = hal_common->port_ids[i];
             *inventory_index = (uint8_t)i;
+
             return TF_E_OK;
         }
     }
@@ -365,17 +399,22 @@ int tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], ch
     // (the unknown bricklet used for device discovery).
     ++index;
 
-    if (index >= hal_common->used) {
+    if(index >= hal_common->used) {
         return TF_E_DEVICE_NOT_FOUND;
     }
-    if (ret_uid != NULL)
+
+    if(ret_uid != NULL) {
         tf_base58_encode(hal_common->uids[index], ret_uid);
+    }
 
-    if (ret_port_name != NULL)
+    if(ret_port_name != NULL) {
         *ret_port_name = tf_hal_get_port_name(hal, hal_common->port_ids[index]);
+    }
 
-    if (ret_port_name != NULL)
+    if(ret_port_name != NULL) {
         *ret_device_id = hal_common->dids[index];
+    }
+
     return TF_E_OK;
 }
 
@@ -390,11 +429,14 @@ static TF_TfpContext *next_callback_tick_tfp(TF_HalContext *hal) {
 
     for(size_t i = hal_common->callback_tick_index; i < hal_common->callback_tick_index + hal_common->used; ++i) {
         size_t index = i;
-        if (index >= hal_common->used) {
+
+        if(index >= hal_common->used) {
             // Skip index 0; used for the unknown bricklet
             index -= hal_common->used - 1;
         }
+
         tfp = &hal_common->tfps[index];
+
         if(tfp != NULL && tfp->needs_callback_tick) {
             hal_common->callback_tick_index = index;
             return tfp;
@@ -440,7 +482,7 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
             if(hal_common->send_enumerate_request[i]) {
                 if(hal_common->tfps[i].spitfp->send_buf[0] == 0) {
                     tf_tfp_inject_packet(&hal_common->tfps[i], &enumerate_request_header, enumerate_request);
-                    //TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count
+                    // TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count
                     tf_tfp_transmit_packet(&hal_common->tfps[i], false, deadline_us, &ignored);
                     hal_common->send_enumerate_request[i] = false;
                 }
@@ -449,30 +491,37 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
 
         TF_TfpHeader header;
         int packet_id = -1;
+
         while(tf_net_get_available_packet_header(net, &header, &packet_id)) {
             uint8_t pid = (uint8_t) packet_id;
+
             // We should never get callback packets from the network side of things. Drop them.
             if(header.seq_num == 0) {
                 tf_net_drop_packet(net, pid);
+
                 continue;
             }
 
             // Handle enumerate requests
-            if (header.fid == 254 && header.uid == 0 && header.length == 8) {
+            if(header.fid == 254 && header.uid == 0 && header.length == 8) {
                 for(int i = 1; i < (int)hal_common->used; ++i) {
                     hal_common->send_enumerate_request[i] = true;
                 }
+
                 tf_net_drop_packet(net, pid);
+
                 continue;
             }
 
             bool device_found = false;
             bool dispatched = false;
+
             for(int i = 1; i < (int)hal_common->used; ++i) {
                 if(header.uid != hal_common->uids[i])
                     continue;
 
                 device_found = true;
+
                 // Intentionally don't use get_payload_buffer here: the payload buffer is at send_buf + SPITFP_HEADER_SIZE
                 // But the "is the buffer filled" marker is just the SPITFP packet length, i.e. before the SPITFP payload.
                 if (hal_common->tfps[i].spitfp->send_buf[0] != 0) {
@@ -483,8 +532,10 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
                 uint8_t buf[TF_TFP_MAX_MESSAGE_LENGTH] = {0};
                 tf_net_get_packet(net, pid, buf);
                 tf_tfp_inject_packet(&hal_common->tfps[i], &header, buf);
-                //TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count
+
+                // TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count
                 tf_tfp_transmit_packet(&hal_common->tfps[i], false, deadline_us, &ignored);
+
                 //tf_spitfp_build_packet(&hal_common->tfps[i].spitfp, false);
                 dispatched = true;
             }
@@ -495,7 +546,9 @@ int tf_hal_tick(TF_HalContext *hal, uint32_t timeout_us) {
         }
     }
 #endif
+
     tf_hal_callback_tick(hal, timeout_us);
+
     return TF_E_OK;
 }
 
@@ -530,12 +583,10 @@ int tf_hal_get_error_counters(TF_HalContext *hal,
                               uint32_t *ret_tfp_error_count_unexpected) {
     TF_HalCommon *hal_common = tf_hal_get_common(hal);
     TF_TfpContext *tfp = NULL;
-
     uint32_t spitfp_error_count_checksum = 0;
     uint32_t spitfp_error_count_frame = 0;
     uint32_t tfp_error_count_frame = 0;
     uint32_t tfp_error_count_unexpected = 0;
-
     bool port_found = false;
 
     for(int i = 1; i < (int)hal_common->used; ++i) {
@@ -543,7 +594,6 @@ int tf_hal_get_error_counters(TF_HalContext *hal,
             continue;
 
         port_found = true;
-
         tfp = &hal_common->tfps[i];
         if(tfp == NULL)
             continue;
@@ -569,6 +619,7 @@ int tf_hal_get_error_counters(TF_HalContext *hal,
 
 void tf_hal_set_net(TF_HalContext *hal, TF_NetContext *net) {
     TF_HalCommon *common = tf_hal_get_common(hal);
+
     common->net = net;
 }
 

@@ -37,7 +37,8 @@ static TF_Port ports[6] = {
 
 int tf_hal_create(TF_HalContext *hal) {
     int rc = tf_hal_common_create(hal);
-    if (rc != TF_E_OK) {
+
+    if(rc != TF_E_OK) {
         return rc;
     }
 
@@ -57,7 +58,7 @@ int tf_hal_create(TF_HalContext *hal) {
     return tf_hal_common_prepare(hal, PORT_COUNT, 50000);
 }
 
-int tf_hal_destroy(TF_HalContext *hal){
+int tf_hal_destroy(TF_HalContext *hal) {
     hal->hspi.end();
     hal->vspi.end();
 
@@ -74,32 +75,34 @@ static SPIClass *get_spi(TF_HalContext *hal, uint8_t port_id) {
     return spi;
 }
 
-int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable){
+int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
     SPIClass *spi = get_spi(hal, port_id);
     if (spi == NULL)
         return TF_E_DEVICE_NOT_FOUND;
 
-    if (enable) {
+    if(enable) {
         spi->beginTransaction(hal->spi_settings);
         digitalWrite(ports[port_id].chip_select_pin, LOW);
     } else {
         digitalWrite(ports[port_id].chip_select_pin, HIGH);
         spi->endTransaction();
     }
+
     return TF_E_OK;
 }
 
-int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length){
+int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length) {
     SPIClass *spi = get_spi(hal, port_id);
     if (spi == NULL)
         return TF_E_DEVICE_NOT_FOUND;
 
     memcpy(read_buffer, write_buffer, length);
     spi->transfer(read_buffer, length);
+
     return TF_E_OK;
 }
 
-uint32_t tf_hal_current_time_us(TF_HalContext *hal){
+uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
     return micros();
 }
 
@@ -108,6 +111,7 @@ void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
         delay(16);
         us -= 16000;
     }
+
     delayMicroseconds(us);
 }
 

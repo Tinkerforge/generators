@@ -19,10 +19,11 @@
 #define TF_PORT(chip_select_pin, port_name) {chip_select_pin, port_name, {._to_init = 0}}
 
 typedef struct TF_Port {
-    //external
+    // external
     uint8_t chip_select_pin;
     char port_name;
-    //internal
+
+    // internal
     TF_PortCommon port_common;
 } TF_Port;
 

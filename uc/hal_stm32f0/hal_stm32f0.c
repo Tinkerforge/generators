@@ -51,7 +51,8 @@ void DMA1_Channel4_5_IRQHandler(void) {
 
 int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_count) {
 	int rc = tf_hal_common_create(hal);
-	if (rc != TF_E_OK) {
+
+	if(rc != TF_E_OK) {
 		return rc;
 	}
 
@@ -60,20 +61,22 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_co
 
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	__HAL_RCC_GPIOB_CLK_ENABLE();
-
 	__HAL_RCC_DMA1_CLK_ENABLE();
 
 	uint8_t count = 0;
+
 	for(uint8_t i = 0; i < spi_port_count; i++) {
 		if(hal->ports[i].spi_instance == SPI1) {
 			if(tf_hal_irq2_3_spi == NULL) {
 				tf_hal_irq2_3_spi = &hal->ports[i].spi;
 			}
+
 			__HAL_RCC_SPI1_CLK_ENABLE();
 		} else {
 			if(tf_hal_irq4_5_spi == NULL) {
 				tf_hal_irq4_5_spi = &hal->ports[i].spi;
 			}
+
 			__HAL_RCC_SPI2_CLK_ENABLE();
 		}
 
@@ -155,6 +158,7 @@ int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
 	}
 
 	TF_STMGPIO *cs = hal->_cs_gpio[port_id];
+
 	if(cs == NULL) {
 		return TF_E_CHIP_SELECT_FAILED;
 	}
@@ -170,6 +174,7 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 	}
 
 	TF_Port *port = hal->_port[port_id];
+
 	if(port == NULL) {
 		return TF_E_TRANSCEIVE_FAILED;
 	}
@@ -180,8 +185,8 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 
 	HAL_StatusTypeDef status = HAL_SPI_TransmitReceive_DMA(&port->spi, (uint8_t *)write_buffer, read_buffer, length);
 	HAL_SPI_StateTypeDef spi_state;
-
 	uint32_t deadline = tf_hal_current_time_us(hal) + TF_HAL_SPI_TIMEOUT*1000;
+
 	while((spi_state = HAL_SPI_GetState(&port->spi)) != HAL_SPI_STATE_READY) {
 #ifdef TF_HAL_USE_COOP_TASK
 		// Don't yield if we only transceive one byte.
@@ -211,6 +216,7 @@ uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
 void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
 #ifdef TF_HAL_USE_COOP_TASK
 	const uint32_t deadline = tf_hal_current_time_us(hal) + us;
+
 	while(!tf_hal_deadline_elapsed(hal, deadline)) {
 		coop_task_yield(); // bricklib2-specific, change me for other platforms
 	}
@@ -224,31 +230,35 @@ TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) {
 }
 
 void tf_hal_log_message(const char *msg, size_t len) {
-    // bricklib2-specific, change me for other platforms
-    for(size_t i = 0; i < len; ++i) {
-        uartbb_tx(msg[i]);
-    }
+	// bricklib2-specific, change me for other platforms
+	for(size_t i = 0; i < len; ++i) {
+		uartbb_tx(msg[i]);
+	}
 }
 
 void tf_hal_log_newline() {
-    // bricklib2-specific, change me for other platforms
-    uartbb_tx('\n');
-    uartbb_tx('\r');
+	// bricklib2-specific, change me for other platforms
+	uartbb_tx('\n');
+	uartbb_tx('\r');
 }
 
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int e_code) {
-    switch(e_code) {
-        #include "../bindings/error_cases.h"
-        case TF_E_CHIP_SELECT_FAILED:
-            return "failed to write to chip select GPIO";
-        case TF_E_TRANSCEIVE_FAILED:
-            return "failed to transceive over SPI";
-        case TF_E_TRANSCEIVE_TIMEOUT:
-            return "timeout during transceive over SPI";
-        default:
-            return "unknown error";
-    }
+	switch(e_code) {
+		#include "../bindings/error_cases.h"
+
+		case TF_E_CHIP_SELECT_FAILED:
+			return "failed to write to chip select GPIO";
+
+		case TF_E_TRANSCEIVE_FAILED:
+			return "failed to transceive over SPI";
+
+		case TF_E_TRANSCEIVE_TIMEOUT:
+			return "timeout during transceive over SPI";
+
+		default:
+			return "unknown error";
+	}
 }
 #endif
 

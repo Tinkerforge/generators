@@ -28,68 +28,71 @@
 uint32_t bcm2835_core_clk_hz;
 
 static int parse_core_freq(const char *name, int *value) {
-	char buffer[128] = {0};
-	int length;
+    char buffer[128] = {0};
+    int length;
 
-	length = tf_vcgencmd_get_config(name, buffer, sizeof(buffer) - 1);
+    length = tf_vcgencmd_get_config(name, buffer, sizeof(buffer) - 1);
 
-	if (length < 0) {
-		tf_hal_log_error("Could not read Raspberry Pi %s config\n", name);
+    if(length < 0) {
+        tf_hal_log_error("Could not read Raspberry Pi %s config\n", name);
 
-		return -1;
-	}
+        return -1;
+    }
 
-	buffer[length] = '\0';
+    buffer[length] = '\0';
 
-	char *end_ptr;
-	*value = strtol(buffer, &end_ptr, 10);
+    char *end_ptr;
+    *value = strtol(buffer, &end_ptr, 10);
 
-	if (buffer == end_ptr) {
-		tf_hal_log_error("Could not parse Raspberry Pi %s value: %s\n", name, buffer);
+    if(buffer == end_ptr) {
+        tf_hal_log_error("Could not parse Raspberry Pi %s value: %s\n", name, buffer);
 
-		return -1;
-	}
+        return -1;
+    }
 
-	if (*value == 0) {
-		// zero means default value, which is 250 for core_freq and core_freq_min
-		// https://github.com/raspberrypi/userland/issues/653
-		tf_hal_log_debug("Raspberry Pi %s value is zero, assuming 250 MHz\n", name);
+    if(*value == 0) {
+        // zero means default value, which is 250 for core_freq and core_freq_min
+        // https://github.com/raspberrypi/userland/issues/653
+        tf_hal_log_debug("Raspberry Pi %s value is zero, assuming 250 MHz\n", name);
 
-		*value = 250;
-	}
+        *value = 250;
+    }
 
-	if (*value < 100 || *value > 1000) {
-		tf_hal_log_error("Invalid value for Raspberry Pi %s config: %d\n", name, *value);
+    if(*value < 100 || *value > 1000) {
+        tf_hal_log_error("Invalid value for Raspberry Pi %s config: %d\n", name, *value);
 
-		return -1;
-	}
+        return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
-    if (rc != TF_E_OK) {
+
+    if(rc != TF_E_OK) {
         return rc;
     }
 
     int core_freq;
-    if (parse_core_freq("core_freq", &core_freq) < 0) {
+
+    if(parse_core_freq("core_freq", &core_freq) < 0) {
         return -1;
     }
 
     int core_freq_min;
-    if (parse_core_freq("core_freq_min", &core_freq_min) < 0) {
+
+    if(parse_core_freq("core_freq_min", &core_freq_min) < 0) {
         return -1;
     }
 
-    if (core_freq != core_freq_min) {
+    if(core_freq != core_freq_min) {
         tf_hal_log_info("Raspberry Pi core frequency (core_freq: %d, core_freq_min: %d) is unstable, SPI throughput will be unstable too\n",
-                    core_freq, core_freq_min);
+                        core_freq, core_freq_min);
     }
 
     tf_hal_log_info("Using %d MHz Raspberry Pi core frequency (core_freq: %d, core_freq_min: %d) for BCM2835 backend\n",
-                core_freq, core_freq, core_freq_min);
+                    core_freq, core_freq, core_freq_min);
 
     // Marked extern in bcm2835.c
     // Will be read in bcm2835_spi_set_speed_hz to scale the SPI clock.
@@ -120,34 +123,42 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count)
 }
 
 int tf_hal_destroy(TF_HalContext *hal) {
-    (void) hal;
+    (void)hal;
+
     bcm2835_spi_end();
     bcm2835_close();
+
     return TF_E_OK;
 }
 
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
     bcm2835_gpio_write(hal->ports[port_id].chip_select_pin, enable ? LOW : HIGH);
+
     return TF_E_OK;
 }
 
 int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, const uint32_t length) {
-    (void) hal;
-    (void) port_id;
+    (void)hal;
+    (void)port_id;
+
     bcm2835_spi_transfernb((const char*)write_buffer, (char *)read_buffer, length);
+
     return TF_E_OK;
 }
 
 uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
-    (void) hal;
+    (void)hal;
+
     struct timespec t;
+
     clock_gettime(CLOCK_MONOTONIC, &t);
 
-    return (uint32_t) ((t.tv_sec * 1000000) + t.tv_nsec / 1000);
+    return (uint32_t)((t.tv_sec * 1000000) + t.tv_nsec / 1000);
 }
 
 void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
-    (void) hal;
+    (void)hal;
+
     usleep(us);
 }
 
@@ -167,10 +178,13 @@ void tf_hal_log_newline() {
 const char *tf_hal_strerror(int e_code) {
     switch(e_code) {
         #include "../bindings/error_cases.h"
+
         case TF_E_BCM2835_INIT_FAILED:
             return "bcm2835_init failed. Are you running as root?";
+
         case TF_E_BCM2835_SPI_BEGIN_FAILED:
             return "bcm2835_spi_begin failed. Are you running as root?";
+
         default:
             return "unknown error";
     }
@@ -182,4 +196,3 @@ char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
         return '?';
     return hal->ports[port_id].port_name;
 }
-

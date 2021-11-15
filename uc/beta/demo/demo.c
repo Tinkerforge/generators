@@ -29,15 +29,15 @@ void gui_tab_handler(TF_LCD128x64 *lcd, int8_t index, void *user_data) {
 }
 
 void demo_setup(TF_HalContext *hal) {
-  check(tf_lcd_128x64_create(&lcd, "HQ6", hal), "create lcd");
-  check(tf_ptc_v2_create(&ptc, "J7d", hal), "create rgb");
+    check(tf_lcd_128x64_create(&lcd, "HQ6", hal), "create lcd");
+    check(tf_ptc_v2_create(&ptc, "J7d", hal), "create rgb");
 
-  tf_lcd_128x64_remove_all_gui(&lcd);
-  tf_lcd_128x64_set_gui_tab_configuration(&lcd, TF_LCD_128X64_CHANGE_TAB_ON_CLICK_AND_SWIPE, true);
-  tf_lcd_128x64_set_gui_tab_text(&lcd, 0, "PTC");
-  tf_lcd_128x64_set_gui_tab_text(&lcd, 1, "Setup");
-  tf_lcd_128x64_set_gui_tab_selected_callback_configuration(&lcd, 10, true);
-  tf_lcd_128x64_register_gui_tab_selected_callback(&lcd, gui_tab_handler, &gui_tab);
+    tf_lcd_128x64_remove_all_gui(&lcd);
+    tf_lcd_128x64_set_gui_tab_configuration(&lcd, TF_LCD_128X64_CHANGE_TAB_ON_CLICK_AND_SWIPE, true);
+    tf_lcd_128x64_set_gui_tab_text(&lcd, 0, "PTC");
+    tf_lcd_128x64_set_gui_tab_text(&lcd, 1, "Setup");
+    tf_lcd_128x64_set_gui_tab_selected_callback_configuration(&lcd, 10, true);
+    tf_lcd_128x64_register_gui_tab_selected_callback(&lcd, gui_tab_handler, &gui_tab);
 }
 
 void button_handler(TF_LCD128x64 *device, uint8_t index, bool pressed, void *user_data) {
@@ -99,40 +99,45 @@ void draw_ptc() {
 }
 
 void demo_loop(TF_HalContext *hal) {
-  if(tab_changed) {
-      first_run_since_tab_change = true;
-  }
-  uint32_t start = tf_hal_current_time_us(hal);
+    if(tab_changed) {
+        first_run_since_tab_change = true;
+    }
 
-  if(tab_changed && first_run_since_tab_change) {
-    tf_lcd_128x64_clear_display(&lcd);
-    tf_lcd_128x64_remove_gui_button(&lcd, 0);
-    tf_lcd_128x64_remove_gui_button(&lcd, 1);
-    tf_lcd_128x64_remove_gui_button(&lcd, 2);
-    tf_lcd_128x64_remove_gui_button(&lcd, 3);
-  }
+    uint32_t start = tf_hal_current_time_us(hal);
 
-  switch(gui_tab) {
-      case 0:
-      draw_ptc();
-      break;
-    case 1:
-      draw_setup();
-      break;
-  }
+    if(tab_changed && first_run_since_tab_change) {
+        tf_lcd_128x64_clear_display(&lcd);
+        tf_lcd_128x64_remove_gui_button(&lcd, 0);
+        tf_lcd_128x64_remove_gui_button(&lcd, 1);
+        tf_lcd_128x64_remove_gui_button(&lcd, 2);
+        tf_lcd_128x64_remove_gui_button(&lcd, 3);
+    }
 
-  tf_lcd_128x64_set_display_configuration(&lcd, 14, backlight, invert, true);
+    switch(gui_tab) {
+        case 0:
+            draw_ptc();
+            break;
 
-  // If callbacks on the Raspberry Pi only work sporadically, use 1000 µs timeout here.
-  tf_lcd_128x64_callback_tick(&lcd, 250);
-  tf_ptc_v2_callback_tick(&ptc, 250);
+        case 1:
+            draw_setup();
+            break;
+    }
 
-  while(tf_hal_current_time_us(hal) - start < 50000) {
+    tf_lcd_128x64_set_display_configuration(&lcd, 14, backlight, invert, true);
+
+    // If callbacks on the Raspberry Pi only work sporadically, use 1000 µs timeout here.
     tf_lcd_128x64_callback_tick(&lcd, 250);
     tf_ptc_v2_callback_tick(&ptc, 250);
-  }
-  if(first_run_since_tab_change)
-    tab_changed = false;
-  first_run_since_tab_change = false;
+
+    while(tf_hal_current_time_us(hal) - start < 50000) {
+        tf_lcd_128x64_callback_tick(&lcd, 250);
+        tf_ptc_v2_callback_tick(&ptc, 250);
+    }
+
+    if(first_run_since_tab_change) {
+        tab_changed = false;
+    }
+
+    first_run_since_tab_change = false;
 }
 

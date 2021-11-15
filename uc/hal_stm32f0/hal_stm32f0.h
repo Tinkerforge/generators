@@ -27,7 +27,7 @@ typedef struct TF_STMGPIO {
 } TF_STMGPIO;
 
 typedef struct TF_Port {
-	// External
+	// external
 	TF_STMGPIO clk;
 	TF_STMGPIO mosi;
 	TF_STMGPIO miso;
@@ -42,7 +42,7 @@ typedef struct TF_Port {
 	DMA_Channel_TypeDef *dma_channel_rx;
 	DMA_Channel_TypeDef *dma_channel_tx;
 
-	// Internal
+	// internal
 	SPI_HandleTypeDef spi;
 	DMA_HandleTypeDef hdma_tx;
 	DMA_HandleTypeDef hdma_rx;
@@ -52,10 +52,9 @@ typedef struct TF_Port {
 struct TF_HalContext {
 	TF_Port *ports;
 	uint8_t spi_port_count;
-
 	TF_HalCommon hal_common;
 
-	// Internal: Filled internally by tf_hal_create to allow for faster access during operation
+	// filled internally by tf_hal_create to allow for faster access during operation
 	TF_Port    *_port[TF_HAL_STM32F0_MAX_PORT_COUNT];
 	TF_STMGPIO *_cs_gpio[TF_HAL_STM32F0_MAX_PORT_COUNT];
 	uint8_t     _port_count;

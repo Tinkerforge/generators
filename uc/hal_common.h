@@ -35,7 +35,7 @@ typedef union TF_PortCommon {
 } TF_PortCommon;
 
 typedef struct TF_HalCommon {
-    //TF_INVENTORY_SIZE + 1 for the unknown bricklet used for device discovery
+    // TF_INVENTORY_SIZE + 1 for the unknown bricklet used for device discovery
     uint32_t uids[TF_INVENTORY_SIZE + 1];
     uint8_t port_ids[TF_INVENTORY_SIZE + 1];
     TF_TfpContext tfps[TF_INVENTORY_SIZE + 1];

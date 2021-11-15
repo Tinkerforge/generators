@@ -5,7 +5,7 @@
 #include "demo/demo.h"
 
 static void check(int e_code, const char *c) {
-    if (e_code < 0) {
+    if(e_code < 0) {
         printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
     }
 }
@@ -63,7 +63,6 @@ int main(int argc, char **argv) {
     }};*/
 
     check(tf_hal_create(&hal, "/dev/spidev0.0", ports, sizeof(ports)/sizeof(ports[0])), "hal create");
-
     demo_setup(&hal);
 
     while(true)

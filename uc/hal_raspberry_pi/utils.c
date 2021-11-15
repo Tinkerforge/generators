@@ -20,37 +20,38 @@
 #include "utils.h"
 
 void microsleep(uint32_t duration) {
-	struct timespec ts;
-	struct timespec tsr;
+    struct timespec ts;
+    struct timespec tsr;
 
-	ts.tv_sec = duration / 1000000;
-	ts.tv_nsec = (duration % 1000000) * 1000;
+    ts.tv_sec = duration / 1000000;
+    ts.tv_nsec = (duration % 1000000) * 1000;
 
-	while (clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, &tsr) < 0 && errno == EINTR) {
-		memcpy(&ts, &tsr, sizeof(ts));
-	}
+    while(clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, &tsr) < 0 && errno == EINTR) {
+        memcpy(&ts, &tsr, sizeof(ts));
+    }
 }
 
 void millisleep(uint32_t duration) {
-	microsleep(duration * 1000);
+    microsleep(duration * 1000);
 }
 
 uint64_t microtime(void) { // monotonic
-	struct timespec ts;
-	if (clock_gettime(CLOCK_MONOTONIC, &ts) < 0) {
-		abort(); // clock_gettime cannot fail under normal circumstances
-	}
+    struct timespec ts;
 
-	return ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
+    if(clock_gettime(CLOCK_MONOTONIC, &ts) < 0) {
+        abort(); // clock_gettime cannot fail under normal circumstances
+    }
+
+    return ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
 }
 
 uint64_t millitime(void) { // monotonic
-	return microtime() / 1000;
+    return microtime() / 1000;
 }
 
 const char *get_errno_name(int error_code) {
     #define ERRNO_NAME(code) case code: return #code
-    switch (error_code) {
+    switch(error_code) {
     ERRNO_NAME(EPERM);
     ERRNO_NAME(ENOENT);
     ERRNO_NAME(ESRCH);
@@ -212,7 +213,7 @@ int robust_close(int fd) {
     int saved_errno = errno;
     int rc;
 
-    if (fd < 0) {
+    if(fd < 0) {
         return 0;
     }
 

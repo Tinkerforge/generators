@@ -21,7 +21,7 @@ void tf_base58_encode(uint32_t value, char *str) {
     size_t i = 0;
     size_t k = 0;
 
-    while (value >= 58) {
+    while(value >= 58) {
         mod = value % 58;
         reverse_str[i] = BASE58_ALPHABET[mod];
         value = value / 58;
@@ -30,18 +30,18 @@ void tf_base58_encode(uint32_t value, char *str) {
 
     reverse_str[i] = BASE58_ALPHABET[value];
 
-    for (k = 0; k <= i; k++) {
+    for(k = 0; k <= i; k++) {
         str[k] = reverse_str[i - k];
     }
 
-    for (; k < TF_BASE58_MAX_STR_SIZE; k++) {
+    for(; k < TF_BASE58_MAX_STR_SIZE; k++) {
         str[k] = '\0';
     }
 }
 
 // https://www.fefe.de/intof.html
 static bool uint32_add(uint32_t a, uint32_t b, uint32_t *c) {
-    if (UINT32_MAX - a < b) {
+    if(UINT32_MAX - a < b) {
         return false;
     }
 
@@ -58,13 +58,13 @@ static bool uint32_multiply(uint32_t a, uint32_t b, uint32_t *c) {
     uint32_t c0;
     uint32_t c1;
 
-    if (a1 > 0 && b1 > 0) {
+    if(a1 > 0 && b1 > 0) {
         return false;
     }
 
     c1 = a1 * b0 + a0 * b1;
 
-    if (c1 > UINT16_MAX) {
+    if(c1 > UINT16_MAX) {
         return false;
     }
 
@@ -86,29 +86,31 @@ int tf_base58_decode(const char *str, uint32_t *ret_value) {
     uint32_t base = 1;
 
     *ret_value = 0;
-    for (; i >= 0; --i) {
-        for (k = 0; k < 58; ++k) {
-            if (BASE58_ALPHABET[k] == str[i]) {
+
+    for(; i >= 0; --i) {
+        for(k = 0; k < 58; ++k) {
+            if(BASE58_ALPHABET[k] == str[i]) {
                 break;
             }
         }
 
-        if (k == 58) {
+        if(k == 58) {
             return TF_E_INVALID_CHAR_IN_UID; // invalid char
         }
 
-        if (!uint32_multiply(k, base, &next))  {
+        if(!uint32_multiply(k, base, &next))  {
             return TF_E_UID_OVERFLOW; // overflow
         }
 
-        if (!uint32_add(value, next, &value))  {
+        if(!uint32_add(value, next, &value))  {
             return TF_E_UID_OVERFLOW; // overflow
         }
 
-        if (i > 0 && !uint32_multiply(base, 58, &base))  {
+        if(i > 0 && !uint32_multiply(base, 58, &base))  {
             return TF_E_UID_OVERFLOW; // overflow
         }
     }
+
     *ret_value = value;
 
     return TF_E_OK;

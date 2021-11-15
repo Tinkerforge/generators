@@ -22,10 +22,8 @@ extern "C" {
 #endif
 
 typedef struct TF_Packetbuffer {
-    //index of first valid elemnt
-    uint8_t start;
-    //index of first invalid element
-    uint8_t end;
+    uint8_t start; // index of first valid elemnt
+    uint8_t end; // index of first invalid element
     uint8_t buffer[TF_PACKET_BUFFER_SIZE];
 } TF_Packetbuffer;
 

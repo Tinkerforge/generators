@@ -15,7 +15,8 @@
 
 int tf_hal_create(TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
-    if (rc != TF_E_OK) {
+
+    if(rc != TF_E_OK) {
         return rc;
     }
 
@@ -35,27 +36,30 @@ int tf_hal_create(TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
 
 int tf_hal_destroy(TF_HalContext *hal) {
     SPI.end();
+
     return TF_E_OK;
 }
 
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
-    if (enable) {
+    if(enable) {
         SPI.beginTransaction(hal->spi_settings);
         digitalWrite(hal->ports[port_id].chip_select_pin, LOW);
     } else {
         digitalWrite(hal->ports[port_id].chip_select_pin, HIGH);
         SPI.endTransaction();
     }
+
     return TF_E_OK;
 }
 
-int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length){
+int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length) {
     memcpy(read_buffer, write_buffer, length);
     SPI.transfer(read_buffer, length);
+
     return TF_E_OK;
 }
 
-uint32_t tf_hal_current_time_us(TF_HalContext *hal){
+uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
     return micros();
 }
 
@@ -64,6 +68,7 @@ void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
         delay(16);
         us -= 16000;
     }
+
     delayMicroseconds(us);
 }
 
@@ -83,6 +88,7 @@ void tf_hal_log_newline() {
 const char *tf_hal_strerror(int e_code) {
     switch(e_code) {
         #include "../bindings/error_cases.h"
+
         default:
             return "unknown error";
     }

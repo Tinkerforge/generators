@@ -96,13 +96,13 @@ void tf_sha1_update(TF_SHA1 *sha1, const uint8_t *data, size_t length) {
 	j = (size_t)((sha1->count >> 3) & 63);
 	sha1->count += (uint64_t)length << 3;
 
-	if ((j + length) > 63) {
+	if((j + length) > 63) {
 		i = 64 - j;
 
 		memcpy(&sha1->buffer[j], data, i);
 		tf_sha1_transform(sha1, sha1->buffer);
 
-		for (; i + 63 < length; i += 64) {
+		for(; i + 63 < length; i += 64) {
 			tf_sha1_transform(sha1, &data[i]);
 		}
 
@@ -118,20 +118,20 @@ void tf_sha1_final(TF_SHA1 *sha1, uint8_t digest[TF_SHA1_DIGEST_LENGTH]) {
 	uint32_t i;
 	uint8_t count[8];
 
-	for (i = 0; i < 8; i++) {
+	for(i = 0; i < 8; i++) {
 		// this is endian independent
 		count[i] = (uint8_t)((sha1->count >> ((7 - (i & 7)) * 8)) & 255);
 	}
 
 	tf_sha1_update(sha1, (uint8_t *)"\200", 1);
 
-	while ((sha1->count & 504) != 448) {
+	while((sha1->count & 504) != 448) {
 		tf_sha1_update(sha1, (uint8_t *)"\0", 1);
 	}
 
 	tf_sha1_update(sha1, count, 8);
 
-	for (i = 0; i < TF_SHA1_DIGEST_LENGTH; i++) {
+	for(i = 0; i < TF_SHA1_DIGEST_LENGTH; i++) {
 		digest[i] = (uint8_t)((sha1->state[i >> 2] >> ((3 - (i & 3)) * 8)) & 255);
 	}
 

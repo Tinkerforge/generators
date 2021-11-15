@@ -153,7 +153,7 @@ TF_Port bricklet_ports[2] = {
 
 // Used to report any error encountered while running the example.
 void check(int e_code, const char *c) {
-	if (e_code == TF_E_OK) {
+	if(e_code == TF_E_OK) {
 		return;
 	}
 
@@ -164,9 +164,7 @@ TF_HalContext hal;
 
 int bricklet_main() {
 	tf_hal_printf("Hello World!\n");
-
 	check(tf_hal_create(&bricklet.hal, bricklet_ports, 2), "hal create");
-
 	example_setup(&hal);
 
 	while(true) {
