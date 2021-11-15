@@ -1,3 +1,11 @@
+/*
+ * Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
+ *
+ * Redistribution and use in source and binary forms of this file,
+ * with or without modification, are permitted. See the Creative
+ * Commons Zero (CC0 1.0) License for more details.
+ */
+
 #include "net_arduino.h"
 
 #include "Arduino.h"
@@ -9,12 +17,12 @@
 #include "../bindings/macros.h"
 #include "../bindings/hal_common.h"
 
-void remove_open_request(TF_NetContext *net, size_t idx) {
+static void remove_open_request(TF_NetContext *net, size_t idx) {
     memmove(net->open_requests + idx, net->open_requests + idx + 1, sizeof(TF_Request) * (net->open_request_count - idx - 1));
     --net->open_request_count;
 }
 
-void add_open_request(TF_NetContext *net, uint32_t client_id, TF_TfpHeader *header) {
+static void add_open_request(TF_NetContext *net, uint32_t client_id, TF_TfpHeader *header) {
     if(net->open_request_count == sizeof(net->open_requests) / sizeof(net->open_requests[0])) {
         // The open_request array is full. Drop the oldest request.
         // Note that this does not mean, that a later response to the dropped request will be
@@ -39,7 +47,7 @@ uint32_t tf_net_current_time_ms(TF_NetContext *net) {
     return millis();
 }
 
-void remove_client(TF_NetContext *net, uint32_t client_idx) {
+static void remove_client(TF_NetContext *net, uint32_t client_idx) {
     TF_NetClient *client = &net->clients[client_idx];
 
     for(int i = 0; i < net->open_request_count; ++i) {
@@ -61,7 +69,7 @@ void remove_client(TF_NetContext *net, uint32_t client_idx) {
     tf_hal_log_info("disconnect; clients used: %d\n", net->clients_used);
 }
 
-int read_packets(TF_NetContext *net) {
+static int read_packets(TF_NetContext *net) {
     for(size_t i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
         uint8_t *buf = client->read_buf;
@@ -99,7 +107,7 @@ int read_packets(TF_NetContext *net) {
     return 0;
 }
 
-int send_from_buf(TF_NetContext *net, int client_idx) {
+static int send_from_buf(TF_NetContext *net, int client_idx) {
     TF_NetClient *client = &net->clients[client_idx];
     size_t written = client->client.write(client->send_buf, client->send_buf_used);
 
@@ -113,11 +121,11 @@ int send_from_buf(TF_NetContext *net, int client_idx) {
     return written;
 }
 
-bool deadline_elapsed(uint32_t now, uint32_t deadline_us) {
+static bool deadline_elapsed(uint32_t now, uint32_t deadline_us) {
     return ((uint32_t)(now - deadline_us)) < (UINT32_MAX / 2);
 }
 
-int add_to_send_buf(TF_NetContext *net, int client_idx, uint8_t *buf, uint8_t len) {
+static int add_to_send_buf(TF_NetContext *net, int client_idx, uint8_t *buf, uint8_t len) {
     TF_NetClient *client = &net->clients[client_idx];
     size_t send_buf_size = sizeof(client->send_buf) / sizeof(client->send_buf[0]);
     uint32_t deadline_us = tf_net_current_time_us(net) + 10000;
@@ -148,7 +156,7 @@ int add_to_send_buf(TF_NetContext *net, int client_idx, uint8_t *buf, uint8_t le
     return len;
 }
 
-void flush_send_buffers(TF_NetContext *net) {
+static void flush_send_buffers(TF_NetContext *net) {
     for(size_t i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
 
@@ -165,7 +173,7 @@ void flush_send_buffers(TF_NetContext *net) {
     }
 }
 
-int accept_connections(TF_NetContext *net) {
+static int accept_connections(TF_NetContext *net) {
     TF_NetClient *clients = net->clients;
     size_t max_clients = sizeof(net->clients)/sizeof(net->clients[0]);
     static uint32_t client_id = 0;
@@ -205,7 +213,7 @@ int accept_connections(TF_NetContext *net) {
     return 0;
 }
 
-void remove_dead_clients(TF_NetContext *net) {
+static void remove_dead_clients(TF_NetContext *net) {
     for(size_t i = 0; i < net->clients_used; ++i) {
         if(deadline_elapsed(tf_net_current_time_ms(net), net->clients[i].last_recv_ms + net->recv_timeout_ms)) {
             remove_client(net, i);
@@ -213,7 +221,7 @@ void remove_dead_clients(TF_NetContext *net) {
     }
 }
 
-bool is_valid_header(TF_TfpHeader *header) {
+static bool is_valid_header(TF_TfpHeader *header) {
     if(header->length < TF_TFP_MIN_MESSAGE_LENGTH) {
         return false;
     }
@@ -229,7 +237,7 @@ bool is_valid_header(TF_TfpHeader *header) {
     return true;
 }
 
-void reassemble_packets(TF_NetContext *net) {
+static void reassemble_packets(TF_NetContext *net) {
     for(int i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
 
@@ -346,7 +354,7 @@ int tf_net_drop_packet(TF_NetContext *net, uint8_t packet_id) {
     return 0;
 }
 
-void broadcast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) {
+static void broadcast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) {
      for(size_t i = 0; i < net->clients_used; ++i) {
         if(add_to_send_buf(net, i, buf, header->length) < 0) {
             remove_client(net, i);
@@ -357,7 +365,7 @@ void broadcast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) {
     }
 }
 
-void unicast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf, size_t client_idx) {
+static void unicast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf, size_t client_idx) {
     if(add_to_send_buf(net, client_idx, buf, header->length) < 0) {
         remove_client(net, client_idx);
         return;
