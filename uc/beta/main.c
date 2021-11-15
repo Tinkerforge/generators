@@ -65,8 +65,9 @@ int main(int argc, char **argv) {
     check(tf_hal_create(&hal, "/dev/spidev0.0", ports, sizeof(ports)/sizeof(ports[0])), "hal create");
     demo_setup(&hal);
 
-    while(true)
+    while(true) {
         demo_loop(&hal);
+    }
 
     return 0;
 }

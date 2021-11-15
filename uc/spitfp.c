@@ -78,8 +78,10 @@ static uint8_t bytes_to_recv(TF_SpiTfpContext *spitfp, uint8_t bytes_missing, ui
 
 static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
     TF_Packetbuffer *buf = &(spitfp->recv_buf);
-    if(bytes_missing != NULL)
+
+    if(bytes_missing != NULL) {
         *bytes_missing = 0;
+    }
 
     while(!tf_packetbuffer_is_empty(buf)) {
         uint8_t packet_len;
@@ -87,17 +89,22 @@ static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
 
         if(packet_len > TF_SPITFP_MAX_MESSAGE_LENGTH || (packet_len < TF_SPITFP_MIN_MESSAGE_LENGTH && packet_len != TF_SPITFP_PROTOCOL_OVERHEAD)) {
             //This can't be the start of a packet.
-            if(packet_len != 0)
+            if(packet_len != 0) {
                 ++spitfp->error_count_frame;
+            }
+
             tf_packetbuffer_remove(buf, 1);
             continue;
         }
+
         uint8_t used = tf_packetbuffer_get_used(buf);
 
         if(packet_len > tf_packetbuffer_get_used(buf)) {
             //This could be the start of a packet, but we don't have enough bytes received yet.
-            if(bytes_missing != NULL)
+            if(bytes_missing != NULL) {
                 *bytes_missing = packet_len - used;
+            }
+
             return false;
         }
 
@@ -108,13 +115,15 @@ static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
 
         for(uint8_t i = 0; i < (packet_len - 1); ++i) {
             uint8_t byte;
+
             tf_packetbuffer_peek_offset(buf, &byte, i);
             TF_PEARSON(real_checksum, byte);
         }
 
         if(packet_checksum == real_checksum) {
-            if(on_receive_packet(spitfp))
+            if(on_receive_packet(spitfp)) {
                 return true;
+            }
         } else {
             // checksum was wrong, advance one byte
             tf_packetbuffer_remove(buf, 1);
@@ -132,8 +141,10 @@ static int tf_spitfp_transceive_buffer(TF_SpiTfpContext *spitfp, uint8_t *send_b
     tf_packetbuffer_free_array_view(&spitfp->recv_buf, length, &first_chunk, &first_len, &second_chunk, &second_len);
 
     int rc = tf_hal_chip_select(spitfp->hal, spitfp->port_id, true);
-    if(rc != TF_E_OK)
+
+    if(rc != TF_E_OK) {
         return rc;
+    }
 
     rc = tf_hal_transceive(spitfp->hal, spitfp->port_id, send_buffer + send_buf_offset, first_chunk, first_len);
 
@@ -191,8 +202,10 @@ uint8_t tf_spitfp_build_packet(TF_SpiTfpContext *spitfp, bool retransmission) {
     spitfp->send_buf[1] = seq_num | (uint8_t)(spitfp->last_sequence_number_seen << 4);
 
     uint8_t checksum = 0;
-    for(uint8_t i = 0; i < packet_length - 1; ++i)
+
+    for(uint8_t i = 0; i < packet_length - 1; ++i) {
         TF_PEARSON(checksum, spitfp->send_buf[i]);
+    }
 
     spitfp->send_buf[packet_length - 1] = checksum;
 
@@ -207,16 +220,19 @@ uint8_t tf_spitfp_build_packet(TF_SpiTfpContext *spitfp, bool retransmission) {
 static int tf_spitfp_transceive_packet(TF_SpiTfpContext *spitfp, uint8_t bytes_to_send, uint8_t *send_buf_offset) {
     while(*send_buf_offset < bytes_to_send) {
         uint8_t bytes_missing;
-        if(process_packets(spitfp, &bytes_missing))
+
+        if(process_packets(spitfp, &bytes_missing)) {
             return TRANSCEIVE_PACKET_RECEIVED;
+        }
 
         uint8_t to_recv = bytes_to_recv(spitfp, bytes_missing, bytes_to_send);
-
         uint8_t bytes_to_transceive = MIN(bytes_to_send, to_recv);
-
         int rc = tf_spitfp_transceive(spitfp, *send_buf_offset, bytes_to_transceive);
-        if(rc != TF_E_OK)
+
+        if(rc != TF_E_OK) {
             return rc;
+        }
+
         *send_buf_offset += bytes_to_transceive;
     }
 
@@ -230,8 +246,10 @@ static void tf_spitfp_build_ack(TF_SpiTfpContext *spitfp) {
     spitfp->send_buf[1] = (uint8_t)(spitfp->last_sequence_number_seen << 4);
 
     uint8_t checksum = 0;
-    for(uint8_t i = 0; i < packet_length - 1; ++i)
+
+    for(uint8_t i = 0; i < packet_length - 1; ++i) [
         TF_PEARSON(checksum, spitfp->send_buf[i]);
+    }
 
     spitfp->send_buf[packet_length - 1] = checksum;
 }
@@ -240,19 +258,28 @@ static void tf_spitfp_build_ack(TF_SpiTfpContext *spitfp) {
 #define RECEIVE_PACKET_TIMEOUT 2
 static int tf_spitfp_receive_packet(TF_SpiTfpContext *spitfp) {
     uint8_t bytes_missing;
-    if(process_packets(spitfp, &bytes_missing))
+
+    if(process_packets(spitfp, &bytes_missing)) {
         return true;
+    }
 
     uint8_t bytes_received = 0;
+
     do {
         uint8_t to_recv = bytes_to_recv(spitfp, bytes_missing, 0);
 
         int rc = tf_spitfp_receive(spitfp, to_recv);
-        if(rc != TF_E_OK)
+
+        if(rc != TF_E_OK) {
             return rc;
+        }
+
         bytes_received += to_recv;
-        if(process_packets(spitfp, &bytes_missing))
+
+        if(process_packets(spitfp, &bytes_missing)) {
             return RECEIVE_PACKET_RECIEVED;
+        }
+
         // Allow receiving two complete packets in case the first has a bitflip etc.
         // Immediately abort if the device has no data available.
     } while(bytes_received < 2 * TF_SPITFP_MAX_MESSAGE_LENGTH && bytes_missing > 0);
@@ -266,38 +293,45 @@ static int tf_spitfp_wait_for_ack(TF_SpiTfpContext *spitfp, uint8_t seq_num, uin
     bool packet_received = process_packets(spitfp, &bytes_missing);
     int result = 0;
 
-    if (packet_received)
+    if(packet_received) {
         result |= TRANSCEIVE_PACKET_RECEIVED;
+    }
 
     // We cant miss any packet here, as only one packet can be "in flight".
     // If process_packets finds multiple packets, they are retransmissions of the same packet.
     // I.e. they acknowledge the same packet
-    if(spitfp->last_sequence_number_acked == seq_num)
+    if(spitfp->last_sequence_number_acked == seq_num) {
         result |= TRANSCEIVE_PACKET_ACKED;
+    }
 
-    if(result != 0)
+    if(result != 0) {
         return result;
+    }
 
     do {
         uint8_t to_recv = bytes_to_recv(spitfp, bytes_missing, 0);
         result = tf_spitfp_receive(spitfp, to_recv);
-        if(result < 0)
+
+        if(result < 0) {
             return result;
+        }
 
         packet_received = process_packets(spitfp, &bytes_missing);
 
-
-        if (packet_received)
+        if(packet_received) {
             result |= TRANSCEIVE_PACKET_RECEIVED;
+        }
 
         // We cant miss any packet here, as only one packet can be "in flight".
         // If process_packets finds multiple packets, they are retransmissions of the same packet.
         // I.e. they acknowledge the same packet
-        if(spitfp->last_sequence_number_acked == seq_num)
+        if(spitfp->last_sequence_number_acked == seq_num) {
             result |= TRANSCEIVE_PACKET_ACKED;
+        }
 
-        if(result != 0)
+        if(result != 0) {
             return result;
+        }
     } while(!tf_hal_deadline_elapsed(spitfp->hal, deadline_us) && bytes_missing > 0);
 
     return tf_hal_deadline_elapsed(spitfp->hal, deadline_us) ? TRANSCEIVE_TIMEOUT : 0;
@@ -347,8 +381,10 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
         case STATE_TRANSCEIVE: {
             uint8_t seq_num = m->info.transceive.seq_num_to_send;
             int result = tf_spitfp_transceive_packet(spitfp,  m->info.transceive.bytes_to_send, & m->info.transceive.send_buf_offset);
-            if(result < 0)
+
+            if(result < 0) {
                 return result;
+            }
 
             if(   (result & TRANSCEIVE_PACKET_SENT)
                && (result & TRANSCEIVE_PACKET_RECEIVED)) {
@@ -453,8 +489,10 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
 
         case STATE_RECEIVE: {
             int result = tf_spitfp_receive_packet(spitfp);
-            if(result < 0)
+
+            if(result < 0) {
                 return result;
+            }
 
             if(result & RECEIVE_PACKET_RECIEVED) {
                 m->state = STATE_BUILD_ACK;

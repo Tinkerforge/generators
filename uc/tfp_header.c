@@ -36,8 +36,10 @@ void tf_peek_packet_header(TF_Packetbuffer *buf, TF_TfpHeader *header) {
 
 void tf_peek_packet_header_plain_buf(uint8_t *buf, TF_TfpHeader *header) {
     uint32_t uid = 0;
-    for(int i = 0; i < 4; ++i)
+
+    for(int i = 0; i < 4; ++i) {
         *(((uint8_t *)&uid) + i) = buf[i];
+    }
 
     header->uid = tf_leconvert_uint32_from(uid);
     header->length = buf[4];

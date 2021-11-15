@@ -115,8 +115,10 @@ static int server_accept(int server_fd) {
     int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_size);
 
     if(client_fd < 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)
+        if(errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
             return -2;
+        }
+
         return -1;
     }
 
@@ -275,8 +277,10 @@ static int accept_connections(TF_NetContext *net) {
     size_t max_clients = sizeof(net->clients)/sizeof(net->clients[0]);
 
     if(net->server_fd == -1) {
-        if(net->clients_used != max_clients)
+        if(net->clients_used != max_clients) {
             net->server_fd = build_server_socket();
+        }
+
         return 0;
     }
 
@@ -487,12 +491,16 @@ static void handle_brickd_packet(TF_NetContext *net, uint8_t packet_id, TF_TfpHe
 static void reassemble_packets(TF_NetContext *net) {
     for(int i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
-        if (client->available_packet_valid)
+
+        if(client->available_packet_valid) {
             continue;
+        }
 
         uint8_t used = client->read_buf_used;
-        if (used < 8)
+
+        if(used < 8) {
             continue;
+        }
 
         uint8_t *buf = client->read_buf;
         TF_TfpHeader header;
@@ -505,8 +513,9 @@ static void reassemble_packets(TF_NetContext *net) {
             continue;
         }
 
-        if (used < header.length)
+        if(used < header.length) {
             continue;
+        }
 
         // Handle Brick Daemon packets without copy
         if(header.uid == 1) {
@@ -548,8 +557,9 @@ int tf_net_create(TF_NetContext *net, const char* listen_addr, uint16_t port, co
 }
 
 int tf_net_destroy(TF_NetContext *net) {
-    if (net->server_fd >= 0)
+    if(net->server_fd >= 0) {
         close(net->server_fd);
+    }
 
     for(int i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
@@ -573,8 +583,11 @@ int tf_net_tick(TF_NetContext *net) {
 bool tf_net_get_available_packet_header(TF_NetContext *net, TF_TfpHeader *header, int *packet_id) {
     for(int i = (*packet_id) + 1; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
-        if(!client->available_packet_valid)
+
+        if(!client->available_packet_valid) {
             continue;
+        }
+
         *header = client->available_packet;
         *packet_id = i;
 
@@ -585,8 +598,10 @@ bool tf_net_get_available_packet_header(TF_NetContext *net, TF_TfpHeader *header
 
 int tf_net_get_packet(TF_NetContext *net, uint8_t packet_id, uint8_t *buf) {
     TF_NetClient *client = &net->clients[packet_id];
-    if(!client->available_packet_valid)
+
+    if(!client->available_packet_valid) {
         return -1;
+    }
 
     memcpy(buf, client->read_buf, client->available_packet.length);
 
@@ -600,8 +615,10 @@ int tf_net_get_packet(TF_NetContext *net, uint8_t packet_id, uint8_t *buf) {
 
 int tf_net_drop_packet(TF_NetContext *net, uint8_t packet_id) {
     TF_NetClient *client = &net->clients[packet_id];
-    if(!client->available_packet_valid)
+
+    if(!client->available_packet_valid) {
         return -1;
+    }
 
     drop_packet(client, client->available_packet.length);
 

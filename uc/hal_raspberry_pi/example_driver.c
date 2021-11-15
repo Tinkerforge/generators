@@ -53,6 +53,7 @@ int main() {
     check(tf_hal_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
     example_setup(&hal);
 
-    while(true)
+    while(true) {
         example_loop(&hal);
+    }
 }

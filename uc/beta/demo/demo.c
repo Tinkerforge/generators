@@ -18,8 +18,10 @@ bool first_run_since_tab_change = false;
 bool show_ptc_resistance = false;
 
 void check(int rc, char *msg) {
-    if (rc >= 0)
+    if(rc >= 0) {
         return;
+    }
+
     tf_hal_log_error("Failed to %s: %d\n", msg, rc);
 }
 
@@ -48,25 +50,34 @@ void button_handler(TF_LCD128x64 *device, uint8_t index, bool pressed, void *use
         case 0:
             invert = !invert;
             break;
+
         case 1:
-            if(backlight <= 90)
+            if(backlight <= 90) {
                 backlight += 10;
+            }
+
             break;
+
         case 2:
             show_ptc_resistance = !show_ptc_resistance;
             break;
+
         case 3:
-            if(backlight > 0)
+            if(backlight > 0) {
                 backlight -= 10;
+            }
+
             break;
     }
 }
 
 void draw_setup() {
-    if(show_ptc_resistance)
+    if(show_ptc_resistance) {
         tf_lcd_128x64_set_gui_button(&lcd, 2, 0, 28, 60, 25, "Hide PTC\xEA");
-    else
+    } else {
         tf_lcd_128x64_set_gui_button(&lcd, 2, 0, 28, 60, 25, "Show PTC\xEA");
+    }
+
     if(tab_changed) {
         tf_lcd_128x64_set_gui_button(&lcd, 0, 0, 0, 60, 25, "Invert");
         tf_lcd_128x64_set_gui_button(&lcd, 1, 128-60, 0, 60, 20, "BL +");
@@ -74,6 +85,7 @@ void draw_setup() {
         tf_lcd_128x64_register_gui_button_pressed_callback(&lcd, button_handler, NULL);
         tf_lcd_128x64_set_gui_button_pressed_callback_configuration(&lcd, 10, true);
     }
+
     char line[5] = {};
     snprintf(line, sizeof(line)/sizeof(line[0]), "%d%%  ", backlight);
     tf_lcd_128x64_write_line(&lcd, 3, 14, line);

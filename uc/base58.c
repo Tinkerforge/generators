@@ -76,8 +76,10 @@ static bool uint32_multiply(uint32_t a, uint32_t b, uint32_t *c) {
 
 int tf_base58_decode(const char *str, uint32_t *ret_value) {
     size_t len = strlen(str);
-    if (len > 6)
+
+    if(len > 6) {
         return TF_E_UID_TOO_LONG;
+    }
 
     int i = (int)len - 1;
     uint8_t k;

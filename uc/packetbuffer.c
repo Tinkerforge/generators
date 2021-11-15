@@ -79,8 +79,9 @@ void tf_packetbuffer_remove(TF_Packetbuffer *pb, const uint8_t num) {
 }
 
 bool tf_packetbuffer_pop(TF_Packetbuffer *pb, uint8_t *data) {
-    if (!tf_packetbuffer_peek(pb, data))
+    if(!tf_packetbuffer_peek(pb, data)) {
         return false;
+    }
 
     tf_packetbuffer_remove(pb, 1);
 
@@ -152,8 +153,9 @@ void tf_packetbuffer_print(TF_Packetbuffer *pb) {
 
 bool tf_packetbuffer_free_array_view(TF_Packetbuffer *pb, uint8_t length, uint8_t **first_chunk,
                                      uint8_t *first_len, uint8_t **second_chunk, uint8_t *second_len) {
-    if (length > tf_packetbuffer_get_free(pb))
+    if(length > tf_packetbuffer_get_free(pb)) {
         return false;
+    }
 
     bool wraps = (pb->end + length) >= TF_PACKET_BUFFER_SIZE;
 

@@ -68,17 +68,21 @@ int tf_hal_destroy(TF_HalContext *hal) {
 static SPIClass *get_spi(TF_HalContext *hal, uint8_t port_id) {
     SPIClass *spi = NULL;
 
-    if (ports[port_id].spi == HSPI)
+    if(ports[port_id].spi == HSPI) {
         spi = &hal->hspi;
-    else if (ports[port_id].spi == VSPI)
+    } else if(ports[port_id].spi == VSPI) {
         spi = &hal->vspi;
+    }
+
     return spi;
 }
 
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
     SPIClass *spi = get_spi(hal, port_id);
-    if (spi == NULL)
+
+    if(spi == NULL) {
         return TF_E_DEVICE_NOT_FOUND;
+    }
 
     if(enable) {
         spi->beginTransaction(hal->spi_settings);
@@ -93,8 +97,10 @@ int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
 
 int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length) {
     SPIClass *spi = get_spi(hal, port_id);
-    if (spi == NULL)
+
+    if(spi == NULL) {
         return TF_E_DEVICE_NOT_FOUND;
+    }
 
     memcpy(read_buffer, write_buffer, length);
     spi->transfer(read_buffer, length);
@@ -138,13 +144,17 @@ const char *tf_hal_strerror(int e_code) {
 #endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
-    if(port_id > PORT_COUNT)
+    if(port_id > PORT_COUNT) {
         return '?';
+    }
+
     return ports[port_id].port_name;
 }
 
 TF_PortCommon *tf_hal_get_port_common(TF_HalContext *hal, uint8_t port_id) {
-    if(port_id > PORT_COUNT)
+    if(port_id > PORT_COUNT) {
         return NULL;
+    }
+
     return &ports[port_id].port_common;
 }

@@ -238,8 +238,10 @@ void reassemble_packets(TF_NetContext *net) {
         }
 
         uint8_t used = client->read_buf_used;
-        if (used < 8)
+
+        if(used < 8) {
             continue;
+        }
 
         uint8_t *buf = client->read_buf;
         TF_TfpHeader header;
@@ -249,7 +251,7 @@ void reassemble_packets(TF_NetContext *net) {
             tf_hal_log_info("invalid request, closing connection\n");
             tf_print_packet_header(&header);
 
-            for(int i = 0; i < 80; ++i){
+            for(int i = 0; i < 80; ++i) {
                 printf("%02x ", buf[i]);
             }
 
@@ -259,8 +261,9 @@ void reassemble_packets(TF_NetContext *net) {
             continue;
         }
 
-        if (used < header.length)
+        if(used < header.length) {
             continue;
+        }
 
         client->available_packet = header;
         client->available_packet_valid = true;
@@ -298,8 +301,11 @@ int tf_net_tick(TF_NetContext *net) {
 bool tf_net_get_available_packet_header(TF_NetContext *net, TF_TfpHeader *header, int *packet_id) {
     for(int i = (*packet_id) + 1; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
-        if(!client->available_packet_valid)
+
+        if(!client->available_packet_valid) {
             continue;
+        }
+
         *header = client->available_packet;
         *packet_id = i;
 
@@ -311,8 +317,10 @@ bool tf_net_get_available_packet_header(TF_NetContext *net, TF_TfpHeader *header
 
 int tf_net_get_packet(TF_NetContext *net, uint8_t packet_id, uint8_t *buf) {
     TF_NetClient *client = &net->clients[packet_id];
-    if(!client->available_packet_valid)
+
+    if(!client->available_packet_valid) {
         return -1;
+    }
 
     memcpy(buf, client->read_buf, client->available_packet.length);
 
@@ -326,8 +334,10 @@ int tf_net_get_packet(TF_NetContext *net, uint8_t packet_id, uint8_t *buf) {
 
 int tf_net_drop_packet(TF_NetContext *net, uint8_t packet_id) {
     TF_NetClient *client = &net->clients[packet_id];
-    if(!client->available_packet_valid)
+
+    if(!client->available_packet_valid) {
         return -1;
+    }
 
     memmove(client->read_buf, client->read_buf + client->available_packet.length, client->read_buf_used - client->available_packet.length);
     client->read_buf_used -= client->available_packet.length;

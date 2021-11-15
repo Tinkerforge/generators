@@ -226,8 +226,9 @@ int tf_tfp_destroy(TF_TfpContext *tfp) {
         return rc;
     }
 
-    if(&common->tfps[inventory_index] != tfp)
+    if(&common->tfps[inventory_index] != tfp) {
         return TF_E_DEVICE_NOT_FOUND;
+    }
 
     common->tfps[inventory_index].device = NULL;
 
@@ -283,8 +284,10 @@ static int tf_tfp_transmit_getter(TF_TfpContext *tfp, uint32_t deadline_us, uint
         }
 
         result = tf_spitfp_tick(tfp->spitfp, deadline_us);
-        if(result < 0)
+
+        if(result < 0) {
             return result;
+        }
 
         if(result & TF_TICK_PACKET_RECEIVED) {
             if(tf_tfp_filter_received_packet(tfp, false, error_code)) {
@@ -310,12 +313,15 @@ static int tf_tfp_transmit_setter(TF_TfpContext *tfp, uint32_t deadline_us) {
     bool packet_sent = false;
 
     while(!tf_hal_deadline_elapsed((TF_HalContext *)tfp->hal, deadline_us) && !packet_sent) {
-        if (result & TF_TICK_TIMEOUT)
+        if(result & TF_TICK_TIMEOUT) {
             tf_spitfp_build_packet(tfp->spitfp, true);
+        }
 
         result = tf_spitfp_tick(tfp->spitfp, deadline_us);
-        if(result < 0)
+
+        if(result < 0) {
             return result;
+        }
 
         if(result & TF_TICK_PACKET_RECEIVED) {
             uint8_t error_code;
@@ -344,8 +350,10 @@ int tf_tfp_finish_send(TF_TfpContext *tfp, int previous_result, uint32_t deadlin
 
     while(!tf_hal_deadline_elapsed((TF_HalContext *)tfp->hal, deadline_us) && (result & TF_TICK_AGAIN)) {
         result = tf_spitfp_tick(tfp->spitfp, deadline_us);
-        if(result < 0)
+
+        if(result < 0) {
             return result;
+        }
     }
 
     // Prevent sending the packet again for example in the callback_tick
@@ -384,8 +392,11 @@ int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) {
         }
 
         result = tf_spitfp_tick(tfp->spitfp, deadline_us);
-        if(result < 0)
+
+        if(result < 0) {
             return result;
+        }
+
         if(result & TF_TICK_PACKET_RECEIVED) {
             //handle possible callback packet
             uint8_t error_code;
