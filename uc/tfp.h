@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-typedef bool (*CallbackHandler)(void *device, uint8_t fid, TF_Packetbuffer *payload);
+typedef bool (*TF_CallbackHandler)(void *device, uint8_t fid, TF_Packetbuffer *payload);
 
 typedef struct TF_TfpContext {
     void *hal;
@@ -39,7 +39,7 @@ typedef struct TF_TfpContext {
     uint8_t waiting_for_length; // includes tfp, but not spitfp header, (to be comparable against length field in the tfp header); 0 if waiting for nothing
     uint8_t waiting_for_sequence_number; // 0 if waiting for nothing
 
-    CallbackHandler cb_handler;
+    TF_CallbackHandler cb_handler;
     bool needs_callback_tick;
 } TF_TfpContext;
 
