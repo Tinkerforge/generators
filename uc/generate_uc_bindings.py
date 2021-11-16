@@ -164,6 +164,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 
     uint32_t numeric_uid;
     int rc = tf_base58_decode(uid, &numeric_uid);
+
     if (rc != TF_E_OK) {{
         return rc;
     }}
@@ -171,17 +172,21 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
     uint8_t port_id;
     uint8_t inventory_index;
     rc = tf_hal_get_port_id(hal, numeric_uid, &port_id, &inventory_index);
+
     if (rc < 0) {{
         return rc;
     }}
 
     rc = tf_hal_get_tfp(hal, &{device_under}->tfp, TF_{device_upper}_DEVICE_IDENTIFIER, inventory_index);
+
     if (rc != TF_E_OK) {{
         return rc;
     }}
+
     {device_under}->tfp->device = {device_under};
     {device_under}->tfp->uid = numeric_uid;
     {device_under}->tfp->cb_handler = tf_{device_under}_callback_handler;{response_expected_init}
+
     return TF_E_OK;
 }}
 """
@@ -196,22 +201,28 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 
     uint32_t numeric_uid;
     int rc = tf_base58_decode(uid, &numeric_uid);
+
     if (rc != TF_E_OK) {{
         return rc;
     }}
 
     rc = tf_hal_get_tfp(hal, &{device_under}->tfp, 0, inventory_index);
+
     if (rc != TF_E_OK) {{
         return rc;
     }}
+
     {device_under}->tfp->device = {device_under};
     {device_under}->tfp->cb_handler = tf_{device_under}_callback_handler;
     TF_PortCommon *port_common = tf_hal_get_port_common(hal, port_id);
     rc = tf_spitfp_create(&port_common->spitfp, hal, port_id);
+
     if (rc != TF_E_OK) {{
         return rc;
     }}
+
     unknown->tfp->spitfp = &port_common->spitfp;{response_expected_init}
+
     return TF_E_OK;
 }}
 """
@@ -248,6 +259,7 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
 
     int result = tf_tfp_destroy({device_under}->tfp);
     {device_under}->tfp = NULL;
+
     return result;
 }}
 """
@@ -456,7 +468,6 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 
         ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
     }} else {{
-
         while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
             {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
 
@@ -649,6 +660,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
         if (ret_{stream_name_under}_length != NULL) {{
             *ret_{stream_name_under}_length = {stream_name_under}_length;
         }}
+
         return ret;
     }}{chunk_offset_check}
 
@@ -674,6 +686,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                 if (ret_{stream_name_under}_length != NULL) {{
                     *ret_{stream_name_under}_length = {stream_name_under}_length;
                 }}
+
                 return ret;
             }}
 
@@ -692,6 +705,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
             if (ret_{stream_name_under} != NULL) {{
                 memcpy(&ret_{stream_name_under}[{stream_name_under}_length], {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
             }}
+
             {stream_name_under}_length += {stream_name_under}_chunk_length;
         }}
     }}
@@ -745,7 +759,6 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
         memcpy(ret_{stream_name_under}, {stream_name_under}_data, sizeof({chunk_data_type}) * {stream_name_under}_length);
         memset(&ret_{stream_name_under}[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
     }}
-
 
     if (ret_{stream_name_under}_length != NULL) {{
         *ret_{stream_name_under}_length = {stream_name_under}_length;
@@ -838,8 +851,10 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
     }} else {{
         {device_under}->tfp->needs_callback_tick = true;
     }}
+
     {device_under}->{packet_under}_handler = handler;
     {device_under}->{packet_under}_user_data = user_data;
+
     return TF_E_OK;
 }}
 """
