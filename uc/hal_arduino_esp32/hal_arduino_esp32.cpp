@@ -16,7 +16,7 @@
 int tf_hal_create(TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
 
-    if(rc != TF_E_OK) {
+    if (rc != TF_E_OK) {
         return rc;
     }
 
@@ -26,24 +26,24 @@ int tf_hal_create(TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     bool uses_hspi = false;
     bool uses_vspi = false;
 
-    for(int i = 0; i < port_count; ++i) {
+    for (int i = 0; i < port_count; ++i) {
         uses_hspi |= hal->ports[i].spi == HSPI;
         uses_vspi |= hal->ports[i].spi == VSPI;
     }
 
     hal->spi_settings = SPISettings(1400000, SPI_MSBFIRST, SPI_MODE3);
 
-    if(uses_hspi) {
+    if (uses_hspi) {
         hal->hspi = SPIClass(HSPI);
         hal->hspi.begin();
     }
 
-    if(uses_vspi) {
+    if (uses_vspi) {
         hal->vspi = SPIClass(VSPI);
         hal->vspi.begin();
     }
 
-    for(int i = 0; i < port_count; ++i) {
+    for (int i = 0; i < port_count; ++i) {
         pinMode(hal->ports[i].chip_select_pin, OUTPUT);
         digitalWrite(hal->ports[i].chip_select_pin, HIGH);
     }
@@ -55,16 +55,16 @@ int tf_hal_destroy(TF_HalContext *hal) {
     bool uses_hspi = false;
     bool uses_vspi = false;
 
-    for(int i = 0; i < hal->port_count; ++i) {
+    for (int i = 0; i < hal->port_count; ++i) {
         uses_hspi |= hal->ports[i].spi == HSPI;
         uses_vspi |= hal->ports[i].spi == VSPI;
     }
 
-    if(uses_hspi) {
+    if (uses_hspi) {
         hal->hspi.end();
     }
 
-    if(uses_vspi) {
+    if (uses_vspi) {
         hal->vspi.end();
     }
 
@@ -74,9 +74,9 @@ int tf_hal_destroy(TF_HalContext *hal) {
 static SPIClass *get_spi(TF_HalContext *hal, uint8_t port_id) {
     SPIClass *spi = NULL;
 
-    if(hal->ports[port_id].spi == HSPI) {
+    if (hal->ports[port_id].spi == HSPI) {
         spi = &hal->hspi;
-    } else if(hal->ports[port_id].spi == VSPI) {
+    } else if (hal->ports[port_id].spi == VSPI) {
         spi = &hal->vspi;
     }
 
@@ -86,11 +86,11 @@ static SPIClass *get_spi(TF_HalContext *hal, uint8_t port_id) {
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
     SPIClass *spi = get_spi(hal, port_id);
 
-    if(spi == NULL) {
+    if (spi == NULL) {
         return TF_E_DEVICE_NOT_FOUND;
     }
 
-    if(enable) {
+    if (enable) {
         spi->beginTransaction(hal->spi_settings);
         digitalWrite(hal->ports[port_id].chip_select_pin, LOW);
     } else {
@@ -104,7 +104,7 @@ int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
 int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length) {
     SPIClass *spi = get_spi(hal, port_id);
 
-    if(spi == NULL) {
+    if (spi == NULL) {
         return TF_E_DEVICE_NOT_FOUND;
     }
 
@@ -119,7 +119,7 @@ uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
 }
 
 void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
-    while(us > 16000) {
+    while (us > 16000) {
         delay(16);
         us -= 16000;
     }
@@ -141,7 +141,7 @@ void tf_hal_log_newline(void) {
 
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int e_code) {
-    switch(e_code) {
+    switch (e_code) {
         #include "../bindings/error_cases.h"
 
         default:
@@ -151,7 +151,7 @@ const char *tf_hal_strerror(int e_code) {
 #endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
-    if(port_id > hal->port_count) {
+    if (port_id > hal->port_count) {
         return '?';
     }
 
@@ -159,7 +159,7 @@ char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
 }
 
 TF_PortCommon *tf_hal_get_port_common(TF_HalContext *hal, uint8_t port_id) {
-    if(port_id > hal->port_count) {
+    if (port_id > hal->port_count) {
         return NULL;
     }
 

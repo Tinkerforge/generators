@@ -98,7 +98,7 @@ int gpio_sysfs_set_direction_out_with_initial_value(char cs_pin_name[32], TF_GPI
     char buffer[GPIO_SYSFS_DIR_MAXLEN];
     ssize_t rc;
 
-    if(value >= GPIO_SYSFS_VALUE_NUM) {
+    if (value >= GPIO_SYSFS_VALUE_NUM) {
         log_error("Unknown value: %d", value);
         return -1;
     }
@@ -129,7 +129,7 @@ int gpio_sysfs_set_output(char cs_pin_name[32], TF_GPIOSYSFSValue value) {
     char buffer[GPIO_SYSFS_DIR_MAXLEN];
     ssize_t rc;
 
-    if(value >= GPIO_SYSFS_VALUE_NUM) {
+    if (value >= GPIO_SYSFS_VALUE_NUM) {
         log_error("Unknown value: %d", value);
         return -1;
     }

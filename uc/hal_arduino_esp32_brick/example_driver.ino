@@ -7,7 +7,7 @@ extern "C" void example_loop(TF_HalContext *hal);
 
 // Used to report any error encountered while running the example.
 extern "C" void check(int e_code, const char *c) {
-    if(e_code == TF_E_OK) {
+    if (e_code == TF_E_OK) {
         return;
     }
 

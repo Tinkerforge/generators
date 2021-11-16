@@ -29,7 +29,7 @@ TF_Port ports[6] = {
     TF_PORT('F')
 };
 
-#define PORT_COUNT (sizeof(ports)/sizeof(ports[0]))
+#define PORT_COUNT (sizeof(ports) / sizeof(ports[0]))
 
 static const int CS_PIN_0 = 12;
 static const int CS_PIN_1 = 13;
@@ -55,7 +55,7 @@ static void deselect_demux() {
 int tf_hal_create(TF_HalContext *hal) {
     int rc = tf_hal_common_create(hal);
 
-    if(rc != TF_E_OK) {
+    if (rc != TF_E_OK) {
         return rc;
     }
 
@@ -78,7 +78,7 @@ int tf_hal_destroy(TF_HalContext *hal) {
 }
 
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
-    if(enable) {
+    if (enable) {
         hal->hspi.beginTransaction(hal->spi_settings);
         select_demux(port_id);
     } else {
@@ -101,7 +101,7 @@ uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
 }
 
 void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
-    while(us > 16000) {
+    while (us > 16000) {
         delay(16);
         us -= 16000;
     }
@@ -123,7 +123,7 @@ void tf_hal_log_newline(void) {
 
 #ifdef TF_IMPLEMENT_STRERROR
 const char *tf_hal_strerror(int e_code) {
-    switch(e_code) {
+    switch (e_code) {
         #include "../bindings/error_cases.h"
 
         default:
@@ -133,7 +133,7 @@ const char *tf_hal_strerror(int e_code) {
 #endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
-    if(port_id > PORT_COUNT) {
+    if (port_id > PORT_COUNT) {
         return '?';
     }
 
@@ -141,7 +141,7 @@ char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
 }
 
 TF_PortCommon *tf_hal_get_port_common(TF_HalContext *hal, uint8_t port_id) {
-    if(port_id > PORT_COUNT) {
+    if (port_id > PORT_COUNT) {
         return NULL;
     }
 

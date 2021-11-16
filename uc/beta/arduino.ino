@@ -28,12 +28,12 @@ void check(int rc, char *msg) {
 }
 
 void setup() {
-  Serial.begin(115200);
-  delay(3000);
-  Serial.println("Hello World!");
+    Serial.begin(115200);
+    delay(3000);
+    Serial.println("Hello World!");
 
-  check(tf_hal_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
-  demo_setup(&hal);
+    check(tf_hal_create(&hal, ports, sizeof(ports) / sizeof(ports[0])), "hal create");
+    demo_setup(&hal);
 }
 
 void loop() {

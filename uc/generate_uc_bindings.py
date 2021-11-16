@@ -278,20 +278,22 @@ int tf_{device_under}_get_response_expected(TF_{device_camel} *{device_under}, u
     if ({device_under} == NULL)
         return TF_E_NULL;
 
-    switch(function_id) {{
+    switch (function_id) {{
 {getter_cases}
         default:
             return TF_E_INVALID_PARAMETER;
     }}
+
     return TF_E_OK;
 }}
 
 int tf_{device_under}_set_response_expected(TF_{device_camel} *{device_under}, uint8_t function_id, bool response_expected) {{
-    switch(function_id) {{
+    switch (function_id) {{
 {setter_cases}
         default:
             return TF_E_INVALID_PARAMETER;
     }}
+
     return TF_E_OK;
 }}
 
@@ -343,7 +345,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     if ({device_under} == NULL)
         return TF_E_NULL;
 
-    if(tf_hal_get_common((TF_HalContext*){device_under}->tfp->hal)->locked) {{
+    if (tf_hal_get_common((TF_HalContext*){device_under}->tfp->hal)->locked) {{
         return TF_E_LOCKED;
     }}
 
@@ -849,7 +851,7 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
     TF_{device_camel} *{device_under} = (TF_{device_camel} *) dev;
     (void)payload;
 
-    switch(fid) {{
+    switch (fid) {{
 {cases}
         default:
             return false;
@@ -1353,7 +1355,7 @@ class UCBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
 
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_get_device_display_name(uint16_t device_id) {{
-    switch(device_id) {{
+    switch (device_id) {{
 {cases}
           default: return "unknown device";
     }}

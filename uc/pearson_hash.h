@@ -23,6 +23,6 @@ extern const uint8_t tf_pearson_permutation[TF_PEARSON_PERMUTATION_SIZE];
 }
 #endif
 
-#define TF_PEARSON(cur, next) do { cur = tf_pearson_permutation[cur ^ next]; } while(0)
+#define TF_PEARSON(cur, next) do { cur = tf_pearson_permutation[cur ^ next]; } while (0)
 
 #endif

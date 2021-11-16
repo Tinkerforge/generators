@@ -22,7 +22,7 @@ uint8_t tf_packetbuffer_get_size(TF_Packetbuffer *pb) {
 }
 
 uint8_t tf_packetbuffer_get_used(TF_Packetbuffer *pb) {
-    if(pb->end < pb->start) {
+    if (pb->end < pb->start) {
         return TF_PACKET_BUFFER_SIZE + pb->end - pb->start;
     }
 
@@ -48,12 +48,12 @@ bool tf_packetbuffer_push(TF_Packetbuffer *pb, const uint8_t data) {
 
     pb->end++;
 
-    if(pb->end >= TF_PACKET_BUFFER_SIZE) {
+    if (pb->end >= TF_PACKET_BUFFER_SIZE) {
         pb->end = 0;
     }
 
-    if(pb->end == pb->start) {
-        if(pb->end == 0) {
+    if (pb->end == pb->start) {
+        if (pb->end == 0) {
             pb->end = TF_PACKET_BUFFER_SIZE-1;
         } else {
             pb->end--;
@@ -73,13 +73,13 @@ void tf_packetbuffer_remove(TF_Packetbuffer *pb, const uint8_t num) {
 
     pb->start += incr;
 
-    if(pb->start >= TF_PACKET_BUFFER_SIZE) {
+    if (pb->start >= TF_PACKET_BUFFER_SIZE) {
         pb->start -= TF_PACKET_BUFFER_SIZE;
     }
 }
 
 bool tf_packetbuffer_pop(TF_Packetbuffer *pb, uint8_t *data) {
-    if(!tf_packetbuffer_peek(pb, data)) {
+    if (!tf_packetbuffer_peek(pb, data)) {
         return false;
     }
 
@@ -92,7 +92,7 @@ bool tf_packetbuffer_peek(TF_Packetbuffer *pb, uint8_t *data) {
     // Silence Wmaybe-uninitialized in the _read_[type] functions.
     *data = 0;
 
-    if(tf_packetbuffer_is_empty(pb)) {
+    if (tf_packetbuffer_is_empty(pb)) {
         return false;
     }
 
@@ -105,11 +105,11 @@ bool tf_packetbuffer_peek_offset(TF_Packetbuffer *pb, uint8_t *data, uint8_t off
     // Silence Wmaybe-uninitialized in the _read_[type] functions.
     *data = 0;
 
-    if(tf_packetbuffer_get_used(pb) <= offset) {
+    if (tf_packetbuffer_get_used(pb) <= offset) {
         return false;
     }
 
-    if(pb->start + offset >= TF_PACKET_BUFFER_SIZE) {
+    if (pb->start + offset >= TF_PACKET_BUFFER_SIZE) {
         *data = pb->buffer[pb->start + offset - TF_PACKET_BUFFER_SIZE];
     } else {
         *data = pb->buffer[pb->start + offset];
@@ -129,21 +129,21 @@ void tf_packetbuffer_print(TF_Packetbuffer *pb) {
     int32_t end = pb->end - pb->start;
     uint8_t i;
 
-    if(end < 0) {
+    if (end < 0) {
         end += TF_PACKET_BUFFER_SIZE;
     }
 
     printf("TF_Packetbuffer (start %u, end %u, size %u): [\n",
            pb->start, pb->end, TF_PACKET_BUFFER_SIZE);
 
-    for(i = 0; i < end; i++) {
-        if((i % 16) == 0) {
+    for (i = 0; i < end; i++) {
+        if ((i % 16) == 0) {
             printf("    ");
         }
 
         printf("%x, ", pb->buffer[(pb->start + i) % TF_PACKET_BUFFER_SIZE]);
 
-        if((i % 16) == 15) {
+        if ((i % 16) == 15) {
             printf("\n");
         }
     }
@@ -153,7 +153,7 @@ void tf_packetbuffer_print(TF_Packetbuffer *pb) {
 
 bool tf_packetbuffer_free_array_view(TF_Packetbuffer *pb, uint8_t length, uint8_t **first_chunk,
                                      uint8_t *first_len, uint8_t **second_chunk, uint8_t *second_len) {
-    if(length > tf_packetbuffer_get_free(pb)) {
+    if (length > tf_packetbuffer_get_free(pb)) {
         return false;
     }
 
@@ -161,7 +161,7 @@ bool tf_packetbuffer_free_array_view(TF_Packetbuffer *pb, uint8_t length, uint8_
 
     *first_chunk = pb->buffer + pb->end;
 
-    if(wraps) {
+    if (wraps) {
         *first_len = TF_PACKET_BUFFER_SIZE - pb->end;
         *second_chunk = pb->buffer;
         *second_len = length - *first_len;
@@ -177,13 +177,13 @@ bool tf_packetbuffer_free_array_view(TF_Packetbuffer *pb, uint8_t length, uint8_
 }
 
 void tf_packetbuffer_pop_n(TF_Packetbuffer *pb, uint8_t* dest, uint8_t count) {
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
         tf_packetbuffer_pop(pb, dest + i);
     }
 }
 
 void tf_packetbuffer_peek_offset_n(TF_Packetbuffer *pb, uint8_t* dest, uint8_t count, uint8_t offset) {
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
         tf_packetbuffer_peek_offset(pb, dest + i, (uint8_t)(offset + i));
     }
 }
@@ -279,8 +279,8 @@ bool tf_packetbuffer_read_bool(TF_Packetbuffer *pb) {
 void tf_packetbuffer_read_bool_array(TF_Packetbuffer *pb, bool* dest, uint16_t count) {
     uint8_t byte = 0;
 
-    for(int i = 0; i < count; ++i) {
-        if(i % 8 == 0) {
+    for (int i = 0; i < count; ++i) {
+        if (i % 8 == 0) {
             tf_packetbuffer_pop(pb, &byte);
         }
 
@@ -379,8 +379,8 @@ bool tf_packetbuffer_peek_bool(TF_Packetbuffer *pb, uint8_t offset) {
 void tf_packetbuffer_peek_bool_array(TF_Packetbuffer *pb, bool* dest, uint16_t count, uint8_t offset) {
     uint8_t byte = 0;
 
-    for(int i = 0; i < count; ++i) {
-        if(i % 8 == 0) {
+    for (int i = 0; i < count; ++i) {
+        if (i % 8 == 0) {
             tf_packetbuffer_peek_offset(pb, &byte, offset);
         }
 

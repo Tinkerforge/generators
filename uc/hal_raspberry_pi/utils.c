@@ -26,7 +26,7 @@ void microsleep(uint32_t duration) {
     ts.tv_sec = duration / 1000000;
     ts.tv_nsec = (duration % 1000000) * 1000;
 
-    while(clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, &tsr) < 0 && errno == EINTR) {
+    while (clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, &tsr) < 0 && errno == EINTR) {
         memcpy(&ts, &tsr, sizeof(ts));
     }
 }
@@ -38,7 +38,7 @@ void millisleep(uint32_t duration) {
 uint64_t microtime(void) { // monotonic
     struct timespec ts;
 
-    if(clock_gettime(CLOCK_MONOTONIC, &ts) < 0) {
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) < 0) {
         abort(); // clock_gettime cannot fail under normal circumstances
     }
 
@@ -51,7 +51,7 @@ uint64_t millitime(void) { // monotonic
 
 const char *get_errno_name(int error_code) {
     #define ERRNO_NAME(code) case code: return #code
-    switch(error_code) {
+    switch (error_code) {
     ERRNO_NAME(EPERM);
     ERRNO_NAME(ENOENT);
     ERRNO_NAME(ESRCH);
@@ -213,7 +213,7 @@ int robust_close(int fd) {
     int saved_errno = errno;
     int rc;
 
-    if(fd < 0) {
+    if (fd < 0) {
         return 0;
     }
 

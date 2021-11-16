@@ -21,7 +21,7 @@
 
 const char *get_errno_name(int error_code) {
     #define ERRNO_NAME(code) case code: return #code
-    switch(error_code) {
+    switch (error_code) {
     ERRNO_NAME(EPERM);
     ERRNO_NAME(ENOENT);
     ERRNO_NAME(ESRCH);
@@ -183,7 +183,7 @@ int robust_close(int fd) {
     int saved_errno = errno;
     int rc;
 
-    if(fd < 0) {
+    if (fd < 0) {
         return 0;
     }
 
@@ -200,7 +200,7 @@ ssize_t robust_write(int fd, const void *buffer, int length) {
     do {
         // FIXME: handle partial write
         rc = write(fd, buffer, (size_t)length);
-    } while(rc < 0 && errno == EINTR);
+    } while (rc < 0 && errno == EINTR);
 
     return rc;
 }

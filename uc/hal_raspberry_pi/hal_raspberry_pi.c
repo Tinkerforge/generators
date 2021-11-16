@@ -33,7 +33,7 @@ static int parse_core_freq(const char *name, int *value) {
 
     length = tf_vcgencmd_get_config(name, buffer, sizeof(buffer) - 1);
 
-    if(length < 0) {
+    if (length < 0) {
         tf_hal_log_error("Could not read Raspberry Pi %s config\n", name);
 
         return -1;
@@ -44,13 +44,13 @@ static int parse_core_freq(const char *name, int *value) {
     char *end_ptr;
     *value = strtol(buffer, &end_ptr, 10);
 
-    if(buffer == end_ptr) {
+    if (buffer == end_ptr) {
         tf_hal_log_error("Could not parse Raspberry Pi %s value: %s\n", name, buffer);
 
         return -1;
     }
 
-    if(*value == 0) {
+    if (*value == 0) {
         // zero means default value, which is 250 for core_freq and core_freq_min
         // https://github.com/raspberrypi/userland/issues/653
         tf_hal_log_debug("Raspberry Pi %s value is zero, assuming 250 MHz\n", name);
@@ -58,7 +58,7 @@ static int parse_core_freq(const char *name, int *value) {
         *value = 250;
     }
 
-    if(*value < 100 || *value > 1000) {
+    if (*value < 100 || *value > 1000) {
         tf_hal_log_error("Invalid value for Raspberry Pi %s config: %d\n", name, *value);
 
         return -1;
@@ -70,23 +70,23 @@ static int parse_core_freq(const char *name, int *value) {
 int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
 
-    if(rc != TF_E_OK) {
+    if (rc != TF_E_OK) {
         return rc;
     }
 
     int core_freq;
 
-    if(parse_core_freq("core_freq", &core_freq) < 0) {
+    if (parse_core_freq("core_freq", &core_freq) < 0) {
         return -1;
     }
 
     int core_freq_min;
 
-    if(parse_core_freq("core_freq_min", &core_freq_min) < 0) {
+    if (parse_core_freq("core_freq_min", &core_freq_min) < 0) {
         return -1;
     }
 
-    if(core_freq != core_freq_min) {
+    if (core_freq != core_freq_min) {
         tf_hal_log_info("Raspberry Pi core frequency (core_freq: %d, core_freq_min: %d) is unstable, SPI throughput will be unstable too\n",
                         core_freq, core_freq_min);
     }
@@ -98,11 +98,11 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count)
     // Will be read in bcm2835_spi_set_speed_hz to scale the SPI clock.
     bcm2835_core_clk_hz = core_freq * 1000000; // MHz -> Hz
 
-    if(!bcm2835_init()) {
+    if (!bcm2835_init()) {
         return TF_E_BCM2835_INIT_FAILED;
     }
 
-    if(!bcm2835_spi_begin()) {
+    if (!bcm2835_spi_begin()) {
         return TF_E_BCM2835_SPI_BEGIN_FAILED;
     }
 
@@ -111,7 +111,7 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count)
     bcm2835_spi_set_speed_hz(BRICKLET_STACK_SPI_CONFIG_MAX_SPEED_HZ);
     bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
 
-    for(int i = 0; i < port_count; ++i) {
+    for (int i = 0; i < port_count; ++i) {
         bcm2835_gpio_fsel(ports[i].chip_select_pin, BCM2835_GPIO_FSEL_OUTP);
         bcm2835_gpio_write(ports[i].chip_select_pin, HIGH);
     }
@@ -176,7 +176,7 @@ void tf_hal_log_newline(void) {
 
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int e_code) {
-    switch(e_code) {
+    switch (e_code) {
         #include "../bindings/error_cases.h"
 
         case TF_E_BCM2835_INIT_FAILED:
@@ -192,7 +192,7 @@ const char *tf_hal_strerror(int e_code) {
 #endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
-    if(port_id > hal->port_count) {
+    if (port_id > hal->port_count) {
         return '?';
     }
 

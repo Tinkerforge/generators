@@ -40,18 +40,18 @@ static int open_spi_port(TF_Port *port) {
 
     snprintf(cs_pin_name, sizeof(cs_pin_name), "gpio%d", port->chip_select_pin);
 
-    if(gpio_sysfs_export(port->chip_select_pin) < 0) {
+    if (gpio_sysfs_export(port->chip_select_pin) < 0) {
         return TF_E_EXPORT_GPIO_FAILED;
     }
 
-    if(gpio_sysfs_set_direction_out_with_initial_value(cs_pin_name, TF_GPIO_SYSFS_VALUE_HIGH) < 0) {
+    if (gpio_sysfs_set_direction_out_with_initial_value(cs_pin_name, TF_GPIO_SYSFS_VALUE_HIGH) < 0) {
         return TF_E_SET_GPIO_DIRECTION_FAILED; // FIXME: unexport gpio cs pin
     }
 
     snprintf(buffer, sizeof(buffer), "/sys/class/gpio/%s/value", cs_pin_name);
     port->cs_pin_fd = open(buffer, O_WRONLY);
 
-    if(port->cs_pin_fd < 0) {
+    if (port->cs_pin_fd < 0) {
         return TF_E_OPEN_GPIO_FAILED; // FIXME: unexport gpio cs pin
     }
 
@@ -61,14 +61,14 @@ static int open_spi_port(TF_Port *port) {
 int tf_hal_create(struct TF_HalContext *hal, const char *spidev_path, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
 
-    if(rc != TF_E_OK) {
+    if (rc != TF_E_OK) {
         return rc;
     }
 
-    for(int i = 0; i < port_count; ++i) {
+    for (int i = 0; i < port_count; ++i) {
         rc = open_spi_port(&ports[i]);
 
-        if(rc != TF_E_OK) {
+        if (rc != TF_E_OK) {
             return rc;
         }
     }
@@ -84,35 +84,35 @@ int tf_hal_create(struct TF_HalContext *hal, const char *spidev_path, TF_Port *p
 
     hal->spidev_fd = open(spidev_path, O_RDWR);
 
-    if(hal->spidev_fd < 0) {
+    if (hal->spidev_fd < 0) {
         printf("Could not open %s: %s (%d)",
                spidev_path, get_errno_name(errno), errno);
 
         return TF_E_OPEN_SPI_DEV_FAILED; // FIXME: close gpio_fd and unexport gpio cs pin
     }
 
-    if(ioctl(hal->spidev_fd, SPI_IOC_WR_MODE, &mode) < 0) {
+    if (ioctl(hal->spidev_fd, SPI_IOC_WR_MODE, &mode) < 0) {
         printf("Could not configure SPI mode: %s (%d)",
                get_errno_name(errno), errno);
 
         return TF_E_SPI_DEV_CONFIG_FAILED; // FIXME: close spidev_fd, close gpio_fd and unexport gpio cs pin
     }
 
-    if(ioctl(hal->spidev_fd, SPI_IOC_WR_MAX_SPEED_HZ, &max_speed_hz) < 0) {
+    if (ioctl(hal->spidev_fd, SPI_IOC_WR_MAX_SPEED_HZ, &max_speed_hz) < 0) {
         printf("Could not configure SPI max speed: %s (%d)",
                get_errno_name(errno), errno);
 
         return TF_E_SPI_DEV_CONFIG_FAILED; // FIXME: close spidev_fd, close gpio_fd and unexport gpio cs pin
     }
 
-    if(ioctl(hal->spidev_fd, SPI_IOC_WR_BITS_PER_WORD, &bits_per_word) < 0) {
+    if (ioctl(hal->spidev_fd, SPI_IOC_WR_BITS_PER_WORD, &bits_per_word) < 0) {
         printf("Could not configure SPI bits per word: %s (%d)",
                get_errno_name(errno), errno);
 
         return TF_E_SPI_DEV_CONFIG_FAILED; // FIXME: close spidev_fd, close gpio_fd and unexport gpio cs pin
     }
 
-    if(ioctl(hal->spidev_fd, SPI_IOC_WR_LSB_FIRST, &lsb_first) < 0) {
+    if (ioctl(hal->spidev_fd, SPI_IOC_WR_LSB_FIRST, &lsb_first) < 0) {
         printf("Could not configure SPI lsb first: %s (%d)",
                get_errno_name(errno), errno);
 
@@ -125,7 +125,7 @@ int tf_hal_create(struct TF_HalContext *hal, const char *spidev_path, TF_Port *p
 int tf_hal_destroy(TF_HalContext *hal) {
     robust_close(hal->spidev_fd);
 
-    for(int i = 0; i < hal->port_count; ++i) {
+    for (int i = 0; i < hal->port_count; ++i) {
         robust_close(hal->ports[i].chip_select_pin);
     }
 
@@ -183,7 +183,7 @@ void tf_hal_log_newline(void) {
 
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int e_code) {
-    switch(e_code) {
+    switch (e_code) {
         #include "../bindings/error_cases.h"
 
         case TF_E_EXPORT_GPIO_FAILED:
@@ -214,7 +214,7 @@ const char *tf_hal_strerror(int e_code) {
 #endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
-    if(port_id > hal->port_count) {
+    if (port_id > hal->port_count) {
         return '?';
     }
 

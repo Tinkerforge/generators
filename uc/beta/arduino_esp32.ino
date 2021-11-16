@@ -35,14 +35,14 @@ TF_Port ports[6] = {{
 TF_HalContext hal;
 
 void check(int rc, char *msg) {
-    if(rc >= 0) {
+    if (rc >= 0) {
         return;
     }
 
     Serial.print(millis());
     Serial.print(" Failed to ");
     Serial.print(msg);
-    Serial.print( " rc:");
+    Serial.print(" rc:");
     Serial.println(rc);
     delay(10);
 }
@@ -52,7 +52,7 @@ void setup() {
     delay(3000);
     Serial.println("Hello World!");
 
-    check(tf_hal_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
+    check(tf_hal_create(&hal, ports, sizeof(ports) / sizeof(ports[0])), "hal create");
     demo_setup(&hal);
 }
 

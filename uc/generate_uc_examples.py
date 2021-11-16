@@ -298,7 +298,7 @@ class UCExampleParameter(common.ExampleParameter, UCTypeMixin, UCPrintfFormatMix
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\ttf_hal_printf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{else_}if ({name} == {constant_name}) {{\n{global_line_prefix}\t\ttf_hal_printf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -375,7 +375,7 @@ class UCExampleResult(common.ExampleResult, UCTypeMixin, UCPrintfFormatMixin):
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
 
-            template = '{else_}if({name} == {constant_name}) {{\n{global_line_prefix}\t\ttf_hal_printf("{label}: {constant_title}\\n");{comment}\n\t}}'
+            template = '{else_}if ({name} == {constant_name}) {{\n{global_line_prefix}\t\ttf_hal_printf("{label}: {constant_title}\\n");{comment}\n\t}}'
             constant_group = self.get_constant_group()
             result = []
 
@@ -766,7 +766,7 @@ class UCExampleSpecialFunction(common.ExampleSpecialFunction):
         elif type_ == 'wait':
             return None
         elif type_ == 'loop_header':
-            template = '{comment}\tint i;\n\tfor(i = 0; i < {limit}; ++i) {{\n'
+            template = '{comment}\tint i;\n\tfor (i = 0; i < {limit}; ++i) {{\n'
             global_line_prefix = '\t'
 
             return template.format(limit=self.get_loop_header_limit(),

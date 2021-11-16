@@ -39,7 +39,7 @@ static TF_Port ports[9] = {
 
 // Used to report any error encountered while running the example.
 void check(int e_code, const char *c) {
-    if(e_code == TF_E_OK) {
+    if (e_code == TF_E_OK) {
         return;
     }
 
@@ -50,10 +50,10 @@ static TF_HalContext hal;
 
 int main(void) {
     printf("Hello World!\n");
-    check(tf_hal_create(&hal, "/dev/spidev0.0", ports, sizeof(ports)/sizeof(ports[0])), "hal create");
+    check(tf_hal_create(&hal, "/dev/spidev0.0", ports, sizeof(ports) / sizeof(ports[0])), "hal create");
     example_setup(&hal);
 
-    while(true) {
+    while (true) {
         example_loop(&hal);
     }
 }

@@ -12,7 +12,7 @@ void example_loop(TF_HalContext *hal);
 void check(int e_code, const char *c);
 
 void check(int e_code, const char *c) {
-    if(e_code < 0) {
+    if (e_code < 0) {
         tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
     }
 }
@@ -20,10 +20,10 @@ void check(int e_code, const char *c) {
 static TF_HalContext hal;
 
 int main(void) {
-    check(tf_hal_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
+    check(tf_hal_create(&hal, ports, sizeof(ports) / sizeof(ports[0])), "hal create");
     example_setup(&hal);
 
-    while(true) {
+    while (true) {
         example_loop(&hal);
     }
 }

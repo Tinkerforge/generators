@@ -18,7 +18,7 @@ bool first_run_since_tab_change = false;
 bool show_ptc_resistance = false;
 
 void check(int rc, char *msg) {
-    if(rc >= 0) {
+    if (rc >= 0) {
         return;
     }
 
@@ -43,16 +43,16 @@ void demo_setup(TF_HalContext *hal) {
 }
 
 void button_handler(TF_LCD128x64 *device, uint8_t index, bool pressed, void *user_data) {
-    if(!pressed)
+    if (!pressed)
         return;
 
-    switch(index) {
+    switch (index) {
         case 0:
             invert = !invert;
             break;
 
         case 1:
-            if(backlight <= 90) {
+            if (backlight <= 90) {
                 backlight += 10;
             }
 
@@ -63,7 +63,7 @@ void button_handler(TF_LCD128x64 *device, uint8_t index, bool pressed, void *use
             break;
 
         case 3:
-            if(backlight > 0) {
+            if (backlight > 0) {
                 backlight -= 10;
             }
 
@@ -72,13 +72,13 @@ void button_handler(TF_LCD128x64 *device, uint8_t index, bool pressed, void *use
 }
 
 void draw_setup(void) {
-    if(show_ptc_resistance) {
+    if (show_ptc_resistance) {
         tf_lcd_128x64_set_gui_button(&lcd, 2, 0, 28, 60, 25, "Hide PTC\xEA");
     } else {
         tf_lcd_128x64_set_gui_button(&lcd, 2, 0, 28, 60, 25, "Show PTC\xEA");
     }
 
-    if(tab_changed) {
+    if (tab_changed) {
         tf_lcd_128x64_set_gui_button(&lcd, 0, 0, 0, 60, 25, "Invert");
         tf_lcd_128x64_set_gui_button(&lcd, 1, 128-60, 0, 60, 20, "BL +");
         tf_lcd_128x64_set_gui_button(&lcd, 3, 128-60, 33, 60, 20, "BL -");
@@ -87,7 +87,7 @@ void draw_setup(void) {
     }
 
     char line[5] = {};
-    snprintf(line, sizeof(line)/sizeof(line[0]), "%d%%  ", backlight);
+    snprintf(line, sizeof(line) / sizeof(line[0]), "%d%%  ", backlight);
     tf_lcd_128x64_write_line(&lcd, 3, 14, line);
 }
 
@@ -98,26 +98,26 @@ void draw_ptc(void) {
     int32_t temp_centidegrees = temperature - temp_degrees * 100;
 
     char line_0[22] = {};
-    snprintf(line_0, sizeof(line_0)/sizeof(line_0[0]), "Temperature %02i.%02i\xF8 ", (int8_t)temp_degrees, (int8_t)temp_centidegrees);
+    snprintf(line_0, sizeof(line_0) / sizeof(line_0[0]), "Temperature %02i.%02i\xF8 ", (int8_t)temp_degrees, (int8_t)temp_centidegrees);
     check(tf_lcd_128x64_write_line(&lcd, 0, 0, line_0), "write line");
 
-    if(show_ptc_resistance) {
+    if (show_ptc_resistance) {
         int32_t resistance;
         tf_ptc_v2_get_resistance(&ptc, &resistance);
         char line_1[22] = {};
-        snprintf(line_1, sizeof(line_1)/sizeof(line_1[0]), "Resistance %d\xEA", resistance);
+        snprintf(line_1, sizeof(line_1) / sizeof(line_1[0]), "Resistance %d\xEA", resistance);
         check(tf_lcd_128x64_write_line(&lcd, 2, 0, line_1), "write line");
     }
 }
 
 void demo_loop(TF_HalContext *hal) {
-    if(tab_changed) {
+    if (tab_changed) {
         first_run_since_tab_change = true;
     }
 
     uint32_t start = tf_hal_current_time_us(hal);
 
-    if(tab_changed && first_run_since_tab_change) {
+    if (tab_changed && first_run_since_tab_change) {
         tf_lcd_128x64_clear_display(&lcd);
         tf_lcd_128x64_remove_gui_button(&lcd, 0);
         tf_lcd_128x64_remove_gui_button(&lcd, 1);
@@ -125,7 +125,7 @@ void demo_loop(TF_HalContext *hal) {
         tf_lcd_128x64_remove_gui_button(&lcd, 3);
     }
 
-    switch(gui_tab) {
+    switch (gui_tab) {
         case 0:
             draw_ptc();
             break;
@@ -141,12 +141,12 @@ void demo_loop(TF_HalContext *hal) {
     tf_lcd_128x64_callback_tick(&lcd, 250);
     tf_ptc_v2_callback_tick(&ptc, 250);
 
-    while(tf_hal_current_time_us(hal) - start < 50000) {
+    while (tf_hal_current_time_us(hal) - start < 50000) {
         tf_lcd_128x64_callback_tick(&lcd, 250);
         tf_ptc_v2_callback_tick(&ptc, 250);
     }
 
-    if(first_run_since_tab_change) {
+    if (first_run_since_tab_change) {
         tab_changed = false;
     }
 

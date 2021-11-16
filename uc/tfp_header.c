@@ -45,7 +45,7 @@ void tf_peek_packet_header(TF_Packetbuffer *buf, TF_TfpHeader *header) {
 void tf_peek_packet_header_plain_buf(uint8_t *buf, TF_TfpHeader *header) {
     uint32_t uid = 0;
 
-    for(int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i) {
         *(((uint8_t *)&uid) + i) = buf[i];
     }
 
@@ -74,11 +74,11 @@ void tf_print_packet_header(TF_TfpHeader *header) {
     tf_base58_encode(header->uid, buf);
 
     printf("UID %s Len %u FID %u SeqNum %u RespExp %s Opt %u Err %u Flags %u\n", buf,
-        header->length,
-        header->fid,
-        header->seq_num,
-        header->response_expected ? "true" : "false",
-        header->options,
-        header->error_code,
-        header->flags);
+           header->length,
+           header->fid,
+           header->seq_num,
+           header->response_expected ? "true" : "false",
+           header->options,
+           header->error_code,
+           header->flags);
 }

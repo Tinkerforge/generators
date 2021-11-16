@@ -36,14 +36,14 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *spi) {
 }
 
 void DMA1_Channel2_3_IRQHandler(void) {
-	if(tf_hal_irq2_3_spi != NULL) {
+	if (tf_hal_irq2_3_spi != NULL) {
 		HAL_DMA_IRQHandler(tf_hal_irq2_3_spi->hdmarx);
 		HAL_DMA_IRQHandler(tf_hal_irq2_3_spi->hdmatx);
 	}
 }
 
 void DMA1_Channel4_5_IRQHandler(void) {
-	if(tf_hal_irq4_5_spi != NULL) {
+	if (tf_hal_irq4_5_spi != NULL) {
 		HAL_DMA_IRQHandler(tf_hal_irq4_5_spi->hdmarx);
 		HAL_DMA_IRQHandler(tf_hal_irq4_5_spi->hdmatx);
 	}
@@ -52,7 +52,7 @@ void DMA1_Channel4_5_IRQHandler(void) {
 int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_count) {
 	int rc = tf_hal_common_create(hal);
 
-	if(rc != TF_E_OK) {
+	if (rc != TF_E_OK) {
 		return rc;
 	}
 
@@ -65,15 +65,15 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_co
 
 	uint8_t count = 0;
 
-	for(uint8_t i = 0; i < spi_port_count; i++) {
-		if(hal->ports[i].spi_instance == SPI1) {
-			if(tf_hal_irq2_3_spi == NULL) {
+	for (uint8_t i = 0; i < spi_port_count; i++) {
+		if (hal->ports[i].spi_instance == SPI1) {
+			if (tf_hal_irq2_3_spi == NULL) {
 				tf_hal_irq2_3_spi = &hal->ports[i].spi;
 			}
 
 			__HAL_RCC_SPI1_CLK_ENABLE();
 		} else {
-			if(tf_hal_irq4_5_spi == NULL) {
+			if (tf_hal_irq4_5_spi == NULL) {
 				tf_hal_irq4_5_spi = &hal->ports[i].spi;
 			}
 
@@ -84,7 +84,7 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_co
 		HAL_GPIO_Init(hal->ports[i].miso.port, &hal->ports[i].miso.pin);
 		HAL_GPIO_Init(hal->ports[i].mosi.port, &hal->ports[i].mosi.pin);
 
-		for(uint8_t j = 0; j < hal->ports[j].cs_count; j++) {
+		for (uint8_t j = 0; j < hal->ports[j].cs_count; j++) {
 			HAL_GPIO_Init(hal->ports[i].cs[j].port, &hal->ports[i].cs[j].pin);
 			hal->_port[count]    = &hal->ports[i];
 			hal->_cs_gpio[count] = &hal->ports[i].cs[j];
@@ -119,7 +119,7 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t spi_port_co
 		HAL_NVIC_SetPriority(hal->ports[i].irq_rx, 1, 0);
 		HAL_NVIC_EnableIRQ(hal->ports[i].irq_rx);
 
-		if(hal->ports[i].spi_instance == SPI1) {
+		if (hal->ports[i].spi_instance == SPI1) {
 			__HAL_RCC_SPI1_FORCE_RESET();
 			__HAL_RCC_SPI1_RELEASE_RESET();
 		} else {
@@ -153,13 +153,13 @@ int tf_hal_destroy(TF_HalContext *hal) {
 }
 
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
-	if(port_id > TF_HAL_STM32F0_MAX_PORT_COUNT) {
+	if (port_id > TF_HAL_STM32F0_MAX_PORT_COUNT) {
 		return TF_E_CHIP_SELECT_FAILED;
 	}
 
 	TF_STMGPIO *cs = hal->_cs_gpio[port_id];
 
-	if(cs == NULL) {
+	if (cs == NULL) {
 		return TF_E_CHIP_SELECT_FAILED;
 	}
 
@@ -169,17 +169,17 @@ int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
 }
 
 int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, const uint32_t length) {
-	if(port_id > TF_HAL_STM32F0_MAX_PORT_COUNT) {
+	if (port_id > TF_HAL_STM32F0_MAX_PORT_COUNT) {
 		return TF_E_CHIP_SELECT_FAILED;
 	}
 
 	TF_Port *port = hal->_port[port_id];
 
-	if(port == NULL) {
+	if (port == NULL) {
 		return TF_E_TRANSCEIVE_FAILED;
 	}
 
-	if((length == 0) || (write_buffer == NULL) || (read_buffer == NULL)) {
+	if ((length == 0) || (write_buffer == NULL) || (read_buffer == NULL)) {
 		return TF_E_OK;
 	}
 
@@ -187,11 +187,11 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 	HAL_SPI_StateTypeDef spi_state;
 	uint32_t deadline = tf_hal_current_time_us(hal) + TF_HAL_SPI_TIMEOUT*1000;
 
-	while((spi_state = HAL_SPI_GetState(&port->spi)) != HAL_SPI_STATE_READY) {
+	while ((spi_state = HAL_SPI_GetState(&port->spi)) != HAL_SPI_STATE_READY) {
 #ifdef TF_HAL_USE_COOP_TASK
 		// Don't yield if we only transceive one byte.
 		// We don't want to wait unnecessary long for that.
-		if(length > 1) {
+		if (length > 1) {
 			tf_hal_get_common(hal)->locked = true;
 			coop_task_yield(); // bricklib2-specific, change me for other platforms
 			tf_hal_get_common(hal)->locked = false;
@@ -200,7 +200,7 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
 
 		// Timeout if SPI state doesn't change to ready within 1s.
 		// TODO: Maybe also explicitly check for ERROR and ABORT states here?
-		if(tf_hal_deadline_elapsed(hal, deadline)) {
+		if (tf_hal_deadline_elapsed(hal, deadline)) {
 			return TF_E_TRANSCEIVE_TIMEOUT;
 		}
 	}
@@ -217,7 +217,7 @@ void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
 #ifdef TF_HAL_USE_COOP_TASK
 	const uint32_t deadline = tf_hal_current_time_us(hal) + us;
 
-	while(!tf_hal_deadline_elapsed(hal, deadline)) {
+	while (!tf_hal_deadline_elapsed(hal, deadline)) {
 		coop_task_yield(); // bricklib2-specific, change me for other platforms
 	}
 #else
@@ -231,7 +231,7 @@ TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) {
 
 void tf_hal_log_message(const char *msg, size_t len) {
 	// bricklib2-specific, change me for other platforms
-	for(size_t i = 0; i < len; ++i) {
+	for (size_t i = 0; i < len; ++i) {
 		uartbb_tx(msg[i]);
 	}
 }
@@ -244,7 +244,7 @@ void tf_hal_log_newline(void) {
 
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int e_code) {
-	switch(e_code) {
+	switc h(e_code) {
 		#include "../bindings/error_cases.h"
 
 		case TF_E_CHIP_SELECT_FAILED:
@@ -263,7 +263,7 @@ const char *tf_hal_strerror(int e_code) {
 #endif
 
 char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
-	if(port_id > hal->_port_count) {
+	if (port_id > hal->_port_count) {
 		return '?';
 	}
 
@@ -271,7 +271,7 @@ char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
 }
 
 TF_PortCommon *tf_hal_get_port_common(TF_HalContext *hal, uint8_t port_id) {
-	if(port_id > hal->port_count) {
+	if (port_id > hal->port_count) {
 		return NULL;
 	}
 
