@@ -17,8 +17,10 @@ TF_Port ports[2] = {{
 TF_HalContext hal;
 
 void check(int rc, char *msg) {
-    if (rc >= 0)
+    if (rc >= 0) {
         return;
+    }
+
     Serial.print(millis());
     Serial.print(" Failed to ");
     Serial.print(msg);

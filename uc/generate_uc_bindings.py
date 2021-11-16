@@ -156,8 +156,9 @@ extern "C" {{
     def get_c_create_function(self):
         template = """
 int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal) {{
-    if ({device_under} == NULL || uid == NULL || hal == NULL)
+    if ({device_under} == NULL || uid == NULL || hal == NULL) {{
         return TF_E_NULL;
+    }}
 
     memset({device_under}, 0, sizeof(TF_{device_camel}));
 
@@ -187,8 +188,9 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 
         unknown_template = """
 int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, uint8_t port_id, uint8_t inventory_index) {{
-    if ({device_under} == NULL || uid == NULL || hal == NULL)
+    if ({device_under} == NULL || uid == NULL || hal == NULL) {{
         return TF_E_NULL;
+    }}
 
     memset({device_under}, 0, sizeof(TF_{device_camel}));
 
@@ -240,8 +242,9 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
     def get_c_destroy_function(self):
         template = """
 int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     int result = tf_tfp_destroy({device_under}->tfp);
     {device_under}->tfp = NULL;
@@ -253,8 +256,9 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
     def get_c_callback_tick_function(self):
         template = """
 int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     return tf_tfp_callback_tick({device_under}->tfp, tf_hal_current_time_us((TF_HalContext*){device_under}->tfp->hal) + timeout_us);
 }}
@@ -275,8 +279,9 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
     def get_c_response_expected_functions(self):
         template = """
 int tf_{device_under}_get_response_expected(TF_{device_camel} *{device_under}, uint8_t function_id, bool *ret_response_expected) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     switch (function_id) {{
 {getter_cases}
@@ -303,8 +308,9 @@ void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_unde
 """
 
         getter_template = """        case TF_{device_upper}_FUNCTION_{packet_upper}:
-            if(ret_response_expected != NULL)
+            if (ret_response_expected != NULL) {{
                 *ret_response_expected = ({device_under}->response_expected[{byte}] & (1 << {bit})) != 0;
+            }}
             break;"""
 
         setter_template = """        case TF_{device_upper}_FUNCTION_{packet_upper}:
@@ -342,8 +348,9 @@ void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_unde
         # normal and low-level
         template = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     if (tf_hal_get_common((TF_HalContext*){device_under}->tfp->hal)->locked) {{
         return TF_E_LOCKED;
@@ -356,8 +363,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 
     uint8_t error_code = 0;
     int result = tf_tfp_transmit_packet({device_under}->tfp, response_expected, deadline, &error_code);
-    if(result < 0)
+
+    if (result < 0) {{
         return result;
+    }}
 
     if (result & TF_TICK_TIMEOUT) {{
         //return -result;
@@ -365,8 +374,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     }}
 {extract_response}
     result = tf_tfp_finish_send({device_under}->tfp, result, deadline);
-    if(result < 0)
+
+    if (result < 0) {{
         return result;
+    }}
 
     return tf_tfp_get_error(error_code);
 }}
@@ -431,8 +442,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
         # high-level
         template_stream_in = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
@@ -471,8 +483,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 """
         template_stream_in_fixed_length = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_length = {fixed_length};
@@ -504,8 +517,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 """
         template_stream_in_short_write = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
@@ -569,8 +583,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 """
         template_stream_in_single_chunk = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
 
@@ -586,8 +601,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 """
         template_stream_in_short_write_single_chunk = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     int ret = TF_E_OK;
     {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
@@ -615,8 +631,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 """
         template_stream_out = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     int ret = TF_E_OK;
     {stream_length_type} max_{stream_name_under}_length = {fixed_length};
@@ -706,8 +723,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
     }}"""
         template_stream_out_single_chunk = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     int ret = TF_E_OK;
     {stream_length_type} {stream_name_under}_length = 0;
@@ -810,8 +828,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 
         template = """
 int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler handler, void *user_data) {{
-    if ({device_under} == NULL)
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
 
     if (handler == NULL) {{
         {device_under}->tfp->needs_callback_tick = false;
@@ -869,8 +888,9 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
         case TF_{device_upper}_CALLBACK_{packet_upper}: {{
             TF_{device_camel}{packet_camel}Handler fn = {device_under}->{packet_under}_handler;
             void *user_data = {device_under}->{packet_under}_user_data;
-            if (fn == NULL)
+            if (fn == NULL) {{
                 return false;
+            }}
 {i_decl}
 {extract_payload}
             TF_HalCommon *common = tf_hal_get_common((TF_HalContext*){device_under}->tfp->hal);
