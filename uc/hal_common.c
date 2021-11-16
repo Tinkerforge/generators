@@ -34,7 +34,6 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
     hal_common->timeout = port_discovery_timeout_us;
     hal_common->port_count = port_count;
 
-    TF_Unknown unknown;
     hal_common->used = 1;
     hal_common->device_overflow_count = 0;
 
@@ -46,8 +45,9 @@ int tf_hal_common_prepare(TF_HalContext *hal, uint8_t port_count, uint32_t port_
 
     for(int i = 0; i < port_count; ++i) {
         TF_PortCommon *port_common = tf_hal_get_port_common(hal, (uint8_t)i);
-        tf_spitfp_create(&port_common->spitfp, hal, (uint8_t)i);
+        TF_Unknown unknown;
 
+        tf_spitfp_create(&port_common->spitfp, hal, (uint8_t)i);
         tf_unknown_create(&unknown, "1", hal, (uint8_t)i, 0);
 
         rc = tf_unknown_comcu_enumerate(&unknown);
