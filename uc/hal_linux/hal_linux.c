@@ -49,9 +49,9 @@ static int open_spi_port(TF_Port *port) {
     }
 
     snprintf(buffer, sizeof(buffer), "/sys/class/gpio/%s/value", cs_pin_name);
-    port->_cs_pin_fd = open(buffer, O_WRONLY);
+    port->cs_pin_fd = open(buffer, O_WRONLY);
 
-    if (port->_cs_pin_fd < 0) {
+    if(port->cs_pin_fd < 0) {
         return TF_E_OPEN_GPIO_FAILED; // FIXME: unexport gpio cs pin
     }
 
@@ -134,7 +134,8 @@ int tf_hal_destroy(TF_HalContext *hal) {
 
 int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
     // Use direct write call instead of gpio_sysfs_set_output on buffered fd to save some CPU time
-    ssize_t rc = write(hal->ports[port_id]._cs_pin_fd, enable ? "0" : "1", 1);
+    ssize_t rc = write(hal->ports[port_id].cs_pin_fd, enable ? "0" : "1", 1);
+
     return rc == 1 ? TF_E_OK : TF_E_CHIP_SELECT_FAILED;
 }
 

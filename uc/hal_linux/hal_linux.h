@@ -25,7 +25,7 @@ typedef struct TF_Port {
     char port_name;
 
     // internal
-    int _cs_pin_fd;
+    int cs_pin_fd;
 } TF_Port;
 
 struct TF_HalContext {
