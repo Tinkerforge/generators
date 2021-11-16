@@ -960,7 +960,7 @@ typedef struct TF_{device_camel} {{
  * \\ingroup {category_camel}{device_camel}
  *
  * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
- * it to the IPConnection \\c ipcon.
+ * it to the HAL \\c hal.
  */
 int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal);
 """
@@ -970,7 +970,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
  * \\ingroup {category_camel}{device_camel}
  *
  * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
- * it to the IPConnection \\c ipcon.
+ * it to the HAL \\c hal.
  */
 int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, uint8_t port_id, uint8_t inventory_index);
 """
@@ -984,7 +984,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 /**
  * \\ingroup {category_camel}{device_camel}
  *
- * Removes the device object \\c {device_under} from its IPConnection and destroys it.
+ * Removes the device object \\c {device_under} from its HAL and destroys it.
  * The device object cannot be used anymore afterwards.
  */
 int tf_{device_under}_destroy(TF_{device_camel} *{device_under});
@@ -1031,8 +1031,8 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
  * For getter functions this is enabled by default and cannot be disabled,
  * because those functions will always send a response. For callback
  * configuration functions it is enabled by default too, but can be disabled
- * via the {device_under}_set_response_expected function. For setter functions it is
- * disabled by default and can be enabled.
+ * via the tf_{device_under}_set_response_expected function. For setter
+ * functions it is disabled by default and can be enabled.
  *
  * Enabling the response expected flag for a setter function allows to
  * detect timeouts and other error conditions calls of this setter as well.
