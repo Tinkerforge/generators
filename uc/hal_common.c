@@ -109,11 +109,11 @@ static void enum_handler(TF_HalContext *hal,
         }
     }
 
-    tf_hal_log_info("Found device %s of type %d at port %c\n", uid, dev_id, tf_hal_get_port_name(hal, port_id));
+    tf_hal_log_info("Found device %s of type %d at port %c\n", uid, did, tf_hal_get_port_name(hal, port_id));
 
     hal_common->port_ids[hal_common->used] = port_id;
     hal_common->uids[hal_common->used] = numeric_uid;
-    hal_common->dids[hal_common->used] = dev_id;
+    hal_common->dids[hal_common->used] = did;
 
     if(tf_tfp_create(&hal_common->tfps[hal_common->used], hal, port_id) == TF_E_OK) {
         ++hal_common->used;

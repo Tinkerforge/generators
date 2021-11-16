@@ -45,7 +45,7 @@ typedef struct TF_TfpContext {
 
 // Don't declare the create function here. If we depend on TF_HalContext * (even if forward declared) this collides with the
 // required forward declaration in hal_common.h.
-// We just declare the function itself in hal_common.c (the only caller).
+// We just declare the function in hal_common.c (the only caller), as well as in tfp.c before the implementation to silence the missing prototype warning.
 //int tf_tfp_create(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 int tf_tfp_destroy(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 

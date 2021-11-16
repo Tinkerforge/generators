@@ -247,7 +247,7 @@ static void tf_spitfp_build_ack(TF_SpiTfpContext *spitfp) {
 
     uint8_t checksum = 0;
 
-    for(uint8_t i = 0; i < packet_length - 1; ++i) [
+    for(uint8_t i = 0; i < packet_length - 1; ++i) {
         TF_PEARSON(checksum, spitfp->send_buf[i]);
     }
 

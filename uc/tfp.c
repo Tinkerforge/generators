@@ -200,6 +200,8 @@ static bool empty_cb_handler(void *device, uint8_t fid, TF_Packetbuffer *payload
     return false;
 }
 
+// See tfp.h why this is here
+int tf_tfp_create(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id);
 int tf_tfp_create(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id) {
     memset(tfp, 0, sizeof(TF_TfpContext));
     TF_PortCommon *port_common = tf_hal_get_port_common(hal, port_id);
