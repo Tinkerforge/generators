@@ -86,7 +86,7 @@ extern "C" {{
         defines = ''
         template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  */
 #define TF_{device_upper}_FUNCTION_{packet_upper} {fid}
 """
@@ -100,7 +100,7 @@ extern "C" {{
         defines = '#if TF_IMPLEMENT_CALLBACKS != 0\n'
         template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  */
 #define TF_{device_upper}_CALLBACK_{packet_upper} {fid}
 """
@@ -114,7 +114,7 @@ extern "C" {{
     def get_c_constants(self):
         constant_format = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  */
 #define TF_{device_upper}_{constant_group_name_upper}_{constant_name_upper} {constant_value}
 """
@@ -128,7 +128,7 @@ extern "C" {{
     def get_c_device_identifier_define(self):
         template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * This constant is used to identify a {device_display}.
  *
@@ -144,7 +144,7 @@ extern "C" {{
     def get_c_device_display_name_define(self):
         template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * This constant represents the display name of a {device_display}.
  */
@@ -891,8 +891,8 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
 
     def get_c_include_h(self):
         template = """{header_comment}
-#ifndef TF_{category_upper}_{device_upper}_H
-#define TF_{category_upper}_{device_upper}_H
+#ifndef TF_{device_upper}_H
+#define TF_{device_upper}_H
 
 #include "config.h"
 #include "tfp.h"
@@ -904,7 +904,7 @@ extern "C" {{
 #endif
 
 /**
- * \\defgroup {category_camel}{device_camel} {device_display}
+ * \\defgroup TF_{device_camel} {device_display}
  */
 
 struct TF_{device_camel};
@@ -912,7 +912,7 @@ struct TF_{device_camel};
 {callback_typedefs}
 #endif
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * {description}
  */
@@ -957,7 +957,7 @@ typedef struct TF_{device_camel} {{
     def get_c_create_declaration(self):
         template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
  * it to the HAL \\c hal.
@@ -967,7 +967,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 
         unknown_template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
  * it to the HAL \\c hal.
@@ -982,7 +982,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
     def get_c_destroy_declaration(self):
         template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * Removes the device object \\c {device_under} from its HAL and destroys it.
  * The device object cannot be used anymore afterwards.
@@ -995,7 +995,7 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under});
         template = """
 #if TF_IMPLEMENT_CALLBACKS != 0
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * Polls for callbacks. Will block for the given timeout in microseconds.
  *
@@ -1006,7 +1006,7 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
 """
         unknown_template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * Polls for callbacks. Will block for the given timeout in microseconds.
  *
@@ -1022,7 +1022,7 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
     def get_c_response_expected_declarations(self):
         template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * Returns the response expected flag for the function specified by the
  * \\c function_id parameter. It is *true* if the function is expected to
@@ -1043,7 +1043,7 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
 int tf_{device_under}_get_response_expected(TF_{device_camel} *{device_under}, uint8_t function_id, bool *ret_response_expected);
 
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * Changes the response expected flag of the function specified by the
  * \\c function_id parameter. This flag can only be changed for setter
@@ -1059,7 +1059,7 @@ int tf_{device_under}_get_response_expected(TF_{device_camel} *{device_under}, u
 int tf_{device_under}_set_response_expected(TF_{device_camel} *{device_under}, uint8_t function_id, bool response_expected);
 
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * Changes the response expected flag for all setter and callback configuration
  * functions of this device at once.
@@ -1074,7 +1074,7 @@ void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_unde
         # normal and low-level
         template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * {doc}
  */
@@ -1102,7 +1102,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{parameter
 
         template = """
 /**
- * \\ingroup {category_camel}{device_camel}
+ * \\ingroup TF_{device_camel}
  *
  * Registers the given \\c handler to the {packet_space} callback. The
  * \\c user_data will be passed as the last parameter to the \\c handler.
