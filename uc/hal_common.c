@@ -355,7 +355,7 @@ void tf_hal_printf(const char *fmt, ...) {
 
             case 4:
                 if(sign) {
-                    value = (uint64_t)(va_arg(va, int32_t));
+                    value = (uint64_t)va_arg(va, int32_t);
                 } else {
                     value = va_arg(va, uint32_t);
                 }
@@ -364,7 +364,7 @@ void tf_hal_printf(const char *fmt, ...) {
 
             case 8:
                 if(sign) {
-                    value = (uint64_t)(va_arg(va, int64_t));
+                    value = (uint64_t)va_arg(va, int64_t);
                 } else {
                     value = va_arg(va, uint64_t);
                 }
