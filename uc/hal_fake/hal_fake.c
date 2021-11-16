@@ -67,8 +67,7 @@ void tf_hal_log_message(const char *msg, size_t len) {
     (void)len;
 }
 
-void tf_hal_log_newline() {
-
+void tf_hal_log_newline(void) {
 }
 
 #if TF_IMPLEMENT_STRERROR != 0

@@ -19,7 +19,7 @@ void check(int e_code, const char *c) {
 
 static TF_HalContext hal;
 
-int main() {
+int main(void) {
     check(tf_hal_create(&hal, ports, sizeof(ports)/sizeof(ports[0])), "hal create");
     example_setup(&hal);
 

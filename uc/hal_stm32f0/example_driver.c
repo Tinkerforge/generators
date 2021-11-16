@@ -162,7 +162,7 @@ void check(int e_code, const char *c) {
 
 TF_HalContext hal;
 
-int bricklet_main() {
+int bricklet_main(void) {
 	tf_hal_printf("Hello World!\n");
 	check(tf_hal_create(&bricklet.hal, bricklet_ports, 2), "hal create");
 	example_setup(&hal);

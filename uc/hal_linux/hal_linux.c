@@ -176,7 +176,7 @@ void tf_hal_log_message(const char *msg, size_t len) {
     fwrite(msg, len, 1, stdout);
 }
 
-void tf_hal_log_newline() {
+void tf_hal_log_newline(void) {
     puts("");
 }
 

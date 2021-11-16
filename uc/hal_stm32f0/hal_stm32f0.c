@@ -236,7 +236,7 @@ void tf_hal_log_message(const char *msg, size_t len) {
 	}
 }
 
-void tf_hal_log_newline() {
+void tf_hal_log_newline(void) {
 	// bricklib2-specific, change me for other platforms
 	uartbb_tx('\n');
 	uartbb_tx('\r');

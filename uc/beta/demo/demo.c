@@ -71,7 +71,7 @@ void button_handler(TF_LCD128x64 *device, uint8_t index, bool pressed, void *use
     }
 }
 
-void draw_setup() {
+void draw_setup(void) {
     if(show_ptc_resistance) {
         tf_lcd_128x64_set_gui_button(&lcd, 2, 0, 28, 60, 25, "Hide PTC\xEA");
     } else {
@@ -91,7 +91,7 @@ void draw_setup() {
     tf_lcd_128x64_write_line(&lcd, 3, 14, line);
 }
 
-void draw_ptc() {
+void draw_ptc(void) {
     int32_t temperature;
     tf_ptc_v2_get_temperature(&ptc, &temperature);
     int32_t temp_degrees = temperature / 100;
@@ -152,4 +152,3 @@ void demo_loop(TF_HalContext *hal) {
 
     first_run_since_tab_change = false;
 }
-

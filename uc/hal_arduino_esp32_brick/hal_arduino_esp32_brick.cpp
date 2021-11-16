@@ -129,7 +129,7 @@ void tf_hal_log_message(const char *msg, size_t len) {
     Serial.write((const uint8_t *) msg, len);
 }
 
-void tf_hal_log_newline() {
+void tf_hal_log_newline(void) {
     Serial.println("");
 }
 
