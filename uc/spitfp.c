@@ -168,8 +168,7 @@ static int tf_spitfp_transceive_buffer(TF_SpiTfpContext *spitfp, uint8_t *send_b
         }
     }
 
-    rc = tf_hal_chip_select(spitfp->hal, spitfp->port_id, false);
-    return rc;
+    return tf_hal_chip_select(spitfp->hal, spitfp->port_id, false);
 }
 
 static int tf_spitfp_transceive(TF_SpiTfpContext *spitfp, uint8_t send_buf_offset, uint8_t length) {
