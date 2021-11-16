@@ -74,4 +74,4 @@ void tf_packetbuffer_peek_bool_array(TF_Packetbuffer *pb, bool* dest, uint16_t c
 }
 #endif
 
-#endif // DAEMONLIB_PACKETBUFFER_H
+#endif
