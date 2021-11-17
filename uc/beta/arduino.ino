@@ -3,8 +3,8 @@
 // Forward declare the demo functions here, as the .ino is
 // compiled as C++, however the rest of the bindings is plain C.
 // This fixes linkage problems.
-extern "C" void demo_setup(TF_HalContext *hal);
-extern "C" void demo_loop(TF_HalContext *hal);
+extern "C" void demo_setup(TF_HAL *hal);
+extern "C" void demo_loop(TF_HAL *hal);
 
 TF_Port ports[2] = {{
     .chip_select_pin=9,
@@ -14,7 +14,7 @@ TF_Port ports[2] = {{
     .port_name='B'
 }};
 
-TF_HalContext hal;
+TF_HAL hal;
 
 void check(int rc, char *msg) {
     if (rc >= 0) {

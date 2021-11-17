@@ -2,8 +2,8 @@
 #include "src/bindings/errors.h"
 
 // Forward declare the example functions.
-extern "C" void example_setup(TF_HalContext *hal);
-extern "C" void example_loop(TF_HalContext *hal);
+extern "C" void example_setup(TF_HAL *hal);
+extern "C" void example_loop(TF_HAL *hal);
 
 // Used to report any error encountered while running the example.
 extern "C" void check(int e_code, const char *c) {
@@ -14,7 +14,7 @@ extern "C" void check(int e_code, const char *c) {
     tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
 }
 
-TF_HalContext hal;
+TF_HAL hal;
 
 void setup() {
     Serial.begin(115200);

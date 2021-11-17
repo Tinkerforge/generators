@@ -28,16 +28,16 @@ typedef struct TF_Port {
     TF_PortCommon port_common;
 } TF_Port;
 
-struct TF_HalContext {
+struct TF_HAL {
     SPISettings spi_settings;
     SPIClass hspi;
     SPIClass vspi;
     TF_Port *ports;
     uint8_t port_count;
-    TF_HalCommon hal_common;
+    TF_HALCommon hal_common;
 };
 
-int tf_hal_create(TF_HalContext *hal, TF_Port *ports, uint8_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
-int tf_hal_destroy(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_create(TF_HAL *hal, TF_Port *ports, uint8_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_destroy(TF_HAL *hal) TF_ATTRIBUTE_NONNULL_ALL;
 
 #endif

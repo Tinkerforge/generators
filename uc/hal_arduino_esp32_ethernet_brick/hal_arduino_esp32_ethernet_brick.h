@@ -11,18 +11,18 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <SPI.h>
+
 #include "../bindings/hal_common.h"
 #include "../bindings/macros.h"
 
-#include <SPI.h>
-
-struct TF_HalContext {
+struct TF_HAL {
     SPISettings spi_settings;
     SPIClass hspi;
-    TF_HalCommon hal_common;
+    TF_HALCommon hal_common;
 };
 
-int tf_hal_create(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
-int tf_hal_destroy(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_create(TF_HAL *hal) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_destroy(TF_HAL *hal) TF_ATTRIBUTE_NONNULL_ALL;
 
 #endif

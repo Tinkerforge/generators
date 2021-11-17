@@ -10,7 +10,7 @@ static void check(int e_code, const char *c) {
     }
 }
 
-TF_HalContext hal;
+TF_HAL hal;
 
 int main(int argc, char **argv) {
     printf("Hello World!\n");

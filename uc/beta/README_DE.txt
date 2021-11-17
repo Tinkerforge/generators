@@ -39,7 +39,7 @@ Es gibt aber folgende, bisher nicht dokumentierte Abweichungen:
       "Normale" Callbacks werden nur ausgeliefert, wenn periodisch mit dem Device kommuniziert wird.
       Um Callbacks für alle Devices, die mindestens einen Callback-Handler registriert haben
       zu empfangen, kann die Funktion
-      int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us);
+      int tf_hal_callback_tick(TF_HAL *hal, uint32_t timeout_us);
       verwendet werden. Diese Funktion blockiert für die übergebene Zeit (in Mikrosekunden),
       empfängt Callbacks und liefert diese aus. Die Funktion kann mit einem Timeout von 0
       aufgerufen werden, um nur ein Callback zu empfangen, falls eins verfügbar ist.
@@ -136,27 +136,27 @@ aufgelistet. const char *tf_hal_strerror(int e_code); liefert eine Fehlerbeschre
 Alle HALs stellen automatisch folgende Funktionen zur Verfügung (implementiert
 in hal_common.c unter Verwendung der HAL-spezifischen Funktionen)
 
-- void tf_hal_set_timeout(TF_HalContext *hal, uint32_t timeout_us)
+- void tf_hal_set_timeout(TF_HAL *hal, uint32_t timeout_us)
   Setzt den Timeout in Mikrosekunden für Funktionsaufrufe der Bricklets.
   Der Standardtimeout beträgt 2500000 = 2,5 Sekunden.
 
-- uint32_t tf_hal_get_timeout(TF_HalContext *hal);
+- uint32_t tf_hal_get_timeout(TF_HAL *hal);
   Gibt den Timeout zurück.
 
-- int tf_hal_get_device_info(TF_HalContext *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id);
+- int tf_hal_get_device_info(TF_HAL *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id);
   Gibt die UID, den Port und den Device Identifier des n-ten (=index) Bricks/Bricklets zurück.
   Diese Funktion gibt TF_E_DEVICE_NOT_FOUND zurück, wenn der Index zu groß war.
   Es können also alle gefundenen Devices aufgelistet werden, indem die Funktion
   in einer Schleife mit von 0 aus wachsendem Index verwendet wird, bis einmal
   false zurückgegeben wird.
 
-- void tf_hal_log_error(TF_HalContext *hal, const char *format, ...)
+- void tf_hal_log_error(TF_HAL *hal, const char *format, ...)
   Loggt einen Fehler.
   Unterstützt einen Format-String und weitere Argumente analog zu printf.
-- void tf_hal_log_info(TF_HalContext *hal, const char *format, ...)
+- void tf_hal_log_info(TF_HAL *hal, const char *format, ...)
   Loggt eine Information.
   Unterstützt einen Format-String und weitere Argumente analog zu printf.
-- void tf_hal_log_debug(TF_HalContext *hal, const char *format, ...)
+- void tf_hal_log_debug(TF_HAL *hal, const char *format, ...)
   Loggt eine Debug-Meldung.
   Unterstützt einen Format-String und weitere Argumente analog zu printf.
 
@@ -172,9 +172,9 @@ Kommunikation über SPI.
 
 Folgende Schritte sind zur Implementierung eines eigenen HALs notwendig:
 
-Zunächst muss eine eigene TF_HalContext-Struktur definiert werden. Diese hält
+Zunächst muss eine eigene TF_HAL-Struktur definiert werden. Diese hält
 alle notwendigen Informationen für die SPI-Kommunikation. Zusätzlich wird
-typischerweise eine Instanz von TF_HalCommon, sowie ein Pointer auf ein Array
+typischerweise eine Instanz von TF_HALCommon, sowie ein Pointer auf ein Array
 von Port-Mapping-Informationen gehalten. Das Format der Array-Einträge kann
 für den spezifischen HAL angepasst werden. Siehe die struct Port in
 hal_arduino_esp32.h und hal_linux.h für Beispiele.
@@ -185,9 +185,9 @@ der geschaltet werden muss, damit Daten per SPI zum Bricklet übertragen werden
 können. In einigen HAL-Funktionen wird eine port_id mitgegeben, diese ist
 typischerweise ein Index in das Array der Port-Mapping-Informationen.
 
-Nachdem die TF_HalContext-Struktur definiert wurde, muss deren
+Nachdem die TF_HAL-Struktur definiert wurde, muss deren
 Initialisierungs-Funktion programmiert werden. Diese hat folgende Aufgaben:
-    - Initialisieren der TF_HalCommon-Instanz mit tf_hal_common_init.
+    - Initialisieren der TF_HALCommon-Instanz mit tf_hal_common_init.
 
     - Vorbereiten der SPI-Kommunikation:
       Nachdem die Initialisierungs-Funktion lief, muss SPI-Kommunikation zu allen
@@ -200,7 +200,7 @@ Initialisierungs-Funktion programmiert werden. Diese hat folgende Aufgaben:
       die Anzahl der verfügbaren Ports, sowie einen Timeout in micro seconds, wie lange an
       jedem Port auf eine Bricklet-Antwort gewartet werden soll.
       tf_hal_common_prepare baut dann eine Liste erreichbarer Bricklets und legt sie
-      in der TF_HalCommon-Instanz ab.
+      in der TF_HALCommon-Instanz ab.
 
 Als letztes müssen alle Funktionen, die in bindings/hal_common.h zwischen
 // BEGIN - To be implemented by the specific HAL
@@ -208,34 +208,34 @@ und
 // END - To be implemented by the specific HAL
 aufgelistet sind implementiert werden. Diese haben folgende Aufgaben:
 
-    - int tf_hal_destroy(TF_HalContext *hal);
+    - int tf_hal_destroy(TF_HAL *hal);
       Beendet die SPI-Kommunikation.
       Achtung: Das Shutdown-Verhalten der Beispiel-HALs ist im Moment ungetestet.
 
-    - int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable);
+    - int tf_hal_chip_select(TF_HAL *hal, uint8_t port_id, bool enable);
       Setzt den Chip-Select-Pin für den Port mit der übergebenen port_id.
       Je nach Plattform kann hier mehr Arbeit notwendig sein.
       Beispielsweise müssen auf einem Arduino zusätzlich begin oder endTransaction
       der SPI-Einheit aufgerufen werden. Die Bindings stellen sicher, dass immer
       nur ein Chip-Select-Pin gleichzeitig aktiv ist.
 
-    - int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length);
+    - int tf_hal_transceive(TF_HAL *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length);
       Überträgt length Bytes aus dem write_buffer an das Bricklet am übergebenen
       Port und empfängt ebensoviele Daten (SPI ist bidirektional) in den
       read_buffer. Die übergebenen Buffer sind immer groß genug um length Bytes zu
       lesen oder zu schreiben.
 
-    - uint32_t tf_hal_current_time_us(TF_HalContext *hal);
+    - uint32_t tf_hal_current_time_us(TF_HAL *hal);
       Gibt die aktuelle Zeit in Mikrosekunden zurück. Die Zeit muss keiner "echten"
       Zeit entsprechen, aber muss (abgesehen von Überläufen) monoton sein.
 
-    - void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us);
+    - void tf_hal_sleep_us(TF_HAL *hal, uint32_t us);
       Blockiert für die übergebene Zeit in Mikrosekunden.
 
-    - TF_HalCommon *tf_hal_get_common(TF_HalContext *hal);
-      Gibt die TF_HalCommon-Instanz aus dem spezifischen HalContext zurück.
+    - TF_HALCommon *tf_hal_get_common(TF_HAL *hal);
+      Gibt die TF_HALCommon-Instanz aus dem spezifischen Hal zurück.
 
-    - char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id);
+    - char tf_hal_get_port_name(TF_HAL *hal, uint8_t port_id);
       Gibt einen Port-Namen (typischerweise ein Buchstabe von 'A' bis 'Z') für die übergebene
       Port-ID zurück. Dieser Name wird z.B. in get_identity()-Aufrufe gepatcht, falls ein
       Brick/Bricklet direkt am System angeschlossen ist.

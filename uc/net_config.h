@@ -14,7 +14,7 @@ extern "C" {
 #endif
 
 // Set this to 1 to enable networking.
-// This requires using a TF_NetContext.
+// This requires using a TF_Net.
 #ifndef TF_NET_ENABLE
 #define TF_NET_ENABLE 0
 #endif

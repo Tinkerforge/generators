@@ -16,7 +16,6 @@
 #include "tfp.h"
 #include "pearson_hash.h"
 #include "errors.h"
-
 #include "hal_common.h"
 
 #define STATE_IDLE 0
@@ -25,12 +24,12 @@
 #define STATE_RECEIVE 3
 #define STATE_BUILD_ACK 4
 
-static bool on_receive_packet(TF_SpiTfpContext *spitfp) {
+static bool on_receive_packet(TF_SPITFP *spitfp) {
     uint8_t packet_length;
-    tf_packetbuffer_pop(&spitfp->recv_buf, &packet_length);
+    tf_packet_buffer_pop(&spitfp->recv_buf, &packet_length);
 
     uint8_t seq_nums;
-    tf_packetbuffer_pop(&spitfp->recv_buf, &seq_nums);
+    tf_packet_buffer_pop(&spitfp->recv_buf, &seq_nums);
 
     spitfp->last_sequence_number_seen = seq_nums & 0x0F;
     spitfp->last_sequence_number_acked = seq_nums >> 4;
@@ -46,16 +45,16 @@ static bool on_receive_packet(TF_SpiTfpContext *spitfp) {
     return packet_length > TF_SPITFP_PROTOCOL_OVERHEAD;
 }
 
-void tf_spitfp_packet_processed(TF_SpiTfpContext *spitfp) {
+void tf_spitfp_packet_processed(TF_SPITFP *spitfp) {
     // The packet was processed, however the checksum byte is still in the buffer.
     // Remove it too.
-    TF_Packetbuffer *buf = &(spitfp->recv_buf);
+    TF_PacketBuffer *buf = &(spitfp->recv_buf);
 
-    tf_packetbuffer_remove(buf, 1);
+    tf_packet_buffer_remove(buf, 1);
 }
 
-static uint8_t bytes_to_recv(TF_SpiTfpContext *spitfp, uint8_t bytes_missing, uint8_t bytes_to_send) {
-    uint8_t result = tf_packetbuffer_get_free(&spitfp->recv_buf);
+static uint8_t bytes_to_recv(TF_SPITFP *spitfp, uint8_t bytes_missing, uint8_t bytes_to_send) {
+    uint8_t result = tf_packet_buffer_get_free(&spitfp->recv_buf);
 
     if (bytes_missing > 0) {
         if (bytes_to_send > 0) {
@@ -76,16 +75,16 @@ static uint8_t bytes_to_recv(TF_SpiTfpContext *spitfp, uint8_t bytes_missing, ui
     return MIN(result, 1);
 }
 
-static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
-    TF_Packetbuffer *buf = &(spitfp->recv_buf);
+static bool process_packets(TF_SPITFP *spitfp, uint8_t *bytes_missing) {
+    TF_PacketBuffer *buf = &(spitfp->recv_buf);
 
     if (bytes_missing != NULL) {
         *bytes_missing = 0;
     }
 
-    while (!tf_packetbuffer_is_empty(buf)) {
+    while (!tf_packet_buffer_is_empty(buf)) {
         uint8_t packet_len;
-        tf_packetbuffer_peek(buf, &packet_len);
+        tf_packet_buffer_peek(buf, &packet_len);
 
         if (packet_len > TF_SPITFP_MAX_MESSAGE_LENGTH || (packet_len < TF_SPITFP_MIN_MESSAGE_LENGTH && packet_len != TF_SPITFP_PROTOCOL_OVERHEAD)) {
             //This can't be the start of a packet.
@@ -93,13 +92,13 @@ static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
                 ++spitfp->error_count_frame;
             }
 
-            tf_packetbuffer_remove(buf, 1);
+            tf_packet_buffer_remove(buf, 1);
             continue;
         }
 
-        uint8_t used = tf_packetbuffer_get_used(buf);
+        uint8_t used = tf_packet_buffer_get_used(buf);
 
-        if (packet_len > tf_packetbuffer_get_used(buf)) {
+        if (packet_len > tf_packet_buffer_get_used(buf)) {
             //This could be the start of a packet, but we don't have enough bytes received yet.
             if (bytes_missing != NULL) {
                 *bytes_missing = packet_len - used;
@@ -111,13 +110,13 @@ static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
         uint8_t packet_checksum;
         uint8_t real_checksum = 0;
 
-        tf_packetbuffer_peek_offset(buf, &packet_checksum, packet_len - 1);
+        tf_packet_buffer_peek_offset(buf, &packet_checksum, packet_len - 1);
 
         for (uint8_t i = 0; i < (packet_len - 1); ++i) {
             uint8_t byte;
 
-            tf_packetbuffer_peek_offset(buf, &byte, i);
-            TF_PEARSON(real_checksum, byte);
+            tf_packet_buffer_peek_offset(buf, &byte, i);
+            TF_PEARSON_HASH(real_checksum, byte);
         }
 
         if (packet_checksum == real_checksum) {
@@ -126,7 +125,7 @@ static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
             }
         } else {
             // checksum was wrong, advance one byte
-            tf_packetbuffer_remove(buf, 1);
+            tf_packet_buffer_remove(buf, 1);
             ++spitfp->error_count_checksum;
 
         }
@@ -135,10 +134,10 @@ static bool process_packets(TF_SpiTfpContext *spitfp, uint8_t *bytes_missing) {
     return false;
 }
 
-static int tf_spitfp_transceive_buffer(TF_SpiTfpContext *spitfp, uint8_t *send_buffer, uint8_t send_buf_offset, uint8_t length) {
+static int tf_spitfp_transceive_buffer(TF_SPITFP *spitfp, uint8_t *send_buffer, uint8_t send_buf_offset, uint8_t length) {
     uint8_t first_len, second_len;
     uint8_t *first_chunk, *second_chunk;
-    tf_packetbuffer_free_array_view(&spitfp->recv_buf, length, &first_chunk, &first_len, &second_chunk, &second_len);
+    tf_packet_buffer_free_array_view(&spitfp->recv_buf, length, &first_chunk, &first_len, &second_chunk, &second_len);
 
     int rc = tf_hal_chip_select(spitfp->hal, spitfp->port_id, true);
 
@@ -171,17 +170,17 @@ static int tf_spitfp_transceive_buffer(TF_SpiTfpContext *spitfp, uint8_t *send_b
     return tf_hal_chip_select(spitfp->hal, spitfp->port_id, false);
 }
 
-static int tf_spitfp_transceive(TF_SpiTfpContext *spitfp, uint8_t send_buf_offset, uint8_t length) {
+static int tf_spitfp_transceive(TF_SPITFP *spitfp, uint8_t send_buf_offset, uint8_t length) {
     return tf_spitfp_transceive_buffer(spitfp, spitfp->send_buf, send_buf_offset, length);
 }
 
-static int tf_spitfp_receive(TF_SpiTfpContext *spitfp, uint8_t length) {
-    TF_HalCommon *common = tf_hal_get_common(spitfp->hal);
+static int tf_spitfp_receive(TF_SPITFP *spitfp, uint8_t length) {
+    TF_HALCommon *hal_common = tf_hal_get_common(spitfp->hal);
 
-    return tf_spitfp_transceive_buffer(spitfp, common->empty_buf, 0, length);
+    return tf_spitfp_transceive_buffer(spitfp, hal_common->empty_buf, 0, length);
 }
 
-uint8_t tf_spitfp_build_packet(TF_SpiTfpContext *spitfp, bool retransmission) {
+uint8_t tf_spitfp_build_packet(TF_SPITFP *spitfp, bool retransmission) {
     uint8_t packet_length = spitfp->send_buf[TF_SPITFP_HEADER_LENGTH + TF_TFP_HEADER_LENGTH_OFFSET] + TF_SPITFP_PROTOCOL_OVERHEAD;
     spitfp->send_buf[0] = packet_length;
     uint8_t seq_num;
@@ -203,7 +202,7 @@ uint8_t tf_spitfp_build_packet(TF_SpiTfpContext *spitfp, bool retransmission) {
     uint8_t checksum = 0;
 
     for (uint8_t i = 0; i < packet_length - 1; ++i) {
-        TF_PEARSON(checksum, spitfp->send_buf[i]);
+        TF_PEARSON_HASH(checksum, spitfp->send_buf[i]);
     }
 
     spitfp->send_buf[packet_length - 1] = checksum;
@@ -216,7 +215,7 @@ uint8_t tf_spitfp_build_packet(TF_SpiTfpContext *spitfp, bool retransmission) {
 #define TRANSCEIVE_PACKET_ACKED 4
 #define TRANSCEIVE_TIMEOUT 8
 
-static int tf_spitfp_transceive_packet(TF_SpiTfpContext *spitfp, uint8_t bytes_to_send, uint8_t *send_buf_offset) {
+static int tf_spitfp_transceive_packet(TF_SPITFP *spitfp, uint8_t bytes_to_send, uint8_t *send_buf_offset) {
     while (*send_buf_offset < bytes_to_send) {
         uint8_t bytes_missing;
 
@@ -238,7 +237,7 @@ static int tf_spitfp_transceive_packet(TF_SpiTfpContext *spitfp, uint8_t bytes_t
     return TRANSCEIVE_PACKET_SENT | (process_packets(spitfp, NULL) ? TRANSCEIVE_PACKET_RECEIVED : 0);
 }
 
-static void tf_spitfp_build_ack(TF_SpiTfpContext *spitfp) {
+static void tf_spitfp_build_ack(TF_SPITFP *spitfp) {
     uint8_t packet_length = TF_SPITFP_PROTOCOL_OVERHEAD;
     spitfp->send_buf[0] = packet_length;
 
@@ -247,7 +246,7 @@ static void tf_spitfp_build_ack(TF_SpiTfpContext *spitfp) {
     uint8_t checksum = 0;
 
     for (uint8_t i = 0; i < packet_length - 1; ++i) {
-        TF_PEARSON(checksum, spitfp->send_buf[i]);
+        TF_PEARSON_HASH(checksum, spitfp->send_buf[i]);
     }
 
     spitfp->send_buf[packet_length - 1] = checksum;
@@ -255,7 +254,7 @@ static void tf_spitfp_build_ack(TF_SpiTfpContext *spitfp) {
 
 #define RECEIVE_PACKET_RECIEVED 1
 #define RECEIVE_PACKET_TIMEOUT 2
-static int tf_spitfp_receive_packet(TF_SpiTfpContext *spitfp) {
+static int tf_spitfp_receive_packet(TF_SPITFP *spitfp) {
     uint8_t bytes_missing;
 
     if (process_packets(spitfp, &bytes_missing)) {
@@ -286,7 +285,7 @@ static int tf_spitfp_receive_packet(TF_SpiTfpContext *spitfp) {
     return bytes_missing > 0 ? RECEIVE_PACKET_TIMEOUT : 0;
 }
 
-static int tf_spitfp_wait_for_ack(TF_SpiTfpContext *spitfp, uint8_t seq_num, uint32_t deadline_us) {
+static int tf_spitfp_wait_for_ack(TF_SPITFP *spitfp, uint8_t seq_num, uint32_t deadline_us) {
     uint8_t bytes_missing;
 
     bool packet_received = process_packets(spitfp, &bytes_missing);
@@ -336,12 +335,12 @@ static int tf_spitfp_wait_for_ack(TF_SpiTfpContext *spitfp, uint8_t seq_num, uin
     return tf_hal_deadline_elapsed(spitfp->hal, deadline_us) ? TRANSCEIVE_TIMEOUT : 0;
 }
 
-static int tf_spitfp_filter_duplicates(TF_SpiTfpContext *spitfp) {
+static int tf_spitfp_filter_duplicates(TF_SPITFP *spitfp) {
     if (spitfp->last_sequence_number_given_to_tfp == spitfp->last_sequence_number_seen) {
         uint8_t packet_len = 0;
 
-        tf_packetbuffer_peek_offset(&spitfp->recv_buf, &packet_len, TF_TFP_HEADER_LENGTH_OFFSET);
-        tf_packetbuffer_remove(&spitfp->recv_buf, packet_len + 1);
+        tf_packet_buffer_peek_offset(&spitfp->recv_buf, &packet_len, TF_TFP_HEADER_LENGTH_OFFSET);
+        tf_packet_buffer_remove(&spitfp->recv_buf, packet_len + 1);
 
         return 0;
     }
@@ -352,8 +351,8 @@ static int tf_spitfp_filter_duplicates(TF_SpiTfpContext *spitfp) {
 }
 
 // See: dot -Tpng spitfp_tick.dot -o spitfp_tick.png && xdg-open spitfp_tick.png
-int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
-    TF_SpiTfpStateMachine *m = &spitfp->state;
+int tf_spitfp_tick(TF_SPITFP *spitfp, uint32_t deadline_us) {
+    TF_SPITFPStateMachine *m = &spitfp->state;
 
     switch (m->state) {
         case STATE_IDLE: {
@@ -523,12 +522,12 @@ int tf_spitfp_tick(TF_SpiTfpContext *spitfp, uint32_t deadline_us) {
     return 0;
 }
 
-uint8_t *tf_spitfp_get_payload_buffer(TF_SpiTfpContext *spitfp) {
+uint8_t *tf_spitfp_get_payload_buffer(TF_SPITFP *spitfp) {
     // Leave space for spitfp protocol header
     return spitfp->send_buf + TF_SPITFP_HEADER_LENGTH;
 }
 
-int tf_spitfp_create(TF_SpiTfpContext *spitfp, struct TF_HalContext *hal, uint8_t port_id) {
+int tf_spitfp_create(TF_SPITFP *spitfp, struct TF_HAL *hal, uint8_t port_id) {
     spitfp->hal = hal;
     spitfp->port_id = port_id;
     spitfp->last_sequence_number_seen = 0;
@@ -541,12 +540,12 @@ int tf_spitfp_create(TF_SpiTfpContext *spitfp, struct TF_HalContext *hal, uint8_
     spitfp->error_count_frame = 0;
 
     memset(spitfp->send_buf, 0, sizeof(spitfp->send_buf));
-    tf_packetbuffer_create(&spitfp->recv_buf);
+    tf_packet_buffer_create(&spitfp->recv_buf);
 
     return TF_E_OK;
 }
 
-int tf_spitfp_destroy(TF_SpiTfpContext *spitfp) {
+int tf_spitfp_destroy(TF_SPITFP *spitfp) {
     (void)spitfp;
 
     return TF_E_OK;

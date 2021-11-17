@@ -30,7 +30,7 @@ void gui_tab_handler(TF_LCD128x64 *lcd, int8_t index, void *user_data) {
     tab_changed = true;
 }
 
-void demo_setup(TF_HalContext *hal) {
+void demo_setup(TF_HAL *hal) {
     check(tf_lcd_128x64_create(&lcd, "HQ6", hal), "create lcd");
     check(tf_ptc_v2_create(&ptc, "J7d", hal), "create rgb");
 
@@ -110,7 +110,7 @@ void draw_ptc(void) {
     }
 }
 
-void demo_loop(TF_HalContext *hal) {
+void demo_loop(TF_HAL *hal) {
     if (tab_changed) {
         first_run_since_tab_change = true;
     }

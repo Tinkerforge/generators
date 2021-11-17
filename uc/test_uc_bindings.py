@@ -195,7 +195,7 @@ class UCExamplesTester(common.Tester):
                  os.path.join(tmp_dir, 'source/bindings/bricklet_unknown.c'),
                  os.path.join(tmp_dir, 'source/bindings/endian_convert.c'),
                  os.path.join(tmp_dir, 'source/bindings/hal_common.c'),
-                 os.path.join(tmp_dir, 'source/bindings/packetbuffer.c'),
+                 os.path.join(tmp_dir, 'source/bindings/packet_buffer.c'),
                  os.path.join(tmp_dir, 'source/bindings/pearson_hash.c'),
                  os.path.join(tmp_dir, 'source/bindings/spitfp.c'),
                  os.path.join(tmp_dir, 'source/bindings/tfp.c'),

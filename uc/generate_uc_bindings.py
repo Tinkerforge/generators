@@ -155,7 +155,7 @@ extern "C" {{
 
     def get_c_create_function(self):
         template = """
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal) {{
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal) {{
     if ({device_under} == NULL || uid == NULL || hal == NULL) {{
         return TF_E_NULL;
     }}
@@ -192,7 +192,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 """
 
         unknown_template = """
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, uint8_t port_id, uint8_t inventory_index) {{
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal, uint8_t port_id, uint8_t inventory_index) {{
     if ({device_under} == NULL || uid == NULL || hal == NULL) {{
         return TF_E_NULL;
     }}
@@ -272,7 +272,7 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
         return TF_E_NULL;
     }}
 
-    return tf_tfp_callback_tick({device_under}->tfp, tf_hal_current_time_us((TF_HalContext*){device_under}->tfp->hal) + timeout_us);
+    return tf_tfp_callback_tick({device_under}->tfp, tf_hal_current_time_us((TF_HAL*){device_under}->tfp->hal) + timeout_us);
 }}
 """
         return format(template, self)
@@ -364,14 +364,14 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
         return TF_E_NULL;
     }}
 
-    if (tf_hal_get_common((TF_HalContext*){device_under}->tfp->hal)->locked) {{
+    if (tf_hal_get_common((TF_HAL*){device_under}->tfp->hal)->locked) {{
         return TF_E_LOCKED;
     }}
 
     bool response_expected = true;{response_expected}
     tf_tfp_prepare_send({device_under}->tfp, TF_{fid}, {request_size}, {response_size}, response_expected);
 {loop_counter_def}{request_assignments}
-    uint32_t deadline = tf_hal_current_time_us((TF_HalContext*){device_under}->tfp->hal) + tf_hal_get_common((TF_HalContext*){device_under}->tfp->hal)->timeout;
+    uint32_t deadline = tf_hal_current_time_us((TF_HAL*){device_under}->tfp->hal) + tf_hal_get_common((TF_HAL*){device_under}->tfp->hal)->timeout;
 
     uint8_t error_code = 0;
     int result = tf_tfp_transmit_packet({device_under}->tfp, response_expected, deadline, &error_code);
@@ -873,15 +873,16 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
 
     def get_c_callback_handler(self):
         no_callbacks_template = """
-static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packetbuffer *payload) {{
+static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_PacketBuffer *payload) {{
     (void)dev;
     (void)fid;
     (void)payload;
+
     return false;
 }}"""
         template = """
 #if TF_IMPLEMENT_CALLBACKS != 0
-static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packetbuffer *payload) {{
+static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_PacketBuffer *payload) {{
     TF_{device_camel} *{device_under} = (TF_{device_camel} *) dev;
     (void)payload;
 
@@ -894,7 +895,7 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
     return true;
 }}
 #else
-static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packetbuffer *payload) {{
+static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_PacketBuffer *payload) {{
     return false;
 }}
 #endif"""
@@ -908,10 +909,10 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
             }}
 {i_decl}
 {extract_payload}
-            TF_HalCommon *common = tf_hal_get_common((TF_HalContext*){device_under}->tfp->hal);
-            common->locked = true;
+            TF_HALCommon *hal_common = tf_hal_get_common((TF_HAL*){device_under}->tfp->hal);
+            hal_common->locked = true;
             fn({device_under}, {params}user_data);
-            common->locked = false;
+            hal_common->locked = false;
             break;
         }}"""
 
@@ -954,7 +955,7 @@ struct TF_{device_camel};
  * {description}
  */
 typedef struct TF_{device_camel} {{
-    TF_TfpContext *tfp;
+    TF_TFP *tfp;
 #if TF_IMPLEMENT_CALLBACKS != 0
 {callback_handlers}
 #endif
@@ -999,7 +1000,7 @@ typedef struct TF_{device_camel} {{
  * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
  * it to the HAL \\c hal.
  */
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal);
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal);
 """
 
         unknown_template = """
@@ -1009,7 +1010,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
  * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
  * it to the HAL \\c hal.
  */
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal, uint8_t port_id, uint8_t inventory_index);
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal, uint8_t port_id, uint8_t inventory_index);
 """
         if self.get_name().under == 'unknown':
             template = unknown_template
@@ -1299,7 +1300,7 @@ class UCBindingsPacket(uc_common.UCPacket):
 
         return struct_list, needs_i
 
-    def get_c_return_list(self, packetbuffer_name, context):
+    def get_c_return_list(self, packet_buffer_name, context):
         assert context in ['callback_handler', 'getter']
         return_list = []
         needs_i = False
@@ -1312,29 +1313,29 @@ class UCBindingsPacket(uc_common.UCPacket):
                     t = 'if ({dest} != NULL) {{ '
 
                 if element.get_type() == 'string':
-                    t += 'tf_packetbuffer_pop_n({packetbuffer}, (uint8_t*){dest}, {count});'
+                    t += 'tf_packet_buffer_pop_n({packet_buffer}, (uint8_t*){dest}, {count});'
                 elif element.get_type() == 'bool':
-                    t += "tf_packetbuffer_read_bool_array({packetbuffer}, {dest}, {count});"
+                    t += "tf_packet_buffer_read_bool_array({packet_buffer}, {dest}, {count});"
                 else:
-                    t += 'for (i = 0; i < {count}; ++i) {dest}[i] = tf_packetbuffer_read_{type_}({packetbuffer});'
+                    t += 'for (i = 0; i < {count}; ++i) {dest}[i] = tf_packet_buffer_read_{type_}({packet_buffer});'
                     needs_i = True
 
                 if context == 'getter':
-                    t += '}} else {{ tf_packetbuffer_remove({packetbuffer}, {size}); }}'
+                    t += '}} else {{ tf_packet_buffer_remove({packet_buffer}, {size}); }}'
 
             else:
                 if context == 'callback_handler':
-                    t = '{type_} {dest} = tf_packetbuffer_read_{type_}({packetbuffer});'
+                    t = '{type_} {dest} = tf_packet_buffer_read_{type_}({packet_buffer});'
                 else:
-                    t = 'if ({dest} != NULL) {{ *{dest} = tf_packetbuffer_read_{type_}({packetbuffer}); }} else {{ tf_packetbuffer_remove({packetbuffer}, {size}); }}'
+                    t = 'if ({dest} != NULL) {{ *{dest} = tf_packet_buffer_read_{type_}({packet_buffer}); }} else {{ tf_packet_buffer_remove({packet_buffer}, {size}); }}'
 
             dest = ('ret_' if context == 'getter' else '') + element.get_name().under
             if self.get_function_id() == 255 and element.get_name().under == 'connected_uid':
                 dest = 'tmp_connected_uid'
                 # Overriding the template fixes clang's "comparison of array 'tmp_connected_uid' not equal to a null pointer is always true" warning
-                t = 'tf_packetbuffer_pop_n({packetbuffer}, (uint8_t*){dest}, {count});'
+                t = 'tf_packet_buffer_pop_n({packet_buffer}, (uint8_t*){dest}, {count});'
 
-            return_list.append(t.format(packetbuffer=packetbuffer_name,
+            return_list.append(t.format(packet_buffer=packet_buffer_name,
                                         dest=dest,
                                         count=element.get_cardinality(),
                                         size=element.get_size(),
@@ -1344,7 +1345,7 @@ class UCBindingsPacket(uc_common.UCPacket):
             return_list.insert(0, 'char tmp_connected_uid[8] = {0};')
             return_list.append(
                 format("""if (tmp_connected_uid[0] == 0 && ret_position != NULL) {{
-            *ret_position = tf_hal_get_port_name((TF_HalContext*){device_under}->tfp->hal, {device_under}->tfp->spitfp->port_id);
+            *ret_position = tf_hal_get_port_name((TF_HAL*){device_under}->tfp->hal, {device_under}->tfp->spitfp->port_id);
         }}
         if (ret_connected_uid != NULL) {{
             memcpy(ret_connected_uid, tmp_connected_uid, 8);

@@ -14,7 +14,7 @@
 #include "endian_convert.h"
 #include "base58.h"
 
-static void parse_header(TF_TfpHeader *header) {
+static void parse_header(TF_TFPHeader *header) {
     header->response_expected = header->seq_num & 0x08;
     header->options = header->seq_num & 0x07;
     header->seq_num >>= 4;
@@ -22,27 +22,27 @@ static void parse_header(TF_TfpHeader *header) {
     header->flags &= 0x3F;
 }
 
-void tf_read_packet_header(TF_Packetbuffer *buf, TF_TfpHeader *header) {
-    header->uid = tf_packetbuffer_read_uint32_t(buf);
-    header->length = tf_packetbuffer_read_uint8_t(buf);
-    header->fid = tf_packetbuffer_read_uint8_t(buf);
-    header->seq_num = tf_packetbuffer_read_uint8_t(buf);
-    header->flags = tf_packetbuffer_read_uint8_t(buf);
+void tf_tfp_header_read(TF_TFPHeader *header, TF_PacketBuffer *buf) {
+    header->uid = tf_packet_buffer_read_uint32_t(buf);
+    header->length = tf_packet_buffer_read_uint8_t(buf);
+    header->fid = tf_packet_buffer_read_uint8_t(buf);
+    header->seq_num = tf_packet_buffer_read_uint8_t(buf);
+    header->flags = tf_packet_buffer_read_uint8_t(buf);
 
     parse_header(header);
 }
 
-void tf_peek_packet_header(TF_Packetbuffer *buf, TF_TfpHeader *header) {
-    header->uid = tf_packetbuffer_peek_uint32_t(buf, 0);
-    header->length = tf_packetbuffer_peek_uint8_t(buf, 4);
-    header->fid = tf_packetbuffer_peek_uint8_t(buf, 5);
-    header->seq_num = tf_packetbuffer_peek_uint8_t(buf, 6);
-    header->flags = tf_packetbuffer_peek_uint8_t(buf, 7);
+void tf_tfp_header_peek(TF_TFPHeader *header, TF_PacketBuffer *buf) {
+    header->uid = tf_packet_buffer_peek_uint32_t(buf, 0);
+    header->length = tf_packet_buffer_peek_uint8_t(buf, 4);
+    header->fid = tf_packet_buffer_peek_uint8_t(buf, 5);
+    header->seq_num = tf_packet_buffer_peek_uint8_t(buf, 6);
+    header->flags = tf_packet_buffer_peek_uint8_t(buf, 7);
 
     parse_header(header);
 }
 
-void tf_peek_packet_header_plain_buf(uint8_t *buf, TF_TfpHeader *header) {
+void tf_tfp_header_peek_plain(TF_TFPHeader *header, uint8_t *buf) {
     uint32_t uid = 0;
 
     for (int i = 0; i < 4; ++i) {
@@ -58,8 +58,9 @@ void tf_peek_packet_header_plain_buf(uint8_t *buf, TF_TfpHeader *header) {
     parse_header(header);
 }
 
-void tf_write_packet_header(TF_TfpHeader *header, uint8_t buf[8]) {
+void tf_tfp_header_write(TF_TFPHeader *header, uint8_t buf[8]) {
     uint32_t uid = tf_leconvert_uint32_to(header->uid);
+
     memcpy(buf, &uid, sizeof(uid));
 
     buf[4] = header->length;
@@ -68,7 +69,7 @@ void tf_write_packet_header(TF_TfpHeader *header, uint8_t buf[8]) {
     buf[7] = (uint8_t)(header->error_code << 6 | header->flags);
 }
 
-void tf_print_packet_header(TF_TfpHeader *header) {
+void tf_tfp_header_print(TF_TFPHeader *header) {
     char buf[8] = {0};
 
     tf_base58_encode(header->uid, buf);

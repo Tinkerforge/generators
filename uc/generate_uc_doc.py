@@ -134,12 +134,12 @@ class UCDocDevice(common.Device):
     def get_c_api(self):
         create_str = {
             'en': """
-.. c:function:: int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal)
+.. c:function:: int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal)
 
 {meta_table}
 
  Creates the device object ``{device_under}`` with the unique device ID ``uid`` and adds
- it to the HAL context ``hal``:
+ it to the HAL ``hal``:
 
  .. code-block:: c
 
@@ -149,12 +149,12 @@ class UCDocDevice(common.Device):
  This device object can be used after the HAL has been initialized.
 """,
             'de': """
-.. c:function:: int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HalContext *hal)
+.. c:function:: int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal)
 
 {meta_table}
 
  Erzeugt ein Geräteobjekt ``{device_under}`` mit der eindeutigen Geräte ID ``uid`` und
- fügt es dem HAL-Context ``hal`` hinzu:
+ fügt es dem HAL ``hal`` hinzu:
 
  .. code-block:: c
 
@@ -171,7 +171,7 @@ class UCDocDevice(common.Device):
 
 {meta_table}
 
- Removes the device object ``{device_under}`` from its HAL context and destroys it.
+ Removes the device object ``{device_under}`` from its HAL and destroys it.
  The device object cannot be used anymore afterwards.
 """,
             'de': """
@@ -179,7 +179,7 @@ class UCDocDevice(common.Device):
 
 {meta_table}
 
- Entfernt das Geräteobjekt ``{device_under}`` von dessen HAL-Context und zerstört es.
+ Entfernt das Geräteobjekt ``{device_under}`` von dessen HAL und zerstört es.
  Das Geräteobjekt kann hiernach nicht mehr verwendet werden.
 """
         }
@@ -371,7 +371,7 @@ Konstanten
 
         create_meta = common.format_simple_element_meta([(format('{device_under}', self), format('TF_{device_camel} *', self), 1, 'in'),
                                                          ('uid', 'const char *', 1, 'in'),
-                                                         ('hal', 'TF_HalContext *', 1, 'in')])
+                                                         ('hal', 'TF_HAL *', 1, 'in')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
         cre = format(common.select_lang(create_str), self, meta_table=create_meta_table)

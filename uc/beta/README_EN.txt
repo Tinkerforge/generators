@@ -35,7 +35,7 @@ However there are the following changes:
     - High level callbacks are not supported.
       "Normal" callbacks will only be delivered if you commmunicate periodically with the device.
       To receive callbacks for all devices with at least one registered handler, you can use
-      int tf_hal_callback_tick(TF_HalContext *hal, uint32_t timeout_us);
+      int tf_hal_callback_tick(TF_HAL *hal, uint32_t timeout_us);
       This function  blocks for the given time in microseconds and receives and delivers callbacks.
       This function can be called with a timeout of 0 to poll for one immediatly available callback.
 
@@ -123,8 +123,8 @@ over SPI.
 
 The following steps are necessary to implement a custom HAL:
 
-First define a TF_HalContext struct. It holds all data necessary for the SPI
-communication. Typically an instance of TF_HalCommon, as well as a Pointer to
+First define a TF_HAL struct. It holds all data necessary for the SPI
+communication. Typically an instance of TF_HALCommon, as well as a Pointer to
 an array of port mapping information is stored here. The format of the port mapping
 entries can be customized. See the port struct in hal_arduino_esp32.h and hal_linux.h
 for examples.
@@ -134,9 +134,9 @@ A port typically maps to the chip select pin that must be toggled to transfer da
 SPI to the bricklet. Some HAL functions receive a port ID, this is normally an index
 into the array of port information.
 
-The next step after defining the TF_HalContext struct is implementing its initialization function,
+The next step after defining the TF_HAL struct is implementing its initialization function,
 that handles the following tasks:
-    - Initialize the TF_HalCommon instance with tf_hal_common_init
+    - Initialize the TF_HALCommon instance with tf_hal_common_init
     
     - Prepare the SPI communication
       When your initialization function returns, SPI communication must be possible to all attached devices.
@@ -146,7 +146,7 @@ that handles the following tasks:
       This is normally the last step in the initialization. SPI communication must be possible here.
       The function expects the number of usable ports as well as a timeout in micro seconds, for how long
       the bindungs should try to reach a device under one of the ports.
-      tf_hal_common_prepare then builds a list of reachable devices and stores it in the TF_HalCommon instance.
+      tf_hal_common_prepare then builds a list of reachable devices and stores it in the TF_HALCommon instance.
       
 Finally all functions defined in bindings/hal_common.h between 
 // BEGIN - To be implemented by the specific HAL
@@ -154,33 +154,33 @@ and
 // END - To be implemented by the specific HAL
 must be implemented.
 
-    - int tf_hal_destroy(TF_HalContext *hal);
+    - int tf_hal_destroy(TF_HAL *hal);
       Ends the SPI commmunication.
       Attention: The shutdown behaviour of the example HALs is currently untested.
     
-    - int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable);
+    - int tf_hal_chip_select(TF_HAL *hal, uint8_t port_id, bool enable);
       Sets the chip select pin of the port with the given port_id.
       Depending on the platform, more work has to be done here. For example on
       an Arduino, begin/endTransaction must be called to make sure, that the SPI
       configuration is applied. The bindings make sure, that only one chip select
       pin is enabled at the same time.
     
-    - int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length);
+    - int tf_hal_transceive(TF_HAL *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, uint32_t length);
       Transmit length bytes of data from the write_buffer to the bricklet while receiving the same
       amount of bytes (as SPI is bi-directional) into the read_buffer. The buffers are always big enough
       to read/write length bytes.
     
-    - uint32_t tf_hal_current_time_us(TF_HalContext *hal);
+    - uint32_t tf_hal_current_time_us(TF_HAL *hal);
       Return the current time in microseconds. The time does not have to map to a "real" time,
       it only has to be monotonic (except overflows).
 
-    - void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us);
+    - void tf_hal_sleep_us(TF_HAL *hal, uint32_t us);
       Block for the given time in microseconds.
     
-    - TF_HalCommon *tf_hal_get_common(TF_HalContext *hal);
-      Return the TF_HalCommon instance from the specific TF_HalContext.
+    - TF_HALCommon *tf_hal_get_common(TF_HAL *hal);
+      Return the TF_HALCommon instance from the specific TF_HAL.
     
-    - char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id);
+    - char tf_hal_get_port_name(TF_HAL *hal, uint8_t port_id);
       Returns a port name (typically a letter from 'A' to 'Z') for the given port ID.
       This name will be patched into the result of get_identity() calls if a device
       is directly connected to the host.

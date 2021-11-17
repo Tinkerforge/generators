@@ -28,12 +28,12 @@ typedef struct TF_Port {
     int cs_pin_fd;
 } TF_Port;
 
-struct TF_HalContext {
+struct TF_HAL {
     TF_Port *ports;
     uint8_t port_count;
 
     int spidev_fd;
-    TF_HalCommon hal_common;
+    TF_HALCommon hal_common;
 };
 
 #define TF_E_EXPORT_GPIO_FAILED -100
@@ -45,7 +45,7 @@ struct TF_HalContext {
 #define TF_E_CHIP_SELECT_FAILED -105
 #define TF_E_TRANSCEIVE_FAILED -106
 
-int tf_hal_create(struct TF_HalContext *hal, const char *spidev_path, TF_Port *ports, uint8_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
-int tf_hal_destroy(TF_HalContext *hal) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_create(struct TF_HAL *hal, const char *spidev_path, TF_Port *ports, uint8_t port_count) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_hal_destroy(TF_HAL *hal) TF_ATTRIBUTE_NONNULL_ALL;
 
 #endif

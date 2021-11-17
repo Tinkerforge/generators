@@ -67,7 +67,7 @@ static int parse_core_freq(const char *name, int *value) {
     return 0;
 }
 
-int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
+int tf_hal_create(struct TF_HAL *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
 
     if (rc != TF_E_OK) {
@@ -122,7 +122,7 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count)
     return tf_hal_common_prepare(hal, port_count, 200000);
 }
 
-int tf_hal_destroy(TF_HalContext *hal) {
+int tf_hal_destroy(TF_HAL *hal) {
     (void)hal;
 
     bcm2835_spi_end();
@@ -131,13 +131,13 @@ int tf_hal_destroy(TF_HalContext *hal) {
     return TF_E_OK;
 }
 
-int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
+int tf_hal_chip_select(TF_HAL *hal, uint8_t port_id, bool enable) {
     bcm2835_gpio_write(hal->ports[port_id].chip_select_pin, enable ? LOW : HIGH);
 
     return TF_E_OK;
 }
 
-int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, const uint32_t length) {
+int tf_hal_transceive(TF_HAL *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, const uint32_t length) {
     (void)hal;
     (void)port_id;
 
@@ -146,7 +146,7 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
     return TF_E_OK;
 }
 
-uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
+uint32_t tf_hal_current_time_us(TF_HAL *hal) {
     (void)hal;
 
     struct timespec t;
@@ -156,13 +156,13 @@ uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
     return (uint32_t)((t.tv_sec * 1000000) + t.tv_nsec / 1000);
 }
 
-void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
+void tf_hal_sleep_us(TF_HAL *hal, uint32_t us) {
     (void)hal;
 
     usleep(us);
 }
 
-TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) {
+TF_HALCommon *tf_hal_get_common(TF_HAL *hal) {
     return &hal->hal_common;
 }
 
@@ -177,7 +177,7 @@ void tf_hal_log_newline(void) {
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int e_code) {
     switch (e_code) {
-        #include "../bindings/error_cases.h"
+        #include "../bindings/errors.inc"
 
         case TF_E_BCM2835_INIT_FAILED:
             return "bcm2835_init failed. Are you running as root?";
@@ -191,7 +191,7 @@ const char *tf_hal_strerror(int e_code) {
 }
 #endif
 
-char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
+char tf_hal_get_port_name(TF_HAL *hal, uint8_t port_id) {
     if (port_id > hal->port_count) {
         return '?';
     }

@@ -30,7 +30,7 @@ typedef struct {
     uint8_t sends_without_progress;
 
     bool available_packet_valid;
-    TF_TfpHeader available_packet;
+    TF_TFPHeader available_packet;
 } TF_NetClient;
 
 typedef struct TF_Request {
@@ -40,7 +40,7 @@ typedef struct TF_Request {
     uint8_t seq_num;
 } TF_Request;
 
-typedef struct TF_NetContext {
+typedef struct TF_Net {
     TF_NetClient clients[TF_MAX_CLIENT_COUNT];
     uint8_t clients_used;
     WiFiServer server;
@@ -49,8 +49,8 @@ typedef struct TF_NetContext {
     uint8_t open_request_count;
     uint16_t send_buf_timeout_us;
     uint32_t recv_timeout_ms;
-} TF_NetContext;
+} TF_Net;
 
-int tf_net_create(TF_NetContext *net, const char* listen_addr, uint16_t port, const char* auth_secret);
+int tf_net_create(TF_Net *net, const char* listen_addr, uint16_t port, const char* auth_secret);
 
 #endif

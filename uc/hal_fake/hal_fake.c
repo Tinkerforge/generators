@@ -10,7 +10,7 @@
 
 #include "../bindings/config.h"
 
-int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count) {
+int tf_hal_create(struct TF_HAL *hal, TF_Port *ports, uint8_t port_count) {
     int rc = tf_hal_common_create(hal);
 
     if (rc != TF_E_OK) {
@@ -23,13 +23,13 @@ int tf_hal_create(struct TF_HalContext *hal, TF_Port *ports, uint8_t port_count)
     return tf_hal_common_prepare(hal, port_count, 200000);
 }
 
-int tf_hal_destroy(TF_HalContext *hal) {
+int tf_hal_destroy(TF_HAL *hal) {
     (void)hal;
 
     return TF_E_OK;
 }
 
-int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
+int tf_hal_chip_select(TF_HAL *hal, uint8_t port_id, bool enable) {
     (void)hal;
     (void)port_id;
     (void)enable;
@@ -37,7 +37,7 @@ int tf_hal_chip_select(TF_HalContext *hal, uint8_t port_id, bool enable) {
     return TF_E_OK;
 }
 
-int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, const uint32_t length) {
+int tf_hal_transceive(TF_HAL *hal, uint8_t port_id, const uint8_t *write_buffer, uint8_t *read_buffer, const uint32_t length) {
     (void)hal;
     (void)port_id;
     (void)write_buffer;
@@ -47,18 +47,18 @@ int tf_hal_transceive(TF_HalContext *hal, uint8_t port_id, const uint8_t *write_
     return TF_E_OK;
 }
 
-uint32_t tf_hal_current_time_us(TF_HalContext *hal) {
+uint32_t tf_hal_current_time_us(TF_HAL *hal) {
     (void)hal;
 
     return 0;
 }
 
-void tf_hal_sleep_us(TF_HalContext *hal, uint32_t us) {
+void tf_hal_sleep_us(TF_HAL *hal, uint32_t us) {
     (void)hal;
     (void)us;
 }
 
-TF_HalCommon *tf_hal_get_common(TF_HalContext *hal) {
+TF_HALCommon *tf_hal_get_common(TF_HAL *hal) {
     return &hal->hal_common;
 }
 
@@ -73,7 +73,7 @@ void tf_hal_log_newline(void) {
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int rc) {
     switch (rc) {
-        #include "../bindings/error_cases.h"
+        #include "../bindings/errors.inc"
 
         default:
             return "unknown error";
@@ -81,7 +81,7 @@ const char *tf_hal_strerror(int rc) {
 }
 #endif
 
-char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
+char tf_hal_get_port_name(TF_HAL *hal, uint8_t port_id) {
     if (port_id > hal->port_count) {
         return '?';
     }
@@ -89,7 +89,7 @@ char tf_hal_get_port_name(TF_HalContext *hal, uint8_t port_id) {
     return hal->ports[port_id].port_name;
 }
 
-TF_PortCommon *tf_hal_get_port_common(TF_HalContext *hal, uint8_t port_id) {
+TF_PortCommon *tf_hal_get_port_common(TF_HAL *hal, uint8_t port_id) {
     if (port_id > hal->port_count) {
         return NULL;
     }

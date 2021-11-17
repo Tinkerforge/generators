@@ -15,18 +15,18 @@
 
 #include "spitfp.h"
 #include "macros.h"
-#include "packetbuffer.h"
+#include "packet_buffer.h"
 #include "tfp_header.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef bool (*TF_CallbackHandler)(void *device, uint8_t fid, TF_Packetbuffer *payload);
+typedef bool (*TF_CallbackHandler)(void *device, uint8_t fid, TF_PacketBuffer *payload);
 
-typedef struct TF_TfpContext {
+typedef struct TF_TFP {
     void *hal;
-    TF_SpiTfpContext *spitfp;
+    TF_SPITFP *spitfp;
     void *device;
 
     uint32_t uid;
@@ -41,26 +41,26 @@ typedef struct TF_TfpContext {
 
     TF_CallbackHandler cb_handler;
     bool needs_callback_tick;
-} TF_TfpContext;
+} TF_TFP;
 
-// Don't declare the create function here. If we depend on TF_HalContext * (even if forward declared) this collides with the
+// Don't declare the create function here. If we depend on TF_HAL * (even if forward declared) this collides with the
 // required forward declaration in hal_common.h.
 // We just declare the function in hal_common.c (the only caller), as well as in tfp.c before the implementation to silence the missing prototype warning.
-//int tf_tfp_create(TF_TfpContext *tfp, TF_HalContext *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
-int tf_tfp_destroy(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+//int tf_tfp_create(TF_TFP *tfp, TF_HAL *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_tfp_destroy(TF_TFP *tfp) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
-void tf_tfp_prepare_send(TF_TfpContext *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) TF_ATTRIBUTE_NONNULL_ALL;
-uint8_t *tf_tfp_get_payload_buffer(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_tfp_prepare_send(TF_TFP *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) TF_ATTRIBUTE_NONNULL_ALL;
+uint8_t *tf_tfp_get_payload_buffer(TF_TFP *tfp) TF_ATTRIBUTE_NONNULL_ALL;
 
-int tf_tfp_transmit_packet(TF_TfpContext *tfp, bool response_expected, uint32_t deadline_us, uint8_t *error_code) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
-void tf_tfp_packet_processed(TF_TfpContext *tfp) TF_ATTRIBUTE_NONNULL_ALL;
-int tf_tfp_finish_send(TF_TfpContext *tfp, int previous_result, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_tfp_transmit_packet(TF_TFP *tfp, bool response_expected, uint32_t deadline_us, uint8_t *error_code) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+void tf_tfp_packet_processed(TF_TFP *tfp) TF_ATTRIBUTE_NONNULL_ALL;
+int tf_tfp_finish_send(TF_TFP *tfp, int previous_result, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 int tf_tfp_get_error(uint8_t error_code) TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
-int tf_tfp_callback_tick(TF_TfpContext *tfp, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+int tf_tfp_callback_tick(TF_TFP *tfp, uint32_t deadline_us) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
-void tf_tfp_inject_packet(TF_TfpContext *tfp, TF_TfpHeader *header, uint8_t *packet) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_tfp_inject_packet(TF_TFP *tfp, TF_TFPHeader *header, uint8_t *packet) TF_ATTRIBUTE_NONNULL_ALL;
 
 #ifdef __cplusplus
 }

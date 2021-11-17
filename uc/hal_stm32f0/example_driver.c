@@ -160,7 +160,7 @@ void check(int e_code, const char *c) {
 	tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
 }
 
-TF_HalContext hal;
+TF_HAL hal;
 
 int bricklet_main(void) {
 	tf_hal_printf("Hello World!\n");

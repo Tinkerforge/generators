@@ -6,8 +6,8 @@ static TF_Port ports[1] = {
     TF_PORT(1, 'A')
 };
 
-void example_setup(TF_HalContext *hal);
-void example_loop(TF_HalContext *hal);
+void example_setup(TF_HAL *hal);
+void example_loop(TF_HAL *hal);
 
 void check(int e_code, const char *c);
 
@@ -17,7 +17,7 @@ void check(int e_code, const char *c) {
     }
 }
 
-static TF_HalContext hal;
+static TF_HAL hal;
 
 int main(void) {
     check(tf_hal_create(&hal, ports, sizeof(ports) / sizeof(ports[0])), "hal create");

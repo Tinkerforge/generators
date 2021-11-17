@@ -123,18 +123,18 @@ class UCExample(common.Example):
 
 void check(int rc, const char* msg);
 
-void example_setup(TF_HalContext *hal);
-void example_loop(TF_HalContext *hal);
+void example_setup(TF_HAL *hal);
+void example_loop(TF_HAL *hal);
 
 {functions}
 static TF_{device_camel} {device_initial};
 
-void example_setup(TF_HalContext *hal) {{
+void example_setup(TF_HAL *hal) {{
 	// Create device object
 	check(tf_{device_under}_create(&{device_initial}, UID, hal), "create device object");
 {sources}}}
 
-void example_loop(TF_HalContext *hal) {{
+void example_loop(TF_HAL *hal) {{
 	// Poll for callbacks
 	tf_hal_callback_tick(hal, 0);
 }}

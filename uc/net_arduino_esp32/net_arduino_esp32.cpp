@@ -8,29 +8,25 @@
 
 #include "net_arduino_esp32.h"
 
-#include "Arduino.h"
-
-#include "lwip/err.h"
-#include "lwip/sockets.h"
-#include "lwip/sys.h"
+#include <Arduino.h>
+#include <lwip/err.h>
+#include <lwip/sockets.h>
+#include <lwip/sys.h>
 #include <lwip/netdb.h>
-
-#include "string.h"
-
-#include "../bindings/macros.h"
-#include "../bindings/hal_common.h"
-
+#include <string.h>
 #include <esp_wifi.h>
 #include <esp_random.h>
 
+#include "../bindings/macros.h"
+#include "../bindings/hal_common.h"
 #include "hmac.h"
 
-static void remove_open_request(TF_NetContext *net, size_t idx) {
+static void remove_open_request(TF_Net *net, size_t idx) {
     memmove(net->open_requests + idx, net->open_requests + idx + 1, sizeof(TF_Request) * (net->open_request_count - idx - 1));
     --net->open_request_count;
 }
 
-static void add_open_request(TF_NetContext *net, uint32_t client_id, TF_TfpHeader *header) {
+static void add_open_request(TF_Net *net, uint32_t client_id, TF_TFPHeader *header) {
     if (net->open_request_count == sizeof(net->open_requests) / sizeof(net->open_requests[0])) {
         // The open_request array is full. Drop the oldest request.
         // Note that this does not mean, that a later response to the dropped request will be
@@ -139,15 +135,15 @@ static int server_accept(int server_fd) {
     return client_fd;
 }
 
-static uint32_t tf_net_current_time_us(TF_NetContext *net) {
+static uint32_t tf_net_current_time_us(TF_Net *net) {
     return micros();
 }
 
-static uint32_t tf_net_current_time_ms(TF_NetContext *net) {
+static uint32_t tf_net_current_time_ms(TF_Net *net) {
     return millis();
 }
 
-static void remove_client(TF_NetContext *net, uint32_t client_idx) {
+static void remove_client(TF_Net *net, uint32_t client_idx) {
     TF_NetClient *client = &net->clients[client_idx];
 
     for (int i = 0; i < net->open_request_count; ++i) {
@@ -170,7 +166,7 @@ static void remove_client(TF_NetContext *net, uint32_t client_idx) {
     tf_hal_log_info("disconnect; clients used: %d\n", net->clients_used);
 }
 
-static int read_packets(TF_NetContext *net) {
+static int read_packets(TF_Net *net) {
     for (size_t i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
         uint8_t *buf = client->read_buf;
@@ -205,7 +201,7 @@ static int read_packets(TF_NetContext *net) {
     return 0;
 }
 
-static int send_from_buf(TF_NetContext *net, int client_idx) {
+static int send_from_buf(TF_Net *net, int client_idx) {
     TF_NetClient *client = &net->clients[client_idx];
     int written = send(client->fd, client->send_buf, client->send_buf_used, 0);
 
@@ -231,7 +227,7 @@ static bool deadline_elapsed(uint32_t now, uint32_t deadline_us) {
     return ((uint32_t)(now - deadline_us)) < (UINT32_MAX / 2);
 }
 
-static int add_to_send_buf(TF_NetContext *net, int client_idx, uint8_t *buf, uint8_t len) {
+static int add_to_send_buf(TF_Net *net, int client_idx, uint8_t *buf, uint8_t len) {
     TF_NetClient *client = &net->clients[client_idx];
     size_t send_buf_size = sizeof(client->send_buf) / sizeof(client->send_buf[0]);
     uint32_t deadline_us = tf_net_current_time_us(net) + 10000;
@@ -263,7 +259,7 @@ static int add_to_send_buf(TF_NetContext *net, int client_idx, uint8_t *buf, uin
     return len;
 }
 
-static void flush_send_buffers(TF_NetContext *net) {
+static void flush_send_buffers(TF_Net *net) {
     for (size_t i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
 
@@ -280,7 +276,7 @@ static void flush_send_buffers(TF_NetContext *net) {
     }
 }
 
-static int accept_connections(TF_NetContext *net) {
+static int accept_connections(TF_Net *net) {
     TF_NetClient *clients = net->clients;
     size_t max_clients = sizeof(net->clients) / sizeof(net->clients[0]);
 
@@ -331,15 +327,15 @@ static int accept_connections(TF_NetContext *net) {
     return 0;
 }
 
-static void remove_dead_clients(TF_NetContext *net) {
+/*static void remove_dead_clients(TF_Net *net) {
     for (size_t i = 0; i < net->clients_used; ++i) {
         if (deadline_elapsed(tf_net_current_time_ms(net), net->clients[i].last_recv_ms + net->recv_timeout_ms)) {
             remove_client(net, i);
         }
     }
-}
+}*/
 
-static bool is_valid_header(TF_TfpHeader *header) {
+static bool is_valid_header(TF_TFPHeader *header) {
     if (header->length < TF_TFP_MIN_MESSAGE_LENGTH) {
         return false;
     }
@@ -362,7 +358,7 @@ static void drop_packet(TF_NetClient *client, uint8_t len) {
     client->available_packet_valid = false;
 }
 
-static void broadcast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) {
+static void broadcast(TF_Net *net, TF_TFPHeader *header, uint8_t *buf) {
     for (size_t i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
 
@@ -380,7 +376,7 @@ static void broadcast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) {
     }
 }
 
-static void unicast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf, size_t client_idx) {
+static void unicast(TF_Net *net, TF_TFPHeader *header, uint8_t *buf, size_t client_idx) {
     if (add_to_send_buf(net, client_idx, buf, header->length) < 0) {
         remove_client(net, client_idx);
         return;
@@ -393,7 +389,7 @@ static void unicast(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf, size
     }
 }
 
-static void handle_get_authentication_nonce_request(TF_NetContext *net, uint8_t client_id, TF_TfpHeader *header, uint8_t *buf) {
+static void handle_get_authentication_nonce_request(TF_Net *net, uint8_t client_id, TF_TFPHeader *header, uint8_t *buf) {
     TF_NetClient *client = &net->clients[client_id];
 
     if (client->auth_state == TF_CLIENT_AUTHENTICATION_STATE_DISABLED) {
@@ -417,13 +413,13 @@ static void handle_get_authentication_nonce_request(TF_NetContext *net, uint8_t 
 
     if (header->response_expected) {
         header->length = TF_GET_AUTHENTICATION_NONCE_RESPONSE_LEN;
-        tf_write_packet_header(header, buf);
+        tf_tfp_header_write(header, buf);
         memcpy(buf + TF_TFP_HEADER_LENGTH, &client->auth_nonce, sizeof(client->auth_nonce));
         unicast(net, header, buf, client_id);
     }
 }
 
-static void handle_authenticate_request(TF_NetContext *net, uint8_t client_id, TF_TfpHeader *header, uint8_t *buf) {
+static void handle_authenticate_request(TF_Net *net, uint8_t client_id, TF_TFPHeader *header, uint8_t *buf) {
     TF_NetClient *client = &net->clients[client_id];
 
     if (client->auth_state == TF_CLIENT_AUTHENTICATION_STATE_DISABLED) {
@@ -461,14 +457,12 @@ static void handle_authenticate_request(TF_NetContext *net, uint8_t client_id, T
 
     if (header->response_expected) {
         header->length = TF_AUTHENTICATE_RESPONSE_LEN;
-        tf_write_packet_header(header, buf);
+        tf_tfp_header_write(header, buf);
         unicast(net, header, buf, client_id);
     }
 }
 
-static void handle_brickd_packet(TF_NetContext *net, uint8_t packet_id, TF_TfpHeader *header, uint8_t *buf) {
-    TF_NetClient *client = &net->clients[packet_id];
-
+static void handle_brickd_packet(TF_Net *net, uint8_t packet_id, TF_TFPHeader *header, uint8_t *buf) {
     if (header->fid == TF_FUNCTION_GET_AUTHENTICATION_NONCE) {
         if (header->length != TF_GET_AUTHENTICATION_NONCE_REQUEST_LEN) {
             tf_hal_log_info("Received authentication-nonce request with wrong length. Disconnecting client.\n");
@@ -492,11 +486,11 @@ static void handle_brickd_packet(TF_NetContext *net, uint8_t packet_id, TF_TfpHe
     }
 
     header->error_code = 2;
-    tf_write_packet_header(header, buf);
+    tf_tfp_header_write(header, buf);
     unicast(net, header, buf, packet_id);
 }
 
-static void reassemble_packets(TF_NetContext *net) {
+static void reassemble_packets(TF_Net *net) {
     for (int i = 0; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
 
@@ -511,9 +505,9 @@ static void reassemble_packets(TF_NetContext *net) {
         }
 
         uint8_t *buf = client->read_buf;
-        TF_TfpHeader header;
+        TF_TFPHeader header;
 
-        tf_peek_packet_header_plain_buf(buf, &header);
+        tf_tfp_header_peek_plain(&header, buf);
 
         if (!is_valid_header(&header)) {
             tf_hal_log_debug("invalid request, closing connection\n");
@@ -532,7 +526,7 @@ static void reassemble_packets(TF_NetContext *net) {
             drop_packet(client, len);
             continue;
         } else if (   client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_DISABLED
-                  && client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_DONE) {
+                   && client->auth_state != TF_CLIENT_AUTHENTICATION_STATE_DONE) {
             tf_hal_log_info("Client not authenticated. Dropping request\n");
             drop_packet(client, header.length);
             continue;
@@ -543,12 +537,12 @@ static void reassemble_packets(TF_NetContext *net) {
     }
 }
 
-int tf_net_create(TF_NetContext *net, const char* listen_addr, uint16_t port, const char* auth_secret) {
+int tf_net_create(TF_Net *net, const char* listen_addr, uint16_t port, const char* auth_secret) {
     (void)listen_addr;
     (void)port;
     (void)auth_secret;
 
-    memset(net, 0, sizeof(TF_NetContext));
+    memset(net, 0, sizeof(TF_Net));
     net->server_fd = build_server_socket();
     net->send_buf_timeout_us = 20000;
     net->recv_timeout_ms = 60000;
@@ -564,20 +558,19 @@ int tf_net_create(TF_NetContext *net, const char* listen_addr, uint16_t port, co
     return 0;
 }
 
-int tf_net_destroy(TF_NetContext *net) {
+int tf_net_destroy(TF_Net *net) {
     if (net->server_fd >= 0) {
         close(net->server_fd);
     }
 
     for (int i = 0; i < net->clients_used; ++i) {
-        TF_NetClient *client = &net->clients[i];
         remove_client(net, i);
     }
 
     return 0;
 }
 
-int tf_net_tick(TF_NetContext *net) {
+int tf_net_tick(TF_Net *net) {
     flush_send_buffers(net);
     read_packets(net);
     reassemble_packets(net);
@@ -588,7 +581,7 @@ int tf_net_tick(TF_NetContext *net) {
     return 0;
 }
 
-bool tf_net_get_available_packet_header(TF_NetContext *net, TF_TfpHeader *header, int *packet_id) {
+bool tf_net_get_available_tfp_header(TF_Net *net, TF_TFPHeader *header, int *packet_id) {
     for (int i = (*packet_id) + 1; i < net->clients_used; ++i) {
         TF_NetClient *client = &net->clients[i];
 
@@ -601,10 +594,11 @@ bool tf_net_get_available_packet_header(TF_NetContext *net, TF_TfpHeader *header
 
         return true;
     }
+
     return false;
 }
 
-int tf_net_get_packet(TF_NetContext *net, uint8_t packet_id, uint8_t *buf) {
+int tf_net_get_packet(TF_Net *net, uint8_t packet_id, uint8_t *buf) {
     TF_NetClient *client = &net->clients[packet_id];
 
     if (!client->available_packet_valid) {
@@ -621,7 +615,7 @@ int tf_net_get_packet(TF_NetContext *net, uint8_t packet_id, uint8_t *buf) {
     return 0;
 }
 
-int tf_net_drop_packet(TF_NetContext *net, uint8_t packet_id) {
+int tf_net_drop_packet(TF_Net *net, uint8_t packet_id) {
     TF_NetClient *client = &net->clients[packet_id];
 
     if (!client->available_packet_valid) {
@@ -633,7 +627,7 @@ int tf_net_drop_packet(TF_NetContext *net, uint8_t packet_id) {
     return 0;
 }
 
-void tf_net_send_packet(TF_NetContext *net, TF_TfpHeader *header, uint8_t *buf) {
+void tf_net_send_packet(TF_Net *net, TF_TFPHeader *header, uint8_t *buf) {
     if (header->seq_num == 0) {
         broadcast(net, header, buf);
     } else {

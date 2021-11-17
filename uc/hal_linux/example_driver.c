@@ -4,8 +4,8 @@
 #include "bindings/errors.h"
 
 // Forward declare the example functions.
-void example_setup(TF_HalContext *hal);
-void example_loop(TF_HalContext *hal);
+void example_setup(TF_HAL *hal);
+void example_loop(TF_HAL *hal);
 
 void check(int e_code, const char *c);
 
@@ -46,7 +46,7 @@ void check(int e_code, const char *c) {
     tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
 }
 
-static TF_HalContext hal;
+static TF_HAL hal;
 
 int main(void) {
     printf("Hello World!\n");
