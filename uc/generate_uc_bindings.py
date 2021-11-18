@@ -305,6 +305,10 @@ int tf_{device_under}_get_response_expected(TF_{device_camel} *{device_under}, u
 }}
 
 int tf_{device_under}_set_response_expected(TF_{device_camel} *{device_under}, uint8_t function_id, bool response_expected) {{
+    if ({device_under} == NULL) {{
+        return TF_E_NULL;
+    }}
+
     switch (function_id) {{
 {setter_cases}
         default:
@@ -314,8 +318,14 @@ int tf_{device_under}_set_response_expected(TF_{device_camel} *{device_under}, u
     return TF_E_OK;
 }}
 
-void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under}, bool response_expected) {{
+int tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under}, bool response_expected) {{
+    if ({device_under} == NULL) {{
+        return TF_E_NULL;
+    }}
+
     memset({device_under}->response_expected, response_expected ? 0xFF : 0, {mapped_bytes});
+
+    return TF_E_OK;
 }}
 """
 
@@ -1102,7 +1112,7 @@ int tf_{device_under}_set_response_expected(TF_{device_camel} *{device_under}, u
  * Changes the response expected flag for all setter and callback configuration
  * functions of this device at once.
  */
-void tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under}, bool response_expected);
+int tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under}, bool response_expected);
 """
         return format(template, self)
 
