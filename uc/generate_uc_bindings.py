@@ -391,7 +391,6 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     }}
 
     if (result & TF_TICK_TIMEOUT) {{
-        //return -result;
         return TF_E_TIMEOUT;
     }}
 {extract_response}
