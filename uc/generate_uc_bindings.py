@@ -855,8 +855,7 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
     }}
 
     if (handler == NULL) {{
-        {device_under}->tfp->needs_callback_tick = false;
-        {other_handler_checks}
+        {device_under}->tfp->needs_callback_tick = false;{other_handler_checks}
     }} else {{
         {device_under}->tfp->needs_callback_tick = true;
     }}
@@ -875,6 +874,8 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
                 for other_packet in self.get_packets('callback')
                 if other_packet != packet
             ])
+
+            other_handler_checks = common.wrap_non_empty("\n        ", other_handler_checks, "")
 
             result.append(format(template, self, packet, other_handler_checks=other_handler_checks))
 
