@@ -213,6 +213,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
     }}
 
     {device_under}->tfp->device = {device_under};
+    {device_under}->tfp->uid = numeric_uid;
     {device_under}->tfp->cb_handler = tf_{device_under}_callback_handler;
     TF_PortCommon *port_common = tf_hal_get_port_common(hal, port_id);
     rc = tf_spitfp_create(&port_common->spitfp, hal, port_id);
