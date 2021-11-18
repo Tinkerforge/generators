@@ -272,7 +272,7 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
         return TF_E_NULL;
     }}
 
-    return tf_tfp_callback_tick({device_under}->tfp, tf_hal_current_time_us((TF_HAL*){device_under}->tfp->hal) + timeout_us);
+    return tf_tfp_callback_tick({device_under}->tfp, tf_hal_current_time_us((TF_HAL *){device_under}->tfp->hal) + timeout_us);
 }}
 """
         return format(template, self)
@@ -374,14 +374,14 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
         return TF_E_NULL;
     }}
 
-    if (tf_hal_get_common((TF_HAL*){device_under}->tfp->hal)->locked) {{
+    if (tf_hal_get_common((TF_HAL *){device_under}->tfp->hal)->locked) {{
         return TF_E_LOCKED;
     }}
 
     bool response_expected = true;{response_expected}
     tf_tfp_prepare_send({device_under}->tfp, TF_{fid}, {request_size}, {response_size}, response_expected);
 {loop_counter_def}{request_assignments}
-    uint32_t deadline = tf_hal_current_time_us((TF_HAL*){device_under}->tfp->hal) + tf_hal_get_common((TF_HAL*){device_under}->tfp->hal)->timeout;
+    uint32_t deadline = tf_hal_current_time_us((TF_HAL *){device_under}->tfp->hal) + tf_hal_get_common((TF_HAL *){device_under}->tfp->hal)->timeout;
 
     uint8_t error_code = 0;
     int result = tf_tfp_transmit_packet({device_under}->tfp, response_expected, deadline, &error_code);
@@ -918,7 +918,7 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
             }}
 {i_decl}
 {extract_payload}
-            TF_HALCommon *hal_common = tf_hal_get_common((TF_HAL*){device_under}->tfp->hal);
+            TF_HALCommon *hal_common = tf_hal_get_common((TF_HAL *){device_under}->tfp->hal);
             hal_common->locked = true;
             fn({device_under}, {params}user_data);
             hal_common->locked = false;
@@ -1354,7 +1354,7 @@ class UCBindingsPacket(uc_common.UCPacket):
             return_list.insert(0, 'char tmp_connected_uid[8] = {0};')
             return_list.append(
                 format("""if (tmp_connected_uid[0] == 0 && ret_position != NULL) {{
-            *ret_position = tf_hal_get_port_name((TF_HAL*){device_under}->tfp->hal, {device_under}->tfp->spitfp->port_id);
+            *ret_position = tf_hal_get_port_name((TF_HAL *){device_under}->tfp->hal, {device_under}->tfp->spitfp->port_id);
         }}
         if (ret_connected_uid != NULL) {{
             memcpy(ret_connected_uid, tmp_connected_uid, 8);
