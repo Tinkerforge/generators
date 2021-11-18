@@ -849,7 +849,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
         result = []
 
         template = """
-int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler handler, void *user_data) {{
+int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler handler, void *user_data) {{
     if ({device_under} == NULL) {{
         return TF_E_NULL;
     }}
@@ -909,9 +909,8 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
 }}
 #endif"""
 
-        case_template = """
-        case TF_{device_upper}_CALLBACK_{packet_upper}: {{
-            TF_{device_camel}{packet_camel}Handler fn = {device_under}->{packet_under}_handler;
+        case_template = """        case TF_{device_upper}_CALLBACK_{packet_upper}: {{
+            TF_{device_camel}_{packet_camel}Handler fn = {device_under}->{packet_under}_handler;
             void *user_data = {device_under}->{packet_under}_user_data;
             if (fn == NULL) {{
                 return false;
@@ -923,7 +922,8 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
             fn({device_under}, {params}user_data);
             hal_common->locked = false;
             break;
-        }}"""
+        }}
+"""
 
         cases = []
         for packet in self.get_packets('callback'):
@@ -973,7 +973,7 @@ typedef struct TF_{device_camel} {{
 """
         mapped_id_count = len([p for p in self.get_packets('function') if p.get_response_expected() != 'always_true'])
 
-        cb_handler_template = """    TF_{device_camel}{packet_camel}Handler {packet_under}_handler;
+        cb_handler_template = """    TF_{device_camel}_{packet_camel}Handler {packet_under}_handler;
     void *{packet_under}_user_data;
 """
         cb_handlers = [format(cb_handler_template, self, packet) for packet in self.get_packets('callback')]
@@ -992,7 +992,7 @@ typedef struct TF_{device_camel} {{
 
     def get_c_typedefs(self):
         typedefs = '\n'
-        template = """typedef void (*TF_{device_camel}{packet_camel}Handler)(struct TF_{device_camel} *device, {params}void *user_data);
+        template = """typedef void (*TF_{device_camel}_{packet_camel}Handler)(struct TF_{device_camel} *device, {params}void *user_data);
 """
 
         # normal and low-level
@@ -1156,7 +1156,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{parameter
  *
  * {doc}
  */
-int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler handler, void *user_data);
+int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler handler, void *user_data);
 """
 
         for packet in self.get_packets('callback'):
