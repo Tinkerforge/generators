@@ -11,13 +11,13 @@ extern "C" void example_loop(TF_HAL *hal);
 // signals, to make sure the signals are separated
 // correctly.
 TF_Port ports[6] = {
-    TF_PORT(27, HSPI, 'F'),
-    TF_PORT(26, HSPI, 'E'),
-    TF_PORT(25, HSPI, 'D'),
-
-    TF_PORT(17, VSPI, 'C'),
+    TF_PORT(16, VSPI, 'A'),
     TF_PORT(33, VSPI, 'B'),
-    TF_PORT(16, VSPI, 'A')
+    TF_PORT(17, VSPI, 'C'),
+
+    TF_PORT(25, HSPI, 'D'),
+    TF_PORT(26, HSPI, 'E'),
+    TF_PORT(27, HSPI, 'F'),
 };
 
 // Used to report any error encountered while running the example.
