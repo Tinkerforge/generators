@@ -894,7 +894,7 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
         template = """
 #if TF_IMPLEMENT_CALLBACKS != 0
 static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_PacketBuffer *payload) {{
-    TF_{device_camel} *{device_under} = (TF_{device_camel} *) dev;
+    TF_{device_camel} *{device_under} = (TF_{device_camel} *)dev;
     (void)payload;
 
     switch (fid) {{
