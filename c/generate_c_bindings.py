@@ -503,7 +503,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
 	{stream_length_type} {stream_name_under}_chunk_offset = 0;
 	{chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
 	{stream_length_type} {stream_name_under}_chunk_length;
-	uint8_t {stream_name_under}_chunk_written;
+	{chunk_written_type} {stream_name_under}_chunk_written;
 
 	*ret_{stream_name_under}_written = 0;
 
@@ -571,7 +571,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
 int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{high_level_parameters}) {{
 	int ret = 0;
 	{chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
-	uint8_t {stream_name_under}_written = 0;
+	{chunk_written_type} {stream_name_under}_written = 0;
 
 	if ({stream_name_under}_length > {chunk_cardinality}) {{
 		return E_INVALID_PARAMETER;
@@ -711,14 +711,19 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
 
                 if stream_in.get_fixed_length() != None:
                     template = template_stream_in_fixed_length
+                    chunk_written_type = 'invalid_t'
                 elif stream_in.has_short_write() and stream_in.has_single_chunk():
                     template = template_stream_in_short_write_single_chunk
+                    chunk_written_type = packet.get_elements(role='stream_chunk_written')[0].get_c_type('default')
                 elif stream_in.has_short_write():
                     template = template_stream_in_short_write
+                    chunk_written_type = packet.get_elements(role='stream_chunk_written')[0].get_c_type('default')
                 elif stream_in.has_single_chunk():
                     template = template_stream_in_single_chunk
+                    chunk_written_type = 'invalid_t'
                 else:
                     template = template_stream_in
+                    chunk_written_type = 'invalid_t'
 
                 functions += template.format(device_name_camel=self.get_name().camel,
                                              device_name_under=self.get_name().under,
@@ -727,6 +732,7 @@ int {device_name_under}_{name_under}({device_name_camel} *{device_name_under}{hi
                                              high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
                                              stream_name_under=stream_in.get_name().under,
                                              stream_length_type=stream_length_type,
+                                             chunk_written_type=chunk_written_type,
                                              fixed_length=stream_in.get_fixed_length(),
                                              chunk_data_type=stream_in.get_chunk_data_element().get_c_type('default'),
                                              chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())

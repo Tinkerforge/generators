@@ -546,6 +546,25 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': 'Short Write Bool Low Level',
+'elements': [('Message Length', 'uint16', 1, 'in', {}),
+             ('Message Chunk Offset', 'uint16', 1, 'in', {}),
+             ('Message Chunk Data', 'bool', 480, 'in', {}),
+             ('Message Chunk Written', 'uint16', 1, 'out', {})],
+'high_level': {'stream_in': {'name': 'Message', 'short_write': True}},
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Single Write Low Level',
 'elements': [('Message Length', 'uint8', 1, 'in', {}),
              ('Message Data', 'char', 63, 'in', {})],
