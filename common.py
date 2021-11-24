@@ -3095,7 +3095,7 @@ class Packet(object):
     def get_name(self, *args, **kwargs):
         return self.name.get(*args, **kwargs)
 
-    def get_elements(self, name=None, direction=None, high_level=False, role=None):
+    def get_elements(self, name=None, direction=None, high_level=False, role='all'):
         if direction not in [None, 'in', 'out']:
             raise GeneratorError('Invalid element direction ' + direction)
 
@@ -3114,7 +3114,7 @@ class Packet(object):
             if not high_level and element.get_level() == 'high':
                 continue
 
-            if role != None and element.get_role() != role:
+            if role != 'all' and element.get_role() != role:
                 continue
 
             elements.append(element)
