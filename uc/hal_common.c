@@ -467,7 +467,7 @@ static TF_TFP *next_callback_tick_tfp(TF_HAL *hal) {
 
 #if TF_NET_ENABLE != 0
 static uint8_t enumerate_request[8] = {
-    0, 0, 0, 0, //uid 1
+    0, 0, 0, 0, // uid 1
     8, // length 8
     254, // fid 254
     0x40, // seq num 4
@@ -537,6 +537,7 @@ int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
             bool device_found = false;
             bool dispatched = false;
 
+            // Skip index 0: the unknown bricklet
             for (int i = 1; i < (int)hal_common->used; ++i) {
                 if (header.uid != hal_common->uids[i]) {
                     continue;
@@ -547,7 +548,7 @@ int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
                 // Intentionally don't use get_payload_buffer here: the payload buffer is at send_buf + SPITFP_HEADER_SIZE
                 // But the "is the buffer filled" marker is just the SPITFP packet length, i.e. before the SPITFP payload.
                 if (hal_common->tfps[i].spitfp->send_buf[0] != 0) {
-                    // send buffer is not empty.
+                    // Send buffer is not empty.
                     continue;
                 }
 
