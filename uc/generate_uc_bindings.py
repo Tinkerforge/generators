@@ -71,6 +71,7 @@ class UCBindingsDevice(common.Device):
 #include "base58.h"
 #include "endian_convert.h"
 #include "errors.h"
+#include "streaming.h"
 
 #include <string.h>
 
@@ -415,7 +416,6 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 """
 
         for packet in self.get_packets('function'):
-            packet_under = packet.get_name().under
             params = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
             fid = format('{device_upper}_FUNCTION_{packet_upper}', self, packet)
 
@@ -461,289 +461,84 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
                                                         request_size=request_size,
                                                         response_size=response_size)
 
-        # high-level
-        template_stream_in = """
+        template_stream_wrapper_struct = """
+typedef struct TF_{device_camel}{packet_camel}LLWrapperData {{
+    {extra_param_decls}
+}} TF_{device_camel}{packet_camel}LLWrapperData;
+
+"""
+        template_stream_wrapper_struct_cast = """TF_{device_camel}{packet_camel}LLWrapperData *data = (TF_{device_camel}{packet_camel}LLWrapperData *) wrapper_data;
+    """
+        template_stream_wrapper_creation = """
+    TF_{device_camel}{packet_camel}LLWrapperData wrapper_data;
+    memset(&wrapper_data, 0, sizeof(wrapper_data));
+"""
+
+        template_stream_in_wrapper_chunk_offset_assignment = """{stream_length_type} {stream_name_under}_chunk_offset = ({stream_length_type})chunk_offset;
+    """
+        template_stream_in_wrapper_fixed_length_assignment = """{stream_length_type} {stream_name_under}_length = ({stream_length_type})stream_length;
+    """
+        template_stream_in = """{wrapper_struct}
+static int tf_{device_under}_{packet_under}_ll_wrapper(void *device, void *wrapper_data, uint32_t stream_length, uint32_t chunk_offset, void *chunk_data, uint32_t *ret_chunk_written) {{
+    {wrapper_cast}{wrapper_chunk_offset_assignment}{wrapper_fixed_length_assignment}uint8_t {stream_name_under}{maybe_chunk}_written = 0;
+
+    {chunk_data_type} *{stream_name_under}{maybe_chunk}_data = ({chunk_data_type} *) chunk_data;
+    int ret = tf_{device_under}_{packet_under}_low_level((TF_{device_camel} *)device, {wrapped_arguments});
+
+    *ret_chunk_written = (uint32_t) {stream_name_under}{maybe_chunk}_written;
+    return ret;
+}}
+
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     if ({device_under} == NULL) {{
         return TF_E_NULL;
     }}
+    {wrapper_creation}{fill_extra_params}
 
-    int ret = TF_E_OK;
+    uint32_t stream_length = {fixed_length_or_param_assignment};
+    uint32_t {stream_name_under}_written = 0;
+    {chunk_data_type} chunk_data[{chunk_cardinality}];
+
+    int ret = tf_stream_in({device_under}, tf_{device_under}_{packet_under}_ll_wrapper, {wrapper_arg}, {stream_name_under}, stream_length, chunk_data, &{stream_name_under}_written, {chunk_cardinality}, tf_copy_items_{chunk_data_type});
+
+{short_write_assignment}
+
+    return ret;
+}}
+
+"""
+
+        template_stream_out = """{wrapper_struct}
+static int tf_{device_under}_{packet_under}_ll_wrapper(void *device, void *wrapper_data, uint32_t *ret_stream_length, uint32_t *ret_chunk_offset, void *chunk_data) {{
+    {wrapper_cast}{stream_length_type} {stream_name_under}_length = {fixed_length};
     {stream_length_type} {stream_name_under}_chunk_offset = 0;
+    {chunk_data_type} *{stream_name_under}_chunk_data = ({chunk_data_type} *) chunk_data;
+    int ret = tf_{device_under}_{packet_under}_low_level((TF_{device_camel} *)device, {wrapped_arguments});{chunk_offset_check}
+
+    *ret_stream_length = (uint32_t){stream_name_under}_length;
+    *ret_chunk_offset = (uint32_t){stream_name_under}_chunk_offset;
+    return ret;
+}}
+
+int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
+    if ({device_under} == NULL) {{
+        return TF_E_NULL;
+    }}
+    {wrapper_creation}{fill_extra_params}
+    uint32_t {stream_name_under}_length = 0;
     {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-    {stream_length_type} {stream_name_under}_chunk_length = 0;
 
-    if ({stream_name_under}_length == 0) {{
-        memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
+    int ret = tf_stream_out({device_under}, tf_{device_under}_{packet_under}_ll_wrapper, {wrapper_arg}, ret_{stream_name_under}, &{stream_name_under}_length, {stream_name_under}_chunk_data, {chunk_cardinality}, tf_copy_items_{chunk_data_type});
 
-        ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-    }} else {{
-        while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
-            {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
-
-            if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-                {stream_name_under}_chunk_length = {chunk_cardinality};
-            }}
-
-            memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-            memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
-
-            ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-
-            if (ret != TF_E_OK) {{
-                break;
-            }}
-
-            {stream_name_under}_chunk_offset += {chunk_cardinality};
-        }}
-
-    }}
-
+    *ret_{stream_name_under}_length = ({stream_length_type}){stream_name_under}_length;
     return ret;
 }}
 """
-        template_stream_in_fixed_length = """
-int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL) {{
-        return TF_E_NULL;
-    }}
 
-    int ret = TF_E_OK;
-    {stream_length_type} {stream_name_under}_length = {fixed_length};
-    {stream_length_type} {stream_name_under}_chunk_offset = 0;
-    {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-    {stream_length_type} {stream_name_under}_chunk_length = 0;
-
-    while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
-        {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
-
-        if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-            {stream_name_under}_chunk_length = {chunk_cardinality};
-        }}
-
-        memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-        memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
-
-        ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-
-        if (ret < TF_E_OK) {{
-            break;
-        }}
-
-        {stream_name_under}_chunk_offset += {chunk_cardinality};
-    }}
-
-    return ret;
-}}
-"""
-        template_stream_in_short_write = """
-int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL) {{
-        return TF_E_NULL;
-    }}
-
-    int ret = TF_E_OK;
-    {stream_length_type} {stream_name_under}_chunk_offset = 0;
-    {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-    {stream_length_type} {stream_name_under}_chunk_length = 0;
-    uint8_t {stream_name_under}_chunk_written = 0;
-
-    if (ret_{stream_name_under}_written != NULL) {{
-        *ret_{stream_name_under}_written = 0;
-    }}
-
-    if ({stream_name_under}_length == 0) {{
-        memset(&{stream_name_under}_chunk_data, 0, sizeof({chunk_data_type}) * {chunk_cardinality});
-
-        ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-
-        if (ret != TF_E_OK) {{
-            return ret;
-        }}
-
-        if (ret_{stream_name_under}_written != NULL) {{
-            *ret_{stream_name_under}_written = {stream_name_under}_chunk_written;
-        }}
-    }} else {{
-
-        while ({stream_name_under}_chunk_offset < {stream_name_under}_length) {{
-            {stream_name_under}_chunk_length = {stream_name_under}_length - {stream_name_under}_chunk_offset;
-
-            if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-                {stream_name_under}_chunk_length = {chunk_cardinality};
-            }}
-
-            memcpy({stream_name_under}_chunk_data, &{stream_name_under}[{stream_name_under}_chunk_offset], sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-            memset(&{stream_name_under}_chunk_data[{stream_name_under}_chunk_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_chunk_length));
-
-            ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-
-            if (ret != TF_E_OK) {{
-                if (ret_{stream_name_under}_written != NULL) {{
-                    *ret_{stream_name_under}_written = 0;
-                }}
-
-                break;
-            }}
-
-            if (ret_{stream_name_under}_written != NULL) {{
-                *ret_{stream_name_under}_written += {stream_name_under}_chunk_written;
-            }}
-
-            if ({stream_name_under}_chunk_written < {chunk_cardinality}) {{
-                break; // either last chunk or short write
-            }}
-
-            {stream_name_under}_chunk_offset += {chunk_cardinality};
-        }}
-
-    }}
-
-    return ret;
-}}
-"""
-        template_stream_in_single_chunk = """
-int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL) {{
-        return TF_E_NULL;
-    }}
-
-    {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
-
-    if ({stream_name_under}_length > {chunk_cardinality}) {{
-        return TF_E_INVALID_PARAMETER;
-    }}
-
-    memcpy({stream_name_under}_data, {stream_name_under}, sizeof({chunk_data_type}) * {stream_name_under}_length);
-    memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
-
-    return tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-}}
-"""
-        template_stream_in_short_write_single_chunk = """
-int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL) {{
-        return TF_E_NULL;
-    }}
-
-    int ret = TF_E_OK;
-    {chunk_data_type} {stream_name_under}_data[{chunk_cardinality}];
-    uint8_t {stream_name_under}_written = 0;
-
-    if ({stream_name_under}_length > {chunk_cardinality}) {{
-        return TF_E_INVALID_PARAMETER;
-    }}
-
-    memcpy({stream_name_under}_data, {stream_name_under}, sizeof({chunk_data_type}) * {stream_name_under}_length);
-    memset(&{stream_name_under}_data[{stream_name_under}_length], 0, sizeof({chunk_data_type}) * ({chunk_cardinality} - {stream_name_under}_length));
-
-    ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-
-    if (ret != TF_E_OK) {{
-        return ret;
-    }}
-
-    if (ret_{stream_name_under}_written != NULL) {{
-        *ret_{stream_name_under}_written = {stream_name_under}_written;
-    }}
-
-    return ret;
-}}
-"""
-        template_stream_out = """
-int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
-    if ({device_under} == NULL) {{
-        return TF_E_NULL;
-    }}
-
-    int ret = TF_E_OK;
-    {stream_length_type} max_{stream_name_under}_length = {fixed_length};
-    {stream_length_type} {stream_name_under}_length = 0;
-    {stream_length_type} {stream_name_under}_chunk_offset = 0;
-    {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
-    bool {stream_name_under}_out_of_sync;
-    {stream_length_type} {stream_name_under}_chunk_length = 0;
-
-    ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-
-    if (ret != TF_E_OK) {{
-        if (ret_{stream_name_under}_length != NULL) {{
-            *ret_{stream_name_under}_length = {stream_name_under}_length;
-        }}
-
-        return ret;
-    }}{chunk_offset_check}
-
-    {stream_name_under}_out_of_sync = {stream_name_under}_chunk_offset != 0;
-
-    if (!{stream_name_under}_out_of_sync) {{
-        {stream_name_under}_chunk_length = max_{stream_name_under}_length - {stream_name_under}_chunk_offset;
-
-        if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-            {stream_name_under}_chunk_length = {chunk_cardinality};
-        }}
-
-        if (ret_{stream_name_under} != NULL) {{
-            memcpy(ret_{stream_name_under}, {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-        }}
-
-        {stream_name_under}_length = {stream_name_under}_chunk_length;
-
-        while ({stream_name_under}_length < max_{stream_name_under}_length) {{
-            ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-
-            if (ret != TF_E_OK) {{
-                if (ret_{stream_name_under}_length != NULL) {{
-                    *ret_{stream_name_under}_length = {stream_name_under}_length;
-                }}
-
-                return ret;
-            }}
-
-            {stream_name_under}_out_of_sync = {stream_name_under}_chunk_offset != {stream_name_under}_length;
-
-            if ({stream_name_under}_out_of_sync) {{
-                break;
-            }}
-
-            {stream_name_under}_chunk_length = max_{stream_name_under}_length - {stream_name_under}_chunk_offset;
-
-            if ({stream_name_under}_chunk_length > {chunk_cardinality}) {{
-                {stream_name_under}_chunk_length = {chunk_cardinality};
-            }}
-
-            if (ret_{stream_name_under} != NULL) {{
-                memcpy(&ret_{stream_name_under}[{stream_name_under}_length], {stream_name_under}_chunk_data, sizeof({chunk_data_type}) * {stream_name_under}_chunk_length);
-            }}
-
-            {stream_name_under}_length += {stream_name_under}_chunk_length;
-        }}
-    }}
-
-    if ({stream_name_under}_out_of_sync) {{
-        if (ret_{stream_name_under}_length != NULL) {{
-            *ret_{stream_name_under}_length = 0; // return empty array
-        }}
-
-        // discard remaining stream to bring it back in-sync
-        while ({stream_name_under}_chunk_offset + {chunk_cardinality} < max_{stream_name_under}_length) {{
-            ret = tf_{device_under}_{packet_under}_low_level({device_under}{parameters});
-
-            if (ret != TF_E_OK) {{
-                return ret;
-            }}
-        }}
-
-        ret = TF_E_STREAM_OUT_OF_SYNC;
-    }}
-
-    return ret;
-}}
-"""
         template_stream_out_chunk_offset_check = """
 
     if ({stream_name_under}_chunk_offset == (1 << {shift_size}) - 1) {{ // maximum chunk offset -> stream has no data
-        return ret;
+        return TF_E_INTERNAL_STREAM_HAS_NO_DATA;
     }}"""
         template_stream_out_single_chunk = """
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
@@ -782,6 +577,35 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
             stream_in = packet.get_high_level('stream_in')
             stream_out = packet.get_high_level('stream_out')
 
+            if stream_in is None and stream_out is None:
+                continue
+
+            extra_param_decls = common.wrap_non_empty("", packet.get_c_parameters(role=None).replace(", ", ";\n    "), ";")
+            fill_extra_params = ""
+            if len(packet.get_c_arguments('default', role=None)) > 0:
+                fill_extra_params = "    " + "\n    ".join("wrapper_data.{0} = {0};".format(x) for x in packet.get_c_arguments('default', role=None).split(", "))
+
+
+            roleless_args = packet.get_c_arguments('default', role=None).split(", ")
+            wrapped_args = []
+            for arg in packet.get_c_arguments('default').split(", "):
+                if arg not in roleless_args:
+                    wrapped_args.append(arg)
+                    continue
+
+                wrapped_args.append("data->" + arg)
+
+            wrapper_struct = ""
+            wrapper_cast = "(void)wrapper_data;\n    "
+            wrapper_creation = ""
+            wrapper_arg = "NULL"
+            if len(extra_param_decls) > 0:
+                wrapper_struct = format(template_stream_wrapper_struct, self, packet, -2,
+                                        extra_param_decls=extra_param_decls)
+                wrapper_cast = format(template_stream_wrapper_struct_cast, self, packet, -2)
+                wrapper_creation = format(template_stream_wrapper_creation, self, packet, -2)
+                wrapper_arg = "&wrapper_data"
+
             if stream_in != None:
                 length_element = stream_in.get_length_element()
                 chunk_offset_element = stream_in.get_chunk_offset_element()
@@ -791,25 +615,45 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                 elif chunk_offset_element != None:
                     stream_length_type = chunk_offset_element.get_c_type('default')
 
-                if stream_in.get_fixed_length() != None:
-                    template = template_stream_in_fixed_length
-                elif stream_in.has_short_write() and stream_in.has_single_chunk():
-                    template = template_stream_in_short_write_single_chunk
-                elif stream_in.has_short_write():
-                    template = template_stream_in_short_write
-                elif stream_in.has_single_chunk():
-                    template = template_stream_in_single_chunk
-                else:
-                    template = template_stream_in
+                fixed_length_or_param_assignment = stream_in.get_name().under + "_length"
+                wrapper_fixed_length_assignment = template_stream_in_wrapper_fixed_length_assignment.format(stream_name_under=stream_in.get_name().under, stream_length_type=stream_length_type)
+                if stream_in.get_fixed_length() is not None:
+                    fixed_length_or_param_assignment = stream_in.get_fixed_length()
+                    wrapper_fixed_length_assignment = "(void)stream_length;"
 
-                functions += format(template, self, packet, -2,
+                short_write_assignment = ""
+                if stream_in.has_short_write():
+                    short_write_assignment = """    if (ret_{stream_name_under}_written != NULL) {{
+        *ret_{stream_name_under}_written = ({stream_length_type}) {stream_name_under}_written;
+    }}""".format(stream_name_under=stream_in.get_name().under, stream_length_type=stream_length_type)
+
+                maybe_chunk = ""
+                wrapper_chunk_offset_assignment = "(void) chunk_offset;"
+                if not stream_in.has_single_chunk():
+                    maybe_chunk = "_chunk"
+                    wrapper_chunk_offset_assignment = template_stream_in_wrapper_chunk_offset_assignment.format(stream_name_under=stream_in.get_name().under, stream_length_type=stream_length_type)
+
+                functions += format(template_stream_in, self, packet, -2,
                                     parameters=common.wrap_non_empty(', ', packet.get_c_arguments('default'), ''),
                                     high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
                                     stream_name_under=stream_in.get_name().under,
                                     stream_length_type=stream_length_type,
                                     fixed_length=stream_in.get_fixed_length(),
                                     chunk_data_type=stream_in.get_chunk_data_element().get_c_type('default'),
-                                    chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())
+                                    chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
+
+                                    fill_extra_params=fill_extra_params,
+                                    wrapped_arguments=", ".join(wrapped_args),
+                                    wrapper_struct=wrapper_struct,
+                                    wrapper_cast=wrapper_cast,
+                                    wrapper_creation=wrapper_creation,
+                                    wrapper_arg=wrapper_arg,
+                                    fixed_length_or_param_assignment=fixed_length_or_param_assignment,
+                                    short_write_assignment=short_write_assignment,
+                                    maybe_chunk=maybe_chunk,
+                                    wrapper_chunk_offset_assignment=wrapper_chunk_offset_assignment,
+                                    wrapper_fixed_length_assignment=wrapper_fixed_length_assignment)
+
             elif stream_out != None:
                 length_element = stream_out.get_length_element()
                 chunk_offset_element = stream_out.get_chunk_offset_element()
@@ -839,7 +683,14 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                                     fixed_length=stream_out.get_fixed_length(default='0'),
                                     chunk_offset_check=chunk_offset_check,
                                     chunk_data_type=stream_out.get_chunk_data_element().get_c_type('default'),
-                                    chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality())
+                                    chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality(),
+
+                                    fill_extra_params=fill_extra_params,
+                                    wrapped_arguments=", ".join(wrapped_args),
+                                    wrapper_struct=wrapper_struct,
+                                    wrapper_cast=wrapper_cast,
+                                    wrapper_creation=wrapper_creation,
+                                    wrapper_arg=wrapper_arg)
 
         return functions
 

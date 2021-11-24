@@ -31,7 +31,7 @@ from generators import common
 UC_KEYWORDS = ['register']
 
 class UCPacket(common.Packet):
-    def get_c_parameters(self, high_level=False):
+    def get_c_parameters(self, high_level=False, role='all'):
         parameters = []
         packet_type = self.get_type()
 
@@ -40,20 +40,23 @@ class UCPacket(common.Packet):
             modifier = ''
             name = element.get_name().under
             direction = element.get_direction()
-            role = element.get_role()
+            e_role = element.get_role()
             array = ''
+
+            if role != 'all' and role != e_role:
+                continue
 
             if direction == 'out' and packet_type == 'function':
                 modifier = '*'
                 name = 'ret_{0}'.format(name)
 
-            if role == 'stream_data':
+            if e_role == 'stream_data':
                 if direction == 'in' and packet_type == 'function':
                     modifier = '*'
                 elif direction == 'out' and packet_type == 'callback':
                     modifier = '*'
 
-            if role != 'stream_data' and element.get_cardinality() > 1:
+            if e_role != 'stream_data' and element.get_cardinality() > 1:
                 if element.get_type() == 'string' and direction == 'in':
                     modifier = '*'
                 else:
@@ -65,7 +68,7 @@ class UCPacket(common.Packet):
             length_elements = self.get_elements(role='stream_length')
             chunk_offset_elements = self.get_elements(role='stream_chunk_offset')
 
-            if role == 'stream_data' and (direction == 'out' or len(length_elements) > 0):
+            if e_role == 'stream_data' and (direction == 'out' or len(length_elements) > 0):
                 if direction == 'out' and packet_type == 'function':
                     modifier = '*'
                 else:
@@ -82,7 +85,7 @@ class UCPacket(common.Packet):
 
         return ', '.join(parameters)
 
-    def get_c_arguments(self, context, high_level=False, single_chunk=False):
+    def get_c_arguments(self, context, high_level=False, single_chunk=False, role='all'):
         assert context in ['default', 'callback_wrapper']
 
         arguments = []
@@ -91,15 +94,18 @@ class UCPacket(common.Packet):
             modifier = ''
             name = element.get_name().under
             direction = element.get_direction()
-            role = element.get_role()
+            e_role = element.get_role()
+
+            if role != 'all' and role != e_role:
+                continue
 
             if direction == 'out' and self.get_type() == 'function':
-                if role in ['stream_length', 'stream_chunk_offset', 'stream_chunk_written']:
+                if e_role in ['stream_length', 'stream_chunk_offset', 'stream_chunk_written']:
                     modifier = '&'
-                elif role not in ['stream_chunk_data', 'stream_chunk_written']:
+                elif e_role not in ['stream_chunk_data', 'stream_chunk_written']:
                     name = 'ret_{0}'.format(name)
 
-            if context == 'callback_wrapper' and role == 'stream_data':
+            if context == 'callback_wrapper' and e_role == 'stream_data':
                 if single_chunk:
                     arguments.append('{0}_data'.format(name))
                 else:
@@ -110,7 +116,7 @@ class UCPacket(common.Packet):
             length_elements = self.get_elements(role='stream_length')
             chunk_offset_elements = self.get_elements(role='stream_chunk_offset')
 
-            if role == 'stream_data' and (direction == 'out' or len(length_elements) > 0):
+            if e_role == 'stream_data' and (direction == 'out' or len(length_elements) > 0):
                 if context == 'callback_wrapper' and not single_chunk:
                     arguments.append('high_level_callback->length')
                 else:

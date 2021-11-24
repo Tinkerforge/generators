@@ -112,6 +112,8 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
             'pearson_hash.h',
             'spitfp.c',
             'spitfp.h',
+            'streaming.c',
+            'streaming.h',
             'tfp.c',
             'tfp.h',
             'tfp_header.c',
