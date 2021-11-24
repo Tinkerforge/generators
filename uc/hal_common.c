@@ -513,8 +513,8 @@ int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
         TF_TFPHeader header;
         int packet_id = -1;
 
-        while (tf_net_get_available_tfp_header(net, &header, &packet_id)) {
-            uint8_t pid = (uint8_t) packet_id;
+        while (!tf_hal_deadline_elapsed(hal, deadline_us) && tf_net_get_available_tfp_header(net, &header, &packet_id)) {
+            uint8_t pid = (uint8_t)packet_id;
 
             // We should never get callback packets from the network side of things. Drop them.
             if (header.seq_num == 0) {
