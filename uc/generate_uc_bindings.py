@@ -222,7 +222,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
         return rc;
     }}
 
-    unknown->tfp->spitfp = &port_common->spitfp;{response_expected_init}
+    {device_under}->tfp->spitfp = &port_common->spitfp;{response_expected_init}
 
     return TF_E_OK;
 }}
