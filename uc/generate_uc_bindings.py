@@ -428,16 +428,11 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
                 request_assignments = format('\n    uint8_t *buf = tf_tfp_get_send_payload_buffer({device_under}->tfp);\n{req_assign}\n', self, req_assign=request_assignments)
 
             if len(packet.get_elements(direction='out')) > 0:
-                response_struct_def = '\n    ' + packet_camel + '_Response response;'
                 return_list, needs_i2 = packet.get_c_return_list(format('tf_tfp_get_receive_buffer({device_under}->tfp)', self), context='getter')
-                response_assignments = format(template_extract_response, self, response_assignments='\n        '.join(return_list))
-
-                reponse_ptr = '(Packet *)&response'
+                extract_response = format(template_extract_response, self, response_assignments='\n        '.join(return_list))
             else:
-                response_struct_def = ''
-                response_assignments = ''
+                extract_response = ''
                 needs_i2 = False
-                reponse_ptr = 'NULL'
 
             if needs_i or needs_i2:
                 loop_counter_def = '\n    size_t i;'
@@ -451,12 +446,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 
             functions += format(template, self, packet, params=params,
                                                         fid=fid,
-                                                        response_struct_def=response_struct_def,
                                                         request_assignments=request_assignments,
                                                         response_expected=response_expected,
-                                                        extract_response=response_assignments,
+                                                        extract_response=extract_response,
                                                         loop_counter_def=loop_counter_def,
-                                                        reponse_ptr=reponse_ptr,
                                                         request_size=request_size,
                                                         response_size=response_size)
 
