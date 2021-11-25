@@ -1254,7 +1254,7 @@ class UCBindingsPacket(uc_common.UCPacket):
                     t = 'if ({dest} != NULL) {{ '
 
                 if element.get_type() == 'string':
-                    t += 'tf_packet_buffer_pop_n({packet_buffer}, (uint8_t*){dest}, {count});'
+                    t += 'tf_packet_buffer_pop_n({packet_buffer}, (uint8_t *){dest}, {count});'
                 elif element.get_type() == 'bool':
                     t += "tf_packet_buffer_read_bool_array({packet_buffer}, {dest}, {count});"
                 else:
@@ -1271,26 +1271,12 @@ class UCBindingsPacket(uc_common.UCPacket):
                     t = 'if ({dest} != NULL) {{ *{dest} = tf_packet_buffer_read_{type_}({packet_buffer}); }} else {{ tf_packet_buffer_remove({packet_buffer}, {size}); }}'
 
             dest = ('ret_' if context == 'getter' else '') + element.get_name().under
-            if self.get_function_id() == 255 and element.get_name().under == 'connected_uid':
-                dest = 'tmp_connected_uid'
-                # Overriding the template fixes clang's "comparison of array 'tmp_connected_uid' not equal to a null pointer is always true" warning
-                t = 'tf_packet_buffer_pop_n({packet_buffer}, (uint8_t*){dest}, {count});'
 
             return_list.append(t.format(packet_buffer=packet_buffer_name,
                                         dest=dest,
                                         count=element.get_cardinality(),
                                         size=element.get_size(),
                                         type_=element.get_c_type('default')))
-
-        if self.get_function_id() == 255:
-            return_list.insert(0, 'char tmp_connected_uid[8] = {0};')
-            return_list.append(
-                format("""if (tmp_connected_uid[0] == 0 && ret_position != NULL) {{
-            *ret_position = tf_hal_get_port_name((TF_HAL *){device_under}->tfp->hal, {device_under}->tfp->spitfp->port_id);
-        }}
-        if (ret_connected_uid != NULL) {{
-            memcpy(ret_connected_uid, tmp_connected_uid, 8);
-        }}""", self.get_device()))
 
         return return_list, needs_i
 

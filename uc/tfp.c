@@ -57,16 +57,6 @@ static bool tf_tfp_dispatch_packet(TF_TFP *tfp, TF_TFPHeader *header, TF_PacketB
 
         tf_tfp_header_write(header, net_buf);
         tf_packet_buffer_peek_offset_n(packet, net_buf + 8, header->length - 8, 0);
-
-        // Patch "position" of enumerate and get_identity packets
-        // if "connected_uid" is just a null-terminator
-        // I.e. the device is attached to us directly
-        if ((header->fid == 253 || header->fid == 255) && net_buf[TF_TFP_MIN_MESSAGE_LENGTH + sizeof(char) * 8] == 0) {
-            net_buf[TF_TFP_MIN_MESSAGE_LENGTH + sizeof(char) * 16] = (uint8_t)tf_hal_get_port_name(hal, tfp->spitfp->port_id);
-            net_buf[TF_TFP_MIN_MESSAGE_LENGTH + sizeof(char) * 8] = '0';
-            net_buf[TF_TFP_MIN_MESSAGE_LENGTH + sizeof(char) * 9] = '\0';
-        }
-
         tf_net_send_packet(hal_common->net, header, net_buf);
     }
 #endif
@@ -136,7 +126,22 @@ static bool tf_tfp_filter_received_packet(TF_TFP *tfp, bool remove_interesting, 
         return false;
     }
 
-    bool packet_uninteresting = (tfp->waiting_for_fid == 0) // we could do this before parsing the header, but in this order it's possible to remove the unwanted packet from the buffer.
+    // Patch "position" of enumerate and get_identity packets if "connected_uid" is
+    // just a null-terminator I.e. the device is attached to us directly
+    if ((header.fid == 253 && header.length == 34) || (header.fid == 255 && header.length == 33)) {
+        uint8_t connected_uid;
+
+        tf_packet_buffer_peek_offset(buf, &connected_uid, 8);
+
+        if (connected_uid == 0) {
+            tf_packet_buffer_poke_offset(buf, '0', 8);
+            tf_packet_buffer_poke_offset(buf, '\0', 9);
+            tf_packet_buffer_poke_offset(buf, tf_hal_get_port_name(tfp->hal, tfp->spitfp->port_id), 16);
+        }
+    }
+
+    // We could do this before parsing the header, but in this order it's possible to remove the unwanted packet from the buffer.
+    bool packet_uninteresting = (tfp->waiting_for_fid == 0)
                              || (tfp->uid != 0 && header.uid != tfp->uid)
                              || (header.fid != tfp->waiting_for_fid)
                              || (header.length != tfp->waiting_for_length)
