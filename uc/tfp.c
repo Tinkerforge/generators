@@ -272,7 +272,7 @@ void tf_tfp_inject_packet(TF_TFP *tfp, TF_TFPHeader *header, uint8_t *packet) {
     return;
 }
 
-static int tf_tfp_transmit_getter(TF_TFP *tfp, uint32_t deadline_us, uint8_t *error_code) {
+static int tf_tfp_send_getter(TF_TFP *tfp, uint32_t deadline_us, uint8_t *error_code) {
     tf_spitfp_build_packet(tfp->spitfp, false);
 
     int result = TF_TICK_AGAIN;
@@ -308,7 +308,7 @@ static int tf_tfp_transmit_getter(TF_TFP *tfp, uint32_t deadline_us, uint8_t *er
     return (packet_received ? TF_TICK_PACKET_RECEIVED : TF_TICK_TIMEOUT) | (result & TF_TICK_AGAIN);
 }
 
-static int tf_tfp_transmit_setter(TF_TFP *tfp, uint32_t deadline_us) {
+static int tf_tfp_send_setter(TF_TFP *tfp, uint32_t deadline_us) {
     tf_spitfp_build_packet(tfp->spitfp, false);
 
     int result = TF_TICK_AGAIN;
@@ -342,8 +342,8 @@ static int tf_tfp_transmit_setter(TF_TFP *tfp, uint32_t deadline_us) {
     return (packet_sent ? TF_TICK_PACKET_SENT : TF_TICK_TIMEOUT) | (result & TF_TICK_AGAIN);
 }
 
-int tf_tfp_transmit_packet(TF_TFP *tfp, bool response_expected, uint32_t deadline_us, uint8_t *error_code) {
-    return response_expected ? tf_tfp_transmit_getter(tfp, deadline_us, error_code) : tf_tfp_transmit_setter(tfp, deadline_us);
+int tf_tfp_send_packet(TF_TFP *tfp, bool response_expected, uint32_t deadline_us, uint8_t *error_code) {
+    return response_expected ? tf_tfp_send_getter(tfp, deadline_us, error_code) : tf_tfp_send_setter(tfp, deadline_us);
 }
 
 int tf_tfp_finish_send(TF_TFP *tfp, int previous_result, uint32_t deadline_us) {
@@ -410,7 +410,7 @@ int tf_tfp_callback_tick(TF_TFP *tfp, uint32_t deadline_us) {
 
         // Allow the state machine to run a bit over the deadline:
         // Result will in the worst case not contain TICK_AGAIN when
-        // the state machine has just transmitted an ACK. The then
+        // the state machine has just sent an ACK. The then
         // received 3 bytes should not contain a complete packet.
         // (Except an ACK that has not be acked again).
     } while (!tf_hal_deadline_elapsed((TF_HAL *)tfp->hal, deadline_us) || (result & TF_TICK_AGAIN));

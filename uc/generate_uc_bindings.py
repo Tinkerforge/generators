@@ -385,7 +385,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     uint32_t deadline = tf_hal_current_time_us((TF_HAL *){device_under}->tfp->hal) + tf_hal_get_common((TF_HAL *){device_under}->tfp->hal)->timeout;
 
     uint8_t error_code = 0;
-    int result = tf_tfp_transmit_packet({device_under}->tfp, response_expected, deadline, &error_code);
+    int result = tf_tfp_send_packet({device_under}->tfp, response_expected, deadline, &error_code);
 
     if (result < 0) {{
         return result;

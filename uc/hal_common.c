@@ -503,7 +503,7 @@ int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
                 if (hal_common->tfps[i].spitfp->send_buf[0] == 0) {
                     tf_tfp_inject_packet(&hal_common->tfps[i], &enumerate_request_header, enumerate_request);
                     // TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count
-                    result = tf_tfp_transmit_packet(&hal_common->tfps[i], false, deadline_us, &ignored);
+                    result = tf_tfp_send_packet(&hal_common->tfps[i], false, deadline_us, &ignored);
                     (void)! tf_tfp_finish_send(&hal_common->tfps[i], result, deadline_us); // ignore result for now: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66425#c34
                     hal_common->send_enumerate_request[i] = false;
                 }
@@ -557,7 +557,7 @@ int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
                 tf_tfp_inject_packet(&hal_common->tfps[i], &header, buf);
 
                 // TODO: What timeout to use here? If decided, use return value to check for the timeout, maybe increase an error count
-                result = tf_tfp_transmit_packet(&hal_common->tfps[i], false, deadline_us, &ignored);
+                result = tf_tfp_send_packet(&hal_common->tfps[i], false, deadline_us, &ignored);
                 (void)! tf_tfp_finish_send(&hal_common->tfps[i], result, deadline_us); // ignore result for now: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66425#c34
                 dispatched = true;
             }
