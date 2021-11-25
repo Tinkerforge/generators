@@ -524,7 +524,7 @@ This callback can only be triggered in slave mode.
 'de':
 """
 Dieser Callback wird aufgerufen sobald ein neuer Frame verfügbar ist
-(vim DMX Master geschrieben).
+(vom DMX Master geschrieben).
 
 Die Größe des Arrays ist gleichbedeutend zu der Anzahl an Kanälen in
 dem Frame. Jedes Byte stellt einen Kanal dar.
