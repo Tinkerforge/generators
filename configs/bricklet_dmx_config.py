@@ -396,7 +396,7 @@ Enables/Disables the different callbacks. By default the
 the :cb:`Frame` callback and :cb:`Frame Error Count` callback are disabled.
 
 If you want to use the :cb:`Frame` callback you can enable it and disable
-the cb:`Frame Available` callback at the same time. It becomes redundant in
+the :cb:`Frame Available` callback at the same time. It becomes redundant in
 this case.
 """,
 'de':
