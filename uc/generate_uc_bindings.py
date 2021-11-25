@@ -425,11 +425,11 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
             response_size = sum(e.get_size() for e in packet.get_elements(direction='out'))
 
             if len(request_assignments) > 0:
-                request_assignments = format('\n    uint8_t *buf = tf_tfp_get_payload_buffer({device_under}->tfp);\n{req_assign}\n', self, req_assign=request_assignments)
+                request_assignments = format('\n    uint8_t *buf = tf_tfp_get_send_payload_buffer({device_under}->tfp);\n{req_assign}\n', self, req_assign=request_assignments)
 
             if len(packet.get_elements(direction='out')) > 0:
                 response_struct_def = '\n    ' + packet_camel + '_Response response;'
-                return_list, needs_i2 = packet.get_c_return_list(format('&{device_under}->tfp->spitfp->recv_buf', self), context='getter')
+                return_list, needs_i2 = packet.get_c_return_list(format('tf_tfp_get_receive_buffer({device_under}->tfp)', self), context='getter')
                 response_assignments = format(template_extract_response, self, response_assignments='\n        '.join(return_list))
 
                 reponse_ptr = '(Packet *)&response'

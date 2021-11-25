@@ -522,9 +522,13 @@ int tf_spitfp_tick(TF_SPITFP *spitfp, uint32_t deadline_us) {
     return 0;
 }
 
-uint8_t *tf_spitfp_get_payload_buffer(TF_SPITFP *spitfp) {
+uint8_t *tf_spitfp_get_send_payload_buffer(TF_SPITFP *spitfp) {
     // Leave space for spitfp protocol header
     return spitfp->send_buf + TF_SPITFP_HEADER_LENGTH;
+}
+
+TF_PacketBuffer *tf_spitfp_get_receive_buffer(TF_SPITFP *spitfp) {
+    return &spitfp->recv_buf;
 }
 
 int tf_spitfp_create(TF_SPITFP *spitfp, struct TF_HAL *hal, uint8_t port_id) {

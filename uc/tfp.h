@@ -50,7 +50,8 @@ typedef struct TF_TFP {
 int tf_tfp_destroy(TF_TFP *tfp) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
 void tf_tfp_prepare_send(TF_TFP *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) TF_ATTRIBUTE_NONNULL_ALL;
-uint8_t *tf_tfp_get_payload_buffer(TF_TFP *tfp) TF_ATTRIBUTE_NONNULL_ALL;
+uint8_t *tf_tfp_get_send_payload_buffer(TF_TFP *tfp) TF_ATTRIBUTE_NONNULL_ALL;
+TF_PacketBuffer *tf_tfp_get_receive_buffer(TF_TFP *tfp) TF_ATTRIBUTE_NONNULL_ALL;
 
 int tf_tfp_send_packet(TF_TFP *tfp, bool response_expected, uint32_t deadline_us, uint8_t *error_code) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 void tf_tfp_packet_processed(TF_TFP *tfp) TF_ATTRIBUTE_NONNULL_ALL;

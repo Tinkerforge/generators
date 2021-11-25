@@ -244,7 +244,7 @@ int tf_tfp_destroy(TF_TFP *tfp) {
 
 void tf_tfp_prepare_send(TF_TFP *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) {
     // TODO: theoretically, all bytes should be rewritten when sending a new packet, so this is not necessary.
-    uint8_t *buf = tf_spitfp_get_payload_buffer(tfp->spitfp);
+    uint8_t *buf = tf_spitfp_get_send_payload_buffer(tfp->spitfp);
     memset(buf, 0, TF_TFP_MAX_MESSAGE_LENGTH);
 
     uint8_t tf_tfp_seq_num = tf_tfp_build_header(tfp, buf, payload_size + TF_TFP_MIN_MESSAGE_LENGTH, fid, response_expected);
@@ -260,21 +260,23 @@ void tf_tfp_prepare_send(TF_TFP *tfp, uint8_t fid, uint8_t payload_size, uint8_t
     }
 }
 
-uint8_t *tf_tfp_get_payload_buffer(TF_TFP *tfp) {
-    return tf_spitfp_get_payload_buffer(tfp->spitfp) + TF_TFP_MIN_MESSAGE_LENGTH;
+uint8_t *tf_tfp_get_send_payload_buffer(TF_TFP *tfp) {
+    return tf_spitfp_get_send_payload_buffer(tfp->spitfp) + TF_TFP_MIN_MESSAGE_LENGTH;
+}
+
+TF_PacketBuffer *tf_tfp_get_receive_buffer(TF_TFP *tfp) {
+    return tf_spitfp_get_receive_buffer(tfp->spitfp);
 }
 
 void tf_tfp_inject_packet(TF_TFP *tfp, TF_TFPHeader *header, uint8_t *packet) {
-    uint8_t *buf = tf_spitfp_get_payload_buffer(tfp->spitfp);
-    memset(buf, 0, TF_TFP_MAX_MESSAGE_LENGTH);
+    uint8_t *buf = tf_spitfp_get_send_payload_buffer(tfp->spitfp);
 
+    memset(buf, 0, TF_TFP_MAX_MESSAGE_LENGTH);
     memcpy(buf, packet, header->length);
 
     tfp->waiting_for_fid = 0;
     tfp->waiting_for_length = 0;
     tfp->waiting_for_sequence_number = 0;
-
-    return;
 }
 
 static int tf_tfp_send_getter(TF_TFP *tfp, uint32_t deadline_us, uint8_t *error_code) {
