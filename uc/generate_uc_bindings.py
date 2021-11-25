@@ -409,6 +409,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 
         template_extract_response = """
     if (result & TF_TICK_PACKET_RECEIVED && error_code == 0) {{
+        TF_PacketBuffer *recv_buf = tf_tfp_get_receive_buffer({device_under}->tfp);
         {response_assignments}
         tf_tfp_packet_processed({device_under}->tfp);
     }}
@@ -425,10 +426,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
             response_size = sum(e.get_size() for e in packet.get_elements(direction='out'))
 
             if len(request_assignments) > 0:
-                request_assignments = format('\n    uint8_t *buf = tf_tfp_get_send_payload_buffer({device_under}->tfp);\n{req_assign}\n', self, req_assign=request_assignments)
+                request_assignments = format('\n    uint8_t *send_buf = tf_tfp_get_send_payload_buffer({device_under}->tfp);\n{req_assign}\n', self, req_assign=request_assignments)
 
             if len(packet.get_elements(direction='out')) > 0:
-                return_list, needs_i2 = packet.get_c_return_list(format('tf_tfp_get_receive_buffer({device_under}->tfp)', self), context='getter')
+                return_list, needs_i2 = packet.get_c_return_list('recv_buf', context='getter')
                 extract_response = format(template_extract_response, self, response_assignments='\n        '.join(return_list))
             else:
                 extract_response = ''
@@ -1196,40 +1197,40 @@ class UCBindingsPacket(uc_common.UCPacket):
         for element in self.get_elements(direction='in'):
 
             if element.get_type() == 'string':
-                temp = '\n    strncpy((char *)(buf + {offset}), {src}, {count});\n'
+                temp = '\n    strncpy((char *)(send_buf + {offset}), {src}, {count});\n'
                 struct_list += temp.format(src=element.get_name().under, offset=offset, count=element.get_cardinality())
                 offset += element.get_cardinality()
             elif element.get_type() == 'bool':
                 if element.get_cardinality() > 1:
                     needs_i = True
                     byte_count = math.ceil(element.get_cardinality() / 8.0)
-                    struct_list += '\n    memset(buf + {offset}, 0, {byte_count}); for (i = 0; i < {count}; ++i) buf[{offset} + (i / 8)] |= ({src}[i] ? 1 : 0) << (i % 8);' \
+                    struct_list += '\n    memset(send_buf + {offset}, 0, {byte_count}); for (i = 0; i < {count}; ++i) send_buf[{offset} + (i / 8)] |= ({src}[i] ? 1 : 0) << (i % 8);' \
                                    .format(src=element.get_name().under, offset=offset, count=element.get_cardinality(), byte_count=math.ceil(element.get_cardinality() / 8.0))
                     offset += byte_count
                 else:
-                    struct_list += '\n    buf[{offset}] = {src} ? 1 : 0;'.format(offset=offset, src=element.get_name().under)
+                    struct_list += '\n    send_buf[{offset}] = {src} ? 1 : 0;'.format(offset=offset, src=element.get_name().under)
                     offset += 1
             elif element.get_cardinality() > 1:
                 if element.get_item_size() > 1:
                     needs_i = True
-                    struct_list += '\n    for (i = 0; i < {count}; i++) {{ {c_type} tmp_{src} = tf_leconvert_{type_}_to({src}[i]); memcpy(buf + {offset} + (i * sizeof({c_type})), &tmp_{src}, sizeof({c_type})); }}' \
+                    struct_list += '\n    for (i = 0; i < {count}; i++) {{ {c_type} tmp_{src} = tf_leconvert_{type_}_to({src}[i]); memcpy(send_buf + {offset} + (i * sizeof({c_type})), &tmp_{src}, sizeof({c_type})); }}' \
                                    .format(src=element.get_name().under,
                                            c_type=element.get_c_type('default'),
                                            type_=element.get_type(),
                                            count=element.get_cardinality(),
                                            offset=offset)
                 else:
-                    temp = '\n    memcpy(buf + {offset}, {src}, {count});'
+                    temp = '\n    memcpy(send_buf + {offset}, {src}, {count});'
                     struct_list += temp.format(offset=offset,
                                                src=element.get_name().under,
                                                count=element.get_cardinality())
                 offset += element.get_cardinality() * element.get_item_size()
             elif element.get_item_size() > 1:
-                struct_list += '\n    {src} = tf_leconvert_{type_}_to({src}); memcpy(buf + {offset}, &{src}, {count});'.format(src=element.get_name().under, type_=element.get_type(), offset=offset, count=element.get_item_size())
+                struct_list += '\n    {src} = tf_leconvert_{type_}_to({src}); memcpy(send_buf + {offset}, &{src}, {count});'.format(src=element.get_name().under, type_=element.get_type(), offset=offset, count=element.get_item_size())
                 offset += element.get_item_size()
             else:
                 # Cast fixes clang -Weverything complaining about sign conversion in case of char or int8_t
-                struct_list += '\n    buf[{offset}] = (uint8_t){src};'.format(src=element.get_name().under, offset=offset)
+                struct_list += '\n    send_buf[{offset}] = (uint8_t){src};'.format(src=element.get_name().under, offset=offset)
                 offset += 1
 
         return struct_list, needs_i
