@@ -71,7 +71,6 @@ class UCBindingsDevice(common.Device):
 #include "base58.h"
 #include "endian_convert.h"
 #include "errors.h"
-#include "streaming.h"
 
 #include <string.h>
 
@@ -718,6 +717,38 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
     return TF_E_OK;
 }}
 """
+
+        template_high_level = """
+static void tf_{device_under}_{packet_under}_wrapper(TF_{device_camel} *{device_under}, {low_level_params}void *user_data) {{
+    {fixed_length_declaration}uint32_t stream_length = (uint32_t) {stream_name_under}_length;
+    uint32_t chunk_offset = (uint32_t) {chunk_offset_or_zero};
+    if (!tf_stream_out_callback(&{device_under}->{packet_under}_hlc, stream_length, chunk_offset, {stream_name_under}{maybe_chunk}_data, {chunk_cardinality}, tf_copy_items_{chunk_data_type})) {{
+        return;
+    }}
+
+    // Stream is either complete or out of sync
+    {stream_data_type} *{stream_name_under} = ({stream_data_type} *) ({device_under}->{packet_under}_hlc.length == 0 ? NULL : {device_under}->{packet_under}_hlc.data);
+    {device_under}->{packet_under}_handler({device_under}, {high_level_arguments}user_data);
+
+    {device_under}->{packet_under}_hlc.stream_in_progress = false;
+    {device_under}->{packet_under}_hlc.length = 0;
+}}
+
+int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler handler, {stream_data_type} *{stream_name_under}_buffer, void *user_data) {{
+    if ({device_under} == NULL) {{
+        return TF_E_NULL;
+    }}
+
+    {device_under}->{packet_under}_handler = handler;
+
+    {device_under}->{packet_under}_hlc.data = {stream_name_under}_buffer;
+    {device_under}->{packet_under}_hlc.length = 0;
+    {device_under}->{packet_under}_hlc.stream_in_progress = false;
+
+    return tf_{device_under}_register_{packet_under}_low_level_callback({device_under}, handler == NULL ? NULL : tf_{device_under}_{packet_under}_wrapper, user_data);
+}}
+"""
+
         other_handler_check_template = """{device_under}->tfp->needs_callback_tick |= {device_under}->{packet_under}_handler != NULL;"""
 
         for packet in self.get_packets('callback'):
@@ -730,6 +761,33 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
             other_handler_checks = common.wrap_non_empty("\n        ", other_handler_checks, "")
 
             result.append(format(template, self, packet, other_handler_checks=other_handler_checks))
+
+            if packet.has_high_level():
+                stream_out = packet.get_high_level('stream_out')
+
+                maybe_chunk = ""
+                chunk_offset_or_zero = "0"
+                if not stream_out.has_single_chunk():
+                    maybe_chunk = "_chunk"
+                    chunk_offset_or_zero = stream_out.get_name().under + "_chunk_offset"
+
+                fixed_length_declaration = ""
+                if stream_out.get_fixed_length() is not None:
+                    chunk_offset_element = stream_out.get_chunk_offset_element()
+                    stream_length_type = chunk_offset_element.get_c_type('default')
+                    fixed_length_declaration = "{} {}_length = {};\n    ".format(stream_length_type, stream_out.get_name().under, stream_out.get_fixed_length())
+
+
+                result.append(format(template_high_level, self, packet, -2,
+                                     low_level_params=common.wrap_non_empty('', packet.get_c_parameters(), ', '),
+                                     stream_name_under=stream_out.get_name().under,
+                                     chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality(),
+                                     chunk_data_type=stream_out.get_chunk_data_element().get_c_type('default'),
+                                     stream_data_type=stream_out.get_data_element().get_c_type('default'),
+                                     high_level_arguments=common.wrap_non_empty('', packet.get_c_arguments('default', high_level=True), ', '),
+                                     maybe_chunk=maybe_chunk,
+                                     chunk_offset_or_zero=chunk_offset_or_zero,
+                                     fixed_length_declaration=fixed_length_declaration))
 
         return format('#if TF_IMPLEMENT_CALLBACKS != 0{funcs}#endif', funcs='\n'.join(result))
 
@@ -798,6 +856,7 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
 #include "tfp.h"
 #include "hal_common.h"
 #include "macros.h"
+#include "streaming.h"
 
 #ifdef __cplusplus
 extern "C" {{
@@ -829,7 +888,11 @@ typedef struct TF_{device_camel} {{
         cb_handler_template = """    TF_{device_camel}_{packet_camel}Handler {packet_under}_handler;
     void *{packet_under}_user_data;
 """
+        cb_high_level_handler_template = """    TF_{device_camel}_{packet_camel}Handler {packet_under}_handler;
+    TF_HighLevelCallback {packet_under}_hlc;
+"""
         cb_handlers = [format(cb_handler_template, self, packet) for packet in self.get_packets('callback')]
+        cb_handlers += [format(cb_high_level_handler_template, self, packet, -2) for packet in self.get_packets('callback') if packet.has_high_level()]
 
         return format(template, self, header_comment=self.get_generator().get_header_comment('asterisk'),
                                       callback_typedefs=self.get_c_typedefs(),
@@ -851,6 +914,8 @@ typedef struct TF_{device_camel} {{
         # normal and low-level
         for packet in self.get_packets('callback'):
             typedefs += format(template, self, packet, params=common.wrap_non_empty('', packet.get_c_parameters(), ', '))
+            if packet.has_high_level():
+                typedefs += format(template, self, packet, -2, params=common.wrap_non_empty('', packet.get_c_parameters(high_level=True), ', '))
 
         return typedefs
 
@@ -1009,11 +1074,18 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{parameter
  *
  * {doc}
  */
-int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler handler, void *user_data);
+int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler handler, {buffer_param}void *user_data);
 """
 
         for packet in self.get_packets('callback'):
-            result.append(format(template, self, packet, doc=packet.get_c_formatted_doc()))
+            result.append(format(template, self, packet, doc=packet.get_c_formatted_doc(), buffer_param=""))
+
+            if packet.has_high_level():
+                stream_out = packet.get_high_level('stream_out')
+                chunk_data_type = stream_out.get_chunk_data_element().get_c_type('default')
+                stream_name_under = stream_out.get_name().under
+                buffer_param = "{chunk_data_type} *{stream_name_under}, ".format(chunk_data_type=chunk_data_type, stream_name_under=stream_name_under)
+                result.append(format(template, self, packet, -2, doc=packet.get_c_formatted_doc(), buffer_param=buffer_param))
 
         return '#if TF_IMPLEMENT_CALLBACKS != 0{}#endif'.format('\n'.join(result))
 

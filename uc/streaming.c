@@ -54,7 +54,7 @@ int tf_stream_out(void *device, TF_LowLevelStreamOut ll_function, void *wrapper_
 
     *ret_stream_length = 0;
 
-    ret = ll_function(device, wrapper_data, &stream_length, &chunk_offset, chunk_data);//tf_stream_test_normal_read_extra_out_full_low_level(stream_test, ret_extra_1, &stream_length, ret_extra_2, &chunk_offset, ret_extra_3, chunk_data, ret_extra_4);
+    ret = ll_function(device, wrapper_data, &stream_length, &chunk_offset, chunk_data);
 
     if (ret == TF_E_INTERNAL_STREAM_HAS_NO_DATA) {
         return TF_E_OK;
@@ -184,3 +184,46 @@ int tf_stream_in(void *device, TF_LowLevelStreamIn ll_function, void *wrapper_da
     return ret;
 }
 
+bool tf_stream_out_callback(TF_HighLevelCallback *hlc, uint32_t stream_length, uint32_t chunk_offset, void *chunk_data, uint32_t max_chunk_length, TF_CopyItemFunction copy_fn)
+{
+    uint32_t chunk_length = stream_length - chunk_offset;
+    if (chunk_length > max_chunk_length)
+        chunk_length = max_chunk_length;
+
+    if (!hlc->stream_in_progress) {  // no stream in progress
+        if (chunk_offset == 0) {  // stream starts
+            hlc->stream_in_progress = true;
+
+            if (hlc->data != NULL) {
+                copy_fn(hlc->data, 0, chunk_data, 0, chunk_length);
+            }
+
+            hlc->length = chunk_length;
+
+            if (hlc->length >= stream_length) {
+                return true;
+            }
+        } else {
+            // ignore tail of current stream, wait for next stream start
+        }
+    } else { // stream in progress
+        if (chunk_offset != hlc->length) { // stream out of sync
+            hlc->stream_in_progress = false;
+            hlc->length = 0;
+
+            return true;
+        } else { //stream in sync
+            if (hlc->data != NULL) {
+                copy_fn(hlc->data, hlc->length, chunk_data, 0, chunk_length);
+            }
+
+            hlc->length += chunk_length;
+
+            if (hlc->length >= stream_length) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}

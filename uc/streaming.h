@@ -47,6 +47,12 @@ typedef int (*TF_LowLevelStreamIn) (void *device, void *wrapper_data, uint32_t s
 
 typedef void (*TF_CopyItemFunction)(void *TF_RESTRICT dest, size_t dest_offset, const void *TF_RESTRICT src, size_t src_offset, size_t item_count);
 
+typedef struct TF_HighLevelCallback {
+    void *data;
+    size_t length;
+    bool stream_in_progress;
+} TF_HighLevelCallback;
+
 int tf_stream_out(void *device,
                  TF_LowLevelStreamOut ll_function, // Generated function wrapper to handle extra parameters etc.
                  void *wrapper_data, // Data passed to the ll_function
@@ -66,6 +72,13 @@ int tf_stream_in(void *device,
                  uint32_t max_chunk_length, // Maximum chunk length in items
                  TF_CopyItemFunction copy_fn) TF_ATTRIBUTE_NONNULL(1,6) TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 
+// Returns true to the wrapper if the stream is complete or out of sync. else false. Clean TF_HighLevelCallback struct when stream is complete!
+bool tf_stream_out_callback(TF_HighLevelCallback *hlc,
+                            uint32_t stream_length,
+                            uint32_t chunk_offset,
+                            void *chunk_data,
+                            uint32_t max_chunk_length,
+                            TF_CopyItemFunction copy_fn) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
 #ifdef __cplusplus
 }
 #endif
