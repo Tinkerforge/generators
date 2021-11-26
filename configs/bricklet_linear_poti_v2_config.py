@@ -62,12 +62,12 @@ add_callback_value_function(
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Position', 'position'), [(('Position', 'Position'), 'uint8', 1, None, '°', None)], [])]
+'functions': [('getter', ('Get Position', 'position'), [(('Position', 'Position'), 'uint8', 1, None, '%', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint8', 1, None, '°', None)], None, None),
+'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint8', 1, None, '%', None)], None, None),
               ('callback_configuration', ('Position', 'position'), [], 250, False, 'x', [(0, 0)])]
 })
 
