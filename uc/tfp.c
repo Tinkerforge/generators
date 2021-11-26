@@ -46,8 +46,7 @@ static uint8_t tf_tfp_build_header(TF_TFP *tfp, uint8_t *header_buf, uint8_t len
 }
 
 static bool tf_tfp_dispatch_packet(TF_TFP *tfp, TF_TFPHeader *header, TF_PacketBuffer *packet) {
-    TF_HAL *hal = (TF_HAL *)tfp->hal;
-    TF_HALCommon *hal_common = tf_hal_get_common(hal);
+    TF_HALCommon *hal_common = tf_hal_get_common(tfp->spitfp->hal);
 
 #if TF_NET_ENABLE != 0
     if (hal_common->net != NULL) {
@@ -60,6 +59,7 @@ static bool tf_tfp_dispatch_packet(TF_TFP *tfp, TF_TFPHeader *header, TF_PacketB
         tf_net_send_packet(hal_common->net, header, net_buf);
     }
 #endif
+
     // We received a non-callback packet that was not expected from the source TFP.
     // As all getter and setter calls of the uC bindings (i.e. of other TFPs) are blocking,
     // we know immediately that the packet is only for the network layer, or is a late response to
@@ -69,26 +69,17 @@ static bool tf_tfp_dispatch_packet(TF_TFP *tfp, TF_TFPHeader *header, TF_PacketB
         return true;
     }
 
-    // Handle enumerations
+    // Handle enumerate callbacks
     if (header->fid == 253) {
-        return tf_hal_enumerate_handler(hal, tfp->spitfp->port_id, packet);
+        tf_hal_enumerate_handler(tfp->spitfp->hal, tfp->spitfp->port_id, packet);
+        return true;
     }
 
     // Search TFP for the received callback
-    TF_TFP *other_tfp = NULL;
-    bool other_tfp_found = false;
-
-    for (uint8_t i = 0; i < hal_common->used; ++i) {
-        if (hal_common->uids[i] == header->uid) {
-            other_tfp_found = true;
-            other_tfp = &hal_common->tfps[i];
-            break;
-        }
-    }
-
     bool result = false;
+    TF_TFP *other_tfp = tf_hal_get_tfp(tfp->spitfp->hal, header->uid);
 
-    if (other_tfp_found) {
+    if (other_tfp != NULL) {
         result = other_tfp->cb_handler(other_tfp->device, header->fid, packet);
     }
 
@@ -110,7 +101,6 @@ static bool tf_tfp_filter_received_packet(TF_TFP *tfp, bool remove_interesting, 
     if (used < 8) {
         tf_hal_log_debug("Too short!\n");
         tf_packet_buffer_remove(buf, used);
-        //tf_tfp_packet_processed(tfp);
         ++tfp->error_count_frame;
         return false;
     }
@@ -120,7 +110,7 @@ static bool tf_tfp_filter_received_packet(TF_TFP *tfp, bool remove_interesting, 
 
     // Compare with <= as behind the tfp packet there has to be the SPITFP checksum
     if (used <= header.length) {
-        tf_hal_log_debug("Too short! used (%d) < header.length (%d)\n", used, header.length);
+        tf_hal_log_debug("Too short! Used (%d) < header.length (%d)\n", used, header.length);
         tf_packet_buffer_remove(buf, used);
         ++tfp->error_count_frame;
         return false;
@@ -136,7 +126,7 @@ static bool tf_tfp_filter_received_packet(TF_TFP *tfp, bool remove_interesting, 
         if (connected_uid == 0) {
             tf_packet_buffer_poke_offset(buf, '0', 8);
             tf_packet_buffer_poke_offset(buf, '\0', 9);
-            tf_packet_buffer_poke_offset(buf, tf_hal_get_port_name(tfp->hal, tfp->spitfp->port_id), 16);
+            tf_packet_buffer_poke_offset(buf, tf_hal_get_port_name(tfp->spitfp->hal, tfp->spitfp->port_id), 16);
         }
     }
 
@@ -205,41 +195,23 @@ static bool empty_cb_handler(void *device, uint8_t fid, TF_PacketBuffer *payload
     return false;
 }
 
-// See tfp.h why this is here
-int tf_tfp_create(TF_TFP *tfp, TF_HAL *hal, uint8_t port_id);
-int tf_tfp_create(TF_TFP *tfp, TF_HAL *hal, uint8_t port_id) {
+int tf_tfp_create(TF_TFP *tfp, uint32_t uid, uint32_t device_id, TF_SPITFP *spitfp) {
     memset(tfp, 0, sizeof(TF_TFP));
-    TF_PortCommon *port_common = tf_hal_get_port_common(hal, port_id);
-    tfp->spitfp = &port_common->spitfp;
 
+    tfp->spitfp = spitfp;
+    tfp->uid = uid;
+    tfp->device_id = device_id;
     tfp->next_sequence_number = 1;
-    tfp->uid = 0;
     tfp->cb_handler = empty_cb_handler;
-    tfp->error_count_frame = 0;
-    tfp->error_count_unexpected = 0;
     tfp->needs_callback_tick = true;
-    tfp->hal = hal;
 
     return TF_E_OK;
 }
 
 int tf_tfp_destroy(TF_TFP *tfp) {
-    TF_HALCommon *hal_common = tf_hal_get_common((TF_HAL *)tfp->hal);
-    uint8_t port_id;
-    uint8_t inventory_index;
-    int rc = tf_hal_get_port_id((TF_HAL *)tfp->hal, tfp->uid, &port_id, &inventory_index);
+    (void)tfp;
 
-    if (rc < 0) {
-        return rc;
-    }
-
-    if (&hal_common->tfps[inventory_index] != tfp) {
-        return TF_E_DEVICE_NOT_FOUND;
-    }
-
-    hal_common->tfps[inventory_index].device = NULL;
-
-    return tf_spitfp_destroy(tfp->spitfp);
+    return TF_E_OK;
 }
 
 void tf_tfp_prepare_send(TF_TFP *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) {
@@ -284,11 +256,11 @@ static int tf_tfp_send_getter(TF_TFP *tfp, uint32_t deadline_us, uint8_t *error_
 
     int result = TF_TICK_AGAIN;
     bool packet_received = false;
-    uint32_t last_send = tf_hal_current_time_us((TF_HAL *)tfp->hal);
+    uint32_t last_send = tf_hal_current_time_us(tfp->spitfp->hal);
 
-    while (!tf_hal_deadline_elapsed((TF_HAL *)tfp->hal, deadline_us) && !packet_received) {
-        if (result & TF_TICK_TIMEOUT && tf_hal_deadline_elapsed((TF_HAL *)tfp->hal, last_send + 5000)) {
-            last_send = tf_hal_current_time_us((TF_HAL *)tfp->hal);
+    while (!tf_hal_deadline_elapsed(tfp->spitfp->hal, deadline_us) && !packet_received) {
+        if (result & TF_TICK_TIMEOUT && tf_hal_deadline_elapsed(tfp->spitfp->hal, last_send + 5000)) {
+            last_send = tf_hal_current_time_us(tfp->spitfp->hal);
             tf_spitfp_build_packet(tfp->spitfp, true);
         }
 
@@ -308,7 +280,7 @@ static int tf_tfp_send_getter(TF_TFP *tfp, uint32_t deadline_us, uint8_t *error_
         }
 
         if (result & TF_TICK_SLEEP) {
-            tf_hal_sleep_us((TF_HAL *)tfp->hal, TF_TFP_SLEEP_TIME_US);
+            tf_hal_sleep_us(tfp->spitfp->hal, TF_TFP_SLEEP_TIME_US);
         }
     }
 
@@ -321,7 +293,7 @@ static int tf_tfp_send_setter(TF_TFP *tfp, uint32_t deadline_us) {
     int result = TF_TICK_AGAIN;
     bool packet_sent = false;
 
-    while (!tf_hal_deadline_elapsed((TF_HAL *)tfp->hal, deadline_us) && !packet_sent) {
+    while (!tf_hal_deadline_elapsed(tfp->spitfp->hal, deadline_us) && !packet_sent) {
         if (result & TF_TICK_TIMEOUT) {
             tf_spitfp_build_packet(tfp->spitfp, true);
         }
@@ -342,7 +314,7 @@ static int tf_tfp_send_setter(TF_TFP *tfp, uint32_t deadline_us) {
         }
 
         if (result & TF_TICK_SLEEP) {
-            tf_hal_sleep_us((TF_HAL *)tfp->hal, TF_TFP_SLEEP_TIME_US);
+            tf_hal_sleep_us(tfp->spitfp->hal, TF_TFP_SLEEP_TIME_US);
         }
     }
 
@@ -356,7 +328,7 @@ int tf_tfp_send_packet(TF_TFP *tfp, bool response_expected, uint32_t deadline_us
 int tf_tfp_finish_send(TF_TFP *tfp, int previous_result, uint32_t deadline_us) {
     int result = previous_result;
 
-    while (!tf_hal_deadline_elapsed((TF_HAL *)tfp->hal, deadline_us) && (result & TF_TICK_AGAIN)) {
+    while (!tf_hal_deadline_elapsed(tfp->spitfp->hal, deadline_us) && (result & TF_TICK_AGAIN)) {
         result = tf_spitfp_tick(tfp->spitfp, deadline_us);
 
         if (result < 0) {
@@ -396,7 +368,7 @@ int tf_tfp_callback_tick(TF_TFP *tfp, uint32_t deadline_us) {
 
     do {
         if (result & TF_TICK_SLEEP) {
-            tf_hal_sleep_us((TF_HAL *)tfp->hal, TF_TFP_SLEEP_TIME_US);
+            tf_hal_sleep_us(tfp->spitfp->hal, TF_TFP_SLEEP_TIME_US);
         }
 
         result = tf_spitfp_tick(tfp->spitfp, deadline_us);
@@ -406,7 +378,7 @@ int tf_tfp_callback_tick(TF_TFP *tfp, uint32_t deadline_us) {
         }
 
         if (result & TF_TICK_PACKET_RECEIVED) {
-            //handle possible callback packet
+            // handle possible callback packet
             uint8_t error_code;
             tf_tfp_filter_received_packet(tfp, false, &error_code);
         }
@@ -420,7 +392,7 @@ int tf_tfp_callback_tick(TF_TFP *tfp, uint32_t deadline_us) {
         // the state machine has just sent an ACK. The then
         // received 3 bytes should not contain a complete packet.
         // (Except an ACK that has not be acked again).
-    } while (!tf_hal_deadline_elapsed((TF_HAL *)tfp->hal, deadline_us) || (result & TF_TICK_AGAIN));
+    } while (!tf_hal_deadline_elapsed(tfp->spitfp->hal, deadline_us) || (result & TF_TICK_AGAIN));
 
     return TF_E_OK;
 }

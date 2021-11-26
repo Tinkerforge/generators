@@ -162,29 +162,25 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 
     memset({device_under}, 0, sizeof(TF_{device_camel}));
 
-    uint32_t numeric_uid;
-    int rc = tf_base58_decode(uid, &numeric_uid);
+    uint32_t uid_num;
+    int rc = tf_base58_decode(uid, &uid_num);
 
     if (rc != TF_E_OK) {{
         return rc;
     }}
 
-    uint8_t port_id;
-    uint8_t inventory_index;
-    rc = tf_hal_get_port_id(hal, numeric_uid, &port_id, &inventory_index);
+    TF_TFP *tfp = tf_hal_get_tfp(hal, uid_num);
 
-    if (rc < 0) {{
-        return rc;
+    if (tfp == NULL) {{
+        return TF_E_DEVICE_NOT_FOUND;
     }}
 
-    rc = tf_hal_get_tfp(hal, &{device_under}->tfp, TF_{device_upper}_DEVICE_IDENTIFIER, inventory_index);
-
-    if (rc != TF_E_OK) {{
-        return rc;
+    if (tfp->device_id != TF_{device_upper}_DEVICE_IDENTIFIER) {{
+        return TF_E_WRONG_DEVICE_TYPE;
     }}
 
+    {device_under}->tfp = tfp;
     {device_under}->tfp->device = {device_under};
-    {device_under}->tfp->uid = numeric_uid;
     {device_under}->tfp->cb_handler = tf_{device_under}_callback_handler;{response_expected_init}
 
     return TF_E_OK;
@@ -192,37 +188,17 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
 """
 
         unknown_template = """
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal, uint8_t port_id, uint8_t inventory_index) {{
-    if ({device_under} == NULL || uid == NULL || hal == NULL) {{
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, TF_TFP *tfp) {{
+    if ({device_under} == NULL || tfp == NULL) {{
         return TF_E_NULL;
     }}
 
     memset({device_under}, 0, sizeof(TF_{device_camel}));
 
-    uint32_t numeric_uid;
-    int rc = tf_base58_decode(uid, &numeric_uid);
-
-    if (rc != TF_E_OK) {{
-        return rc;
-    }}
-
-    rc = tf_hal_get_tfp(hal, &{device_under}->tfp, 0, inventory_index);
-
-    if (rc != TF_E_OK) {{
-        return rc;
-    }}
-
+    {device_under}->tfp = tfp;
     {device_under}->tfp->device = {device_under};
-    {device_under}->tfp->uid = numeric_uid;
     {device_under}->tfp->cb_handler = tf_{device_under}_callback_handler;
-    TF_PortCommon *port_common = tf_hal_get_port_common(hal, port_id);
-    rc = tf_spitfp_create(&port_common->spitfp, hal, port_id);
-
-    if (rc != TF_E_OK) {{
-        return rc;
-    }}
-
-    {device_under}->tfp->spitfp = &port_common->spitfp;{response_expected_init}
+{response_expected_init}
 
     return TF_E_OK;
 }}
@@ -258,10 +234,11 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
         return TF_E_NULL;
     }}
 
-    int result = tf_tfp_destroy({device_under}->tfp);
+    {device_under}->tfp->cb_handler = NULL;
+    {device_under}->tfp->device = NULL;
     {device_under}->tfp = NULL;
 
-    return result;
+    return TF_E_OK;
 }}
 """
         return format(template, self)
@@ -273,7 +250,9 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
         return TF_E_NULL;
     }}
 
-    return tf_tfp_callback_tick({device_under}->tfp, tf_hal_current_time_us((TF_HAL *){device_under}->tfp->hal) + timeout_us);
+    TF_HAL *hal = {device_under}->tfp->spitfp->hal;
+
+    return tf_tfp_callback_tick({device_under}->tfp, tf_hal_current_time_us(hal) + timeout_us);
 }}
 """
         return format(template, self)
@@ -375,14 +354,16 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
         return TF_E_NULL;
     }}
 
-    if (tf_hal_get_common((TF_HAL *){device_under}->tfp->hal)->locked) {{
+    TF_HAL *hal = {device_under}->tfp->spitfp->hal;
+
+    if (tf_hal_get_common(hal)->locked) {{
         return TF_E_LOCKED;
     }}
 
     bool response_expected = true;{response_expected}
     tf_tfp_prepare_send({device_under}->tfp, TF_{fid}, {request_size}, {response_size}, response_expected);
 {loop_counter_def}{request_assignments}
-    uint32_t deadline = tf_hal_current_time_us((TF_HAL *){device_under}->tfp->hal) + tf_hal_get_common((TF_HAL *){device_under}->tfp->hal)->timeout;
+    uint32_t deadline = tf_hal_current_time_us(hal) + tf_hal_get_common(hal)->timeout;
 
     uint8_t error_code = 0;
     int result = tf_tfp_send_packet({device_under}->tfp, response_expected, deadline, &error_code);
@@ -794,8 +775,8 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
 
     def get_c_callback_handler(self):
         no_callbacks_template = """
-static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_PacketBuffer *payload) {{
-    (void)dev;
+static bool tf_{device_under}_callback_handler(void *device, uint8_t fid, TF_PacketBuffer *payload) {{
+    (void)device;
     (void)fid;
     (void)payload;
 
@@ -803,8 +784,9 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
 }}"""
         template = """
 #if TF_IMPLEMENT_CALLBACKS != 0
-static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_PacketBuffer *payload) {{
-    TF_{device_camel} *{device_under} = (TF_{device_camel} *)dev;
+static bool tf_{device_under}_callback_handler(void *device, uint8_t fid, TF_PacketBuffer *payload) {{
+    TF_{device_camel} *{device_under} = (TF_{device_camel} *)device;
+    TF_HALCommon *hal_common = tf_hal_get_common({device_under}->tfp->spitfp->hal);
     (void)payload;
 
     switch (fid) {{
@@ -816,7 +798,7 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
     return true;
 }}
 #else
-static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_PacketBuffer *payload) {{
+static bool tf_{device_under}_callback_handler(void *device, uint8_t fid, TF_PacketBuffer *payload) {{
     return false;
 }}
 #endif"""
@@ -829,7 +811,6 @@ static bool tf_{device_under}_callback_handler(void *dev, uint8_t fid, TF_Packet
             }}
 {i_decl}
 {extract_payload}
-            TF_HALCommon *hal_common = tf_hal_get_common((TF_HAL *){device_under}->tfp->hal);
             hal_common->locked = true;
             fn({device_under}, {params}user_data);
             hal_common->locked = false;
@@ -938,7 +919,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid,
  * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
  * it to the HAL \\c hal.
  */
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal, uint8_t port_id, uint8_t inventory_index);
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, TF_TFP *tfp);
 """
         if self.get_name().under == 'unknown':
             template = unknown_template

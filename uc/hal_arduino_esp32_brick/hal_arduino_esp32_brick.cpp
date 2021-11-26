@@ -21,7 +21,7 @@ typedef struct TF_Port {
     TF_PortCommon port_common;
 } TF_Port;
 
-#define TF_PORT(chip_select_pin, spi, port_name) {chip_select_pin, spi, port_name,  {._to_init = 0}}
+#define TF_PORT(chip_select_pin, spi, port_name) {chip_select_pin, spi, port_name, {._to_init = 0}}
 
 static TF_Port ports[6] = {
     TF_PORT(16, VSPI, 'A'),
