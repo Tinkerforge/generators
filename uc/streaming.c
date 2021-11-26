@@ -42,7 +42,7 @@ COPY_ITEMS_IMPL(char)
 COPY_ITEMS_IMPL(float)
 
 int tf_stream_out(void *device, TF_LowLevelStreamOut ll_function, void *wrapper_data, void *ret_stream,
-                  uint32_t *ret_stream_length, void *TF_RESTRICT chunk_data, uint32_t max_chunk_length, TF_CopyItemFunction copy_fn)
+                  uint32_t *ret_stream_read, void *TF_RESTRICT chunk_data, uint32_t max_chunk_length, TF_CopyItemFunction copy_fn)
 {
     int ret = TF_E_OK;
 
@@ -52,7 +52,7 @@ int tf_stream_out(void *device, TF_LowLevelStreamOut ll_function, void *wrapper_
     uint32_t chunk_offset = 0;
     uint32_t chunk_length = 0;
 
-    *ret_stream_length = 0;
+    *ret_stream_read = 0;
 
     ret = ll_function(device, wrapper_data, &stream_length, &chunk_offset, chunk_data);
 
@@ -77,16 +77,16 @@ int tf_stream_out(void *device, TF_LowLevelStreamOut ll_function, void *wrapper_
             copy_fn(ret_stream, 0, chunk_data, 0, chunk_length);
         }
 
-        *ret_stream_length += chunk_length; // This could just be = as we've written 0 beforehand. However += looks more in line with the following code.
+        *ret_stream_read += chunk_length; // This could just be = as we've written 0 beforehand. However += looks more in line with the following code.
 
-        while (*ret_stream_length < stream_length) {
+        while (*ret_stream_read < stream_length) {
             ret = ll_function(device, wrapper_data, &stream_length, &chunk_offset, chunk_data);
 
             if (ret != TF_E_OK) {
                 return ret;
             }
 
-            stream_out_of_sync = chunk_offset != stream_length;
+            stream_out_of_sync = chunk_offset != *ret_stream_read;
 
             if (stream_out_of_sync) {
                 break;
@@ -99,15 +99,15 @@ int tf_stream_out(void *device, TF_LowLevelStreamOut ll_function, void *wrapper_
             }
 
             if (ret_stream != NULL) {
-                copy_fn(ret_stream, *ret_stream_length, chunk_data, 0, chunk_length);
+                copy_fn(ret_stream, *ret_stream_read, chunk_data, 0, chunk_length);
             }
 
-            *ret_stream_length += chunk_length;
+            *ret_stream_read += chunk_length;
         }
     }
 
     if (stream_out_of_sync) {
-        *ret_stream_length = 0; // return empty array
+        *ret_stream_read = 0; // return empty array
 
         // discard remaining stream to bring it back in-sync
         while (chunk_offset + max_chunk_length < stream_length) {
