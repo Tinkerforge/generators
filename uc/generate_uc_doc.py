@@ -101,7 +101,7 @@ class UCDocDevice(common.Device):
 
     def get_c_callbacks(self):
         callbacks = []
-        template = '.. c:function:: void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}{packet_camel}Handler, void *user_data)\n{params}\n{meta_table}\n{desc}\n'
+        template = '.. c:function:: void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler, void *user_data)\n{params}\n{meta_table}\n{desc}\n'
         param_template = {
             'en': """
  .. code-block:: c

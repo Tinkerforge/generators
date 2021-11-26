@@ -461,15 +461,15 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
                                                         response_size=response_size)
 
         template_stream_wrapper_struct = """
-typedef struct TF_{device_camel}{packet_camel}LLWrapperData {{
+typedef struct TF_{device_camel}_{packet_camel}LLWrapperData {{
     {extra_param_decls}
-}} TF_{device_camel}{packet_camel}LLWrapperData;
+}} TF_{device_camel}_{packet_camel}LLWrapperData;
 
 """
-        template_stream_wrapper_struct_cast = """TF_{device_camel}{packet_camel}LLWrapperData *data = (TF_{device_camel}{packet_camel}LLWrapperData *) wrapper_data;
+        template_stream_wrapper_struct_cast = """TF_{device_camel}_{packet_camel}LLWrapperData *data = (TF_{device_camel}_{packet_camel}LLWrapperData *) wrapper_data;
     """
         template_stream_wrapper_creation = """
-    TF_{device_camel}{packet_camel}LLWrapperData wrapper_data;
+    TF_{device_camel}_{packet_camel}LLWrapperData wrapper_data;
     memset(&wrapper_data, 0, sizeof(wrapper_data));
 """
 
