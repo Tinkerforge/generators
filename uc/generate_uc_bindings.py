@@ -529,7 +529,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 
     int ret = tf_stream_out({device_under}, tf_{device_under}_{packet_under}_ll_wrapper, {wrapper_arg}, ret_{stream_name_under}, &{stream_name_under}_length, {stream_name_under}_chunk_data, {chunk_cardinality}, tf_copy_items_{chunk_data_type});
 
-    *ret_{stream_name_under}_length = ({stream_length_type}){stream_name_under}_length;
+    if (ret_{stream_name_under}_length != NULL) {{
+        *ret_{stream_name_under}_length = ({stream_length_type}){stream_name_under}_length;
+    }}
     return ret;
 }}
 """
