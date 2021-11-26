@@ -35,28 +35,13 @@ int tf_hal_common_prepare(TF_HAL *hal, uint8_t port_count, uint32_t port_discove
 
     for (uint8_t port_id = 0; port_id < port_count; ++port_id) {
         TF_PortCommon *port_common = tf_hal_get_port_common(hal, port_id);
-
-        if (port_common == NULL) {
-            return TF_E_NULL;
-        }
-
-        int rc = tf_spitfp_create(&port_common->spitfp, hal, port_id);
-
-        if (rc != TF_E_OK) {
-            return rc;
-        }
-
         TF_TFP tfp;
-
-        rc = tf_tfp_create(&tfp, 0, 0, &port_common->spitfp);
-
-        if (rc != TF_E_OK) {
-            return rc;
-        }
-
         TF_Unknown unknown;
 
-        rc = tf_unknown_create(&unknown, &tfp);
+        tf_spitfp_create(&port_common->spitfp, hal, port_id);
+        tf_tfp_create(&tfp, 0, 0, &port_common->spitfp);
+
+        int rc = tf_unknown_create(&unknown, &tfp);
 
         if (rc != TF_E_OK) {
             return rc;
@@ -69,7 +54,6 @@ int tf_hal_common_prepare(TF_HAL *hal, uint8_t port_count, uint32_t port_discove
         }
 
         tf_unknown_destroy(&unknown);
-        (void)!tf_tfp_destroy(&tfp);
     }
 
     if (hal_common->device_overflow_count > 0) {
@@ -111,13 +95,7 @@ void tf_hal_enumerate_handler(TF_HAL *hal, uint8_t port_id, TF_PacketBuffer *pay
 
     TF_PortCommon *port_common = tf_hal_get_port_common(hal, port_id);
 
-    if (port_common == NULL) {
-        return;
-    }
-
-    if (tf_tfp_create(&hal_common->tfps[hal_common->tfps_used], uid_num, device_id, &port_common->spitfp) == TF_E_OK) {
-        ++hal_common->tfps_used;
-    }
+    tf_tfp_create(&hal_common->tfps[hal_common->tfps_used++], uid_num, device_id, &port_common->spitfp);
 }
 
 static const char *alphabet = "0123456789abcdef";

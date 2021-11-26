@@ -195,7 +195,7 @@ static bool empty_cb_handler(void *device, uint8_t fid, TF_PacketBuffer *payload
     return false;
 }
 
-int tf_tfp_create(TF_TFP *tfp, uint32_t uid, uint32_t device_id, TF_SPITFP *spitfp) {
+void tf_tfp_create(TF_TFP *tfp, uint32_t uid, uint32_t device_id, TF_SPITFP *spitfp) {
     memset(tfp, 0, sizeof(TF_TFP));
 
     tfp->spitfp = spitfp;
@@ -204,14 +204,6 @@ int tf_tfp_create(TF_TFP *tfp, uint32_t uid, uint32_t device_id, TF_SPITFP *spit
     tfp->next_sequence_number = 1;
     tfp->cb_handler = empty_cb_handler;
     tfp->needs_callback_tick = true;
-
-    return TF_E_OK;
-}
-
-int tf_tfp_destroy(TF_TFP *tfp) {
-    (void)tfp;
-
-    return TF_E_OK;
 }
 
 void tf_tfp_prepare_send(TF_TFP *tfp, uint8_t fid, uint8_t payload_size, uint8_t response_size, bool response_expected) {

@@ -531,26 +531,12 @@ TF_PacketBuffer *tf_spitfp_get_receive_buffer(TF_SPITFP *spitfp) {
     return &spitfp->recv_buf;
 }
 
-int tf_spitfp_create(TF_SPITFP *spitfp, struct TF_HAL *hal, uint8_t port_id) {
+void tf_spitfp_create(TF_SPITFP *spitfp, struct TF_HAL *hal, uint8_t port_id) {
+    memset(spitfp, 0, sizeof(TF_SPITFP));
+
     spitfp->hal = hal;
     spitfp->port_id = port_id;
-    spitfp->last_sequence_number_seen = 0;
-    spitfp->last_sequence_number_acked = 0;
-    spitfp->last_sequence_number_sent = 0;
-    spitfp->last_sequence_number_given_to_tfp = 0;
-    spitfp->state.deadline_us = 0;
     spitfp->state.state = STATE_IDLE;
-    spitfp->error_count_checksum = 0;
-    spitfp->error_count_frame = 0;
 
-    memset(spitfp->send_buf, 0, sizeof(spitfp->send_buf));
     tf_packet_buffer_create(&spitfp->recv_buf);
-
-    return TF_E_OK;
-}
-
-int tf_spitfp_destroy(TF_SPITFP *spitfp) {
-    (void)spitfp;
-
-    return TF_E_OK;
 }

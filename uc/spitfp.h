@@ -67,8 +67,7 @@ typedef struct TF_SPITFP {
     struct TF_SPITFPStateMachine state;
 } TF_SPITFP;
 
-int tf_spitfp_create(TF_SPITFP *spitfp, struct TF_HAL *hal, uint8_t port_id) TF_ATTRIBUTE_NONNULL_ALL;
-int tf_spitfp_destroy(TF_SPITFP *spitfp) TF_ATTRIBUTE_NONNULL_ALL TF_ATTRIBUTE_WARN_UNUSED_RESULT;
+void tf_spitfp_create(TF_SPITFP *spitfp, struct TF_HAL *hal, uint8_t port_id);
 
 uint8_t *tf_spitfp_get_send_payload_buffer(TF_SPITFP *spitfp) TF_ATTRIBUTE_NONNULL_ALL;
 TF_PacketBuffer *tf_spitfp_get_receive_buffer(TF_SPITFP *spitfp) TF_ATTRIBUTE_NONNULL_ALL;
