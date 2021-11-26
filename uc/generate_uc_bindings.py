@@ -479,7 +479,7 @@ typedef struct TF_{device_camel}{packet_camel}LLWrapperData {{
     """
         template_stream_in = """{wrapper_struct}
 static int tf_{device_under}_{packet_under}_ll_wrapper(void *device, void *wrapper_data, uint32_t stream_length, uint32_t chunk_offset, void *chunk_data, uint32_t *ret_chunk_written) {{
-    {wrapper_cast}{wrapper_chunk_offset_assignment}{wrapper_fixed_length_assignment}uint8_t {stream_name_under}{maybe_chunk}_written = 0;
+    {wrapper_cast}{wrapper_chunk_offset_assignment}{wrapper_fixed_length_assignment}uint8_t {stream_name_under}{maybe_chunk}_written = {chunk_cardinality};
 
     {chunk_data_type} *{stream_name_under}{maybe_chunk}_data = ({chunk_data_type} *) chunk_data;
     int ret = tf_{device_under}_{packet_under}_low_level((TF_{device_camel} *)device, {wrapped_arguments});
