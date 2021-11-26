@@ -77,7 +77,6 @@ void tf_hal_enumerate_handler(TF_HAL *hal, uint8_t port_id, TF_PacketBuffer *pay
 
     if (hal_common->tfps_used >= sizeof(hal_common->tfps) / sizeof(hal_common->tfps[0])) {
         ++hal_common->device_overflow_count;
-
         return;
     }
 
@@ -87,7 +86,7 @@ void tf_hal_enumerate_handler(TF_HAL *hal, uint8_t port_id, TF_PacketBuffer *pay
         return;
     }
 
-    if (tf_hal_get_tfp(hal, uid_num) != NULL) {
+    if (tf_hal_get_tfp(hal, NULL, &uid_num, NULL, NULL) != NULL) {
         return; // device already known
     }
 
@@ -352,7 +351,7 @@ uint32_t tf_hal_get_timeout(TF_HAL *hal) {
     return tf_hal_get_common(hal)->timeout;
 }
 
-int tf_hal_get_device_info(TF_HAL *hal, size_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id) {
+int tf_hal_get_device_info(TF_HAL *hal, uint16_t index, char ret_uid[7], char *ret_port_name, uint16_t *ret_device_id) {
     TF_HALCommon *hal_common = tf_hal_get_common(hal);
 
     if (index >= hal_common->tfps_used) {
@@ -380,20 +379,20 @@ static TF_TFP *next_callback_tick_tfp(TF_HAL *hal) {
     ++hal_common->callback_tick_index;
 
     if (hal_common->callback_tick_index >= hal_common->tfps_used) {
-        hal_common->callback_tick_index = 0;
+        hal_common->callback_tick_index -= hal_common->tfps_used;
     }
 
     for (uint16_t i = hal_common->callback_tick_index; i < hal_common->callback_tick_index + hal_common->tfps_used; ++i) {
-        uint16_t index = i;
+        uint16_t k = i;
 
-        if (index >= hal_common->tfps_used) {
-            index -= hal_common->tfps_used;
+        if (k >= hal_common->tfps_used) {
+            k -= hal_common->tfps_used;
         }
 
-        TF_TFP *tfp = &hal_common->tfps[index];
+        TF_TFP *tfp = &hal_common->tfps[k];
 
         if (tfp->needs_callback_tick) {
-            hal_common->callback_tick_index = index;
+            hal_common->callback_tick_index = k;
             return tfp;
         }
     }
@@ -593,13 +592,47 @@ void tf_hal_set_net(TF_HAL *hal, TF_Net *net) {
     hal_common->net = net;
 }
 
-TF_TFP *tf_hal_get_tfp(TF_HAL *hal, uint32_t uid) {
+// FIXME: For a device_id-only lookup to produce stable results the TFP order has to be stable.
+//        The order has to be predictable as wall for the user. This means having the TFPs
+//        sorted by port_id order port_name. This is currently not the case, I think.
+TF_TFP *tf_hal_get_tfp(TF_HAL *hal, uint16_t *index_ptr, const uint32_t *uid, const uint8_t *port_id, const uint16_t *device_id) {
     TF_HALCommon *hal_common = tf_hal_get_common(hal);
+    uint16_t index = 0;
 
-    for (uint16_t i = 0; i < hal_common->tfps_used; ++i) {
-        if (hal_common->tfps[i].uid == uid) {
-            return &hal_common->tfps[i];
+    if (index_ptr != NULL) {
+        index = *index_ptr;
+    }
+
+    if (index >= hal_common->tfps_used) {
+        index -= hal_common->tfps_used;
+    }
+
+    for (uint16_t i = index; i < index + hal_common->tfps_used; ++i) {
+        uint16_t k = i;
+
+        if (k >= hal_common->tfps_used) {
+            k -= hal_common->tfps_used;
         }
+
+        TF_TFP *tfp = &hal_common->tfps[k];
+
+        if (uid != NULL && tfp->uid != *uid) {
+            continue;
+        }
+
+        if (port_id != NULL && tfp->spitfp->port_id != *port_id) {
+            continue;
+        }
+
+        if (device_id != NULL && tfp->device_id != *device_id) {
+            continue;
+        }
+
+        if (index_ptr != NULL) {
+            *index_ptr = k + 1;
+        }
+
+        return tfp;
     }
 
     return NULL;

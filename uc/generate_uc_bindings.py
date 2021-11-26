@@ -156,27 +156,45 @@ extern "C" {{
     def get_c_create_function(self):
         template = """
 int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal) {{
-    if ({device_under} == NULL || uid == NULL || hal == NULL) {{
+    if ({device_under} == NULL || hal == NULL) {{
         return TF_E_NULL;
     }}
 
+    static uint16_t next_tfp_index = 0;
+
     memset({device_under}, 0, sizeof(TF_{device_camel}));
 
-    uint32_t uid_num;
-    int rc = tf_base58_decode(uid, &uid_num);
+    TF_TFP *tfp;
 
-    if (rc != TF_E_OK) {{
-        return rc;
+    if (uid != NULL && *uid != '\\0') {{
+        uint32_t uid_num = 0;
+        int rc = tf_base58_decode(uid, &uid_num);
+
+        if (rc != TF_E_OK) {{
+            return rc;
+        }}
+
+        tfp = tf_hal_get_tfp(hal, &next_tfp_index, &uid_num, NULL, NULL);
+
+        if (tfp == NULL) {{
+            return TF_E_DEVICE_NOT_FOUND;
+        }}
+
+        if (tfp->device_id != TF_{device_upper}_DEVICE_IDENTIFIER) {{
+            return TF_E_WRONG_DEVICE_TYPE;
+        }}
+    }} else {{
+        uint16_t device_id = TF_{device_upper}_DEVICE_IDENTIFIER;
+
+        tfp = tf_hal_get_tfp(hal, &next_tfp_index, NULL, NULL, &device_id);
+
+        if (tfp == NULL) {{
+            return TF_E_DEVICE_NOT_FOUND;
+        }}
     }}
 
-    TF_TFP *tfp = tf_hal_get_tfp(hal, uid_num);
-
-    if (tfp == NULL) {{
-        return TF_E_DEVICE_NOT_FOUND;
-    }}
-
-    if (tfp->device_id != TF_{device_upper}_DEVICE_IDENTIFIER) {{
-        return TF_E_WRONG_DEVICE_TYPE;
+    if (tfp->device != NULL) {{
+        return TF_E_DEVICE_ALREADY_IN_USE;
     }}
 
     {device_under}->tfp = tfp;
@@ -194,6 +212,10 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, TF_TFP *tfp) {{
     }}
 
     memset({device_under}, 0, sizeof(TF_{device_camel}));
+
+    if (tfp->device != NULL) {{
+        return TF_E_DEVICE_ALREADY_IN_USE;
+    }}
 
     {device_under}->tfp = tfp;
     {device_under}->tfp->device = {device_under};
@@ -230,7 +252,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, TF_TFP *tfp) {{
     def get_c_destroy_function(self):
         template = """
 int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
-    if ({device_under} == NULL) {{
+    if ({device_under} == NULL || {device_under}->tfp == NULL) {{
         return TF_E_NULL;
     }}
 
