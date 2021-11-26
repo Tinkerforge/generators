@@ -479,7 +479,7 @@ typedef struct TF_{device_camel}_{packet_camel}LLWrapperData {{
     """
         template_stream_in = """{wrapper_struct}
 static int tf_{device_under}_{packet_under}_ll_wrapper(void *device, void *wrapper_data, uint32_t stream_length, uint32_t chunk_offset, void *chunk_data, uint32_t *ret_chunk_written) {{
-    {wrapper_cast}{wrapper_chunk_offset_assignment}{wrapper_fixed_length_assignment}uint8_t {stream_name_under}{maybe_chunk}_written = {chunk_cardinality};
+    {wrapper_cast}{wrapper_chunk_offset_assignment}{wrapper_fixed_length_assignment}{chunk_written_type} {stream_name_under}{maybe_chunk}_written = {chunk_cardinality};
 
     {chunk_data_type} *{stream_name_under}{maybe_chunk}_data = ({chunk_data_type} *) chunk_data;
     int ret = tf_{device_under}_{packet_under}_low_level((TF_{device_camel} *)device, {wrapped_arguments});
@@ -622,8 +622,12 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                     fixed_length_or_param_assignment = stream_in.get_fixed_length()
                     wrapper_fixed_length_assignment = "(void)stream_length;"
 
+                # If we don't have a short write, the low level function will not take a pointer to _written.
+                # We can then just use uint32_t as it is casted to this later anyway.
+                chunk_written_type = "uint32_t"
                 short_write_assignment = ""
                 if stream_in.has_short_write():
+                    chunk_written_type = packet.get_elements(role='stream_chunk_written')[0].get_c_type('default')
                     short_write_assignment = """    if (ret_{stream_name_under}_written != NULL) {{
         *ret_{stream_name_under}_written = ({stream_length_type}) {stream_name_under}_written;
     }}""".format(stream_name_under=stream_in.get_name().under, stream_length_type=stream_length_type)
@@ -653,7 +657,8 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                                     short_write_assignment=short_write_assignment,
                                     maybe_chunk=maybe_chunk,
                                     wrapper_chunk_offset_assignment=wrapper_chunk_offset_assignment,
-                                    wrapper_fixed_length_assignment=wrapper_fixed_length_assignment)
+                                    wrapper_fixed_length_assignment=wrapper_fixed_length_assignment,
+                                    chunk_written_type=chunk_written_type)
 
             elif stream_out != None:
                 length_element = stream_out.get_length_element()
