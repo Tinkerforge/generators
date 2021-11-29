@@ -155,46 +155,18 @@ extern "C" {{
 
     def get_c_create_function(self):
         template = """
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal) {{
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid_or_port_name, TF_HAL *hal) {{
     if ({device_under} == NULL || hal == NULL) {{
         return TF_E_NULL;
     }}
 
-    static uint16_t next_tfp_index = 0;
-
     memset({device_under}, 0, sizeof(TF_{device_camel}));
 
     TF_TFP *tfp;
+    int rc = tf_hal_get_attachable_tfp(hal, &tfp, uid_or_port_name, TF_{device_upper}_DEVICE_IDENTIFIER);
 
-    if (uid != NULL && *uid != '\\0') {{
-        uint32_t uid_num = 0;
-        int rc = tf_base58_decode(uid, &uid_num);
-
-        if (rc != TF_E_OK) {{
-            return rc;
-        }}
-
-        tfp = tf_hal_get_tfp(hal, &next_tfp_index, &uid_num, NULL, NULL);
-
-        if (tfp == NULL) {{
-            return TF_E_DEVICE_NOT_FOUND;
-        }}
-
-        if (tfp->device_id != TF_{device_upper}_DEVICE_IDENTIFIER) {{
-            return TF_E_WRONG_DEVICE_TYPE;
-        }}
-    }} else {{
-        uint16_t device_id = TF_{device_upper}_DEVICE_IDENTIFIER;
-
-        tfp = tf_hal_get_tfp(hal, &next_tfp_index, NULL, NULL, &device_id);
-
-        if (tfp == NULL) {{
-            return TF_E_DEVICE_NOT_FOUND;
-        }}
-    }}
-
-    if (tfp->device != NULL) {{
-        return TF_E_DEVICE_ALREADY_IN_USE;
+    if (rc != TF_E_OK) {{
+        return rc;
     }}
 
     {device_under}->tfp = tfp;
@@ -942,7 +914,7 @@ typedef struct TF_{device_camel} {{
  * Creates the device object \\c {device_under} with the unique device ID \\c uid and adds
  * it to the HAL \\c hal.
  */
-int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal);
+int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid_or_port_name, TF_HAL *hal);
 """
 
         unknown_template = """

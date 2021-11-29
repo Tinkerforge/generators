@@ -77,7 +77,7 @@ static bool tf_tfp_dispatch_packet(TF_TFP *tfp, TF_TFPHeader *header, TF_PacketB
 
     // Search TFP for the received callback
     bool result = false;
-    TF_TFP *other_tfp = tf_hal_get_tfp(tfp->spitfp->hal, NULL, &header->uid, NULL, NULL);
+    TF_TFP *other_tfp = tf_hal_get_tfp(tfp->spitfp->hal, &header->uid, NULL, NULL, false);
 
     if (other_tfp != NULL) {
         result = other_tfp->cb_handler(other_tfp->device, header->fid, packet);

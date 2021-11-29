@@ -44,7 +44,7 @@ typedef struct TF_TFP {
     bool send_enumerate_request;
 } TF_TFP;
 
-void tf_tfp_create(TF_TFP *tfp, uint32_t uid, uint16_t did, TF_SPITFP *spitfp) TF_ATTRIBUTE_NONNULL_ALL;
+void tf_tfp_create(TF_TFP *tfp, uint32_t uid, uint16_t device_id, TF_SPITFP *spitfp) TF_ATTRIBUTE_NONNULL_ALL;
 
 void tf_tfp_prepare_send(TF_TFP *tfp, uint8_t fid, uint8_t payload_size, bool response_expected) TF_ATTRIBUTE_NONNULL_ALL;
 uint8_t *tf_tfp_get_send_payload_buffer(TF_TFP *tfp) TF_ATTRIBUTE_NONNULL_ALL;
