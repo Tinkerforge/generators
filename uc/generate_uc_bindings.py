@@ -376,43 +376,43 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
         return TF_E_NULL;
     }}
 
-    TF_HAL *hal = {device_under}->tfp->spitfp->hal;
+    TF_HAL *_hal = {device_under}->tfp->spitfp->hal;
 
-    if (tf_hal_get_common(hal)->locked) {{
+    if (tf_hal_get_common(_hal)->locked) {{
         return TF_E_LOCKED;
     }}
 
-    bool response_expected = true;{response_expected}
-    tf_tfp_prepare_send({device_under}->tfp, TF_{fid}, {request_size}, {response_size}, response_expected);
+    bool _response_expected = true;{response_expected}
+    tf_tfp_prepare_send({device_under}->tfp, TF_{fid}, {request_size}, {response_size}, _response_expected);
 {loop_counter_def}{request_assignments}
-    uint32_t deadline = tf_hal_current_time_us(hal) + tf_hal_get_common(hal)->timeout;
+    uint32_t _deadline = tf_hal_current_time_us(_hal) + tf_hal_get_common(_hal)->timeout;
 
-    uint8_t error_code = 0;
-    int result = tf_tfp_send_packet({device_under}->tfp, response_expected, deadline, &error_code);
+    uint8_t _error_code = 0;
+    int _result = tf_tfp_send_packet({device_under}->tfp, _response_expected, _deadline, &_error_code);
 
-    if (result < 0) {{
-        return result;
+    if (_result < 0) {{
+        return _result;
     }}
 
-    if (result & TF_TICK_TIMEOUT) {{
+    if (_result & TF_TICK_TIMEOUT) {{
         return TF_E_TIMEOUT;
     }}
 {extract_response}
-    result = tf_tfp_finish_send({device_under}->tfp, result, deadline);
+    _result = tf_tfp_finish_send({device_under}->tfp, _result, _deadline);
 
-    if (result < 0) {{
-        return result;
+    if (_result < 0) {{
+        return _result;
     }}
 
-    return tf_tfp_get_error(error_code);
+    return tf_tfp_get_error(_error_code);
 }}
 """
         template_response_expected = """
-    tf_{device_under}_get_response_expected({device_under}, TF_{fid}, &response_expected);"""
+    tf_{device_under}_get_response_expected({device_under}, TF_{fid}, &_response_expected);"""
 
         template_extract_response = """
-    if (result & TF_TICK_PACKET_RECEIVED && error_code == 0) {{
-        TF_PacketBuffer *recv_buf = tf_tfp_get_receive_buffer({device_under}->tfp);
+    if (_result & TF_TICK_PACKET_RECEIVED && _error_code == 0) {{
+        TF_PacketBuffer *_recv_buf = tf_tfp_get_receive_buffer({device_under}->tfp);
         {response_assignments}
         tf_tfp_packet_processed({device_under}->tfp);
     }}
@@ -429,10 +429,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
             response_size = sum(e.get_size() for e in packet.get_elements(direction='out'))
 
             if len(request_assignments) > 0:
-                request_assignments = format('\n    uint8_t *send_buf = tf_tfp_get_send_payload_buffer({device_under}->tfp);\n{req_assign}\n', self, req_assign=request_assignments)
+                request_assignments = format('\n    uint8_t *_send_buf = tf_tfp_get_send_payload_buffer({device_under}->tfp);\n{req_assign}\n', self, req_assign=request_assignments)
 
             if len(packet.get_elements(direction='out')) > 0:
-                return_list, needs_i2 = packet.get_c_return_list('recv_buf', context='getter')
+                return_list, needs_i2 = packet.get_c_return_list('_recv_buf', context='getter')
                 extract_response = format(template_extract_response, self, response_assignments='\n        '.join(return_list))
             else:
                 extract_response = ''
@@ -466,8 +466,8 @@ typedef struct TF_{device_camel}_{packet_camel}LLWrapperData {{
         template_stream_wrapper_struct_cast = """TF_{device_camel}_{packet_camel}LLWrapperData *data = (TF_{device_camel}_{packet_camel}LLWrapperData *) wrapper_data;
     """
         template_stream_wrapper_creation = """
-    TF_{device_camel}_{packet_camel}LLWrapperData wrapper_data;
-    memset(&wrapper_data, 0, sizeof(wrapper_data));
+    TF_{device_camel}_{packet_camel}LLWrapperData _wrapper_data;
+    memset(&_wrapper_data, 0, sizeof(_wrapper_data));
 """
 
         template_stream_in_wrapper_chunk_offset_assignment = """{stream_length_type} {stream_name_under}_chunk_offset = ({stream_length_type})chunk_offset;
@@ -491,11 +491,11 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
     }}
     {wrapper_creation}{fill_extra_params}
 
-    uint32_t stream_length = {fixed_length_or_param_assignment};
-    uint32_t {stream_name_under}_written = 0;
-    {chunk_data_type} chunk_data[{chunk_cardinality}];
+    uint32_t _stream_length = {fixed_length_or_param_assignment};
+    uint32_t _{stream_name_under}_written = 0;
+    {chunk_data_type} _chunk_data[{chunk_cardinality}];
 
-    int ret = tf_stream_in({device_under}, tf_{device_under}_{packet_under}_ll_wrapper, {wrapper_arg}, {stream_name_under}, stream_length, chunk_data, &{stream_name_under}_written, {chunk_cardinality}, tf_copy_items_{chunk_data_type});
+    int ret = tf_stream_in({device_under}, tf_{device_under}_{packet_under}_ll_wrapper, {wrapper_arg}, {stream_name_under}, _stream_length, _chunk_data, &_{stream_name_under}_written, {chunk_cardinality}, tf_copy_items_{chunk_data_type});
 
 {short_write_assignment}
 
@@ -521,13 +521,13 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
         return TF_E_NULL;
     }}
     {wrapper_creation}{fill_extra_params}
-    uint32_t {stream_name_under}_length = 0;
-    {chunk_data_type} {stream_name_under}_chunk_data[{chunk_cardinality}];
+    uint32_t _{stream_name_under}_length = 0;
+    {chunk_data_type} _{stream_name_under}_chunk_data[{chunk_cardinality}];
 
-    int ret = tf_stream_out({device_under}, tf_{device_under}_{packet_under}_ll_wrapper, {wrapper_arg}, ret_{stream_name_under}, &{stream_name_under}_length, {stream_name_under}_chunk_data, {chunk_cardinality}, tf_copy_items_{chunk_data_type});
+    int ret = tf_stream_out({device_under}, tf_{device_under}_{packet_under}_ll_wrapper, {wrapper_arg}, ret_{stream_name_under}, &_{stream_name_under}_length, _{stream_name_under}_chunk_data, {chunk_cardinality}, tf_copy_items_{chunk_data_type});
 
     if (ret_{stream_name_under}_length != NULL) {{
-        *ret_{stream_name_under}_length = ({stream_length_type}){stream_name_under}_length;
+        *ret_{stream_name_under}_length = ({stream_length_type})_{stream_name_under}_length;
     }}
     return ret;
 }}
@@ -581,7 +581,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
             extra_param_decls = common.wrap_non_empty("", packet.get_c_parameters(role=None).replace(", ", ";\n    "), ";")
             fill_extra_params = ""
             if len(packet.get_c_arguments('default', role=None)) > 0:
-                fill_extra_params = "    " + "\n    ".join("wrapper_data.{0} = {0};".format(x) for x in packet.get_c_arguments('default', role=None).split(", "))
+                fill_extra_params = "    " + "\n    ".join("_wrapper_data.{0} = {0};".format(x) for x in packet.get_c_arguments('default', role=None).split(", "))
 
 
             roleless_args = packet.get_c_arguments('default', role=None).split(", ")
@@ -602,7 +602,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                                         extra_param_decls=extra_param_decls)
                 wrapper_cast = format(template_stream_wrapper_struct_cast, self, packet, -2)
                 wrapper_creation = format(template_stream_wrapper_creation, self, packet, -2)
-                wrapper_arg = "&wrapper_data"
+                wrapper_arg = "&_wrapper_data"
 
             if stream_in != None:
                 length_element = stream_in.get_length_element()
@@ -626,7 +626,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                 if stream_in.has_short_write():
                     chunk_written_type = packet.get_elements(role='stream_chunk_written')[0].get_c_type('default')
                     short_write_assignment = """    if (ret_{stream_name_under}_written != NULL) {{
-        *ret_{stream_name_under}_written = ({stream_length_type}) {stream_name_under}_written;
+        *ret_{stream_name_under}_written = ({stream_length_type}) _{stream_name_under}_written;
     }}""".format(stream_name_under=stream_in.get_name().under, stream_length_type=stream_length_type)
 
                 maybe_chunk = ""
@@ -1200,40 +1200,40 @@ class UCBindingsPacket(uc_common.UCPacket):
         for element in self.get_elements(direction='in'):
 
             if element.get_type() == 'string':
-                temp = '\n    strncpy((char *)(send_buf + {offset}), {src}, {count});\n'
+                temp = '\n    strncpy((char *)(_send_buf + {offset}), {src}, {count});\n'
                 struct_list += temp.format(src=element.get_name().under, offset=offset, count=element.get_cardinality())
                 offset += element.get_cardinality()
             elif element.get_type() == 'bool':
                 if element.get_cardinality() > 1:
                     needs_i = True
                     byte_count = math.ceil(element.get_cardinality() / 8.0)
-                    struct_list += '\n    memset(send_buf + {offset}, 0, {byte_count}); for (i = 0; i < {count}; ++i) send_buf[{offset} + (i / 8)] |= ({src}[i] ? 1 : 0) << (i % 8);' \
+                    struct_list += '\n    memset(_send_buf + {offset}, 0, {byte_count}); for (i = 0; i < {count}; ++i) _send_buf[{offset} + (i / 8)] |= ({src}[i] ? 1 : 0) << (i % 8);' \
                                    .format(src=element.get_name().under, offset=offset, count=element.get_cardinality(), byte_count=math.ceil(element.get_cardinality() / 8.0))
                     offset += byte_count
                 else:
-                    struct_list += '\n    send_buf[{offset}] = {src} ? 1 : 0;'.format(offset=offset, src=element.get_name().under)
+                    struct_list += '\n    _send_buf[{offset}] = {src} ? 1 : 0;'.format(offset=offset, src=element.get_name().under)
                     offset += 1
             elif element.get_cardinality() > 1:
                 if element.get_item_size() > 1:
                     needs_i = True
-                    struct_list += '\n    for (i = 0; i < {count}; i++) {{ {c_type} tmp_{src} = tf_leconvert_{type_}_to({src}[i]); memcpy(send_buf + {offset} + (i * sizeof({c_type})), &tmp_{src}, sizeof({c_type})); }}' \
+                    struct_list += '\n    for (i = 0; i < {count}; i++) {{ {c_type} tmp_{src} = tf_leconvert_{type_}_to({src}[i]); memcpy(_send_buf + {offset} + (i * sizeof({c_type})), &tmp_{src}, sizeof({c_type})); }}' \
                                    .format(src=element.get_name().under,
                                            c_type=element.get_c_type('default'),
                                            type_=element.get_type(),
                                            count=element.get_cardinality(),
                                            offset=offset)
                 else:
-                    temp = '\n    memcpy(send_buf + {offset}, {src}, {count});'
+                    temp = '\n    memcpy(_send_buf + {offset}, {src}, {count});'
                     struct_list += temp.format(offset=offset,
                                                src=element.get_name().under,
                                                count=element.get_cardinality())
                 offset += element.get_cardinality() * element.get_item_size()
             elif element.get_item_size() > 1:
-                struct_list += '\n    {src} = tf_leconvert_{type_}_to({src}); memcpy(send_buf + {offset}, &{src}, {count});'.format(src=element.get_name().under, type_=element.get_type(), offset=offset, count=element.get_item_size())
+                struct_list += '\n    {src} = tf_leconvert_{type_}_to({src}); memcpy(_send_buf + {offset}, &{src}, {count});'.format(src=element.get_name().under, type_=element.get_type(), offset=offset, count=element.get_item_size())
                 offset += element.get_item_size()
             else:
                 # Cast fixes clang -Weverything complaining about sign conversion in case of char or int8_t
-                struct_list += '\n    send_buf[{offset}] = (uint8_t){src};'.format(src=element.get_name().under, offset=offset)
+                struct_list += '\n    _send_buf[{offset}] = (uint8_t){src};'.format(src=element.get_name().under, offset=offset)
                 offset += 1
 
         return struct_list, needs_i
