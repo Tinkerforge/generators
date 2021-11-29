@@ -383,12 +383,13 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     }}
 
     bool _response_expected = true;{response_expected}
-    tf_tfp_prepare_send({device_under}->tfp, TF_{fid}, {request_size}, {response_size}, _response_expected);
+    tf_tfp_prepare_send({device_under}->tfp, TF_{fid}, {request_size}, _response_expected);
 {loop_counter_def}{request_assignments}
     uint32_t _deadline = tf_hal_current_time_us(_hal) + tf_hal_get_common(_hal)->timeout;
 
     uint8_t _error_code = 0;
-    int _result = tf_tfp_send_packet({device_under}->tfp, _response_expected, _deadline, &_error_code);
+    uint8_t _length = 0;
+    int _result = tf_tfp_send_packet({device_under}->tfp, _response_expected, _deadline, &_error_code, &_length);
 
     if (_result < 0) {{
         return _result;
@@ -399,6 +400,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     }}
 {extract_response}
     _result = tf_tfp_finish_send({device_under}->tfp, _result, _deadline);
+
+    if (_error_code == 0 && _length != {response_size}) {{
+        return TF_E_WRONG_RESPONSE_LENGTH;
+    }}
 
     if (_result < 0) {{
         return _result;
@@ -411,9 +416,13 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     tf_{device_under}_get_response_expected({device_under}, TF_{fid}, &_response_expected);"""
 
         template_extract_response = """
-    if (_result & TF_TICK_PACKET_RECEIVED && _error_code == 0) {{
+    if (_result & TF_TICK_PACKET_RECEIVED) {{
         TF_PacketBuffer *_recv_buf = tf_tfp_get_receive_buffer({device_under}->tfp);
-        {response_assignments}
+        if (_error_code != 0 || _length != {response_size}) {{
+            tf_packet_buffer_remove(_recv_buf, _length);
+        }} else {{
+            {response_assignments}
+        }}
         tf_tfp_packet_processed({device_under}->tfp);
     }}
 """
@@ -433,7 +442,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 
             if len(packet.get_elements(direction='out')) > 0:
                 return_list, needs_i2 = packet.get_c_return_list('_recv_buf', context='getter')
-                extract_response = format(template_extract_response, self, response_assignments='\n        '.join(return_list))
+                extract_response = format(template_extract_response, self,
+                                          response_size=response_size,
+                                          response_assignments='\n            '.join(return_list))
             else:
                 extract_response = ''
                 needs_i2 = False
