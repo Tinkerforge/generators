@@ -439,7 +439,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
                 needs_i2 = False
 
             if needs_i or needs_i2:
-                loop_counter_def = '\n    size_t i;'
+                loop_counter_def = '\n    size_t _i;'
             else:
                 loop_counter_def = ''
 
@@ -847,7 +847,7 @@ static bool tf_{device_under}_callback_handler(void *device, uint8_t fid, TF_Pac
             cases.append(format(case_template, self, packet,
                                 extract_payload=common.wrap_non_empty('            ', '\n            '.join(extract_payload), ''),
                                 params=common.wrap_non_empty('', packet.get_c_arguments(context='callback_wrapper'), ', '),
-                                i_decl = '' if not needs_i else '            size_t i;'))
+                                i_decl = '' if not needs_i else '            size_t _i;'))
 
         return format(template if len(cases) > 0 else no_callbacks_template, self, cases='\n'.join(cases))
 
@@ -1207,7 +1207,7 @@ class UCBindingsPacket(uc_common.UCPacket):
                 if element.get_cardinality() > 1:
                     needs_i = True
                     byte_count = math.ceil(element.get_cardinality() / 8.0)
-                    struct_list += '\n    memset(_send_buf + {offset}, 0, {byte_count}); for (i = 0; i < {count}; ++i) _send_buf[{offset} + (i / 8)] |= ({src}[i] ? 1 : 0) << (i % 8);' \
+                    struct_list += '\n    memset(_send_buf + {offset}, 0, {byte_count}); for (_i = 0; _i < {count}; ++_i) _send_buf[{offset} + (_i / 8)] |= ({src}[_i] ? 1 : 0) << (_i % 8);' \
                                    .format(src=element.get_name().under, offset=offset, count=element.get_cardinality(), byte_count=math.ceil(element.get_cardinality() / 8.0))
                     offset += byte_count
                 else:
@@ -1216,7 +1216,7 @@ class UCBindingsPacket(uc_common.UCPacket):
             elif element.get_cardinality() > 1:
                 if element.get_item_size() > 1:
                     needs_i = True
-                    struct_list += '\n    for (i = 0; i < {count}; i++) {{ {c_type} tmp_{src} = tf_leconvert_{type_}_to({src}[i]); memcpy(_send_buf + {offset} + (i * sizeof({c_type})), &tmp_{src}, sizeof({c_type})); }}' \
+                    struct_list += '\n    for (_i = 0; _i < {count}; _i++) {{ {c_type} tmp_{src} = tf_leconvert_{type_}_to({src}[_i]); memcpy(_send_buf + {offset} + (_i * sizeof({c_type})), &tmp_{src}, sizeof({c_type})); }}' \
                                    .format(src=element.get_name().under,
                                            c_type=element.get_c_type('default'),
                                            type_=element.get_type(),
@@ -1255,7 +1255,7 @@ class UCBindingsPacket(uc_common.UCPacket):
                 elif element.get_type() == 'bool':
                     t += "tf_packet_buffer_read_bool_array({packet_buffer}, {dest}, {count});"
                 else:
-                    t += 'for (i = 0; i < {count}; ++i) {dest}[i] = tf_packet_buffer_read_{type_}({packet_buffer});'
+                    t += 'for (_i = 0; _i < {count}; ++_i) {dest}[_i] = tf_packet_buffer_read_{type_}({packet_buffer});'
                     needs_i = True
 
                 if context == 'getter':
