@@ -321,10 +321,15 @@ int tf_tfp_finish_send(TF_TFP *tfp, int previous_result, uint32_t deadline_us) {
         }
     }
 
-    // Prevent sending the packet again for example in the callback_tick
+    // Prevent sending the packet again for example in the callback_tick.
+    // Note that we don't have to do this before the while loop, as we only
+    // tick SPITFP iff previous_result has TF_TICK_AGAIN set, i.e. we are
+    // in the middle of a transmission.
+    // SPITFP would only resend the packet after returning once without
+    // the TF_TICK_AGAIN flag set.
     tfp->spitfp->send_buf[0] = 0;
 
-    return (result & TF_TICK_AGAIN) ? -1 : 0;
+    return (result & TF_TICK_AGAIN) ? TF_E_TIMEOUT : 0;
 }
 
 int tf_tfp_get_error(uint8_t error_code) {
