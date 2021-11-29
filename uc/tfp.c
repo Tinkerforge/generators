@@ -126,7 +126,7 @@ static bool tf_tfp_filter_received_packet(TF_TFP *tfp, bool remove_interesting, 
         if (connected_uid == 0) {
             tf_packet_buffer_poke_offset(buf, '0', 8);
             tf_packet_buffer_poke_offset(buf, '\0', 9);
-            tf_packet_buffer_poke_offset(buf, tf_hal_get_port_name(tfp->spitfp->hal, tfp->spitfp->port_id), 16);
+            tf_packet_buffer_poke_offset(buf, (uint8_t)tf_hal_get_port_name(tfp->spitfp->hal, tfp->spitfp->port_id), 16);
         }
     }
 
@@ -195,7 +195,7 @@ static bool empty_cb_handler(void *device, uint8_t fid, TF_PacketBuffer *payload
     return false;
 }
 
-void tf_tfp_create(TF_TFP *tfp, uint32_t uid, uint32_t device_id, TF_SPITFP *spitfp) {
+void tf_tfp_create(TF_TFP *tfp, uint32_t uid, uint16_t device_id, TF_SPITFP *spitfp) {
     memset(tfp, 0, sizeof(TF_TFP));
 
     tfp->spitfp = spitfp;
