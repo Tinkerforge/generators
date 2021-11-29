@@ -923,7 +923,7 @@ typedef struct TF_{device_camel} {{
 
     def get_c_typedefs(self):
         typedefs = '\n'
-        template = """typedef void (*TF_{device_camel}_{packet_camel}Handler)(struct TF_{device_camel} *device, {params}void *user_data);
+        template = """typedef void (*TF_{device_camel}_{packet_camel}Handler)(struct TF_{device_camel} *{device_under}, {params}void *user_data);
 """
 
         # normal and low-level
