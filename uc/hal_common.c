@@ -677,7 +677,7 @@ int tf_hal_get_attachable_tfp(TF_HAL *hal, TF_TFP **tfp_ptr, const char *uid_or_
         }
 
         // Could be a port name
-        if (*(uid_or_port_name + 1) != '\0') {
+        if (*(uid_or_port_name + 1) == '\0') {
             bool known_port_name = false;
 
             for (uint8_t port_id = 0; port_id < hal_common->port_count; ++port_id) {
@@ -712,7 +712,11 @@ int tf_hal_get_attachable_tfp(TF_HAL *hal, TF_TFP **tfp_ptr, const char *uid_or_
             }
         }
 
-        return base58_rc;
+        if (base58_rc == TF_E_OK) {
+            return TF_E_DEVICE_NOT_FOUND;
+        } else {
+            return base58_rc;
+        }
     } else {
         TF_TFP *tfp = tf_hal_get_tfp(hal, NULL, NULL, &device_id, true);
 
