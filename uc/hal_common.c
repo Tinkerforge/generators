@@ -395,33 +395,6 @@ int tf_hal_get_device_info(TF_HAL *hal, uint16_t index, char ret_uid[7], char *r
     return TF_E_OK;
 }
 
-static TF_TFP *next_callback_tick_tfp(TF_HAL *hal) {
-    TF_HALCommon *hal_common = tf_hal_get_common(hal);
-
-    ++hal_common->callback_tick_index;
-
-    if (hal_common->callback_tick_index >= hal_common->tfps_used) {
-        hal_common->callback_tick_index -= hal_common->tfps_used;
-    }
-
-    for (uint16_t i = hal_common->callback_tick_index; i < hal_common->callback_tick_index + hal_common->tfps_used; ++i) {
-        uint16_t k = i;
-
-        if (k >= hal_common->tfps_used) {
-            k -= hal_common->tfps_used;
-        }
-
-        TF_TFP *tfp = &hal_common->tfps[k];
-
-        if (tfp->needs_callback_tick) {
-            hal_common->callback_tick_index = k;
-            return tfp;
-        }
-    }
-
-    return NULL;
-}
-
 #if TF_NET_ENABLE != 0
 static uint8_t enumerate_request[8] = {
     0, 0, 0, 0, // uid 1
@@ -533,20 +506,24 @@ int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
 int tf_hal_callback_tick(TF_HAL *hal, uint32_t timeout_us) {
     uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
     TF_TFP *tfp = NULL;
+    TF_HALCommon *hal_common = tf_hal_get_common(hal);
+    uint16_t first_idx = hal_common->callback_tick_index;
 
     do {
-        tfp = next_callback_tick_tfp(hal);
+        ++hal_common->callback_tick_index;
 
-        if (tfp == NULL) {
-            return TF_E_OK;
+        if (hal_common->callback_tick_index >= hal_common->tfps_used) {
+            hal_common->callback_tick_index -= hal_common->tfps_used;
         }
+
+        tfp = &hal_common->tfps[hal_common->callback_tick_index];
 
         int result = tf_tfp_callback_tick(tfp, tf_hal_current_time_us(hal));
 
         if (result != TF_E_OK) {
             return result;
         }
-    } while (!tf_hal_deadline_elapsed(hal, deadline_us));
+    } while (first_idx != hal_common->callback_tick_index && !tf_hal_deadline_elapsed(hal, deadline_us));
 
     return TF_E_OK;
 }

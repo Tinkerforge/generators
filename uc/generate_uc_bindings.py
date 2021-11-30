@@ -731,12 +731,6 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
         return TF_E_NOT_INITIALIZED;
     }}
 
-    if (handler == NULL) {{
-        {device_under}->tfp->needs_callback_tick = false;{other_handler_checks}
-    }} else {{
-        {device_under}->tfp->needs_callback_tick = true;
-    }}
-
     {device_under}->{packet_under}_handler = handler;
     {device_under}->{packet_under}_user_data = user_data;
 
@@ -779,18 +773,8 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
 }}
 """
 
-        other_handler_check_template = """{device_under}->tfp->needs_callback_tick |= {device_under}->{packet_under}_handler != NULL;"""
-
         for packet in self.get_packets('callback'):
-            other_handler_checks = '\n        '.join([
-                format(other_handler_check_template, self, other_packet)
-                for other_packet in self.get_packets('callback')
-                if other_packet != packet
-            ])
-
-            other_handler_checks = common.wrap_non_empty("\n        ", other_handler_checks, "")
-
-            result.append(format(template, self, packet, other_handler_checks=other_handler_checks))
+            result.append(format(template, self, packet))
 
             if packet.has_high_level():
                 stream_out = packet.get_high_level('stream_out')

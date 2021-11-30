@@ -39,7 +39,6 @@ typedef struct TF_TFP {
     uint8_t waiting_for_sequence_number; // 0 if waiting for nothing
 
     TF_CallbackHandler cb_handler;
-    bool needs_callback_tick;
 
     bool send_enumerate_request;
 } TF_TFP;
