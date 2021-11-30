@@ -98,7 +98,7 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
             'display_names.h',
             'endian_convert.c',
             'endian_convert.h',
-            'errors.inc',
+            'error_cases.h',
             'errors.h',
             'hal_common.c',
             'hal_common.h',

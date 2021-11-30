@@ -177,7 +177,7 @@ void tf_hal_log_newline(void) {
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int e_code) {
     switch (e_code) {
-        #include "../bindings/errors.inc"
+        #include "../bindings/error_cases.h"
 
         case TF_E_BCM2835_INIT_FAILED:
             return "bcm2835_init failed. Are you running as root?";

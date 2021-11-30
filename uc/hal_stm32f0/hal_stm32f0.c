@@ -245,7 +245,7 @@ void tf_hal_log_newline(void) {
 #if TF_IMPLEMENT_STRERROR != 0
 const char *tf_hal_strerror(int e_code) {
 	switc h(e_code) {
-		#include "../bindings/errors.inc"
+		#include "../bindings/error_cases.h"
 
 		case TF_E_CHIP_SELECT_FAILED:
 			return "failed to write to chip select GPIO";
