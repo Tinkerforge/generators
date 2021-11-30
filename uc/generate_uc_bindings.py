@@ -171,8 +171,8 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid_
 
     {device_under}->tfp = tfp;
     {device_under}->tfp->device = {device_under};
-    {device_under}->tfp->cb_handler = tf_{device_under}_callback_handler;{response_expected_init}
-
+    {device_under}->tfp->cb_handler = tf_{device_under}_callback_handler;
+    {device_under}->magic = 0x5446;{response_expected_init}
     return TF_E_OK;
 }}
 """
@@ -192,8 +192,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, TF_TFP *tfp) {{
     {device_under}->tfp = tfp;
     {device_under}->tfp->device = {device_under};
     {device_under}->tfp->cb_handler = tf_{device_under}_callback_handler;
-{response_expected_init}
-
+    {device_under}->magic = 0x5446;{response_expected_init}
     return TF_E_OK;
 }}
 """
@@ -224,13 +223,17 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, TF_TFP *tfp) {{
     def get_c_destroy_function(self):
         template = """
 int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
-    if ({device_under} == NULL || {device_under}->tfp == NULL) {{
+    if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
     }}
 
     {device_under}->tfp->cb_handler = NULL;
     {device_under}->tfp->device = NULL;
     {device_under}->tfp = NULL;
+    {device_under}->magic = 0;
 
     return TF_E_OK;
 }}
@@ -242,6 +245,10 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
 int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us) {{
     if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
+
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
     }}
 
     TF_HAL *hal = {device_under}->tfp->spitfp->hal;
@@ -269,6 +276,10 @@ int tf_{device_under}_get_response_expected(TF_{device_camel} *{device_under}, u
         return TF_E_NULL;
     }}
 
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
+    }}
+
     switch (function_id) {{
 {getter_cases}
         default:
@@ -283,6 +294,10 @@ int tf_{device_under}_set_response_expected(TF_{device_camel} *{device_under}, u
         return TF_E_NULL;
     }}
 
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
+    }}
+
     switch (function_id) {{
 {setter_cases}
         default:
@@ -295,6 +310,10 @@ int tf_{device_under}_set_response_expected(TF_{device_camel} *{device_under}, u
 int tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under}, bool response_expected) {{
     if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
+
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
     }}
 
     memset({device_under}->response_expected, response_expected ? 0xFF : 0, {mapped_bytes});
@@ -346,6 +365,10 @@ int tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) {{
     if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
+
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
     }}
 
     TF_HAL *_hal = {device_under}->tfp->spitfp->hal;
@@ -472,6 +495,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
     if ({device_under} == NULL) {{
         return TF_E_NULL;
     }}
+
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
+    }}
     {wrapper_creation}{fill_extra_params}
 
     uint32_t _stream_length = {fixed_length_or_param_assignment};
@@ -503,6 +530,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
     if ({device_under} == NULL) {{
         return TF_E_NULL;
     }}
+
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
+    }}
     {wrapper_creation}{fill_extra_params}
     uint32_t _{stream_name_under}_length = 0;
     {chunk_data_type} _{stream_name_under}_chunk_data[{chunk_cardinality}];
@@ -525,6 +556,10 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_level_parameters}) {{
     if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
+
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
     }}
 
     int ret = TF_E_OK;
@@ -692,6 +727,10 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
         return TF_E_NULL;
     }}
 
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
+    }}
+
     if (handler == NULL) {{
         {device_under}->tfp->needs_callback_tick = false;{other_handler_checks}
     }} else {{
@@ -724,6 +763,10 @@ static void tf_{device_under}_{packet_under}_wrapper(TF_{device_camel} *{device_
 int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler handler, {stream_data_type} *{stream_name_under}_buffer, void *user_data) {{
     if ({device_under} == NULL) {{
         return TF_E_NULL;
+    }}
+
+    if ({device_under}->magic != 0x5446 || {device_under}->tfp == NULL) {{
+        return TF_E_NOT_INITIALIZED;
     }}
 
     {device_under}->{packet_under}_handler = handler;
@@ -867,6 +910,7 @@ typedef struct TF_{device_camel} {{
 #if TF_IMPLEMENT_CALLBACKS != 0
 {callback_handlers}
 #endif
+    uint16_t magic;
     uint8_t response_expected[{mapped_bytes}];
 }} TF_{device_camel};
 """
