@@ -386,7 +386,7 @@ com['openhab'] = {
             'name': 'Noise Rejection Filter Frequency',
             'type': 'integer',
             'label': 'Noise Rejection Filter Frequency',
-            'description': 'Sets the noise rejection filter to either 50 Hz or 60 Hz. Noise from 50 Hz or 60 Hz power sources (including harmonics of the AC power’s fundamental frequency) is attenuated by 82dB',
+            'description': "Sets the noise rejection filter to either 50 Hz or 60 Hz. Noise from 50 Hz or 60 Hz power sources (including harmonics of the AC power's fundamental frequency) is attenuated by 82dB",
         }, {
             'virtual': True,
 
