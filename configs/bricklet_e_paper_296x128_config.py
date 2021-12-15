@@ -688,5 +688,5 @@ com['openhab'] = {
     'actions': ['Draw', 'Get Draw Status',
                 'Write Black White', 'Read Black White', 'Write Color', 'Read Color', 'Fill Display',
                 'Draw Text', 'Draw Line', 'Draw Box',
-                'Set Update Mode', 'Get Update Mode', 'Get Display Type']
+                'Set Update Mode', 'Get Update Mode', 'Get Display Type', 'Get Display Driver']
 }

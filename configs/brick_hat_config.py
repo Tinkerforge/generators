@@ -483,5 +483,5 @@ com['openhab'] = {
             'command_options': [('Start Sleep Mode', 'Trigger')]
         }
     ],
-    'actions': ['Set Sleep Mode', 'Get Sleep Mode', {'fn': 'Set Bricklet Power', 'refreshs': ['Power Bricklets']}, 'Get Bricklet Power', 'Get Voltages']
+    'actions': ['Set Sleep Mode', 'Get Sleep Mode', {'fn': 'Set Bricklet Power', 'refreshs': ['Power Bricklets']}, 'Get Bricklet Power', 'Get Voltages', 'Get RTC Driver']
 }
