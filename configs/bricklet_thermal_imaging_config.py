@@ -648,7 +648,12 @@ com['examples'].append({
 
 com['openhab'] = {
     'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
-    'param_groups': oh_generic_channel_param_groups(),
+    'param_groups': oh_generic_channel_param_groups() + [{
+        'name': 'Flux Linear Parameters',
+        'label': 'Flux Linear Parameters',
+        'description': 'The flux linear parameters that can be used for radiometry calibration.\n\nSee FLIR document 102-PS245-100-01 for more details.',
+        'advanced': 'true'
+    }],
     'params': [{
             'packet': 'Set Image Transfer Config',
             'element': 'Config',
@@ -747,10 +752,91 @@ com['openhab'] = {
 
             'label': 'Spotmeter Row End',
             'description': 'Last row of the spotmeter region of interest.',
+        }, {
+            'packet': 'Set Flux Linear Parameters',
+            'element': 'Scene Emissivity',
+
+            'name': 'Scene Emissivity',
+            'type': 'integer',
+
+            'label': 'Scene Emissivity',
+            'description': '',
+            'groupName': 'Flux Linear Parameters'
+        }, {
+            'packet': 'Set Flux Linear Parameters',
+            'element': 'Temperature Background',
+
+            'name': 'Temperature Background',
+            'type': 'integer',
+
+            'label': 'Temperatrure Background',
+            'description': '',
+            'groupName': 'Flux Linear Parameters'
+        }, {
+            'packet': 'Set Flux Linear Parameters',
+            'element': 'Tau Window',
+
+            'name': 'Tau Window',
+            'type': 'integer',
+
+            'label': 'Tau Window',
+            'description': '',
+            'groupName': 'Flux Linear Parameters'
+        }, {
+            'packet': 'Set Flux Linear Parameters',
+            'element': 'Temperatur Window',
+
+            'name': 'Temperature Window',
+            'type': 'integer',
+
+            'label': 'Temperature Window',
+            'description': '',
+            'groupName': 'Flux Linear Parameters'
+        }, {
+            'packet': 'Set Flux Linear Parameters',
+            'element': 'Tau Atmosphere',
+
+            'name': 'Tau Atmosphere',
+            'type': 'integer',
+
+            'label': 'Tau Atmosphere',
+            'description': '',
+            'groupName': 'Flux Linear Parameters'
+        }, {
+            'packet': 'Set Flux Linear Parameters',
+            'element': 'Temperature Atmosphere',
+
+            'name': 'Temperature Atmosphere',
+            'type': 'integer',
+
+            'label': 'Temperature Atmosphere',
+            'description': '',
+            'groupName': 'Flux Linear Parameters'
+        }, {
+            'packet': 'Set Flux Linear Parameters',
+            'element': 'Reflection Window',
+
+            'name': 'Reflection Window',
+            'type': 'integer',
+
+            'label': 'Reflection Window',
+            'description': '',
+            'groupName': 'Flux Linear Parameters'
+        }, {
+            'packet': 'Set Flux Linear Parameters',
+            'element': 'Temperature Reflection',
+
+            'name': 'Temperature Reflection',
+            'type': 'integer',
+
+            'label': 'Temperature Reflection',
+            'description': '',
+            'groupName': 'Flux Linear Parameters'
         }],
     'init_code': """this.setImageTransferConfig(cfg.imageType);
     this.setResolution(cfg.resolution);
-    this.setSpotmeterConfig(new int[]{cfg.spotmeterColumnStart, cfg.spotmeterRowStart, cfg.spotmeterColumnEnd, cfg.spotmeterRowEnd});""",
+    this.setSpotmeterConfig(new int[]{cfg.spotmeterColumnStart, cfg.spotmeterRowStart, cfg.spotmeterColumnEnd, cfg.spotmeterRowEnd});
+    this.setFluxLinearParameters(cfg.sceneEmissivity, cfg.temperatureBackground, cfg.tauWindow, cfg.temperatureWindow, cfg.tauAtmosphere, cfg.temperatureAtmosphere, cfg.reflectionWindow, cfg.temperatureReflection);""",
     'channels': [{
         'predicate': 'cfg.imageType == 0',
         'id': 'High Contrast Image',
