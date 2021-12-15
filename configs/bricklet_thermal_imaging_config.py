@@ -647,7 +647,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.RawType', 'org.eclipse.smarthome.core.library.types.OpenClosedType'],
     'param_groups': oh_generic_channel_param_groups() + [{
         'name': 'Flux Linear Parameters',
         'label': 'Flux Linear Parameters',
@@ -957,7 +957,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'value.temperatureWarning[0] ? OnOffType.ON : OnOffType.OFF'}],
+            'transform': 'value.temperatureWarning[0] ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
     }, {
         'id': 'Overtemperature Shutdown Imminent',
         'type': 'Overtemperature Shutdown Imminent',
@@ -965,7 +965,7 @@ com['openhab'] = {
         'getters': [{
             'packet': 'Get Statistics',
             'packet_params': [],
-            'transform': 'value.temperatureWarning[1] ? OnOffType.ON : OnOffType.OFF'}],
+            'transform': 'value.temperatureWarning[1] ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
     },
 
     ],
@@ -1098,10 +1098,10 @@ com['openhab'] = {
                         ('In Progress', 2),
                         ('Complete', 3)]
         },
-        oh_generic_channel_type('Shutter Lockout', 'Switch', 'Shutter Lockout',
+        oh_generic_channel_type('Shutter Lockout', 'Contact', 'Shutter Lockout',
                     update_style=None,
                     description='If enabled, shutter is locked out because temperature is outside -10°C to +65°C'),
-        oh_generic_channel_type('Overtemperature Shutdown Imminent', 'Switch', 'Overtemperature Shutdown Imminent',
+        oh_generic_channel_type('Overtemperature Shutdown Imminent', 'Contact', 'Overtemperature Shutdown Imminent',
                     update_style=None,
                     description='Gets enabled 10 seconds before shutdown.'),
     ],

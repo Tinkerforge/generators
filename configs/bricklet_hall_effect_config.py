@@ -306,7 +306,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OpenClosedType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Edge Count Config',
@@ -353,7 +353,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Value',
                 'element': 'Value',
-                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
 
         }
     ],
@@ -386,7 +386,7 @@ com['openhab'] = {
                         'description': {'en': 'Enabling this will reset the edge counter after openHAB reads its value. Use this if you want relative edge counts per update.',
                                         'de': 'Wenn aktiviert, wird der Flankenzähler jedes Mal wenn openHAB dessen Wert liest zurückgesetzt. Dann wird eine relative Flankenzählung pro Update ausgegeben.'}
                     }]),
-        oh_generic_channel_type('Magnetic Field Detected', 'Switch', {'en': 'Magnetic Field Detected', 'de': 'Magnetfeld detektiert'},
+        oh_generic_channel_type('Magnetic Field Detected', 'Contact', {'en': 'Magnetic Field Detected', 'de': 'Magnetfeld detektiert'},
                     update_style=None,
                     description={'en': 'Enabled if a magnetic field of 3.5 millitesla or greater is detected.',
                                  'de': 'Aktiviert, wenn ein Magnetfeld größer oder gleich 3,5 Millitesla detektiert wird.'}),

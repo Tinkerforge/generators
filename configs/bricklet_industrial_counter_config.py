@@ -638,12 +638,12 @@ def value_channel(idx):
             'packet': 'Get Signal Data',
             'element': 'Value',
             'packet_params': [str(idx)],
-            'transform': 'value.value ? OnOffType.ON : OnOffType.OFF'
+            'transform': 'value.value ? OpenClosedType.CLOSED : OpenClosedType.OPEN'
         }],
         'callbacks': [{
             'packet': 'All Signal Data',
             'element': 'Value',
-            'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)
+            'transform': 'value[{}] ? OpenClosedType.CLOSED : OpenClosedType.OPEN'.format(idx)
         }],
     }
 
@@ -699,7 +699,7 @@ channels += [signal_data_channel(i, {'en': 'Frequency', 'de': 'Frequenz'}, 'freq
 channels += [value_channel(i) for i in range(0, 4)]
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OpenClosedType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'params': [enable_config(i) for i in range(0, 4)] + \
               [update_interval('Set All Counter Callback Configuration', 'Period', 'Counter', 'all counters'),
                update_interval('Set All Signal Data Callback Configuration', 'Period', 'Signal Data', 'all signal data')],
@@ -724,7 +724,7 @@ com['openhab'] = {
                     update_style=None,
                     description={'en': "The signal's frequency.",
                                  'de': 'Die Frequenz des Signals'}),
-        oh_generic_channel_type('Value', 'Switch', 'NOT USED',
+        oh_generic_channel_type('Value', 'Contact', 'NOT USED',
                     update_style=None,
                     description={'en': "The signal's current value",
                                  'de': 'Der aktuelle Wert des Signals'}),

@@ -704,7 +704,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.OpenClosedType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Configuration',
@@ -772,7 +772,7 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Error Log',
                 'element': '{title_words}',
-                'transform': 'value.transceiverDisabled ? OnOffType.ON : OnOffType.OFF'
+                'transform': 'value.transceiverDisabled ? OpenClosedType.CLOSED : OpenClosedType.OPEN'
             }],
         }, {
             'id': 'Write Timeout Count',
@@ -811,7 +811,7 @@ com['openhab'] = {
             update_style=None,
             description={'en': 'The read error level indicates the current level of checksum, acknowledgement, form, bit and stuffing errors during CAN bus read operations.\n\nThe read error level is not available in read-only transceiver mode and is reset to 0 as a side effect of changing the configuration or the read filter.',
                          'de': 'Das Lesefehler-Level gibt Aufschluss über das aktuelle Level der Prüfsummen-, Acknowledgement-, Form-, Bit- und Stuffing-Fehler während CAN-Bus Leseoperationen.\n\nDer Lesefehler-Level-Wert ist im Read-Only Transceiver-Modus nicht verfügbar. Außerdem wird er als Seiteneffekt von Konfigurations- und Lesefilteränderungen auf 0 zurückgesetzt.'}),
-        oh_generic_channel_type('Transceiver Disabled', 'Switch', {'en': 'Transceiver Disabled', 'de': 'Transceiver deaktiviert'},
+        oh_generic_channel_type('Transceiver Disabled', 'Contact', {'en': 'Transceiver Disabled', 'de': 'Transceiver deaktiviert'},
             update_style=None,
             description={'en': 'When the write error level extends 255 then the CAN transceiver gets disabled and no frames can be transmitted or received anymore. The CAN transceiver will automatically be activated again after the CAN bus is idle for a while.',
                          'de': 'Wenn das Schreibfehler-Level 255 überschreitet dann wird der CAN-Transceiver deaktiviert und es können keine Frames mehr übertragen und empfangen werden. Wenn auf dem CAN-Bus für eine Weile Ruhe herrscht, dann wird der CAN-Transceiver automatisch wieder aktiviert.'}),

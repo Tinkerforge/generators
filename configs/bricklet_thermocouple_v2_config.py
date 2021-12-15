@@ -262,7 +262,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
+    'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OpenClosedType"],
     'params': [{
             'packet': 'Set Configuration',
             'element': 'Averaging',
@@ -302,12 +302,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Error State',
                 'element': 'Over Under',
-                'transform': 'value.overUnder ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value.overUnder ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
 
             'callbacks': [{
                 'packet': 'Error State',
                 'element': 'Over Under',
-                'transform': 'overUnder ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'overUnder ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
 
         }, {
             'id': 'Open Circuit',
@@ -317,12 +317,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Error State',
                 'element': 'Open Circuit',
-                'transform': 'value.openCircuit ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value.openCircuit ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
 
             'callbacks': [{
                 'packet': 'Error State',
                 'element': 'Open Circuit',
-                'transform': 'openCircuit ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'openCircuit ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
 
         }
     ],
@@ -330,10 +330,10 @@ com['openhab'] = {
         oh_generic_channel_type('Temperature', 'Number', 'Temperature',
                     update_style='Callback Configuration',
                     description='The temperature of the thermocouple.'),
-        oh_generic_channel_type('Over Under Voltage', 'Switch', 'Over/Under Voltage Error',
+        oh_generic_channel_type('Over Under Voltage', 'Contact', 'Over/Under Voltage Error',
                     update_style=None,
                     description='Over/Under Voltage happens for voltages below 0V or above 3.3V. In this case it is very likely that your thermocouple is defective.'),
-        oh_generic_channel_type('Open Circuit', 'Switch', 'Open Circuit Error',
+        oh_generic_channel_type('Open Circuit', 'Contact', 'Open Circuit Error',
                     update_style=None,
                     description='An Open Circuit error indicates that there is no thermocouple connected.'),
     ],

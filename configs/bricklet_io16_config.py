@@ -626,13 +626,13 @@ def input_channel(idx):
                 'packet': 'Get Port',
                 'element': 'Value Mask',
                 'packet_params': ["\'a\'" if idx <= 7 else "\'b\'"],
-                'transform': '(value & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx % 8)}],
+                'transform': '(value & (1 << {})) > 0 ? OpenClosedType.CLOSED : OpenClosedType.OPEN'.format(idx % 8)}],
 
             'callbacks': [{
                 'filter': 'port == {} && (interruptMask & (1 << {})) > 0'.format("\'a\'" if idx <= 7 else "\'b\'", idx % 8),
                 'packet': 'Interrupt',
                 'element': 'Value Mask',
-                'transform': '(valueMask & (1 << {})) > 0 ? OnOffType.ON : OnOffType.OFF'.format(idx % 8)}],
+                'transform': '(valueMask & (1 << {})) > 0 ? OpenClosedType.CLOSED : OpenClosedType.OPEN'.format(idx % 8)}],
 
             'init_code':"""this.setPortConfiguration({port}, (short)(1 << {idx_mod}), 'i', cfg.pinConfiguration{idx} % 2 == 1);
             this.setPortInterrupt({port}, (short)(this.getPortInterrupt({port}) | (1 << {idx_mod})));""".format(port="\'a\'" if idx <= 7 else "\'b\'", idx_mod=idx % 8, idx=idx),
@@ -737,11 +737,11 @@ channels = [input_channel(i) for i in range(0, 16)] + [output_channel(i) for i i
 params = [pin_config(i) for i in range(0, 16)]
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.OpenClosedType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'params': params,
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Input Pin', 'Switch', 'NOT USED',
+        oh_generic_channel_type('Input Pin', 'Contact', 'NOT USED',
                     update_style=None,
                     description={'en': 'The logic level that is currently measured on the pin.',
                                  'de': 'Der Logikpegel, der aktuell auf dem Pin gemessen wird.'}),

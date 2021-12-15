@@ -166,7 +166,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OpenClosedType'],
     'param_groups': oh_generic_channel_param_groups(),
     'init_code':"""this.enableTiltStateCallback();""",
     'dispose_code': """this.disableTiltStateCallback();""",
@@ -178,11 +178,11 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Tilt State',
                 'element': 'State',
-                'transform': 'value == 1 ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value == 1 ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
             'callbacks': [{
                 'packet': 'Tilt State',
                 'element': 'State',
-                'transform': 'state == 1 ? OnOffType.ON : OnOffType.OFF'}]
+                'transform': 'state == 1 ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}]
         }, {
             'id': 'Vibrating',
             'type': 'Vibrating',
@@ -190,18 +190,18 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Tilt State',
                 'element': 'State',
-                'transform': 'value == 2 ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value == 2 ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
             'callbacks': [{
                 'packet': 'Tilt State',
                 'element': 'State',
-                'transform': 'state == 2 ? OnOffType.ON : OnOffType.OFF'}]
+                'transform': 'state == 2 ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}]
         }
     ],
     'channel_types': [
-        oh_generic_channel_type('Tilted', 'Switch', 'Tilted',
+        oh_generic_channel_type('Tilted', 'Contact', 'Tilted',
                     update_style=None,
                     description='The current tilt state. Enabled if tilted, disabled if closed or vibrating.'),
-        oh_generic_channel_type('Vibrating', 'Switch', 'Vibrating',
+        oh_generic_channel_type('Vibrating', 'Contact', 'Vibrating',
                     update_style=None,
                     description='The current vibration state. Enabled if vibration is detected, disabled if not. Vibration can only be detected if the bricklet is not tilted.')
     ],

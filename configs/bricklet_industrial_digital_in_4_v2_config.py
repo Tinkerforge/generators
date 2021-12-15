@@ -586,13 +586,13 @@ this.setChannelLEDConfig({0}, channelCfg.ledConfig);""".format(index),
             'getters': [{
                 'packet': 'Get Value',
                 'element': 'Value',
-                'transform': 'value[{0}] ? OnOffType.ON : OnOffType.OFF'.format(index)}],
+                'transform': 'value[{0}] ? OpenClosedType.CLOSED : OpenClosedType.OPEN'.format(index)}],
 
             'callbacks': [{
                 'filter': 'channel == {0}'.format(index),
                 'packet': 'Value',
                 'element': 'Value',
-                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
 
         }
 
@@ -614,10 +614,10 @@ def edge_count_channel(index):
         }
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OpenClosedType'],
     'channels': [input_channel(i) for i in range(0, 4)] + [edge_count_channel(i) for i in range(0, 4)],
     'channel_types': [
-        oh_generic_channel_type('Value', 'Switch', 'NOT USED',
+        oh_generic_channel_type('Value', 'Contact', 'NOT USED',
             update_style='Callback Configuration',
             description={'en': 'The logic level that is currently measured on the channel.',
                             'de': 'Der Logikpegel, der aktuell auf dem Kanal gemessen wird.'},

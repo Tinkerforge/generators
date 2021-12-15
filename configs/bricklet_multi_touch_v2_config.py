@@ -360,12 +360,12 @@ def electrode_channel(idx):
         'getters': [{
             'packet': 'Get Touch State',
             'element': 'State',
-            'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+            'transform': 'value[{}] ? OpenClosedType.CLOSED : OpenClosedType.OPEN'.format(idx)}],
 
         'callbacks': [{
             'packet': 'Touch State',
             'element': 'State',
-            'transform': 'state[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+            'transform': 'state[{}] ? OpenClosedType.CLOSED : OpenClosedType.OPEN'.format(idx)}],
     }
 
 def electrode_config(idx):
@@ -383,7 +383,7 @@ def electrode_config(idx):
         }
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OpenClosedType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Electrode Sensitivity',
@@ -434,12 +434,12 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Get Touch State',
                 'element': 'State',
-                'transform': 'value[12] ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value[12] ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
 
             'callbacks': [{
                 'packet': 'Touch State',
                 'element': 'State',
-                'transform': 'state[12] ? OnOffType.ON : OnOffType.OFF'}]
+                'transform': 'state[12] ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}]
         },
         {
             'id': 'Recalibrate',
@@ -454,7 +454,7 @@ com['openhab'] = {
     'channel_types': [
         {
             'id': 'Electrode',
-            'item_type': 'Switch',
+            'item_type': 'Contact',
             'label': 'NOT USED',
             'description': {'en': 'The current touch state. An electrode is already counted as touched if a finger is nearly touching the electrode. This means that you can put a piece of paper or foil or similar on top of a electrode to build a touch panel with a professional look.',
                             'de': 'Eine Elektrode wird schon als berührt gezählt wenn ein Finger sie beinahe berührt. Dadurch ist es möglich ein Stück Papier oder Folie über die Elektrode zu kleben um damit ein Touchpanel mit einem professionellen Aussehen zu bauen.'}

@@ -565,7 +565,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OpenClosedType'],
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [
         oh_generic_old_style_channel('Current', 'Current', cast_literal='(short)'),
@@ -576,11 +576,11 @@ com['openhab'] = {
             'getters': [{
                 'packet': 'Is Over Current',
                 'element': 'Over',
-                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
 
             'callbacks': [{
                 'packet': 'Over Current',
-                'transform': 'OnOffType.ON'}]
+                'transform': 'OpenClosedType.CLOSED'}]
         },
         oh_analog_value_channel()
     ],
@@ -588,7 +588,7 @@ com['openhab'] = {
         oh_generic_channel_type('Current', 'Number', {'en': 'Current', 'de': 'Stromstärke'},
                     update_style='Callback Period',
                     description={'en': 'The measured current.', 'de': 'Die gemessene Stromstärke.'}),
-        oh_generic_channel_type('Over Current', 'Switch', {'en': 'Over Current', 'de': 'Überstrom'},
+        oh_generic_channel_type('Over Current', 'Contact', {'en': 'Over Current', 'de': 'Überstrom'},
                     update_style=None,
                     description={'en': 'Enabled if more than 25A were measured. To reset this value you have to power cycle the Bricklet.',
                                  'de': 'Aktiviert, wenn mehr als 25A gemessen wurden. Um diesen Wert zurückzusetzen ist ein Aus- und Wiedereinschalten des Bricklet notwendig.'}),

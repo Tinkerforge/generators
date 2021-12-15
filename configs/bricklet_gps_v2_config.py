@@ -822,7 +822,7 @@ com['openhab'] = {
                 ['org.eclipse.smarthome.core.library.types.StringType',
                  'org.eclipse.smarthome.core.library.types.PointType',
                  'org.eclipse.smarthome.core.library.types.DateTimeType',
-                 'org.eclipse.smarthome.core.library.types.OnOffType',
+                 'org.eclipse.smarthome.core.library.types.OpenClosedType',
                  'java.time.ZoneId'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
@@ -873,12 +873,12 @@ com['openhab'] = {
                 'packet': 'Get Status',
                 'element': 'Has Fix',
                 'packet_params': [],
-                'transform': "value.hasFix ? OnOffType.ON : OnOffType.OFF"}],
+                'transform': "value.hasFix ? OpenClosedType.CLOSED : OpenClosedType.OPEN"}],
 
             'callbacks': [{
                 'packet': 'Status',
                 'element': 'Has Fix',
-                'transform': "hasFix ? OnOffType.ON : OnOffType.OFF"}],
+                'transform': "hasFix ? OpenClosedType.CLOSED : OpenClosedType.OPEN"}],
 
         }, {
             'id': 'Satellites In View',
@@ -997,7 +997,7 @@ com['openhab'] = {
                     update_style='Callback Period',
                     description={'en': 'The location as determined by the bricklet.',
                                  'de': 'Der vom Bricklet ermittelte Standort'}),
-        oh_generic_channel_type('Fix', 'Switch', {'en': 'Fix', 'de': 'Fix'},
+        oh_generic_channel_type('Fix', 'Contact', {'en': 'Fix', 'de': 'Fix'},
                     update_style=None,
                     description={'en': 'The current fix status',
                                  'de': 'Der aktuelle Fix-Status'}),

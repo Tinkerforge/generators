@@ -206,6 +206,7 @@ Sets the mode. The NFC Bricklet supports four modes:
 * Card Emulation (Cardemu): Emulates a tag for other readers
 * Peer to Peer (P2P): Exchange data with other readers
 * Reader: Reads and writes tags
+* Simple: Automatically reads tag IDs
 
 If you change a mode, the Bricklet will reconfigure the hardware for this mode.
 Therefore, you can only use functions corresponding to the current mode. For
@@ -219,6 +220,7 @@ Setzt den Modus. Das NFC Bricklet unterstützt vier Modi:
 * Card Emulation (Cardemu): Emuliert einen Tag für andere Reader
 * Peer to Peer (P2P): Datenaustausch mit anderen Readern
 * Reader: Liest und schreibt Tags
+* Simple: Liest automatisch Tag-IDs
 
 Wenn der Modus geändert wird, dann rekonfiguriert das Bricklet die Hardware für
 den gewählten Modus. Daher können immer nur die dem Modus zugehörigen Funktionen

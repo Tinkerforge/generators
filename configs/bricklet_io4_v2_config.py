@@ -685,12 +685,12 @@ def input_channel(idx):
 
             'getters': [{
                 'packet': 'Get Value',
-                'transform': 'value[{}] ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+                'transform': 'value[{}] ? OpenClosedType.CLOSED : OpenClosedType.OPEN'.format(idx)}],
 
             'callbacks': [{
                 'filter': 'channel == {}'.format(idx),
                 'packet': 'Input Value',
-                'transform': 'value ? OnOffType.ON : OnOffType.OFF'.format(idx)}],
+                'transform': 'value ? OpenClosedType.CLOSED : OpenClosedType.OPEN'.format(idx)}],
 
             'init_code':"""this.setConfiguration({0}, 'i', cfg.pinConfiguration{0} % 2 == 1);
             this.setInputValueCallbackConfiguration({0}, channelCfg.updateInterval, false);""".format(idx),
@@ -790,11 +790,11 @@ channels = [input_channel(i) for i in range(0, 4)] + [output_channel(i) for i in
 params = [pin_config(i) for i in range(0, 4)]
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.StringType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType', 'org.eclipse.smarthome.core.library.types.OpenClosedType', 'org.eclipse.smarthome.core.library.types.StringType'],
     'params': params,
     'channels': channels,
     'channel_types': [
-        oh_generic_channel_type('Input Value', 'Switch', 'NOT USED',
+        oh_generic_channel_type('Input Value', 'Contact', 'NOT USED',
                     update_style='Callback Configuration',
                     description={'en': 'The logic level that is currently measured on the pin.',
                                  'de': 'Der Logikpegel, der aktuell auf dem Pin gemessen wird.'}),

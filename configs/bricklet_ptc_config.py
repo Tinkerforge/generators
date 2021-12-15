@@ -662,7 +662,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OnOffType'],
+    'imports': oh_generic_channel_imports() + ['org.eclipse.smarthome.core.library.types.OpenClosedType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [
         {
@@ -711,11 +711,11 @@ this.setSensorConnectedCallbackConfiguration(true);""",
             'getters': [{
                 'packet': 'Is Sensor Connected',
                 'element': 'Connected',
-                'transform': 'value ? OnOffType.ON : OnOffType.OFF'}],
+                'transform': 'value ? OpenClosedType.CLOSED : OpenClosedType.OPEN'}],
             'callbacks': [{
                 'packet': 'Sensor Connected',
                 'element': 'Connected',
-                'transform': 'connected ? OnOffType.ON : OnOffType.OFF'
+                'transform': 'connected ? OpenClosedType.CLOSED : OpenClosedType.OPEN'
             }]
         },
     ],
@@ -726,7 +726,7 @@ this.setSensorConnectedCallbackConfiguration(true);""",
         oh_generic_channel_type('Resistance', 'Number', 'Resistance',
                     update_style='Callback Period',
                     description='The value as measured by the MAX31865 precision delta-sigma ADC. Configure the thing to Pt 100 or Pt 1000, to make sure the conversion is correct.'),
-        oh_generic_channel_type('Sensor Connected', 'Switch', 'Sensor Connected',
+        oh_generic_channel_type('Sensor Connected', 'Contact', 'Sensor Connected',
                     update_style=None,
                     description='Indicates if the sensor is connected correctly. If this is disabled, there is either no Pt100 or Pt1000 sensor connected, the sensor is connected incorrectly or the sensor itself is faulty.'),
     ],
