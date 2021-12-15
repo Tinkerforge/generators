@@ -563,7 +563,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set DMX Mode',
@@ -668,6 +668,16 @@ com['openhab'] = {
                 'packet': 'Frame Error Count',
                 'element': '{title_words}',
                 'transform': 'new DecimalType(framingErrorCount)'}],
+        }, {
+            'predicate': 'cfg.errorLEDConfig == 3',
+            'id': 'Clear Error LED',
+            'type': 'Clear Error LED',
+            'setters': [{
+                'packet': 'Set Error LED Config',
+                'packet_params': ['3'],
+                'command_type': "StringType"
+            }],
+
         }],
     'channel_types': [
         oh_generic_channel_type('Overrun Error Count', 'Number', {'en': 'Overrun Error Count', 'de': 'Overrun-Fehlerzähler'},
@@ -676,6 +686,13 @@ com['openhab'] = {
         oh_generic_channel_type('Framing Error Count', 'Number', {'en': 'Framing Error Count', 'de': 'Framing-Fehlerzähler'},
             update_style=None,
             description={'en': 'The number of occurred framing errors', 'de': 'Die Anzahl an aufgetretenen Framing-Fehlern'}),
+            {
+            'id': 'Clear Error LED',
+            'item_type': 'String',
+            'label': 'Clear Error LED',
+            'description': 'Clears the error LED.',
+            'command_options': [('Clear', 'CLEAR')]
+        }
     ],
     'actions': ['Write Frame', 'Get DMX Mode', 'Read Frame', 'Get Frame Duration', 'Get Frame Error Count', 'Get Communication LED Config', 'Get Error LED Config']
 }

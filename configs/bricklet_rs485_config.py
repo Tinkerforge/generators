@@ -2407,7 +2407,7 @@ modbus_common_error_channels = [modbus_error_channel(*tup) for tup in [
     ('Slave Device Failure', 'slaveDeviceFailure', 'Number of errors occurred on the slave device which were unrecoverable. This corresponds to Modbus exception code 4.')]]
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups() + [{
         'name': 'RS485',
         'label': 'RS485',
@@ -2594,6 +2594,16 @@ com['openhab'] = {
                 'element': 'Receive Buffer Used',
                 'transform': 'new {number_type}(value.receiveBufferUsed{divisor}{unit})'
             }],
+        }, {
+            'predicate': 'cfg.errorLEDConfig == 3',
+            'id': 'Clear Error LED',
+            'type': 'Clear Error LED',
+            'setters': [{
+                'packet': 'Set Error LED Config',
+                'packet_params': ['3'],
+                'command_type': "StringType"
+            }],
+
         }],
     'channel_types': [
         oh_generic_channel_type('Overrun Error Count', 'Number', 'Overrun Error Count',
@@ -2611,6 +2621,13 @@ com['openhab'] = {
         oh_generic_channel_type('Receive Buffer Used', 'Number', 'Receive Buffer Used',
             update_style=None,
             description='The number of bytes currently in the receive buffer'),
+            {
+            'id': 'Clear Error LED',
+            'item_type': 'String',
+            'label': 'Clear Error LED',
+            'description': 'Clears the error LED.',
+            'command_options': [('Clear', 'CLEAR')]
+        }
     ],
     #'actions': ['Write', 'Read', 'Get RS485 Configuration', 'Get Mode', 'Get Communication LED Config', 'Get Error LED Config', 'Get Buffer Config', 'Get Buffer Status', 'Get Error Count',
     #            'Get Modbus Configuration', 'Get Modbus Common Error Count', 'Modbus Master Read Coils', 'Modbus Master Read Holding Registers', 'Modbus Master Write Single Coil', 'Modbus Master Write Single Register', 'Modbus Master Write Multiple Coils', 'Modbus Master Write Multiple Registers', 'Modbus Master Read Discrete Inputs', 'Modbus Master Read Input Registers']

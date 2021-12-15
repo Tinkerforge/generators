@@ -1172,7 +1172,7 @@ com['examples'].append({
 })
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Transceiver Configuration',
@@ -1248,7 +1248,23 @@ com['openhab'] = {
             'callbacks': [{
                 'packet': 'Error Occurred',
                 'transform': '""'}],
+        }, {
+            'predicate': 'cfg.errorLEDConfig == 4',
+            'id': 'Clear Error LED',
+            'type': 'Clear Error LED',
+            'setters': [{
+                'packet': 'Set Error LED Config',
+                'packet_params': ['4'],
+                'command_type': "StringType"
+            }],
+
         }],
-    'channel_types': [],
+    'channel_types': [{
+            'id': 'Clear Error LED',
+            'item_type': 'String',
+            'label': 'Clear Error LED',
+            'description': 'Clears the error LED.',
+            'command_options': [('Clear', 'CLEAR')]
+        }],
     'actions': ['Write Frame', 'Read Frame', 'Get Transceiver Configuration', 'Set Queue Configuration', 'Get Queue Configuration', 'Set Read Filter Configuration', 'Get Read Filter Configuration', 'Get Error Log']
 }
