@@ -726,6 +726,15 @@ com['openhab'] = {
             'description': {'en': 'The number of samples to average over for the temperature.',
                             'de': 'Die Anzahl an Messungen über die der Mittelwert für die Temperatur gebildet wird.'},
             'groupName': 'average'
+        },
+         {
+            'packet': 'Set I2C Mode',
+            'element': 'Mode',
+
+            'name': 'I2C Mode',
+            'type': 'integer',
+            'label': 'I2C Mode',
+            'description': 'Possible modes are:<ul><li>0: Fast (400kHz)</li><li>1: Slow (100kHz)</li>\n\nIf you have problems with obvious outliers in the Barometer Bricklet measurements, they may be caused by EMI issues. In this case it may be helpful to lower the I2C speed.\n\nIt is however not recommended to lower the I2C speed in applications where a high throughput needs to be achieved.',
         }],
     'param_groups': oh_generic_channel_param_groups() + [
      {
@@ -737,7 +746,8 @@ com['openhab'] = {
     }
     ],
     'init_code': """this.setReferenceAirPressure(cfg.referenceAirPressure.multiply(new BigDecimal(1000)).intValue());
-this.setAveraging(cfg.pressureMovingAverageLength.shortValue(), cfg.pressureAverageLength.shortValue(), cfg.temperatureAverageLength.shortValue());""",
+this.setAveraging(cfg.pressureMovingAverageLength.shortValue(), cfg.pressureAverageLength.shortValue(), cfg.temperatureAverageLength.shortValue());
+this.setI2CMode(cfg.i2cMode.shortValue());""",
     'channels': [
         oh_generic_old_style_channel('Air Pressure', 'Air Pressure', 'SmartHomeUnits.BAR', divisor=1000000.0),
         oh_generic_old_style_channel('Altitude', 'Altitude')
