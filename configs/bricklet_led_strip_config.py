@@ -791,10 +791,18 @@ com['openhab'] = {
             'label': {'en': 'Clock Frequency', 'de': 'Taktfrequenz'},
             'description': {'en': 'The frequency of the clock in Hz. The Bricklet will choose the nearest achievable frequency, which may be off by a few Hz.\n\nIf you have problems with flickering LEDs, they may be bits flipping. You can fix this by either making the connection between the LEDs and the Bricklet shorter or by reducing the frequency.\n\nWith a decreasing frequency your maximum frames per second will decrease too.',
                             'de': 'Die Frequenz der Clock-Leitung. Das Bricklet wählt die nächst mögliche erreichbare Frequenz. Diese kann ein paar Hz neben des gesetzten Wertes liegen.\n\nWenn Probleme mit flackernden LEDs auftreten kann es daran liegen das Bits auf der Leitung flippen. Dies kann behoben werden in dem man die Verbindung zwischen Bricklet und LEDs verringert oder in dem man die Frequenz reduziert.\n\nMit abnehmender Frequenz nimmt allerdings auch die maximale Framerate ab.'}
+        }, {
+            'virtual': True,
+            'name': 'Enable Frame Started Channel',
+            'type': 'boolean',
+            'default': 'false',
+            'label': 'Enable Frame Started Channel',
+            'description': 'Enables the frame started channel. This will result in a lot of spam in the openhab Log!'
         }
         ],
     'channels': [
         {
+            'predicate': 'cfg.enableFrameStartedChannel',
             'id': 'Frame Started',
             'label': {'en': 'Frame Started', 'de': 'Frame gestartet'},
             'description': {'en': 'This channel is triggered directly after a new frame render is started. You should send the data for the next frame directly after this listener was triggered.',
