@@ -1334,3 +1334,249 @@ com['examples'].append({
 'functions': [('callback', ('All Data', 'all data'), [(('Acceleration', ['Acceleration [X]', 'Acceleration [Y]', 'Acceleration [Z]']), 'int16', 3, 100.0, 'm/s²', None), (('Magnetic Field', ['Magnetic Field [X]', 'Magnetic Field [Y]', 'Magnetic Field [Z]']), 'int16', 3, 16.0, 'µT', None), (('Angular Velocity', ['Angular Velocity [X]', 'Angular Velocity [Y]', 'Angular Velocity [Z]']), 'int16', 3, 16.0, '°/s', None), (('Euler Angle', ['Euler Angle [Heading]', 'Euler Angle [Roll]', 'Euler Angle [Pitch]']), 'int16', 3, 16.0, '°', None), (('Quaternion', ['Quaternion [W]', 'Quaternion [X]', 'Quaternion [Y]', 'Quaternion [Z]']), 'int16', 4, 16383.0, None, None), (('Linear Acceleration', ['Linear Acceleration [X]', 'Linear Acceleration [Y]', 'Linear Acceleration [Z]']), 'int16', 3, 100.0, 'm/s²', None), (('Gravity Vector', ['Gravity Vector [X]', 'Gravity Vector [Y]', 'Gravity Vector [Z]']), 'int16', 3, 100.0, 'm/s²', None), (('Temperature', 'Temperature'), 'int8', 1, None, '°C', None), (('Calibration Status', 'Calibration Status'), 'uint8:bitmask:8', 1, None, None, None)], None, None),
               ('callback_configuration', ('All Data', 'all data'), [], 100, False, None, [])]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + ["org.eclipse.smarthome.core.library.types.OnOffType"],
+    'params': [{
+            'packet': 'Set Sensor Configuration',
+            'element': 'Magnetometer Rate',
+
+            'name': 'Magnetometer Rate',
+            'type': 'integer',
+
+            'label': 'Magnetometer Rate',
+            'description': 'This option is auto-controlled in fusion mode.'
+        }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Gyroscope Range',
+
+            'name': 'Gyroscope Range',
+            'type': 'integer',
+            'options':[('2000°/s', 0),
+                        ('1000°/s', 1),
+                        ('500°/s', 2),
+                        ('250°/s', 3),
+                        ('125°/s', 4)],
+            'limit_to_options': 'true',
+            'label': 'Gyroscope Range',
+            'description': 'This option is auto-controlled in fusion mode.'
+        }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Gyroscope Bandwidth',
+
+            'name': 'Gyroscope Bandwidth',
+            'type': 'integer',
+
+            'label': 'Gyroscope Bandwidth',
+            'description': 'This option is auto-controlled in fusion mode.'
+        }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Accelerometer Range',
+
+            'name': 'Accelerometer Range',
+            'type': 'integer',
+            'options':[('±2G', 0),
+                       ('±4G', 1),
+                       ('±8G', 2),
+                       ('±16G', 3)],
+            'limit_to_options': 'true',
+            'label': 'Accelerometer Range',
+            'description': 'This option is user selectable in all fusion modes.'
+        }, {
+            'packet': 'Set Sensor Configuration',
+            'element': 'Accelerometer Bandwidth',
+
+            'name': 'Accelerometer Bandwidth',
+            'type': 'integer',
+            'options':[('7.81Hz', 0),
+                       ('15.63Hz', 1),
+                       ('31.25Hz', 2),
+                       ('62.5Hz', 3),
+                       ('125Hz', 4),
+                       ('250Hz', 5),
+                       ('500Hz', 6),
+                       ('1000Hz', 7)],
+            'limit_to_options': 'true',
+            'label': 'Accelerometer Bandwidth',
+            'description': 'This option is auto-controlled in fusion mode.'
+        }, {
+            'packet': 'Set Sensor Fusion Mode',
+            'element': 'Mode',
+
+            'name': 'Sensor Fusion Mode',
+            'type': 'integer',
+            'label': 'Sensor Fusion Mode',
+            'description': "If the fusion mode is turned off, the Acceleration, Magnetic Field and Angular Velocity channels return uncalibrated and uncompensated sensor data. All other sensor channels return no data.\n\nSince firmware version 2.0.6 you can also use a fusion mode without magnetometer. In this mode the calculated orientation is relative (with magnetometer it is absolute with respect to the earth). However, the calculation can't be influenced by spurious magnetic fields.\n\nSince firmware version 2.0.13 you can also use a fusion mode without fast magnetometer calibration. This mode is the same as the normal fusion mode, but the fast magnetometer calibration is turned off. So to find the orientation the first time will likely take longer, but small magnetic influences might not affect the automatic calibration as much.\n\nBy default sensor fusion is on."
+        },
+        update_interval('Set Acceleration Callback Configuration', 'Period', 'Acceleration', 'the acceleration'),
+        update_interval('Set Magnetic Field Callback Configuration', 'Period', 'Magnetic Field', 'the magnetic field'),
+        update_interval('Set Angular Velocity Callback Configuration', 'Period', 'Angular Velocity', 'the angular velocity'),
+        update_interval('Set Orientation Callback Configuration', 'Period', 'Orientation', 'the orientation as euler angles'),
+        update_interval('Set Quaternion Callback Configuration', 'Period', 'Quaternion', 'the orientation as quaternion'),
+        update_interval('Set Linear Acceleration Callback Configuration', 'Period', 'Linear Acceleration', 'the linear acceleration'),
+        update_interval('Set Gravity Vector Callback Configuration', 'Period', 'Gravity Vector', 'the gravity vector'),
+        update_interval('Set Temperature Callback Configuration', 'Period', 'Temperature', 'the temperature'),
+        ],
+    'param_groups': oh_generic_channel_param_groups(),
+    'init_code': """
+    this.setAccelerationCallbackConfiguration(cfg.accelerationUpdateInterval, true);
+    this.setMagneticFieldCallbackConfiguration(cfg.magneticFieldUpdateInterval, true);
+    this.setAngularVelocityCallbackConfiguration(cfg.angularVelocityUpdateInterval, true);
+    this.setOrientationCallbackConfiguration(cfg.orientationUpdateInterval, true);
+    this.setQuaternionCallbackConfiguration(cfg.quaternionUpdateInterval, true);
+    this.setLinearAccelerationCallbackConfiguration(cfg.linearAccelerationUpdateInterval, true);
+    this.setGravityVectorCallbackConfiguration(cfg.gravityVectorUpdateInterval, true);
+    this.setTemperatureCallbackConfiguration(cfg.temperatureUpdateInterval, true);
+    this.setSensorConfiguration(cfg.magnetometerRate.shortValue(), cfg.gyroscopeRange.shortValue(), cfg.gyroscopeBandwidth.shortValue(), cfg.accelerometerRange.shortValue(), cfg.accelerometerBandwidth.shortValue());
+    this.setSensorFusionMode(cfg.sensorFusionMode.shortValue());
+    """,
+    'channels': [{
+            'id': 'Acceleration {}'.format(axis.upper()),
+            'type': 'Acceleration',
+            'label': 'Acceleration - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Acceleration',
+                'element': axis,
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Acceleration',
+                'element': axis,
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+            'id': 'Magnetic Field {}'.format(axis.upper()),
+            'type': 'Magnetic Field',
+            'label': 'Magnetic Field - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Magnetic Field',
+                'element': axis,
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Magnetic Field',
+                'element': axis,
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
+        } for axis in ['X', 'Y', 'Z']
+    ] +  [{
+            'id': 'Angular Velocity {}'.format(axis.upper()),
+            'type': 'Angular Velocity',
+            'label': 'Angular Velocity - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Angular Velocity',
+                'element': axis,
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Angular Velocity',
+                'element': axis,
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+            'id': 'Orientation {}'.format(angle),
+            'type': 'Orientation',
+            'label': 'Orientation - {}'.format(angle),
+
+            'getters': [{
+                'packet': 'Get Orientation',
+                'element': angle,
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(angle.lower())}],
+
+            'callbacks': [{
+                'packet': 'Orientation',
+                'element': angle,
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(angle.lower())}],
+        } for angle in ['Heading', 'Roll', 'Pitch']
+    ] + [{
+            'id': 'Quaternion {}'.format(axis.upper()),
+            'type': 'Quaternion',
+            'label': 'Quaternion - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Quaternion',
+                'element': axis,
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Quaternion',
+                'element': axis,
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
+        } for axis in ['W', 'X', 'Y', 'Z']
+    ] + [{
+            'id': 'Linear Acceleration {}'.format(axis.upper()),
+            'type': 'Linear Acceleration',
+            'label': 'Linear Acceleration - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Linear Acceleration',
+                'element': axis,
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Linear Acceleration',
+                'element': axis,
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+            'id': 'Gravity Vector {}'.format(axis.upper()),
+            'type': 'Gravity Vector',
+            'label': 'Gravity Vector - {}'.format(axis.upper()),
+
+            'getters': [{
+                'packet': 'Get Gravity Vector',
+                'element': axis,
+                'transform': 'new {{number_type}}(value.{}{{divisor}}{{unit}})'.format(axis.lower())}],
+
+            'callbacks': [{
+                'packet': 'Gravity Vector',
+                'element': axis,
+                'transform': 'new {{number_type}}({}{{divisor}}{{unit}})'.format(axis.lower())}],
+            'java_unit': 'SmartHomeUnits.STANDARD_GRAVITY',
+            'divisor': 980.665,
+        } for axis in ['X', 'Y', 'Z']
+    ] + [{
+        'id': 'Temperature',
+        'type': 'Temperature',
+        'label': 'Temperature',
+
+        'getters': [{
+            'packet': 'Get Temperature',
+            'element': 'Temperature',
+            'transform': 'new {number_type}(value{divisor}{unit})'}],
+
+        'callbacks': [{
+            'packet': 'Temperature',
+            'element': 'Temperature',
+            'transform': 'new {number_type}(temperature{divisor}{unit})'}],
+    }],
+    'channel_types': [
+        oh_generic_channel_type('Acceleration', 'Number:Acceleration', 'NOT USED',
+                    update_style=None,
+                    description='The acceleration from the accelerometer for the x, y and z axis in m/s².'),
+        oh_generic_channel_type('Magnetic Field', 'Number:MagneticFluxDensity', 'NOT USED',
+                    update_style=None,
+                    description='The calibrated magnetic field from the magnetometer for the x, y and z axis in Tesla.'),
+        oh_generic_channel_type('Angular Velocity', 'Number:Dimensionless', 'NOT USED',
+                    update_style=None,
+                    description='The calibrated angular velocity from the gyroscope for the x, y and z axis in °/s.'),
+        oh_generic_channel_type('Orientation', 'Number:Angle', 'NOT USED',
+                    update_style=None,
+                    description='The current orientation (heading, roll, pitch) of the IMU Brick as independent Euler angles in 1/16 degree. Note that Euler angles always experience a gimbal lock. We recommend that you use quaternions instead, if you need the absolute orientation.'),
+        oh_generic_channel_type('Quaternion', 'Number:Dimensionless', 'NOT USED',
+                    update_style=None,
+                    description='The current orientation (w, x, y, z) of the IMU Brick as quaternions.'),
+        oh_generic_channel_type('Linear Acceleration', 'Number:Acceleration', 'NOT USED',
+                    update_style=None,
+                    description='The linear acceleration from the accelerometer for the x, y and z axis in m/s. The linear acceleration is the acceleration in each of the three axis of the IMU Brick with the influences of gravity removed.'),
+        oh_generic_channel_type('Gravity Vector', 'Number:Acceleration', 'NOT USED',
+                    update_style=None,
+                    description='The current gravity vector of the IMU Brick for the x, y and z axis in g (1g = 9.80665m/s²). The gravity vector is the acceleration that occurs due to gravity. Influences of additional linear acceleration are removed.'),
+        oh_generic_channel_type('Temperature', 'Number:Temperature', 'NOT USED',
+                    update_style=None,
+                    description='The temperature of the IMU Brick. The temperature is given in °C. The temperature is measured in the core of the BNO055 IC, it is not the ambient temperature.'),
+    ],
+    'actions': ['Get Orientation', 'Get Linear Acceleration', 'Get Gravity Vector', 'Get Quaternion', 'Get All Data', 'Get Acceleration', 'Get Magnetic Field', 'Get Angular Velocity', 'Get Temperature', 'Get Sensor Configuration', 'Get Sensor Fusion Mode']
+}
