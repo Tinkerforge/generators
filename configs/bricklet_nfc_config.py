@@ -1360,7 +1360,7 @@ P2P:
     <li>P2P_STATE_TRANSFER_NDEF_ERROR = 195</li></ul>""".replace('\n    ', '')
 
 com['openhab'] = {
-    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports(),
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() + ['org.eclipse.smarthome.core.library.types.StringType', 'org.eclipse.smarthome.core.library.types.DateTimeType', 'java.util.stream.Collectors', 'java.time.ZonedDateTime', 'java.time.temporal.ChronoUnit'],
     'param_groups': oh_generic_channel_param_groups(),
     'params': [{
             'packet': 'Set Mode',
@@ -1370,7 +1370,7 @@ com['openhab'] = {
             'type': 'integer',
 
             'label': 'Mode',
-            'description': 'The NFC Bricklet supports four modes:\n\n<ul><li>Off</li><li>Card Emulation (Cardemu): Emulates a tag for other readers</li><li>Peer to Peer (P2P): Exchange data with other readers</li><li>Reader: Reads and writes tags</li></ul>\n\nIf you change a mode, the Bricklet will reconfigure the hardware for this mode. Therefore, you can only use functions corresponding to the current mode. For example, in Reader mode you can only use Reader functions.',
+            'description': 'The NFC Bricklet supports five modes:\n\n<ul><li>Off</li><li>Card Emulation (Cardemu): Emulates a tag for other readers</li><li>Peer to Peer (P2P): Exchange data with other readers</li><li>Reader: Reads and writes tags</li><li>Simple: Automatically reads tag IDs</li></ul>\n\nIf you change a mode, the Bricklet will reconfigure the hardware for this mode. Therefore, you can only use functions corresponding to the current mode. For example, in Reader mode you can only use Reader functions.',
         },  {
             'packet': 'Set Detection LED Config',
             'element': 'Config',
@@ -1395,6 +1395,7 @@ com['openhab'] = {
     this.setMaximumTimeout(cfg.maximumTimeout);""",
 
     'channels': [{
+            'predicate': 'cfg.mode != 4',
             'id': 'State',
             'type': 'State',
             'callbacks': [{
@@ -1427,10 +1428,56 @@ com['openhab'] = {
                 'element': 'State',
                 'transform': 'new DecimalType(value.state)'
             }],
-        }],
+        },
+        {
+            'predicate': 'cfg.mode == 4',
+            'id': 'Last Tag ID',
+            'type': 'Tag ID',
+
+            'getters': [{
+                'packet': 'Simple Get Tag ID',
+                'element': 'Tag ID',
+                'packet_params': ["0"],
+                'transform': 'new StringType(Arrays.stream(value.tagID).mapToObj(i -> String.format("%02x", i)).collect(Collectors.joining(":")))'
+            }],
+        }, {
+            'predicate': 'cfg.mode == 4',
+            'id': 'Last Tag Type',
+            'type': 'Tag Type',
+
+            'getters': [{
+                'packet': 'Simple Get Tag ID',
+                'element': 'Tag Type',
+                'packet_params': ["0"],
+                'transform': 'new DecimalType(value.tagType)'
+            }],
+        }, {
+            'predicate': 'cfg.mode == 4',
+            'id': 'Last Tag Seen',
+            'type': 'Tag Last Seen',
+
+            'getters': [{
+                'packet': 'Simple Get Tag ID',
+                'element': 'Last Seen',
+                'packet_params': ["0"],
+                'predicate': 'value.lastSeen != 0',
+                'transform': 'new DateTimeType(ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).minusSeconds(value.lastSeen / 1000))'
+            }],
+        }
+        ],
     'channel_types': [oh_generic_channel_type('State', 'Number', 'State',
             update_style=None,
-            description="The current state of the bricklet. The meaning of the state depends on the configured mode. Calling actions is only allowed in idle, ready and error states (e.g. all states >= 128). The following states are defined:\n" + state_list)],
+            description="The current state of the bricklet. The meaning of the state depends on the configured mode. Calling actions is only allowed in idle, ready and error states (e.g. all states >= 128). The following states are defined:\n" + state_list),
+        oh_generic_channel_type('Tag ID', 'String', 'Tag ID',
+            update_style=None,
+            description="blah"),
+        oh_generic_channel_type('Tag Type', 'Number', 'Tag Type',
+            update_style=None,
+            description="blah"),
+         oh_generic_channel_type('Tag Last Seen', 'DateTime', 'Tag Last Seen',
+                    update_style=None,
+                    description=""),
+    ],
     'actions': ['Get Mode',
                 'Reader Request Tag ID', 'Reader Get Tag ID', 'Reader Get State', 'Reader Write NDEF', 'Reader Request NDEF', 'Reader Read NDEF', 'Reader Authenticate Mifare Classic Page', 'Reader Write Page', 'Reader Request Page', 'Reader Read Page',
                 'Cardemu Get State', 'Cardemu Start Discovery', 'Cardemu Write NDEF', 'Cardemu Start Transfer',
