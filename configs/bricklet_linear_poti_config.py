@@ -40,13 +40,13 @@ com['constant_groups'].append(THRESHOLD_OPTION_CONSTANT_GROUP)
 com['packets'].append({
 'type': 'function',
 'name': 'Get Position',
-'elements': [('Position', 'uint16', 1, 'out', {'range': (0, 100)})],
+'elements': [('Position', 'uint16', 1, 'out', {'unit': 'Percent', 'range': (0, 100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the position of the linear potentiometer. The value is
-between 0 (slider down) and 100 (slider up).
+between 0% (slider down) and 100% (slider up).
 
 If you want to get the position periodically, it is recommended to use the
 :cb:`Position` callback and set the period with
@@ -55,7 +55,7 @@ If you want to get the position periodically, it is recommended to use the
 'de':
 """
 Gibt die Position des Linearpotentiometers zurück. Der Wertebereich
-ist von 0 (Schieberegler unten) und 100 (Schieberegler oben).
+ist von 0% (Schieberegler unten) und 100% (Schieberegler oben).
 
 Wenn die Position periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Position` Callback zu nutzen und die Periode mit
@@ -191,8 +191,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Position Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'in', {'default': 0}),
-             ('Max', 'uint16', 1, 'in', {'default': 0})],
+             ('Min', 'uint16', 1, 'in', {'unit': 'Percent', 'default': 0}),
+             ('Max', 'uint16', 1, 'in', {'unit': 'Percent', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -234,8 +234,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Position Callback Threshold',
 'elements': [('Option', 'char', 1, 'out', {'constant_group': 'Threshold Option', 'default': 'x'}),
-             ('Min', 'uint16', 1, 'out', {'default': 0}),
-             ('Max', 'uint16', 1, 'out', {'default': 0})],
+             ('Min', 'uint16', 1, 'out', {'unit': 'Percent', 'default': 0}),
+             ('Max', 'uint16', 1, 'out', {'unit': 'Percent', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -368,7 +368,7 @@ Gibt die Entprellperiode zurück, wie von :func:`Set Debounce Period` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': 'Position',
-'elements': [('Position', 'uint16', 1, 'out', {'range': (0, 100)})],
+'elements': [('Position', 'uint16', 1, 'out', {'unit': 'Percent', 'range': (0, 100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -420,7 +420,7 @@ seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Position Reached',
-'elements': [('Position', 'uint16', 1, 'out', {'range': (0, 100)})],
+'elements': [('Position', 'uint16', 1, 'out', {'unit': 'Percent', 'range': (0, 100)})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -473,12 +473,12 @@ mit :func:`Set Debounce Period` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Position', 'position'), [(('Position', 'Position'), 'uint16', 1, None, None, (0, 100))], [])]
+'functions': [('getter', ('Get Position', 'position'), [(('Position', 'Position'), 'uint16', 1, None, '%', (0, 100))], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint16', 1, None, None, (0, 100))], None, None),
+'functions': [('callback', ('Position', 'position'), [(('Position', 'Position'), 'uint16', 1, None, '%', (0, 100))], None, None),
               ('callback_period', ('Position', 'position'), [], 50)]
 })
 

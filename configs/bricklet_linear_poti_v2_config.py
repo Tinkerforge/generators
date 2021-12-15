@@ -42,12 +42,12 @@ position_doc = {
 'en':
 """
 Returns the position of the linear potentiometer. The value is
-between 0 (slider down) and 100 (slider up).
+between 0% (slider down) and 100% (slider up).
 """,
 'de':
 """
 Gibt die Position des Linearpotentiometers zurück. Der Wertebereich
-ist von 0 (Schieberegler unten) und 100 (Schieberegler oben).
+ist von 0% (Schieberegler unten) und 100% (Schieberegler oben).
 """
 }
 
@@ -57,7 +57,8 @@ add_callback_value_function(
     data_name = 'Position',
     data_type = 'uint8',
     doc       = position_doc,
-    range_    = (0, 100)
+    range_    = (0, 100),
+    unit      = 'Percent'
 )
 
 com['examples'].append({
