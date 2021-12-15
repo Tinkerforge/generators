@@ -273,6 +273,7 @@ def relay_channel(channel):
         'id': 'Relay {}'.format(channel),
         'label': 'Relay {}'.format(channel),
         'description': 'Switches Relay {}. A running monoflop timer for this relay will be aborted if the relay is toggled by this channel.'.format(channel),
+        'init_code': 'this.setChannelLEDConfig({0}, channelCfg.channelLEDConfiguration);'.format(channel),
 
         'type': 'Relay',
 
@@ -325,7 +326,16 @@ com['openhab'] = {
     'param_groups': oh_generic_channel_param_groups(),
     'channels': [relay_channel(i) for i in range(0, 2)] + [monoflop_channel(i) for i in range(0, 2)],
     'channel_types': [
-        oh_generic_channel_type('Relay', 'Switch', 'NOT USED', update_style=None, description='NOT USED'),
+        oh_generic_channel_type('Relay', 'Switch', 'NOT USED', update_style=None, description='NOT USED', params=[{
+                'packet': 'Set Channel LED Config',
+                'element': 'Config',
+
+                'name': 'Channel LED Configuration',
+                'type': 'integer',
+                'label': {'en': 'Channel LED', 'de': 'Kanal-LED'},
+                'description': {'en': 'Each channel has a corresponding LED. You can turn the LED off, on or show a heartbeat. You can also set the LED to Channel Status. In this mode the LED is on if the channel is high and off otherwise.',
+                                'de': 'Jeder Kanal hat eine dazugehörige LED. Die LEDs können individuell an- oder ausgeschaltet werden. Zusätzlich kann ein Heartbeat oder der Kanalstatus angezeigt werden. Falls Kanalstatus gewählt wird ist die LED an wenn ein High-Signal am Kanal anliegt und sonst aus.'},
+            }]),
         {
             'id': 'Monoflop',
             'item_type': 'String',
