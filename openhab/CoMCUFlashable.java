@@ -25,6 +25,9 @@ import org.eclipse.smarthome.core.thing.binding.firmware.Firmware;
 import org.eclipse.smarthome.core.thing.binding.firmware.ProgressCallback;
 import org.eclipse.smarthome.core.thing.binding.firmware.ProgressStep;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.tinkerforge.TinkerforgeException;
 
 /**
@@ -44,6 +47,8 @@ public interface CoMCUFlashable {
     public static final int BOOTLOADER_STATUS_ENTRY_FUNCTION_NOT_PRESENT = 3;
     public static final int BOOTLOADER_STATUS_DEVICE_IDENTIFIER_INCORRECT = 4;
     public static final int BOOTLOADER_STATUS_CRC_MISMATCH = 5;
+
+    public final Logger logger = LoggerFactory.getLogger(CoMCUFlashable.class);
 
     public abstract int setBootloaderMode(int mode) throws TinkerforgeException;
 
@@ -82,6 +87,7 @@ public interface CoMCUFlashable {
                 }
             }
         } catch (IOException e) {
+            logger.warn("Failed to update: zip file contained no firmware");
             progressCallback.failed("Failed to update: zip file contained no firmware");
             return;
         }
@@ -105,6 +111,7 @@ public interface CoMCUFlashable {
         try {
             CoMCUHelper.flashComcuPlugin(plugin, this, regularPluginUpto);
         } catch (TinkerforgeException e) {
+            logger.warn("Failed to flash: {}", e.getMessage());
             progressCallback.failed("Failed to flash: {}", e.getMessage());
             return;
         }
@@ -114,13 +121,26 @@ public interface CoMCUFlashable {
         int modeRet;
         try {
             modeRet = this.setBootloaderMode(CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE);
+
         } catch (TinkerforgeException e) {
-            progressCallback.failed("Failed to reboot into firmware: {}", e.getMessage());
-            return;
+            try {
+                Thread.sleep(500);
+                modeRet = this.setBootloaderMode(CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE);
+            } catch (TinkerforgeException e1) {
+                logger.warn("Failed twice to reboot into firmware: {}", e1.getMessage());
+                progressCallback.failed("Failed twice to reboot into firmware: {}", e1.getMessage());
+                return;
+            } catch (InterruptedException ie) {
+                logger.warn("Failed twice to reboot into firmware: {}", ie.getMessage());
+                progressCallback.failed("Failed twice to reboot into firmware: {}", ie.getMessage());
+                return;
+            }
         }
+
         if (modeRet != 0 && modeRet != 2) {
             // report error
             if (modeRet != 5) {
+                logger.warn("Failed to reboot into firmware: Set bootloader mode returned {}", modeRet);
                 progressCallback.failed("Failed to reboot into firmware: Set bootloader mode returned {}", modeRet);
                 return;
             }
@@ -128,6 +148,7 @@ public interface CoMCUFlashable {
             try {
                 CoMCUHelper.flashComcuPlugin(plugin, this, plugin.length);
             } catch (TinkerforgeException e) {
+                logger.warn("Failed to flash (second try): {}", e.getMessage());
                 progressCallback.failed("Failed to flash (second try): {}", e.getMessage());
                 return;
             }
@@ -136,6 +157,7 @@ public interface CoMCUFlashable {
         try {
             CoMCUHelper.waitForBootloaderMode(this, CoMCUFlashable.BOOTLOADER_MODE_FIRMWARE);
         } catch (TinkerforgeException e) {
+            logger.warn("Failed to wait for reboot into firmware: {}", e.getMessage());
             progressCallback.failed("Failed to wait for reboot into firmware: {}", e.getMessage());
             return;
         }
