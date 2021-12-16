@@ -608,6 +608,9 @@ class OpenHABDocGenerator(openhab_common.OpenHABGeneratorTrait, common.DocGenera
         return java_common.JavaElement
 
     def generate(self, device):
+        if device.oh is None:
+            return
+
         with open(device.get_doc_rst_path(), 'w') as f:
             f.write(device.get_openhab_doc())
 
@@ -628,7 +631,7 @@ def generate(root_dir, language, internal):
         for file in os.listdir(de_docs):
             with open(os.path.join(de_docs, file), 'r') as f:
                 content = f.read()
-            content = content.replace('This is the description of the :ref:`openHAB API bindings <api_bindings_openhab>` for the', '.. note::\n Zur Zeit ist nur die englische openHAB-Dokumentation verfügbar.\n\nThis is the description of the :ref:`openHAB API bindings <api_bindings_openhab>` for the')
+            content = content.replace('This is the description of the :ref:`openHAB API bindings <api_bindings_openhab>` for the', '.. note::\n Die openHAB-Dokumentation ist nur auf englisch verfügbar.\n\nThis is the description of the :ref:`openHAB API bindings <api_bindings_openhab>` for the')
             with open(os.path.join(de_docs, file), 'w') as f:
                 f.write(content)
 

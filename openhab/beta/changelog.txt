@@ -218,3 +218,20 @@
 2020-05-19: 2.0.0 Beta 23
 - Add control channels to DC Brick
 - Add All LEDs channel to LED Strip Bricklets
+
+
+2021-12-16: 2.0.0 Beta 24
+- Add reset action to CoMCU Bricklets
+- Add NFC simple mode
+- Pass through some new API
+- Add I2C mode config to Barometer Bricklet
+- Add support for:
+    - Industrial Dual AC Relay
+    - Industrial PTC
+    - IMU 3.0
+- Allow disabling the frame started channel of LED Strip Bricklets
+- Add clear error LED channel to Bricklets with an error LED
+- Change binary inputs from switch to contact
+- Add work-around for broken actions after an addon reloads
+- Fix firmware updates
+- Fix reachability and heartbeat checks

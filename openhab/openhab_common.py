@@ -997,7 +997,9 @@ class OpenHABDevice(java_common.JavaDevice):
         if 'openhab' in self.raw_data:
             oh = self.apply_defaults(self.raw_data['openhab'])
         else:
-            oh = self.apply_defaults({})
+            #oh = self.apply_defaults({})
+            self.oh = None
+            return
 
         if self.generator.is_openhab_doc_generator and 'doc_actions' in oh:
             oh['actions'] = oh['doc_actions']
