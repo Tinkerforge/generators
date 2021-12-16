@@ -568,7 +568,7 @@ public class {device_camel}Wrapper extends {device_camel} {interfaces}{{
 
         return template.format(cases='\n            '.join(cases))
 
-    def get_openhab_actions_class(self):
+    def get_openhab_actions_interface(self):
         template = """{header}
 package org.openhab.binding.tinkerforge.internal.device;
 
@@ -587,6 +587,74 @@ import org.openhab.core.automation.annotation.ActionOutput;
 import org.openhab.core.automation.annotation.RuleAction;
 
 import java.util.Map;
+
+import com.tinkerforge.TinkerforgeException;
+
+/**
+ * Passes through actions of the {configured_item}.
+ *
+ * @author Erik Fleckstein - Initial contribution
+ */
+@NonNullByDefault
+public interface I{device_camel}Actions {{
+
+{actions};
+}}
+"""
+        input_action_template = """    public void {device_headless}{id_camel}({typed_inputs}) throws TinkerforgeException;"""
+
+        output_action_template = """    public Map<String, Object> {device_headless}{id_camel}({typed_inputs}) throws TinkerforgeException;"""
+
+        actions = []
+        for action in self.oh.actions:
+            packet = action.fn
+            inputs = packet.get_elements(direction='in', high_level=True)
+            outputs = packet.get_elements(direction='out', high_level=True)
+
+            typed_inputs = ["{type} {id}".format(id=elem.get_name().headless,
+                                                 type=elem.get_java_type()) for elem in inputs]
+            input_names = [elem.get_name().headless for elem in inputs]
+
+            packet_name = packet.get_name() if not packet.has_high_level() else packet.get_name(skip=-2)
+
+            if len(outputs) == 0:
+                actions.append(input_action_template.format(
+                                                    device_headless=self.get_category().headless + self.get_name().camel,
+                                                    id_camel=packet_name.camel,
+                                                    typed_inputs=', '.join(typed_inputs)))
+            else:
+                actions.append(output_action_template.format(device_headless=self.get_category().headless + self.get_name().camel,
+                                                    id_camel=packet_name.camel,
+                                                    typed_inputs=', '.join(typed_inputs)))
+
+        return template.format(header=openhab_header + self.get_generator().get_header_comment('asterisk'),
+                               configured_item=self.get_long_display_name(),
+                               device_camel=self.get_category().camel + self.get_name().camel,
+                               actions='\n\n'.join(actions))
+
+
+    def get_openhab_actions_class(self):
+        template = """{header}
+package org.openhab.binding.tinkerforge.internal.device;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.openhab.binding.tinkerforge.internal.handler.DeviceHandler;
+import org.eclipse.smarthome.core.thing.Thing;
+import org.eclipse.smarthome.core.thing.binding.ThingActions;
+import org.eclipse.smarthome.core.thing.binding.ThingActionsScope;
+import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.core.thing.ChannelUID;
+import org.openhab.core.automation.annotation.ActionInput;
+import org.openhab.core.automation.annotation.ActionOutput;
+import org.openhab.core.automation.annotation.RuleAction;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+import java.util.Map;
 import java.util.HashMap;
 
 import com.tinkerforge.TinkerforgeException;
@@ -598,7 +666,7 @@ import com.tinkerforge.{device_camel};
  */
 @ThingActionsScope(name = "tinkerforge")
 @NonNullByDefault
-public class {device_camel}Actions implements ThingActions {{
+public class {device_camel}Actions implements ThingActions, I{device_camel}Actions {{
 
     private @Nullable DeviceHandler handler;
 
@@ -608,10 +676,30 @@ public class {device_camel}Actions implements ThingActions {{
     @Override
     public @Nullable ThingHandler getThingHandler() {{ return handler; }}
 
+    private static I{device_camel}Actions invokeMethodOf(@Nullable ThingActions actions) {{
+        if (actions == null) {{
+            throw new IllegalArgumentException("actions cannot be null");
+        }}
+        if (actions.getClass().getName().equals({device_camel}Actions.class.getName())) {{
+            if (actions instanceof I{device_camel}Actions) {{
+                return (I{device_camel}Actions) actions;
+            }} else {{
+                return (I{device_camel}Actions) Proxy.newProxyInstance(I{device_camel}Actions.class.getClassLoader(),
+                        new Class[] {{ I{device_camel}Actions.class }}, (Object proxy, Method method, Object[] args) -> {{
+                            Method m = actions.getClass().getDeclaredMethod(method.getName(),
+                                    method.getParameterTypes());
+                            return m.invoke(actions, args);
+                        }});
+            }}
+        }}
+        throw new IllegalArgumentException("Actions is not an instance of {device_camel}Actions");
+    }}
+
     {actions}
 }}
 """
-        input_action_template = """    @RuleAction(label = "{label}")
+        input_action_template = """    @Override
+    @RuleAction(label = "{label}")
     public void {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
         DeviceHandler h = handler;
@@ -628,14 +716,12 @@ public class {device_camel}Actions implements ThingActions {{
     }}
 
     public static void {device_headless}{id_camel}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
-        if (actions instanceof {device_camel}Actions) {{
-            (({device_camel}Actions) actions).{device_headless}{id_camel}({inputs});
-        }} else {{
-            throw new IllegalArgumentException("Instance is not an {device_camel}Actions class.");
-        }}
+        invokeMethodOf(actions).{device_headless}{id_camel}({inputs});
     }}"""
 
-        output_action_template = """    @RuleAction(label = "{label}")
+        output_action_template = """
+    @Override
+    @RuleAction(label = "{label}")
     public {output_annotations}
            Map<String, Object> {device_headless}{id_camel}(
             {annotated_inputs}) throws TinkerforgeException {{
@@ -657,11 +743,7 @@ public class {device_camel}Actions implements ThingActions {{
     }}
 
     public static Map<String, Object> {device_headless}{id_camel}(@Nullable ThingActions actions{typed_inputs}) throws TinkerforgeException {{
-        if (actions instanceof {device_camel}Actions) {{
-            return (({device_camel}Actions) actions).{device_headless}{id_camel}({inputs});
-        }} else {{
-            throw new IllegalArgumentException("Instance is not an {device_camel}Actions class.");
-        }}
+        return invokeMethodOf(actions).{device_headless}{id_camel}({inputs});
     }}"""
 
         input_template = """@ActionInput(name = "{id}") {type} {id}"""
@@ -827,8 +909,12 @@ class OpenHABBindingsGenerator(openhab_common.OpenHABGeneratorTrait, JavaBinding
         self.released_devices = []
 
     def generate(self, device):
+        if device.oh is None:
+            return
+
         if device.oh.custom:
             return
+
         class_name = device.get_java_class_name()
 
         with open(os.path.join(self.get_bindings_dir(), class_name + '.java'), 'w') as f:
@@ -847,6 +933,8 @@ class OpenHABBindingsGenerator(openhab_common.OpenHABGeneratorTrait, JavaBinding
         elif len(device.oh.actions) > 0:
             with open(os.path.join(self.get_bindings_dir(), class_name + 'Actions.java'), 'w') as f:
                 f.write(device.get_openhab_actions_class())
+            with open(os.path.join(self.get_bindings_dir(), "I" + class_name + 'Actions.java'), 'w') as f:
+                f.write(device.get_openhab_actions_interface())
 
         if device.is_released():
             self.released_devices.append(device)
