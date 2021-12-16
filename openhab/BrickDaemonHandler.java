@@ -119,8 +119,8 @@ public class BrickDaemonHandler extends BaseBridgeHandler {
         List<ReachabilityResult> result = new ArrayList<>();
         for (int i = 0; i < handlers.size(); ++i) {
             try {
-                result.add(futures.get(i).get());
-            } catch (InterruptedException | ExecutionException e) {
+                result.add(futures.get(i).get(3, TimeUnit.SECONDS));
+            } catch (InterruptedException | ExecutionException | java.util.concurrent.TimeoutException e) {
                 result.add(new ReachabilityResult(false, handlers.get(i)));
             }
         }
