@@ -111,12 +111,17 @@ public class TinkerforgeFirmwareProvider implements FirmwareProvider {
                 thingName = deviceType + "lcd20x4";
 
             String version = splt[2];
-            boolean isCoMCU = isExtension || DeviceWrapperFactory.getDeviceInfo(thingName).isCoMCU;
-            String urlString = String.format("https://download.tinkerforge.com/firmwares/%s/%s/%s_%s_firmware_%s.%s",
-                    deviceType + 's', deviceName, deviceType, deviceName, version.replace(".", "_"), isCoMCU ? "zbin"
-                            : "bin");
+            try {
+                boolean isCoMCU = isExtension || DeviceWrapperFactory.getDeviceInfo(thingName).isCoMCU;
 
-            latestVersions.put(thingName, new FirmwareInfo(version, urlString));
+                String urlString = String.format("https://download.tinkerforge.com/firmwares/%s/%s/%s_%s_firmware_%s.%s",
+                        deviceType + 's', deviceName, deviceType, deviceName, version.replace(".", "_"), isCoMCU ? "zbin"
+                                : "bin");
+                latestVersions.put(thingName, new FirmwareInfo(version, urlString));
+            } catch(IllegalArgumentException e) {
+                logger.debug("Skipping unsupported device {}", deviceName);
+                continue;
+            }
         }
     }
 
