@@ -506,13 +506,15 @@ int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
 
 int tf_hal_callback_tick(TF_HAL *hal, uint32_t timeout_us) {
     TF_HALCommon *hal_common = tf_hal_get_common(hal);
-    if (hal_common->tfps_used == 0)
+
+    if (hal_common->tfps_used == 0) {
         return TF_E_OK;
+    }
 
     uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
+    uint16_t first_index = hal_common->callback_tick_index;
     TF_TFP *tfp = NULL;
 
-    uint16_t first_idx = hal_common->callback_tick_index;
 
     do {
         ++hal_common->callback_tick_index;
@@ -528,7 +530,7 @@ int tf_hal_callback_tick(TF_HAL *hal, uint32_t timeout_us) {
         if (result != TF_E_OK) {
             return result;
         }
-    } while (first_idx != hal_common->callback_tick_index && !tf_hal_deadline_elapsed(hal, deadline_us));
+    } while (first_index != hal_common->callback_tick_index && !tf_hal_deadline_elapsed(hal, deadline_us));
 
     return TF_E_OK;
 }
@@ -689,16 +691,20 @@ int tf_hal_get_attachable_tfp(TF_HAL *hal, TF_TFP **tfp_ptr, const char *uid_or_
                 // Intentionally don't exit here, port names are not enforced to be unique
             }
 
+            // Could be known port name, but no device of requested type is connected
             if (known_port_name) {
                 return TF_E_DEVICE_NOT_FOUND;
             }
+
+            // Intentionally don't exit here and report potential base58 error
         }
 
-        if (base58_rc == TF_E_OK) {
-            return TF_E_DEVICE_NOT_FOUND;
-        } else {
+        // Not a port name, report base58 error
+        if (base58_rc != TF_E_OK) {
             return base58_rc;
         }
+
+        return TF_E_DEVICE_NOT_FOUND;
     } else {
         TF_TFP *tfp = tf_hal_get_tfp(hal, NULL, NULL, &device_id, true);
 
