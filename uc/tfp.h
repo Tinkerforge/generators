@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-typedef bool (*TF_CallbackHandler)(void *device, uint8_t fid, TF_PacketBuffer *payload);
+typedef bool (*TF_TFP_CallbackHandler)(void *device, uint8_t fid, TF_PacketBuffer *payload);
 
 typedef struct TF_TFP {
     TF_SPITFP *spitfp;
@@ -38,7 +38,7 @@ typedef struct TF_TFP {
     uint8_t waiting_for_sequence_number; // 0 if waiting for nothing
     bool send_enumerate_request;
 
-    TF_CallbackHandler cb_handler;
+    TF_TFP_CallbackHandler cb_handler;
 
     uint16_t device_id;
 } TF_TFP;
