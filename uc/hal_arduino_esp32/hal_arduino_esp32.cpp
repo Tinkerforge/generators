@@ -7,8 +7,9 @@
  */
 
 #include "hal_arduino_esp32.h"
-#include "SPI.h"
+
 #include <Arduino.h>
+#include <SPI.h>
 
 #include "../bindings/config.h"
 #include "../bindings/errors.h"
