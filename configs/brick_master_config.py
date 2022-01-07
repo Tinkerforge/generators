@@ -1432,11 +1432,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the USB voltage. Does not work with hardware version 2.1.
+Returns the USB voltage. Does not work with hardware version 2.1 or newer.
 """,
 'de':
 """
-Gibt die USB Spannung zurück. Funktioniert nicht mit Hardware Version 2.1.
+Gibt die USB Spannung zurück. Funktioniert nicht mit Hardware Version 2.1 oder neuer.
 """
 }]
 })
@@ -1982,7 +1982,7 @@ voltage.
 The :cb:`USB Voltage` callback is only triggered if the USB voltage has changed
 since the last triggering.
 
-Does not work with hardware version 2.1.
+Does not work with hardware version 2.1 or newer.
 """,
 'de':
 """
@@ -1993,7 +1993,7 @@ die USB Spannung.
 Der :cb:`USB Voltage` Callback wird nur ausgelöst, wenn sich die USB Spannung
 seit der letzten Auslösung geändert hat.
 
-Funktioniert nicht mit Hardware Version 2.1.
+Funktioniert nicht mit Hardware Version 2.1 oder neuer.
 """
 }]
 })
