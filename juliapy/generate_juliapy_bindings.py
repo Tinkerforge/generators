@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Julia Bindings Generator
+JuliaPy Bindings Generator
 Copyright (C) 2020 Jonas Schumacher <github735@jonasschumacher.de>
 
-generate_julia_bindings.py: Generator for Julia bindings
+generate_juliapy_bindings.py: Generator for Julia bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -51,10 +51,10 @@ if 'generators' not in sys.modules:
     create_generators_module()
 
 from generators import common
-from generators.julia import julia_common
+from generators.juliapy import juliapy_common
 
-class JuliaBindingsDevice(julia_common.JuliaDevice):
-    def get_julia_import(self):
+class JuliaPyBindingsDevice(juliapy_common.JuliaPyDevice):
+    def get_juliapy_import(self):
         template = """
 
 """
@@ -67,7 +67,7 @@ class JuliaBindingsDevice(julia_common.JuliaDevice):
         return template.format(self.get_generator().get_header_comment('hash'),
                                released)
 
-    def get_julia_namedtuples(self):
+    def get_juliapy_namedtuples(self):
         tuples = ''
         template = """
 export {struct_name}{name_tup}
@@ -90,9 +90,9 @@ end
             params = []
 
             for element in packet.get_elements(direction='out'):
-                params.append("{0}::{1}".format(element.get_name().under, element.get_julia_type()))
+                params.append("{0}::{1}".format(element.get_name().under, element.get_juliapy_type()))
 
-            tuples += template.format(name=name.camel, name_tup=name_tup, params="\n    ".join(params), struct_name=self.get_julia_struct_name())
+            tuples += template.format(name=name.camel, name_tup=name_tup, params="\n    ".join(params), struct_name=self.get_juliapy_struct_name())
 
         for packet in self.get_packets('function'):
             if not packet.has_high_level():
@@ -111,49 +111,27 @@ end
             params = []
 
             for element in packet.get_elements(direction='out', high_level=True):
-                params.append("{0}::{1}".format(element.get_name().under, element.get_julia_type()))
+                params.append("{0}::{1}".format(element.get_name().under, element.get_juliapy_type()))
 
-            tuples += template.format(name=name.camel, name_tup=name_tup, params="\n    ".join(params), struct_name=self.get_julia_struct_name())
+            tuples += template.format(name=name.camel, name_tup=name_tup, params="\n    ".join(params), struct_name=self.get_juliapy_struct_name())
 
         return tuples
 
-    def get_julia_struct(self):
+    def get_juliapy_struct(self):
         template = """
 export {0}
 \"\"\"
 {1}
 \"\"\"
 mutable struct {0} <: TinkerforgeDevice
-    replaced::Bool
-	uid::Union{{Integer, Missing}}
-	uid_string::String
-	ipcon::IPConnection
-	device_identifier::Integer
-	device_display_name::String
-    device_url_part::String
-	device_identifier_lock::Base.AbstractLock
-	device_identifier_check::DeviceIdentifierCheck # protected by device_identifier_lock
-	wrong_device_display_name::String # protected by device_identifier_lock
-	api_version::Tuple{{Integer, Integer, Integer}}
-	registered_callbacks::Dict{{Integer, Function}}
-	expected_response_function_id::Union{{Symbol, Nothing}} # protected by request_lock
-	expected_response_sequence_number::Union{{Integer, Nothing}} # protected by request_lock
-	response_queue::DataStructures.Queue{{Symbol}}
-	request_lock::Base.AbstractLock
-	stream_lock::Base.AbstractLock
-
-    callbacks::Dict{{Symbol, Integer}}
-    callback_formats::Dict{{Symbol, Tuple{{Integer, String}}}}
-    high_level_callbacks::Dict{{Symbol, Integer}}
-    id_definitions::Dict{{Symbol, Integer}}
-    constants::Dict{{Symbol, Union{Integer, String}}}
-    response_expected::DefaultDict{{Symbol, ResponseExpected}} 
+    ipcon::IPConnection
+    deviceInternal::PyObject
 """
 
-        return template.format(self.get_julia_struct_name(),
+        return template.format(self.get_juliapy_struct_name(),
                                common.select_lang(self.get_description()))
 
-    def get_julia_callback_id_definitions(self):
+    def get_juliapy_callback_id_definitions(self):
         callback_ids = ''
         template = '        device.callbacks[:CALLBACK_{0}] = {1}\n'
 
@@ -172,7 +150,7 @@ mutable struct {0} <: TinkerforgeDevice
 
         return callback_ids
 
-    def get_julia_function_id_definitions(self):
+    def get_juliapy_function_id_definitions(self):
         function_ids = '\n'
         template = '        device.id_definitions[:FUNCTION_{0}] = {1}\n'
 
@@ -181,72 +159,24 @@ mutable struct {0} <: TinkerforgeDevice
 
         return function_ids
 
-    def get_julia_constants(self):
+    def get_juliapy_constants(self):
         constant_format = '        device.constants[:{constant_group_name_upper}_{constant_name_upper}] = {constant_value}\n'
 
         return '\n' + self.get_formatted_constants(constant_format, char_format_func="\"{0}\"".format)
 
-    def get_julia_init_method(self):
+    def get_juliapy_init_method(self):
         template = """
     \"\"\"
     Creates an object with the unique device ID *uid* and adds it to
     the IP Connection *ipcon*.
     \"\"\"
     function {0}(uid::String, ipcon::IPConnection)
-        replaced = false
-        uid_string = uid
-        device_identifier = {5}
-        device_display_name = "{6}"
-        device_url_part = "{7}" # internal
-        device_identifier_lock = Base.ReentrantLock()
-        device_identifier_check = DEVICE_IDENTIFIER_CHECK_PENDING # protected by device_identifier_lock
-        wrong_device_display_name = "?" # protected by device_identifier_lock
-        api_version = (0, 0, 0)
-        registered_callbacks = Dict{{Integer, Function}}()
-        expected_response_function_id = nothing # protected by request_lock
-        expected_response_sequence_number = nothing # protected by request_lock
-        response_queue = DataStructures.Queue{{Symbol}}()
-        request_lock = Base.ReentrantLock()
-        stream_lock = Base.ReentrantLock()
+        package = pyimport("tinkerforge.{1}")
+        deviceInternal = package.{0}(uid, ipcon.ipconInternal)
 
-        callbacks = Dict{{Symbol, Integer}}()
-        callback_formats = Dict{{Symbol, Tuple{{Integer, String}}}}()
-        high_level_callbacks = Dict{{Symbol, Integer}}()
-        id_definitions = Dict{{Symbol, Integer}}()
-        constants = Dict{{Symbol, Union{Integer, String}}}()
-        response_expected = DefaultDict{{Symbol, ResponseExpected}}(RESPONSE_EXPECTED_INVALID_FUNCTION_ID)
-        
-        device = new(
-            replaced,
-            missing,
-            uid_string,
-            ipcon,
-            device_identifier,
-            device_display_name,
-            device_url_part,
-            device_identifier_lock,
-            device_identifier_check,
-            wrong_device_display_name,
-            api_version,
-            registered_callbacks,
-            expected_response_function_id,
-            expected_response_sequence_number,
-            response_queue,
-            request_lock,
-            stream_lock,
-            callbacks,
-            callback_formats,
-            high_level_callbacks,
-            id_definitions,
-            constants,
-            response_expected
-        )
-        _initDevice(device)
+        {2}
 
-        device.api_version = ({1}, {2}, {3})
-        
-    {4}
-        return device
+        return new(ipcon, deviceInternal)
     end
 end
 """
@@ -254,37 +184,34 @@ end
 
         for packet in self.get_packets('function'):
             response_expected += '        device.response_expected[:FUNCTION_{1}] = RESPONSE_EXPECTED_{2}\n' \
-                                 .format(self.get_julia_struct_name(), packet.get_name().upper,
+                                 .format(self.get_juliapy_struct_name(), packet.get_name().upper,
                                          packet.get_response_expected().upper())
 
-        fillins = self.get_julia_callback_id_definitions()
-        fillins += self.get_julia_function_id_definitions()
-        fillins += self.get_julia_constants()+'\n'
-        fillins += common.wrap_non_empty('', response_expected, '\n')
-        fillins += self.get_julia_callback_formats()
-        fillins += self.get_julia_high_level_callbacks()
-        fillins += self.get_julia_add_device()
+        fillins = self.get_juliapy_callback_id_definitions()
+        #fillins += self.get_juliapy_function_id_definitions()
+        fillins += self.get_juliapy_constants()+'\n'
+        #fillins += common.wrap_non_empty('', response_expected, '\n')
+        #fillins += self.get_juliapy_callback_formats()
+        #fillins += self.get_juliapy_high_level_callbacks()
+        #fillins += self.get_juliapy_add_device()
 
-        return template.format(self.get_julia_struct_name(),
-                               *self.get_api_version(),
-                               fillins,
-                               self.get_device_identifier(),
-                               self.get_long_display_name(),
-                               self.get_name().under)
+        return template.format(self.get_juliapy_struct_name(),
+                               self.get_juliapy_import_name(),
+                               fillins)
 
-    def get_julia_callback_formats(self):
+    def get_juliapy_callback_formats(self):
         callback_formats = ''
         template = '        device.callback_formats[:CALLBACK_{1}] = ({2}, "{3}")\n'
 
         for packet in self.get_packets('callback'):
-            callback_formats += template.format(self.get_julia_struct_name(),
+            callback_formats += template.format(self.get_juliapy_struct_name(),
                                                 packet.get_name().upper,
                                                 packet.get_response_size(),
-                                                packet.get_julia_format_list('out'))
+                                                packet.get_juliapy_format_list('out'))
 
         return callback_formats + '\n'
 
-    def get_julia_high_level_callbacks(self):
+    def get_juliapy_high_level_callbacks(self):
         high_level_callbacks = ''
         template = '        device.high_level_callbacks[:CALLBACK_{1}] = [{4}, Dict("fixed_length" => {2}, "single_chunk" => {3}), nothing]\n'
 
@@ -297,7 +224,7 @@ end
                 for element in packet.get_elements(direction='out'):
                     roles.append(element.get_role())
 
-                high_level_callbacks += template.format(self.get_julia_struct_name(),
+                high_level_callbacks += template.format(self.get_juliapy_struct_name(),
                                                         packet.get_name(skip=-2).upper,
                                                         stream.get_fixed_length(),
                                                         stream.has_single_chunk(),
@@ -305,10 +232,10 @@ end
 
         return high_level_callbacks
 
-    def get_julia_add_device(self):
+    def get_juliapy_add_device(self):
         return '    add_device(ipcon, device)\n'
 
-    def get_julia_methods(self):
+    def get_juliapy_methods(self):
         m_tup = """
 export {0}
 \"\"\"
@@ -317,9 +244,7 @@ export {0}
 {10}
 \"\"\"
 function {0}(device::{2}{8}{4})
-    {11}
-    {12}
-    return {1}(send_request(device, :FUNCTION_{3}, ({4}{9}), \"{5}\", {6}, \"{7}\"))
+    return device.deviceInternal.{0}({4})
 end
 """
         m_ret = """
@@ -330,9 +255,7 @@ export {0}
 {9}
 \"\"\"
 function {0}(device::{1}{7}{3})
-    {10}
-    {11}
-    return send_request(device, :FUNCTION_{2}, ({3}{8}), \"{4}\", {5}, \"{6}\")
+    return device.deviceInternal.{0}({3})
 end
 """
         m_nor = """
@@ -343,21 +266,19 @@ export {0}
 {7}
 \"\"\"
 function {0}(device::{1}{5}{3})
-    {8}
-    {9}
-    send_request(device, :FUNCTION_{2}, ({3}{6}), \"{4}\", 0, \"\")
+    device.deviceInternal.{0}({3})
 end
 """
         methods = ''
-        cls = self.get_julia_struct_name()
+        cls = self.get_juliapy_struct_name()
 
         # normal and low-level
         for packet in self.get_packets('function'):
             nb = packet.get_name().camel
             ns = packet.get_name().under
             nh = ns.upper()
-            par = packet.get_julia_parameters()
-            doc = packet.get_julia_formatted_doc()
+            par = packet.get_juliapy_parameters()
+            doc = packet.get_juliapy_formatted_doc()
             cp = ''
             ct = ''
 
@@ -367,16 +288,16 @@ end
                 if not ',' in par:
                     ct = ','
 
-            in_f = packet.get_julia_format_list('in')
+            in_f = packet.get_juliapy_format_list('in')
             out_l = packet.get_response_size()
-            out_f = packet.get_julia_format_list('out')
+            out_f = packet.get_juliapy_format_list('out')
 
             if packet.get_function_id() == 255: # <device>.get_identity
                 check = ''
             else:
                 check = 'check_validity(device)\n'
 
-            coercions = common.wrap_non_empty('', packet.get_julia_parameter_coercions(), '\n')
+            coercions = common.wrap_non_empty('', packet.get_juliapy_parameter_coercions(), '\n')
             out_c = len(packet.get_elements(direction='out'))
 
             if out_c > 1:
@@ -606,13 +527,13 @@ end
                     if len(packet.get_elements(direction='out', high_level=True)) < 2:
                         if stream_in.has_single_chunk():
                             result = template_stream_in_single_chunk_result.format(function_name=packet.get_name(skip=-2).under,
-                                                                                   parameters=packet.get_julia_parameters())
+                                                                                   parameters=packet.get_juliapy_parameters())
                         else:
                             result = template_stream_in_short_write_result.format(stream_name_under=stream_in.get_name().under)
                     else:
                         if stream_in.has_single_chunk():
                             result = template_stream_in_single_chunk_namedtuple_result.format(function_name=packet.get_name(skip=-2).under,
-                                                                                              parameters=packet.get_julia_parameters(),
+                                                                                              parameters=packet.get_juliapy_parameters(),
                                                                                               result_camel_name=packet.get_name(skip=-2).camel)
                         else:
                             fields = []
@@ -633,32 +554,32 @@ end
                     if len(packet.get_elements(direction='out', high_level=True)) < 2:
                         if stream_in.has_single_chunk():
                             result = template_stream_in_single_chunk_result.format(function_name=packet.get_name(skip=-2).under,
-                                                                                   parameters=packet.get_julia_parameters())
+                                                                                   parameters=packet.get_juliapy_parameters())
                         else:
                             result = template_stream_in_result
                     else:
                         if stream_in.has_single_chunk():
                             result = template_stream_in_single_chunk_namedtuple_result.format(function_name=packet.get_name(skip=-2).under,
-                                                                                              parameters=packet.get_julia_parameters(),
+                                                                                              parameters=packet.get_juliapy_parameters(),
                                                                                               result_camel_name=packet.get_name(skip=-2).camel)
                         else:
                             result = template_stream_in_namedtuple_result.format(result_camel_name=packet.get_name(skip=-2).camel)
 
-                methods += template.format(doc=packet.get_julia_formatted_doc(),
-                                           coercions=common.wrap_non_empty('\n        ', packet.get_julia_parameter_coercions(high_level=True), '\n'),
+                methods += template.format(doc=packet.get_juliapy_formatted_doc(),
+                                           coercions=common.wrap_non_empty('\n        ', packet.get_juliapy_parameter_coercions(high_level=True), '\n'),
                                            function_name=packet.get_name(skip=-2).under,
-                                           parameters=packet.get_julia_parameters(),
-                                           high_level_parameters=common.wrap_non_empty(', ', packet.get_julia_parameters(high_level=True), ''),
+                                           parameters=packet.get_juliapy_parameters(),
+                                           high_level_parameters=common.wrap_non_empty(', ', packet.get_juliapy_parameters(high_level=True), ''),
                                            stream_name_space=stream_in.get_name().space,
                                            stream_name_under=stream_in.get_name().under,
                                            stream_max_length=abs(stream_in.get_data_element().get_cardinality()),
                                            fixed_length=stream_in.get_fixed_length(),
                                            chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
-                                           chunk_padding=stream_in.get_chunk_data_element().get_julia_default_item_value(),
+                                           chunk_padding=stream_in.get_chunk_data_element().get_juliapy_default_item_value(),
                                            chunk_written_0=chunk_written_0,
                                            chunk_written_n=chunk_written_n,
                                            chunk_written_test=chunk_written_test,
-                                           struct_name=self.get_julia_struct_name(),
+                                           struct_name=self.get_juliapy_struct_name(),
                                            #closing_end='end\n' if chunk_offset_check else '',
                                            result=result)
             elif stream_out != None:
@@ -701,11 +622,11 @@ end
                 else:
                     template = template_stream_out
 
-                methods += template.format(doc=packet.get_julia_formatted_doc(),
-                                           coercions=common.wrap_non_empty('\n        ', packet.get_julia_parameter_coercions(high_level=True), '\n'),
+                methods += template.format(doc=packet.get_juliapy_formatted_doc(),
+                                           coercions=common.wrap_non_empty('\n        ', packet.get_juliapy_parameter_coercions(high_level=True), '\n'),
                                            function_name=packet.get_name(skip=-2).under,
-                                           parameters=packet.get_julia_parameters(),
-                                           high_level_parameters=common.wrap_non_empty(', ', packet.get_julia_parameters(high_level=True), ''),
+                                           parameters=packet.get_juliapy_parameters(),
+                                           high_level_parameters=common.wrap_non_empty(', ', packet.get_juliapy_parameters(high_level=True), ''),
                                            stream_name_space=stream_out.get_name().space,
                                            stream_name_under=stream_out.get_name().under,
                                            fixed_length=fixed_length,
@@ -715,13 +636,13 @@ end
                                            chunk_offset_check=chunk_offset_check,
                                            chunk_offset_check_indent=chunk_offset_check_indent,
                                            chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality(),
-                                           struct_name=self.get_julia_struct_name(),
+                                           struct_name=self.get_juliapy_struct_name(),
                                            closing_end='end\n' if chunk_offset_check != '' else '',
                                            result=result)
 
         return methods
 
-    def get_julia_register_callback_method(self):
+    def get_juliapy_register_callback_method(self):
         if len(self.get_packets('callback')) == 0:
             return ''
 
@@ -737,30 +658,30 @@ function register_callback(device::{0}, callback_id, function_)
         device.registered_callbacks[callback_id] = function_
     end
 end
-""".format(self.get_julia_struct_name())
+""".format(self.get_juliapy_struct_name())
 
-    def get_julia_old_name(self):
+    def get_juliapy_old_name(self):
         template = """
 {0} = {1} # for backward compatibility
 """
 
-        return ""#template.format(self.get_name().camel, self.get_julia_struct_name())
+        return ""#template.format(self.get_name().camel, self.get_juliapy_struct_name())
 
-    def get_julia_source(self):
-        source  = self.get_julia_import()
-        source += self.get_julia_namedtuples()
-        source += self.get_julia_struct()
-        source += self.get_julia_init_method()
-        source += self.get_julia_methods()
-        source += self.get_julia_register_callback_method()
+    def get_juliapy_source(self):
+        source  = self.get_juliapy_import()
+        source += self.get_juliapy_namedtuples()
+        source += self.get_juliapy_struct()
+        source += self.get_juliapy_init_method()
+        source += self.get_juliapy_methods()
+        source += self.get_juliapy_register_callback_method()
 
         if self.is_brick() or self.is_bricklet():
-            source += self.get_julia_old_name()
+            source += self.get_juliapy_old_name()
 
         return common.strip_trailing_whitespace(source)
 
-class JuliaBindingsPacket(julia_common.JuliaPacket):
-    def get_julia_formatted_doc(self):
+class JuliaPyBindingsPacket(juliapy_common.JuliaPyPacket):
+    def get_juliapy_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
 
         def format_parameter(name):
@@ -773,33 +694,33 @@ class JuliaBindingsPacket(julia_common.JuliaPacket):
 
         return '\n'.join(text.strip().split('\n'))
 
-    def get_julia_format_list(self, io):
+    def get_juliapy_format_list(self, io):
         forms = []
 
         for element in self.get_elements(direction=io):
-            forms.append(element.get_julia_struct_format())
+            forms.append(element.get_juliapy_struct_format())
 
         return ' '.join(forms)
 
-    def get_julia_parameter_coercions(self, high_level=False):
+    def get_juliapy_parameter_coercions(self, high_level=False):
         coercions = []
 
         for element in self.get_elements(direction='in', high_level=high_level):
             name = element.get_name().under
 
-            coercions.append('{0} = {1}'.format(name, element.get_julia_parameter_coercion().format(name)))
+            coercions.append('{0} = {1}'.format(name, element.get_juliapy_parameter_coercion().format(name)))
 
         return '\n    '.join(coercions)
 
-class JuliaBindingsGenerator(julia_common.JuliaGeneratorTrait, common.BindingsGenerator):
+class JuliaPyBindingsGenerator(juliapy_common.JuliaPyGeneratorTrait, common.BindingsGenerator):
     def get_device_class(self):
-        return JuliaBindingsDevice
+        return JuliaPyBindingsDevice
 
     def get_packet_class(self):
-        return JuliaBindingsPacket
+        return JuliaPyBindingsPacket
 
     def get_element_class(self):
-        return julia_common.JuliaElement
+        return juliapy_common.JuliaPyElement
 
     def prepare(self):
         common.BindingsGenerator.prepare(self)
@@ -812,12 +733,12 @@ class JuliaBindingsGenerator(julia_common.JuliaGeneratorTrait, common.BindingsGe
         filename = '{0}_{1}.jl'.format(device.get_category().under, device.get_name().under)
 
         with open(os.path.join(self.get_bindings_dir(), filename), 'w') as f:
-            f.write(device.get_julia_source())
+            f.write(device.get_juliapy_source())
 
-        self.device_factory_all_classes.append((device.get_julia_import_name(), device.get_julia_struct_name(), device.get_device_identifier()))
+        self.device_factory_all_classes.append((device.get_juliapy_import_name(), device.get_juliapy_struct_name(), device.get_device_identifier()))
 
         if device.is_released():
-            self.device_factory_released_classes.append((device.get_julia_import_name(), device.get_julia_struct_name(), device.get_device_identifier()))
+            self.device_factory_released_classes.append((device.get_juliapy_import_name(), device.get_juliapy_struct_name(), device.get_device_identifier()))
             self.device_display_names.append((device.get_device_identifier(), device.get_long_display_name()))
             self.released_files.append(filename)
 
@@ -887,9 +808,9 @@ end
         common.BindingsGenerator.finish(self)
 
 def generate(root_dir, language, internal):
-    common.generate(root_dir, language, internal, JuliaBindingsGenerator)
+    common.generate(root_dir, language, internal, JuliaPyBindingsGenerator)
 
 if __name__ == '__main__':
-    args = common.dockerize('julia', __file__, add_internal_argument=True)
+    args = common.dockerize('juliapy', __file__, add_internal_argument=True)
 
     generate(os.getcwd(), 'en', args.internal)
