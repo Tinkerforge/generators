@@ -305,8 +305,8 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Charging Slots',
-'elements': [('Max Current', 'uint16', 20, 'in'),
-             ('Active And Clear On Disconnect', 'uint8', 20, 'in')], # bit 0 => Active, bit 1 => Clear On Disconnect
+'elements': [('Max Current', 'uint16', 20, 'out'),
+             ('Active And Clear On Disconnect', 'uint8', 20, 'out')], # bit 0 => Active, bit 1 => Clear On Disconnect
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
