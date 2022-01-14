@@ -272,6 +272,7 @@ fixed slots:
 1: outgoing cable (read-only, configured through resistor)
 2: gpio input 0 (shutdown input)
 3: gpio input 1 (input)
+4: button (0A <-> 32A, can be controlled from web interface with start button and physical button if configured)
 
 """,
 'de':
