@@ -109,15 +109,6 @@ com['constant_groups'].append({
 })
 
 com['constant_groups'].append({
-'name': 'Charge Release',
-'type': 'uint8',
-'constants': [('Automatic', 0),
-              ('Manual', 1),
-              ('Deactivated', 2),
-              ('Managed', 3)]
-})
-
-com['constant_groups'].append({
 'name': 'DC Fault Current State',
 'type': 'uint8',
 'constants': [('Normal Condition', 0),
@@ -167,7 +158,6 @@ com['packets'].append({
              ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
-             ('Charge Release', 'uint8', 1, 'out', {'constant_group': 'Charge Release'}),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
@@ -667,7 +657,6 @@ com['packets'].append({
              ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
-             ('Charge Release', 'uint8', 1, 'out', {'constant_group': 'Charge Release'}),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
