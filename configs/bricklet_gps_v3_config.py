@@ -816,3 +816,222 @@ com['examples'].append({
 'functions': [('callback', ('Coordinates', 'coordinates'), [(('Latitude', 'Latitude'), 'uint32', 1, 1000000.0, '°', None), (('NS', 'N/S'), 'char', 1, None, None, None), (('Longitude', 'Longitude'), 'uint32', 1, 1000000.0, '°', None), (('EW', 'E/W'), 'char', 1, None, None, None)], None, None),
               ('callback_period', ('Coordinates', 'coordinates'), [], 1000)]
 })
+
+com['openhab'] = {
+    'imports': oh_generic_channel_imports() + oh_generic_trigger_channel_imports() +
+                ['org.eclipse.smarthome.core.library.types.StringType',
+                 'org.eclipse.smarthome.core.library.types.PointType',
+                 'org.eclipse.smarthome.core.library.types.DateTimeType',
+                 'org.eclipse.smarthome.core.library.types.OpenClosedType',
+                 'java.time.ZoneId'],
+    'param_groups': oh_generic_channel_param_groups(),
+    'params': [{
+            'packet': 'Set Fix LED Config',
+            'element': 'Config',
+
+            'name': 'Fix LED Config',
+            'type': 'integer',
+            'label': {'en': 'Fix LED', 'de': 'Fix-LED'},
+            'description': {'en': 'The fix LED configuration. By default the LED shows if the Bricklet got a GPS fix yet. If a fix is established the LED turns on. If there is no fix then the LED is turned off.\n\nYou can also turn the LED permanently on/off, show a heartbeat or let it blink in sync with the PPS (pulse per second) output of the GPS module.\n\nIf the Bricklet is in bootloader mode, the LED is off.',
+                            'de': 'Die Konfiguration der Fix-LED. Standardmäßig zeigt die LED an ob ein GPS-Fix besteht. Wenn ein Fix da ist, geht die LED an. Wenn kein Fix da ist, geht die LED aus.\n\nDie LED kann auch permanent an/aus gestellt werden, einen Herzschlag anzeigen oder im Rhythmus des PPS (Puls pro Sekunde) Ausgangs des GPS Moduls blinken.\n\nWenn das Bricklet sich im Bootloadermodus befindet ist die LED aus.'}
+        }, {
+            'packet': 'Set SBAS Config',
+            'element': 'SBAS Config',
+
+            'name': 'Enable SBAS',
+            'type': 'boolean',
+            'default': 'true',
+            'label': {'en': 'SBAS', 'de': 'SBAS'},
+            'description': {'en': 'If SBAS is enabled, the position accuracy increases (if SBAS satellites are in view), but the update rate is limited to 5Hz. With SBAS disabled the update rate is increased to 10Hz.',
+                            'de': 'Wenn SBAS aktiviert ist, erhöht sich die Positionsgenauigkeit der GPS Daten falls SBAS Satelliten zu sehen sind. Die Aktualisierungsrate der GPS Daten beträgt 5Hz falls SBAS aktiviert ist und 10Hz falls SBAS deaktiviert ist.'},
+        },
+        update_interval('Set Status Callback Period', 'Period', 'Status', 'the status'),
+        update_interval('Set Altitude Callback Period', 'Period', 'Altitude', 'the altitude and geodial separation'),
+        update_interval('Set Motion Callback Period', 'Period', 'Motion', 'the course and speed')],
+    'init_code': """this.setFixLEDConfig(cfg.fixLEDConfig);
+        this.setSBASConfig(cfg.enableSBAS ? 0 : 1);
+        this.setStatusCallbackPeriod(cfg.statusUpdateInterval);
+        this.setAltitudeCallbackPeriod(cfg.altitudeUpdateInterval);
+        this.setMotionCallbackPeriod(cfg.motionUpdateInterval);""",
+    'dispose_code': """this.setStatusCallbackPeriod(0);
+        this.setAltitudeCallbackPeriod(0);
+        this.setMotionCallbackPeriod(0);""",
+    'channels': [
+        {
+            'id': 'Location',
+            'type': 'Coordinates',
+            'callbacks': [{
+                'packet': 'Coordinates',
+                'transform': "new PointType(new DecimalType(latitude / 1000000.0 * (ns == 'N' ? 1 : -1)), new DecimalType(longitude / 1000000.0 * (ew == 'E' ? 1 : -1)))"}],
+            'init_code': 'this.setCoordinatesCallbackPeriod(channelCfg.updateInterval);',
+            'dispose_code': 'this.setCoordinatesCallbackPeriod(0);'
+        }, {
+            'id': 'Fix',
+            'type': 'Fix',
+
+            'getters': [{
+                'packet': 'Get Status',
+                'element': 'Has Fix',
+                'packet_params': [],
+                'transform': "value.hasFix ? OpenClosedType.CLOSED : OpenClosedType.OPEN"}],
+
+            'callbacks': [{
+                'packet': 'Status',
+                'element': 'Has Fix',
+                'transform': "hasFix ? OpenClosedType.CLOSED : OpenClosedType.OPEN"}],
+
+        }, {
+            'id': 'Satellites In View',
+            'type': 'Satellites In View',
+
+            'getters': [{
+                'packet': 'Get Status',
+                'element': 'Satellites View',
+                'packet_params': [],
+                'transform': "new DecimalType(value.satellitesView)"}],
+
+            'callbacks': [{
+                'packet': 'Status',
+                'element': 'Satellites View',
+                'transform': "new DecimalType(satellitesView)"}],
+
+        },  {
+            'id': 'Altitude',
+            'type': 'Altitude',
+
+            'getters': [{
+                'packet': 'Get Altitude',
+                'element': '{title_words}',
+                'packet_params': [],
+                'transform': "new {number_type}(value.altitude{divisor}{unit})"}],
+
+            'callbacks': [{
+                'packet': 'Altitude',
+                'element': '{title_words}',
+                'transform': "new {number_type}(altitude{divisor}{unit})"}],
+
+        },  {
+            'id': 'Geoidal Separation',
+            'type': 'Geoidal Separation',
+
+            'getters': [{
+                'packet': 'Get Altitude',
+                'element': '{title_words}',
+                'packet_params': [],
+                'transform': "new {number_type}(value.geoidalSeparation{divisor}{unit})"}],
+
+            'callbacks': [{
+                'packet': 'Altitude',
+                'element': '{title_words}',
+                'transform': "new {number_type}(geoidalSeparation{divisor}{unit})"}],
+
+        },  {
+            'id': 'Course',
+            'type': 'Course',
+
+            'getters': [{
+                'packet': 'Get Motion',
+                'element': '{title_words}',
+                'packet_params': [],
+                'transform': "new {number_type}(value.course{divisor}{unit})"}],
+
+            'callbacks': [{
+                'packet': 'Motion',
+                'element': '{title_words}',
+                'transform': "new {number_type}(course{divisor}{unit})"}],
+
+        },  {
+            'id': 'Speed',
+            'type': 'Speed',
+
+            'getters': [{
+                'packet': 'Get Motion',
+                'element': '{title_words}',
+                'packet_params': [],
+                'transform': "new {number_type}(value.speed{divisor}{unit})"}],
+
+            'callbacks': [{
+                'packet': 'Motion',
+                'element': '{title_words}',
+                'transform': "new {number_type}(speed{divisor}{unit})"}],
+
+        },  {
+            'id': 'Date Time',
+            'type': 'Date Time',
+
+            'getters': [{
+                'packet': 'Get Date Time',
+                'packet_params': [],
+                'transform': 'new DateTimeType(Helper.parseGPSDateTime(value.date, value.time).withZoneSameInstant(ZoneId.systemDefault()))'}],
+
+            'callbacks': [{
+                'packet': 'Date Time',
+                'transform': "new DateTimeType(Helper.parseGPSDateTime(date, time).withZoneSameInstant(ZoneId.systemDefault()))"}],
+
+            'init_code': 'this.setDateTimeCallbackPeriod(channelCfg.updateInterval);',
+            'dispose_code': 'this.setDateTimeCallbackPeriod(0);'
+        }, {
+            'id': 'Pulse Per Second',
+            'type': 'system.trigger',
+
+            'label': 'Pulse Per Second',
+            'description': 'This channel is triggered precisely once per second, see `PPS <https://en.wikipedia.org/wiki/Pulse-per-second_signal>`__.\n\nThe precision of two subsequent pulses will be skewed because of the latency in the USB/RS485/Ethernet connection. But in the long run this will be very precise. For example a count of 3600 pulses will take exactly 1 hour.',
+
+            'callbacks': [{
+                'packet': 'Pulse Per Second',
+                'transform': '""'}],
+        }, {
+            'id': 'Restart',
+            'type': 'Restart',
+
+            'setters': [{
+                'packet': 'Restart',
+                'packet_params': ['Integer.valueOf(cmd.toString())'],
+                'command_type': "StringType"
+            }],
+
+        }
+    ],
+    'channel_types': [
+       oh_generic_channel_type('Coordinates', 'Location', {'en': 'Location', 'de': 'Standort'},
+                    update_style='Callback Period',
+                    description={'en': 'The location as determined by the bricklet.',
+                                 'de': 'Der vom Bricklet ermittelte Standort'}),
+        oh_generic_channel_type('Fix', 'Contact', {'en': 'Fix', 'de': 'Fix'},
+                    update_style=None,
+                    description={'en': 'The current fix status',
+                                 'de': 'Der aktuelle Fix-Status'}),
+        oh_generic_channel_type('Satellites In View', 'Number', {'en': 'Satellites In View', 'de': 'Sichtbare Satelliten'},
+                    update_style=None,
+                    description={'en': 'The number of satellites that are in view.',
+                                 'de': 'Die Anzahl der derzeit sichtbaren Satelliten.'}),
+        oh_generic_channel_type('Altitude', 'Number', {'en': 'Altitude', 'de': 'Höhe'},
+                    update_style=None,
+                    description={'en': 'The measured altitude', 'de': 'Die gemessene Höhe'}),
+        oh_generic_channel_type('Geoidal Separation', 'Number', {'en': 'Geoidal Separation', 'de': 'Geoidal Separation'},
+                    update_style=None,
+                    description={'en': 'The geoidal separation corresponding to the current altitude',
+                                 'de': "Die 'Geoidal Separation' zur aktuellen Höhe."}),
+        oh_generic_channel_type('Course', 'Number', {'en': 'Course', 'de': 'Kurs'},
+                    update_style=None,
+                    description={'en': 'The current course. A course of 0° means the Bricklet is traveling north bound and 90° means it is traveling east bound. Please note that this only returns useful values if an actual movement is present.',
+                                 'de': 'Eine Richtung von 0° bedeutet eine Bewegung des Bricklets nach Norden und 90° einer Bewegung nach Osten. Dabei ist zu beachten: Diese Funktion liefert nur nützlich Werte wenn auch tatsächlich eine Bewegung stattfindet.'}),
+        oh_generic_channel_type('Speed', 'Number', {'en': 'Speed', 'de': 'Geschwindigkeit'},
+                    update_style=None,
+                    description={'en': 'The current speed. Please note that this only returns useful values if an actual movement is present.',
+                                 'de': 'Die aktuelle Geschwindigkeit. Dabei ist zu beachten: Diese Funktion liefert nur nützlich Werte wenn auch tatsächlich eine Bewegung stattfindet.'}),
+        oh_generic_channel_type('Date Time', 'DateTime', {'en': 'Date Time', 'de': 'Datum und Uhrzeit'},
+                    update_style='Callback Period',
+                    description={'en': 'The current date and time.',
+                                 'de': 'Das aktuelle Datum und die aktuelle Uhrzeit'}),
+        oh_generic_channel_type('Restart', 'String', {'en': 'Restart', 'de': 'Neustart'},
+                    update_style=None,
+                    description={'en': "Restarts the GPS Bricklet, the following restart types are available:<ul><li>Hot start (use all available data in the NV store)</li><li>Warm start (don't use ephemeris at restart)</li><li>Cold start (don't use time, position, almanacs and ephemeris at restart)</li><li>Factory reset (clear all system/user configurations at restart)</li></ul>",
+                                 'de': "Startet das GPS Bricklet neu. Die folgenden Neustart-Typen stehen zur Verfügung:<ul><li>Hot Start (alle verfügbaren Daten im NV-Speicher werden weiter genutzt)</li><li>Warm Start (Ephemerisdaten werden verworfen)</li><li>Cold Start (Zeit-, Position-, Almanach- und Ephemerisdaten werden verworfen)</li><li>Factory Reset (Alle System/User Einstellungen werden verworfen)</li></ul>"},
+                    command_options=[('Hot Start', '0'),
+                                     ('Warm Start', '1'),
+                                     ('Cold Start', '2'),
+                                     ('Factory reset', '3')])
+    ],
+    'actions': ['Get Coordinates', 'Get Status', 'Get Altitude', 'Get Motion', 'Get Date Time', 'Get Satellite System Status', 'Get Satellite Status', 'Restart', 'Get Fix LED Config', 'Get SBAS Config']
+}
