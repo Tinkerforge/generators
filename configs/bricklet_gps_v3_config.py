@@ -75,13 +75,6 @@ com['constant_groups'].append({
               ('Disabled', 1)]
 })
 
-com['constant_groups'].append({
-'name': 'Antenna',
-'type': 'uint8',
-'constants': [('Internal', 0),
-              ('External', 1)]
-})
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Coordinates',
@@ -809,41 +802,6 @@ Returns the SBAS configuration as set by :func:`Set SBAS Config`
 'de':
 """
 Gibt die SBAS-Konfiguration zurück, wie von :func:`Set SBAS Config` gesetzt.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Set Antenna Config',
-'elements': [('Antenna Config', 'uint8', 1, 'in', {'constant_group': 'Antenna', 'default': 0})],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Configures the Bricklet to either use the internal or external antenna (through the u.fl connector)
-""",
-'de':
-"""
-Konfiguriert das Bricklet um entweder die interne oder externe Antenne zu nutzen (über den u.fl-Stecker)
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Get Antenna Config',
-'elements': [('Antenna Config', 'uint8', 1, 'out', {'constant_group': 'Antenna', 'default': 0})],
-
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the Antenna configuration as set by :func:`Set Antenna Config`
-""",
-'de':
-"""
-Gibt die Antennen-Konfiguration zurück, wie von :func:`Set Antenna Config` gesetzt.
 """
 }]
 })
