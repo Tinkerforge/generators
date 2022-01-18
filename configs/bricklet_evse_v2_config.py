@@ -56,12 +56,13 @@ com['constant_groups'].append({
 })
 
 com['constant_groups'].append({
-'name': 'Vehicle State',
+'name': 'Charger State',
 'type': 'uint8',
 'constants': [('Not Connected', 0),
-              ('Connected', 1),
-              ('Charging', 2),
-              ('Error', 3)]
+              ('Waiting For Charge Release', 1),
+              ('Ready To Charge', 2),
+              ('Charging', 3),
+              ('Error', 4)]
 })
 
 com['constant_groups'].append({
@@ -150,12 +151,21 @@ com['constant_groups'].append({
               ('Automatic', 2)]
 })
 
+com['constant_groups'].append({
+'name': 'Energy Meter Type',
+'type': 'uint8',
+'constants': [('Not Available', 0),
+              ('SDM72', 1),
+              ('SDM630', 2),
+              ('SDM72V2', 3)]
+})
+
 
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
 'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
-             ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
+             ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
@@ -181,7 +191,7 @@ com['packets'].append({
 'elements': [('Jumper Configuration', 'uint8', 1, 'out', {'constant_group': 'Jumper Configuration'}),
              ('Has Lock Switch', 'bool', 1, 'out'),
              ('EVSE Version', 'uint8', 1, 'out'),
-             ('Energy Meter Type', 'uint8', 1, 'out')],
+             ('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -313,7 +323,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Charging Slot Power On Default',
+'name': 'Set Charging Slot Default',
 'elements': [('Slot', 'uint8', 1, 'in'),
              ('Max Current', 'uint16', 1, 'in'),
              ('Active', 'bool', 1, 'in'),
@@ -340,7 +350,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Charging Slot Power On Default',
+'name': 'Get Charging Slot Default',
 'elements': [('Slot', 'uint8', 1, 'in'),
              ('Max Current', 'uint16', 1, 'out'),
              ('Active', 'bool', 1, 'out'),
@@ -381,7 +391,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Energy Meter Detailed Values Low Level',
+'name': 'Get All Energy Meter Values Low Level',
 'elements': [('Values Chunk Offset', 'uint16', 1, 'out', {}),
              ('Values Chunk Data', 'float', 15, 'out', {})],
 'high_level': {'stream_out': {'name': 'Values', 'fixed_length': 85}},
@@ -400,7 +410,7 @@ TBD
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Energy Meter Error',
+'name': 'Get Energy Meter Errors',
 'elements': [('Error Count', 'uint32', 6, 'out')], # local timeout, global timeout, illigal function, illegal data address, illegal data value, slave device failure
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -417,7 +427,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Reset Energy Meter',
+'name': 'Reset Energy Meter Relative Energy',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -435,7 +445,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Reset DC Fault Current',
+'name': 'Reset DC Fault Current State',
 'response_expected': 'true',
 'elements': [('Password', 'uint32', 1, 'in')], # Password: 0xDC42FA23
 'since_firmware': [1, 0, 0],
@@ -654,7 +664,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get All Data 1',
 'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
-             ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
+             ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
