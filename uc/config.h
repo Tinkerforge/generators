@@ -45,6 +45,13 @@ extern "C" {
 #define TF_IMPLEMENT_GET_DEVICE_DISPLAY_NAME 1
 #endif
 
+// Set this to 1 to enable network support.
+// If a net context is then registered to the HAL,
+// attached Bricklets are controllable via network.
+#ifndef TF_NET_ENABLE
+#define TF_NET_ENABLE 0
+#endif
+
 #ifdef __cplusplus
 }
 #endif
