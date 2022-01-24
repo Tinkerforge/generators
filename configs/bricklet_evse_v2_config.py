@@ -284,6 +284,60 @@ TODO
 
 com['packets'].append({
 'type': 'function',
+'name': 'Set Charging Slot Max Current',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Max Current', 'uint16', 1, 'in'),
+],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Charging Slot Active',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Active', 'bool', 1, 'in'),
+],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Charging Slot Clear On Disconnect',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Clear On Disconnect', 'bool', 1, 'in'),
+],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Get Charging Slot',
 'elements': [('Slot', 'uint8', 1, 'in'),
              ('Max Current', 'uint16', 1, 'out'),
