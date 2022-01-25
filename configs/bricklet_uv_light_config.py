@@ -24,7 +24,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False, # selling remaining stock, replaced by UV Light Bricklet 2.0
+    'discontinued': True, # replaced by UV Light Bricklet 2.0
     'features': [
         'device',
         'bricklet_get_identity'
