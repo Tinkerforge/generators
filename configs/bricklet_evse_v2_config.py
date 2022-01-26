@@ -728,7 +728,13 @@ com['packets'].append({
              ('Jumper Configuration', 'uint8', 1, 'out', {'constant_group': 'Jumper Configuration'}),
              ('Has Lock Switch', 'bool', 1, 'out'),
              ('EVSE Version', 'uint8', 1, 'out'),
-             ('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'})
+             ('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'}),
+             ('Power', 'float', 1, 'out'),            # W
+             ('Energy Relative', 'float', 1, 'out'),  # Wh
+             ('Energy Absolute', 'float', 1, 'out'),  # Wh
+             ('Phases Active', 'bool', 3, 'out'),
+             ('Phases Connected', 'bool', 3, 'out'),
+             ('Error Count', 'uint32', 6, 'out'),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -746,13 +752,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data 2',
-'elements': [('Power', 'float', 1, 'out'),            # W
-             ('Energy Relative', 'float', 1, 'out'),  # Wh
-             ('Energy Absolute', 'float', 1, 'out'),  # Wh
-             ('Phases Active', 'bool', 3, 'out'),
-             ('Phases Connected', 'bool', 3, 'out'),
-             ('Error Count', 'uint32', 6, 'out'),
-             ('Shutdown Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Shutdown Input'}),
+'elements': [('Shutdown Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Shutdown Input'}),
              ('Input Configuration', 'uint8', 1, 'out'),
              ('Output Configuration', 'uint8', 1, 'out', {'constant_group': 'Output'}),
              ('Indication', 'int16', 1, 'out'),
@@ -762,7 +762,6 @@ com['packets'].append({
              ('Button Release Time', 'uint32', 1, 'out'),
              ('Button Pressed', 'bool', 1, 'out'),
              ('Control Pilot', 'uint8', 1, 'out', {'constant_group': 'Control Pilot'})
-
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
