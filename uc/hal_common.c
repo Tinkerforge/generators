@@ -534,14 +534,6 @@ int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
 int tf_hal_callback_tick(TF_HAL *hal, uint32_t timeout_us) {
     TF_HALCommon *hal_common = tf_hal_get_common(hal);
 
-    if (hal_common->tfps_used == 0) {
-        return TF_E_OK;
-    }
-
-    uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
-    uint16_t first_index = hal_common->callback_tick_index;
-    TF_TFP *tfp = NULL;
-
 #if TF_LOCAL_ENABLE != 0
     if (hal_common->local != NULL
      && tf_local_callback_tick(hal_common->local)
@@ -553,6 +545,14 @@ int tf_hal_callback_tick(TF_HAL *hal, uint32_t timeout_us) {
         tf_net_send_packet(hal_common->net, &header, recv_buf);
     }
 #endif
+
+    if (hal_common->tfps_used == 0) {
+        return TF_E_OK;
+    }
+
+    uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
+    uint16_t first_index = hal_common->callback_tick_index;
+    TF_TFP *tfp = NULL;
 
     do {
         ++hal_common->callback_tick_index;
