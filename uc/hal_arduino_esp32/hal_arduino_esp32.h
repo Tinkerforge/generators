@@ -11,10 +11,10 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <SPI.h>
+
 #include "../bindings/hal_common.h"
 #include "../bindings/macros.h"
-
-#include <SPI.h>
 
 #define TF_PORT(chip_select_pin, spi, port_name) {chip_select_pin, spi, port_name, {._to_init = 0}}
 
