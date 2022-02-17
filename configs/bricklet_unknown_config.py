@@ -80,65 +80,65 @@ com['packets'].append({
 """
 The callback has seven parameters:
 
- * ``uid``: The UID of the device.
- * ``connected_uid``: UID where the device is connected to. For a Bricklet this
-   is the UID of the Brick or Bricklet it is connected to. "0" if the Bricklet is
-   directly connected to the calling hardware. With this information it is possible to
-   reconstruct the complete network topology.
- * ``position``: 'a' - 'h' (position on Brick) or 'i' (position of the Raspberry Pi (Zero) HAT)
-   or 'z' (Bricklet on :ref:`Isolator Bricklet <isolator_bricklet>`).
- * ``hardware_version``: Major, minor and release number for hardware version.
- * ``firmware_version``: Major, minor and release number for firmware version.
- * ``device_identifier``: A number that represents the device.
- * ``enumeration_type``: Type of enumeration.
+* ``uid``: The UID of the device.
+* ``connected_uid``: UID where the device is connected to. For a Bricklet this
+  is the UID of the Brick or Bricklet it is connected to. "0" if the Bricklet is
+  directly connected to the calling hardware. With this information it is possible to
+  reconstruct the complete network topology.
+* ``position``: 'a' - 'h' (position on Brick) or 'i' (position of the Raspberry Pi (Zero) HAT)
+  or 'z' (Bricklet on :ref:`Isolator Bricklet <isolator_bricklet>`).
+* ``hardware_version``: Major, minor and release number for hardware version.
+* ``firmware_version``: Major, minor and release number for firmware version.
+* ``device_identifier``: A number that represents the device.
+* ``enumeration_type``: Type of enumeration.
 
- Possible enumeration types are:
+Possible enumeration types are:
 
- * Available: Device is available (enumeration
-   triggered by user). This enumeration type can
-   occur multiple times for the same device.
- * Connected: Device is newly connected
-   (automatically send by Brick after establishing a communication connection).
-   This indicates that the device has potentially lost its previous
-   configuration and needs to be reconfigured.
- * Disconnected: Device is disconnected (only
-   possible for USB connection). In this case only ``uid`` and
-   ``enumeration_type`` are valid.
+* Available: Device is available (enumeration
+  triggered by user). This enumeration type can
+  occur multiple times for the same device.
+* Connected: Device is newly connected
+  (automatically send by Brick after establishing a communication connection).
+  This indicates that the device has potentially lost its previous
+  configuration and needs to be reconfigured.
+* Disconnected: Device is disconnected (only
+  possible for USB connection). In this case only ``uid`` and
+  ``enumeration_type`` are valid.
 
- It should be possible to implement plug-and-play functionality with this
- (as is done in Brick Viewer).
+It should be possible to implement plug-and-play functionality with this
+(as is done in Brick Viewer).
 """,
 'de':
 """
 Der Callback empfängt sieben Parameter:
 
- * ``uid``: Die UID des Bricks/Bricklets.
- * ``connected_uid``: Die UID des Gerätes mit dem das Bricklet verbunden
-   ist. Für ein Bricklet ist dies die UID des Bricks oder Bricklets mit dem es verbunden ist oder
-   "0" falls das Bricklet direkt mit der aufrufenden Hardware verbunden ist. Mit diesen Informationen
-   sollte es möglich sein die komplette Netzwerktopologie zu rekonstruieren.
- * ``position``: 'a' - 'h' (Position an Brick) oder 'i' (Position des Raspberry Pi (Zero) HAT)
-   oder 'z' (Bricklet an :ref:`Isolator Bricklet <isolator_bricklet>`).
- * ``hardware_version``: Major, Minor und Release Nummer der Hardwareversion.
- * ``firmware_version``: Major, Minor und Release Nummer der Firmwareversion.
- * ``device_identifier``: Eine Zahl, welche das Bricklet repräsentiert.
- * ``enumeration_type``: Art der Enumerierung
+* ``uid``: Die UID des Bricks/Bricklets.
+* ``connected_uid``: Die UID des Gerätes mit dem das Bricklet verbunden
+  ist. Für ein Bricklet ist dies die UID des Bricks oder Bricklets mit dem es verbunden ist oder
+  "0" falls das Bricklet direkt mit der aufrufenden Hardware verbunden ist. Mit diesen Informationen
+  sollte es möglich sein die komplette Netzwerktopologie zu rekonstruieren.
+* ``position``: 'a' - 'h' (Position an Brick) oder 'i' (Position des Raspberry Pi (Zero) HAT)
+  oder 'z' (Bricklet an :ref:`Isolator Bricklet <isolator_bricklet>`).
+* ``hardware_version``: Major, Minor und Release Nummer der Hardwareversion.
+* ``firmware_version``: Major, Minor und Release Nummer der Firmwareversion.
+* ``device_identifier``: Eine Zahl, welche das Bricklet repräsentiert.
+* ``enumeration_type``: Art der Enumerierung
 
- Mögliche Enumerierungsarten sind:
+Mögliche Enumerierungsarten sind:
 
- * Available: Gerät ist verfügbar (Enumerierung vom
-   Benutzer ausgelöst). Diese Enumerierungsart kann
-   mehrfach für das selbe Gerät auftreten.
- * Connected: Gerät wurde neu verbunden (Automatisch
-   vom Brick gesendet nachdem die Kommunikation aufgebaut wurde). Dies kann
-   bedeuten, dass das Gerät die vorher eingestellte Konfiguration verloren hat
-   und neu konfiguriert werden muss.
- * Disconnected: Gerät wurde getrennt (Nur bei
-   USB-Verbindungen möglich). In diesem Fall haben nur ``uid`` und
-   ``enumeration_type`` einen gültigen Wert.
+* Available: Gerät ist verfügbar (Enumerierung vom
+  Benutzer ausgelöst). Diese Enumerierungsart kann
+  mehrfach für das selbe Gerät auftreten.
+* Connected: Gerät wurde neu verbunden (Automatisch
+  vom Brick gesendet nachdem die Kommunikation aufgebaut wurde). Dies kann
+  bedeuten, dass das Gerät die vorher eingestellte Konfiguration verloren hat
+  und neu konfiguriert werden muss.
+* Disconnected: Gerät wurde getrennt (Nur bei
+  USB-Verbindungen möglich). In diesem Fall haben nur ``uid`` und
+  ``enumeration_type`` einen gültigen Wert.
 
- Es sollte möglich sein Plug-and-Play-Funktionalität mit diesem Callback
- zu implementieren (wie es im Brick Viewer geschieht).
+Es sollte möglich sein Plug-and-Play-Funktionalität mit diesem Callback
+zu implementieren (wie es im Brick Viewer geschieht).
 """
 }]
 })
@@ -153,11 +153,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
- Broadcasts an enumerate request. All devices will respond with an :cb:`Enumerate` callback.
+Broadcasts an enumerate request. All devices will respond with an :cb:`Enumerate` callback.
 """,
 'de':
 """
- Broadcast einer Enumerierungsanfrage. Alle Bricks und Bricklets werden mit einem :cb:`Enumerate` Callback antworten.
+Broadcast einer Enumerierungsanfrage. Alle Bricks und Bricklets werden mit einem :cb:`Enumerate` Callback antworten.
 """
 }]
 })
