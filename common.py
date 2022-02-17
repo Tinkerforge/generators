@@ -3405,7 +3405,10 @@ class Device(object):
         return self.generator
 
     def has_comcu(self):
-        return 'comcu_bricklet' in self.raw_data['features']
+        return self.has_feature('comcu_bricklet')
+
+    def has_feature(self, feature):
+        return feature in self.raw_data['features']
 
     def is_released(self):
         return self.raw_data['released'] or self.generator.internal
