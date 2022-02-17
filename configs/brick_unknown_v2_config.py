@@ -4,15 +4,15 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# Unknown Brick communication config
+# Unknown Brick 2.0 communication config
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': -11,
-    'name': 'Unknown',
-    'display_name': 'Unknown',
+    'name': 'Unknown V2',
+    'display_name': 'Unknown 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '',
