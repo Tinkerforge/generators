@@ -214,9 +214,10 @@ def main():
                     shutil.copy(src_file, tool_path)
                     print(' * {0}'.format(f))
 
-        print('')
-        print('Copying uC bindings to esp32-firmware:')
-        copy_uc_files()
+        if 'uc' in bindings:
+            print('')
+            print('Copying uC bindings to esp32-firmware:')
+            copy_uc_files()
 
     doc_copy = [('_Brick_', 'Bricks'),
                 ('_Bricklet_', 'Bricklets'),
