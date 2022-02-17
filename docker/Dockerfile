@@ -33,7 +33,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -t stretch-backports mono-
 RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
 RUN DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/packages-microsoft-prod.deb
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -t stretch-backports dotnet-sdk-3.1
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -t stretch-backports dotnet-sdk-6.0
 ENV DOTNET_CLI_TELEMETRY_OPTOUT 1
 
 # delphi bindings

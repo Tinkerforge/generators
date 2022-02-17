@@ -4942,7 +4942,7 @@ def dockerize(bindings_name, script_path, add_internal_argument=False, add_argum
             print('error: docker is not installed')
             sys.exit(1)
 
-        image_name = 'tinkerforge/builder-generators-debian:1.0.0'
+        image_name = 'tinkerforge/builder-generators-debian:1.1.0'
 
         if len(subprocess.check_output(['docker', 'images', '-q', image_name]).strip()) == 0:
             print('error: docker image {0} is missing'.format(image_name))

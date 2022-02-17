@@ -14,13 +14,33 @@
     <summary>Tinkerforge is an open source hardware platform of stackable microcontroller building blocks (Bricks) that can control different modules (Bricklets). The hardware can be controlled by external programs written in different programming languages including C#.</summary>
     <copyright>Tinkerforge GmbH 2011-2021</copyright>
     <tags>Tinkerforge Open-Source Hardware Brick Bricklet</tags>
+    <dependencies>
+      <group targetFramework="net20">
+      </group>
+      <group targetFramework="net40">
+      </group>
+      <group targetFramework="net5.0">
+      </group>
+      <group targetFramework="net6.0">
+      </group>
+      <group targetFramework="netcoreapp2.0">
+      </group>
+      <group targetFramework="netstandard2.0">
+      </group>
+    </dependencies>
   </metadata>
   <files>
     <file src="unzipped_net20/Tinkerforge.dll" target="lib/net20" />
     <file src="unzipped_net20/Tinkerforge.xml" target="lib/net20" />
     <file src="unzipped_net40/Tinkerforge.dll" target="lib/net40" />
     <file src="unzipped_net40/Tinkerforge.xml" target="lib/net40" />
-    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.dll" target="lib/netcore20" />
-    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.xml" target="lib/netcore20" />
+    <file src="unzipped_net50/source/Tinkerforge/bin/Release/net5.0/Tinkerforge.dll" target="lib/net5.0" />
+    <file src="unzipped_net50/source/Tinkerforge/bin/Release/net5.0/Tinkerforge.xml" target="lib/net5.0" />
+    <file src="unzipped_net60/source/Tinkerforge/bin/Release/net6.0/Tinkerforge.dll" target="lib/net6.0" />
+    <file src="unzipped_net60/source/Tinkerforge/bin/Release/net6.0/Tinkerforge.xml" target="lib/net6.0" />
+    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.dll" target="lib/netcoreapp2.0" />
+    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.xml" target="lib/netcoreapp2.0" />
+    <file src="unzipped_netstandard20/source/Tinkerforge/bin/Release/netstandard2.0/Tinkerforge.dll" target="lib/netstandard2.0" />
+    <file src="unzipped_netstandard20/source/Tinkerforge/bin/Release/netstandard2.0/Tinkerforge.xml" target="lib/netstandard2.0" />
   </files>
 </package>
