@@ -53,6 +53,11 @@
 	#include <sys/time.h> // gettimeofday
 #endif
 
+#if defined _MSC_VER && _MSC_VER < 1900
+	// snprintf is not available in older MSVC versions
+	#define snprintf _snprintf
+#endif
+
 #define IPCON_EXPOSE_INTERNALS
 #define IPCON_EXPOSE_MILLISLEEP
 
