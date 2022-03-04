@@ -56,12 +56,13 @@ com['constant_groups'].append({
 })
 
 com['constant_groups'].append({
-'name': 'Vehicle State',
+'name': 'Charger State',
 'type': 'uint8',
 'constants': [('Not Connected', 0),
-              ('Connected', 1),
-              ('Charging', 2),
-              ('Error', 3)]
+              ('Waiting For Charge Release', 1),
+              ('Ready To Charge', 2),
+              ('Charging', 3),
+              ('Error', 4)]
 })
 
 com['constant_groups'].append({
@@ -121,15 +122,12 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get State',
 'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
-             ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
+             ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
-             ('Charge Release', 'uint8', 1, 'out', {'constant_group': 'Charge Release'}),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
-             ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
-             ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
-             ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
+             ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'})],
 'since_firmware': [2, 0, 5],
 'doc': ['bf', {
 'en':
@@ -147,7 +145,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Hardware Configuration',
 'elements': [('Jumper Configuration', 'uint8', 1, 'out', {'constant_group': 'Jumper Configuration'}),
-             ('Has Lock Switch', 'bool', 1, 'out')],
+             ('Has Lock Switch', 'bool', 1, 'out'),
+             ('EVSE Version', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -164,21 +163,47 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get Low Level State',
-'elements': [('Low Level Mode Enabled', 'bool', 1, 'out'),
-             ('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
+'elements': [('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
              ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
              ('ADC Values', 'uint16', 2, 'out'),
              ('Voltages', 'int16', 3, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # pe-cp, pe-pp, high voltage pe-cp
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}),
              ('GPIO', 'bool', 5, 'out'), # XMC_GPIO_GetInput(EVSE_INPUT_GP_PIN) | (XMC_GPIO_GetInput(EVSE_OUTPUT_GP_PIN) << 1) | (XMC_GPIO_GetInput(EVSE_MOTOR_INPUT_SWITCH_PIN) << 2) | (XMC_GPIO_GetInput(EVSE_RELAY_PIN) << 3) | (XMC_GPIO_GetInput(EVSE_MOTOR_FAULT_PIN) << 4)
-             ('Hardware Version', 'uint8', 1, 'out'),
-             ('Charging Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})
+             ('Charging Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Charging Slot',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Max Current', 'uint16', 1, 'in'),
+             ('Active', 'bool', 1, 'in'),
+             ('Clear On Disconnect', 'bool', 1, 'in'),
 ],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 1, 0],
 'doc': ['bf', {
 'en':
 """
-TODO
+fixed slots:
+0: incoming cable (read-only, configured through slide switch)
+1: outgoing cable (read-only, configured through resistor)
+2: gpio input 0 (shutdown input)
+3: gpio input 1 (input)
+4: button (0A <-> 32A, can be controlled from web interface with start button and physical button if configured)
+
 """,
 'de':
 """
@@ -189,13 +214,14 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Max Charging Current',
-'elements': [('Max Current', 'uint16', 1, 'in')], # mA (default 32A?)
-'since_firmware': [1, 0, 0],
+'name': 'Set Charging Slot Max Current',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Max Current', 'uint16', 1, 'in'),
+],
+'since_firmware': [2, 1, 0],
 'doc': ['bf', {
 'en':
 """
-TODO
 """,
 'de':
 """
@@ -206,20 +232,14 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Max Charging Current',
-'elements': [('Max Current Configured', 'uint16', 1, 'out'),     # mA
-             ('Max Current Incoming Cable', 'uint16', 1, 'out'), # mA
-             ('Max Current Outgoing Cable', 'uint16', 1, 'out'), # mA
-             ('Max Current Managed', 'uint16', 1, 'out')],       # mA
-'since_firmware': [2, 0, 6],
+'name': 'Set Charging Slot Active',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Active', 'bool', 1, 'in'),
+],
+'since_firmware': [2, 1, 0],
 'doc': ['bf', {
 'en':
 """
-* Max Current Configured -> set with :func:`Set Max Charging Current`
-* Max Current Incoming Cable -> set with jumper on EVSE
-* Max Current Outgoing Cable -> set with resistor between PP/PE (if fixed cable is used)
-
-TODO
 """,
 'de':
 """
@@ -227,6 +247,111 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Charging Slot Clear On Disconnect',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Clear On Disconnect', 'bool', 1, 'in'),
+],
+'since_firmware': [2, 1, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Charging Slot',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Max Current', 'uint16', 1, 'out'),
+             ('Active', 'bool', 1, 'out'),
+             ('Clear On Disconnect', 'bool', 1, 'out'),
+],
+'since_firmware': [2, 1, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Charging Slots',
+'elements': [('Max Current', 'uint16', 20, 'out'),
+             ('Active And Clear On Disconnect', 'uint8', 20, 'out')], # bit 0 => Active, bit 1 => Clear On Disconnect
+'since_firmware': [2, 1, 0],
+'doc': ['bf', {
+'en':
+"""
+packed getter
+
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Charging Slot Default',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Max Current', 'uint16', 1, 'in'),
+             ('Active', 'bool', 1, 'in'),
+             ('Clear On Disconnect', 'bool', 1, 'in'),
+],
+'since_firmware': [2, 1, 0],
+'doc': ['bf', {
+'en':
+"""
+fixed slots:
+0: incoming cable (read-only, configured through slide switch)
+1: outgoing cable (read-only, configured through resistor)
+2: gpio input 0 (shutdown input)
+3: gpio input 1 (input)
+
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Charging Slot Default',
+'elements': [('Slot', 'uint8', 1, 'in'),
+             ('Max Current', 'uint16', 1, 'out'),
+             ('Active', 'bool', 1, 'out'),
+             ('Clear On Disconnect', 'bool', 1, 'out'),
+],
+'since_firmware': [2, 1, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
 
 com['packets'].append({
 'type': 'function',
@@ -247,128 +372,6 @@ TODO
 """
 }]
 })
-
-com['packets'].append({
-'type': 'function',
-'name': 'Start Charging',
-'elements': [],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Stop Charging',
-'elements': [],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Set Charging Autostart',
-'elements': [('Autostart', 'bool', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Get Charging Autostart',
-'elements': [('Autostart', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Get Managed',
-'elements': [('Managed', 'bool', 1, 'out')],
-'since_firmware': [2, 0, 6],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Set Managed',
-'response_expected': 'true',
-'elements': [('Managed', 'bool', 1, 'in'),
-             ('Password', 'uint32', 1, 'in')], # To enable: 0x00363702 (mgmt on), to disable: 0x036370FF (mgmt off)
-'since_firmware': [2, 0, 6],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Set Managed Current',
-'elements': [('Current', 'uint16', 1, 'in')], # mA (default 0A)
-'since_firmware': [2, 0, 6],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
 
 com['packets'].append({
 'type': 'function',
@@ -509,11 +512,12 @@ TODO
 })
 
 
+# Get All Data: TBD
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data 1',
 'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
-             ('Vehicle State', 'uint8', 1, 'out', {'constant_group': 'Vehicle State'}),
+             ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
              ('Charge Release', 'uint8', 1, 'out', {'constant_group': 'Charge Release'}),
