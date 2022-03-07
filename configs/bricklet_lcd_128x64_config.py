@@ -687,6 +687,8 @@ com['packets'].append({
 Draws a text at the pixel position (x, y).
 
 You can use one of 9 different font sizes and draw the text in white or black.
+
+The font conforms to code page 437.
 """,
 'de':
 """
@@ -694,6 +696,8 @@ Zeichnet einen Text an die Pixelposition (x, y).
 
 Es können 9 unterschiedliche Font-Größen genutzt werden und der Text
 kann in weiß oder schwarz gezeichnet werden.
+
+Der der Zeichensatz entspricht Codepage 437.
 """
 }]
 })

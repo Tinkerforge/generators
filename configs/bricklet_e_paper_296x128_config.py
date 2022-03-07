@@ -374,6 +374,8 @@ black/white/red|gray. The text can be drawn horizontal or vertical.
 
 This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
 to the display use :func:`Draw`.
+
+The font conforms to code page 437.
 """,
 'de':
 """
@@ -385,6 +387,8 @@ oder vertikal gezeichnet werden.
 
 Diese Funktion schreibt Pixel in den Schwarz-/Weiß-/Grau|Rot-Buffer. Der Buffer kann mit der Funktion :func:`Draw`
 auf das Display übertragen werden.
+
+Der der Zeichensatz entspricht Codepage 437.
 """
 }]
 })

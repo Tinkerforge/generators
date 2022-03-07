@@ -188,6 +188,8 @@ afterwards.
 
 The display uses a special 5x7 pixel charset. You can view the characters
 of the charset in Brick Viewer.
+
+The font conforms to code page 437.
 """,
 'de':
 """
@@ -202,6 +204,8 @@ Text hinzuzufügen.
 
 Das Display nutzt einen speziellen 5x7 Pixel Zeichensatz. Der Zeichensatz
 kann mit Hilfe von Brick Viewer angezeigt werden.
+
+Der der Zeichensatz entspricht Codepage 437.
 """
 }]
 })

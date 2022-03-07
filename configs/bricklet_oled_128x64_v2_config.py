@@ -259,6 +259,8 @@ multiple steps.
 
 Automatic draw can be configured with the :func:`Set Display Configuration`
 function.
+
+The font conforms to code page 437.
 """,
 'de':
 """
@@ -282,6 +284,8 @@ wenn ein komplexes Bild in mehreren Schritten aufgebaut wird.
 
 Automatic Draw kann über die :func:`Set Display Configuration` Funktion
 eingestellt werden.
+
+Der der Zeichensatz entspricht Codepage 437.
 """
 }]
 })
