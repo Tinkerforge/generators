@@ -531,7 +531,8 @@ com['packets'].append({
              ('Duration', 'uint16', 1, 'out'),
 
              ('Button Press Time', 'uint32', 1, 'out'),
-             ('Button Release Time', 'uint32', 1, 'out')],
+             ('Button Release Time', 'uint32', 1, 'out'),
+             ('Button Pressed', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
