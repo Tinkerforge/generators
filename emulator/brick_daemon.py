@@ -710,7 +710,17 @@ class Device(metaclass=MetaDevice):
                         pending_requests.append(_PendingRequest(request_match, request, response_queue))
 
                 if response_task.done():
-                    data = response_task.result()
+                    try:
+                        data = response_task.result()
+                    except asyncio.CancelledError:
+                        break # ignore cancellation here to do proper cleanup
+                    except Exception as e:
+                        if self._debug:
+                            _logger.error('Error while receiving response data, disconnecting passthrough {0}: {1}'
+                                          .format(client_signature, _exception_to_str(e)))
+
+                        break
+
                     response_task = None
 
                     if len(data) == 0:
@@ -861,7 +871,15 @@ class Device(metaclass=MetaDevice):
                 await _cancel_task(response_task) # FIXME: what to do if awaiting cancellation gets cancelled?
 
             writer.close()
-            await writer.wait_closed() # cancellation is okay here
+
+            try:
+                await writer.wait_closed()
+            except asyncio.CancelledError:
+                raise # cancellation is okay here
+            except Exception as e:
+                if self._debug:
+                    _logger.error('Error while disconnecting passthrough {0}: {1}'
+                                  .format(passthrough_signature, _exception_to_str(e)))
 
     def _get_next_trace(self):
         if self._get_next_trace_cb == None:
@@ -1157,7 +1175,17 @@ class BrickDaemon:
                 break # ignore cancellation here to do proper cleanup
 
             if request_task.done():
-                data = request_task.result()
+                try:
+                    data = request_task.result()
+                except asyncio.CancelledError:
+                    break # ignore cancellation here to do proper cleanup
+                except Exception as e:
+                    if self._debug:
+                        _logger.error('Error while receiving request data, disconnecting client {0}: {1}'
+                                      .format(client_signature, _exception_to_str(e)))
+
+                    break
+
                 request_task = None
 
                 if len(data) == 0:
@@ -1230,7 +1258,15 @@ class BrickDaemon:
             await _cancel_task(response_task) # FIXME: what to do if awaiting cancellation gets cancelled?
 
         writer.close()
-        await writer.wait_closed() # cancellation is okay here
+
+        try:
+            await writer.wait_closed()
+        except asyncio.CancelledError:
+            raise # cancellation is okay here
+        except Exception as e:
+            if self._debug:
+                _logger.error('Error while disconnecting client {0}: {1}'
+                              .format(client_signature, _exception_to_str(e)))
 
     def start_running(self):
         if self._run_task != None:
