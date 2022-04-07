@@ -775,3 +775,23 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Factory Reset',
+'response_expected': 'true',
+'elements': [('Password', 'uint32', 1, 'in')], # Password: 0x2342FACD
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+
