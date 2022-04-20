@@ -1651,7 +1651,7 @@ def subgenerate(root_dir, language, internal, generator_class, config_name):
                            device.get_git_name(),
                            firmware_url_part,
                            device.has_comcu(),
-                           device.oh != None,
+                           device.has_openhab(),
                            device.is_released(),
                            device.is_documented(),
                            device.is_discontinued(),
@@ -1675,7 +1675,7 @@ def subgenerate(root_dir, language, internal, generator_class, config_name):
                            device.get_git_name(),
                            firmware_url_part,
                            device.has_comcu(),
-                           device.oh != None,
+                           device.has_openhab(),
                            device.is_released(),
                            device.is_documented(),
                            device.is_discontinued(),
@@ -1699,7 +1699,7 @@ def subgenerate(root_dir, language, internal, generator_class, config_name):
                            device.get_git_name(),
                            firmware_url_part,
                            False,
-                           device.oh != None,
+                           device.has_openhab(),
                            device.is_released(),
                            device.is_documented(),
                            device.is_discontinued(),
@@ -3409,6 +3409,9 @@ class Device(object):
 
     def has_comcu(self):
         return self.has_feature('comcu_bricklet')
+
+    def has_openhab(self):
+        return 'openhab' in self.raw_data
 
     def has_feature(self, feature):
         return feature in self.raw_data['features']
