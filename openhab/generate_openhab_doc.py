@@ -520,10 +520,13 @@ Thing
 
     def get_openhab_doc(self):
         doc  = common.make_rst_header(self, has_device_identifier_constant=False)
+        doc += '\n.. warning::\n The openHAB bindings are still in beta, but the development was stopped.\n'
         doc += common.make_rst_summary(self)
+
         if self.oh.doc is not None:
             doc += self.oh.doc
             doc += '\n\n'
+
         examples = self.get_openhab_examples()
         doc += examples
         doc += '\n\n'
@@ -628,11 +631,14 @@ def generate(root_dir, language, internal):
         de_docs = os.path.join(root_dir, 'doc', 'de')
         shutil.rmtree(de_docs, ignore_errors=True)
         shutil.copytree(os.path.join(root_dir, 'doc', 'en'), de_docs)
-        for file in os.listdir(de_docs):
-            with open(os.path.join(de_docs, file), 'r') as f:
+
+        for name in os.listdir(de_docs):
+            with open(os.path.join(de_docs, name), 'r') as f:
                 content = f.read()
-            content = content.replace('This is the description of the :ref:`openHAB API bindings <api_bindings_openhab>` for the', '.. note::\n Die openHAB-Dokumentation ist nur auf englisch verfügbar.\n\nThis is the description of the :ref:`openHAB API bindings <api_bindings_openhab>` for the')
-            with open(os.path.join(de_docs, file), 'w') as f:
+
+            content = content.replace('.. warning::\n The openHAB bindings are still in beta', '.. note::\n Die openHAB-Dokumentation ist nur auf Englisch verfügbar.\n\n.. warning::\n The openHAB bindings are still in beta')
+
+            with open(os.path.join(de_docs, name), 'w') as f:
                 f.write(content)
 
         return
