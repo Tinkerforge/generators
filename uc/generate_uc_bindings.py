@@ -136,10 +136,10 @@ extern "C" {{
  * {{@link IPCON_CALLBACK_ENUMERATE}} callback of the IP Connection have a
  * \\c device_identifier parameter to specify the Brick's or Bricklet's type.
  */
-#define TF_{device_upper}_DEVICE_IDENTIFIER {did}
+#define TF_{device_upper}_DEVICE_IDENTIFIER {device_id}
 """
 
-        return format(template, self, did=self.get_device_identifier())
+        return format(template, self, device_id=self.get_device_identifier())
 
     def get_c_device_display_name_define(self):
         template = """
