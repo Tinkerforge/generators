@@ -15,8 +15,8 @@ com = {
     'display_name': 'ESP32',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
-        'de': 'TBD'
+        'en': 'ESP32 microcontroller based Brick with 6 Bricklet ports',
+        'de': 'ESP32 Mikrocontroller basierter Brick mit 6 Bricklet-Ports'
     },
     'released': False,
     'documented': False,
