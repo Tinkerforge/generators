@@ -7,7 +7,7 @@ Copyright (C) 2012-2015, 2018 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
-generate_c_zip.py: Generator for C/C++ ZIP
+generate_uc_zip.py: Generator for C/C++ for Microcontrollers ZIP
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

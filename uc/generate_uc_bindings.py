@@ -55,7 +55,7 @@ from generators.uc import uc_common
 from generators.uc.uc_common import uc_format
 
 class UCBindingsDevice(common.Device):
-    def specialize_c_doc_function_links(self, text):
+    def specialize_uc_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return uc_format('{{@link tf_{device_under}_register_{packet_under}_callback}}', packet.get_device(), packet, -2 if high_level else 0)
@@ -64,7 +64,7 @@ class UCBindingsDevice(common.Device):
 
         return self.specialize_doc_rst_links(text, specializer)
 
-    def get_c_include_c(self):
+    def get_uc_include_c(self):
         template = """{header_comment}
 
 #include "{category_under}_{device_under}.h"
@@ -82,7 +82,7 @@ extern "C" {{
 
         return uc_format(template, self, header_comment=self.get_generator().get_header_comment('asterisk'))
 
-    def get_c_function_id_defines(self):
+    def get_uc_function_id_defines(self):
         defines = ''
         template = """
 /**
@@ -96,7 +96,7 @@ extern "C" {{
 
         return common.wrap_non_empty('', defines, '\n')
 
-    def get_c_callback_defines(self):
+    def get_uc_callback_defines(self):
         defines = '#if TF_IMPLEMENT_CALLBACKS != 0\n'
         template = """
 /**
@@ -111,7 +111,7 @@ extern "C" {{
         defines += '\n#endif'
         return defines
 
-    def get_c_constants(self):
+    def get_uc_constants(self):
         constant_format = """
 /**
  * \\ingroup TF_{device_camel}
@@ -125,7 +125,7 @@ extern "C" {{
                                                    device_camel=self.get_name().camel,
                                                    device_upper=self.get_name().upper)
 
-    def get_c_device_identifier_define(self):
+    def get_uc_device_identifier_define(self):
         template = """
 /**
  * \\ingroup TF_{device_camel}
@@ -141,7 +141,7 @@ extern "C" {{
 
         return uc_format(template, self)
 
-    def get_c_device_display_name_define(self):
+    def get_uc_device_display_name_define(self):
         template = """
 /**
  * \\ingroup TF_{device_camel}
@@ -153,7 +153,7 @@ extern "C" {{
 
         return uc_format(template, self)
 
-    def get_c_create_function(self):
+    def get_uc_create_function(self):
         template = """
 int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid_or_port_name, TF_HAL *hal) {{
     if ({device_under} == NULL || hal == NULL) {{
@@ -197,7 +197,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, TF_TFP *tfp) {{
 }}
 """
 
-        mapped_bytes, response_dict = self.get_c_response_expected_info()
+        mapped_bytes, response_dict = self.get_uc_response_expected_info()
 
         response_expected_bytes = [0] * mapped_bytes
 
@@ -220,7 +220,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, TF_TFP *tfp) {{
 
         return uc_format(template, self, response_expected_init=response_expected_init)
 
-    def get_c_destroy_function(self):
+    def get_uc_destroy_function(self):
         template = """
 int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
     if ({device_under} == NULL) {{
@@ -240,7 +240,7 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under}) {{
 """
         return uc_format(template, self)
 
-    def get_c_callback_tick_function(self):
+    def get_uc_callback_tick_function(self):
         template = """
 int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t timeout_us) {{
     if ({device_under} == NULL) {{
@@ -258,7 +258,7 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
 """
         return uc_format(template, self)
 
-    def get_c_response_expected_info(self):
+    def get_uc_response_expected_info(self):
         mapped_id = 0
         d = {}
         for packet in self.get_packets('function'):
@@ -269,7 +269,7 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
 
         return math.ceil(mapped_id / 8.0), d
 
-    def get_c_response_expected_functions(self):
+    def get_uc_response_expected_functions(self):
         template = """
 int tf_{device_under}_get_response_expected(TF_{device_camel} *{device_under}, uint8_t function_id, bool *ret_response_expected) {{
     if ({device_under} == NULL) {{
@@ -339,7 +339,7 @@ int tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under
         getters = []
         setters = []
 
-        mapped_bytes, response_map = self.get_c_response_expected_info()
+        mapped_bytes, response_map = self.get_uc_response_expected_info()
 
         for packet in self.get_packets('function'):
             if packet.get_function_id() not in response_map:
@@ -357,7 +357,7 @@ int tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under
                          getter_cases='\n'.join(getters),
                          mapped_bytes=mapped_bytes)
 
-    def get_c_functions(self):
+    def get_uc_functions(self):
         functions = ''
 
         # normal and low-level
@@ -423,11 +423,11 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 """
 
         for packet in self.get_packets('function'):
-            params = common.wrap_non_empty(', ', packet.get_c_parameters(), '')
+            params = common.wrap_non_empty(', ', packet.get_uc_parameters(), '')
             fid = uc_format('{device_upper}_FUNCTION_{packet_upper}', self, packet)
 
             packet_camel = packet.get_name().camel
-            request_assignments, needs_i = packet.get_c_struct_list()
+            request_assignments, needs_i = packet.get_uc_struct_list()
 
             request_size = sum(e.get_size() for e in packet.get_elements(direction='in'))
             response_size = sum(e.get_size() for e in packet.get_elements(direction='out'))
@@ -436,7 +436,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
                 request_assignments = uc_format('\n    uint8_t *_send_buf = tf_tfp_get_send_payload_buffer({device_under}->tfp);\n{req_assign}\n', self, req_assign=request_assignments)
 
             if len(packet.get_elements(direction='out')) > 0:
-                return_list, needs_i2 = packet.get_c_return_list('_recv_buf', context='getter')
+                return_list, needs_i2 = packet.get_uc_return_list('_recv_buf', context='getter')
                 extract_response = uc_format(template_extract_response, self,
                                              response_size=response_size,
                                              response_assignments='\n            '.join(return_list))
@@ -597,15 +597,15 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
             if stream_in is None and stream_out is None:
                 continue
 
-            extra_param_decls = common.wrap_non_empty("", packet.get_c_parameters(role=None).replace(", ", ";\n    "), ";")
+            extra_param_decls = common.wrap_non_empty("", packet.get_uc_parameters(role=None).replace(", ", ";\n    "), ";")
             fill_extra_params = ""
-            if len(packet.get_c_arguments('default', role=None)) > 0:
-                fill_extra_params = "    " + "\n    ".join("_wrapper_data.{0} = {0};".format(x) for x in packet.get_c_arguments('default', role=None).split(", "))
+            if len(packet.get_uc_arguments('default', role=None)) > 0:
+                fill_extra_params = "    " + "\n    ".join("_wrapper_data.{0} = {0};".format(x) for x in packet.get_uc_arguments('default', role=None).split(", "))
 
 
-            roleless_args = packet.get_c_arguments('default', role=None).split(", ")
+            roleless_args = packet.get_uc_arguments('default', role=None).split(", ")
             wrapped_args = []
-            for arg in packet.get_c_arguments('default').split(", "):
+            for arg in packet.get_uc_arguments('default').split(", "):
                 if arg not in roleless_args:
                     wrapped_args.append(arg)
                     continue
@@ -628,9 +628,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                 chunk_offset_element = stream_in.get_chunk_offset_element()
 
                 if length_element != None:
-                    stream_length_type = length_element.get_c_type('default')
+                    stream_length_type = length_element.get_uc_type('default')
                 elif chunk_offset_element != None:
-                    stream_length_type = chunk_offset_element.get_c_type('default')
+                    stream_length_type = chunk_offset_element.get_uc_type('default')
 
                 fixed_length_or_param_assignment = stream_in.get_name().under + "_length"
                 wrapper_fixed_length_assignment = template_stream_in_wrapper_fixed_length_assignment.format(stream_name_under=stream_in.get_name().under, stream_length_type=stream_length_type)
@@ -643,7 +643,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                 chunk_written_type = "uint32_t"
                 short_write_assignment = ""
                 if stream_in.has_short_write():
-                    chunk_written_type = packet.get_elements(role='stream_chunk_written')[0].get_c_type('default')
+                    chunk_written_type = packet.get_elements(role='stream_chunk_written')[0].get_uc_type('default')
                     short_write_assignment = """    if (ret_{stream_name_under}_written != NULL) {{
         *ret_{stream_name_under}_written = ({stream_length_type}) _{stream_name_under}_written;
     }}""".format(stream_name_under=stream_in.get_name().under, stream_length_type=stream_length_type)
@@ -655,12 +655,12 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                     wrapper_chunk_offset_assignment = template_stream_in_wrapper_chunk_offset_assignment.format(stream_name_under=stream_in.get_name().under, stream_length_type=stream_length_type)
 
                 functions += uc_format(template_stream_in, self, packet, -2,
-                                       parameters=common.wrap_non_empty(', ', packet.get_c_arguments('default'), ''),
-                                       high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
+                                       parameters=common.wrap_non_empty(', ', packet.get_uc_arguments('default'), ''),
+                                       high_level_parameters=common.wrap_non_empty(', ', packet.get_uc_parameters(high_level=True), ''),
                                        stream_name_under=stream_in.get_name().under,
                                        stream_length_type=stream_length_type,
                                        fixed_length=stream_in.get_fixed_length(),
-                                       chunk_data_type=stream_in.get_chunk_data_element().get_c_type('default'),
+                                       chunk_data_type=stream_in.get_chunk_data_element().get_uc_type('default'),
                                        chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality(),
                                        fill_extra_params=fill_extra_params,
                                        wrapped_arguments=", ".join(wrapped_args),
@@ -680,9 +680,9 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                 chunk_offset_element = stream_out.get_chunk_offset_element()
 
                 if length_element != None:
-                    stream_length_type = length_element.get_c_type('default')
+                    stream_length_type = length_element.get_uc_type('default')
                 elif chunk_offset_element != None:
-                    stream_length_type = chunk_offset_element.get_c_type('default')
+                    stream_length_type = chunk_offset_element.get_uc_type('default')
 
                 if stream_out.has_single_chunk():
                     template = template_stream_out_single_chunk
@@ -697,13 +697,13 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
                     chunk_offset_check = ''
 
                 functions += uc_format(template, self, packet, -2,
-                                       parameters=common.wrap_non_empty(', ', packet.get_c_arguments('default'), ''),
-                                       high_level_parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''),
+                                       parameters=common.wrap_non_empty(', ', packet.get_uc_arguments('default'), ''),
+                                       high_level_parameters=common.wrap_non_empty(', ', packet.get_uc_parameters(high_level=True), ''),
                                        stream_name_under=stream_out.get_name().under,
                                        stream_length_type=stream_length_type,
                                        fixed_length=stream_out.get_fixed_length(default='0'),
                                        chunk_offset_check=chunk_offset_check,
-                                       chunk_data_type=stream_out.get_chunk_data_element().get_c_type('default'),
+                                       chunk_data_type=stream_out.get_chunk_data_element().get_uc_type('default'),
                                        chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality(),
                                        fill_extra_params=fill_extra_params,
                                        wrapped_arguments=", ".join(wrapped_args),
@@ -714,7 +714,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{high_leve
 
         return functions
 
-    def get_c_register_callback_functions(self):
+    def get_uc_register_callback_functions(self):
         if self.get_callback_count() == 0:
             return '\n'
 
@@ -787,23 +787,23 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
                 fixed_length_declaration = ""
                 if stream_out.get_fixed_length() is not None:
                     chunk_offset_element = stream_out.get_chunk_offset_element()
-                    stream_length_type = chunk_offset_element.get_c_type('default')
+                    stream_length_type = chunk_offset_element.get_uc_type('default')
                     fixed_length_declaration = "{} {}_length = {};\n    ".format(stream_length_type, stream_out.get_name().under, stream_out.get_fixed_length())
 
                 result.append(uc_format(template_high_level, self, packet, -2,
-                                        low_level_params=common.wrap_non_empty('', packet.get_c_parameters(), ', '),
+                                        low_level_params=common.wrap_non_empty('', packet.get_uc_parameters(), ', '),
                                         stream_name_under=stream_out.get_name().under,
                                         chunk_cardinality=stream_out.get_chunk_data_element().get_cardinality(),
-                                        chunk_data_type=stream_out.get_chunk_data_element().get_c_type('default'),
-                                        stream_data_type=stream_out.get_data_element().get_c_type('default'),
-                                        high_level_arguments=common.wrap_non_empty('', packet.get_c_arguments('default', high_level=True), ', '),
+                                        chunk_data_type=stream_out.get_chunk_data_element().get_uc_type('default'),
+                                        stream_data_type=stream_out.get_data_element().get_uc_type('default'),
+                                        high_level_arguments=common.wrap_non_empty('', packet.get_uc_arguments('default', high_level=True), ', '),
                                         maybe_chunk=maybe_chunk,
                                         chunk_offset_or_zero=chunk_offset_or_zero,
                                         fixed_length_declaration=fixed_length_declaration))
 
         return uc_format('#if TF_IMPLEMENT_CALLBACKS != 0{funcs}#endif', funcs='\n'.join(result))
 
-    def get_c_callback_handler(self):
+    def get_uc_callback_handler(self):
         no_callbacks_template = """
 static bool tf_{device_under}_callback_handler(void *device, uint8_t fid, TF_PacketBuffer *payload) {{
     (void)device;
@@ -850,16 +850,16 @@ static bool tf_{device_under}_callback_handler(void *device, uint8_t fid, TF_Pac
 
         cases = []
         for packet in self.get_packets('callback'):
-            extract_payload, needs_i = packet.get_c_return_list('payload', context='callback_handler')
+            extract_payload, needs_i = packet.get_uc_return_list('payload', context='callback_handler')
 
             cases.append(uc_format(case_template, self, packet,
                                    extract_payload=common.wrap_non_empty('            ', '\n            '.join(extract_payload), ''),
-                                   params=common.wrap_non_empty('', packet.get_c_arguments(context='callback_wrapper'), ', '),
+                                   params=common.wrap_non_empty('', packet.get_uc_arguments(context='callback_wrapper'), ', '),
                                    i_decl = '' if not needs_i else '            size_t _i;'))
 
         return uc_format(template if len(cases) > 0 else no_callbacks_template, self, cases='\n'.join(cases))
 
-    def get_c_include_h(self):
+    def get_uc_include_h(self):
         template = """{header_comment}
 #ifndef TF_{device_upper}_H
 #define TF_{device_upper}_H
@@ -909,31 +909,31 @@ typedef struct TF_{device_camel} {{
 
         return uc_format(template, self,
                          header_comment=self.get_generator().get_header_comment('asterisk'),
-                         callback_typedefs=self.get_c_typedefs(),
+                         callback_typedefs=self.get_uc_typedefs(),
                          callback_handlers='\n'.join(cb_handlers),
                          description=common.select_lang(self.get_description()),
                          mapped_bytes=math.ceil(mapped_id_count / 8.0))
 
-    def get_c_end_h(self):
+    def get_uc_end_h(self):
         return "\n#ifdef __cplusplus\n}\n#endif\n\n#endif\n"
 
-    def get_c_end_c(self):
+    def get_uc_end_c(self):
         return "\n#ifdef __cplusplus\n}\n#endif\n"
 
-    def get_c_typedefs(self):
+    def get_uc_typedefs(self):
         typedefs = '\n'
         template = """typedef void (*TF_{device_camel}_{packet_camel}Handler)(struct TF_{device_camel} *{device_under}, {params}void *user_data);
 """
 
         # normal and low-level
         for packet in self.get_packets('callback'):
-            typedefs += uc_format(template, self, packet, params=common.wrap_non_empty('', packet.get_c_parameters(), ', '))
+            typedefs += uc_format(template, self, packet, params=common.wrap_non_empty('', packet.get_uc_parameters(), ', '))
             if packet.has_high_level():
-                typedefs += uc_format(template, self, packet, -2, params=common.wrap_non_empty('', packet.get_c_parameters(high_level=True), ', '))
+                typedefs += uc_format(template, self, packet, -2, params=common.wrap_non_empty('', packet.get_uc_parameters(high_level=True), ', '))
 
         return typedefs
 
-    def get_c_create_declaration(self):
+    def get_uc_create_declaration(self):
         template = """
 /**
  * \\ingroup TF_{device_camel}
@@ -958,7 +958,7 @@ int tf_{device_under}_create(TF_{device_camel} *{device_under}, TF_TFP *tfp);
 
         return uc_format(template, self)
 
-    def get_c_destroy_declaration(self):
+    def get_uc_destroy_declaration(self):
         template = """
 /**
  * \\ingroup TF_{device_camel}
@@ -970,7 +970,7 @@ int tf_{device_under}_destroy(TF_{device_camel} *{device_under});
 """
         return uc_format(template, self)
 
-    def get_c_callback_tick_declaration(self):
+    def get_uc_callback_tick_declaration(self):
         template = """
 #if TF_IMPLEMENT_CALLBACKS != 0
 /**
@@ -998,7 +998,7 @@ int tf_{device_under}_callback_tick(TF_{device_camel} *{device_under}, uint32_t 
 
         return uc_format(template, self)
 
-    def get_c_response_expected_declarations(self):
+    def get_uc_response_expected_declarations(self):
         template = """
 /**
  * \\ingroup TF_{device_camel}
@@ -1047,7 +1047,7 @@ int tf_{device_under}_set_response_expected_all(TF_{device_camel} *{device_under
 """
         return uc_format(template, self)
 
-    def get_c_function_declaration(self):
+    def get_uc_function_declaration(self):
         functions = ''
 
         # normal and low-level
@@ -1061,19 +1061,19 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{parameter
 """
         for packet in self.get_packets('function'):
             functions += uc_format(template, self, packet,
-                                   doc=packet.get_c_formatted_doc(),
-                                   parameters=common.wrap_non_empty(', ', packet.get_c_parameters(), ''))
+                                   doc=packet.get_uc_formatted_doc(),
+                                   parameters=common.wrap_non_empty(', ', packet.get_uc_parameters(), ''))
 
         # high-level
         for packet in self.get_packets('function'):
             if packet.has_high_level():
                 functions += uc_format(template, self, packet, -2,
-                                       doc=packet.get_c_formatted_doc(),
-                                       parameters=common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), ''))
+                                       doc=packet.get_uc_formatted_doc(),
+                                       parameters=common.wrap_non_empty(', ', packet.get_uc_parameters(high_level=True), ''))
 
         return functions
 
-    def get_c_register_callback_declarations(self):
+    def get_uc_register_callback_declarations(self):
         if self.get_callback_count() == 0:
             return '\n'
 
@@ -1092,49 +1092,49 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
 """
 
         for packet in self.get_packets('callback'):
-            result.append(uc_format(template, self, packet, doc=packet.get_c_formatted_doc(), buffer_param=""))
+            result.append(uc_format(template, self, packet, doc=packet.get_uc_formatted_doc(), buffer_param=""))
 
             if packet.has_high_level():
                 stream_out = packet.get_high_level('stream_out')
-                chunk_data_type = stream_out.get_chunk_data_element().get_c_type('default')
+                chunk_data_type = stream_out.get_chunk_data_element().get_uc_type('default')
                 stream_name_under = stream_out.get_name().under
                 buffer_param = "{chunk_data_type} *{stream_name_under}, ".format(chunk_data_type=chunk_data_type, stream_name_under=stream_name_under)
-                result.append(uc_format(template, self, packet, -2, doc=packet.get_c_formatted_doc(), buffer_param=buffer_param))
+                result.append(uc_format(template, self, packet, -2, doc=packet.get_uc_formatted_doc(), buffer_param=buffer_param))
 
         return '#if TF_IMPLEMENT_CALLBACKS != 0{}#endif'.format('\n'.join(result))
 
-    def get_c_source(self):
-        source  = self.get_c_include_c()
-        source += self.get_c_callback_handler()
-        source += self.get_c_create_function()
-        source += self.get_c_destroy_function()
-        source += self.get_c_response_expected_functions()
-        source += self.get_c_functions()
-        source += self.get_c_register_callback_functions()
-        source += self.get_c_callback_tick_function()
-        source += self.get_c_end_c()
+    def get_uc_source(self):
+        source  = self.get_uc_include_c()
+        source += self.get_uc_callback_handler()
+        source += self.get_uc_create_function()
+        source += self.get_uc_destroy_function()
+        source += self.get_uc_response_expected_functions()
+        source += self.get_uc_functions()
+        source += self.get_uc_register_callback_functions()
+        source += self.get_uc_callback_tick_function()
+        source += self.get_uc_end_c()
 
         return source
 
-    def get_c_header(self):
-        header  = self.get_c_include_h()
-        header += self.get_c_function_id_defines()
-        header += self.get_c_callback_defines()
-        header += self.get_c_constants()
-        header += self.get_c_device_identifier_define()
-        header += self.get_c_device_display_name_define()
-        header += self.get_c_create_declaration()
-        header += self.get_c_destroy_declaration()
-        header += self.get_c_response_expected_declarations()
-        header += self.get_c_register_callback_declarations()
-        header += self.get_c_callback_tick_declaration()
-        header += self.get_c_function_declaration()
-        header += self.get_c_end_h()
+    def get_uc_header(self):
+        header  = self.get_uc_include_h()
+        header += self.get_uc_function_id_defines()
+        header += self.get_uc_callback_defines()
+        header += self.get_uc_constants()
+        header += self.get_uc_device_identifier_define()
+        header += self.get_uc_device_display_name_define()
+        header += self.get_uc_create_declaration()
+        header += self.get_uc_destroy_declaration()
+        header += self.get_uc_response_expected_declarations()
+        header += self.get_uc_register_callback_declarations()
+        header += self.get_uc_callback_tick_declaration()
+        header += self.get_uc_function_declaration()
+        header += self.get_uc_end_h()
 
         return header
 
 class UCBindingsPacket(uc_common.UCPacket):
-    def get_c_formatted_doc(self, high_level=False):
+    def get_uc_formatted_doc(self, high_level=False):
         text = common.select_lang(self.get_doc_text())
 
         # handle tables
@@ -1165,10 +1165,10 @@ class UCBindingsPacket(uc_common.UCPacket):
                 replaced_lines.append(line)
 
         text = '\n'.join(replaced_lines)
-        text = self.get_device().specialize_c_doc_function_links(text)
+        text = self.get_device().specialize_uc_doc_function_links(text)
 
         if self.get_type() == 'callback':
-            parameters = self.get_c_parameters(high_level=high_level)
+            parameters = self.get_uc_parameters(high_level=high_level)
 
             if len(parameters) > 0:
                 parameters += ', '
@@ -1188,21 +1188,21 @@ class UCBindingsPacket(uc_common.UCPacket):
 
         return '\n * '.join(text.strip().split('\n'))
 
-    def get_c_struct_body(self, direction=None):
+    def get_uc_struct_body(self, direction=None):
         struct_body = []
 
         for element in self.get_elements(direction=direction):
-            c_type = element.get_c_type('struct')
+            uc_type = element.get_uc_type('struct')
             name = element.get_name().under
 
             if element.get_cardinality() > 1:
-                struct_body.append('    {0} {1}[{2}];\n'.format(c_type, name, element.get_c_array_length()))
+                struct_body.append('    {0} {1}[{2}];\n'.format(uc_type, name, element.get_uc_array_length()))
             else:
-                struct_body.append('    {0} {1};\n'.format(c_type, name))
+                struct_body.append('    {0} {1};\n'.format(uc_type, name))
 
         return ''.join(struct_body)
 
-    def get_c_struct_list(self):
+    def get_uc_struct_list(self):
         struct_list = ''
         needs_i = False
 
@@ -1228,7 +1228,7 @@ class UCBindingsPacket(uc_common.UCPacket):
                     needs_i = True
                     struct_list += '\n    for (_i = 0; _i < {count}; _i++) {{ {c_type} tmp_{src} = tf_leconvert_{type_}_to({src}[_i]); memcpy(_send_buf + {offset} + (_i * sizeof({c_type})), &tmp_{src}, sizeof({c_type})); }}' \
                                    .format(src=element.get_name().under,
-                                           c_type=element.get_c_type('default'),
+                                           c_type=element.get_uc_type('default'),
                                            type_=element.get_type(),
                                            count=element.get_cardinality(),
                                            offset=offset)
@@ -1248,7 +1248,7 @@ class UCBindingsPacket(uc_common.UCPacket):
 
         return struct_list, needs_i
 
-    def get_c_return_list(self, packet_buffer_name, context):
+    def get_uc_return_list(self, packet_buffer_name, context):
         assert context in ['callback_handler', 'getter']
         return_list = []
         needs_i = False
@@ -1283,7 +1283,7 @@ class UCBindingsPacket(uc_common.UCPacket):
                                         dest=dest,
                                         count=element.get_cardinality(),
                                         size=element.get_size(),
-                                        type_=element.get_c_type('default')))
+                                        type_=element.get_uc_type('default')))
 
         return return_list, needs_i
 
@@ -1309,10 +1309,10 @@ class UCBindingsGenerator(uc_common.UCGeneratorTrait, common.BindingsGenerator):
         filename = uc_format('{category_under}_{device_under}', device)
 
         with open(os.path.join(self.get_bindings_dir(), filename + '.c'), 'w') as f:
-            f.write(device.get_c_source())
+            f.write(device.get_uc_source())
 
         with open(os.path.join(self.get_bindings_dir(), filename + '.h'), 'w') as f:
-            f.write(device.get_c_header())
+            f.write(device.get_uc_header())
 
         if device.is_released():
             self.released_files.append(filename + '.c')

@@ -5,7 +5,7 @@
 C/C++ for Microcontrollers Examples Generator
 Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
-generate_uc_examples.py: Generator for C/C++ examples for Microcontrollers
+generate_uc_examples.py: Generator for C/C++ for Microcontrollers examples
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -57,7 +57,7 @@ from generators.uc.uc_common import uc_format
 global_line_prefix = ''
 
 class UCTypeMixin(object):
-    def get_c_type(self):
+    def get_uc_type(self):
         type_ = self.get_type().split(':')[0]
 
         if type_ == 'string':
@@ -68,13 +68,13 @@ class UCTypeMixin(object):
         return type_
 
 class UCPrintfFormatMixin(object):
-    def get_c_printf_defines(self):
+    def get_uc_printf_defines(self):
         return []
 
-    def get_c_printf_includes(self):
+    def get_uc_printf_includes(self):
         return []
 
-    def get_c_printf_format(self):
+    def get_uc_printf_format(self):
         type_ = self.get_type().split(':')[0]
 
         if type_ == 'char':
@@ -88,10 +88,10 @@ class UCPrintfFormatMixin(object):
         else:
             return '%d 1/%d'
 
-    def get_c_printf_prefix(self):
+    def get_uc_printf_prefix(self):
         return ''
 
-    def get_c_printf_suffix(self):
+    def get_uc_printf_suffix(self):
         type_ = self.get_type().split(':')[0]
 
         if type_ == 'bool':
@@ -100,7 +100,7 @@ class UCPrintfFormatMixin(object):
             return ''
 
 class UCConstant(common.Constant):
-    def get_c_source(self):
+    def get_uc_source(self):
         template = 'TF_{device_upper}_{constant_group_upper}_{constant_upper}'
 
         return uc_format(template, self.get_device(),
@@ -112,7 +112,7 @@ class UCExample(common.Example):
         common.Example.__init__(self, raw_data, device)
         self.used_argument_decl_names = {}
 
-    def get_c_source(self):
+    def get_uc_source(self):
         template = r"""// This example is not self-contained.
 // It requres usage of the example driver specific to your platform.
 // See the HAL documentation.
@@ -157,16 +157,16 @@ void example_loop(TF_HAL *hal) {{
         cleanups = []
 
         for function in self.get_functions():
-            defines += function.get_c_defines()
-            includes += function.get_c_includes()
-            functions.append(function.get_c_function())
-            sources.append(function.get_c_source())
+            defines += function.get_uc_defines()
+            includes += function.get_uc_includes()
+            functions.append(function.get_uc_function())
+            sources.append(function.get_uc_source())
 
         for cleanup in self.get_cleanups():
-            defines += cleanup.get_c_defines()
-            includes += cleanup.get_c_includes()
-            functions.append(cleanup.get_c_function())
-            cleanups.append(cleanup.get_c_source())
+            defines += cleanup.get_uc_defines()
+            includes += cleanup.get_uc_includes()
+            functions.append(cleanup.get_uc_function())
+            cleanups.append(cleanup.get_uc_source())
 
         if len(includes) > 0:
             includes += ['']
@@ -208,7 +208,7 @@ void example_loop(TF_HAL *hal) {{
                          sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'))
 
 class UCExampleArgument(common.ExampleArgument, UCTypeMixin):
-    def get_c_source(self):
+    def get_uc_source(self):
         type_ = self.get_type()
 
         def helper(value):
@@ -221,9 +221,9 @@ class UCExampleArgument(common.ExampleArgument, UCTypeMixin):
             elif type_ == 'string':
                 return '"{0}"'.format(value.replace('"', '\\"'))
             elif ':bitmask:' in type_:
-                return common.make_c_like_bitmask(value)
+                return common.make_uc_like_bitmask(value)
             elif type_.endswith(':constant'):
-                return self.get_value_constant(value).get_c_source()
+                return self.get_value_constant(value).get_uc_source()
             else:
                 return str(value)
 
@@ -239,7 +239,7 @@ class UCExampleArgument(common.ExampleArgument, UCTypeMixin):
             else:
                 self.get_example().used_argument_decl_names[name] = 0
 
-            declaration = '{type} {name}[{size}] = {{{data}}};'.format(type=self.get_c_type(),
+            declaration = '{type} {name}[{size}] = {{{data}}};'.format(type=self.get_uc_type(),
                                                                        name=name,
                                                                        size=len(value),
                                                                        data=', '.join([helper(item) for item in value]))
@@ -251,16 +251,16 @@ class UCExampleArgument(common.ExampleArgument, UCTypeMixin):
         return (None, helper(value))
 
 class UCExampleArgumentsMixin(object):
-    def get_c_arguments(self):
+    def get_uc_arguments(self):
         args = self.get_arguments()
         if len(args) == 0:
             return ([], [])
-        definitions, arguments = zip(*(argument.get_c_source() for argument in self.get_arguments()))
+        definitions, arguments = zip(*(argument.get_uc_source() for argument in self.get_arguments()))
         definitions = [d for d in definitions if d is not None]
         return (definitions, arguments)
 
 class UCExampleParameter(common.ExampleParameter, UCTypeMixin, UCPrintfFormatMixin):
-    def get_c_source(self):
+    def get_uc_source(self):
         templateA = '{type_} {name}'
         templateB = '{type_} {name}[{cardinality}]'
         templateC = '{type_} *{name}, uint16_t {name}_length' # FIXME: don't hardcode length as uint16_t
@@ -272,11 +272,11 @@ class UCExampleParameter(common.ExampleParameter, UCTypeMixin, UCPrintfFormatMix
         else: # cardinality < 0
             template = templateC
 
-        return template.format(type_=self.get_c_type(),
+        return template.format(type_=self.get_uc_type(),
                                name=self.get_name().under,
                                cardinality=self.get_cardinality())
 
-    def get_c_unuseds(self):
+    def get_uc_unuseds(self):
         templateA = '(void){name};'
         templateB = '(void){name}_length;'
         result = []
@@ -289,7 +289,7 @@ class UCExampleParameter(common.ExampleParameter, UCTypeMixin, UCPrintfFormatMix
 
         return result
 
-    def get_c_printfs(self):
+    def get_uc_printfs(self):
         if self.get_type().split(':')[-1] == 'constant':
             if self.get_label_name() == None:
                 return []
@@ -306,7 +306,7 @@ class UCExampleParameter(common.ExampleParameter, UCTypeMixin, UCPrintfFormatMix
                                               else_='\belse ' if len(result) > 0 else global_line_prefix + '\t',
                                               name=self.get_name().under,
                                               label=self.get_label_name().replace('%', '%%'),
-                                              constant_name=constant.get_c_source(),
+                                              constant_name=constant.get_uc_source(),
                                               constant_title=constant.get_name().space,
                                               comment=self.get_formatted_comment(' // {0}')))
 
@@ -333,16 +333,16 @@ class UCExampleParameter(common.ExampleParameter, UCTypeMixin, UCPrintfFormatMix
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor(', {0}', cast=int),
-                                              printf_format=self.get_c_printf_format(),
-                                              printf_prefix=self.get_c_printf_prefix(),
-                                              printf_suffix=self.get_c_printf_suffix(),
+                                              printf_format=self.get_uc_printf_format(),
+                                              printf_prefix=self.get_uc_printf_prefix(),
+                                              printf_suffix=self.get_uc_printf_suffix(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
                                               comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
 class UCExampleResult(common.ExampleResult, UCTypeMixin, UCPrintfFormatMixin):
-    def get_c_variable_declaration(self):
+    def get_uc_variable_declaration(self):
         name = self.get_name().under
 
         if name == self.get_device().get_initial_name():
@@ -351,9 +351,9 @@ class UCExampleResult(common.ExampleResult, UCTypeMixin, UCPrintfFormatMixin):
         if self.get_cardinality() > 1:
             name += '[{0}]'.format(self.get_cardinality())
 
-        return self.get_c_type(), name
+        return self.get_uc_type(), name
 
-    def get_c_variable_reference(self):
+    def get_uc_variable_reference(self):
         templateA = '{name}'
         templateB = '&{name}'
 
@@ -369,7 +369,7 @@ class UCExampleResult(common.ExampleResult, UCTypeMixin, UCPrintfFormatMixin):
 
         return template.format(name=name)
 
-    def get_c_printfs(self):
+    def get_uc_printfs(self):
         if self.get_type().split(':')[-1] == 'constant':
             # FIXME: need to handle multiple labels
             assert self.get_label_count() == 1
@@ -383,7 +383,7 @@ class UCExampleResult(common.ExampleResult, UCTypeMixin, UCPrintfFormatMixin):
                                               else_='\belse ' if len(result) > 0 else global_line_prefix + '\t',
                                               name=self.get_name().under,
                                               label=self.get_label_name().replace('%', '%%'),
-                                              constant_name=constant.get_c_source(),
+                                              constant_name=constant.get_uc_source(),
                                               constant_title=constant.get_name().space,
                                               comment=self.get_formatted_comment(' // {0}')))
 
@@ -415,35 +415,35 @@ class UCExampleResult(common.ExampleResult, UCTypeMixin, UCPrintfFormatMixin):
                                               label=self.get_label_name(index=index).replace('%', '%%'),
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               divisor=self.get_formatted_divisor(', {0}', cast=int),
-                                              printf_format=self.get_c_printf_format(),
-                                              printf_prefix=self.get_c_printf_prefix(),
-                                              printf_suffix=self.get_c_printf_suffix(),
+                                              printf_format=self.get_uc_printf_format(),
+                                              printf_prefix=self.get_uc_printf_prefix(),
+                                              printf_suffix=self.get_uc_printf_suffix(),
                                               unit=self.get_formatted_unit_name(' {0}').replace('%', '%%'),
                                               comment=self.get_formatted_comment(' // {0}')))
 
         return result
 
 class UCExampleGetterFunction(common.ExampleGetterFunction, UCExampleArgumentsMixin):
-    def get_c_defines(self):
+    def get_uc_defines(self):
         defines = []
 
         for result in self.get_results():
-            defines += result.get_c_printf_defines()
+            defines += result.get_uc_printf_defines()
 
         return defines
 
-    def get_c_includes(self):
+    def get_uc_includes(self):
         includes = []
 
         for result in self.get_results():
-            includes += result.get_c_printf_includes()
+            includes += result.get_uc_printf_includes()
 
         return includes
 
-    def get_c_function(self):
+    def get_uc_function(self):
         return None
 
-    def get_c_source(self):
+    def get_uc_source(self):
         template = r"""{global_line_prefix}	// Get current {packet_comment}
 {global_line_prefix}{variable_declarations};
 {global_line_prefix}	check(tf_{device_under}_{packet_under}(&{device_initial}{arguments}{variable_references}), "get {packet_comment}");
@@ -455,11 +455,11 @@ class UCExampleGetterFunction(common.ExampleGetterFunction, UCExampleArgumentsMi
         printfs = []
 
         for result in self.get_results():
-            variable_declarations.append(result.get_c_variable_declaration())
-            variable_references.append(result.get_c_variable_reference())
-            printfs += result.get_c_printfs()
+            variable_declarations.append(result.get_uc_variable_declaration())
+            variable_references.append(result.get_uc_variable_reference())
+            printfs += result.get_uc_printfs()
 
-        arg_declarations, arguments = self.get_c_arguments()
+        arg_declarations, arguments = self.get_uc_arguments()
         variable_declarations += arg_declarations
 
         merged_variable_declarations = []
@@ -499,19 +499,19 @@ class UCExampleGetterFunction(common.ExampleGetterFunction, UCExampleArgumentsMi
         return common.break_string(result, '_{}('.format(self.get_name().under))
 
 class UCExampleSetterFunction(common.ExampleSetterFunction, UCExampleArgumentsMixin):
-    def get_c_defines(self):
+    def get_uc_defines(self):
         return []
 
-    def get_c_includes(self):
+    def get_uc_includes(self):
         return []
 
-    def get_c_function(self):
+    def get_uc_function(self):
         return None
 
-    def get_c_source(self):
+    def get_uc_source(self):
         template = '{comment1}{declarations}{global_line_prefix}\tcheck(tf_{device_under}_{packet_under}(&{device_initial}{arguments}), "call {packet_under}");{comment2}\n'
 
-        arg_declarations, arguments = self.get_c_arguments()
+        arg_declarations, arguments = self.get_uc_arguments()
         declarations = common.wrap_non_empty('', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '\n')
 
         result = uc_format(template, self.get_device(), self,
@@ -524,23 +524,23 @@ class UCExampleSetterFunction(common.ExampleSetterFunction, UCExampleArgumentsMi
         return common.break_string(result, '_{}('.format(self.get_name().under))
 
 class UCExampleCallbackFunction(common.ExampleCallbackFunction):
-    def get_c_defines(self):
+    def get_uc_defines(self):
         defines = []
 
         for parameter in self.get_parameters():
-            defines += parameter.get_c_printf_defines()
+            defines += parameter.get_uc_printf_defines()
 
         return defines
 
-    def get_c_includes(self):
+    def get_uc_includes(self):
         includes = []
 
         for parameter in self.get_parameters():
-            includes += parameter.get_c_printf_includes()
+            includes += parameter.get_uc_printf_includes()
 
         return includes
 
-    def get_c_function(self):
+    def get_uc_function(self):
         template1A = r"""// Callback function for {packet_comment} callback
 """
         template1B = r"""{override_comment}
@@ -563,9 +563,9 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
         printfs = []
 
         for parameter in self.get_parameters():
-            parameters.append(parameter.get_c_source())
-            unuseds += parameter.get_c_unuseds()
-            printfs += parameter.get_c_printfs()
+            parameters.append(parameter.get_uc_source())
+            unuseds += parameter.get_uc_unuseds()
+            printfs += parameter.get_uc_printfs()
 
         while None in unuseds:
             unuseds.remove(None)
@@ -595,7 +595,7 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
 
         return common.break_string(result, '{}_handler('.format(self.get_name().under))
 
-    def get_c_source(self):
+    def get_uc_source(self):
         template = r"""	// Register {packet_comment}<BP>callback<BP>to<BP>function<BP>{packet_under}_handler
 	tf_{device_under}_register_{packet_under}_callback(&{device_initial},
 	{spaces}{packet_under}_handler,
@@ -608,16 +608,16 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
         return common.break_string(result, '// ', indent_tail='// ')
 
 class UCExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, UCExampleArgumentsMixin):
-    def get_c_defines(self):
+    def get_uc_defines(self):
         return []
 
-    def get_c_includes(self):
+    def get_uc_includes(self):
         return []
 
-    def get_c_function(self):
+    def get_uc_function(self):
         return None
 
-    def get_c_source(self):
+    def get_uc_source(self):
         templateA = r"""	// Set period for {packet_comment} callback to {period_sec_short} ({period_msec}ms){declarations}
 	check(tf_{device_under}_set_{packet_under}_period(&{device_initial}{arguments}, {period_msec}), "set {packet_comment} period");
 """
@@ -634,7 +634,7 @@ class UCExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, UCEx
 
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
-        arg_declarations, arguments = self.get_c_arguments()
+        arg_declarations, arguments = self.get_uc_arguments()
         declarations = common.wrap_non_empty('\n', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '')
 
         return uc_format(template, self.get_device(), self,
@@ -645,32 +645,32 @@ class UCExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, UCEx
                          period_sec_long=period_sec_long)
 
 class UCExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresholdMinimumMaximum):
-    def get_c_source(self):
+    def get_uc_source(self):
         template = '{minimum}, {maximum}'
 
         return template.format(minimum=self.get_formatted_minimum(),
                                maximum=self.get_formatted_maximum())
 
 class UCExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction, UCExampleArgumentsMixin):
-    def get_c_defines(self):
+    def get_uc_defines(self):
         return []
 
-    def get_c_includes(self):
+    def get_uc_includes(self):
         return []
 
-    def get_c_function(self):
+    def get_uc_function(self):
         return None
 
-    def get_c_source(self):
+    def get_uc_source(self):
         template = r"""	// Configure threshold for {packet_comment} "{option_comment}"{declarations}
 	tf_{device_under}_set_{packet_under}_callback_threshold(&{device_initial}{arguments}, '{option_char}', {minimum_maximums});
 """
         minimum_maximums = []
 
         for minimum_maximum in self.get_minimum_maximums():
-            minimum_maximums.append(minimum_maximum.get_c_source())
+            minimum_maximums.append(minimum_maximum.get_uc_source())
 
-        arg_declarations, arguments = self.get_c_arguments()
+        arg_declarations, arguments = self.get_uc_arguments()
         declarations = common.wrap_non_empty('\n', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '')
 
         return uc_format(template, self.get_device(), self,
@@ -681,16 +681,16 @@ class UCExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction
                          minimum_maximums=', '.join(minimum_maximums))
 
 class UCExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, UCExampleArgumentsMixin):
-    def get_c_defines(self):
+    def get_uc_defines(self):
         return []
 
-    def get_c_includes(self):
+    def get_uc_includes(self):
         return []
 
-    def get_c_function(self):
+    def get_uc_function(self):
         return None
 
-    def get_c_source(self):
+    def get_uc_source(self):
         templateA = r"""	// Set period for {packet_comment} callback to {period_sec_short} ({period_msec}ms){declarations}
 	tf_{device_under}_set_{packet_under}_callback_configuration(&{device_initial}{arguments}, {period_msec}{value_has_to_change});
 """
@@ -714,9 +714,9 @@ class UCExampleCallbackConfigurationFunction(common.ExampleCallbackConfiguration
         period_msec, period_sec_short, period_sec_long = self.get_formatted_period()
 
         for minimum_maximum in self.get_minimum_maximums():
-            minimum_maximums.append(minimum_maximum.get_c_source())
+            minimum_maximums.append(minimum_maximum.get_uc_source())
 
-        arg_declarations, arguments = self.get_c_arguments()
+        arg_declarations, arguments = self.get_uc_arguments()
         declarations = common.wrap_non_empty('\n', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '')
 
         return uc_format(template, self.get_device(), self,
@@ -730,16 +730,16 @@ class UCExampleCallbackConfigurationFunction(common.ExampleCallbackConfiguration
                          minimum_maximums=', '.join(minimum_maximums))
 
 class UCExampleSpecialFunction(common.ExampleSpecialFunction):
-    def get_c_defines(self):
+    def get_uc_defines(self):
             return []
 
-    def get_c_includes(self):
+    def get_uc_includes(self):
         return []
 
-    def get_c_function(self):
+    def get_uc_function(self):
         return None
 
-    def get_c_source(self):
+    def get_uc_source(self):
         global global_line_prefix
 
         type_ = self.get_type()
@@ -847,7 +847,7 @@ class UCExamplesGenerator(uc_common.UCGeneratorTrait, common.ExamplesGenerator):
                 common.print_verbose('    - ' + filename)
 
             with open(filepath, 'w') as f:
-                f.write(example.get_c_source())
+                f.write(example.get_uc_source())
 
 def generate(root_dir, language, internal):
     common.generate(root_dir, language, internal, UCExamplesGenerator)

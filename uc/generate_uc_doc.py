@@ -5,7 +5,7 @@
 C/C++ for Microcontrollers Documentation Generator
 Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
-generate_uc_doc.py: Generator for C/C++ documentation for microcontrollers
+generate_uc_doc.py: Generator for C/C++ for microcontrollers documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -54,7 +54,7 @@ from generators.uc import uc_common
 from generators.uc.uc_common import uc_format
 
 class UCDocDevice(common.Device):
-    def specialize_c_doc_function_links(self, text):
+    def specialize_uc_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
                 return uc_format(':c:func:`{packet_space} <tf_{device_under}_register_{packet_under}_callback>`', packet.get_device(), packet, 0)
@@ -63,14 +63,14 @@ class UCDocDevice(common.Device):
 
         return self.specialize_doc_rst_links(text, specializer, prefix='c')
 
-    def get_c_examples(self):
+    def get_uc_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('example_', '').replace('.c', '')
             return common.under_to_space(filename).replace('Pwm ', 'PWM ')
 
         return common.make_rst_examples(title_from_filename, self, language_from_filename=lambda f: 'c')
 
-    def get_c_functions(self, type_):
+    def get_uc_functions(self, type_):
         functions = []
         template = '.. c:function:: int tf_{device_under}_{packet_under}({params})\n\n{meta_table}{desc}\n'
 
@@ -82,10 +82,10 @@ class UCDocDevice(common.Device):
                 continue
 
             skip = -2 if packet.has_high_level() else 0
-            plist = common.wrap_non_empty(', ', packet.get_c_parameters(high_level=True), '')
+            plist = common.wrap_non_empty(', ', packet.get_uc_parameters(high_level=True), '')
 
-            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_c_type('meta', cardinality=cardinality),
-                                                     lambda element, index=None: element.get_c_name(index=index),
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_uc_type('meta', cardinality=cardinality),
+                                                     lambda element, index=None: element.get_uc_name(index=index),
                                                      output_parameter='always',
                                                      prefix_elements=[(self.get_name().under, 'TF_' + self.get_name().camel + ' *', 1, 'in')],
                                                      suffix_elements=[('e_code', 'int', 1, 'return')],
@@ -95,31 +95,31 @@ class UCDocDevice(common.Device):
             functions.append(uc_format(template, self, packet, skip,
                                        params=uc_format('TF_{device_camel} *{device_under}{plist}', self, plist=plist),
                                        meta_table=common.make_rst_meta_table(meta),
-                                       desc=packet.get_c_formatted_doc()))
+                                       desc=packet.get_uc_formatted_doc()))
 
         return ''.join(functions)
 
-    def get_c_callbacks(self):
+    def get_uc_callbacks(self):
         callbacks = []
-        template = '.. c:function:: void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler, void *user_data)\n{params}\n{meta_table}\n{desc}\n'
+        template = '.. c:function:: int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler handler, void *user_data)\n{params}\n{meta_table}\n{desc}\n'
 
         for packet in self.get_packets('callback'):
-            plist = uc_format('TF_{device_camel} *{device_under}, ', self) + common.wrap_non_empty('', packet.get_c_parameters(), ', ') + 'void *user_data'
+            plist = uc_format('TF_{device_camel} *{device_under}, ', self) + common.wrap_non_empty('', packet.get_uc_parameters(), ', ') + 'void *user_data'
 
-            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_c_type('meta', cardinality=cardinality),
-                                                     lambda element, index=None: element.get_c_name(index=index),
+            meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_uc_type('meta', cardinality=cardinality),
+                                                     lambda element, index=None: element.get_uc_name(index=index),
                                                      prefix_elements=[(uc_format('{device_under}', self), uc_format('TF_{device_camel} *', self), 1, 'out')],
-                                                     suffix_elements=[('user_data', 'void *', 1, 'out')],
+                                                     suffix_elements=[('user_data', 'void *', 1, 'out'), ('e_code', 'int', 1, 'return')],
                                                      stream_length_suffix='_length')
 
             callbacks.append(uc_format(template, self, packet,
                                        params='\n .. code-block:: c\n\n  void handler({0})\n'.format(plist),
                                        meta_table=common.make_rst_meta_table(meta),
-                                       desc=packet.get_c_formatted_doc()))
+                                       desc=packet.get_uc_formatted_doc()))
 
         return ''.join(callbacks)
 
-    def get_c_api(self):
+    def get_uc_api(self):
         create_str = {
             'en': """
 .. c:function:: int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal)
@@ -371,12 +371,12 @@ Konstanten
 
         des = uc_format(common.select_lang(destroy_str), self, meta_table=destroy_meta_table)
 
-        bf = self.get_c_functions('bf')
-        af = self.get_c_functions('af')
-        ccf = self.get_c_functions('ccf')
-        c = self.get_c_callbacks()
-        vf = self.get_c_functions('vf')
-        if_ = self.get_c_functions('if')
+        bf = self.get_uc_functions('bf')
+        af = self.get_uc_functions('af')
+        ccf = self.get_uc_functions('ccf')
+        c = self.get_uc_callbacks()
+        vf = self.get_uc_functions('vf')
+        if_ = self.get_uc_functions('if')
         api_str = ''
 
         if bf:
@@ -430,21 +430,21 @@ auf dem API Bindings Objekt.
 
         return uc_format(common.select_lang(api), self,
                          device_doc_rst_ref=self.get_doc_rst_ref_name(),
-                         doc_str=self.specialize_c_doc_function_links(common.select_lang(self.get_doc())),
+                         doc_str=self.specialize_uc_doc_function_links(common.select_lang(self.get_doc())),
                          api_str=api_str)
 
-    def get_c_doc(self):
+    def get_uc_doc(self):
         doc  = common.make_rst_header(self)
         doc += common.make_rst_summary(self)
-        doc += self.get_c_examples()
-        doc += self.get_c_api()
+        doc += self.get_uc_examples()
+        doc += self.get_uc_api()
 
         return doc
 
 class UCDocPacket(uc_common.UCPacket):
-    def get_c_formatted_doc(self):
+    def get_uc_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-        text = self.get_device().specialize_c_doc_function_links(text)
+        text = self.get_device().specialize_uc_doc_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME
@@ -457,9 +457,9 @@ class UCDocPacket(uc_common.UCPacket):
 
         def format_element_name(element, index):
             if index == None:
-                return element.get_c_name()
+                return element.get_uc_name()
 
-            return '{0}[{1}]'.format(element.get_c_name(), index)
+            return '{0}[{1}]'.format(element.get_uc_name(), index)
 
         text += common.format_constants(prefix, self, format_element_name)
         text += common.format_since_firmware(self.get_device(), self)
@@ -486,7 +486,7 @@ class UCDocGenerator(uc_common.UCGeneratorTrait, common.DocGenerator):
         if not device.has_comcu():
             return
         with open(device.get_doc_rst_path(), 'w') as f:
-            f.write(device.get_c_doc())
+            f.write(device.get_uc_doc())
 
 def generate(root_dir, language, internal):
     common.generate(root_dir, language, internal, UCDocGenerator)

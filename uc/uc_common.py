@@ -31,12 +31,12 @@ from generators import common
 UC_KEYWORDS = ['register']
 
 class UCPacket(common.Packet):
-    def get_c_parameters(self, high_level=False, role='all'):
+    def get_uc_parameters(self, high_level=False, role='all'):
         parameters = []
         packet_type = self.get_type()
 
         for element in self.get_elements(high_level=high_level):
-            element_type = element.get_c_type('signature')
+            element_type = element.get_uc_type('signature')
             modifier = ''
             name = element.get_name().under
             direction = element.get_direction()
@@ -75,9 +75,9 @@ class UCPacket(common.Packet):
                     modifier = ''
 
                 if len(length_elements) > 0:
-                    element_type = length_elements[0].get_c_type('signature')
+                    element_type = length_elements[0].get_uc_type('signature')
                 elif len(chunk_offset_elements) > 0:
-                    element_type = chunk_offset_elements[0].get_c_type('signature')
+                    element_type = chunk_offset_elements[0].get_uc_type('signature')
                 else:
                     raise common.GeneratorError('Malformed stream config')
 
@@ -85,7 +85,7 @@ class UCPacket(common.Packet):
 
         return ', '.join(parameters)
 
-    def get_c_arguments(self, context, high_level=False, single_chunk=False, role='all'):
+    def get_uc_arguments(self, context, high_level=False, single_chunk=False, role='all'):
         assert context in ['default', 'callback_wrapper']
 
         arguments = []
@@ -109,7 +109,7 @@ class UCPacket(common.Packet):
                 if single_chunk:
                     arguments.append('{0}_data'.format(name))
                 else:
-                    arguments.append('({0} *)high_level_callback->data'.format(element.get_c_type('signature')))
+                    arguments.append('({0} *)high_level_callback->data'.format(element.get_uc_type('signature')))
             else:
                 arguments.append('{0}{1}'.format(modifier, name))
 
@@ -160,7 +160,7 @@ class UCElement(common.Element):
 
         return str(value)
 
-    def get_c_name(self, index=None):
+    def get_uc_name(self, index=None):
         name = self.get_name(index=index).under
 
         if self.get_direction() == 'out' and self.get_packet().get_type() == 'function' and index == None:
@@ -168,7 +168,7 @@ class UCElement(common.Element):
 
         return name
 
-    def get_c_type(self, context, cardinality=None):
+    def get_uc_type(self, context, cardinality=None):
         assert context in ['default', 'signature', 'struct', 'meta']
         assert cardinality == None or (isinstance(cardinality, int) and cardinality > 0), cardinality
 
@@ -198,7 +198,7 @@ class UCElement(common.Element):
 
         return type_
 
-    def get_c_array_length(self):
+    def get_uc_array_length(self):
         if self.get_type() == 'bool':
             return int(math.ceil(self.get_cardinality() / 8.0))
 
