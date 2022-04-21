@@ -391,7 +391,28 @@ Konstanten
                                  padding=' ' * len(self.get_name().under))
 
         if vf:
-            api_str += common.select_lang(common.vf_str).format(vf)
+            vf_str = {
+            'en': """
+Virtual Functions
+^^^^^^^^^^^^^^^^^
+
+Virtual functions don't communicate with the device itself, but operate only on
+the API bindings device object.
+
+{0}
+""",
+            'de': """
+Virtuelle Funktionen
+^^^^^^^^^^^^^^^^^^^^
+
+Virtuelle Funktionen kommunizieren nicht mit dem Gerät selbst, sie arbeiten nur
+auf dem API Bindings Objekt.
+
+{0}
+"""
+            }
+
+            api_str += common.select_lang(vf_str).format(vf)
 
         if if_:
             api_str += common.select_lang(common.if_str).format(if_)
