@@ -359,12 +359,14 @@ Konstanten
 
         create_meta = common.format_simple_element_meta([(uc_format('{device_under}', self), uc_format('TF_{device_camel} *', self), 1, 'in'),
                                                          ('uid', 'const char *', 1, 'in'),
-                                                         ('hal', 'TF_HAL *', 1, 'in')])
+                                                         ('hal', 'TF_HAL *', 1, 'in'),
+                                                         ('e_code', 'int', 1, 'out')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
         cre = uc_format(common.select_lang(create_str), self, meta_table=create_meta_table)
 
-        destroy_meta = common.format_simple_element_meta([(uc_format('{device_under}', self), uc_format('TF_{device_camel} *', self), 1, 'in')])
+        destroy_meta = common.format_simple_element_meta([(uc_format('{device_under}', self), uc_format('TF_{device_camel} *', self), 1, 'in'),
+                                                          ('e_code', 'int', 1, 'out')])
         destroy_meta_table = common.make_rst_meta_table(destroy_meta)
 
         des = uc_format(common.select_lang(destroy_str), self, meta_table=destroy_meta_table)
