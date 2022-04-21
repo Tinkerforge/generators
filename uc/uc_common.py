@@ -220,7 +220,7 @@ class UCGeneratorTrait:
     def generates_high_level_callbacks(self):
         return False
 
-def format(s, device=None, packet=None, packet_skip=0, **kwargs):
+def uc_format(s, device=None, packet=None, packet_skip=0, **kwargs):
     if device is not None:
         kwargs['device_space'] = device.get_name().space
         kwargs['device_lower'] = device.get_name().lower

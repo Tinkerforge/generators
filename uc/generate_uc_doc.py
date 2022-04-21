@@ -51,15 +51,15 @@ if 'generators' not in sys.modules:
 
 from generators import common
 from generators.uc import uc_common
-from generators.uc.uc_common import format
+from generators.uc.uc_common import uc_format
 
 class UCDocDevice(common.Device):
     def specialize_c_doc_function_links(self, text):
         def specializer(packet, high_level):
             if packet.get_type() == 'callback':
-                return format(':c:func:`{packet_space} <tf_{device_under}_register_{packet_under}_callback>`', packet.get_device(), packet, 0)
+                return uc_format(':c:func:`{packet_space} <tf_{device_under}_register_{packet_under}_callback>`', packet.get_device(), packet, 0)
             else:
-                return format(':c:func:`tf_{device_under}_{packet_under}`', packet.get_device(), packet, -2 if high_level else 0)
+                return uc_format(':c:func:`tf_{device_under}_{packet_under}`', packet.get_device(), packet, -2 if high_level else 0)
 
         return self.specialize_doc_rst_links(text, specializer, prefix='c')
 
@@ -92,42 +92,30 @@ class UCDocDevice(common.Device):
                                                      stream_length_suffix='_length',
                                                      high_level=True)
 
-            functions.append(format(template, self, packet, skip,
-                                    params=format('TF_{device_camel} *{device_under}{plist}', self, plist=plist),
-                                    meta_table=common.make_rst_meta_table(meta),
-                                    desc=packet.get_c_formatted_doc()))
+            functions.append(uc_format(template, self, packet, skip,
+                                       params=uc_format('TF_{device_camel} *{device_under}{plist}', self, plist=plist),
+                                       meta_table=common.make_rst_meta_table(meta),
+                                       desc=packet.get_c_formatted_doc()))
 
         return ''.join(functions)
 
     def get_c_callbacks(self):
         callbacks = []
         template = '.. c:function:: void tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{device_under}, TF_{device_camel}_{packet_camel}Handler, void *user_data)\n{params}\n{meta_table}\n{desc}\n'
-        param_template = {
-            'en': """
- .. code-block:: c
-
-  void handler({0})
-""",
-            'de': """
- .. code-block:: c
-
-  void handler({0})
-"""
-        }
 
         for packet in self.get_packets('callback'):
-            plist = format('TF_{device_camel} *{device_under}, ', self) + common.wrap_non_empty('', packet.get_c_parameters(), ', ') + 'void *user_data'
+            plist = uc_format('TF_{device_camel} *{device_under}, ', self) + common.wrap_non_empty('', packet.get_c_parameters(), ', ') + 'void *user_data'
 
             meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_c_type('meta', cardinality=cardinality),
                                                      lambda element, index=None: element.get_c_name(index=index),
-                                                     prefix_elements=[(format('{device_under}', self), format('TF_{device_camel} *', self), 1, 'out')],
+                                                     prefix_elements=[(uc_format('{device_under}', self), uc_format('TF_{device_camel} *', self), 1, 'out')],
                                                      suffix_elements=[('user_data', 'void *', 1, 'out')],
                                                      stream_length_suffix='_length')
 
-            callbacks.append(format(template, self, packet,
-                                    params=common.select_lang(param_template).format(plist),
-                                    meta_table=common.make_rst_meta_table(meta),
-                                    desc=packet.get_c_formatted_doc()))
+            callbacks.append(uc_format(template, self, packet,
+                                       params='\n .. code-block:: c\n\n  void handler({0})\n'.format(plist),
+                                       meta_table=common.make_rst_meta_table(meta),
+                                       desc=packet.get_c_formatted_doc()))
 
         return ''.join(callbacks)
 
@@ -369,17 +357,17 @@ Konstanten
 """
         }
 
-        create_meta = common.format_simple_element_meta([(format('{device_under}', self), format('TF_{device_camel} *', self), 1, 'in'),
+        create_meta = common.format_simple_element_meta([(uc_format('{device_under}', self), uc_format('TF_{device_camel} *', self), 1, 'in'),
                                                          ('uid', 'const char *', 1, 'in'),
                                                          ('hal', 'TF_HAL *', 1, 'in')])
         create_meta_table = common.make_rst_meta_table(create_meta)
 
-        cre = format(common.select_lang(create_str), self, meta_table=create_meta_table)
+        cre = uc_format(common.select_lang(create_str), self, meta_table=create_meta_table)
 
-        destroy_meta = common.format_simple_element_meta([(format('{device_under}', self), format('TF_{device_camel} *', self), 1, 'in')])
+        destroy_meta = common.format_simple_element_meta([(uc_format('{device_under}', self), uc_format('TF_{device_camel} *', self), 1, 'in')])
         destroy_meta_table = common.make_rst_meta_table(destroy_meta)
 
-        des = format(common.select_lang(destroy_str), self, meta_table=destroy_meta_table)
+        des = uc_format(common.select_lang(destroy_str), self, meta_table=destroy_meta_table)
 
         bf = self.get_c_functions('bf')
         af = self.get_c_functions('af')
@@ -397,10 +385,10 @@ Konstanten
 
         if c:
             api_str += common.select_lang(common.ccf_str).format('', ccf)
-            api_str += format(common.select_lang(c_str), self,
-                              device_doc_rst_ref=self.get_doc_rst_ref_name(),
-                              callbacks=c,
-                              padding=' ' * len(self.get_name().under))
+            api_str += uc_format(common.select_lang(c_str), self,
+                                 device_doc_rst_ref=self.get_doc_rst_ref_name(),
+                                 callbacks=c,
+                                 padding=' ' * len(self.get_name().under))
 
         if vf:
             api_str += common.select_lang(common.vf_str).format(vf)
@@ -413,14 +401,14 @@ Konstanten
         if self.is_brick():
             article = 'einen'
 
-        api_str += format(common.select_lang(const_str), self,
-                          device_doc_rst_ref=self.get_doc_rst_ref_name(),
-                          article=article)
+        api_str += uc_format(common.select_lang(const_str), self,
+                             device_doc_rst_ref=self.get_doc_rst_ref_name(),
+                             article=article)
 
-        return format(common.select_lang(api), self,
-                      device_doc_rst_ref=self.get_doc_rst_ref_name(),
-                      doc_str=self.specialize_c_doc_function_links(common.select_lang(self.get_doc())),
-                      api_str=api_str)
+        return uc_format(common.select_lang(api), self,
+                         device_doc_rst_ref=self.get_doc_rst_ref_name(),
+                         doc_str=self.specialize_c_doc_function_links(common.select_lang(self.get_doc())),
+                         api_str=api_str)
 
     def get_c_doc(self):
         doc  = common.make_rst_header(self)

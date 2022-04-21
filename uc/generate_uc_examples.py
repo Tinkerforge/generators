@@ -52,7 +52,7 @@ if 'generators' not in sys.modules:
 
 from generators import common
 from generators.uc import uc_common
-from generators.uc.uc_common import format
+from generators.uc.uc_common import uc_format
 
 global_line_prefix = ''
 
@@ -103,9 +103,9 @@ class UCConstant(common.Constant):
     def get_c_source(self):
         template = 'TF_{device_upper}_{constant_group_upper}_{constant_upper}'
 
-        return format(template, self.get_device(),
-                      constant_group_upper=self.get_constant_group().get_name().upper,
-                      constant_upper=self.get_name().upper)
+        return uc_format(template, self.get_device(),
+                         constant_group_upper=self.get_constant_group().get_name().upper,
+                         constant_upper=self.get_name().upper)
 
 class UCExample(common.Example):
     def __init__(self, raw_data, device):
@@ -172,7 +172,7 @@ void example_loop(TF_HAL *hal) {{
             includes += ['']
 
         includes += ['#include "bindings/hal_common.h"',
-                     format('#include "bindings/{category_under}_{device_under}.h"', self.get_device())]
+                     uc_format('#include "bindings/{category_under}_{device_under}.h"', self.get_device())]
 
         unique_includes = []
 
@@ -198,15 +198,14 @@ void example_loop(TF_HAL *hal) {{
         while None in cleanups:
             cleanups.remove(None)
 
-        return format(template, self.get_device(),
-                               defines=common.wrap_non_empty('', '\n'.join(unique_defines), '\n\n'),
-                               includes=common.wrap_non_empty('', '\n'.join(unique_includes), ''),
-                               incomplete=incomplete,
-                               description=description,
-
-                               dummy_uid=self.get_dummy_uid(),
-                               functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
-                               sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'))
+        return uc_format(template, self.get_device(),
+                         defines=common.wrap_non_empty('', '\n'.join(unique_defines), '\n\n'),
+                         includes=common.wrap_non_empty('', '\n'.join(unique_includes), ''),
+                         incomplete=incomplete,
+                         description=description,
+                         dummy_uid=self.get_dummy_uid(),
+                         functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
+                         sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'))
 
 class UCExampleArgument(common.ExampleArgument, UCTypeMixin):
     def get_c_source(self):
@@ -490,12 +489,12 @@ class UCExampleGetterFunction(common.ExampleGetterFunction, UCExampleArgumentsMi
         while None in printfs:
             printfs.remove(None)
 
-        result = format(template, self.get_device(), self,
-                        global_line_prefix=global_line_prefix,
-                        variable_declarations=variable_declarations,
-                        variable_references=',<BP>' + ',<BP>'.join(variable_references),
-                        printfs='\n'.join(printfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
-                        arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(arguments), ''))
+        result = uc_format(template, self.get_device(), self,
+                           global_line_prefix=global_line_prefix,
+                           variable_declarations=variable_declarations,
+                           variable_references=',<BP>' + ',<BP>'.join(variable_references),
+                           printfs='\n'.join(printfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
+                           arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(arguments), ''))
 
         return common.break_string(result, '_{}('.format(self.get_name().under))
 
@@ -515,12 +514,12 @@ class UCExampleSetterFunction(common.ExampleSetterFunction, UCExampleArgumentsMi
         arg_declarations, arguments = self.get_c_arguments()
         declarations = common.wrap_non_empty('', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '\n')
 
-        result = format(template, self.get_device(), self,
-                        global_line_prefix=global_line_prefix,
-                        declarations=declarations,
-                        arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(arguments), ''),
-                        comment1=self.get_formatted_comment1(global_line_prefix + '\t// {0}\n', '\r', '\n' + global_line_prefix + '\t// '),
-                        comment2=self.get_formatted_comment2(' // {0}', ''))
+        result = uc_format(template, self.get_device(), self,
+                           global_line_prefix=global_line_prefix,
+                           declarations=declarations,
+                           arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(arguments), ''),
+                           comment1=self.get_formatted_comment1(global_line_prefix + '\t// {0}\n', '\r', '\n' + global_line_prefix + '\t// '),
+                           comment2=self.get_formatted_comment2(' // {0}', ''))
 
         return common.break_string(result, '_{}('.format(self.get_name().under))
 
@@ -587,12 +586,12 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(printfs) > 0:
             extra_message = '\n' + extra_message
 
-        result = format(template1, None, self, override_comment=override_comment) + \
-                 format(template2, self.get_device(), self,
-                        parameters=common.wrap_non_empty('', ',<BP>'.join(parameters), ',<BP>'),
-                        unuseds=unuseds,
-                        printfs='\n'.join(printfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
-                        extra_message=extra_message)
+        result = uc_format(template1, None, self, override_comment=override_comment) + \
+                 uc_format(template2, self.get_device(), self,
+                           parameters=common.wrap_non_empty('', ',<BP>'.join(parameters), ',<BP>'),
+                           unuseds=unuseds,
+                           printfs='\n'.join(printfs).replace('\r\n\r', '\n\n').strip('\r').replace('\r', '\n'),
+                           extra_message=extra_message)
 
         return common.break_string(result, '{}_handler('.format(self.get_name().under))
 
@@ -603,8 +602,8 @@ class UCExampleCallbackFunction(common.ExampleCallbackFunction):
 	{spaces}NULL);
 """
 
-        result = format(template, self.get_device(), self,
-                        spaces=' ' * (len(self.get_device().get_name().under) + len(self.get_name().under) + 23))
+        result = uc_format(template, self.get_device(), self,
+                           spaces=' ' * (len(self.get_device().get_name().under) + len(self.get_name().under) + 23))
 
         return common.break_string(result, '// ', indent_tail='// ')
 
@@ -638,12 +637,12 @@ class UCExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction, UCEx
         arg_declarations, arguments = self.get_c_arguments()
         declarations = common.wrap_non_empty('\n', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '')
 
-        return format(template, self.get_device(), self,
-                      declarations=declarations,
-                      arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
-                      period_msec=period_msec,
-                      period_sec_short=period_sec_short,
-                      period_sec_long=period_sec_long)
+        return uc_format(template, self.get_device(), self,
+                         declarations=declarations,
+                         arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
+                         period_msec=period_msec,
+                         period_sec_short=period_sec_short,
+                         period_sec_long=period_sec_long)
 
 class UCExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresholdMinimumMaximum):
     def get_c_source(self):
@@ -674,12 +673,12 @@ class UCExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction
         arg_declarations, arguments = self.get_c_arguments()
         declarations = common.wrap_non_empty('\n', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '')
 
-        return format(template, self.get_device(), self,
-                      declarations=declarations,
-                      arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
-                      option_char=self.get_option_char(),
-                      option_comment=self.get_option_comment(),
-                      minimum_maximums=', '.join(minimum_maximums))
+        return uc_format(template, self.get_device(), self,
+                         declarations=declarations,
+                         arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
+                         option_char=self.get_option_char(),
+                         option_comment=self.get_option_comment(),
+                         minimum_maximums=', '.join(minimum_maximums))
 
 class UCExampleCallbackConfigurationFunction(common.ExampleCallbackConfigurationFunction, UCExampleArgumentsMixin):
     def get_c_defines(self):
@@ -720,15 +719,15 @@ class UCExampleCallbackConfigurationFunction(common.ExampleCallbackConfiguration
         arg_declarations, arguments = self.get_c_arguments()
         declarations = common.wrap_non_empty('\n', '\n'.join(['{global_line_prefix}\t{decl}'.format(global_line_prefix=global_line_prefix, decl=decl) for decl in arg_declarations]), '')
 
-        return format(template, self.get_device(), self,
-                      declarations=declarations,
-                      arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
-                      period_msec=period_msec,
-                      period_sec_short=period_sec_short,
-                      value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
-                      option_char=self.get_option_char(),
-                      option_comment=self.get_option_comment(),
-                      minimum_maximums=', '.join(minimum_maximums))
+        return uc_format(template, self.get_device(), self,
+                         declarations=declarations,
+                         arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''),
+                         period_msec=period_msec,
+                         period_sec_short=period_sec_short,
+                         value_has_to_change=common.wrap_non_empty(', ', self.get_value_has_to_change('true', 'false', ''), ''),
+                         option_char=self.get_option_char(),
+                         option_comment=self.get_option_comment(),
+                         minimum_maximums=', '.join(minimum_maximums))
 
 class UCExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_c_defines(self):
@@ -753,9 +752,9 @@ class UCExampleSpecialFunction(common.ExampleSpecialFunction):
 """
             period_msec, period_sec = self.get_formatted_debounce_period()
 
-            return format(template, self.get_device(),
-                          period_msec=period_msec,
-                          period_sec=period_sec)
+            return uc_format(template, self.get_device(),
+                             period_msec=period_msec,
+                             period_sec=period_sec)
         elif type_ == 'sleep':
             template = '{comment1}{global_line_prefix}\ttf_hal_sleep_us(hal, {duration} * 1000);{comment2}\n'
 
