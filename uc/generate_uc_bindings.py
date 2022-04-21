@@ -139,7 +139,7 @@ extern "C" {{
 #define TF_{device_upper}_DEVICE_IDENTIFIER {device_id}
 """
 
-        return format(template, self, device_id=self.get_device_identifier())
+        return format(template, self)
 
     def get_c_device_display_name_define(self):
         template = """
