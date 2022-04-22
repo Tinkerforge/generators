@@ -109,7 +109,7 @@ class UCDocDevice(common.Device):
             meta = packet.get_formatted_element_meta(lambda element, cardinality=None: element.get_uc_type('meta', cardinality=cardinality),
                                                      lambda element, index=None: element.get_uc_name(index=index),
                                                      prefix_elements=[(uc_format('{device_under}', self), uc_format('TF_{device_camel} *', self), 1, 'out')],
-                                                     suffix_elements=[('user_data', 'void *', 1, 'out'), ('e_code', 'int', 1, 'return')],
+                                                     suffix_elements=[('user_data', 'void *', 1, 'out')],
                                                      stream_length_suffix='_length')
 
             callbacks.append(uc_format(template, self, packet,
