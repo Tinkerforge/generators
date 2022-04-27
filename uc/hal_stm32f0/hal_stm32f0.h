@@ -14,9 +14,9 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stm32f0xx_hal.h>
 
-#include "stm32f0xx_hal.h"
-#include "bindings/hal_common.h"
+#include "../bindings/hal_common.h"
 
 // Maximum number of ports handled by the HAL
 #define TF_HAL_STM32F0_MAX_PORT_COUNT 8

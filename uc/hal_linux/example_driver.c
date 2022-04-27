@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "hal_linux/hal_linux.h"
-#include "bindings/errors.h"
+#include "src/hal_linux/hal_linux.h"
+#include "src/bindings/errors.h"
 
 // Forward declare the example functions.
 void example_setup(TF_HAL *hal);

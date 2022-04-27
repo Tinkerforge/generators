@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "hal_fake.h"
+#include "src/hal_fake/hal_fake.h"
 
 static TF_Port ports[1] = {
     TF_PORT(1, 'A')

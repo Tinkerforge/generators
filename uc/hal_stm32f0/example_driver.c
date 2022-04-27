@@ -7,8 +7,8 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
-#include "hal_stm32f0/hal_stm32f0.h"
-#include "bindings/errors.h"
+#include "src/hal_stm32f0/hal_stm32f0.h"
+#include "src/bindings/errors.h"
 
 #define BRICKLET_SPI0_CS0_PIN        GPIO_PIN_2
 #define BRICKLET_SPI0_CS0_PORT       GPIOA

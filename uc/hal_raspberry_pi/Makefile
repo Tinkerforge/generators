@@ -20,18 +20,18 @@ ifeq ($(WITH_DEBUG),yes)
 endif
 
 # These files are always required when using the bindings
-SOURCES_BINDINGS := bindings/base58.c \
-					bindings/bricklet_unknown.c \
-					bindings/endian_convert.c \
-					bindings/hal_common.c \
-					bindings/packet_buffer.c \
-					bindings/pearson_hash.c \
-					bindings/spitfp.c \
-					bindings/tfp.c \
+SOURCES_BINDINGS := src/bindings/base58.c \
+					src/bindings/bricklet_unknown.c \
+					src/bindings/endian_convert.c \
+					src/bindings/hal_common.c \
+					src/bindings/packet_buffer.c \
+					src/bindings/pearson_hash.c \
+					src/bindings/spitfp.c \
+					src/bindings/tfp.c \
 
 # HAL specific files
-SOURCES_HAL_RASPBERRY_PI := hal_raspberry_pi/hal_raspberry_pi.c \
-							hal_raspberry_pi/bcm2835.c \
+SOURCES_HAL_RASPBERRY_PI := src/hal_raspberry_pi/hal_raspberry_pi.c \
+							src/hal_raspberry_pi/bcm2835.c \
 
 # TODO: List your used devices here
 SOURCES_DEVICES :=

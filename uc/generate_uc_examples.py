@@ -114,18 +114,16 @@ class UCExample(common.Example):
 
     def get_uc_source(self):
         template = r"""// This example is not self-contained.
-// It requres usage of the example driver specific to your platform.
+// It requires usage of the example driver specific to your platform.
 // See the HAL documentation.
 
 {defines}{includes}{incomplete}{description}
 
 #define UID "{dummy_uid}" // Change {dummy_uid} to the UID of your {device_display}
 
-void check(int rc, const char* msg);
-
+void check(int rc, const char *msg);
 void example_setup(TF_HAL *hal);
 void example_loop(TF_HAL *hal);
-
 {functions}
 static TF_{device_camel} {device_initial};
 
@@ -171,8 +169,8 @@ void example_loop(TF_HAL *hal) {{
         if len(includes) > 0:
             includes += ['']
 
-        includes += ['#include "bindings/hal_common.h"',
-                     uc_format('#include "bindings/{category_under}_{device_under}.h"', self.get_device())]
+        includes += ['#include "src/bindings/hal_common.h"',
+                     uc_format('#include "src/bindings/{category_under}_{device_under}.h"', self.get_device())]
 
         unique_includes = []
 

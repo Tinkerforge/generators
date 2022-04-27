@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "hal_raspberry_pi/hal_raspberry_pi.h"
-#include "bindings/errors.h"
+#include "src/hal_raspberry_pi/hal_raspberry_pi.h"
+#include "src/bindings/errors.h"
 
 // Forward declare the example functions.
 void example_setup(TF_HAL *hal);

@@ -15,8 +15,8 @@
 #include "bricklib2/hal/uartbb/uartbb.h"
 #include "bricklib2/os/coop_task.h"
 
-#include "bindings/errors.h"
-#include "bindings/config.h"
+#include "../bindings/errors.h"
+#include "../bindings/config.h"
 
 #include "configs/config.h"
 
