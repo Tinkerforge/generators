@@ -117,7 +117,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns if a fix is currently available as well as the, the number of
+Returns if a fix is currently available as well as the number of
 satellites that are in view.
 
 There is also a :ref:`green LED <gps_v2_bricklet_fix_led>` on the Bricklet that

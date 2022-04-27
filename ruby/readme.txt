@@ -14,6 +14,6 @@ go to:
  https://www.tinkerforge.com/en/doc/Software/API_Bindings_Ruby.html (English)
  https://www.tinkerforge.com/de/doc/Software/API_Bindings_Ruby.html (German)
 
-The Ruby bindings are also available from the Python Package Index (PyPI):
+The Ruby bindings are also available from the RubyGems.org:
 
  https://rubygems.org/gems/tinkerforge
