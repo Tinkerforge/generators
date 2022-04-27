@@ -122,34 +122,36 @@ class UCDocDevice(common.Device):
     def get_uc_api(self):
         create_str = {
             'en': """
-.. c:function:: int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal)
+.. c:function:: int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid_or_port_name, TF_HAL *hal)
 
 {meta_table}
 
- Creates the device object ``{device_under}`` with the unique device ID ``uid`` and adds
- it to the HAL ``hal``:
+ Creates the device object ``{device_under}`` with the optional unique device ID or port name
+ ``uid_or_port_name`` and adds it to the HAL ``hal``:
 
  .. code-block:: c
 
     TF_{device_camel} {device_under};
-    tf_{device_under}_create(&{device_under}, "YOUR_DEVICE_UID", &hal);
+    tf_{device_under}_create(&{device_under}, NULL, &hal);
 
- This device object can be used after the HAL has been initialized.
+ Normally ``uid_or_port_name`` can stay ``NULL``. For more details about this
+ see section :ref:`api_bindings_uc_uid_or_port_name`.
 """,
             'de': """
 .. c:function:: int tf_{device_under}_create(TF_{device_camel} *{device_under}, const char *uid, TF_HAL *hal)
 
 {meta_table}
 
- Erzeugt ein Geräteobjekt ``{device_under}`` mit der eindeutigen Geräte ID ``uid`` und
- fügt es dem HAL ``hal`` hinzu:
+ Erzeugt ein Geräteobjekt ``{device_under}`` mit der optionalen eindeutigen Geräte ID oder
+ dem Portnamen ``uid_or_port_name`` und fügt es dem HAL ``hal`` hinzu:
 
  .. code-block:: c
 
     TF_{device_camel} {device_under};
-    tf_{device_under}_create(&{device_under}, "YOUR_DEVICE_UID", &ipcon);
+    tf_{device_under}_create(&{device_under}, NULL, &ipcon);
 
- Dieses Geräteobjekt kann benutzt werden, nachdem der HAL initialisiert wurde.
+ Im Normalfall kann ``uid_or_port_name`` auf ``NULL`` belassen werden. Für weitere
+ Details siehe Abschnitt :ref:`api_bindings_uc_uid_or_port_name`.
 """
         }
 

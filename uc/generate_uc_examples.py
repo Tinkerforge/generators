@@ -119,8 +119,6 @@ class UCExample(common.Example):
 
 {defines}{includes}{incomplete}{description}
 
-#define UID "{dummy_uid}" // Change {dummy_uid} to the UID of your {device_display}
-
 void check(int rc, const char *msg);
 void example_setup(TF_HAL *hal);
 void example_loop(TF_HAL *hal);
@@ -129,7 +127,7 @@ static TF_{device_camel} {device_initial};
 
 void example_setup(TF_HAL *hal) {{
 	// Create device object
-	check(tf_{device_under}_create(&{device_initial}, UID, hal), "create device object");
+	check(tf_{device_under}_create(&{device_initial}, NULL, hal), "create device object");
 {sources}}}
 
 void example_loop(TF_HAL *hal) {{
@@ -201,7 +199,6 @@ void example_loop(TF_HAL *hal) {{
                          includes=common.wrap_non_empty('', '\n'.join(unique_includes), ''),
                          incomplete=incomplete,
                          description=description,
-                         dummy_uid=self.get_dummy_uid(),
                          functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
                          sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'))
 
