@@ -11,7 +11,7 @@
 #include "src/hal_fake/hal_fake.h"
 
 static TF_Port ports[1] = {
-    TF_PORT(1, 'A')
+    TF_PORT('A')
 };
 
 void example_setup(TF_HAL *hal);

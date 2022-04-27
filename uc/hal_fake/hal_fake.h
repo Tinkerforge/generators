@@ -17,11 +17,10 @@
 #include "../bindings/errors.h"
 #include "../bindings/macros.h"
 
-#define TF_PORT(chip_select_pin, port_name) {chip_select_pin, port_name, {._to_init = 0}}
+#define TF_PORT(port_name) {port_name, {._to_init = 0}}
 
 typedef struct TF_Port {
     // external
-    uint8_t chip_select_pin;
     char port_name;
 
     // internal
