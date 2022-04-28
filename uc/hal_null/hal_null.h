@@ -6,8 +6,8 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
-#ifndef TF_HAL_FAKE_H
-#define TF_HAL_FAKE_H
+#ifndef TF_HAL_NULL_H
+#define TF_HAL_NULL_H
 
 #include <stdbool.h>
 #include <stdint.h>

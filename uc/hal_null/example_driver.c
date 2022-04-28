@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-#include "src/hal_fake/hal_fake.h"
+#include "src/hal_null/hal_null.h"
 
 static TF_Port ports[1] = {
     TF_PORT('A')

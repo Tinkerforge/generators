@@ -6,7 +6,7 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
-#include "hal_fake.h"
+#include "hal_null.h"
 
 #include "../bindings/config.h"
 
