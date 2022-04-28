@@ -62,6 +62,8 @@ class UCExamplesTester(common.Tester):
         self.run_after_unzip = run_after_unzip
 
     def after_unzip(self, tmp_dir):
+        os.rename(os.path.join(tmp_dir, 'source'), os.path.join(tmp_dir, 'src'))
+
         if not self.run_after_unzip:
             return True
 
@@ -69,8 +71,8 @@ class UCExamplesTester(common.Tester):
 
         with common.ChangedDirectory(tmp_dir):
             print('>>> building libuc.so')
-            args = ['clang', '-ggdb', '-std=c99', '-shared', '-pthread', '-I', 'source', '-o', 'libuc.so', 'source/hal_fake/hal_fake.c']
-            args += glob.glob(os.path.join(tmp_dir, 'source/bindings/*.c'))
+            args = ['clang', '-ggdb', '-std=c99', '-shared', '-pthread', '-fPIC', '-I', 'src', '-o', 'libuc.so', 'src/hal_null/hal_null.c']
+            args += glob.glob(os.path.join(tmp_dir, 'src/bindings/*.c'))
 
             common.execute(args)
 
@@ -86,7 +88,7 @@ class UCExamplesTester(common.Tester):
                 else:
                     location = "unknown location"
 
-                if not symbol.startswith("tf_"):
+                if not symbol.startswith("tf_") and symbol not in ['__bss_start', '_edata', '_end', '_fini', '_init']:
                     print("{} Exported symbol {} is missing the tf_ prefix".format(location.replace(tmp_dir, "."), symbol))
                     result = False
 
@@ -119,16 +121,17 @@ class UCExamplesTester(common.Tester):
             _, output = common.check_output_and_error(args)
             files = output.splitlines()
 
-            args = ['sed', '-e', '/typedef enum/,/\}/!d'] + files
-            _, output = common.check_output_and_error(args)
-            for l in output.splitlines():
-                l = l.strip()
-                if l.startswith("typedef") or l.startswith("}"):
-                    continue
+            if len(files) > 0:
+                args = ['sed', '-e', '/typedef enum/,/\}/!d'] + files
+                _, output = common.check_output_and_error(args)
+                for l in output.splitlines():
+                    l = l.strip()
+                    if l.startswith("typedef") or l.startswith("}"):
+                        continue
 
-                if not l.startswith("TF_"):
-                    print("Enum value {} is missing the TF_ prefix".format(l.split(" ")[0].replace(",", "")))
-                    result = False
+                    if not l.startswith("TF_"):
+                        print("Enum value {} is missing the TF_ prefix".format(l.split(" ")[0].replace(",", "")))
+                        result = False
 
             define_whitelist = ["MIN", "MAX", "__GNUC_PREREQ"]
 
@@ -147,7 +150,6 @@ class UCExamplesTester(common.Tester):
                     print("{} Define {} is missing the TF_ prefix".format(location, name))
                     result = False
 
-
         if result:
             print('\033[01;32m>>> test succeeded\033[0m\n')
         else:
@@ -163,7 +165,7 @@ class UCExamplesTester(common.Tester):
 
         if not extra and '/brick' in path:
             dirname = os.path.split(path)[0]
-            device = os.path.join(tmp_dir, 'source/bindings/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1]))
+            device = os.path.join(tmp_dir, 'src/bindings/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1]))
         else:
             device = ''
 
@@ -188,27 +190,28 @@ class UCExamplesTester(common.Tester):
                  '-Wextra',
                  '-Werror',
                  '-O2',
-                 '-I' + os.path.join(tmp_dir, 'source'),
+                 '-I' + tmp_dir,
+                 '-I' + os.path.join(tmp_dir, 'src'),
                  '-o',
                  output,
-                 os.path.join(tmp_dir, 'source/bindings/base58.c'),
-                 os.path.join(tmp_dir, 'source/bindings/bricklet_unknown.c'),
-                 os.path.join(tmp_dir, 'source/bindings/endian_convert.c'),
-                 os.path.join(tmp_dir, 'source/bindings/hal_common.c'),
-                 os.path.join(tmp_dir, 'source/bindings/packet_buffer.c'),
-                 os.path.join(tmp_dir, 'source/bindings/pearson_hash.c'),
-                 os.path.join(tmp_dir, 'source/bindings/spitfp.c'),
-                 os.path.join(tmp_dir, 'source/bindings/streaming.c'),
-                 os.path.join(tmp_dir, 'source/bindings/tfp.c'),
-                 os.path.join(tmp_dir, 'source/bindings/tfp_header.c'),
-                 os.path.join(tmp_dir, 'source/hal_fake/hal_fake.c'),
-                 os.path.join(tmp_dir, 'source/hal_fake/example_driver.c')]
+                 os.path.join(tmp_dir, 'src/bindings/base58.c'),
+                 os.path.join(tmp_dir, 'src/bindings/bricklet_unknown.c'),
+                 os.path.join(tmp_dir, 'src/bindings/endian_convert.c'),
+                 os.path.join(tmp_dir, 'src/bindings/hal_common.c'),
+                 os.path.join(tmp_dir, 'src/bindings/packet_buffer.c'),
+                 os.path.join(tmp_dir, 'src/bindings/pearson_hash.c'),
+                 os.path.join(tmp_dir, 'src/bindings/spitfp.c'),
+                 os.path.join(tmp_dir, 'src/bindings/streaming.c'),
+                 os.path.join(tmp_dir, 'src/bindings/tfp.c'),
+                 os.path.join(tmp_dir, 'src/bindings/tfp_header.c'),
+                 os.path.join(tmp_dir, 'src/hal_null/hal_null.c'),
+                 os.path.join(tmp_dir, 'src/hal_null/example_driver.c')]
 
         if len(device) > 0:
             args.append(device)
         elif extra:
-            dependencies = glob.glob(os.path.join(tmp_dir, 'source/*.c'))
-            dependencies.remove(os.path.join(tmp_dir, 'source/ip_connection.c'))
+            dependencies = glob.glob(os.path.join(tmp_dir, 'src/*.c'))
+            dependencies.remove(os.path.join(tmp_dir, 'src/ip_connection.c'))
             args.append('-Wno-error=unused-parameter')
             args += dependencies
 
