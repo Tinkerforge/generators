@@ -18,8 +18,8 @@ com = {
         'en': 'ESP32 microcontroller based Brick with Ethernet and 6 Bricklet ports',
         'de': 'ESP32 Mikrocontroller basierter Brick mit Ethernet und 6 Bricklet-Ports'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'device',
