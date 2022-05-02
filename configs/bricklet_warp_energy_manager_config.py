@@ -33,6 +33,14 @@ com = {
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Energy Meter Type',
+'type': 'uint8',
+'constants': [('Not Available', 0),
+              ('SDM72', 1),
+              ('SDM630', 2),
+              ('SDM72V2', 3)]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -149,7 +157,7 @@ TBD
 com['packets'].append({
 'type': 'function',
 'name': 'Get Energy Meter State',
-'elements': [('Available', 'bool', 1, 'out'),
+'elements': [('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'}),
              ('Error Count', 'uint32', 6, 'out')], # local timeout, global timeout, illigal function, illegal data address, illegal data value, slave device failure
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -166,7 +174,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Reset Energy Meter',
+'name': 'Reset Energy Meter Relative Energy',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -300,3 +308,35 @@ TODO
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get All Data 1',
+'elements': [('Value', 'bool', 1, 'out', {}),
+             ('R', 'uint8', 1, 'out', {}),
+             ('G', 'uint8', 1, 'out', {}),
+             ('B', 'uint8', 1, 'out', {}),
+             ('Power', 'float', 1, 'out'),            # W
+             ('Energy Relative', 'float', 1, 'out'),  # Wh
+             ('Energy Absolute', 'float', 1, 'out'),  # Wh
+             ('Phases Active', 'bool', 3, 'out'),
+             ('Phases Connected', 'bool', 3, 'out'),
+             ('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'}),
+             ('Error Count', 'uint32', 6, 'out'),
+             ('Input', 'bool', 2, 'out'),
+             ('Output', 'bool', 1, 'out'),
+             ('Input Configuration', 'uint8', 2, 'out'),
+             ('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('Contactor Check State', 'uint8', 1, 'out')
+],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
