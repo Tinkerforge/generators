@@ -1114,7 +1114,7 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
         source += self.get_uc_callback_tick_function()
         source += self.get_uc_end_c()
 
-        return source
+        return common.strip_trailing_whitespace(source)
 
     def get_uc_header(self):
         header  = self.get_uc_include_h()
@@ -1131,7 +1131,7 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
         header += self.get_uc_function_declaration()
         header += self.get_uc_end_h()
 
-        return header
+        return common.strip_trailing_whitespace(header)
 
 class UCBindingsPacket(uc_common.UCPacket):
     def get_uc_formatted_doc(self, high_level=False):
