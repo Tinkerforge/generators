@@ -1656,6 +1656,7 @@ def subgenerate(root_dir, language, internal, generator_class, config_name):
                            device.is_documented(),
                            device.is_discontinued(),
                            True,
+                           device.get_esp32_firmware(),
                            device.get_description())
 
             brick_infos.append(device_info)
@@ -1680,6 +1681,7 @@ def subgenerate(root_dir, language, internal, generator_class, config_name):
                            device.is_documented(),
                            device.is_discontinued(),
                            True,
+                           device.get_esp32_firmware(),
                            device.get_description())
 
             bricklet_infos.append(device_info)
@@ -1704,6 +1706,7 @@ def subgenerate(root_dir, language, internal, generator_class, config_name):
                            device.is_documented(),
                            device.is_discontinued(),
                            True,
+                           device.get_esp32_firmware(),
                            device.get_description())
 
             tng_infos.append(device_info)
@@ -1714,11 +1717,11 @@ def subgenerate(root_dir, language, internal, generator_class, config_name):
 
     # only update device_infos.py for default config
     if config_name == 'tinkerforge':
-        brick_infos.append((None, 'Brick', 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, False, False, True, True, False, False,
+        brick_infos.append((None, 'Brick', 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, False, False, True, True, False, False, None,
                             {'en': 'For Firmware Developers: JTAG and serial console',
                              'de': 'Für Firmware Entwickler: JTAG und serielle Konsole'}))
 
-        bricklet_infos.append((None, 'Bricklet', 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, False, False, True, True, False, False,
+        bricklet_infos.append((None, 'Bricklet', 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, False, False, True, True, False, False, None,
                                {'en': 'Makes all Bricklet signals available',
                                 'de': 'Macht alle Bricklet Signale zugänglich'}))
 
@@ -1726,7 +1729,7 @@ def subgenerate(root_dir, language, internal, generator_class, config_name):
             f.write('# -*- coding: utf-8 -*-\n')
             f.write('from collections import namedtuple\n')
             f.write('\n')
-            f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier category long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part has_comcu has_openhab is_released is_documented is_discontinued has_bindings description')\n")
+            f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier category long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part has_comcu has_openhab is_released is_documented is_discontinued has_bindings esp32_firmware description')\n")
             f.write('\n')
             f.write('brick_infos = \\\n')
             f.write('[\n')
@@ -3518,6 +3521,9 @@ class Device(object):
 
     def get_description(self):
         return self.raw_data['description']
+
+    def get_esp32_firmware(self):
+        return self.raw_data.get('esp32_firmware')
 
     def get_git_name(self):
         if self.is_tng():

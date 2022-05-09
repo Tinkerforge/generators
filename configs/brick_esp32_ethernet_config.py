@@ -21,6 +21,7 @@ com = {
     'released': True,
     'documented': True,
     'discontinued': False,
+    'esp32_firmware': 'esp32_ethernet',
     'features': [
         'device',
         'brick_get_identity'

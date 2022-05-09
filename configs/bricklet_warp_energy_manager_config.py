@@ -23,6 +23,7 @@ com = {
     'released': False,
     'documented': False,
     'discontinued': False,
+    'esp32_firmware': 'energy_manager',
     'features': [
         'device',
         'comcu_bricklet',
