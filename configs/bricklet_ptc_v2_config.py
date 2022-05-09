@@ -25,7 +25,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False,
+    'discontinued': True, # replaced by Industrial PTC Bricklet
     'features': [
         'device',
         'comcu_bricklet',

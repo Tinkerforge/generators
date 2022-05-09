@@ -24,7 +24,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': True, # replaced by PTC Bricklet 2.0
+    'discontinued': True, # replaced by Industrial PTC Bricklet
     'features': [
         'device',
         'bricklet_get_identity'
