@@ -20,7 +20,7 @@ com = {
         'en': 'Determine position, velocity and altitude using GPS',
         'de': 'Bestimmt Position, Geschwindigkeit und Höhe mittels GPS'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'features': [
