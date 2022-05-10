@@ -95,4 +95,5 @@
 - Add simple_get_tag_id function and MODE_SIMPLE constant to NFC Bricklet API
 
 2022-05-10: 2.0.20 (<unknown>)
+- Add support for GPS Bricklet 3.0 and ESP32 (Ethernet) Brick
 - Add set/get_rtc_driver functions and RTC_DRIVER constants to HAT Brick API
