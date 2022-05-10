@@ -1,2 +1,5 @@
 2022-04-28: 2.0.0 (36f8cfd)
 - Initial version
+
+2022-05-10: 2.0.1 (<unknown>)
+- Add support for GPS Bricklet 3.0

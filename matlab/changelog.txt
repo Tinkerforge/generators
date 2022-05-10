@@ -172,3 +172,10 @@
 2021-05-06: 2.0.31 (7cd6fa2)
 - Add GPIOState callback to Performance DC Bricklet API
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
+
+2022-05-10: 2.0.32 (<unknown>)
+- Add support for GPS Bricklet 3.0
+- Add set/getDisplayDriver methods and DISPLAY_DRIVER constants to
+  E-Paper 296x128 Bricklet API
+- Add simpleGetTagID method and MODE_SIMPLE constant to NFC Bricklet API
+- Add set/getRTCDdriver methods and RTC_DRIVER constants to HAT Brick API

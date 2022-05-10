@@ -183,3 +183,10 @@
 - Add GPIO_STATE callback to Performance DC Bricklet API
 - Fix BigInt detection for Node.js < 10.4
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
+
+2022-05-10: 2.1.34 (<unknown>)
+- Add support for GPS Bricklet 3.0
+- Add set/getDisplayDriver functions and DISPLAY_DRIVER constants to
+  E-Paper 296x128 Bricklet API
+- Add simpleGetTagID function and MODE_SIMPLE constant to NFC Bricklet API
+- Add set/getRTCDriver functions and RTC_DRIVER constants to HAT Brick API

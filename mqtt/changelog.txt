@@ -111,3 +111,10 @@
 
 2021-05-06: 2.0.15 (7cd6fa2)
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
+
+2022-05-10: 2.0.16 (<unknown>)
+- Add support for GPS Bricklet 3.0
+- Add set/get_display_driver functions and display_driver symbols to
+  E-Paper 296x128 Bricklet API
+- Add simple_get_tag_id function and mode_simple symbol to NFC Bricklet API
+- Add set/get_rtc_driver functions and rtc_driver symbols to HAT Brick API
