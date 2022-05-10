@@ -312,7 +312,10 @@ for git_name in sorted(os.listdir('..')):
                cp['pcbnew/libraries'].get('LibDir', 'kicad-libraries') != 'kicad-libraries':
                 print('invalid pcbnew/libraries:LibDir in hardware/*.pro')
 
-            if cp['eeschema']['LibDir'] != 'kicad-libraries':
+            try:
+                if cp['eeschema']['LibDir'] != 'kicad-libraries':
+                    error('invalid eeschema:LibDir in hardware/*.pro')
+            except:
                 error('invalid eeschema:LibDir in hardware/*.pro')
 
             if 'eeschema/libraries' not in cp or 'eeschema/libraries' not in cp['eeschema/libraries'] or cp['eeschema/libraries']['LibName1'] != 'tinkerforge':
