@@ -30,38 +30,60 @@ if 'generators' not in sys.modules:
 from generators import common
 
 DISPLAY_NAMES = {
-'c':           'C/C++',
-'csharp':      'C#',
-'delphi':      'Delphi/Lazarus',
-'go':          'Go',
-'java':        'Java',
-'javascript':  'JavaScript',
-'labview':     'LabVIEW',
-'mathematica': 'Mathematica',
-'matlab':      'MATLAB/Octave',
-'mqtt':        'MQTT',
-'perl':        'Perl',
-'php':         'PHP',
-'python':      'Python',
-'ruby':        'Ruby',
-'rust':        'Rust',
-'saleae':      'Saleae',
-'shell':       'Shell',
-'vbnet':       'Visual Basic .NET'
+    'c':           'C/C++',
+    'csharp':      'C#',
+    'delphi':      'Delphi/Lazarus',
+    'go':          'Go',
+    'java':        'Java',
+    'javascript':  'JavaScript',
+    'labview':     'LabVIEW',
+    'mathematica': 'Mathematica',
+    'matlab':      'MATLAB/Octave',
+    'mqtt':        'MQTT',
+    'perl':        'Perl',
+    'php':         'PHP',
+    'python':      'Python',
+    'ruby':        'Ruby',
+    'rust':        'Rust',
+    'saleae':      'Saleae',
+    'shell':       'Shell',
+    'vbnet':       'Visual Basic .NET',
+    'uc':          'C/C++ for Microcontrollers'
 }
+
+BINDINGS_ORDER = [
+    'c',
+    'uc',
+    'csharp',
+    'delphi',
+    'go',
+    'java',
+    'javascript',
+    'labview',
+    'mathematica',
+    'matlab',
+    'mqtt',
+    'perl',
+    'php',
+    'python',
+    'ruby',
+    'rust',
+    'saleae',
+    'shell',
+    'vbnet'
+]
 
 def main():
     bindings = []
 
-    for binding in sorted(os.listdir(generators_dir)):
+    for binding in os.listdir(generators_dir):
         if not os.path.isdir(binding) or os.path.exists(os.path.join(generators_dir, binding, 'skip_generate_forum_post')):
             continue
 
         if binding not in ['.git', '.vscode', '.m2', '__pycache__', 'configs', 'docker']:
             bindings.append(binding)
 
-    display_names = []
-    downloads = []
+    result = {}
 
     for binding in bindings:
         if len(sys.argv) > 1 and binding not in sys.argv[1:]:
@@ -70,9 +92,14 @@ def main():
         path = os.path.join(generators_dir, binding)
         version = common.get_changelog_version(path)
 
-        display_names.append('{0} {1}.{2}.{3}'.format(DISPLAY_NAMES[binding], *version))
-        downloads.append('<a href="https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_{2}_{3}_{4}.zip">{1}</a>'
-                         .format(binding, DISPLAY_NAMES[binding], *version))
+        result[binding] = ('{0} {1}.{2}.{3}'.format(DISPLAY_NAMES[binding], *version),
+                           '<a href="https://download.tinkerforge.com/bindings/{0}/tinkerforge_{0}_bindings_{2}_{3}_{4}.zip">{1}</a>'
+                           .format(binding, DISPLAY_NAMES[binding], *version))
+
+    sorted_result = []
+
+    for binding in BINDINGS_ORDER:
+        sorted_result.append(result[binding])
 
     print("""<p><strong>Bindings:
 {0}
@@ -83,7 +110,7 @@ def main():
 <p>Download:
 {1}
 </p>
-""".format(',\n'.join(display_names), ',\n'.join(downloads)))
+""".format(',\n'.join([item[0] for item in sorted_result]), ',\n'.join([item[1] for item in sorted_result])))
 
 if __name__ == '__main__':
     main()
