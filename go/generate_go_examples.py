@@ -259,7 +259,7 @@ class GoExampleParameter(common.ExampleParameter):
             if ':bitmask:' in self.get_type():
                 fmt = '%b'
             elif 'float' in self.get_type() or self.get_divisor() is not None:
-                fmt =  '%f'
+                fmt = '%f'
             elif 'int' in self.get_type():
                 fmt = '%d'
             elif 'char' in self.get_type():
@@ -317,7 +317,7 @@ class GoExampleResult(common.ExampleResult):
 
             result = ['\r' + result + '\r']
         else:
-            template = '{global_line_prefix}\t\tfmt.Printf("{label}: {format_verb}{unit_param}\\n", {float_cast}{name}{index}{float_cast_end}{divisor});{comment}'
+            template = '{global_line_prefix}\t\tfmt.Printf("{label}: {fmt}{unit_param}\\n", {float_cast}{name}{index}{float_cast_end}{divisor});{comment}'
 
             if self.get_label_name() == None:
                 return []
@@ -326,12 +326,15 @@ class GoExampleResult(common.ExampleResult):
                 return [] # FIXME: streaming
 
             if ':bitmask:' in self.get_type():
-                format_verb = '%b'
+                fmt = '%b'
+            elif 'float' in self.get_type() or self.get_divisor() is not None:
+                fmt = '%f'
+            elif 'int' in self.get_type():
+                fmt = '%d'
+            elif 'char' in self.get_type():
+                fmt = '%c'
             else:
-                format_verb =  ''
-
-            if 'float' in self.get_type() or self.get_divisor() is not None:
-                format_verb = '%f'
+                fmt = '%s'
 
             result = []
 
@@ -341,7 +344,7 @@ class GoExampleResult(common.ExampleResult):
                 result.append(template.format(global_line_prefix=global_line_prefix,
                                               name=name,
                                               label=self.get_label_name(index=index),
-                                              format_verb=format_verb,
+                                              fmt=fmt,
                                               unit_param=unit_param,
                                               index='[{0}]'.format(index) if self.get_label_count() > 1 else '',
                                               float_cast = "float64(" if self.get_divisor() is not None else "",
