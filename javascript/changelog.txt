@@ -184,7 +184,7 @@
 - Fix BigInt detection for Node.js < 10.4
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
 
-2022-05-10: 2.1.34 (<unknown>)
+2022-05-11: 2.1.34 (<unknown>)
 - Add support for GPS Bricklet 3.0 and ESP32 (Ethernet) Brick
 - Add set/getDisplayDriver functions and DISPLAY_DRIVER constants to
   E-Paper 296x128 Bricklet API
