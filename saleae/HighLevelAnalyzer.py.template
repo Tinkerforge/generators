@@ -31,15 +31,15 @@ pearson = [1, 87, 49, 12, 176, 178, 102, 166, 121, 193, 6, 84, 249, 230, 44, 163
 	140, 36, 210, 172, 41, 54, 159, 8, 185, 232, 113, 196, 231, 47, 146, 120,
 	51, 65, 28, 144, 254, 221, 93, 189, 194, 139, 112, 43, 71, 109, 184, 209]
 
-#checksum = 0
-#packet = [0x0B, # Paketlänge
-          #0x01, # Sequenznummer
-          #0x98, 0x83, 0x00, 0x00, 0x08, 0x01, 0x18, 0x00 # Payload
-          #]
-#packet = [0x03, 0x10, 0x00]
-#for byte in packet:
-    #checksum = pearson[checksum ^ byte]
-#print("{:x}".format(checksum))
+# checksum = 0
+# packet = [0x0B, # packet length
+#           0x01, # sequence number 1 ACK 0
+#           0x98, 0x83, 0x00, 0x00, 0x08, 0x01, 0x18, 0x00 # Payload
+#          ]
+# packet = [0x03, 0x10, 0x00]
+# for byte in packet:
+#     checksum = pearson[checksum ^ byte]
+# print("{:x}".format(checksum))
 
 
 def get_uid_from_data(data):
