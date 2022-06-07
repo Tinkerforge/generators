@@ -28,17 +28,22 @@ SOURCES_BINDINGS := src/bindings/base58.c \
 					src/bindings/pearson_hash.c \
 					src/bindings/spitfp.c \
 					src/bindings/tfp.c \
+					src/bindings/tfp_header.c
 
 # HAL specific files
 SOURCES_HAL_RASPBERRY_PI := src/hal_raspberry_pi/hal_raspberry_pi.c \
 							src/hal_raspberry_pi/bcm2835.c \
+							src/hal_raspberry_pi/vcgencmd.c \
+							src/hal_raspberry_pi/utils.c
 
 # TODO: List your used devices here
 SOURCES_DEVICES :=
 
 # TODO: Add your example file below
-SOURCES := example_driver.c \
+SOURCES_EXAMPLE :=
 
+SOURCES := example_driver.c
+SOURCES += $(SOURCES_EXAMPLE)
 SOURCES += $(SOURCES_BINDINGS)
 SOURCES += $(SOURCES_HAL_RASPBERRY_PI)
 SOURCES += $(SOURCES_DEVICES)

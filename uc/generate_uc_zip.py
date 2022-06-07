@@ -141,7 +141,7 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
                 if not folder.startswith('hal_'):
                     continue
 
-                if folder not in ['hal_arduino_esp32', 'hal_arduino_esp32_brick', 'hal_arduino_esp32_ethernet_brick', 'hal_linux', 'hal_null']:
+                if folder not in ['hal_arduino_esp32', 'hal_arduino_esp32_brick', 'hal_arduino_esp32_ethernet_brick', 'hal_linux', 'hal_raspberry_pi', 'hal_null']:
                     continue
 
                 shutil.copytree(os.path.join(root_dir, folder), os.path.join(self.tmp_source_dir, folder))
