@@ -28,6 +28,7 @@ SOURCES_BINDINGS := src/bindings/base58.c \
 					src/bindings/pearson_hash.c \
 					src/bindings/spitfp.c \
 					src/bindings/tfp.c \
+					src/bindings/tfp_header.c
 
 # HAL specific files
 SOURCES_HAL_LINUX := src/hal_linux/hal_linux.c \
@@ -38,8 +39,10 @@ SOURCES_HAL_LINUX := src/hal_linux/hal_linux.c \
 SOURCES_DEVICES :=
 
 # TODO: Add your example file below
-SOURCES := example_driver.c \
+SOURCES_EXAMPLE :=
 
+SOURCES := example_driver.c
+SOURCES += $(SOURCES_EXAMPLE)
 SOURCES += $(SOURCES_BINDINGS)
 SOURCES += $(SOURCES_HAL_LINUX)
 SOURCES += $(SOURCES_DEVICES)

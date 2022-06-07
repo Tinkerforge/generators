@@ -17,7 +17,7 @@
 #include "../bindings/errors.h"
 #include "../bindings/macros.h"
 
-#define TF_PORT(chip_select_pin, port_name) {chip_select_pin, port_name, {._to_init = 0}}
+#define TF_PORT(chip_select_pin, port_name) {chip_select_pin, port_name, -1, {._to_init = 0}}
 
 typedef struct TF_Port {
     // external
@@ -26,6 +26,7 @@ typedef struct TF_Port {
 
     // internal
     int cs_pin_fd;
+    TF_PortCommon port_common;
 } TF_Port;
 
 struct TF_HAL {
