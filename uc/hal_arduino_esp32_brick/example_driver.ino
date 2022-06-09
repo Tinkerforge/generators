@@ -6,6 +6,7 @@
  * Commons Zero (CC0 1.0) License for more details.
  */
 
+#include "src/bindings/config.h"
 #include "src/hal_arduino_esp32_brick/hal_arduino_esp32_brick.h"
 #include "src/bindings/errors.h"
 
@@ -19,7 +20,11 @@ extern "C" void check(int e_code, const char *c) {
         return;
     }
 
+#if TF_IMPLEMENT_STRERROR != 0
     tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
+#else
+    tf_hal_printf("Failed to %s: %d\n", c, e_code);
+#endif
 }
 
 TF_HAL hal;

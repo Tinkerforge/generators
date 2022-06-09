@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 
+#include "src/bindings/config.h"
 #include "src/hal_linux/hal_linux.h"
 #include "src/bindings/errors.h"
 
@@ -51,7 +52,11 @@ void check(int e_code, const char *c) {
         return;
     }
 
+#if TF_IMPLEMENT_STRERROR != 0
     tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
+#else
+    tf_hal_printf("Failed to %s: %d\n", c, e_code);
+#endif
 }
 
 static TF_HAL hal;

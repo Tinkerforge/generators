@@ -8,7 +8,9 @@
 
 #include <stdio.h>
 
+#include "src/bindings/config.h"
 #include "src/hal_null/hal_null.h"
+#include "src/bindings/errors.h"
 
 static TF_Port ports[1] = {
     TF_PORT('A')
@@ -20,9 +22,15 @@ void example_loop(TF_HAL *hal);
 void check(int e_code, const char *c);
 
 void check(int e_code, const char *c) {
-    if (e_code < 0) {
-        tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
+    if (e_code == TF_E_OK) {
+        return;
     }
+
+#if TF_IMPLEMENT_STRERROR != 0
+    tf_hal_printf("Failed to %s: %s (error code %d)\n", c, tf_hal_strerror(e_code), e_code);
+#else
+    tf_hal_printf("Failed to %s: %d\n", c, e_code);
+#endif
 }
 
 static TF_HAL hal;
