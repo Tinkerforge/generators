@@ -1068,7 +1068,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{parameter
         for packet in self.get_packets('function'):
             if packet.has_high_level():
                 functions += uc_format(template, self, packet, -2,
-                                       doc=packet.get_uc_formatted_doc(),
+                                       doc=packet.get_uc_formatted_doc(high_level=True),
                                        parameters=common.wrap_non_empty(', ', packet.get_uc_parameters(high_level=True), ''))
 
         return functions
@@ -1099,7 +1099,7 @@ int tf_{device_under}_register_{packet_under}_callback(TF_{device_camel} *{devic
                 chunk_data_type = stream_out.get_chunk_data_element().get_uc_type('default')
                 stream_name_under = stream_out.get_name().under
                 buffer_param = "{chunk_data_type} *{stream_name_under}, ".format(chunk_data_type=chunk_data_type, stream_name_under=stream_name_under)
-                result.append(uc_format(template, self, packet, -2, doc=packet.get_uc_formatted_doc(), buffer_param=buffer_param))
+                result.append(uc_format(template, self, packet, -2, doc=packet.get_uc_formatted_doc(high_level=True), buffer_param=buffer_param))
 
         return '#if TF_IMPLEMENT_CALLBACKS != 0{}#endif'.format('\n'.join(result))
 
