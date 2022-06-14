@@ -123,7 +123,7 @@ except (ValueError, ImportError):
     def get_python_class(self):
         template = """
 class {0}(Device):
-    \"\"\"
+    r\"\"\"
     {1}
     \"\"\"
 
@@ -175,7 +175,7 @@ class {0}(Device):
     def get_python_init_method(self):
         template = """
     def __init__(self, uid, ipcon):
-        \"\"\"
+        r\"\"\"
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         \"\"\"
@@ -232,21 +232,21 @@ class {0}(Device):
     def get_python_methods(self):
         m_tup = """
     def {0}(self{8}{4}):
-        \"\"\"
+        r\"\"\"
         {10}
         \"\"\"{11}{12}
         return {1}(*self.ipcon.send_request(self, {2}.FUNCTION_{3}, ({4}{9}), '{5}', {6}, '{7}'))
 """
         m_ret = """
     def {0}(self{7}{3}):
-        \"\"\"
+        r\"\"\"
         {9}
         \"\"\"{10}{11}
         return self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{8}), '{4}', {5}, '{6}')
 """
         m_nor = """
     def {0}(self{5}{3}):
-        \"\"\"
+        r\"\"\"
         {7}
         \"\"\"{8}{9}
         self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{6}), '{4}', 0, '')
@@ -292,7 +292,7 @@ class {0}(Device):
         # high-level
         template_stream_in = """
     def {function_name}(self{high_level_parameters}):
-        \"\"\"
+        r\"\"\"
         {doc}
         \"\"\"{coercions}
         if len({stream_name_under}) > {stream_max_length}:
@@ -314,7 +314,7 @@ class {0}(Device):
 """
         template_stream_in_fixed_length = """
     def {function_name}(self{high_level_parameters}):
-        \"\"\"
+        r\"\"\"
         {doc}
         \"\"\"{coercions}
         {stream_name_under}_length = {fixed_length}
@@ -336,7 +336,7 @@ class {0}(Device):
         return {result_camel_name}(*ret)"""
         template_stream_in_short_write = """
     def {function_name}(self{high_level_parameters}):
-        \"\"\"
+        r\"\"\"
         {doc}
         \"\"\"{coercions}
         if len({stream_name_under}) > {stream_max_length}:
@@ -376,7 +376,7 @@ class {0}(Device):
         return {result_camel_name}({result_fields})"""
         template_stream_in_single_chunk = """
     def {function_name}(self{high_level_parameters}):
-        \"\"\"
+        r\"\"\"
         {doc}
         \"\"\"{coercions}
         {stream_name_under}_length = len({stream_name_under})
@@ -395,7 +395,7 @@ class {0}(Device):
         return {result_camel_name}(*self.{function_name}_low_level({parameters}))"""
         template_stream_out = """
     def {function_name}(self{high_level_parameters}):
-        \"\"\"
+        r\"\"\"
         {doc}
         \"\"\"{coercions}{fixed_length}
         with self.stream_lock:
@@ -429,7 +429,7 @@ class {0}(Device):
                 """
         template_stream_out_single_chunk = """
     def {function_name}(self{high_level_parameters}):
-        \"\"\"
+        r\"\"\"
         {doc}
         \"\"\"{coercions}
         ret = self.{function_name}_low_level({parameters})
@@ -589,7 +589,7 @@ class {0}(Device):
 
         return """
     def register_callback(self, callback_id, function):
-        \"\"\"
+        r\"\"\"
         Registers the given *function* with the given *callback_id*.
         \"\"\"
         if function is None:
