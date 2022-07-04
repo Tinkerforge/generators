@@ -21,7 +21,7 @@ com = {
         'de': 'Bestimmt Position, Geschwindigkeit und Höhe mittels GPS'
     },
     'released': True,
-    'documented': False,
+    'documented': True,
     'discontinued': False,
     'features': [
         'device',
