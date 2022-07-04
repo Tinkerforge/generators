@@ -794,4 +794,20 @@ TODO
 }]
 })
 
-
+com['packets'].append({
+'type': 'function',
+'name': 'Get Button Press Boot Time',
+'elements': [('Reset', 'bool', 1, 'in'),
+             ('Button Press Boot Time', 'uint32', 1, 'out')], # Amount of time button was continuously pressed during boot (in ms)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
