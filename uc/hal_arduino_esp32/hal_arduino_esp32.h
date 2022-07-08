@@ -30,8 +30,8 @@ typedef struct TF_Port {
 
 struct TF_HAL {
     SPISettings spi_settings;
-    SPIClass hspi;
-    SPIClass vspi;
+    SPIClass *hspi;
+    SPIClass *vspi;
     TF_Port *ports;
     uint8_t port_count;
     TF_HALCommon hal_common;
