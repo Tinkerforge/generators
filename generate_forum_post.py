@@ -99,7 +99,10 @@ def main():
     sorted_result = []
 
     for binding in BINDINGS_ORDER:
-        sorted_result.append(result[binding])
+        try:
+            sorted_result.append(result[binding])
+        except KeyError:
+            pass
 
     print("""<p><strong>Bindings:
 {0}
