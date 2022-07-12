@@ -8,5 +8,5 @@
 - Add HALs for Arduino, Arduino ESP32, Linux and Raspberry Pi
 - Make example drivers work with TF_IMPLEMENT_STRERROR disabled
 
-2022-07-12: 2.0.3 (<unknown>)
+2022-07-12: 2.0.3 (0e04c77)
 - Fix ESP32 HAL compatibility with Arduino-ESP32 2.0.4
