@@ -77,7 +77,7 @@ def main():
     all_bindings = []
 
     for binding in os.listdir(generators_dir):
-        if not os.path.isdir(binding) or os.path.exists(os.path.join(generators_dir, binding, 'skip_zip_diff')):
+        if not os.path.isdir(os.path.join(generators_dir, binding)) or os.path.exists(os.path.join(generators_dir, binding, 'skip_zip_diff')):
             continue
 
         if binding not in ['.git', '.m2', '.vscode', '__pycache__', 'configs', 'docker']:
@@ -92,6 +92,11 @@ def main():
         except Exception as e:
             print('error: {0}'.format(e))
             return 1
+    else:
+        binding = os.path.relpath(os.getcwd(), generators_dir)
+
+        if binding in all_bindings:
+            active_bindings = set([binding])
 
     if args.prepare:
         for binding in all_bindings:

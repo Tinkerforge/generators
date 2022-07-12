@@ -10,7 +10,9 @@ if sys.hexversion < 0x3040000:
 import os
 import argparse
 
-os.system('pyuic5 -o ui_diff_view.py diff_view.ui')
+generators_dir = os.path.dirname(os.path.realpath(__file__))
+
+os.system('pyuic5 -o {0} {1}'.format(os.path.join(generators_dir, 'ui_diff_view.py'), os.path.join(generators_dir, 'diff_view.ui')))
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow
