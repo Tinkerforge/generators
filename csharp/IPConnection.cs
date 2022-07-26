@@ -2200,6 +2200,22 @@ namespace Tinkerforge
 #endif
 
 			stream = new NetworkStream(socket);
+
+			// make sure that the receive thread can be aborted by
+			// System.Threading.Thread.Abort that results in a
+			// System.Threading.ThreadAbortException being thrown in the thread.
+			// but this exception does not abort calls blocking in unmanaged
+			// code, like the socket receive call. therefore, the receive thread
+			// will just ignore the abort call. in turn this makes
+			// System.AppDomain.Unload calls fail with a
+			// System.CannotUnloadAppDomainException. this affects LabVIEW that
+			// unloads the AppDomain every time a VI is stopped. but LabVIEW
+			// doesn't handle this exception and crashes. avoid all of this by
+			// setting a read timeout so the receive thread doesn't block in
+			// unmanaged code forever and the ThreadAbortException can abort the
+			// receive thread before the Unload call runs into a timeout and
+			// throws an CannotUnloadAppDomainException.
+			stream.ReadTimeout = 100; // milliseconds
 		}
 
 		public void Close()
@@ -2220,7 +2236,31 @@ namespace Tinkerforge
 
 		public int Read(byte[] buffer, int offset, int count)
 		{
-			return stream.Read(buffer, offset, count);
+			while (true)
+			{
+				try
+				{
+					return stream.Read(buffer, offset, count);
+				}
+				catch (IOException e)
+				{
+					// ignore socket timeouts. those are necessary to avoid having
+					// the receive thread blocking in unmanaged code making it
+					// ignore System.Threading.ThreadAbortException. see above for
+					// more details.
+					if (e.InnerException != null && e.InnerException is SocketException)
+					{
+						int error = ((SocketException)e.InnerException).ErrorCode;
+
+						if (error == 10035 /* linux: WSAEWOULDBLOCK */ || error == 10060 /* windows: WSAETIMEDOUT */)
+						{
+							continue;
+						}
+					}
+
+					throw;
+				}
+			}
 		}
 
 		public void Write(byte[] buffer, int offset, int count)
