@@ -350,3 +350,6 @@
 - Add SimpleGetTagID method and MODE_SIMPLE constant to NFC Bricklet API
 - Add Set/GetRTCDriver methods and RTC_DRIVER constants to to HAT Brick API
 - Add .NET 5/6 and .NET Standard 2.0 to NuGet package
+
+<unknown>: 2.1.32 (<unknown>)
+- Fix System.AppDomain.Unload timeout

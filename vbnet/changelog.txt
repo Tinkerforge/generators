@@ -225,3 +225,6 @@
   E-Paper 296x128 Bricklet API
 - Add SimpleGetTagID method and MODE_SIMPLE constant to NFC Bricklet API
 - Add Set/GetRTCDriver methods and RTC_DRIVER constants to to HAT Brick API
+
+<unknown>: 2.1.31 (<unknown>)
+- Fix System.AppDomain.Unload timeout
