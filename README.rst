@@ -20,18 +20,6 @@ generate_all.py:
 copy_all.py:
  * Copies all bindings and documentations to the corresponding places
 
-Requirements
-------------
-
-The generators are written in Python and meant to be executed on Linux. They
-work with Python 2.7. Python 3 will probably not work.
-
-The generators for specific bindings can have extra requirements, typically
-the compilers for compiled languages (the following list is incomplete):
-
-C#:
- * Mono 3.2 or higher (gmcs + runtime)
-
 Usage
 -----
 
