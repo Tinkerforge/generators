@@ -143,7 +143,7 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
             for f in files:
                 shutil.copy(os.path.join(root_dir, f), path)
 
-        output = subprocess.check_output(["go", "fmt"], cwd=self.tmp_bindings_dir, stderr=subprocess.STDOUT).decode('utf-8').strip()
+        output = subprocess.check_output(["gofmt", "-w", "."], cwd=self.tmp_bindings_dir, stderr=subprocess.STDOUT).decode('utf-8').strip()
 
         if len(output) > 0:
             print("Got the following output from go fmt:")
