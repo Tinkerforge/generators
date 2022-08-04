@@ -187,7 +187,7 @@ func (device *Device) SetHighLevel(lowLevelClosure func(uint64, uint64, []byte) 
 	}
 	writtenSum := uint64(0)
 	for {
-		toWrite := MinU(uint64(chunkOffset+chunkLenInBit), uint64(length))
+		toWrite := MinU(uint64(chunkOffset+chunkLenInBit), uint64(length)*elementSizeInBit)
 		result, err := lowLevelClosure(length, chunkOffset, payload[chunkOffset/8:toWrite/8])
 		if err != nil {
 			return result, err
