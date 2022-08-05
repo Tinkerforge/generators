@@ -513,6 +513,8 @@ class MQTTBindings:
                     payload = ". \n\tPayload was: " + repr(json_args)
 
                 return json_error("Could not parse payload for {} call of {} {} as JSON: {}{}".format(fnName, device_name, uid, str(e), payload))
+        else:
+            obj = {}
 
         function_id, direction, high_level_roles_in, high_level_roles_out, \
             low_level_roles_in, low_level_roles_out, arg_names, arg_types, arg_symbols, \
