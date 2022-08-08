@@ -77,6 +77,6 @@
 - Add SimpleGetTagID function and ModeSimple constant to NFC Bricklet API
 - Add Set/GetRTCDriver functions and RTCDriver constants to HAT Brick API
 
-2022-08-08: 2.0.13 (<unknown>)
+2022-08-08: 2.0.13 (72492b3)
 - Fix streaming setter payload length calculation
 - Convert to Go module
