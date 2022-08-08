@@ -110,6 +110,7 @@ class GoZipGenerator(go_common.GoGeneratorTrait, common.ZipGenerator):
                     "ipcon_handle.go"
                 ],
                 "": [
+                    "go.mod",
                     "doc.go"
                 ]
             }
