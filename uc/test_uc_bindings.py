@@ -172,19 +172,19 @@ class UCExamplesTester(common.Tester):
         args = []
 
         if self.compiler == 'gcc':
-            args += ['gcc', '-std=c99', '-pthread', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded']
+            args += ['gcc', '-std=c99', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded']
         elif self.compiler == 'g++':
-            args += ['g++', '-std=c++98', '-pthread', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-extensions']
+            args += ['g++', '-std=c++98', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-extensions']
         elif self.compiler == 'mingw32-gcc':
             args += ['x86_64-w64-mingw32-gcc', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded']
         elif self.compiler == 'mingw32-g++':
             args += ['x86_64-w64-mingw32-g++', '-Wall', '-Wextra']
         elif self.compiler == 'clang':
-            args += ['clang', '-std=c99', '-pthread', '-Weverything', '-Wno-padded', '-Wno-declaration-after-statement']
+            args += ['clang', '-std=c99', '-Weverything', '-Wno-padded', '-Wno-declaration-after-statement']
         elif self.compiler == 'clang++':
-            args += ['clang++', '-std=c++98', '-pthread', '-Weverything', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-designator']
+            args += ['clang++', '-std=c++98', '-Weverything', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-designator']
         elif self.compiler == 'scan-build clang':
-            args += ['scan-build', 'clang', '-std=c99', '-pthread']
+            args += ['scan-build', 'clang', '-std=c99']
         else:
             raise common.GeneratorError('Invalid compiler ' + self.compiler)
 
