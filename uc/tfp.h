@@ -17,6 +17,7 @@
 #include "macros.h"
 #include "packet_buffer.h"
 #include "tfp_header.h"
+#include "config.h"
 
 #ifdef __cplusplus
 extern "C" {
