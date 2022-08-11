@@ -172,13 +172,13 @@ class UCExamplesTester(common.Tester):
         args = []
 
         if self.compiler == 'gcc':
-            args += ['gcc', '-std=c99', '-pthread']
+            args += ['gcc', '-std=c99', '-pthread', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded']
         elif self.compiler == 'g++':
-            args += ['g++', '-std=c++98', '-pthread']
+            args += ['g++', '-std=c++98', '-pthread', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-extensions']
         elif self.compiler == 'mingw32-gcc':
-            args += ['x86_64-w64-mingw32-gcc']
+            args += ['x86_64-w64-mingw32-gcc', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded']
         elif self.compiler == 'mingw32-g++':
-            args += ['x86_64-w64-mingw32-g++']
+            args += ['x86_64-w64-mingw32-g++', '-Wall', '-Wextra']
         elif self.compiler == 'clang':
             args += ['clang', '-std=c99', '-pthread', '-Weverything', '-Wno-padded', '-Wno-declaration-after-statement']
         elif self.compiler == 'scan-build clang':
