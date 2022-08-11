@@ -71,7 +71,7 @@ class UCExamplesTester(common.Tester):
 
         with common.ChangedDirectory(tmp_dir):
             print('>>> building libuc.so')
-            args = ['clang', '-ggdb', '-std=c99', '-shared', '-pthread', '-fPIC', '-I', 'src', '-o', 'libuc.so', 'src/hal_null/hal_null.c']
+            args = ['clang', '-ggdb', '-std=c99', '-DTF_NET_ENABLE=1', '-shared', '-pthread', '-fPIC', '-I', 'src', '-o', 'libuc.so', 'src/hal_null/hal_null.c', 'src/net_null/net_null.c']
             args += glob.glob(os.path.join(tmp_dir, 'src/bindings/*.c'))
 
             common.execute(args)
@@ -172,19 +172,19 @@ class UCExamplesTester(common.Tester):
         args = []
 
         if self.compiler == 'gcc':
-            args += ['gcc', '-std=c99', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded']
+            args += ['gcc', '-std=c99', '-DTF_NET_ENABLE=1', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded']
         elif self.compiler == 'g++':
-            args += ['g++', '-std=c++98', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-extensions']
+            args += ['g++', '-std=c++98', '-DTF_NET_ENABLE=1', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-extensions']
         elif self.compiler == 'mingw32-gcc':
-            args += ['x86_64-w64-mingw32-gcc', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded']
+            args += ['x86_64-w64-mingw32-gcc', '-DTF_NET_ENABLE=1', '-Wall', '-Wextra', '-Wpedantic', '-Wno-padded']
         elif self.compiler == 'mingw32-g++':
-            args += ['x86_64-w64-mingw32-g++', '-Wall', '-Wextra']
+            args += ['x86_64-w64-mingw32-g++', '-DTF_NET_ENABLE=1', '-Wall', '-Wextra']
         elif self.compiler == 'clang':
-            args += ['clang', '-std=c99', '-Weverything', '-Wno-padded', '-Wno-declaration-after-statement']
+            args += ['clang', '-std=c99', '-DTF_NET_ENABLE=1', '-Weverything', '-Wno-padded', '-Wno-declaration-after-statement']
         elif self.compiler == 'clang++':
-            args += ['clang++', '-std=c++98', '-Weverything', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-designator']
+            args += ['clang++', '-std=c++98', '-DTF_NET_ENABLE=1', '-Weverything', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-designator']
         elif self.compiler == 'scan-build clang':
-            args += ['scan-build', 'clang', '-std=c99']
+            args += ['scan-build', 'clang', '-DTF_NET_ENABLE=1', '-std=c99']
         else:
             raise common.GeneratorError('Invalid compiler ' + self.compiler)
 
@@ -207,7 +207,8 @@ class UCExamplesTester(common.Tester):
                  os.path.join(tmp_dir, 'src/bindings/tfp.c'),
                  os.path.join(tmp_dir, 'src/bindings/tfp_header.c'),
                  os.path.join(tmp_dir, 'src/hal_null/hal_null.c'),
-                 os.path.join(tmp_dir, 'src/hal_null/example_driver.c')]
+                 os.path.join(tmp_dir, 'src/hal_null/example_driver.c'),
+                 os.path.join(tmp_dir, 'src/net_null/net_null.c'),]
 
         if len(device) > 0:
             args.append(device)
