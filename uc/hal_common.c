@@ -418,7 +418,13 @@ static TF_TFPHeader enumerate_request_header = {
 
 int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
 #if TF_NET_ENABLE != 0
+    // Calculate deadline here to include the callback_tick execution time.
     uint32_t deadline_us = tf_hal_current_time_us(hal) + timeout_us;
+#endif
+
+    tf_hal_callback_tick(hal, timeout_us);
+
+#if TF_NET_ENABLE != 0
     TF_HALCommon *hal_common = tf_hal_get_common(hal);
     TF_Net *net = hal_common->net;
     uint8_t ignored_error_code;
@@ -525,8 +531,6 @@ int tf_hal_tick(TF_HAL *hal, uint32_t timeout_us) {
         }
     }
 #endif
-
-    tf_hal_callback_tick(hal, timeout_us);
 
     return TF_E_OK;
 }
