@@ -181,6 +181,8 @@ class UCExamplesTester(common.Tester):
             args += ['x86_64-w64-mingw32-g++', '-Wall', '-Wextra']
         elif self.compiler == 'clang':
             args += ['clang', '-std=c99', '-pthread', '-Weverything', '-Wno-padded', '-Wno-declaration-after-statement']
+        elif self.compiler == 'clang++':
+            args += ['clang++', '-std=c++98', '-pthread', '-Weverything', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-designator']
         elif self.compiler == 'scan-build clang':
             args += ['scan-build', 'clang', '-std=c99', '-pthread']
         else:
@@ -232,6 +234,9 @@ def test(root_dir):
     extra_paths = []
 
     if not UCExamplesTester(root_dir, 'clang', extra_paths, True).run():
+        return False
+
+    if not UCExamplesTester(root_dir, 'clang++', extra_paths, True).run():
         return False
 
     if not UCExamplesTester(root_dir, 'gcc', extra_paths, False).run():
