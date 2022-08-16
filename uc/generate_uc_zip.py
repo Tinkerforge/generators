@@ -145,6 +145,8 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
 
                 shutil.copytree(os.path.join(root_dir, folder), os.path.join(self.tmp_source_dir, folder))
 
+            shutil.copytree(os.path.join(root_dir, "net_null"), os.path.join(self.tmp_source_dir, "net_null"))
+
             shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
             shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
