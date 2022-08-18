@@ -195,6 +195,8 @@ const (
                 read_results.append("{ret_name} = rune({buf}.Next(1)[0])".format(buf=bufferName, ret_name=elem.get_go_name()))
             elif "rune" in elem.get_go_type():
                 read_results.append("copy({ret_name}[:], ByteSliceTo{type}Slice({buf}.Next({len})))".format(buf=bufferName, ret_name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), len=elem.get_cardinality()))
+            elif "bool" in elem.get_go_type() and elem.get_cardinality() > 1:
+                read_results.append("copy({ret_name}[:], ByteSliceTo{type}Slice({buf}.Next({len})))".format(buf=bufferName, ret_name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), len=math.ceil(elem.get_cardinality() / 8)))
             elif elem.get_go_type() == "string":
                 read_results.append("{ret_name} = ByteSliceTo{type}({buf}.Next({len}))".format(buf=bufferName, ret_name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), len=elem.get_cardinality()))
             else:
