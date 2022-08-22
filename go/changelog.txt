@@ -81,5 +81,5 @@
 - Fix streaming setter payload length calculation
 - Convert to Go module
 
-2022-08-22: 2.0.14 (<unknown>)
+2022-08-22: 2.0.14 (ee02315)
 - Fix bool arrays in getters
