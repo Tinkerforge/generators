@@ -683,7 +683,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Control Pilot Configuration',
 'elements': [('Control Pilot', 'uint8', 1, 'in', {'constant_group': 'Control Pilot'}),
-             ('Control Pilot State', 'bool', 1, 'out')], # True if CP is physically connected, False otherwise
+             ('Control Pilot Connected', 'bool', 1, 'out')], # True if CP is physically connected, False otherwise
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -701,7 +701,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Control Pilot Configuration',
 'elements': [('Control Pilot', 'uint8', 1, 'out', {'constant_group': 'Control Pilot'}),
-             ('Control Pilot State', 'bool', 1, 'out')], # True if CP is physically connected, False otherwise
+             ('Control Pilot Connected', 'bool', 1, 'out')], # True if CP is physically connected, False otherwise
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -764,7 +764,7 @@ com['packets'].append({
              ('Button Release Time', 'uint32', 1, 'out'),
              ('Button Pressed', 'bool', 1, 'out'),
              ('Control Pilot', 'uint8', 1, 'out', {'constant_group': 'Control Pilot'}),
-             ('Control Pilot State', 'bool', 1, 'out'),
+             ('Control Pilot Connected', 'bool', 1, 'out'),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
