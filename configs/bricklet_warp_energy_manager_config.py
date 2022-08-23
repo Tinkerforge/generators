@@ -243,40 +243,6 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Input Configuration',
-'elements': [('Input Configuration', 'uint8', 2, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Get Input Configuration',
-'elements': [('Input Configuration', 'uint8', 2, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': 'Get Input Voltage',
 'elements': [('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'})],
 'since_firmware': [1, 0, 0],
@@ -325,7 +291,6 @@ com['packets'].append({
              ('Error Count', 'uint32', 6, 'out'),
              ('Input', 'bool', 2, 'out'),
              ('Output', 'bool', 1, 'out'),
-             ('Input Configuration', 'uint8', 2, 'out'),
              ('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
              ('Contactor Check State', 'uint8', 1, 'out')
 ],
