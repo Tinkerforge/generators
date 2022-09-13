@@ -337,9 +337,12 @@ def main():
             elif git.endswith('-extension'):
                 category = 'extensions'
                 device = '_'.join(git.split('-')[:-1])
-            elif git.endswith('-powersupply') or git.endswith('-power-supply'):
+            elif git.endswith('-powersupply'):
                 category = 'power_supplies'
                 device = '_'.join(git.split('-')[:-1])
+            elif git.endswith('-power-supply'):
+                category = 'power_supplies'
+                device = '_'.join(git.split('-')[:-2])
             else:
                 category = 'accessories'
                 device = git.replace('-', '_')
