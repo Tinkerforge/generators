@@ -620,25 +620,37 @@ class ExtensionSocket extends Socket
 {
     private $handle = FALSE;
 
-    function __construct($address, $port)
+    function __construct($host, $port)
     {
-        $this->handle = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        $fixed_host = $host;
+
+        if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $fixed_host = "[$host]";
+        }
+
+        $addrinfos = @socket_addrinfo_lookup($host, strval($port), array("ai_socktype" => SOCK_STREAM, "ai_protocol" => 6 /* IPPROTO_TCP */));
+
+        if ($addrinfos === FALSE) {
+            throw new \Exception("Could not lookup $fixed_host:$port: " .
+                                 socket_strerror(socket_last_error()));
+        }
+
+        $this->handle = FALSE;
+
+        foreach ($addrinfos as $addrinfo) {
+            $this->handle = @socket_addrinfo_connect($addrinfo);
+
+            if ($this->handle !== FALSE) {
+                break;
+            }
+        }
 
         if ($this->handle === FALSE) {
-            throw new \Exception('Could not create socket: ' .
+            throw new \Exception("Could not connect to $fixed_host:$port: " .
                                  socket_strerror(socket_last_error()));
         }
 
         @socket_set_option($this->handle, SOL_TCP, TCP_NODELAY, 1);
-
-        if (!@socket_connect($this->handle, $address, $port)) {
-            $error = socket_strerror(socket_last_error($this->handle));
-
-            socket_close($this->handle);
-            $this->handle = FALSE;
-
-            throw new \Exception("Could not connect socket: $error");
-        }
     }
 
     function __destruct()
@@ -711,13 +723,19 @@ class StreamSocket extends Socket
 {
     private $handle = FALSE;
 
-    function __construct($address, $port)
+    function __construct($host, $port)
     {
+        $fixed_host = $host;
+
+        if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $fixed_host = "[$host]";
+        }
+
         // FIXME: stream sockets don't support TCP_NODELAY, see https://bugs.php.net/bug.php?id=51879
-        $this->handle = stream_socket_client("tcp://$address:$port", $errno, $message);
+        $this->handle = stream_socket_client("tcp://$fixed_host:$port", $errno, $message);
 
         if ($this->handle === FALSE) {
-            throw new \Exception("Could not connect socket: $message");
+            throw new \Exception("Could not connect to $host:$port: $message");
         }
     }
 
@@ -881,22 +899,10 @@ class IPConnection
         $this->host = $host;
         $this->port = $port;
 
-        $address = '';
-
-        if (preg_match('/^\d+\.\d+\.\d+\.\d+$/', $host) === 0) {
-            $address = gethostbyname($host);
-
-            if ($address === $host) {
-                throw new \Exception('Could not resolve hostname');
-            }
-        } else {
-            $address = $host;
-        }
-
         if (extension_loaded('sockets')) {
-            $this->socket = new ExtensionSocket($address, $port);
+            $this->socket = new ExtensionSocket($host, $port);
         } else {
-            $this->socket = new StreamSocket($address, $port);
+            $this->socket = new StreamSocket($host, $port);
         }
 
         if (array_key_exists(self::CALLBACK_CONNECTED, $this->registered_callbacks)) {
