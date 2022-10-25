@@ -22,7 +22,7 @@ com = {
     },
     'released': True,
     'documented': True,
-    'discontinued': False, # selling remaining stock, replaced by RGB LED Bricklet 2.0
+    'discontinued': True, # replaced by RGB LED Bricklet 2.0
     'features': [
         'device',
         'bricklet_get_identity'
