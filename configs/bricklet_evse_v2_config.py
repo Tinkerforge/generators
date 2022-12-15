@@ -681,9 +681,8 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Control Pilot Configuration',
-'elements': [('Control Pilot', 'uint8', 1, 'in', {'constant_group': 'Control Pilot'}),
-             ('Control Pilot Connected', 'bool', 1, 'out')], # True if CP is physically connected, False otherwise
+'name': 'Set EV Wakeup',
+'elements': [('EV Wakeup Enabled', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -699,9 +698,43 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Control Pilot Configuration',
-'elements': [('Control Pilot', 'uint8', 1, 'out', {'constant_group': 'Control Pilot'}),
-             ('Control Pilot Connected', 'bool', 1, 'out')], # True if CP is physically connected, False otherwise
+'name': 'Get EV Wakuep',
+'elements': [('EV Wakeup Enabled', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Control Pilot Disconnect',
+'elements': [('Control Pilot Disconnect', 'bool', 1, 'in'),
+             ('Is Control Pilot Disconnect', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Control Pilot Disconnect',
+'elements': [('Control Pilot Disconnect', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -763,8 +796,9 @@ com['packets'].append({
              ('Button Press Time', 'uint32', 1, 'out'),
              ('Button Release Time', 'uint32', 1, 'out'),
              ('Button Pressed', 'bool', 1, 'out'),
-             ('Control Pilot', 'uint8', 1, 'out', {'constant_group': 'Control Pilot'}),
-             ('Control Pilot Connected', 'bool', 1, 'out'),
+             ('EV Wakeup Enabled', 'bool', 1, 'out'),
+             ('Control Pilot Disconnected', 'bool', 1, 'out'),
+             ('Boost Mode Enabled', 'bool', 1, 'out'),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -802,6 +836,40 @@ com['packets'].append({
 'name': 'Get Button Press Boot Time',
 'elements': [('Reset', 'bool', 1, 'in'),
              ('Button Press Boot Time', 'uint32', 1, 'out')], # Amount of time button was continuously pressed during boot (in ms)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Boost Mode',
+'elements': [('Boost Mode Enabled', 'bool', 1, 'in')], # default False
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Boost Mode',
+'elements': [('Boost Mode Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
