@@ -532,7 +532,8 @@ com['packets'].append({
 
              ('Button Press Time', 'uint32', 1, 'out'),
              ('Button Release Time', 'uint32', 1, 'out'),
-             ('Button Pressed', 'bool', 1, 'out')],
+             ('Button Pressed', 'bool', 1, 'out'),
+             ('Boost Mode Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -565,4 +566,36 @@ TODO
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Boost Mode',
+'elements': [('Boost Mode Enabled', 'bool', 1, 'in')], # default False
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
 
+com['packets'].append({
+'type': 'function',
+'name': 'Get Boost Mode',
+'elements': [('Boost Mode Enabled', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
