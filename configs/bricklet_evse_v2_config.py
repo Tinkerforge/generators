@@ -797,7 +797,7 @@ com['packets'].append({
              ('Button Release Time', 'uint32', 1, 'out'),
              ('Button Pressed', 'bool', 1, 'out'),
              ('EV Wakeup Enabled', 'bool', 1, 'out'),
-             ('Control Pilot Disconnected', 'bool', 1, 'out'),
+             ('Control Pilot Disconnect', 'bool', 1, 'out'),
              ('Boost Mode Enabled', 'bool', 1, 'out'),
 ],
 'since_firmware': [1, 0, 0],
