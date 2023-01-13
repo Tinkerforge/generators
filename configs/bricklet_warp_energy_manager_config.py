@@ -47,7 +47,7 @@ com['constant_groups'].append({
 com['packets'].append({
 'type': 'function',
 'name': 'Set Contactor',
-'elements': [('Value', 'bool', 1, 'in', {})],
+'elements': [('Contactor Value', 'bool', 1, 'in', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -64,7 +64,7 @@ TBD
 com['packets'].append({
 'type': 'function',
 'name': 'Get Contactor',
-'elements': [('Value', 'bool', 1, 'out', {})],
+'elements': [('Contactor Value', 'bool', 1, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -279,7 +279,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data 1',
-'elements': [('Value', 'bool', 1, 'out', {}),
+'elements': [('Contactor Value', 'bool', 1, 'out', {}),
              ('R', 'uint8', 1, 'out', {}),
              ('G', 'uint8', 1, 'out', {}),
              ('B', 'uint8', 1, 'out', {}),
