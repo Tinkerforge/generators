@@ -176,23 +176,6 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Reset Energy Meter Relative Energy',
-'elements': [],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': 'Get Input',
 'elements': [('Input', 'bool', 2, 'out')],
 'since_firmware': [1, 0, 0],
