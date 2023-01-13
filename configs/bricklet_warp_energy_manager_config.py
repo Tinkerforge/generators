@@ -119,11 +119,9 @@ Gibt die *r*, *g* und *b* Werte der LED zurück, wie von :func:`Set RGB Value` g
 com['packets'].append({
 'type': 'function',
 'name': 'Get Energy Meter Values',
-'elements': [('Power', 'float', 1, 'out'),            # W
-             ('Energy Relative', 'float', 1, 'out'),  # Wh
-             ('Energy Absolute', 'float', 1, 'out'),  # Wh
-             ('Phases Active', 'bool', 3, 'out'),
-             ('Phases Connected', 'bool', 3, 'out')],
+'elements': [('Power', 'float', 1, 'out'),          # W
+             ('Energy Import', 'float', 1, 'out'),  # Wh
+             ('Energy Export', 'float', 1, 'out')], # Wh
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -267,10 +265,8 @@ com['packets'].append({
              ('G', 'uint8', 1, 'out', {}),
              ('B', 'uint8', 1, 'out', {}),
              ('Power', 'float', 1, 'out'),            # W
-             ('Energy Relative', 'float', 1, 'out'),  # Wh
-             ('Energy Absolute', 'float', 1, 'out'),  # Wh
-             ('Phases Active', 'bool', 3, 'out'),
-             ('Phases Connected', 'bool', 3, 'out'),
+             ('Energy Import', 'float', 1, 'out'),  # Wh
+             ('Energy Export', 'float', 1, 'out'),  # Wh
              ('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'}),
              ('Error Count', 'uint32', 6, 'out'),
              ('Input', 'bool', 2, 'out'),
