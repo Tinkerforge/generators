@@ -286,3 +286,75 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get SD Information',
+'elements': [('SD Status', 'uint32', 1, 'out'),
+             ('LFS Status', 'uint32', 1, 'out'),
+             ('Sector Size', 'uint16', 1, 'out'),
+             ('Sector Count', 'uint32', 1, 'out'),
+             ('Card Type', 'uint32', 1, 'out'),
+             ('Product Rev', 'uint8', 1, 'out'),
+             ('Product Name', 'char', 5, 'out'),
+             ('Manufacturer ID', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set SD Wallbox Data Point',
+'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in'),
+             ('Day', 'uint8', 1, 'in'),
+             ('Hour', 'uint8', 1, 'in'),
+             ('Minute', 'uint8', 1, 'in'), # 5 minute interval
+             ('Flags', 'uint8', 1, 'in'), # IEC_STATE (bit 0-2) + future use
+             ('Power', 'uint16', 1, 'in')], # W
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get SD Wallbox Data Point',
+'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in'),
+             ('Day', 'uint8', 1, 'in'),
+             ('Hour', 'uint8', 1, 'in'),
+             ('Minute', 'uint8', 1, 'in'), # 5 minute interval (0, 5, .., 50, 55).
+             ('Flags', 'uint8', 1, 'out'), # IEC_STATE (bit 0-2) + future use
+             ('Power', 'uint16', 1, 'out')], # W
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
