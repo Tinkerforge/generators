@@ -100,7 +100,16 @@ class PacketBuffer():
         while len(self.data) > 0:
             packet_len = self.data[0]
             if packet_len < 3 or packet_len > 83:
+                start_time = self.frame_start_times[0]
+                end_time = self.frame_end_times[0]
                 self.remove(1)
+                if packet_len != 0:
+                    return AnalyzerFrame('Unexpected', start_time, end_time, {
+                            'input_type': frame_type,
+                            'length': packet_len,
+                            'payload': str(packet_len)
+                        }
+                    )
                 continue
 
             if packet_len > len(self.data):
@@ -113,7 +122,15 @@ class PacketBuffer():
                 real_checksum = pearson[real_checksum ^ byte]
 
             if real_checksum != packet_checksum:
+                start_time = self.frame_start_times[0]
+                end_time = self.frame_end_times[0]
                 self.remove(1)
+                return AnalyzerFrame('Wrong Checksum', start_time, end_time, {
+                            'input_type': frame_type,
+                            'length': packet_len,
+                            'payload': str(packet_len)
+                        }
+                    )
                 continue
 
             seq_num = self.data[1] & 0x0F
@@ -218,8 +235,14 @@ class Hla(HighLevelAnalyzer):
             'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}], Checksum: {{data.checksum}}'
         },
         'Invalid': {
-            'format': 'SPITFP [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}], (Invalid!) SPITFP payload[{{data.payload}}] Checksum: {{data.checksum}}'
-        }
+            'format': 'ERROR INVALID [Len: {{data.length}}, SeqNum: {{data.seq_num}}, ACK: {{data.seq_num_acked}}], (Invalid!) SPITFP payload[{{data.payload}}] Checksum: {{data.checksum}}'
+        },
+        'Unexpected': {
+            'format': 'ERROR UNEXPECTED'
+        },
+        'Wrong Checksum': {
+            'format': 'ERROR WRONG CHECKSUM OR UNEXPECTED BYTE'
+        },
     }
 
     def __init__(self):
