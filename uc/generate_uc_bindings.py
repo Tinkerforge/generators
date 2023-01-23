@@ -422,6 +422,12 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
     }}
 """
 
+        template_ignore_response = """
+    if (_result & TF_TICK_PACKET_RECEIVED) {{
+        tf_tfp_packet_processed({device_under}->tfp);
+    }}
+"""
+
         for packet in self.get_packets('function'):
             params = common.wrap_non_empty(', ', packet.get_uc_parameters(), '')
             fid = uc_format('{device_upper}_FUNCTION_{packet_upper}', self, packet)
@@ -441,7 +447,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
                                              response_size=response_size,
                                              response_assignments='\n            '.join(return_list))
             else:
-                extract_response = ''
+                extract_response = uc_format(template_ignore_response, self)
                 needs_i2 = False
 
             if needs_i or needs_i2:
