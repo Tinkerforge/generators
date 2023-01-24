@@ -391,7 +391,7 @@ int tf_tfp_callback_tick(TF_TFP *tfp, uint32_t deadline_us) {
         if (result & TF_TICK_PACKET_RECEIVED) {
             // handle possible callback packet
             uint8_t error_code, length;
-            tf_tfp_filter_received_packet(tfp, false, &error_code, &length);
+            tf_tfp_filter_received_packet(tfp, true, &error_code, &length);
         }
 
         if (result & TF_TICK_PACKET_SENT) {
