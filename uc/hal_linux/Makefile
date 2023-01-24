@@ -27,6 +27,7 @@ SOURCES_BINDINGS := src/bindings/base58.c \
 					src/bindings/packet_buffer.c \
 					src/bindings/pearson_hash.c \
 					src/bindings/spitfp.c \
+					src/bindings/streaming.c \
 					src/bindings/tfp.c \
 					src/bindings/tfp_header.c
 
