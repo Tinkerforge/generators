@@ -379,7 +379,7 @@ int tf_spitfp_tick(TF_SPITFP *spitfp, uint32_t deadline_us) {
 
         case STATE_TRANSCEIVE: {
             uint8_t seq_num = m->info.transceive.seq_num_to_send;
-            int result = tf_spitfp_transceive_packet(spitfp,  m->info.transceive.bytes_to_send, & m->info.transceive.send_buf_offset);
+            int result = tf_spitfp_transceive_packet(spitfp,  m->info.transceive.bytes_to_send, &m->info.transceive.send_buf_offset);
 
             if (result < 0) {
                 return result;
