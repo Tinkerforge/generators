@@ -346,6 +346,10 @@ int tf_tfp_finish_send(TF_TFP *tfp, int previous_result, uint32_t deadline_us) {
     // the TF_TICK_AGAIN flag set.
     tfp->spitfp->send_buf[0] = 0;
 
+    // Also make sure we are not waiting for a packet anymore (in case of timeout).
+    tfp->waiting_for_fid = 0;
+    tfp->waiting_for_seq_num = 0;
+
     return (result & TF_TICK_AGAIN) ? TF_E_TIMEOUT : 0;
 }
 
