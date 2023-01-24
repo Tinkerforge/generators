@@ -399,7 +399,7 @@ int tf_spitfp_tick(TF_SPITFP *spitfp, uint32_t deadline_us) {
 
             if (result & TRANSCEIVE_PACKET_RECEIVED) {
                 m->info.transceive.packet_received = true;
-                return TF_TICK_AGAIN | tf_spitfp_filter_duplicates(spitfp);
+                return TF_TICK_AGAIN | TF_TICK_IN_TRANSCEIVE | tf_spitfp_filter_duplicates(spitfp);
             }
 
             if (result & TRANSCEIVE_PACKET_SENT) {

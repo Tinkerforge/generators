@@ -390,10 +390,14 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
         return _result;
     }}
 
+    {extract_response}
+
     if (_result & TF_TICK_TIMEOUT) {{
+        _result = tf_tfp_finish_send({device_under}->tfp, _result, _deadline);
+        (void) _result;
         return TF_E_TIMEOUT;
     }}
-{extract_response}
+
     _result = tf_tfp_finish_send({device_under}->tfp, _result, _deadline);
 
     if (_error_code == 0 && _length != {response_size}) {{
