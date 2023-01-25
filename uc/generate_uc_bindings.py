@@ -384,7 +384,7 @@ int tf_{device_under}_{packet_under}(TF_{device_camel} *{device_under}{params}) 
 
     uint8_t _error_code = 0;
     uint8_t _length = 0;
-    int _result = tf_tfp_send_packet({device_under}->tfp, _response_expected, _deadline, &_error_code, &_length);
+    int _result = tf_tfp_send_packet({device_under}->tfp, _response_expected, _deadline, &_error_code, &_length, TF_NEW_PACKET);
 
     if (_result < 0) {{
         return _result;
