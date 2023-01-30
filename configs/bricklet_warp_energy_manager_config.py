@@ -44,6 +44,15 @@ com['constant_groups'].append({
               ('SDM72CTM', 4)]
 })
 
+com['constant_groups'].append({
+'name': 'Data Status',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('SD Error', 1),
+              ('LFS Error', 2),
+              ('Queue Full', 3)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set Contactor',
@@ -321,7 +330,34 @@ com['packets'].append({
              ('Hour', 'uint8', 1, 'in'),
              ('Minute', 'uint8', 1, 'in'), # 5 minute interval
              ('Flags', 'uint8', 1, 'in'), # IEC_STATE (bit 0-2) + future use
-             ('Power', 'uint16', 1, 'in')], # W
+             ('Power', 'uint16', 1, 'in'), # W
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+# Triggers SD Wallbox Data callback
+# Only access one day at a time! 
+com['packets'].append({
+'type': 'function',
+'name': 'Get SD Wallbox Data Points',
+'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in'),
+             ('Day', 'uint8', 1, 'in'),
+             ('Hour', 'uint8', 1, 'in'),
+             ('Minute', 'uint8', 1, 'in'), # 5 minute interval (0, 5, .., 50, 55).
+             ('Amount', 'uint16', 1, 'in'), # 288 for one year
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -336,18 +372,14 @@ TODO
 })
 
 com['packets'].append({
-'type': 'function',
-'name': 'Get SD Wallbox Data Point',
-'elements': [('Wallbox ID', 'uint8', 1, 'in'),
-             ('Year', 'uint8', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
-             ('Hour', 'uint8', 1, 'in'),
-             ('Minute', 'uint8', 1, 'in'), # 5 minute interval (0, 5, .., 50, 55).
-             ('Flags', 'uint8', 1, 'out'), # IEC_STATE (bit 0-2) + future use
-             ('Power', 'uint16', 1, 'out')], # W
+'type': 'callback',
+'name': 'SD Wallbox Data Points Low Level',
+'elements': [('Data Length', 'uint16', 1, 'out', {}),
+             ('Data Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Data Chunk Data', 'uint8', 60, 'out', {})],
+'high_level': {'stream_out': {'name': 'Data'}},
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['c', {
 'en':
 """
 TODO
