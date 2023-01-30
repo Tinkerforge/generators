@@ -470,8 +470,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set SD Energy Manager Daily Data Point',
-'elements': [('Wallbox ID', 'uint8', 1, 'in'),
-             ('Year', 'uint8', 1, 'in'),
+'elements': [('Year', 'uint8', 1, 'in'),
              ('Month', 'uint8', 1, 'in'),
              ('Day', 'uint8', 1, 'in'),
              ('Energy Grid In', 'uint32', 1, 'in'),
@@ -497,8 +496,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get SD Energy Manager Daily Data Points',
-'elements': [('Wallbox ID', 'uint8', 1, 'in'),
-             ('Year', 'uint8', 1, 'in'),
+'elements': [('Year', 'uint8', 1, 'in'),
              ('Month', 'uint8', 1, 'in'),
              ('Day', 'uint8', 1, 'in'),
              ('Amount', 'uint8', 1, 'in'),
