@@ -356,7 +356,152 @@ com['packets'].append({
              ('Day', 'uint8', 1, 'in'),
              ('Hour', 'uint8', 1, 'in'),
              ('Minute', 'uint8', 1, 'in'), # 5 minute interval (0, 5, .., 50, 55).
-             ('Amount', 'uint16', 1, 'in'), # 288 for one year
+             ('Amount', 'uint16', 1, 'in'), # 288 for one day
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set SD Wallbox Daily Data Point',
+'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in'),
+             ('Day', 'uint8', 1, 'in'),
+             ('Energy', 'uint32', 1, 'in'),
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+# Triggers SD Wallbox Daily Data callback
+# Only access one month at a time! 
+com['packets'].append({
+'type': 'function',
+'name': 'Get SD Wallbox Daily Data Points',
+'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in'),
+             ('Day', 'uint8', 1, 'in'),
+             ('Amount', 'uint8', 1, 'in'),
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set SD Energy Manager Data Point',
+'elements': [('Year', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in'),
+             ('Day', 'uint8', 1, 'in'),
+             ('Hour', 'uint8', 1, 'in'),
+             ('Minute', 'uint8', 1, 'in'), # 5 minute interval
+             ('Flags', 'uint8', 1, 'in'), #
+             ('Power Grid', 'int32', 1, 'in'), # W
+             ('Power General', 'int32', 6, 'in'), # W
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+# Triggers SD Energy Manager Data callback
+# Only access one day at a time! 
+com['packets'].append({
+'type': 'function',
+'name': 'Get SD Energy Manager Data Points',
+'elements': [('Year', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in'),
+             ('Day', 'uint8', 1, 'in'),
+             ('Hour', 'uint8', 1, 'in'),
+             ('Minute', 'uint8', 1, 'in'), # 5 minute interval (0, 5, .., 50, 55).
+             ('Amount', 'uint16', 1, 'in'), # 288 for one day
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set SD Energy Manager Daily Data Point',
+'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in'),
+             ('Day', 'uint8', 1, 'in'),
+             ('Energy Grid In', 'uint32', 1, 'in'),
+             ('Energy Grid Out', 'uint32', 1, 'in'),
+             ('Energy General In', 'uint32', 6, 'in'),
+             ('Energy General Out', 'uint32', 6, 'in'),
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+# Triggers SD Energy Manager Daily Data callback
+# Only access one month at a time! 
+com['packets'].append({
+'type': 'function',
+'name': 'Get SD Energy Manager Daily Data Points',
+'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in'),
+             ('Day', 'uint8', 1, 'in'),
+             ('Amount', 'uint8', 1, 'in'),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -377,6 +522,66 @@ com['packets'].append({
 'elements': [('Data Length', 'uint16', 1, 'out', {}),
              ('Data Chunk Offset', 'uint16', 1, 'out', {}),
              ('Data Chunk Data', 'uint8', 60, 'out', {})],
+'high_level': {'stream_out': {'name': 'Data'}},
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'SD Wallbox Daily Data Points Low Level',
+'elements': [('Data Length', 'uint16', 1, 'out', {}),
+             ('Data Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Data Chunk Data', 'uint32', 15, 'out', {})],
+'high_level': {'stream_out': {'name': 'Data'}},
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'SD Energy Manager Data Points Low Level',
+'elements': [('Data Length', 'uint16', 1, 'out', {}),
+             ('Data Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Data Chunk Data', 'uint8', 58, 'out', {})],
+'high_level': {'stream_out': {'name': 'Data'}},
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'SD Energy Manager Daily Data Points Low Level',
+'elements': [('Data Length', 'uint16', 1, 'out', {}),
+             ('Data Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Data Chunk Data', 'uint8', 56, 'out', {})],
 'high_level': {'stream_out': {'name': 'Data'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
