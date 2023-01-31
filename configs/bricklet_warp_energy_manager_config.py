@@ -326,10 +326,10 @@ com['packets'].append({
 'name': 'Set SD Wallbox Data Point',
 'elements': [('Wallbox ID', 'uint8', 1, 'in'),
              ('Year', 'uint8', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
-             ('Hour', 'uint8', 1, 'in'),
-             ('Minute', 'uint8', 1, 'in'), # 5 minute interval
+             ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
+             ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
+             ('Minute', 'uint8', 1, 'in', {'range': (0, 55)}), # 5 minute interval (0, 5, .., 50, 55)
              ('Flags', 'uint8', 1, 'in'), # IEC_STATE (bit 0-2) + future use
              ('Power', 'uint16', 1, 'in'), # W
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
@@ -353,10 +353,10 @@ com['packets'].append({
 'name': 'Get SD Wallbox Data Points',
 'elements': [('Wallbox ID', 'uint8', 1, 'in'),
              ('Year', 'uint8', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
-             ('Hour', 'uint8', 1, 'in'),
-             ('Minute', 'uint8', 1, 'in'), # 5 minute interval (0, 5, .., 50, 55).
+             ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
+             ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
+             ('Minute', 'uint8', 1, 'in', {'range': (0, 55)}), # 5 minute interval (0, 5, .., 50, 55)
              ('Amount', 'uint16', 1, 'in'), # 288 for one day
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
@@ -377,8 +377,8 @@ com['packets'].append({
 'name': 'Set SD Wallbox Daily Data Point',
 'elements': [('Wallbox ID', 'uint8', 1, 'in'),
              ('Year', 'uint8', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Energy', 'uint32', 1, 'in'),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
@@ -401,8 +401,8 @@ com['packets'].append({
 'name': 'Get SD Wallbox Daily Data Points',
 'elements': [('Wallbox ID', 'uint8', 1, 'in'),
              ('Year', 'uint8', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Amount', 'uint8', 1, 'in'),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
@@ -422,10 +422,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set SD Energy Manager Data Point',
 'elements': [('Year', 'uint8', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
-             ('Hour', 'uint8', 1, 'in'),
-             ('Minute', 'uint8', 1, 'in'), # 5 minute interval
+             ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
+             ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
+             ('Minute', 'uint8', 1, 'in', {'range': (0, 55)}), # 5 minute interval (0, 5, .., 50, 55)
              ('Flags', 'uint8', 1, 'in'), #
              ('Power Grid', 'int32', 1, 'in'), # W
              ('Power General', 'int32', 6, 'in'), # W
@@ -449,10 +449,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get SD Energy Manager Data Points',
 'elements': [('Year', 'uint8', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
-             ('Hour', 'uint8', 1, 'in'),
-             ('Minute', 'uint8', 1, 'in'), # 5 minute interval (0, 5, .., 50, 55).
+             ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
+             ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
+             ('Minute', 'uint8', 1, 'in', {'range': (0, 55)}), # 5 minute interval (0, 5, .., 50, 55)
              ('Amount', 'uint16', 1, 'in'), # 288 for one day
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
@@ -472,8 +472,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set SD Energy Manager Daily Data Point',
 'elements': [('Year', 'uint8', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Energy Grid In', 'uint32', 1, 'in'),
              ('Energy Grid Out', 'uint32', 1, 'in'),
              ('Energy General In', 'uint32', 6, 'in'),
@@ -498,8 +498,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get SD Energy Manager Daily Data Points',
 'elements': [('Year', 'uint8', 1, 'in'),
-             ('Month', 'uint8', 1, 'in'),
-             ('Day', 'uint8', 1, 'in'),
+             ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
+             ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Amount', 'uint8', 1, 'in'),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
