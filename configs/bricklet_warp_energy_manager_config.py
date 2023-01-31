@@ -50,7 +50,8 @@ com['constant_groups'].append({
 'constants': [('OK', 0),
               ('SD Error', 1),
               ('LFS Error', 2),
-              ('Queue Full', 3)]
+              ('Queue Full', 3),
+              ('Date Out Of Range', 4)]
 })
 
 com['packets'].append({
