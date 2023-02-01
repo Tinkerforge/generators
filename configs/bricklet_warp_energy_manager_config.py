@@ -580,7 +580,7 @@ com['packets'].append({
 'name': 'SD Energy Manager Daily Data Points Low Level',
 'elements': [('Data Length', 'uint16', 1, 'out', {}),
              ('Data Chunk Offset', 'uint16', 1, 'out', {}),
-             ('Data Chunk Data', 'uint8', 56, 'out', {})],
+             ('Data Chunk Data', 'uint32', 14, 'out', {})],
 'high_level': {'stream_out': {'name': 'Data'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
