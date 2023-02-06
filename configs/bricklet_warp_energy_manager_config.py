@@ -594,3 +594,21 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Format SD',
+'elements': [('Password', 'uint32', 1, 'in'), # Password: 0x2342ABCD
+             ('Format Status', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
