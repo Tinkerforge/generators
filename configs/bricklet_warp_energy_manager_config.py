@@ -54,6 +54,14 @@ com['constant_groups'].append({
               ('Date Out Of Range', 4)]
 })
 
+com['constant_groups'].append({
+'name': 'Format Status',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('Password Error', 1),
+              ('Format Error', 2)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set Contactor',
@@ -599,7 +607,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Format SD',
 'elements': [('Password', 'uint32', 1, 'in'), # Password: 0x2342ABCD
-             ('Format Status', 'uint8', 1, 'out')],
+             ('Format Status', 'uint8', 1, 'out', {'constant_group': 'Format Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
