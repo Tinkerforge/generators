@@ -58,7 +58,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the input value as bools, *true* refers to "AC voltage detected" and *false* refers to no AC "votlage detected".
+Returns the input values as bools, *true* refers to "AC voltage detected" and *false* refers to no AC "voltage detected".
 """,
 'de':
 """
