@@ -283,7 +283,7 @@ com['packets'].append({
              ('R', 'uint8', 1, 'out', {}),
              ('G', 'uint8', 1, 'out', {}),
              ('B', 'uint8', 1, 'out', {}),
-             ('Power', 'float', 1, 'out'),            # W
+             ('Power', 'float', 1, 'out'),          # W
              ('Energy Import', 'float', 1, 'out'),  # Wh
              ('Energy Export', 'float', 1, 'out'),  # Wh
              ('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'}),
@@ -609,6 +609,52 @@ com['packets'].append({
 'name': 'Format SD',
 'elements': [('Password', 'uint32', 1, 'in'), # Password: 0x2342ABCD
              ('Format Status', 'uint8', 1, 'out', {'constant_group': 'Format Status'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Date Time',
+'elements': [('Seconds', 'uint8', 1, 'in', {'range': (0, 59)}),
+             ('Minutes', 'uint8', 1, 'in', {'range': (0, 59)}),
+             ('Hours', 'uint8', 1, 'in', {'range': (0, 23)}),
+             ('Days', 'uint8', 1, 'in', {'range': (0, 31)}),
+             ('Days Of Week', 'uint8', 1, 'in', {'range': (0, 6)}), # 0 = Sunday, 1 = Monday, ...
+             ('Month', 'uint8', 1, 'in', {'range': (0, 11)}),
+             ('Year', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Date Time',
+'elements': [('Seconds', 'uint8', 1, 'out', {'range': (0, 59)}),
+             ('Minutes', 'uint8', 1, 'out', {'range': (0, 59)}),
+             ('Hours', 'uint8', 1, 'out', {'range': (0, 23)}),
+             ('Days', 'uint8', 1, 'out', {'range': (0, 31)}),
+             ('Days Of Week', 'uint8', 1, 'out', {'range': (0, 6)}), # 0 = Sunday, 1 = Monday, ...
+             ('Month', 'uint8', 1, 'out', {'range': (0, 11)}),
+             ('Year', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
