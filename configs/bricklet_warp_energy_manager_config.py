@@ -333,7 +333,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set SD Wallbox Data Point',
-'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+'elements': [('Wallbox ID', 'uint32', 1, 'in'),
              ('Year', 'uint8', 1, 'in'),
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
@@ -360,7 +360,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get SD Wallbox Data Points',
-'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+'elements': [('Wallbox ID', 'uint32', 1, 'in'),
              ('Year', 'uint8', 1, 'in'),
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
@@ -384,7 +384,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set SD Wallbox Daily Data Point',
-'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+'elements': [('Wallbox ID', 'uint32', 1, 'in'),
              ('Year', 'uint8', 1, 'in'),
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
@@ -408,7 +408,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get SD Wallbox Daily Data Points',
-'elements': [('Wallbox ID', 'uint8', 1, 'in'),
+'elements': [('Wallbox ID', 'uint32', 1, 'in'),
              ('Year', 'uint8', 1, 'in'),
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
