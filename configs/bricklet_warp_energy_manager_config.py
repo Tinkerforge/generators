@@ -278,6 +278,23 @@ TODO
 
 com['packets'].append({
 'type': 'function',
+'name': 'Get Uptime',
+'elements': [('Uptime', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Get All Data 1',
 'elements': [('Contactor Value', 'bool', 1, 'out', {}),
              ('R', 'uint8', 1, 'out', {}),
@@ -291,7 +308,8 @@ com['packets'].append({
              ('Input', 'bool', 2, 'out'),
              ('Output', 'bool', 1, 'out'),
              ('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
-             ('Contactor Check State', 'uint8', 1, 'out')
+             ('Contactor Check State', 'uint8', 1, 'out'),
+             ('Uptime', 'uint32', 1, 'out')
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -607,7 +625,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Format SD',
-'elements': [('Password', 'uint32', 1, 'in'), # Password: 0x2342ABCD
+'elements': [('Password', 'uint32', 1, 'in'), # Password: 0x4223ABCD
              ('Format Status', 'uint8', 1, 'out', {'constant_group': 'Format Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
