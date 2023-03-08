@@ -63,6 +63,15 @@ com['constant_groups'].append({
               ('Format Error', 2)]
 })
 
+com['constant_groups'].append({
+'name': 'LED Pattern',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Blinking', 2),
+              ('Breathing', 3)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set Contactor',
@@ -682,6 +691,39 @@ TODO
 'de':
 """
 TODO
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set LED State',
+'elements': [('Pattern', 'uint8', 1, 'in'),
+             ('Hue', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get LED State',
+'elements': [('Pattern', 'uint8', 1, 'out'),
+             ('Hue', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
 """
 }]
 })
