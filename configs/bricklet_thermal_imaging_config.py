@@ -10,7 +10,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 2],
     'category': 'Bricklet',
     'device_identifier': 278,
     'name': 'Thermal Imaging',
@@ -56,6 +56,22 @@ com['constant_groups'].append({
               ('Manual Temperature Image', 1),
               ('Callback High Contrast Image', 2),
               ('Callback Temperature Image', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Shutter Mode',
+'type': 'uint8',
+'constants': [('Manual', 0),
+              ('Auto', 1),
+              ('External', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Shutter Lockout',
+'type': 'uint8',
+'constants': [('Inactive', 0),
+              ('High', 1),
+              ('Low', 2)]
 })
 
 com['packets'].append({
@@ -638,6 +654,86 @@ Gibt die Flux-Linear-Parameter zurück, wie von :func:`Set Flux Linear Parameter
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set FFC Shutter Mode',
+'elements': [('Shutter Mode',                'uint8',  1, 'in', {'default': 1, 'constant_group': 'Shutter Mode'}),
+             ('Temp Lockout State',          'uint8',  1, 'in', {'default': 0, 'constant_group': 'Shutter Lockout'}),
+             ('Video Freeze During FFC',     'bool',   1, 'in', {'default': True}),
+             ('FFC Desired',                 'bool',   1, 'in', {'default': False}),
+             ('Elapsed Time Since Last FFC', 'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
+             ('Desired FFC Period',          'uint32', 1, 'in', {'scale': (1, 1000), 'unit': 'Second', 'default': 300000}),
+             ('Explicit Cmd To Open',        'bool',   1, 'in', {'default': False}),
+             ('Desired FFC Temp Delta',      'uint16', 1, 'in', {'scale': (1, 100), 'unit': 'Kelvin', 'default': 300}),
+             ('Imminent Delay',              'uint16', 1, 'in', {'default': 52})],
+'since_firmware': [2, 0, 6],
+'doc': ['af', {
+'en':
+"""
+Sets the FFC shutter mode parameters.
+
+See FLIR document 110-0144-03 4.5.15 for more details.
+""",
+'de':
+"""
+Setzt die FFC-Shutter-Mode Parameter.
+
+Siehe FLIR-Dokument 110-0144-03 4.5.15 für mehr Informationen.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get FFC Shutter Mode',
+'elements': [('Shutter Mode',                'uint8',  1, 'out', {'default': 1, 'constant_group': 'Shutter Mode'}),
+             ('Temp Lockout State',          'uint8',  1, 'out', {'default': 0, 'constant_group': 'Shutter Lockout'}),
+             ('Video Freeze During FFC',     'bool',   1, 'out', {'default': True}),
+             ('FFC Desired',                 'bool',   1, 'out', {'default': False}),
+             ('Elapsed Time Since Last FFC', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 0}),
+             ('Desired FFC Period',          'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second', 'default': 300000}),
+             ('Explicit Cmd To Open',        'bool',   1, 'out', {'default': False}),
+             ('Desired FFC Temp Delta',      'uint16', 1, 'out', {'scale': (1, 100), 'unit': 'Kelvin', 'default': 300}),
+             ('Imminent Delay',              'uint16', 1, 'out', {'default': 52})],
+'since_firmware': [2, 0, 6],
+'doc': ['af', {
+'en':
+"""
+Sets the FFC shutter mode parameters.
+
+See FLIR document 110-0144-03 4.5.15 for more details.
+""",
+'de':
+"""
+Setzt die FFC-Shutter-Mode Parameter.
+
+Siehe FLIR-Dokument 110-0144-03 4.5.15 für mehr Informationen.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Run FFC Normalization',
+'elements': [],
+'since_firmware': [2, 0, 6],
+'doc': ['af', {
+'en':
+"""
+Starts the Flat-Field Correction (FFC) normalization.
+
+See FLIR document 110-0144-03 4.5.16 for more details.
+""",
+'de':
+"""
+Startet die Flat-Field Correction (FFC) Normalisierung.
+
+Siehe FLIR-Dokument 110-0144-03 4.5.16 für mehr Informationen.
+"""
+}]
+})
+
 
 com['examples'].append({
 'name': 'Callback',
