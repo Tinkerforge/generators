@@ -160,6 +160,28 @@ com['constant_groups'].append({
               ('SDM72V2', 3)]
 })
 
+com['constant_groups'].append({
+'name': 'Input',
+'type': 'uint8',
+'constants': [('Unconfigured', 0),
+              ('Active Low Max 0A', 1),
+              ('Active Low Max 6A', 2),
+              ('Active Low Max 10A', 3),
+              ('Active Low Max 13A', 4),
+              ('Active Low Max 16A', 5),
+              ('Active Low Max 20A', 6),
+              ('Active Low Max 25A', 7),
+              ('Active Low Max 32A', 8),
+              ('Active High Max 0A', 9),
+              ('Active High Max 6A', 10),
+              ('Active High Max 10A', 11),
+              ('Active High Max 13A', 12),
+              ('Active High Max 16A', 13),
+              ('Active High Max 20A', 14),
+              ('Active High Max 25A', 15),
+              ('Active High Max 32A', 16)]
+})
+
 
 com['packets'].append({
 'type': 'function',
@@ -519,8 +541,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set GPIO Configuration',
 'elements': [('Shutdown Input Configuration', 'uint8', 1, 'in', {'constant_group': 'Shutdown Input'}),
-             ('Input Configuration', 'uint8', 1, 'in'),
-             ('Output Configuration', 'uint8', 1, 'in')],
+             ('Input Configuration', 'uint8', 1, 'in', {'constant_group': 'Input'}),
+             ('Output Configuration', 'uint8', 1, 'in', {'constant_group': 'Output'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -538,7 +560,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get GPIO Configuration',
 'elements': [('Shutdown Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Shutdown Input'}),
-             ('Input Configuration', 'uint8', 1, 'out'),
+             ('Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Input'}),
              ('Output Configuration', 'uint8', 1, 'out', {'constant_group': 'Output'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
