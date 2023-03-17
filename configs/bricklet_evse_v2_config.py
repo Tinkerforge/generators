@@ -166,20 +166,20 @@ com['constant_groups'].append({
 'constants': [('Unconfigured', 0),
               ('Active Low Max 0A', 1),
               ('Active Low Max 6A', 2),
-              ('Active Low Max 10A', 3),
-              ('Active Low Max 13A', 4),
-              ('Active Low Max 16A', 5),
-              ('Active Low Max 20A', 6),
-              ('Active Low Max 25A', 7),
-              ('Active Low Max 32A', 8),
+              ('Active Low Max 8A', 3),
+              ('Active Low Max 10A', 4),
+              ('Active Low Max 13A', 5),
+              ('Active Low Max 16A', 6),
+              ('Active Low Max 20A', 7),
+              ('Active Low Max 25A', 8),
               ('Active High Max 0A', 9),
               ('Active High Max 6A', 10),
-              ('Active High Max 10A', 11),
-              ('Active High Max 13A', 12),
-              ('Active High Max 16A', 13),
-              ('Active High Max 20A', 14),
-              ('Active High Max 25A', 15),
-              ('Active High Max 32A', 16)]
+              ('Active High Max 8A', 11),
+              ('Active High Max 10A', 12),
+              ('Active High Max 13A', 13),
+              ('Active High Max 16A', 14),
+              ('Active High Max 20A', 15),
+              ('Active High Max 25A', 16)]
 })
 
 
