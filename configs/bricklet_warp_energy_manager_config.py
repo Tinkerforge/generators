@@ -727,3 +727,39 @@ com['packets'].append({
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Data Storage',
+'elements': [('Page', 'uint8', 1, 'in'),
+             ('Data', 'uint8', 63, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Data Storage',
+'elements': [('Page', 'uint8', 1, 'in'),
+             ('Data', 'uint8', 63, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
