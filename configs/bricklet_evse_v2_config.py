@@ -904,3 +904,21 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Trigger DC Fault Test',
+'elements': [('Password', 'uint32', 1, 'in'), # Password: 0xDCFAE550
+             ('Started', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
