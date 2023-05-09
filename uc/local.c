@@ -51,7 +51,7 @@ void tf_local_inject_packet(TF_Local *local, TF_TFPHeader *header, uint8_t *pack
     memcpy(local->send_buf, packet, header->length);
 }
 
-int tf_local_transceive_packet(TF_Local *local) {
+void tf_local_transceive_packet(TF_Local *local) {
     TF_TFPHeader header;
 
     tf_tfp_header_peek_plain(&header, local->send_buf);
@@ -72,11 +72,13 @@ int tf_local_transceive_packet(TF_Local *local) {
         local->recv_buf[8 + 22] = local->fw_version[2];
         memcpy(local->recv_buf + 8 + 23, &local->device_id, 2); // FIXME: tf_leconvert_uint16_to
 
-        return TF_E_OK;
-    }
 
-    // FIXME: handle other functions
-    return TF_E_NOT_SUPPORTED;
+    } else {
+        // FIXME: handle other functions
+        header.length = 8;
+        header.error_code = 2; // not supported
+        tf_tfp_header_write(&header, local->recv_buf);
+    }
 }
 
 bool tf_local_callback_tick(TF_Local *local) {
