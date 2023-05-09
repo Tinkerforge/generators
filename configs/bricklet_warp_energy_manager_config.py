@@ -361,7 +361,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set SD Wallbox Data Point',
 'elements': [('Wallbox ID', 'uint32', 1, 'in'),
-             ('Year', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'), # base 2000
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
@@ -388,7 +388,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get SD Wallbox Data Points',
 'elements': [('Wallbox ID', 'uint32', 1, 'in'),
-             ('Year', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'), # base 2000
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
@@ -412,7 +412,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set SD Wallbox Daily Data Point',
 'elements': [('Wallbox ID', 'uint32', 1, 'in'),
-             ('Year', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'), # base 2000
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Energy', 'uint32', 1, 'in'),
@@ -436,7 +436,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get SD Wallbox Daily Data Points',
 'elements': [('Wallbox ID', 'uint32', 1, 'in'),
-             ('Year', 'uint8', 1, 'in'),
+             ('Year', 'uint8', 1, 'in'), # base 2000
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Amount', 'uint8', 1, 'in'),
@@ -457,7 +457,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set SD Energy Manager Data Point',
-'elements': [('Year', 'uint8', 1, 'in'),
+'elements': [('Year', 'uint8', 1, 'in'), # base 2000
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
@@ -484,7 +484,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get SD Energy Manager Data Points',
-'elements': [('Year', 'uint8', 1, 'in'),
+'elements': [('Year', 'uint8', 1, 'in'), # base 2000
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
@@ -507,7 +507,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set SD Energy Manager Daily Data Point',
-'elements': [('Year', 'uint8', 1, 'in'),
+'elements': [('Year', 'uint8', 1, 'in'), # base 2000
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Energy Grid In', 'uint32', 1, 'in'),
@@ -533,7 +533,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get SD Energy Manager Daily Data Points',
-'elements': [('Year', 'uint8', 1, 'in'),
+'elements': [('Year', 'uint8', 1, 'in'), # base 2000
              ('Month', 'uint8', 1, 'in', {'range': (1, 12)}),
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Amount', 'uint8', 1, 'in'),
