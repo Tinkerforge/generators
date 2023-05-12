@@ -20,8 +20,8 @@ com = {
         'en': '2 inputs that can detect AC voltages of up to 230V',
         'de': '2 Eingänge die AC-Spannungen von bis zu 230V detektieren können'
     },
-    'released': False,
-    'documented': False,
+    'released': True,
+    'documented': True,
     'discontinued': False,
     'features': [
         'device',
