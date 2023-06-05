@@ -922,3 +922,20 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set GP Output',
+'elements': [('GP Output', 'uint8', 1, 'in', {'constant_group': 'Output'})], # Bootup-Default set by Set GPIO Configuration
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
