@@ -130,8 +130,8 @@ com['constant_groups'].append({
 com['constant_groups'].append({
 'name': 'Output',
 'type': 'uint8',
-'constants': [('Low', 0),
-              ('High', 1)]
+'constants': [('Connected To Ground', 0),
+              ('High Impedance', 1)]
 })
 
 com['constant_groups'].append({
