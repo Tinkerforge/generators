@@ -157,7 +157,10 @@ com['constant_groups'].append({
 'constants': [('Not Available', 0),
               ('SDM72', 1),
               ('SDM630', 2),
-              ('SDM72V2', 3)]
+              ('SDM72V2', 3),
+              ('SDM72CTM', 4),
+              ('SDM630MCTV2', 5),
+              ('DSZ15DZMOD', 6)]
 })
 
 com['constant_groups'].append({
