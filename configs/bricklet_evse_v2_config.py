@@ -266,6 +266,7 @@ com['packets'].append({
              ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (20 for now)
              ('Charging Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Time Since DC Fault Check', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
