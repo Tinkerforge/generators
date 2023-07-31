@@ -697,12 +697,6 @@ true);"""
 				errorCallback(IPConnection.ERROR_INVALID_PARAMETER);
 			}}
 
-			this.resetStreamStateObject(streamStateObject);
-
-			if (streamStateObject['responseProperties']['callQueue'].length > 0) {{
-				streamStateObject['responseProperties']['callQueue'].shift()(device);
-			}}
-
 			return;
 		}}
 
