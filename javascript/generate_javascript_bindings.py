@@ -819,7 +819,6 @@ true);"""
 					var payload = null;
 					var llvalues = null;
 					var packetErrorFlag = 0;
-					var rolesMappedData = [];
 					var shortWriteWritten = -1;
 					var streamStateObject = device.streamStateObjects[fid];
 					var responseEmpty = streamStateObject['responseProperties']['streamInResponseEmpty'];
