@@ -377,12 +377,12 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
 
 		header.FillFromBytes(resultBytes)
 
-		if header.Length != {response_size} {{
-			return {return_results}fmt.Errorf("Received packet of unexpected size %d, instead of %d", header.Length, {response_size})
-		}}
-
 		if header.ErrorCode != 0 {{
 			return {return_results}DeviceError(header.ErrorCode)
+		}}
+
+		if header.Length != {response_size} {{
+			return {return_results}fmt.Errorf("Received packet of unexpected size %d, instead of %d", header.Length, {response_size})
 		}}
 
 		{resultBufAssignment}bytes.NewBuffer(resultBytes[8:])
