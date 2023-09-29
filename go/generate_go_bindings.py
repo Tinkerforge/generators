@@ -566,7 +566,7 @@ func (device *{device_name}) Deregister{name}Callback(registrationId uint64) {{
                 if not stream.has_single_chunk():
                     chunk_offset = stream.get_chunk_offset_element().get_go_name()
                 else:
-                    chunk_offset = stream.get_length_element().get_go_name()
+                    chunk_offset = 0
 
                 functions.append(stream_out_getter_template.format(description=packet.get_go_formatted_doc(),
                                                                    device_name=self.get_go_name(),
