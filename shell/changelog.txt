@@ -211,3 +211,6 @@
   E-Paper 296x128 Bricklet API
 - Add simple-get-tag-id function and mode-simple symbol to NFC Bricklet API
 - Add set/get-rtc-driver functions and rtc-driver symbols to HAT Brick API
+
+<unknown>: 2.1.33 (<unknown>)
+- Fix get-identity call
