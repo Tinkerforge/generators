@@ -836,6 +836,6 @@ def common_get_identity(ctx, prog_prefix, device_class, argv):
 
 	args = parser.parse_args(argv)
 
-	device_call(ctx, device_class, 255, (), '', '8s 8s c 3B 3B H', args.execute, False,
+	device_call(ctx, device_class, 255, (), '', 33, '8s 8s c 3B 3B H', args.execute, False,
 	            ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier'],
 	            [None, None, None, None, None, device_identifier_symbols])
