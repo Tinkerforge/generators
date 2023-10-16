@@ -214,3 +214,4 @@
 
 <unknown>: 2.1.33 (<unknown>)
 - Fix get-identity call
+- Fix --execute with modern Python versions

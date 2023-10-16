@@ -781,9 +781,6 @@ def execute_response(ctx, command, names, values):
 	formatted_values = {}
 
 	class Tuple(tuple):
-		def __init__(self, *args):
-			tuple.__init__(self, *args)
-
 		def __str__(self):
 			return ctx.item_separator.join(map(str, self))
 
