@@ -20,6 +20,7 @@ import threading
 import subprocess
 import textwrap
 from collections import namedtuple, OrderedDict
+import re
 
 if sys.version_info < (3, 3):
     from collections import Hashable
@@ -67,10 +68,16 @@ try:
 except (ImportError, ModuleNotFoundError):
     fatal_error('Requiring paho-mqtt 1.3.1 or newer', ERROR_PAHO_MISSING)
 
-try:
-    from pkg_resources import parse_version
-except (ImportError, ModuleNotFoundError):
-    from distutils.version import StrictVersion as parse_version
+def parse_version(v):
+    m = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)(?:-(\d+))?", v)
+    if m is None:
+        raise Exception("Failed to parse {}".format(v))
+
+    major, minor, patch, package = m.groups()
+    if package is None:
+        package = 0
+
+    return (major, minor, patch, package)
 
 if parse_version(paho.mqtt.__version__) < parse_version('1.3.1'):
     fatal_error('Requiring paho-mqtt 1.3.1 or newer, but found ' + str(paho.mqtt.__version__), ERROR_PAHO_VERSION)
