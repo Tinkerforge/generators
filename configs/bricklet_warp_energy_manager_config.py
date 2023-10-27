@@ -148,9 +148,8 @@ Gibt die *r*, *g* und *b* Werte der LED zurück, wie von :func:`Set RGB Value` g
 com['packets'].append({
 'type': 'function',
 'name': 'Get Energy Meter Values',
-'elements': [('Power', 'float', 1, 'out'),          # W
-             ('Energy Import', 'float', 1, 'out'),  # Wh
-             ('Energy Export', 'float', 1, 'out')], # Wh
+'elements': [('Power', 'float', 1, 'out'),
+             ('Current', 'float', 3, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -310,9 +309,8 @@ com['packets'].append({
              ('R', 'uint8', 1, 'out', {}),
              ('G', 'uint8', 1, 'out', {}),
              ('B', 'uint8', 1, 'out', {}),
-             ('Power', 'float', 1, 'out'),          # W
-             ('Energy Import', 'float', 1, 'out'),  # Wh
-             ('Energy Export', 'float', 1, 'out'),  # Wh
+             ('Power', 'float', 1, 'out'),
+             ('Current', 'float', 3, 'out'),
              ('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'}),
              ('Error Count', 'uint32', 6, 'out'),
              ('Input', 'bool', 2, 'out'),
