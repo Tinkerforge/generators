@@ -71,7 +71,7 @@ com['constant_groups'].append({
 'constants': [('AC1 NLive AC2 NLive', 0),
               ('AC1 Live AC2 NLive', 1),
               ('AC1 NLive AC2 Live', 2),
-              ('AC1 Live AC2 Live', 3)]
+              ('AC1 Live AC2 Live', 3)] # Different in V3
 })
 
 com['constant_groups'].append({
@@ -191,8 +191,8 @@ com['packets'].append({
 'name': 'Get State',
 'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
              ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
-             ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
-             ('Contactor Error', 'uint8', 1, 'out'),
+             ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}), # TODO V3 doc
+             ('Contactor Error', 'uint8', 1, 'out'), # TODO V3 doc
              ('Allowed Charging Current', 'uint16', 1, 'out'),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
@@ -619,7 +619,10 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Indicator LED',
 'elements': [('Indication', 'int16', 1, 'out'),
-             ('Duration', 'uint16', 1, 'out')],
+             ('Duration', 'uint16', 1, 'out'),
+             ('Color H', 'uint16', 1, 'out'),
+             ('Color S', 'uint8', 1, 'out'),
+             ('Color V', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -638,6 +641,9 @@ com['packets'].append({
 'name': 'Set Indicator LED',
 'elements': [('Indication', 'int16', 1, 'in'), #-1 = led controled by EVSE, 0 = Off, 255 = on, 1-254 = pwm, 1001 = ack indication, 1002 = nack indication, 1003 = nag indication
              ('Duration', 'uint16', 1, 'in'), # max 2^16 ms
+             ('Color H', 'uint16', 1, 'in'), # Color V=0 => automatic color. In EVSE V2 always blue
+             ('Color S', 'uint8', 1, 'in'),
+             ('Color V', 'uint8', 1, 'in'),
              ('Status', 'uint8', 1, 'out')], # OK = 0, Sonst nicht OK wegen X (Blinking=2, Flickering=3, Breathing=4)
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -931,6 +937,59 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set GP Output',
 'elements': [('GP Output', 'uint8', 1, 'in', {'constant_group': 'Output'})], # Bootup-Default set by Set GPIO Configuration
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Temperature',
+'elements': [('Temperature', 'int16', 1, 'out')], # Returns 0 in EVSE V2
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Phase Control',
+'elements': [('Phases', 'uint8', 1, 'in')], # No effect in EVSE V2
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Phase Control',
+'elements': [('Phases Current', 'uint8', 1, 'out'),  # Always three-phase EVSE V2
+             ('Phases Requested', 'uint8', 1, 'out'),
+             ('Phases Status', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
