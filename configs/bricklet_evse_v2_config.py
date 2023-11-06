@@ -113,10 +113,12 @@ com['constant_groups'].append({
 'name': 'DC Fault Current State',
 'type': 'uint8',
 'constants': [('Normal Condition', 0),
-              ('6 MA Error', 1),
+              ('6 MA DC Error', 1),
               ('System Error', 2),
               ('Unknown Error', 3),
-              ('Calibration Error', 4)]
+              ('Calibration Error', 4),
+              ('20 MA AC Error', 5),
+              ('6 MA AC And 20 MA AC Error', 6)]
 })
 
 com['constant_groups'].append({
