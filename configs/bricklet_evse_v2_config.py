@@ -825,6 +825,9 @@ com['packets'].append({
              ('Input Configuration', 'uint8', 1, 'out'),
              ('Output Configuration', 'uint8', 1, 'out', {'constant_group': 'Output'}),
              ('Indication', 'int16', 1, 'out'),
+             ('Color H', 'uint16', 1, 'out'),
+             ('Color S', 'uint8', 1, 'out'),
+             ('Color V', 'uint8', 1, 'out'),
              ('Duration', 'uint16', 1, 'out'),
              ('Button Configuration', 'uint8', 1, 'out', {'constant_group': 'Button Configuration'}),
              ('Button Press Time', 'uint32', 1, 'out'),
@@ -833,6 +836,10 @@ com['packets'].append({
              ('EV Wakeup Enabled', 'bool', 1, 'out'),
              ('Control Pilot Disconnect', 'bool', 1, 'out'),
              ('Boost Mode Enabled', 'bool', 1, 'out'),
+             ('Temperature', 'int16', 1, 'out'),
+             ('Phases Current', 'uint8', 1, 'out'),  # Always three-phase for EVSE V2
+             ('Phases Requested', 'uint8', 1, 'out'),
+             ('Phases Status', 'uint8', 1, 'out'),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
