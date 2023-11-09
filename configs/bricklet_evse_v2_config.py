@@ -109,6 +109,20 @@ com['constant_groups'].append({
               ('Unconfigured', 8)]
 })
 
+"""
+DC fault current state
+state & 0b0000_0111 = [('Normal Condition', 0),
+                       ('6 MA DC Error', 1),
+                       ('System Error', 2),
+                       ('Unknown Error', 3),
+                       ('Calibration Error', 4),
+                       ('20 MA AC Error', 5),
+                       ('6 MA AC And 20 MA AC Error', 6)]
+state & 0b0011_1000 = (state & 0b0000_0111 != 4 (calibration error)) ?
+                        pins (x6 x30 err) :
+                        calibration error code
+state & 0b0100_0000 = sensor type (0 old, 1 new)
+"""
 com['constant_groups'].append({
 'name': 'DC Fault Current State',
 'type': 'uint8',
@@ -188,13 +202,25 @@ com['constant_groups'].append({
 })
 
 
+"""
+contactor state
+state & 0b0000_0001 = contactor state  N+L1 (0 is not switched, 1 is switched)
+state & 0b0000_0010 = contactor state L2+L3 (0 is not switched, 1 is switched)
+state & 0b0000_0100 = pe connected (0 not connected 1 connected)
+state & 0b0000_1000 = contactor control  N+L1 (0 want not switched, 1 want switched)
+state & 0b0001_0000 = contactor control L2+L3 (0 want not switched, 1 want switched)
+
+contactor error
+error & 0b0000_0001 = pe error (0 ok, 1 error -> !(state & 0x04))
+error & 0b1111_1110 = error state (0 ok, else earror -> contactor control/state mismatch)
+"""
 com['packets'].append({
 'type': 'function',
 'name': 'Get State',
 'elements': [('IEC61851 State', 'uint8', 1, 'out', {'constant_group': 'IEC61851 State'}),
              ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
-             ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}), # TODO V3 doc
-             ('Contactor Error', 'uint8', 1, 'out'), # TODO V3 doc
+             ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
+             ('Contactor Error', 'uint8', 1, 'out'),
              ('Allowed Charging Current', 'uint16', 1, 'out'),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
