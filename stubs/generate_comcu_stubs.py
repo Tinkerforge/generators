@@ -214,8 +214,16 @@ class CoMCUStubDevice(common.Device):
         return callback_list
 
     def get_c_cases(self):
-        case =  '\t\tcase FID_{0}: return {1}(message);'
-        case_with_response = '\t\tcase FID_{0}: return {1}(message, response);'
+        longest_upper = 0
+        longest_camel = 0
+        for packet in self.get_packets('function'):
+            if packet.get_function_id() < 200:
+                if not packet.is_part_of_callback_value():
+                    longest_upper = max(len(packet.get_name().upper), longest_upper)
+                    longest_camel = max(len(packet.get_name().camel), longest_camel)
+
+        case =  '\t\tcase FID_{0}:{1} return length != sizeof({2}){3} ? HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER : {4}(message);'
+        case_with_response = '\t\tcase FID_{0}:{1} return length != sizeof({2}){3} ? HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER : {4}(message, response);'
         case_cv =  '\t\tcase FID_{0}: return {1}_{2}(message, &callback_value_{3});'
         case_cv_with_response = '\t\tcase FID_{0}: return {1}_{2}(message, response, &callback_value_{3});'
         cases = []
@@ -237,10 +245,12 @@ class CoMCUStubDevice(common.Device):
                     else:
                         cases.append(case_cv_with_response.format(packet.get_name().upper, callback_value_function_name, c_type, packet.get_callback_value_name()))
                 else:
+                    len_diff_upper = " "*(longest_upper - len(packet.get_name().upper))
+                    len_diff_camel = " "*(longest_camel - len(packet.get_name().camel))
                     if len(packet.get_elements(direction='out')) == 0:
-                        cases.append(case.format(packet.get_name().upper, packet.get_name().under))
+                        cases.append(case.format(packet.get_name().upper, len_diff_upper, packet.get_name().camel, len_diff_camel, packet.get_name().under))
                     else:
-                        cases.append(case_with_response.format(packet.get_name().upper, packet.get_name().under))
+                        cases.append(case_with_response.format(packet.get_name().upper, len_diff_upper, packet.get_name().camel, len_diff_camel, packet.get_name().under))
 
         return cases
 
@@ -376,6 +386,7 @@ class CoMCUStubGenerator(common.Generator):
 #include "bricklib2/protocols/tfp/tfp.h"
 {7}
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {{
+\tconst uint8_t length = ((TFPMessageHeader*)message)->length;
 \tswitch(tfp_get_fid_from_message(message)) {{
 {4}
 \t\tdefault: return HANDLE_MESSAGE_RESPONSE_NOT_SUPPORTED;
