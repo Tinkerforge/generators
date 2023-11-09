@@ -118,6 +118,8 @@ class CZipGenerator(c_common.CGeneratorTrait, common.ZipGenerator):
             shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
             shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
         else:
+            shutil.copy(os.path.join(root_dir, 'ip_connection.c'),              self.tmp_source_dir)
+            shutil.copy(os.path.join(root_dir, 'ip_connection.h'),              self.tmp_source_dir)
             shutil.copy(os.path.join(self.get_config_dir(), 'changelog.txt'),   self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'custom.txt'),                   os.path.join(self.tmp_dir, 'readme.txt'))
 
