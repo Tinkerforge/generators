@@ -259,7 +259,7 @@ TODO
 })
 
 """
-GPIO:
+GPIO WARP V2:
 	response->gpio[0] = (get_bit(port0, 0)  << 0) | //  0: Config Jumper 0
 	                    (get_bit(port0, 1)  << 1) | //  1: Motor Fault
 	                    (get_bit(port0, 3)  << 2) | //  2: DC Error
@@ -282,6 +282,30 @@ GPIO:
 	                    (get_bit(port4, 4)  << 1) | // 17: DC X6
 	                    (get_bit(port4, 5)  << 2) | // 18: DC X30
 	                    (get_bit(port4, 6)  << 3);  // 19: LED
+
+GPIO WARP V3:
+    response->gpio[0] = (get_bit(port0, 0)   << 0) | //  0: DC X30
+                        (get_bit(port0, 1)   << 1) | //  1: DC X6
+                        (get_bit(port0, 3)   << 2) | //  2: DC Error
+                        (get_bit(port0, 5)   << 3) | //  3: DC Test
+                        (get_bit(port0, 6)   << 4) | //  4: Status LED
+                        (get_bit(port0, 12)  << 5) | //  5: Switch
+                        (get_bit(port1, 0)   << 6) | //  6: LED R
+                        (get_bit(port1, 2)   << 7);  //  7: LED B
+
+    response->gpio[1] = (get_bit(port1, 3)   << 0) | //  8: LED G
+                        (get_bit(port1, 4)   << 1) | //  9: CP PWM
+                        (get_bit(port1, 5)   << 2) | // 10: Contactor 1
+                        (get_bit(port1, 6)   << 3) | // 11: Contactor 0
+                        (get_bit(port2, 6)   << 4) | // 12: Contactor 1 FB
+                        (get_bit(port2, 7)   << 5) | // 13: Contactor 0 FB
+                        (get_bit(port2, 8)   << 6) | // 14: PE Check
+                        (get_bit(port2, 9)   << 7);  // 15: Config Jumper 1
+
+    response->gpio[2] = (get_bit(port4, 4)   << 6) | // 16: CP Disconnect
+                        (get_bit(port4, 5)   << 7) | // 17: Config Jumper 0
+                        (get_bit(port4, 6)   << 0) | // 18: Enable
+                        (get_bit(port4, 7)   << 1);  // 19: Version Detection
 """
 com['packets'].append({
 'type': 'function',
