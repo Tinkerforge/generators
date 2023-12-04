@@ -161,6 +161,7 @@
 
 2020-06-25: 2.0.28 (cf55e68)
 - Use Maven to build all JAR file variants
+- Increase minimum JDK version from 1.6 to 8
 
 2020-11-02: 2.0.29 (6399602)
 - Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
