@@ -43,7 +43,8 @@ com['constant_groups'].append({
               ('SDM72V2', 3),
               ('SDM72CTM', 4),
               ('SDM630MCTV2', 5),
-              ('DSZ15DZMOD', 6)]
+              ('DSZ15DZMOD', 6),
+              ('DEMA4', 7)]
 })
 
 com['constant_groups'].append({
@@ -168,7 +169,7 @@ com['packets'].append({
 'name': 'Get Energy Meter Detailed Values Low Level',
 'elements': [('Values Chunk Offset', 'uint16', 1, 'out', {}),
              ('Values Chunk Data', 'float', 15, 'out', {})],
-'high_level': {'stream_out': {'name': 'Values', 'fixed_length': 85}},
+'high_level': {'stream_out': {'name': 'Values', 'fixed_length': 88}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -750,6 +751,24 @@ com['packets'].append({
 'name': 'Set Data Storage',
 'elements': [('Page', 'uint8', 1, 'in'),
              ('Data', 'uint8', 63, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Reset Energy Meter Relative Energy',
+'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

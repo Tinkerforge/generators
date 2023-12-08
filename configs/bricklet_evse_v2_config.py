@@ -176,7 +176,8 @@ com['constant_groups'].append({
               ('SDM72V2', 3),
               ('SDM72CTM', 4),
               ('SDM630MCTV2', 5),
-              ('DSZ15DZMOD', 6)]
+              ('DSZ15DZMOD', 6),
+              ('DEM4A', 7)]
 })
 
 com['constant_groups'].append({
@@ -504,8 +505,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Energy Meter Values',
 'elements': [('Power', 'float', 1, 'out'),            # W
-             ('Energy Relative', 'float', 1, 'out'),  # Wh
-             ('Energy Absolute', 'float', 1, 'out'),  # Wh
+             ('Current', 'float', 3, 'out'),
              ('Phases Active', 'bool', 3, 'out'),
              ('Phases Connected', 'bool', 3, 'out')],
 'since_firmware': [1, 0, 0],
@@ -526,7 +526,7 @@ com['packets'].append({
 'name': 'Get All Energy Meter Values Low Level',
 'elements': [('Values Chunk Offset', 'uint16', 1, 'out', {}),
              ('Values Chunk Data', 'float', 15, 'out', {})],
-'high_level': {'stream_out': {'name': 'Values', 'fixed_length': 85}},
+'high_level': {'stream_out': {'name': 'Values', 'fixed_length': 88}},
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
