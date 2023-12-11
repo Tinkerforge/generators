@@ -849,8 +849,7 @@ com['packets'].append({
              ('EVSE Version', 'uint8', 1, 'out'),
              ('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'}),
              ('Power', 'float', 1, 'out'),            # W
-             ('Energy Relative', 'float', 1, 'out'),  # Wh
-             ('Energy Absolute', 'float', 1, 'out'),  # Wh
+             ('Current', 'float', 3, 'out'),          # A
              ('Phases Active', 'bool', 3, 'out'),
              ('Phases Connected', 'bool', 3, 'out'),
              ('Error Count', 'uint32', 6, 'out'),
