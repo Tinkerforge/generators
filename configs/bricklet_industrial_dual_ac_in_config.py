@@ -21,7 +21,7 @@ com = {
         'de': '2 Eingänge die AC-Spannungen von bis zu 230V detektieren können'
     },
     'released': True,
-    'documented': True,
+    'documented': False,
     'discontinued': False,
     'features': [
         'device',
