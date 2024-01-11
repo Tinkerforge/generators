@@ -665,7 +665,7 @@ a Modbus master request.
 """,
 'de':
 """
-Im Modbus-Slave Modus kann diese Funktion genutzt werden um eine Modbus Exception
+Im Modbus-Slave Modus kann diese Funktion genutzt werden, um eine Modbus Exception
 auf eine Modbus-Master Anfrage zurückzugeben.
 
 * Request ID: Request ID einer Anfrage eines Slaves.
@@ -697,7 +697,7 @@ with the Request ID as provided by the argument of the callback.
 """,
 'de':
 """
-Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Read Coils-Anfrage
+Im Modbus-Slave Modus kann diese Funktion genutzt werden, um eine Read Coils-Anfrage
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
@@ -739,7 +739,7 @@ is indeed for a particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Coils-Anfrage
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um eine Read Coils-Anfrage
 an einen Modbus-Slave zu senden (Modbus Funktionscode 1).
 
 * Slave Addresss: Adresse des Modbus-Slave
@@ -823,7 +823,7 @@ callback with the Request ID as provided by the argument of the callback.
 """,
 'de':
 """
-Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Holding Registers``-Anfrage
+Im Modbus-Slave Modus kann diese Funktion genutzt werden, um eine ``Read Holding Registers``-Anfrage
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
@@ -865,7 +865,7 @@ particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Holding Register-Anfrage
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um eine Read Holding Register-Anfrage
 an einen Modbus-Slave zu senden (Modbus Funktionscode 3).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
@@ -944,7 +944,7 @@ callback with the Request ID as provided by the arguments of the callback.
 """,
 'de':
 """
-Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Read Single Coil-Anfrage
+Im Modbus-Slave Modus kann diese Funktion genutzt werden, um eine Read Single Coil-Anfrage
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
@@ -985,7 +985,7 @@ particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un eine einzelne Coil eines
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um eine einzelne Coil eines
 Modbus-Slave zu schreiben (Modbus Funktionscode 5).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
@@ -1058,7 +1058,7 @@ the arguments of the callback.
 """,
 'de':
 """
-Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Write Single Register-Anfrage
+Im Modbus-Slave Modus kann diese Funktion genutzt werden, um eine Write Single Register-Anfrage
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
@@ -1099,7 +1099,7 @@ particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un ein einzelnes Register eines
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um ein einzelnes Register eines
 Modbus-Slave zu schreiben (Modbus Funktionscode 6).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
@@ -1148,7 +1148,7 @@ timeout period as set by :func:`Set Modbus Configuration`.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un ein einzelnes Register eines
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um ein einzelnes Register eines
 Modbus-Slave zu schreiben (Modbus Funktionscode 6).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
@@ -1183,7 +1183,7 @@ callback with the Request ID of the callback.
 """,
 'de':
 """
-Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Write Multiple Coils-Anfrage
+Im Modbus-Slave Modus kann diese Funktion genutzt werden, um eine Write Multiple Coils-Anfrage
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
@@ -1226,7 +1226,7 @@ particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un eine mehrere Coils eines
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um eine mehrere Coils eines
 Modbus-Slave zu schreiben (Modbus Funktionscode 15).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
@@ -1276,7 +1276,7 @@ timeout period as set by :func:`Set Modbus Configuration`.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un eine mehrere Coils eines
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um eine mehrere Coils eines
 Modbus-Slave zu schreiben (Modbus Funktionscode 15).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
@@ -1310,7 +1310,7 @@ callback with the Request ID of the callback.
 """,
 'de':
 """
-Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine Write Multiple Register-Anfrage
+Im Modbus-Slave Modus kann diese Funktion genutzt werden, um eine Write Multiple Register-Anfrage
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
@@ -1353,7 +1353,7 @@ particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden um ein oder mehrere Holding Register eines
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um ein oder mehrere Holding Register eines
 Modbus-Slave zu schreiben (Modbus Funktionscode 16).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
@@ -1432,7 +1432,7 @@ callback with the Request ID as provided by the argument of the callback.
 """,
 'de':
 """
-Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Discrete Inputs``-Anfrage
+Im Modbus-Slave Modus kann diese Funktion genutzt werden, um eine ``Read Discrete Inputs``-Anfrage
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
@@ -1474,7 +1474,7 @@ particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Discrete Inputs-Anfrage
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um eine Read Discrete Inputs-Anfrage
 an einen Modbus-Slave zu senden (Modbus Funktionscode 2).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
@@ -1556,7 +1556,7 @@ with the Request ID as provided by the argument of the callback.
 """,
 'de':
 """
-Im Modbus-Slave Modus kann diese Funktion genutzt werden un eine ``Read Input``-Anfrage
+Im Modbus-Slave Modus kann diese Funktion genutzt werden, um eine ``Read Input``-Anfrage
 eines Modbus-Masters zu beantworten.
 
 * Request ID: Request ID der zu beantwortenden Anfrage.
@@ -1598,7 +1598,7 @@ particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Input-Anfrage
+Im Modbus-Master Modus kann diese Funktion genutzt werden, um eine Read Input-Anfrage
 an einen Modbus-Slave zu senden (Modbus Funktionscode 4).
 
 * Slave Address: Addresse des anzusprechenden Modbus-Slave.
