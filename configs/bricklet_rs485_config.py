@@ -739,7 +739,8 @@ is indeed for a particular request.
 """,
 'de':
 """
-Im Modbus-Master Modus kann diese Funktion genutzt werden um Coils vom Slave zu lesen.
+Im Modbus-Master Modus kann diese Funktion genutzt werden un eine Read Coils-Anfrage
+an einen Modbus-Slave zu senden (Modbus Funktionscode 1).
 
 * Slave Addresss: Adresse des Modbus-Slave
 * Starting Address: Nummer der ersten zu lesenden Coil. Aus Gründen der Rückwärtskompatibilität heißt dieser Parameter Starting Address, ist aber keine Addresse, sondern eine eins-basierte Coil-Nummer zwischen 1 und 65536.
