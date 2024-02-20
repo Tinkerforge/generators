@@ -212,6 +212,8 @@
 - Add simple-get-tag-id function and mode-simple symbol to NFC Bricklet API
 - Add set/get-rtc-driver functions and rtc-driver symbols to HAT Brick API
 
-<unknown>: 2.1.33 (<unknown>)
+2024-02-21: 2.1.33 (<unknown>)
+- Add support for Industrial Dual AC In Bricklet
+- Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Fix get-identity call
 - Fix --execute with modern Python versions

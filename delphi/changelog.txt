@@ -303,3 +303,7 @@
 - Add Set/GetRTCDriver functions and RTC_DRIVER constants to HAT Brick API
 - Fix race condition in TTimedSemaphore Acquire/Release logic that affected
   callback handling
+
+2024-02-21: 2.1.33 (<unknown>)
+- Add support for Industrial Dual AC In Bricklet
+- Add FFC shutter mode and normalization to Thermal Imaging Bricklet API

@@ -351,5 +351,7 @@
 - Add Set/GetRTCDriver methods and RTC_DRIVER constants to to HAT Brick API
 - Add .NET 5/6 and .NET Standard 2.0 to NuGet package
 
-<unknown>: 2.1.32 (<unknown>)
+2024-02-21: 2.1.32 (<unknown>)
+- Add support for Industrial Dual AC In Bricklet
+- Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Fix System.AppDomain.Unload timeout

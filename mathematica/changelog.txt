@@ -175,5 +175,7 @@
 - Add SimpleGetTagID function and MODE_SIMPLE constant to NFC Bricklet API
 - Add Set/GetRTCDriver functions and RTC_DRIVER constants to HAT Brick API
 
-<unknown>: 2.1.31 (<unknown>)
+2024-02-21: 2.1.31 (<unknown>)
+- Add support for Industrial Dual AC In Bricklet
+- Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Fix System.AppDomain.Unload timeout

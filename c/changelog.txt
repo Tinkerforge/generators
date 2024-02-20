@@ -361,3 +361,7 @@
 - Fix short write for bool stream-in
 - Only include stdbool.h if compiling for C
 - Use correct snprintf function with older MSVC versions
+
+2024-02-21: 2.1.34 (<unknown>)
+- Add support for Industrial Dual AC In Bricklet
+- Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
