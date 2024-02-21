@@ -7,7 +7,7 @@ use std::{
     str,
     sync::{
         atomic::{AtomicUsize, Ordering},
-        mpsc::{Receiver, Sender, *},
+        mpsc::*,
         Arc,
     },
     thread::{self, JoinHandle},
