@@ -725,7 +725,7 @@ class RustExamplesGenerator(rust_common.RustGeneratorTrait, common.ExamplesGener
             version = subprocess.check_output(["rustfmt", "--version"])
 
             if not 'nightly' in version.decode('utf-8'):
-                print("Please set your rust toolchain to nightly (e.g. with 'rustup default nightly'), as the example generator currently depends on unstable rustfmt features.")
+                print("Please set your rust toolchain to nightly (e.g. with 'rustup default nightly'), as the example generator currently depends on unstable rustfmt features (fn_single_line, imports_granularity, match_arm_blocks).")
                 return
 
             p = subprocess.Popen(["rustfmt", filename, "--config-path", self.root_dir], cwd=examples_dir, stdout = subprocess.PIPE)

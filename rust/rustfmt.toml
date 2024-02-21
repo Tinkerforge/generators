@@ -1,6 +1,6 @@
 use_small_heuristics = "Max"
 fn_single_line = true
-merge_imports = true
+imports_granularity = "Crate"
 max_width = 140
 use_field_init_shorthand = true
 use_try_shorthand = true
