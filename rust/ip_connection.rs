@@ -748,7 +748,7 @@ impl Drop for IpConnection {
 }
 
 /// A trait to get an [`IpConnectionRequestSender`](crate::ip_connection::IpConnectionRequestSender).
-/// Implementing this trait allows a type to used to create device handles.
+/// Implementing this trait allows a type to be used to create device handles.
 pub trait GetRequestSender {
     fn get_rs(&self) -> IpConnectionRequestSender;
 }
