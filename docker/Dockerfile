@@ -54,7 +54,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git
 
 # perl bindings
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y perl libterm-readkey-perl libgd-perl libb-lint-perl libdata-dump-perl libperl-critic-perl libmodule-starter-perl libmodule-build-perl
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y perl libterm-readkey-perl libgd-perl libb-lint-perl libdata-dump-perl libperl-critic-perl libmodule-starter-perl libmodule-build-perl libdigest-hmac-perl
 
 # python bindings
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python3 pylint3 python3-pil python3-setuptools
