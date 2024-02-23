@@ -116,12 +116,13 @@ def test(root_dir):
                    os.path.join(root_dir, '../../blinkenlights/rainbow/python/rainbow.py'),
                    os.path.join(root_dir, '../../blinkenlights/text/python/text.py')]
 
-    if not PythonTester(root_dir, 'python', extra_paths).run():
-        return False
+    if os.path.exists('/usr/bin/python'):
+        if not PythonTester(root_dir, 'python', extra_paths).run():
+            return False
 
-    # FIXME: doesn't handle PyQt related super false-positves yet
-    if not PylintTester(root_dir, 'python', 'pylint', []).run():#extra_paths).run():
-        return False
+        # FIXME: doesn't handle PyQt related super false-positves yet
+        if not PylintTester(root_dir, 'python', 'pylint', []).run():#extra_paths).run():
+            return False
 
     if not PythonTester(root_dir, 'python3', extra_paths).run():
         return False
