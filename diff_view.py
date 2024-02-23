@@ -42,7 +42,7 @@ class DiffView(QMainWindow, Ui_DiffView):
         super().__init__()
 
         self.setupUi(self)
-        self.setWindowTitle(path +' - DiffView')
+        self.setWindowTitle(path + ' - DiffView')
 
         self.path = path
         self.highlighter = DiffHighlighter(self.edit_diff.document())
@@ -81,6 +81,11 @@ class DiffView(QMainWindow, Ui_DiffView):
 
                 lines.append(line)
 
+            if block.kind != None:
+                block.text = ''.join(lines)
+
+                self.blocks.append(block)
+
         self.update_edit()
 
         self.button_hide_selection.clicked.connect(self.hide_selection)
@@ -93,7 +98,7 @@ class DiffView(QMainWindow, Ui_DiffView):
 
         for block in self.blocks:
             total += 1
-            
+
             if block.visible:
                 visible += 1
                 text += block.text
