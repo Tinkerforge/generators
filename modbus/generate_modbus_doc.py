@@ -31,8 +31,6 @@ if sys.hexversion < 0x3040000:
     sys.exit(1)
 
 import os
-import shutil
-import subprocess
 import importlib.util
 import importlib.machinery
 

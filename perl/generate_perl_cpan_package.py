@@ -32,7 +32,6 @@ if sys.hexversion < 0x3040000:
 
 import os
 import shutil
-import subprocess
 import importlib.util
 import importlib.machinery
 
