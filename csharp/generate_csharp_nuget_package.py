@@ -53,79 +53,9 @@ if 'generators' not in sys.modules:
 
 from generators import common
 
-NET50_CSPROJ = '''<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>library</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <DocumentationFile>bin/Release/net5.0/Tinkerforge.xml</DocumentationFile>
-  </PropertyGroup>
-</Project>
-'''
-
-NET60_CSPROJ = '''<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>library</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <DocumentationFile>bin/Release/net6.0/Tinkerforge.xml</DocumentationFile>
-  </PropertyGroup>
-</Project>
-'''
-
-NETCORE20_CSPROJ = '''<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>library</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <DocumentationFile>bin/Release/netcoreapp2.0/Tinkerforge.xml</DocumentationFile>
-  </PropertyGroup>
-</Project>
-'''
-
-NETSTANDARD20_CSPROJ = '''<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>library</OutputType>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <DocumentationFile>bin/Release/netstandard2.0/Tinkerforge.xml</DocumentationFile>
-  </PropertyGroup>
-</Project>
-'''
-
 def generate(root_dir):
-    tmp_dir                                           = os.path.join(root_dir, 'nuget_package')
-    tmp_unzipped_net20_dir                            = os.path.join(tmp_dir, 'unzipped_net20')
-    tmp_unzipped_net40_dir                            = os.path.join(tmp_dir, 'unzipped_net40')
-    tmp_unzipped_net40_source_tinkerforge_dir         = os.path.join(tmp_unzipped_net40_dir, 'source', 'Tinkerforge')
-    tmp_unzipped_net50_dir                            = os.path.join(tmp_dir, 'unzipped_net50')
-    tmp_unzipped_net50_source_tinkerforge_dir         = os.path.join(tmp_unzipped_net50_dir, 'source', 'Tinkerforge')
-    tmp_unzipped_net60_dir                            = os.path.join(tmp_dir, 'unzipped_net60')
-    tmp_unzipped_net60_source_tinkerforge_dir         = os.path.join(tmp_unzipped_net60_dir, 'source', 'Tinkerforge')
-    tmp_unzipped_netcoreapp20_dir                     = os.path.join(tmp_dir, 'unzipped_netcoreapp20')
-    tmp_unzipped_netcoreapp20_source_tinkerforge_dir  = os.path.join(tmp_unzipped_netcoreapp20_dir, 'source', 'Tinkerforge')
-    tmp_unzipped_netstandard20_dir                    = os.path.join(tmp_dir, 'unzipped_netstandard20')
-    tmp_unzipped_netstandard20_source_tinkerforge_dir = os.path.join(tmp_unzipped_netstandard20_dir, 'source', 'Tinkerforge')
+    tmp_dir          = os.path.join(root_dir, 'nuget_package')
+    tmp_unzipped_dir = os.path.join(tmp_dir, 'unzipped')
 
     # Make directories
     common.recreate_dir(tmp_dir)
@@ -137,75 +67,11 @@ def generate(root_dir):
                     '-q',
                     os.path.join(root_dir, 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)),
                     '-d',
-                    tmp_unzipped_net20_dir])
+                    tmp_unzipped_dir])
 
-    shutil.copytree(tmp_unzipped_net20_dir, tmp_unzipped_net40_dir)
-    shutil.copytree(tmp_unzipped_net20_dir, tmp_unzipped_net50_dir)
-    shutil.copytree(tmp_unzipped_net20_dir, tmp_unzipped_net60_dir)
-    shutil.copytree(tmp_unzipped_net20_dir, tmp_unzipped_netcoreapp20_dir)
-    shutil.copytree(tmp_unzipped_net20_dir, tmp_unzipped_netstandard20_dir)
-
-    # Make DLL for NET 4.0
-    print('Building NET 4.0')
-
-    with common.ChangedDirectory(tmp_unzipped_net40_dir):
-        common.execute(['mcs',
-                        '/debug:full',
-                        '/optimize+',
-                        '/warn:4',
-                        '/sdk:4',
-                        '/target:library',
-                        '/doc:' + os.path.join(tmp_unzipped_net40_dir, 'Tinkerforge.xml'),
-                        '/out:' + os.path.join(tmp_unzipped_net40_dir, 'Tinkerforge.dll'),
-                        os.path.join(tmp_unzipped_net40_source_tinkerforge_dir, '*.cs')])
-
-    # Make DLL for NET 5.0
-    print('Building NET 5.0')
-
-    with open(os.path.join(tmp_unzipped_net50_source_tinkerforge_dir, 'Tinkerforge.csproj'), 'w') as f:
-        f.write(NET50_CSPROJ)
-
-    with common.ChangedDirectory(tmp_unzipped_net50_source_tinkerforge_dir):
-        common.execute(['dotnet',
-                        'build',
-                        '-c',
-                        'Release'])
-
-    # Make DLL for NET 6.0
-    print('Building NET 6.0')
-
-    with open(os.path.join(tmp_unzipped_net60_source_tinkerforge_dir, 'Tinkerforge.csproj'), 'w') as f:
-        f.write(NET60_CSPROJ)
-
-    with common.ChangedDirectory(tmp_unzipped_net60_source_tinkerforge_dir):
-        common.execute(['dotnet',
-                        'build',
-                        '-c',
-                        'Release'])
-
-    # Make DLL for NET Core 2.0
-    print('Building NET Core 2.0')
-
-    with open(os.path.join(tmp_unzipped_netcoreapp20_source_tinkerforge_dir, 'Tinkerforge.csproj'), 'w') as f:
-        f.write(NETCORE20_CSPROJ)
-
-    with common.ChangedDirectory(tmp_unzipped_netcoreapp20_source_tinkerforge_dir):
-        common.execute(['dotnet',
-                        'build',
-                        '-c',
-                        'Release'])
-
-    # Make DLL for NET Standard 2.0
-    print('Building NET Standard 2.0')
-
-    with open(os.path.join(tmp_unzipped_netstandard20_source_tinkerforge_dir, 'Tinkerforge.csproj'), 'w') as f:
-        f.write(NETSTANDARD20_CSPROJ)
-
-    with common.ChangedDirectory(tmp_unzipped_netstandard20_source_tinkerforge_dir):
-        common.execute(['dotnet',
-                        'build',
-                        '-c',
-                        'Release'])
+    # Make all dlls
+    with common.ChangedDirectory(os.path.join(tmp_unzipped_dir, 'source', 'Tinkerforge')):
+        common.execute(['dotnet', 'build', '-c', 'Release'])
 
     # Download nuget.exe
     with common.ChangedDirectory(tmp_dir):

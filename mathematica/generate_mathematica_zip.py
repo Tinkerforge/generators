@@ -109,16 +109,24 @@ class MathematicaZipGenerator(mathematica_common.MathematicaGeneratorTrait, comm
                                    {'<<BINDINGS>>': 'Mathematica',
                                     '<<VERSION>>': '.'.join(version)})
 
+        # Make Tinkerforge.csproj
+        project_items = []
+
+        for filename in ['AssemblyInfo.cs', 'IPConnection.cs'] + self.get_released_files():
+            project_items.append('<Compile Include="{0}" />'.format(filename))
+
+        common.specialize_template(os.path.join(root_dir, '..', 'csharp', 'Tinkerforge.csproj.template'),
+                                   os.path.join(self.tmp_source_tinkerforge_dir, 'Tinkerforge.csproj'),
+                                   {'{{ITEMS}}': '\n    '.join(project_items)})
+
         # Make dll
-        with common.ChangedDirectory(self.tmp_dir):
-            common.execute(['mcs',
-                            '/optimize+',
-                            '/warn:4',
-                            '/warnaserror',
-                            '/sdk:2',
-                            '/target:library',
-                            '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),
-                            os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])
+        with common.ChangedDirectory(self.tmp_source_tinkerforge_dir):
+            common.execute(['dotnet', 'build', '-c', 'Release', '-f', 'net20', '-o', self.tmp_dir])
+
+        os.remove(os.path.join(self.tmp_dir, 'Tinkerforge.pdb'))
+        os.remove(os.path.join(self.tmp_dir, 'Tinkerforge.xml'))
+        shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'bin'))
+        shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'obj'))
 
         # Make zip
         self.create_zip_file(self.tmp_dir)

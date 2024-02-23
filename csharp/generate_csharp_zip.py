@@ -131,17 +131,11 @@ class CSharpZipGenerator(csharp_common.CSharpGeneratorTrait, common.ZipGenerator
                                    {'{{ITEMS}}': '\n    '.join(project_items)})
 
         # Make dll
-        with common.ChangedDirectory(self.tmp_dir):
-            common.execute(['mcs',
-                            '/debug:full',
-                            '/optimize+',
-                            '/warn:4',
-                            '/warnaserror',
-                            '/sdk:2',
-                            '/target:library',
-                            '/doc:' + os.path.join(self.tmp_dir, 'Tinkerforge.xml'),
-                            '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),
-                            os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])
+        with common.ChangedDirectory(self.tmp_source_tinkerforge_dir):
+            common.execute(['dotnet', 'build', '-c', 'Release', '-f', 'net20', '-o', self.tmp_dir])
+
+        shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'bin'))
+        shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'obj'))
 
         # Make zip
         self.create_zip_file(self.tmp_dir)

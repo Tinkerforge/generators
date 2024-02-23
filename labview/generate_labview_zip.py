@@ -125,19 +125,29 @@ class LabVIEWZipGenerator(labview_common.LabVIEWGeneratorTrait, common.ZipGenera
                                    {'<<BINDINGS>>': 'LabVIEW',
                                     '<<VERSION>>': '.'.join(version)})
 
+        # Make Tinkerforge.csproj
+        project_items = []
+
+        for filename in ['AssemblyInfo.cs', 'IPConnection.cs'] + self.get_released_files():
+            project_items.append('<Compile Include="{0}" />'.format(filename))
+
+        common.specialize_template(os.path.join(root_dir, '..', 'csharp', 'Tinkerforge.csproj.template'),
+                                   os.path.join(self.tmp_source_tinkerforge_dir, 'Tinkerforge.csproj'),
+                                   {'{{ITEMS}}': '\n    '.join(project_items)})
+
         # Make dll
         for sdk in [2, 4]:
-            os.makedirs(os.path.join(self.tmp_dir, 'net{0}0'.format(sdk)))
+            tmp_sdk_dir = os.path.join(self.tmp_dir, 'net{0}0'.format(sdk))
 
-            with common.ChangedDirectory(self.tmp_dir):
-                common.execute(['mcs',
-                                '/optimize+',
-                                '/warn:4',
-                                '/warnaserror',
-                                '/sdk:{0}'.format(sdk),
-                                '/target:library',
-                                '/out:' + os.path.join(self.tmp_dir, 'net{0}0'.format(sdk), 'Tinkerforge.dll'),
-                                os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])
+            os.makedirs(tmp_sdk_dir)
+
+            with common.ChangedDirectory(self.tmp_source_tinkerforge_dir):
+                common.execute(['dotnet', 'build', '-c', 'Release', '-f', 'net{0}0'.format(sdk), '-o', tmp_sdk_dir])
+
+            os.remove(os.path.join(tmp_sdk_dir, 'Tinkerforge.pdb'))
+            os.remove(os.path.join(tmp_sdk_dir, 'Tinkerforge.xml'))
+            shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'bin'))
+            shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'obj'))
 
         # Make zip
         self.create_zip_file(self.tmp_dir)

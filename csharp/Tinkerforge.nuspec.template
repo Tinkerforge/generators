@@ -30,17 +30,17 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="unzipped_net20/Tinkerforge.dll" target="lib/net20" />
-    <file src="unzipped_net20/Tinkerforge.xml" target="lib/net20" />
-    <file src="unzipped_net40/Tinkerforge.dll" target="lib/net40" />
-    <file src="unzipped_net40/Tinkerforge.xml" target="lib/net40" />
-    <file src="unzipped_net50/source/Tinkerforge/bin/Release/net5.0/Tinkerforge.dll" target="lib/net5.0" />
-    <file src="unzipped_net50/source/Tinkerforge/bin/Release/net5.0/Tinkerforge.xml" target="lib/net5.0" />
-    <file src="unzipped_net60/source/Tinkerforge/bin/Release/net6.0/Tinkerforge.dll" target="lib/net6.0" />
-    <file src="unzipped_net60/source/Tinkerforge/bin/Release/net6.0/Tinkerforge.xml" target="lib/net6.0" />
-    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.dll" target="lib/netcoreapp2.0" />
-    <file src="unzipped_netcoreapp20/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.xml" target="lib/netcoreapp2.0" />
-    <file src="unzipped_netstandard20/source/Tinkerforge/bin/Release/netstandard2.0/Tinkerforge.dll" target="lib/netstandard2.0" />
-    <file src="unzipped_netstandard20/source/Tinkerforge/bin/Release/netstandard2.0/Tinkerforge.xml" target="lib/netstandard2.0" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/net20/Tinkerforge.dll" target="lib/net20" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/net20/Tinkerforge.xml" target="lib/net20" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/net40/Tinkerforge.dll" target="lib/net40" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/net40/Tinkerforge.xml" target="lib/net40" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/net5.0/Tinkerforge.dll" target="lib/net5.0" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/net5.0/Tinkerforge.xml" target="lib/net5.0" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/net6.0/Tinkerforge.dll" target="lib/net6.0" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/net6.0/Tinkerforge.xml" target="lib/net6.0" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.dll" target="lib/netcoreapp2.0" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/netcoreapp2.0/Tinkerforge.xml" target="lib/netcoreapp2.0" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/netstandard2.0/Tinkerforge.dll" target="lib/netstandard2.0" />
+    <file src="unzipped/source/Tinkerforge/bin/Release/netstandard2.0/Tinkerforge.xml" target="lib/netstandard2.0" />
   </files>
 </package>
