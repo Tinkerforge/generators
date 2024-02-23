@@ -1246,7 +1246,7 @@ end;
 
                     if output_count == 1:
                         output_declaration = '\n  {0}: TArrayOf{1};'.format(stream_name_headless, chunk_data_type_capitalized)
-                        output_prepare = '\n  SetLength(result, 0);\n  SetLength({0}, 0);'.format(stream_name_headless)
+                        output_prepare = '\n  result := []; {{ avoid compiler warning "function result variable of a managed type does not seem to be initialized" }}\n  SetLength(result, 0);\n  SetLength({0}, 0);'.format(stream_name_headless)
                         output_finish = '\n  result := {0};'.format(stream_name_headless)
                     else:
                         output_declaration = ''

@@ -1287,6 +1287,7 @@ end;
 function TIPConnection.CreateRequestPacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
 var sequenceNumber, responseExpected: byte;
 begin
+  result := []; { avoid compiler warning "function result variable of a managed type does not seem to be initialized" }
   SetLength(result, len);
   FillChar(result[0], len, 0);
   sequenceNumberMutex.Acquire;

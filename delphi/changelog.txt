@@ -307,3 +307,5 @@
 2024-02-21: 2.1.33 (<unknown>)
 - Add support for Industrial Dual AC In Bricklet
 - Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
+- Avoid compiler warning: function result variable of a managed type does not
+  seem to be initialized

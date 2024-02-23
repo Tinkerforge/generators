@@ -251,6 +251,7 @@ end;
 function TDevice.SendRequest(const request: TByteArray; expectedResponseLength: byte): TByteArray;
 var ipcon_: TIPConnection; kind, errorCode, functionID: byte;
 begin
+  result := []; { avoid compiler warning "function result variable of a managed type does not seem to be initialized" }
   SetLength(result, 0);
   ipcon_ := ipcon as TIPConnection;
   if (GetResponseExpectedFromData(request)) then begin
