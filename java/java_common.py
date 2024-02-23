@@ -354,13 +354,13 @@ class JavaGeneratorTrait:
         return True
 
 def detect_java_home():
-    for java_home in ['/usr/lib/jvm/java-8-openjdk-amd64', '/usr/lib/jvm/java-8-openjdk']:
+    for java_home in ['/usr/lib/jvm/java-11-openjdk-amd64', '/usr/lib/jvm/java-11-openjdk']:
         try:
             javac_version = subprocess.check_output([os.path.join(java_home, 'bin/javac'), '-version'], stderr=subprocess.STDOUT).decode()
         except:
             continue
 
-        if javac_version.startswith('javac 1.8.0'):
+        if javac_version.startswith('javac 11.'):
             return java_home
 
-    raise Exception('Could not detect JAVA_HOME for Java 8')
+    raise Exception('Could not detect JAVA_HOME for Java 11')
