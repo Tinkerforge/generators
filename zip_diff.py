@@ -71,6 +71,7 @@ def main():
     parser.add_argument('-u', '--unreleased', action='store_true', help='use unreleased zip as old diff input')
     parser.add_argument('-d', '--diff-tool', default='./diff_view.py', help='program to open diff with')
     parser.add_argument('-b', '--bindings', nargs=1, help='comma separated list of bindings, each prefixed by +/-/>=/>/<=/<')
+    parser.add_argument('-s', '--ignore-space-change', action='store_true', help='ignore changes in the amount of white space')
 
     args = parser.parse_args(argv)
 
@@ -384,7 +385,7 @@ def main():
                 print('error: copy and unzip new.zip failed')
                 return 1
 
-            if os.system('bash -c "pushd {1} > /dev/null && diff -ru6 old_{0}/ new_{0}/ > diff_{0}.diff; popd > /dev/null"'.format(binding, tmp)) != 0:
+            if os.system('bash -c "pushd {1} > /dev/null && diff -r{2}u6 old_{0}/ new_{0}/ > diff_{0}.diff; popd > /dev/null"'.format(binding, tmp, 'b' if args.ignore_space_change else '')) != 0:
                 print('error: diff old vs new failed')
                 return 1
 
