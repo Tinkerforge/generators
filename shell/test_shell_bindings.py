@@ -55,7 +55,7 @@ class ShellExamplesTester(common.Tester):
     def __init__(self, root_dir):
         common.Tester.__init__(self, 'shell', '.sh', root_dir)
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         if path.endswith('example-unicode.sh'): # FIXME
             self.handle_result(cookie, 0, '>>> skipping')
             return

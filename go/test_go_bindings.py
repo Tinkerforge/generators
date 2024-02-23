@@ -65,7 +65,7 @@ class GoExamplesTester(common.Tester):
 
         return True
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         args = ['go',
                 'build',
                 '-o',

@@ -56,7 +56,7 @@ class VBNETExamplesTester(common.Tester):
     def __init__(self, root_dir, extra_paths):
         common.Tester.__init__(self, 'vbnet', '.vb', root_dir, extra_paths=extra_paths)
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         if extra:
             shutil.copy(path, tmp_dir)
             path = os.path.join(tmp_dir, os.path.split(path)[-1])

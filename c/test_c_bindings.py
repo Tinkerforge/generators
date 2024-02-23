@@ -59,7 +59,7 @@ class CExamplesTester(common.Tester):
 
         self.compiler = compiler
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         uses_libgd = False
 
         with open(path, 'r') as f:

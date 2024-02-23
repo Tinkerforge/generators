@@ -57,7 +57,7 @@ class PythonTester(common.Tester):
 
         self.python = python
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         args = [self.python,
                 '-c',
                 'import py_compile; py_compile.compile("{0}", doraise=True)'.format(path)]

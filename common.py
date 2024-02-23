@@ -4778,12 +4778,12 @@ class ExamplesGenerator(Generator):
             git_dir = os.path.join(override_git_dir, device.get_git_name())
         return os.path.join(git_dir, 'software', 'examples', self.get_bindings_name())
 
-def tester_worker(cookie, args, env, setup, teardown):
+def tester_worker(cookie, args, env, cwd, setup, teardown):
     if setup != None:
         setup()
 
     try:
-        exit_code, output = check_output_and_error(args, env=env)
+        exit_code, output = check_output_and_error(args, env=env, cwd=cwd)
     except Exception as e:
         return cookie, None, 'Tester Exception: ' + str(e)
     finally:
@@ -4810,15 +4810,15 @@ class Tester(object):
         self.failure_count = 0
         self.pool = multiprocessing.dummy.Pool(processes=self.PROCESSES)
 
-    def execute(self, cookie, args, env=None, setup=None, teardown=None):
+    def execute(self, cookie, args, env=None, cwd=None, setup=None, teardown=None):
         def callback(result):
             self.handle_result(*result)
 
-        self.pool.apply_async(tester_worker, args=(cookie, args, env, setup, teardown), callback=callback)
+        self.pool.apply_async(tester_worker, args=(cookie, args, env, cwd, setup, teardown), callback=callback)
 
-    def handle_source(self, tmp_dir, path, extra):
+    def handle_source(self, tmp_dir, scratch_dir, path, extra):
         self.test_count += 1
-        self.test((path,), tmp_dir, path, extra)
+        self.test((path,), tmp_dir, scratch_dir, path, extra)
 
     def handle_result(self, cookie, exit_code, output):
         if exit_code == None: # FIXME: add better handling
@@ -4858,20 +4858,25 @@ class Tester(object):
     def after_unzip(self, tmp_dir):
         return True
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         raise NotImplementedError()
 
     def check_success(self, exit_code, output):
         return exit_code == 0
 
     def run(self):
-        tmp_dir = os.path.join('/tmp/tester', self.name)
+        tmp_dir = os.path.join('/tmp/tester/unpack', self.name)
+        scratch_base = os.path.join('/tmp/tester/scratch', self.name)
 
         # Make temporary directory
         if os.path.exists(tmp_dir):
             shutil.rmtree(tmp_dir)
 
+        if os.path.exists(scratch_base):
+            shutil.rmtree(scratch_base)
+
         os.makedirs(tmp_dir)
+        os.makedirs(scratch_base)
 
         with ChangedDirectory(tmp_dir):
             shutil.copy(os.path.join(self.root_dir, self.zipname), tmp_dir)
@@ -4895,16 +4900,32 @@ class Tester(object):
                 return False
 
             # test
+            counter = 1
+
             for subdir in self.subdirs:
                 for root, _, files in os.walk(os.path.join(tmp_dir, subdir)):
                     for name in files:
                         if not name.endswith(self.extension):
                             continue
 
-                        self.handle_source(tmp_dir, os.path.join(root, name), False)
+                        scratch_dir = os.path.join(scratch_base, '{0:04}_{1}'.format(counter, name))
+                        counter += 1
+
+                        if os.path.exists(scratch_dir):
+                            shutil.rmtree(scratch_dir)
+
+                        os.makedirs(scratch_dir)
+                        self.handle_source(tmp_dir, scratch_dir, os.path.join(root, name), False)
 
             for extra_path in self.extra_paths:
-                self.handle_source(tmp_dir, extra_path, True)
+                scratch_dir = os.path.join(scratch_base, '{0:04}_{1}'.format(counter, os.path.split(extra_path)[-1]))
+                counter += 1
+
+                if os.path.exists(scratch_dir):
+                    shutil.rmtree(scratch_dir)
+
+                os.makedirs(scratch_dir)
+                self.handle_source(tmp_dir, scratch_dir, extra_path, True)
 
             self.pool.close()
             self.pool.join()

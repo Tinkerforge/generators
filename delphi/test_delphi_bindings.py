@@ -66,7 +66,7 @@ class DelphiExamplesTester(common.Tester):
 
         self.lib_path = os.path.dirname(output)
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         if extra:
             shutil.copy(path, tmp_dir)
             path = os.path.join(tmp_dir, os.path.split(path)[-1])

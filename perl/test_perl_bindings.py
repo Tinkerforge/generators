@@ -55,7 +55,7 @@ class PerlCheckExamplesTester(common.Tester):
     def __init__(self, root_dir):
         common.Tester.__init__(self, 'perl', '.pl', root_dir, comment='check')
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         path_check = path.replace('.pl', '_check.pl')
 
         with open(path, 'r') as f:

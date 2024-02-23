@@ -56,7 +56,7 @@ class RustExamplesTester(common.Tester):
     def __init__(self, root_dir, extra_paths):
         common.Tester.__init__(self, 'rust', 'Cargo.toml', root_dir, subdirs='.')
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         example_path = os.path.join(os.path.dirname(path), 'examples')
 
         for dirpath, _dirnames, filenames in os.walk(example_path):
