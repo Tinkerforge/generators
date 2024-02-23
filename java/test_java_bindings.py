@@ -114,7 +114,7 @@ class JavaDocTester(common.Tester):
 
         return rc == 0
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         args = ['xmllint',
                 '--noout',
                 '--valid',

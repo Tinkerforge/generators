@@ -70,7 +70,7 @@ class PylintTester(common.Tester):
 
         self.python = python
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         teardown = None
 
         if self.python == 'python3':

@@ -84,7 +84,7 @@ class PerlLintExamplesTester(common.Tester):
     def __init__(self, root_dir):
         common.Tester.__init__(self, 'perl', '.pl', root_dir, comment='lint')
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         path_lint = path.replace('.pl', '_lint.pl')
 
         with open(path, 'r') as f:
@@ -126,7 +126,7 @@ class PerlCriticExamplesTester(common.Tester):
     def __init__(self, root_dir):
         common.Tester.__init__(self, 'perl', '.pl', root_dir, comment='critic')
 
-    def test(self, cookie, tmp_dir, path, extra):
+    def test(self, cookie, tmp_dir, scratch_dir, path, extra):
         args = ['perlcritic',
                 #'--brutal', # FIXME
                 '--verbose',
