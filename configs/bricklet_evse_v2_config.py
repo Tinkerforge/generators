@@ -1060,3 +1060,23 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Energy Meter Values',
+'elements': [('Power', 'float', 1, 'out'),            # W
+             ('Current', 'float', 3, 'out'),
+             ('Phases Active', 'bool', 3, 'out'),
+             ('Phases Connected', 'bool', 3, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
