@@ -57,7 +57,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y perl libterm-readkey-perl libgd-perl libb-lint-perl libdata-dump-perl libperl-critic-perl libmodule-starter-perl libmodule-build-perl libdigest-hmac-perl
 
 # python bindings
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python3 pylint3 python3-pil python3-setuptools
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y python3 pylint3 python3-pil python3-setuptools python3-opencv python3-numpy
 
 # php bindings
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y php-pear
