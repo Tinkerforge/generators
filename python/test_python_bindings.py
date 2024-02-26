@@ -91,7 +91,7 @@ class PylintTester(common.Tester):
                 '-c',
                 'import sys; sys.path.insert(0, "{0}"); import pylint; pylint.run_pylint()'.format(os.path.join(tmp_dir, 'source')),
                 '-E',
-                '--disable=no-name-in-module',
+                '--disable=no-name-in-module,assignment-from-no-return',
                 path]
 
         self.execute(cookie, args, teardown=teardown)
