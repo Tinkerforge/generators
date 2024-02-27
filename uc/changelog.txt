@@ -11,7 +11,7 @@
 2022-07-12: 2.0.3 (0e04c77)
 - Fix ESP32 HAL compatibility with Arduino-ESP32 2.0.4
 
-2024-02-21: 2.0.4 (<unknown>)
+2024-02-27: 2.0.4 (<unknown>)
 - Add support for Industrial Dual AC In Bricklet
 - Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Support authentication secret, listen address and port for Arduino ESP32
