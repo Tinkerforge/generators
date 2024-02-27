@@ -68,13 +68,16 @@ def generate(root_dir):
                     '-d',
                     tmp_unzipped_dir])
 
+    shutil.copy(os.path.join(root_dir, 'package.png'), tmp_dir)
+    shutil.copy(os.path.join(root_dir, 'package.md'), tmp_dir)
+
     # Make all dlls
     with common.ChangedDirectory(os.path.join(tmp_unzipped_dir, 'source', 'Tinkerforge')):
         common.execute(['dotnet', 'build', '-c', 'Release'])
 
     # Download nuget.exe
     with common.ChangedDirectory(tmp_dir):
-        common.execute(['wget', 'https://dist.nuget.org/win-x86-commandline/v5.0.2/nuget.exe'])
+        common.execute(['wget', 'https://dist.nuget.org/win-x86-commandline/v6.9.1/nuget.exe'])
 
     # Make Tinkerforge.nuspec
     common.specialize_template(os.path.join(root_dir, 'Tinkerforge.nuspec.template'),

@@ -8,7 +8,8 @@
     <owners>Tinkerforge GmbH</owners>
     <license type="expression">CC0-1.0</license>
     <projectUrl>https://www.tinkerforge.com</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/Tinkerforge/generators/master/csharp/package.png</iconUrl>
+    <icon>images/package.png</icon>
+    <readme>docs/package.md</readme>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This .NET library provides the C# API bindings for Tinkerforge Bricks and Bricklets.</description>
     <summary>Tinkerforge is an open source hardware platform of stackable microcontroller building blocks (Bricks) that can control different modules (Bricklets). The hardware can be controlled by external programs written in different programming languages including C#.</summary>
@@ -30,6 +31,8 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="package.png" target="images" />
+    <file src="package.md" target="docs" />
     <file src="unzipped/source/Tinkerforge/bin/Release/net20/Tinkerforge.dll" target="lib/net20" />
     <file src="unzipped/source/Tinkerforge/bin/Release/net20/Tinkerforge.xml" target="lib/net20" />
     <file src="unzipped/source/Tinkerforge/bin/Release/net40/Tinkerforge.dll" target="lib/net40" />
