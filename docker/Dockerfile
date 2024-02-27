@@ -25,7 +25,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y zip
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y debhelper dh-golang dh-python lintian
 
 # c bindings
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential mingw-w64 clang libgd-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential mingw-w64 clang clang-tools libgd-dev
 
 # csharp bindings
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget
