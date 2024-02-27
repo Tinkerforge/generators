@@ -28,7 +28,7 @@
 - Add simple_get_tag_id function to NFC Bricklet API
 - Add Set/Get RTC Driver functions to HAT Brick API
 
-2024-02-27: 2.0.8 (<unknown>)
+2024-02-27: 2.0.8 (3a86bf6)
 - Add support for Industrial Dual AC In Bricklet
 - Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Show dropped bytes

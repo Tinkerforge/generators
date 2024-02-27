@@ -344,7 +344,7 @@
 - Add set/get_rtc_driver functions and RTC_DRIVER constants to HAT Brick API
 - Fix relative import error handling in Python 3
 
-2024-02-27: 2.1.31 (<unknown>)
+2024-02-27: 2.1.31 (3a86bf6)
 - Add support for Industrial Dual AC In Bricklet
 - Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Don't leak socket on connect error

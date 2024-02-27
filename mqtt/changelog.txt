@@ -119,7 +119,7 @@
 - Add simple_get_tag_id function and mode_simple symbol to NFC Bricklet API
 - Add set/get_rtc_driver functions and rtc_driver symbols to HAT Brick API
 
-2024-02-27: 2.0.17 (<unknown>)
+2024-02-27: 2.0.17 (3a86bf6)
 - Add support for Industrial Dual AC In Bricklet
 - Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Handle empty payload in streamed function calls

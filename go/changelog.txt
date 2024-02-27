@@ -84,7 +84,7 @@
 2022-08-22: 2.0.14 (ee02315)
 - Fix bool arrays in getters
 
-2024-02-27: 2.0.15 (<unknown>)
+2024-02-27: 2.0.15 (3a86bf6)
 - Add support for Industrial Dual AC In Bricklet
 - Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Fix error response check
