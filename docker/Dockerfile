@@ -28,7 +28,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y debhelper dh-golang dh-pyt
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential mingw-w64 clang clang-tools libgd-dev
 
 # csharp bindings
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget mono-complete
 RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
 RUN DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/packages-microsoft-prod.deb
 RUN DEBIAN_FRONTEND=noninteractive apt-get update

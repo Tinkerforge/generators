@@ -83,8 +83,7 @@ def generate(root_dir):
 
     # Make package
     with common.ChangedDirectory(tmp_dir):
-        os.chmod('./nuget.exe', 0o755)
-        common.execute(['./nuget.exe', 'pack', 'Tinkerforge.nuspec'])
+        common.execute(['mono', 'nuget.exe', 'pack', 'Tinkerforge.nuspec'])
 
     shutil.move(os.path.join(tmp_dir, 'Tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)),
                 os.path.join(root_dir, 'tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)))
