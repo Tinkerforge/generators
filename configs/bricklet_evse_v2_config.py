@@ -138,9 +138,11 @@ com['constant_groups'].append({
 com['constant_groups'].append({
 'name': 'Shutdown Input',
 'type': 'uint8',
-'constants': [('Ignored', 0),
+'constants': [('Ignored', 0), # <- WARP2 default
               ('Shutdown On Open', 1),
-              ('Shutdown On Close', 2)]
+              ('Shutdown On Close', 2),
+              ('4300 Watt On Open', 3),
+              ('4300 Watt On Close', 4)] # <- WARP3 default
 })
 
 com['constant_groups'].append({
