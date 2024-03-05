@@ -890,7 +890,8 @@ com['packets'].append({
              ('Temperature', 'int16', 1, 'out'),
              ('Phases Current', 'uint8', 1, 'out'),  # Always three-phase for EVSE V2
              ('Phases Requested', 'uint8', 1, 'out'),
-             ('Phases Status', 'uint8', 1, 'out'),
+             ('Phases State', 'uint8', 1, 'out'),
+             ('Phases Info', 'uint8', 1, 'out'),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1049,7 +1050,8 @@ com['packets'].append({
 'name': 'Get Phase Control',
 'elements': [('Phases Current', 'uint8', 1, 'out'),  # Always three-phase EVSE V2
              ('Phases Requested', 'uint8', 1, 'out'),
-             ('Phases Status', 'uint8', 1, 'out')],
+             ('Phases State', 'uint8', 1, 'out'),
+             ('Phases Info', 'uint8', 1, 'out')],  # 0 = normal, 1 = 1-phase forced by auto-switch
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
