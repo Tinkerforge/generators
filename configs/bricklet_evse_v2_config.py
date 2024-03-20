@@ -893,6 +893,7 @@ com['packets'].append({
              ('Phases State', 'uint8', 1, 'out'),
              ('Phases Info', 'uint8', 1, 'out'),
              ('Phase Auto Switch Enabled', 'bool', 1, 'out'),
+             ('Phases Connected', 'uint8', 1, 'out'), # 1 or 3, Ignored in EVSE V2
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1087,6 +1088,40 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Phase Auto Switch',
 'elements': [('Phase Auto Switch Enabled', 'bool', 1, 'out')], # Always false in EVSE V2
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Phases Connected',
+'elements': [('Phases Connected', 'uint8', 1, 'in')], # 1 or 3, Ignored in EVSE V2
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Phases Connected',
+'elements': [('Phases Connected', 'uint8', 1, 'out')], # 1 or 3, Ignored in EVSE V2
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
