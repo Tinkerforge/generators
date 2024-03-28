@@ -141,8 +141,8 @@ com['constant_groups'].append({
 'constants': [('Ignored', 0), # <- WARP2 default
               ('Shutdown On Open', 1),
               ('Shutdown On Close', 2),
-              ('4300 Watt On Open', 3),
-              ('4300 Watt On Close', 4)] # <- WARP3 default
+              ('4200 Watt On Open', 3),
+              ('4200 Watt On Close', 4)] # <- WARP3 default
 })
 
 com['constant_groups'].append({
