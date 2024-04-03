@@ -179,3 +179,7 @@
 - Add support for Industrial Dual AC In Bricklet
 - Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Fix System.AppDomain.Unload timeout
+
+2024-04-08: 2.1.32 (<unknown>)
+- Handle forced socket read timeout for System.AppDomain.Unload timeout fix
+  correctly when using Microsoft .NET runtime on Linux

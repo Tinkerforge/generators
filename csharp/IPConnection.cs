@@ -2252,7 +2252,9 @@ namespace Tinkerforge
 					{
 						int error = ((SocketException)e.InnerException).ErrorCode;
 
-						if (error == 10035 /* linux: WSAEWOULDBLOCK */ || error == 10060 /* windows: WSAETIMEDOUT */)
+						if (error == 110 /* linux/dotnet: ETIMEDOUT */ ||
+						    error == 10035 /* linux/mono: WSAEWOULDBLOCK */ ||
+						    error == 10060 /* windows: WSAETIMEDOUT */)
 						{
 							continue;
 						}
