@@ -310,5 +310,5 @@
 - Avoid compiler warning: function result variable of a managed type does not
   seem to be initialized
 
-2024-04-08: 2.1.34 (<unknown>)
+2024-04-08: 2.1.34 (a78c5b4)
 - Use macOS specific code for all non-Windows platforms
