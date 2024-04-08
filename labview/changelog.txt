@@ -181,6 +181,6 @@
 - Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Fix LabVIEW crash due to System.AppDomain.Unload timeout
 
-2024-04-08: 2.1.32 (<unknown>)
+2024-04-08: 2.1.32 (0a0cd96)
 - Handle forced socket read timeout for System.AppDomain.Unload timeout fix
   correctly when using Microsoft .NET runtime on Linux
