@@ -11,7 +11,7 @@ unit TimedSemaphore;
 {$ifdef FPC}
  {$mode OBJFPC}{$H+}
 {$else}
- {$ifdef MACOS}{$define DELPHI_MACOS}{$endif}
+ {$ifndef MSWINDOWS}{$define DELPHI_NONWIN}{$endif}
 {$endif}
 
 interface
@@ -26,7 +26,7 @@ type
   { Manual-Reset Event }
   TEventWrapper = class
   private
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
     event: TEvent;
  {$else}
     event: PRTLEvent;
@@ -154,7 +154,7 @@ end;
 { TEventWrapper }
 constructor TEventWrapper.Create;
 begin
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   event := TEvent.Create(nil, true, false, '', false);
  {$else}
   event := RTLEventCreate; { This is a manual-reset event }
@@ -163,7 +163,7 @@ end;
 
 destructor TEventWrapper.Destroy;
 begin
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   event.Destroy;
  {$else}
   RTLEventDestroy(event);
@@ -174,14 +174,14 @@ end;
 procedure TEventWrapper.WaitFor(const timeout: longint);
 begin
   if (timeout < 0) then begin
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
     event.WaitFor(INFINITE);
  {$else}
     RTLEventWaitFor(event);
  {$endif}
   end
   else begin
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
     event.WaitFor(timeout);
  {$else}
     RTLEventWaitFor(event, timeout);
@@ -191,7 +191,7 @@ end;
 
 procedure TEventWrapper.SetEvent;
 begin
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   event.SetEvent();
  {$else}
   RTLEventSetEvent(event);
@@ -200,7 +200,7 @@ end;
 
 procedure TEventWrapper.ResetEvent;
 begin
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   event.ResetEvent();
  {$else}
   RTLEventResetEvent(event);

@@ -14,7 +14,7 @@ unit IPConnection;
 {$ifdef FPC}
  {$mode OBJFPC}{$H+}
 {$else}
- {$ifdef MACOS}{$define DELPHI_MACOS}{$endif}
+ {$ifndef MSWINDOWS}{$define DELPHI_NONWIN}{$endif}
 {$endif}
 
 interface
@@ -25,7 +25,7 @@ uses
 {$else}
  {$ifdef MSWINDOWS}Windows, WinSock,{$endif}
 {$endif}
-{$ifdef DELPHI_MACOS}
+{$ifdef DELPHI_NONWIN}
   Posix.ArpaInet, Posix.Errno, Posix.NetDB, Posix.NetinetIn, Posix.NetinetTcp, Posix.String_, Posix.SysSocket, Posix.SysTypes, Posix.Unistd,
 {$endif}
   Classes, SyncObjs, SysUtils, LEConverter, BlockingQueue, Device, TimedSemaphore, SHAone, BrickDaemon;
@@ -70,7 +70,7 @@ const
   ESysEINTR = WSAEINTR;
  {$endif}
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   INVALID_SOCKET = -1;
   ESysEINTR = EINTR;
  {$else}
@@ -182,7 +182,7 @@ type
     pendingData: TByteArray;
     socketMutex: TCriticalSection;
     socketSendMutex: TCriticalSection;
-{$ifdef DELPHI_MACOS}
+{$ifdef DELPHI_NONWIN}
     socket: longint; { protected by socketMutex }
 {$else}
     socket: TSocket; { protected by socketMutex }
@@ -683,13 +683,13 @@ var
     data: WSAData;
  {$endif}
 {$endif}
-{$ifdef DELPHI_MACOS}
+{$ifdef DELPHI_NONWIN}
     tmp: longint;
 {$else}
     tmp: TSocket;
 {$endif}
     nodelay: longint;
-{$ifdef DELPHI_MACOS}
+{$ifdef DELPHI_NONWIN}
     hints: addrinfo;
     entry: PAddrInfo;
     error: longint;
@@ -699,13 +699,13 @@ var
 {$ifdef FPC}
     address: TInetSockAddr;
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
     address: sockaddr_in;
  {$else}
     address: TSockAddrIn;
  {$endif}
 {$endif}
-{$ifdef DELPHI_MACOS}
+{$ifdef DELPHI_NONWIN}
     resolved: in_addr;
 {$else}
     resolved: TInAddr;
@@ -739,7 +739,7 @@ begin
   tmp := fpsocket(AF_INET, SOCK_STREAM, 0);
   if (tmp < 0) then begin
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   tmp := Posix.SysSocket.socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
  {$else}
   tmp := WinSock.socket(AF_INET, SOCK_STREAM, 0);
@@ -757,7 +757,7 @@ begin
 {$ifdef FPC}
   if (fpsetsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) < 0) then begin
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   if (setsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, nodelay, sizeof(nodelay)) < 0) then begin
  {$else}
   if (setsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) = SOCKET_ERROR) then begin
@@ -765,7 +765,7 @@ begin
 {$endif}
     raise Exception.Create('Could not set TCP_NODELAY socket option: ' + GetLastSocketErrorMessage);
   end;
-{$ifdef DELPHI_MACOS}
+{$ifdef DELPHI_NONWIN}
   FillChar(hints, SizeOf(hints), 0);
   hints.ai_flags := AI_PASSIVE;
   hints.ai_family := AF_UNSPEC;
@@ -807,7 +807,7 @@ begin
 {$ifdef FPC}
   if (fpconnect(tmp, @address, sizeof(address)) < 0) then begin
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   if (Posix.SysSocket.connect(tmp, sockaddr(address), sizeof(address)) < 0) then begin
  {$else}
   if (WinSock.connect(tmp, address, sizeof(address)) = SOCKET_ERROR) then begin
@@ -819,7 +819,7 @@ begin
       callback := nil;
     end;
     { Destroy socket }
-{$ifdef DELPHI_MACOS}
+{$ifdef DELPHI_NONWIN}
     Posix.Unistd.__close(tmp);
 {$else}
     closesocket(tmp);
@@ -882,7 +882,7 @@ begin
 {$ifdef FPC}
   fpshutdown(socket, 2);
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   shutdown(socket, SHUT_RDWR);
  {$else}
   shutdown(socket, SD_BOTH);
@@ -894,7 +894,7 @@ begin
   receiveThread.Destroy;
   receiveThread := nil;
   { Destroy socket }
-{$ifdef DELPHI_MACOS}
+{$ifdef DELPHI_NONWIN}
     Posix.Unistd.__close(socket);
 {$else}
     closesocket(socket);
@@ -907,7 +907,7 @@ begin
 {$ifdef FPC}
   result := socketerror;
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   result := errno;
  {$else}
   result := WSAGetLastError;
@@ -924,7 +924,7 @@ begin
   result := SysErrorMessage(socketerror);
  {$endif}
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
   result := string(strerror(errno));
  {$else}
   result := SysErrorMessage(WSAGetLastError);
@@ -942,7 +942,7 @@ begin
 {$ifdef FPC}
     len := fprecv(socket, @data[0], Length(data), 0);
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
     len := recv(socket, data, Length(data), 0);
  {$else}
     len := WinSock.Recv(socket, data, Length(data), 0);
@@ -1062,7 +1062,7 @@ begin
 {$ifdef FPC}
         error := fpsend(socket, @request[0], Length(request), 0) < 0;
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
         error := send(socket, request[0], Length(request), 0) < 0;
  {$else}
         error := WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR;
@@ -1159,7 +1159,7 @@ begin
           disconnectProbeQueue.Destroy;
           disconnectProbeQueue := nil;
           { Destroy socket }
-{$ifdef DELPHI_MACOS}
+{$ifdef DELPHI_NONWIN}
           Posix.Unistd.__close(socket);
 {$else}
           closesocket(socket);
@@ -1322,7 +1322,7 @@ begin
 {$ifdef FPC}
       error := fpsend(socket, @request[0], Length(request), 0) < 0;
 {$else}
- {$ifdef DELPHI_MACOS}
+ {$ifdef DELPHI_NONWIN}
       error := send(socket, request[0], Length(request), 0) < 0;
  {$else}
       error := WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR;
