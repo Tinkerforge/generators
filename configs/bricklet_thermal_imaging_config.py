@@ -301,10 +301,10 @@ Gibt die Auflösung zurück, wie von :func:`Set Resolution` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Spotmeter Config',
-'elements': [('Region Of Interest', 'uint8', 4, 'in', [{'name': 'First Column', 'range': (0, 79), 'default': 39},
-                                                       {'name': 'First Row', 'range': (0, 59), 'default': 29},
-                                                       {'name': 'Last Column', 'range': (1, 80), 'default': 40},
-                                                       {'name': 'Last Row', 'range': (1, 60), 'default': 30}])],
+'elements': [('Region Of Interest', 'uint8', 4, 'in', [{'name': 'First Column', 'range': (0, 78), 'default': 39},
+                                                       {'name': 'First Row', 'range': (0, 58), 'default': 29},
+                                                       {'name': 'Last Column', 'range': (1, 79), 'default': 40},
+                                                       {'name': 'Last Row', 'range': (1, 59), 'default': 30}])],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
