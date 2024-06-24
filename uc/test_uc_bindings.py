@@ -206,6 +206,7 @@ class UCExamplesTester(common.Tester):
                  os.path.join(tmp_dir, 'src/bindings/streaming.c'),
                  os.path.join(tmp_dir, 'src/bindings/tfp.c'),
                  os.path.join(tmp_dir, 'src/bindings/tfp_header.c'),
+                 os.path.join(tmp_dir, 'src/bindings/display_names.c'),
                  os.path.join(tmp_dir, 'src/hal_null/hal_null.c'),
                  os.path.join(tmp_dir, 'src/hal_null/example_driver.c'),
                  os.path.join(tmp_dir, 'src/net_null/net_null.c'),]

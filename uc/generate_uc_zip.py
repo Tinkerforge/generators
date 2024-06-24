@@ -91,6 +91,11 @@ class UCZipGenerator(uc_common.UCGeneratorTrait, common.ZipGenerator):
     def finish(self):
         root_dir = self.get_root_dir()
 
+        # Copy generic examples
+        if self.get_config_name().space == 'Tinkerforge':
+            for example in common.find_examples(root_dir, r'^example_.*\.c$'):
+                shutil.copy(example[1], self.tmp_examples_dir)
+
         bindings_files = [
             'base58.c',
             'base58.h',
