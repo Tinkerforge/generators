@@ -34,12 +34,19 @@ com = {
     'examples': []
 }
 
+com['constant_groups'].append({
+'name': 'Flash Status',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('Busy', 1)]
+})
+
 # Page = 256 Byte of 64 Byte Subpages
 # Sector = 4096 Byte
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set EEPROM Index',
+'name': 'Set Flash Index',
 'elements': [('Page Index', 'uint32', 1, 'in'),
              ('Sub Page Index', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -57,7 +64,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get EEPROM Index',
+'name': 'Get Flash Index',
 'elements': [('Page Index', 'uint32', 1, 'out'),
              ('Sub Page Index', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -75,10 +82,11 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set EEPROM Data', # Uses current Index and increments it by 1
+'name': 'Set Flash Data', # Uses current Index and increments it by 1
 'elements': [('Data', 'uint8', 64, 'in'),
              ('Next Page Index', 'uint32', 1, 'out'),
-             ('Next Sub Page Index', 'uint8', 1, 'out')],
+             ('Next Sub Page Index', 'uint8', 1, 'out'),
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Flash Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -94,24 +102,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get EEPROM Data',
-'elements': [('Data', 'uint8', 64, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': 'Erase EEPROM Sector',
+'name': 'Erase Flash Sector',
 'elements': [('Sector Index', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -128,7 +119,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Erase EEPROM',
+'name': 'Erase Flash',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
