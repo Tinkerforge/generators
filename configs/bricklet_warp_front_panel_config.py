@@ -40,7 +40,7 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': 'Set EEPROM Index',
-'elements': [('Page Index', 'uint16', 1, 'in'),
+'elements': [('Page Index', 'uint32', 1, 'in'),
              ('Sub Page Index', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -58,7 +58,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get EEPROM Index',
-'elements': [('Page Index', 'uint16', 1, 'out'),
+'elements': [('Page Index', 'uint32', 1, 'out'),
              ('Sub Page Index', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -77,7 +77,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set EEPROM Data', # Uses current Index and increments it by 1
 'elements': [('Data', 'uint8', 64, 'in'),
-             ('Next Page Index', 'uint16', 1, 'out'),
+             ('Next Page Index', 'uint32', 1, 'out'),
              ('Next Sub Page Index', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -112,8 +112,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Erase EEPROM Sector',
-'elements': [('Sector Index', 'uint16', 1, 'in'),
-             ('Sub Page Index', 'uint8', 1, 'in')],
+'elements': [('Sector Index', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
