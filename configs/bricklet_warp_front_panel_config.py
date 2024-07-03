@@ -103,7 +103,8 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Erase Flash Sector',
-'elements': [('Sector Index', 'uint16', 1, 'in')],
+'elements': [('Sector Index', 'uint16', 1, 'in'),
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Flash Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -120,7 +121,7 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Erase Flash',
-'elements': [],
+'elements': [('Status', 'uint8', 1, 'out', {'constant_group': 'Flash Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
