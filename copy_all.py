@@ -160,7 +160,7 @@ def copy_uc_files():
             with open(target_path, 'wb') as f:
                 f.write(data)
 
-    copy_files(generators_uc_dir, bindings_target_dir, include_pattern=r'^.*\.(h|c)$', exclude_pattern=r'^(brick(let)?_.*\.(h|c)|display_names.c|example_*\.c)$')
+    copy_files(generators_uc_dir, bindings_target_dir, include_pattern=r'^.*\.(h|c)$', exclude_pattern=r'^(brick(let)?_.*\.(h|c)|display_names.c|example_.*\.c)$')
     copy_files(os.path.join(generators_uc_dir, 'bindings'), bindings_target_dir, include_pattern=r'^(brick(let)?_.*\.(h|c)|display_names.c)$',
                exclude_pattern=r'^bricklet_stream_test\.(h|c)$', header_marker=' * This file was automatically generated on ')
     copy_files(os.path.join(generators_uc_dir, 'net_arduino_esp32'), net_arduino_esp32_target_dir, include_pattern=r'^.*\.(h|c|cpp)$')
