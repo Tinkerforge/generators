@@ -215,9 +215,9 @@ com['packets'].append({
 'elements': [('Icon Index', 'uint32', 1, 'in'),
              ('Sprite Index', 'uint32', 1, 'in'),
              ('Text 1', 'char', 10, 'in'),
-             ('Font Index 1', 'uint8', 1, 'out'),
+             ('Font Index 1', 'uint8', 1, 'in'),
              ('Text 2', 'char', 10, 'in'),
-             ('Font Index 2', 'uint8', 1, 'out')],
+             ('Font Index 2', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
