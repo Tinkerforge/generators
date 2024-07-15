@@ -134,3 +134,121 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Status Bar',
+'elements': [('Ethernet Status', 'uint32', 1, 'in'),
+             ('WIFI Status', 'uint32', 1, 'in'),
+             ('Hours', 'uint8', 1, 'in'),
+             ('Minutes', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Status Bar',
+'elements': [('Ethernet Status', 'uint32', 1, 'out'),
+             ('WIFI Status', 'uint32', 1, 'out'),
+             ('Hours', 'uint8', 1, 'out'),
+             ('Minutes', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Display Page Index',
+'elements': [('Page Index', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Display Page Index',
+'elements': [('Page Index', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Display Front Page Icon',
+'elements': [('Icon Index', 'uint32', 1, 'in'),
+             ('Sprite Index', 'uint32', 1, 'in'),
+             ('Text 1', 'char', 10, 'in'),
+             ('Font Index 1', 'uint8', 1, 'out'),
+             ('Text 2', 'char', 10, 'in'),
+             ('Font Index 2', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Display Front Page Icon',
+'elements': [('Icon Index', 'uint32', 1, 'in'),
+             ('Sprite Index', 'uint32', 1, 'out'),
+             ('Text 1', 'char', 10, 'out'),
+             ('Font Index 1', 'uint8', 1, 'out'),
+             ('Text 2', 'char', 10, 'out'),
+             ('Font Index 2', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
