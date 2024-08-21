@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# Energy Monitor Bricklet communication config
+# WARP Front Panel Bricklet communication config
 
 from generators.configs.openhab_commonconfig import *
 
