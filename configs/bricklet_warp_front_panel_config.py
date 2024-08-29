@@ -41,6 +41,32 @@ com['constant_groups'].append({
               ('Busy', 1)]
 })
 
+
+com['constant_groups'].append({
+'name': 'LED Pattern',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Blinking', 2),
+              ('Breathing', 3)]
+})
+
+
+com['constant_groups'].append({
+'name': 'LED Color',
+'type': 'uint8',
+'constants': [('Green', 0),
+              ('Red', 1),
+              ('Yellow', 2)]
+})
+
+com['constant_groups'].append({
+'name': 'Display',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('Automatic', 1)]
+})
+
 # Page = 256 Byte of 64 Byte Subpages
 # Sector = 4096 Byte
 
@@ -217,9 +243,9 @@ com['packets'].append({
 'elements': [('Icon Index', 'uint32', 1, 'in'),
              ('Active', 'bool', 1, 'in'),
              ('Sprite Index', 'uint32', 1, 'in'),
-             ('Text 1', 'char', 10, 'in'),
+             ('Text 1', 'char', 6, 'in'),
              ('Font Index 1', 'uint8', 1, 'in'),
-             ('Text 2', 'char', 10, 'in'),
+             ('Text 2', 'char', 6, 'in'),
              ('Font Index 2', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -323,6 +349,69 @@ TODO
 'de':
 """
 TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set LED State',
+'elements': [('Pattern', 'uint8', 1, 'in', {'constant_group': 'LED Pattern'}),
+             ('Color', 'uint8', 1, 'in', {'constant_group': 'LED Color'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get LED State',
+'elements': [('Pattern', 'uint8', 1, 'out', {'constant_group': 'LED Pattern'}),
+             ('Color', 'uint8', 1, 'out', {'constant_group': 'LED Color'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Display',
+'elements': [('Display', 'uint8', 1, 'in', {'constant_group': 'Display'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Display',
+'elements': [('Display', 'uint8', 1, 'out', {'constant_group': 'Display'}),
+             ('Countdown', 'uint32', 1, 'out')], # in ms, 0 = Off
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
 """
 }]
 })
