@@ -465,6 +465,7 @@ com['packets'].append({
              ('Flags', 'uint8', 1, 'in'), #
              ('Power Grid', 'int32', 1, 'in'), # W
              ('Power General', 'int32', 6, 'in'), # W
+             ('Price', 'uint32', 1, 'in'),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -514,6 +515,7 @@ com['packets'].append({
              ('Energy Grid Out', 'uint32', 1, 'in'),
              ('Energy General In', 'uint32', 6, 'in'),
              ('Energy General Out', 'uint32', 6, 'in'),
+             ('Price', 'uint32', 1, 'in'),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -596,7 +598,7 @@ com['packets'].append({
 'name': 'SD Energy Manager Data Points Low Level',
 'elements': [('Data Length', 'uint16', 1, 'out', {}),
              ('Data Chunk Offset', 'uint16', 1, 'out', {}),
-             ('Data Chunk Data', 'uint8', 58, 'out', {})],
+             ('Data Chunk Data', 'uint8', 33, 'out', {})],
 'high_level': {'stream_out': {'name': 'Data'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -616,7 +618,7 @@ com['packets'].append({
 'name': 'SD Energy Manager Daily Data Points Low Level',
 'elements': [('Data Length', 'uint16', 1, 'out', {}),
              ('Data Chunk Offset', 'uint16', 1, 'out', {}),
-             ('Data Chunk Data', 'uint32', 14, 'out', {})],
+             ('Data Chunk Data', 'uint32', 15, 'out', {})],
 'high_level': {'stream_out': {'name': 'Data'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
