@@ -251,7 +251,15 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Data 1',
-'elements': [ # TBD
+'elements': [('Power', 'float', 1, 'out'),
+             ('Current', 'float', 3, 'out'),
+             ('Energy Meter Type', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Type'}),
+             ('Error Count', 'uint32', 6, 'out'),
+             ('Input', 'bool', 4, 'out'),
+             ('Output SG Ready', 'bool', 2, 'out'),
+             ('Output Relay', 'bool', 2, 'out'),
+             ('Voltage', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Volt'}),
+             ('Uptime', 'uint32', 1, 'out')
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
