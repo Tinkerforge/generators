@@ -415,3 +415,23 @@ com['packets'].append({
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Flash Metadata',
+'elements': [('Version Flash', 'uint32', 1, 'out'),
+             ('Version Expected', 'uint32', 1, 'out'),
+             ('Length Flash', 'uint32', 1, 'out'),
+             ('Length Expected', 'uint32', 1, 'out'),
+             ('Checksum Flash', 'uint32', 1, 'out'),
+             ('Checksum Expected', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
