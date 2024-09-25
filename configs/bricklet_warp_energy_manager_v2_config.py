@@ -149,7 +149,8 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set SG Ready Output',
-'elements': [('Output', 'bool', 2, 'in')],
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Output', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -183,7 +184,8 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set Relay Output',
-'elements': [('Output', 'bool', 2, 'in')],
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Output', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
