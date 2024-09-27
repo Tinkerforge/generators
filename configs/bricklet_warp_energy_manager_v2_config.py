@@ -309,7 +309,7 @@ com['packets'].append({
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
              ('Minute', 'uint8', 1, 'in', {'range': (0, 55)}), # 5 minute interval (0, 5, .., 50, 55)
-             ('Flags', 'uint8', 1, 'in'), # IEC_STATE (bit 0-2) + future use
+             ('Flags', 'uint16', 1, 'in'), # IEC_STATE (bit 0-2) + future use
              ('Power', 'uint16', 1, 'in'), # W
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
@@ -405,7 +405,7 @@ com['packets'].append({
              ('Day', 'uint8', 1, 'in', {'range': (1, 31)}),
              ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
              ('Minute', 'uint8', 1, 'in', {'range': (0, 55)}), # 5 minute interval (0, 5, .., 50, 55)
-             ('Flags', 'uint8', 1, 'in'), #
+             ('Flags', 'uint16', 1, 'in'), #
              ('Power Grid', 'int32', 1, 'in'), # W
              ('Power General', 'int32', 6, 'in'), # W
              ('Price', 'uint32', 1, 'in'),
@@ -541,7 +541,7 @@ com['packets'].append({
 'name': 'SD Energy Manager Data Points Low Level',
 'elements': [('Data Length', 'uint16', 1, 'out', {}),
              ('Data Chunk Offset', 'uint16', 1, 'out', {}),
-             ('Data Chunk Data', 'uint8', 33, 'out', {})],
+             ('Data Chunk Data', 'uint8', 34, 'out', {})],
 'high_level': {'stream_out': {'name': 'Data'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
