@@ -10,7 +10,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 2],
+    'api_version': [2, 0, 3],
     'category': 'Bricklet',
     'device_identifier': 286,
     'name': 'NFC',
@@ -1300,6 +1300,45 @@ Bis zu acht Tags werden gespeichert.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Cardemu Set Tag ID',
+'elements': [('Tag ID Length', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Tag ID Data', 'uint8', 7, 'in')],
+'since_firmware': [2, 1, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the tag ID for cardemu mode. The tag ID can either have a length of 4 or 7.
+
+Set a length of 0 for random tag ID (default)
+""",
+'de':
+"""
+Setzt die Tag ID für den Caremu-Modus. Die Tag ID kann entweder eine Länge von 4 oder von 7 haben.
+
+Wrid die Länge auf 0 gesetzt, nutzt das Bricklet eine zufällige Tag ID (Default).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Cardemu Get Tag ID',
+'elements': [('Tag ID Length', 'uint8', 1, 'out', {'range': (0, 7)}),
+             ('Tag ID Data', 'uint8', 7, 'out')],
+'since_firmware': [2, 1, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the tag ID and length as set by :func:`Set Tag ID`.
+""",
+'de':
+"""
+Gibt die Tag ID und Länge zurück, wie von :func:`Set Tag ID` gesetzt.
+"""
+}]
+})
 
 com['examples'].append({
 'name': 'Scan For Tags',
