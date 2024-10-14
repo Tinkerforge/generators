@@ -1277,21 +1277,25 @@ Gibt das Timeout zurück, wie von :func:`Set Maximum Timeout` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Simple Get Tag ID Low Level',
-'elements': [('Index', 'uint8', 1, 'in'),
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 7)}),
              ('Tag Type', 'uint8', 1, 'out', {'constant_group': 'Tag Type'}),
              ('Tag ID Length', 'uint8', 1, 'out', {'range': (0, 10)}),
              ('Tag ID Data', 'uint8', 10, 'out', {}),
-             ('Last Seen', 'uint32', 1, 'out')],
+             ('Last Seen', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'high_level': {'stream_out': {'name': 'Tag ID', 'single_chunk': True}},
 'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
 """
+Returns the tag type and tag ID from simple mode sorted by last seen time for a given index.
 
+Up to eight tags are saved.
 """,
 'de':
 """
+Gibt den Tag Typ und die Tag ID des Simple-Mode sortiert nach `last_seen` für den gegebenen Index zurück.
 
+Bis zu acht Tags werden gespeichert.
 """
 }]
 })
