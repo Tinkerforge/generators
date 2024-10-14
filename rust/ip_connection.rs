@@ -332,10 +332,11 @@ fn is_socket_really_connected(stream: &mut TcpStream) -> Result<bool, std::io::E
     result
 }
 
-fn create_socket_from_list(addrs: &Vec<SocketAddr>) -> std::io::Result<(TcpStream, TcpStream)> {
+fn create_socket_from_list(addrs: &Vec<SocketAddr>, connection_timeout: Duration) -> std::io::Result<(TcpStream, TcpStream)> {
     let mut error = std::io::Error::new(std::io::ErrorKind::Other, "Could not resolve hostname or no IP address was given!");
+    let timeout = connection_timeout.checked_div(addrs.len() as u32).unwrap_or(Duration::ZERO);
     for addr in addrs {
-        match create_socket(addr) {
+        match create_socket(addr, timeout) {
             Ok(tup) => return Ok(tup),
             Err(e) => error = e,
         }
@@ -343,8 +344,8 @@ fn create_socket_from_list(addrs: &Vec<SocketAddr>) -> std::io::Result<(TcpStrea
     return Err(error);
 }
 
-fn create_socket(addr: &SocketAddr) -> std::io::Result<(TcpStream, TcpStream)> {
-    let mut tcp_stream = TcpStream::connect_timeout(&addr, Duration::new(30, 0))?;
+fn create_socket(addr: &SocketAddr, connection_timeout: Duration) -> std::io::Result<(TcpStream, TcpStream)> {
+    let mut tcp_stream = if connection_timeout.is_zero() {TcpStream::connect(&addr)?} else {TcpStream::connect_timeout(&addr, connection_timeout)?};
 
     tcp_stream.set_read_timeout(Some(Duration::new(5, 0)))?;
     tcp_stream.set_write_timeout(Some(Duration::new(5, 0)))?;
@@ -370,6 +371,7 @@ fn socket_thread_fn(
     let mut enumerate_callbacks = Vec::new();
     let mut session_id = 0u64;
     let mut timeout = Duration::new(2, 500_000_000);
+    let mut connection_timeout = Duration::new(30, 0);
     let mut auto_reconnect_enabled = true;
     let mut auto_reconnect_allowed = true;
     let mut is_auto_reconnect = false;
@@ -419,6 +421,8 @@ fn socket_thread_fn(
                 Ok(SocketThreadRequest::Response(_, _)) => {}        //ignore network data, the thread creating it is not running yet
                 Ok(SocketThreadRequest::SetTimeout(t)) => timeout = t,
                 Ok(SocketThreadRequest::GetTimeout(tx)) => tx.send(timeout).expect("Request sent queue was dropped. This is a bug in the rust bindings."),
+                Ok(SocketThreadRequest::SetConnectionTimeout(t)) => connection_timeout = t,
+                Ok(SocketThreadRequest::GetConnectionTimeout(tx)) => tx.send(connection_timeout).expect("Request sent queue was dropped. This is a bug in the rust bindings."),
                 Ok(SocketThreadRequest::TriggerAutoReconnect(addrs)) => {
                     if !auto_reconnect_allowed {
                         continue 'wait_for_connect;
@@ -439,7 +443,7 @@ fn socket_thread_fn(
         session_id += 1;
         connection_state.store(2, Ordering::SeqCst);
 
-        let (mut tcp_stream, stream_copy) = match create_socket_from_list(&addrs) {
+        let (mut tcp_stream, stream_copy) = match create_socket_from_list(&addrs, connection_timeout) {
             Ok((a, b)) => (a, b),
             Err(e) => {
                 if let Some(tx) = connection_request_done_tx {
@@ -580,6 +584,8 @@ fn socket_thread_fn(
                 }
                 Ok(SocketThreadRequest::SetTimeout(t)) => timeout = t,
                 Ok(SocketThreadRequest::GetTimeout(tx)) => tx.send(timeout).expect("Request sent queue was dropped. This is a bug in the rust bindings."),
+                Ok(SocketThreadRequest::SetConnectionTimeout(t)) => connection_timeout = t,
+                Ok(SocketThreadRequest::GetConnectionTimeout(tx)) => tx.send(connection_timeout).expect("Request sent queue was dropped. This is a bug in the rust bindings."),
                 Ok(SocketThreadRequest::SetAutoReconnect(ar_enabled)) => auto_reconnect_enabled = ar_enabled,
                 Ok(SocketThreadRequest::GetAutoReconnect(ar_tx)) => ar_tx.send(auto_reconnect_enabled).expect("Request sent queue was dropped. This is a bug in the rust bindings."),
                 Err(RecvTimeoutError::Timeout) => {
@@ -591,7 +597,7 @@ fn socket_thread_fn(
                 }
                 Err(_) => {
                     println!("Disconnected from Queue. This is a bug in the rust bindings.");
-                    break 'thread;
+                    break 'thread
                 }
             }
         }
@@ -670,6 +676,8 @@ pub(crate) enum SocketThreadRequest {
     TriggerAutoReconnect(Vec<SocketAddr>),
     SetAutoReconnect(bool),
     GetAutoReconnect(Sender<bool>),
+    SetConnectionTimeout(Duration),
+    GetConnectionTimeout(Sender<Duration>),
     Terminate,
 }
 
@@ -931,6 +939,22 @@ impl IpConnectionRequestSender {
         let timeout = auth_sent_rx.recv().expect("The sent queue was dropped. This is a bug in the rust bindings.");
         Ok(ConvertingReceiver::new(auth_rx, timeout))
     }
+
+    /// Returns the timeout as set by [`set_connection_timeout`](crate::ip_connection::IpConnection::set_connection_timeout)
+    pub fn get_connection_timeout(&self) -> Duration {
+        let (tx, rx) = channel();
+        self.socket_thread_tx.send(SocketThreadRequest::GetConnectionTimeout(tx)).expect("Socket thread has crashed. This is a bug in the rust bindings.");
+        rx.recv().expect("The auto reconnect queue was dropped. This is a bug in the rust bindings.")
+    }
+
+    /// Sets the timeout for connection attempts.
+    ///
+    /// Default timeout is 30 s.
+    pub fn set_connection_timeout(&mut self, timeout: Duration) {
+        self.socket_thread_tx
+            .send(SocketThreadRequest::SetConnectionTimeout(timeout))
+            .expect("Socket thread has crashed. This is a bug in the rust bindings.");
+    }
 }
 
 impl IpConnection {
@@ -961,7 +985,7 @@ impl IpConnection {
 
     /// Sets the timeout for getters and for setters for which the response expected flag is activated.
     ///
-    /// Default timeout is 2500 ms.
+    /// Default timeout is 2,5 s.
     pub fn set_timeout(&mut self, timeout: Duration) { self.req.set_timeout(timeout) }
 
     /// Queries the current connection state.
@@ -996,4 +1020,12 @@ impl IpConnection {
     ///
     /// New in version 2.1.0.
     pub fn authenticate(&self, secret: &str) -> Result<ConvertingReceiver<()>, AuthenticateError> { self.req.authenticate(secret) }
+
+    /// Returns the timeout as set by [`set_connection_timeout`](crate::ip_connection::IpConnection::set_connection_timeout)
+    pub fn get_connection_timeout(&self) -> Duration { self.req.get_connection_timeout() }
+
+    /// Sets the timeout for connection attempts.
+    ///
+    /// Default timeout is 30 s.
+    pub fn set_connection_timeout(&mut self, timeout: Duration) { self.req.set_connection_timeout(timeout) }
 }
