@@ -289,6 +289,7 @@ Aktuell werden die folgenden Tag Typen unterstützt:
 * NFC Forum Type 2
 * NFC Forum Type 3
 * NFC Forum Type 4
+* NFC Forum Type 5
 
 Beim Aufruf von :func:`Reader Request Tag ID` versucht das NFC Bricklet die Tag ID
 eines Tags auszulesen. Nachdem dieser Prozess beendet ist ändert sich
@@ -417,7 +418,7 @@ com['packets'].append({
 """
 Writes NDEF formated data.
 
-This function currently supports NFC Forum Type 2 and 4.
+This function currently supports NFC Forum Type 2, 4, 5 and Mifare Classic.
 
 The general approach for writing a NDEF message is as follows:
 
@@ -434,7 +435,7 @@ The general approach for writing a NDEF message is as follows:
 """
 Schreibt NDEF formatierte Daten.
 
-Diese Funktion unterstützt aktuell NFC Forum Type 2 und 4.
+Diese Funktion unterstützt aktuell NFC Forum Type 2, 4, 5 und Mifare Classic.
 
 Der Ansatz um eine NDEF Nachricht zu schreiben sieht wie folgt aus:
 
@@ -461,7 +462,7 @@ com['packets'].append({
 """
 Reads NDEF formated data from a tag.
 
-This function currently supports NFC Forum Type 1, 2, 3 and 4.
+This function currently supports NFC Forum Type 1, 2, 3, 4, 5 and Mifare Classic.
 
 The general approach for reading a NDEF message is as follows:
 
@@ -479,7 +480,7 @@ The general approach for reading a NDEF message is as follows:
 """
 Liest NDEF formatierten Daten von einem Tag.
 
-Diese Funktion unterstützt aktuell NFC Forum Type 1, 2, 3 und 4.
+Diese Funktion unterstützt aktuell NFC Forum Type 1, 2, 3, 4, 5 and Mifare Classic.
 
 Der Ansatz um eine NDEF Nachricht zu lesen sieht wie folgt aus:
 
@@ -602,6 +603,7 @@ depends on the tag type. The page sizes are as follows:
 * NFC Forum Type 2 page size: 4 byte
 * NFC Forum Type 3 page size: 16 byte
 * NFC Forum Type 4: No pages, page = file selection (CC or NDEF, see below)
+* NFC Forum Type 5 page size: 4 byte
 
 The general approach for writing to a tag is as follows:
 
@@ -633,6 +635,7 @@ verhalten sich wie folgt:
 * NFC Forum Type 2 Pagegröße: 4 byte
 * NFC Forum Type 3 Pagegröße: 16 byte
 * NFC Forum Type 4: Keine Pages, Page = Dateiwahl (CC oder NDEF, siehe unten)
+* NFC Forum Type 5 Pagegröße: 4 byte
 
 Der generelle Ansatz zum Schreiben eines Tags sieht wie folgt aus:
 
@@ -677,6 +680,7 @@ as follows:
 * NFC Forum Type 2 page size: 4 byte
 * NFC Forum Type 3 page size: 16 byte
 * NFC Forum Type 4: No pages, page = file selection (CC or NDEF, see below)
+* NFC Forum Type 5 page size: 4 byte
 
 The general approach for reading a tag is as follows:
 
@@ -710,6 +714,7 @@ Die Pagegrößen verhalten sich wie folgt:
 * NFC Forum Type 2 Pagegröße: 4 byte
 * NFC Forum Type 3 Pagegröße: 16 byte
 * NFC Forum Type 4: Keine Pages, Page = Dateiwahl (CC oder NDEF, siehe unten)
+* NFC Forum Type 5 Pagegröße: 4 byte
 
 Der generelle Ansatz zum Lesen eines Tags sieht wie folgt aus:
 
