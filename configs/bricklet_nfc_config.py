@@ -1336,11 +1336,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the tag ID and length as set by :func:`Set Tag ID`.
+Returns the tag ID and length as set by :func:`Cardemu Set Tag ID`.
 """,
 'de':
 """
-Gibt die Tag ID und Länge zurück, wie von :func:`Set Tag ID` gesetzt.
+Gibt die Tag ID und Länge zurück, wie von :func:`Cardemu Set Tag ID` gesetzt.
 """
 }]
 })
