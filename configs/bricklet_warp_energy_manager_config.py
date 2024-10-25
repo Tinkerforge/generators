@@ -74,6 +74,14 @@ com['constant_groups'].append({
               ('Breathing', 3)]
 })
 
+com['constant_groups'].append({
+'name': 'Data Storage Status',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('Not Found', 1),
+              ('Busy', 2)]
+})
+
 com['packets'].append({
 'type': 'function',
 'name': 'Set Contactor',
@@ -734,6 +742,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Data Storage',
 'elements': [('Page', 'uint8', 1, 'in'),
+             ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Storage Status'}),
              ('Data', 'uint8', 63, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
