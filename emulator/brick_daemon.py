@@ -717,7 +717,7 @@ class Device(metaclass=MetaDevice):
                     except Exception as e:
                         if self._debug:
                             _logger.error('Error while receiving response data, disconnecting passthrough {0}: {1}'
-                                          .format(client_signature, _exception_to_str(e)))
+                                          .format(passthrough_signature, _exception_to_str(e)))
 
                         break
 
