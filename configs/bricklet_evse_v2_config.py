@@ -319,7 +319,7 @@ com['packets'].append({
              ('Voltages', 'int16', 7, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # CP/PE before resistor (PWM high), CP/PE after resistor (PWM high), CP/PE before resistor (PWM low), CP/PE after resistor (PWM low), PP/PE, +12V rail, -12V rail
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}), # CP/PE resistance, PP/PE resistance
              ('GPIO', 'bool', 24, 'out'), # TODO, all I/O (20 for now)
-             ('Charging Time', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Car Stopped Charging', 'bool', 1, 'out'),
              ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Time Since DC Fault Check', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
