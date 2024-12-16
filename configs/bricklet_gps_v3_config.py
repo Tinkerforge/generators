@@ -271,8 +271,7 @@ Returns the
 * HDOP value and
 * VDOP value
 
-for a given satellite system. Currently GPS and GLONASS are supported, Galileo
-is not yet supported.
+for a given satellite system. Currently GPS, GLONASS and Galileo are supported.
 
 The GPS and GLONASS satellites have unique numbers and the satellite list gives
 the numbers of the satellites that are currently utilized. The number 0 is not
@@ -288,10 +287,10 @@ Gibt die
 * HDOP-Wert and
 * VDOP-Wert zurück.
 
-für ein gegebenes Satellitensystem zurück. Aktuell werden GPS und GLONASS
-unterstützt, Galileo hat noch keine Unterstützung.
+für ein gegebenes Satellitensystem zurück. Aktuell werden GPS, GLONASS und Galileo
+unterstützt.
 
-Die GPS und GLONASS Satelliten haben eindeutige Nummern and die Satellitenliste
+Die Satelliten haben eindeutige Nummern and die Satellitenliste
 gibt die Nummer der Satelliten die aktuell benutzt werden. Die Nummer 0 ist
 keine gültige Satellitennummer und kann ignoriert werden.
 """
@@ -310,23 +309,26 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current elevation, azimuth and SNR
-for a given satellite and satellite system.
+Returns the current elevation, azimuth and SNR for a given satellite and satellite system.
 
-The satellite number here always goes from 1 to 32. For GLONASS it corresponds to
-the satellites 65-96.
+The available satellite numbers are:
 
-Galileo is not yet supported.
+* GPS: 1-32
+* GLONASS: 65-96
+* Galileo: 301-332
+
 """,
 'de':
 """
 Gibt die aktuellen Werte von Elevation, Azimutwinkel und SNR
 für einen gegebenen Satelliten und ein gegebenes Satellitensystem zurück.
 
-Die Satellitennummer hat hier immer einen Bereich von 1 bis 32. Bei GLONASS
-entspricht dieser Bereich den Satelliten 65-96.
+Die Satellitennummern teilen sich wie folgt auf:
 
-Galileo wird noch nicht unterstützt.
+* GPS: 1-32
+* GLONASS: 65-96
+* Galileo: 301-332
+
 """
 }]
 })
