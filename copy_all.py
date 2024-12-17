@@ -172,6 +172,7 @@ def main():
     start_path = os.path.realpath(os.path.join(generators_dir, '..'))
     brickv_path_bindings = os.path.join(start_path, 'brickv/src/brickv/bindings')
     flash_test_path_bindings = os.path.join(start_path, 'flash-test/src/flash-test/plugin_system/tinkerforge')
+    esp32_provisioning_path_bindings = os.path.join(start_path, 'esp32-firmware/provisioning/tinkerforge')
     bindings = []
 
     for binding in os.listdir(generators_dir):
@@ -185,7 +186,8 @@ def main():
 
     if socket.gethostname() != 'tinkerforge.com':
         for tool_name, tool_path in [('brickv', brickv_path_bindings),
-                                     ('flash-test', flash_test_path_bindings)]:
+                                     ('flash-test', flash_test_path_bindings),
+                                     ('esp32-firmware', esp32_provisioning_path_bindings)]:
             print('')
             print('Copying ip_connection to {0}:'.format(tool_name))
 
@@ -200,7 +202,7 @@ def main():
 
             path_binding = os.path.join(path, 'python')
             src_file_path = os.path.join(path_binding, 'bindings')
-            files = [f for f in os.listdir(src_file_path) if f.endswith('.py')]
+            files = [f for f in sorted(os.listdir(src_file_path)) if f.endswith('.py')]
 
             files.remove('device_factory.py')
 
