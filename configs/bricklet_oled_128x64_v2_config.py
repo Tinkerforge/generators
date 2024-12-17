@@ -239,6 +239,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+.. note::
+ This function is deprecated and only here for backward compatibility.
+ Since firmware version 2.0.5 we recommend :func:`Write Line 2`.
+ It has an additional parameter for letter spacing.
+
 Writes text to a specific line with a specific position.
 The text can have a maximum of 22 characters.
 
@@ -264,6 +269,11 @@ The font conforms to code page 437.
 """,
 'de':
 """
+.. note::
+ Diese Funktion ist ist nur hier für Rückwärtskompatibilität.
+ Seit Firmware Version 2.0.5 empfehlen wir :func:`Write Line 2`.
+ Diese Funktion hat zusätzlich einen Parameter für Letter-Spacing.
+
 Schreibt einen Text in die angegebene Zeile mit einer vorgegebenen Position.
 Der Text kann maximal 22 Zeichen lang sein.
 
@@ -321,6 +331,70 @@ werden, wenn ein komplexes Bild in mehreren Schritten aufgebaut wird.
 Wenn `Force Complete Redraw` auf *true* gesetzt ist, dann wird der gesamte Display
 aktualisiert, anstatt nur die Pixel die sich wirklich verändert haben. Normalerweise
 sollte dies nicht notwendig sein, außer bei hängenden Pixeln bedingt durch Fehler.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Write Line 2',
+'elements': [('Line', 'uint8', 1, 'in', {'range': (0, 7)}),
+             ('Position', 'uint8', 1, 'in', {'range': (0, 25)}),
+             ('Letter Spacing', 'uint8', 1, 'in', {'range': (0, 1)}),
+             ('Text', 'string', 26, 'in', {})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Writes text to a specific line with a specific position.
+The text can have a maximum of 26 characters.
+
+With a letter spacing of 0, a maximum of 26 characters can be written and
+with a letter spacing of 1 a maximum of 22 characters can be written. 
+
+For example: (1, 10, "Hello") will write *Hello* in the middle of the
+second line of the display.
+
+The display uses a special 5x7 pixel charset. You can view the characters
+of the charset in Brick Viewer.
+
+If automatic draw is enabled (default) the text is directly written to
+the screen. Only pixels that have actually changed are updated on the screen,
+the rest stays the same.
+
+If automatic draw is disabled the text is written to an internal buffer and
+the buffer is transferred to the display only after :func:`Draw Buffered Frame`
+is called. This can be used to avoid flicker when drawing a complex frame in
+multiple steps.
+
+Automatic draw can be configured with the :func:`Set Display Configuration`
+function.
+""",
+'de':
+"""
+Schreibt einen Text in die angegebene Zeile mit einer vorgegebenen Position.
+Der Text kann maximal 26 Zeichen lang sein.
+
+Mit einem Letter-Spacing von 0 können bis zu 26 Zeichen geschrieben werden
+und mit einem Letter-Spacing von 1 können bis zu 22 Zeichen geschrieben werden.
+
+Beispiel: (1, 10, "Hallo") schreibt *Hallo* in die Mitte der zweiten Zeile
+des Displays.
+
+Das Display nutzt einen speziellen 5x7 Pixel Zeichensatz. Der Zeichensatz
+kann mit Hilfe von Brick Viewer angezeigt werden.
+
+Wenn Automatic Draw aktiviert ist (Standard), dann wird der Text direkt auf
+den Display geschrieben. Nur Pixel die sich wirklich verändert haben werden
+auf dem Display aktualisiert.
+
+Wenn Automatic Draw deaktiviert ist, dann wird der Text in einen internen
+Buffer geschrieben der dann durch einen Aufruf von :func:`Draw Buffered Frame`
+auf dem Display angezeigt werden kann. Dadurch kann Flicker vermieden werden,
+wenn ein komplexes Bild in mehreren Schritten aufgebaut wird.
+
+Automatic Draw kann über die :func:`Set Display Configuration` Funktion
+eingestellt werden.
 """
 }]
 })
