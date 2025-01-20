@@ -435,3 +435,20 @@ com['packets'].append({
 """
 }]
 })
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Flash Data Done',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
