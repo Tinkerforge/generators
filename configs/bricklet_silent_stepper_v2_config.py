@@ -1753,6 +1753,61 @@ Dieser Callback wird ausgelöst durch GPIO-Änderungen wenn er über :func:`Set 
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Motor Stalled Callback Configuration',
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period with which the :cb:`All Data` callback is triggered
+periodically. A value of 0 turns the callback off.
+""",
+'de':
+"""
+Setzt die Periode mit welcher der :cb:`All Data` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Motor Stalled Callback Configuraton',
+'elements': [('Enabled', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`Set All Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`Set All Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Motor Stalled',
+'elements': [('Position', 'int32', 1, 'out', {})],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered whenever the motor stalled parameter in the status is set (changes from false to true).
+See :func:`Get Driver Status`.
+""",
+'de':
+"""
+Dieser Callback wird immer dann ausgelöst, wenn der Motor-Stalled-Parameter im Status gesetzt wird (Änderung von False auf True).
+Siehe :func:`Get Driver Status`.
+"""
+}]
+})
+
 com['examples'].append({
 'name': 'Configuration',
 'functions': [('setter', 'Set Motor Current', [('uint16', 800)], None, '800 mA'),
