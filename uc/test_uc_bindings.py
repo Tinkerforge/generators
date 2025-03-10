@@ -122,7 +122,7 @@ class UCExamplesTester(common.Tester):
             files = output.splitlines()
 
             if len(files) > 0:
-                args = ['sed', '-e', '/typedef enum/,/\}/!d'] + files
+                args = ['sed', '-e', r'/typedef enum/,/\}/!d'] + files
                 _, output = common.check_output_and_error(args)
                 for l in output.splitlines():
                     l = l.strip()

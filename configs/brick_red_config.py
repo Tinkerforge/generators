@@ -834,7 +834,7 @@ com['packets'].append({
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
-"""
+r"""
 Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously.
 
 Reports the bytes read (in 60 byte chunks), the actual number of bytes read and

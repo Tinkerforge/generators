@@ -42,7 +42,7 @@ com['packets'].append({
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
-"""
+r"""
 Returns the particulate matter concentration, broken down as:
 
 * PM\ :sub:`1.0`\ ,
@@ -57,7 +57,7 @@ If you want to get the values periodically, it is recommended to use the
 with :func:`Set PM Concentration Callback Configuration`.
 """,
 'de':
-"""
+r"""
 Gibt die Feinstaub-Konzentration zurück, aufgeschlüsselt nach:
 
 * PM\ :sub:`1.0`\ ,

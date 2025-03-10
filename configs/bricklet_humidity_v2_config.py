@@ -145,7 +145,7 @@ com['packets'].append({
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
-"""
+r"""
 Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
 for the humidity and temperature.
 
@@ -162,7 +162,7 @@ of th IC, changed the default value from 20 samples per second to 1. With 1 samp
 a moving average length of 1000 would result in an averaging window of 1000 seconds!
 """,
 'de':
-"""
+r"""
 Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
 für die Luftfeuchtigkeit und Temperatur.
 
@@ -277,7 +277,7 @@ com['openhab'] = {
         'name': 'average',
         'label': {'en': 'Averaging', 'de': 'Mittelwertbildung'},
         'description': {'en': 'The length of a moving averaging for the humidity and temperature.\n\nSetting the length to 1 will turn the averaging off. With less averaging, there is more noise on the data.\n\nThe range for the averaging is 1-1000.\n\nNew data is gathered every 50ms*. With a moving average of length 1000 the resulting averaging window has a length of 50s. If you want to do long term measurements the longest moving average will give the cleanest results.\n\nThe default value is 5.\n\n* In firmware version 2.0.3 we added the setSamplesPerSecond action. It configures the measurement frequency. Since high frequencies can result in self-heating of th IC, changed the default value from 20 samples per second to 1. With 1 sample per second a moving average length of 1000 would result in an averaging window of 1000 seconds!',
-                        'de': 'Setzt die Länge eines gleitenden Mittelwerts für die Luftfeuchtigkeit und Temperatur.\n\nWenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert. Je kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.\n\nEiner neue Wert wird alle 50ms* gemessen. Mit einer Mittelwerts-Länge von 1000 hat das resultierende gleitende Fenster eine Zeitspanne von 50s. Bei Langzeitmessungen gibt ein langer Mittelwert die saubersten Resultate.\n\n\* In Firmware Version 2.0.3 haben wir die Sample Rate-Konfiguration hinzugefügt. Diese konfiguriert die Messfrequenz. Da eine hohe Messfrequenz zu Selbsterhitzung führen kann haben wir die Standardeinstellung von 20 SPS auf 1 SPS geändert. Mit einer Messung pro Sekunde entspricht eine Mittelwert-Länge von 1000 einem Zeitfenster von 1000 Sekunden!'},
+                        'de': r'Setzt die Länge eines gleitenden Mittelwerts für die Luftfeuchtigkeit und Temperatur.\\n\\nWenn die Länge auf 1 gesetzt wird, ist die Mittelwertbildung deaktiviert. Je kürzer die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.\\n\\nEiner neue Wert wird alle 50ms* gemessen. Mit einer Mittelwerts-Länge von 1000 hat das resultierende gleitende Fenster eine Zeitspanne von 50s. Bei Langzeitmessungen gibt ein langer Mittelwert die saubersten Resultate.\\n\\n\* In Firmware Version 2.0.3 haben wir die Sample Rate-Konfiguration hinzugefügt. Diese konfiguriert die Messfrequenz. Da eine hohe Messfrequenz zu Selbsterhitzung führen kann haben wir die Standardeinstellung von 20 SPS auf 1 SPS geändert. Mit einer Messung pro Sekunde entspricht eine Mittelwert-Länge von 1000 einem Zeitfenster von 1000 Sekunden!'},
         'advanced': 'true'
     }],
     'params': [
