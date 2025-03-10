@@ -180,9 +180,9 @@ class UCExamplesTester(common.Tester):
         elif self.compiler == 'mingw32-g++':
             args += ['x86_64-w64-mingw32-g++', '-DTF_NET_ENABLE=1', '-Wall', '-Wextra']
         elif self.compiler == 'clang':
-            args += ['clang', '-std=c99', '-DTF_NET_ENABLE=1', '-Weverything', '-Wno-padded', '-Wno-declaration-after-statement']
+            args += ['clang', '-std=c99', '-DTF_NET_ENABLE=1', '-Weverything', '-Wno-padded', '-Wno-declaration-after-statement', '-Wno-unsafe-buffer-usage']
         elif self.compiler == 'clang++':
-            args += ['clang++', '-std=c++98', '-DTF_NET_ENABLE=1', '-Weverything', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-designator']
+            args += ['clang++', '-std=c++98', '-DTF_NET_ENABLE=1', '-Weverything', '-Wno-padded', '-Wno-deprecated', '-Wno-variadic-macros', '-Wno-old-style-cast', '-Wno-c++20-designator', '-Wno-unsafe-buffer-usage']
         elif self.compiler == 'scan-build clang':
             args += ['scan-build', 'clang', '-DTF_NET_ENABLE=1', '-std=c99']
         else:
