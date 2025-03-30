@@ -204,6 +204,13 @@ com['constant_groups'].append({
               ('Active High Max 25A', 16)]
 })
 
+com['constant_groups'].append({
+'name': 'Charging Protocol',
+'type': 'uint8',
+'constants': [('IEC61851', 0),
+              ('ISO15118', 1)]
+})
+
 
 """
 contactor state
@@ -1144,6 +1151,42 @@ com['packets'].append({
              ('Phases Connected', 'bool', 3, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Charging Protocol',
+'elements': [('Charging Protocol', 'uint8', 1, 'in', {'constant_group': 'Charging Protocol'}),
+             ('CP Duty Cycle', 'uint16', 1, 'in')], # Only used when protocol is ISO15118, only 50 (5%) and 1000 (100%) are accepted
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Charging Protocol',
+'elements': [('Charging Protocol', 'uint8', 1, 'out', {'constant_group': 'Charging Protocol'}),
+             ('CP Duty Cycle', 'uint16', 1, 'out')], # Only used when protocol is ISO15118, only 50 (5%) and 1000 (100%) are accepted
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
 'en':
 """
 TODO
