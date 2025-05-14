@@ -10,7 +10,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2111,
     'name': 'IO4 V2',
@@ -648,6 +648,57 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 Dieser Callback wird ausgelöst, wenn ein Monoflop Timer abläuft (0 erreicht).
 :word:`parameters` enthalten den Kanal und den aktuellen
 Zustand des Kanals (der Zustand nach dem Monoflop).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Capture Input Callback Configuration',
+'elements': [('Enable', 'bool', 1, 'in'),
+             ('Time Between Capture', 'uint16', 1, 'in', {'scale': (1, 1000*1000), 'unit': 'Second', 'range': (20, 0xFFFF), 'default': 50})],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Capture Input Callback Configuration',
+'elements': [('Enable', 'bool', 1, 'out'),
+             ('Time Between Capture', 'uint16', 1, 'out', {'scale': (1, 1000*1000), 'unit': 'Second', 'range': (20, 0xFFFF), 'default': 50})],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Capture Input',
+'elements': [('Data', 'uint8', 64, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['c', {
+'en':
+"""
+""",
+'de':
+"""
 """
 }]
 })
