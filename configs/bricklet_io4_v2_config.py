@@ -661,11 +661,17 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+If `enable` is set to true, the :cb:`Capture Input` callback is started. The sample frequency is given with the `time between capture` parameter (in us).
+For example: A time between capture of 50us corresponds to a sampling frequency of 20kHz. The maximum sampling frquency is 50kHz.
 
+Note: When the :cb:`Capture Input` callback is activated, all other functions of the IO-4 Bricklet 2.0 stop working.
 """,
 'de':
 """
+Wenn `enable` auf true gesetzt ist, wird der Callback :cb:`Capture Input` gestartet. Die Abtastfrequenz wird über den Parameter `time between capture` (in µs) festgelegt.
+Zum Beispiel: Eine Konfiguration von 50 µs entspricht einer Abtastfrequenz von 20 kHz. Die maximale Abtastfrequenz beträgt 50 kHz.
 
+Hinweis: Wenn der :cb:`Capture Input`-Callback aktiviert ist, funktionieren alle anderen Funktionen des IO-4 Bricklet 2.0 nicht mehr.
 """
 }]
 })
@@ -679,11 +685,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-
+Returns the callback configuration as set by
+:func:`Set Capture Input Callback Configuration`.
 """,
 'de':
 """
-
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Capture Input Callback Configuration` gesetzt.
 """
 }]
 })
@@ -696,9 +704,16 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+Returns a stream of IO-4 inputs encoded as bitmasks. There are two samples per 8 bit (i.e. 128 samples per callback). Each sample has a time distance as defined by :func:`Set Capture Input Callback Configuration`.
+
+The data starts to stream when the callback is enabled and stops after it is disabled again.
 """,
 'de':
 """
+Gibt einen Stream der IO-4-Eingangszustände zurück, die als Bitmaske kodiert sind. Es gibt zwei Abtastwerte pro 8-Bit Wert (also 128 Zustände pro Callback).
+Der zeitliche Abstand der Abtastwerte wird per :func:`Set Capture Input Callback Configuration` definiert.
+
+Die Daten beginnen zu streamen, sobald der Callback aktiviert ist, und stoppen, sobald er wieder deaktiviert wird.
 """
 }]
 })
