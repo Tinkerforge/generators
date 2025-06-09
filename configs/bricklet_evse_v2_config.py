@@ -179,7 +179,8 @@ com['constant_groups'].append({
               ('SDM72CTM', 4),
               ('SDM630MCTV2', 5),
               ('DSZ15DZMOD', 6),
-              ('DEM4A', 7)]
+              ('DEM4A', 7),
+              ('DMED341MID7ER', 8)]
 })
 
 com['constant_groups'].append({
