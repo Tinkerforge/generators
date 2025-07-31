@@ -8,7 +8,7 @@
 
 #include "net_arduino_esp32.h"
 
-#include <Arduino.h>
+#include <algorithm>
 #include <lwip/err.h>
 #include <lwip/sockets.h>
 #include <lwip/sys.h>
@@ -310,8 +310,6 @@ static int accept_connections(TF_Net *net) {
     memset(clients[insert_idx].send_buf, 0, sizeof(clients[insert_idx].send_buf) / sizeof(clients[insert_idx].send_buf[0]));
     clients[insert_idx].send_buf_used = 0;
     ++net->clients_used;
-
-    printf("clients used: %d\n", net->clients_used);
 
     if (net->clients_used == max_clients) {
         // We already have the maximum amount of clients, don't accept more.
