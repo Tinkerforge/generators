@@ -302,6 +302,8 @@ func (device *Device) checkDeviceIdentifier() error {
 		if deviceIdentifier != device.deviceIdentifier {
 			device.deviceIdentifierCheck = deviceIdentifierCheckMismatch
 			device.wrongDeviceDisplayName = getDeviceDisplayName(deviceIdentifier)
+		} else {
+			device.deviceIdentifierCheck = deviceIdentifierCheckMatch
 		}
 	}
 
