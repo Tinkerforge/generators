@@ -90,5 +90,5 @@
 - Fix error response check
 - Fix single chunk streams
 
-2025-08-20: 2.0.16 (<unknown>)
+2025-08-20: 2.0.16 (75eff11)
 - Fix device identifier check
