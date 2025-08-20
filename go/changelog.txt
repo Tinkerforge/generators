@@ -91,4 +91,11 @@
 - Fix single chunk streams
 
 2025-08-20: 2.0.16 (75eff11)
+- Add support NFC forum tag type 5 to NFC Bricklet API
+- Add CardemuSet/GetTagID function to NFC Bricklet API
+- Add WriteLine2 function to OLED 128x64 Bricklet 2.0 API
+- Add Set/GetMotorStalledCallbackConfiguration functions and MotorStalled
+  callback to Silent Stepper Bricklet 2.0 API
+- Add Set/GetCaptureInputCallbackConfiguration functions and CaptureInput
+  callback to IO-4 Bricklet 2.0 API
 - Fix device identifier check
