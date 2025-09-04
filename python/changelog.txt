@@ -350,7 +350,7 @@
 - Don't leak socket on connect error
 - Add IPv6 support
 
-2025-09-04: 2.1.32 (<unknown>)
+2025-09-04: 2.1.32 (1a4ef75)
 - Add support NFC forum tag type 5 to NFC Bricklet API
 - Add cardemu_set/get_tag_id function to NFC Bricklet API
 - Add write_line_2 function to OLED 128x64 Bricklet 2.0 API
