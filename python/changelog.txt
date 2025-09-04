@@ -349,3 +349,12 @@
 - Add FFC shutter mode and normalization to Thermal Imaging Bricklet API
 - Don't leak socket on connect error
 - Add IPv6 support
+
+2025-09-04: 2.1.32 (<unknown>)
+- Add support NFC forum tag type 5 to NFC Bricklet API
+- Add cardemu_set/get_tag_id function to NFC Bricklet API
+- Add write_line_2 function to OLED 128x64 Bricklet 2.0 API
+- Add set/get_motor_stalled_callback_configuration functions and MOTOR_STALLED
+  callback to Silent Stepper Bricklet 2.0 API
+- Add set/get_capture_input_callback_configuration functions and CAPTURE_INPUT
+  callback to IO-4 Bricklet 2.0 API
