@@ -214,6 +214,68 @@ com['constant_groups'].append({
               ('ISO15118', 1)]
 })
 
+com['constant_groups'].append({
+'name': 'Eichrecht State',
+'type': 'uint8',
+'constants': [('OK', 0),
+              ('Not All Info Set', 1),
+              ('Busy', 2),
+              ('Not Supported', 3)]
+})
+
+com['constant_groups'].append({
+'name': 'Eichrecht User Assignment Identification Flag',
+'type': 'uint8',
+'constants': [('RFID NONE', 0),
+              ('RFID PLAIN', 1),
+              ('RFID RELATED', 2),
+              ('RFID PSK', 3),
+              ('OCPP NONE', 4),
+              ('OCPP RS', 5),
+              ('OCPP AUTH', 6),
+              ('OCPP RS TLS', 7),
+              ('OCPP AUTH TLS', 8),
+              ('OCPP CACHE', 9),
+              ('OCPP WHITELIST', 10),
+              ('OCPP CERTIFIED', 11),
+              ('ISO15118 NONE', 12),
+              ('ISO15118 PNC', 13),
+              ('PLMN NONE', 14),
+              ('PLMN RING', 15),
+              ('PLMN SMS', 16),
+              ('Not Set', 17)]
+})
+
+com['constant_groups'].append({
+'name': 'Eichrecht User Assignment Identification Type',
+'type': 'uint8',
+'constants': [('NONE', 0),
+              ('DENIED', 1),
+              ('UNDEFINED', 2),
+              ('ISO14443', 3),
+              ('ISO15693', 4),
+              ('EMAID', 5),
+              ('EVCCID', 6),
+              ('EVCOID', 7),
+              ('ISO7812', 8),
+              ('CARD TXN NR', 9),
+              ('CENTRAL', 10),
+              ('CENTRAL 1', 11),
+              ('CENTRAL 2', 12),
+              ('LOCAL', 13),
+              ('LOCAL 1', 14),
+              ('LOCAL 2', 15),
+              ('PHONE NUMBER', 16),
+              ('KEY CODE', 17)]
+})
+
+com['constant_groups'].append({
+'name': 'Eichrecht Charge Point Identification Type',
+'type': 'uint8',
+'constants': [('EVSEID', 0),
+              ('CBIDC', 1)]
+})
+
 
 """
 contactor state
@@ -1191,6 +1253,177 @@ com['packets'].append({
              ('CP Duty Cycle', 'uint16', 1, 'out')], # Only used when protocol is ISO15118, only 50 (5%) and 1000 (100%) are accepted
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Eichrecht General Information',
+'elements': [('Gateway Identification', 'char', 32, 'in'), # GI
+             ('Gateway Serial', 'char', 32, 'in'), # GS
+             ('Eichrecht State', 'uint8', 1, 'out', {'constant_group': 'Eichrecht State'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Eichrecht General Information',
+'elements': [('Gateway Identification', 'char', 32, 'out'), # GI
+             ('Gateway Serial', 'char', 32, 'out')], # GS
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Eichrecht User Assignment',
+'elements': [('Identification Status', 'bool', 1, 'in'), # IS
+             ('Identification Flags', 'uint8', 4, 'in', {'constant_group': 'Eichrecht User Assignment Identification Flag'}), # IF
+             ('Identification Type', 'uint8', 1, 'in', {'constant_group': 'Eichrecht User Assignment Identification Type'}), # IT
+             ('Identification Data', 'char', 40, 'in'), # ID
+             ('Eichrecht State', 'uint8', 1, 'out', {'constant_group': 'Eichrecht State'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Eichrecht User Assignment',
+'elements': [('Identification Status', 'bool', 1, 'out'), # IS
+             ('Identification Flags', 'uint8', 4, 'out', {'constant_group': 'Eichrecht User Assignment Identification Flag'}), # IF
+             ('Identification Type', 'uint8', 1, 'out', {'constant_group': 'Eichrecht User Assignment Identification Type'}), # IT
+             ('Identification Data', 'char', 40, 'out')], # ID
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Eichrecht Charge Point',
+'elements': [('Identification Type', 'uint8', 1, 'in', {'constant_group': 'Eichrecht Charge Point Identification Type'}), # CT
+             ('Identification', 'char', 20, 'in'), # CI
+             ('Eichrecht State', 'uint8', 1, 'out', {'constant_group': 'Eichrecht State'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Eichrecht Charge Point',
+'elements': [('Identification Type', 'uint8', 1, 'out', {'constant_group': 'Eichrecht Charge Point Identification Type'}), # CT
+             ('Identification', 'char', 20, 'out')], # CI
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Eichrecht Transaction',
+'elements': [('Transaction', 'char', 1, 'in'), # TX
+             ('Unix Time', 'uint64', 1, 'in'),
+             ('Eichrecht State', 'uint8', 1, 'out', {'constant_group': 'Eichrecht State'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Eichrecht Transaction',
+'elements': [('Transaction', 'char', 1, 'out')], # TX
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Eichrecht Dataset Low Level',
+'elements': [('Message Length', 'uint16', 1, 'out', {}),
+             ('Message Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Message Chunk Data', 'char', 60, 'out', {})],
+'high_level': {'stream_out': {'name': 'Message'}},
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
 'en':
 """
 TODO
