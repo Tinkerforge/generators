@@ -276,6 +276,65 @@ com['constant_groups'].append({
               ('CBIDC', 1)]
 })
 
+com['constant_groups'].append({
+'name': 'Eichrecht Signature Status',
+'type': 'uint16',
+'constants': [('Not Initialised', 0),
+              ('Idle', 1),
+              ('Signature In Progress', 2),
+              ('Signature OK', 15),
+              ('Invalid Date Time', 128),
+              ('Checksum Error', 129),
+              ('Invalid Command', 130),
+              ('Invalid State', 131),
+              ('Invalid Measurement', 132),
+              ('Test Mode Error', 133),
+              ('Verify State Error', 243),
+              ('Signature State Error', 244),
+              ('Keypair Generation', 245),
+              ('SHA Failed', 246),
+              ('Init Failed', 247),
+              ('Data Not Locked', 248),
+              ('Config Not Locked', 249),
+              ('Verify Error', 250),
+              ('Public Key Error', 251),
+              ('Invalid Message Format', 252),
+              ('Invalid Message Size', 253),
+              ('Signature Error', 254),
+              ('Undefined Error', 255)]
+})
+
+com['constant_groups'].append({
+'name': 'Eichrecht Signature Format',
+'type': 'uint16',
+'constants': [('ASN1', 0),
+              ('Base64', 1)]
+})
+
+com['constant_groups'].append({
+'name': 'Eichrecht Measurement Status',
+'type': 'uint16',
+'constants': [('Idle', 0),
+              ('Active', 1),
+              ('Active After Power Failure', 2),
+              ('Active After Reset', 3),
+              ('Invalid Date Time', 128)]
+})
+
+com['constant_groups'].append({
+'name': 'Eichrecht Transaction Command',
+'type': 'char',
+'constants': [('Begin', 'B'),
+              ('End', 'E'),
+              ('Intermediate', 'C'),
+              ('Exception', 'X'),
+              ('Tariff Change', 'T'),
+              ('Suspended', 'S'),
+              ('End With Begin', 'r'),
+              ('Fiscal Reading', 'f'),
+              ('Hold Command', 'h'),
+              ('Last Charge Reading', 'i')]
+})
 
 """
 contactor state
@@ -1382,8 +1441,10 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Set Eichrecht Transaction',
-'elements': [('Transaction', 'char', 1, 'in'), # TX
-             ('Unix Time', 'uint64', 1, 'in'),
+'elements': [('Transaction', 'char', 1, 'in', {'constant_group': 'Eichrecht Transaction Command'}),
+             ('Unix Time', 'uint32', 1, 'in'), # Seconds, Iskra uses uint32 for unix time instead of standard int32, so it goes to the year 2106... good enough.
+             ('UTC Time Offset', 'int16', 1, 'in', {'range': (-719, 720)}), # Minutes
+             ('Signature Format', 'uint16', 1, 'in', {'constant_group': 'Eichrecht Signature Format'}),
              ('Eichrecht State', 'uint8', 1, 'out', {'constant_group': 'Eichrecht State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1401,7 +1462,12 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get Eichrecht Transaction',
-'elements': [('Transaction', 'char', 1, 'out')], # TX
+'elements': [('Transaction', 'char', 1, 'out', {'constant_group': 'Eichrecht Transaction Command'}),
+             ('Transaction State', 'uint8', 1, 'out'),
+             ('Transaction Inner State', 'uint8', 1, 'out'),
+             ('Measurement Status', 'uint16', 1, 'out', {'constant_group': 'Eichrecht Measurement Status'}),
+             ('Signature Status', 'uint16', 1, 'out', {'constant_group': 'Eichrecht Signature Status'}),
+             ('Eichrecht State', 'uint8', 1, 'out', {'constant_group': 'Eichrecht State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1422,6 +1488,43 @@ com['packets'].append({
              ('Message Chunk Offset', 'uint16', 1, 'out', {}),
              ('Message Chunk Data', 'char', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Message'}},
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Eichrecht Signature Low Level',
+'elements': [('Message Length', 'uint16', 1, 'out', {}),
+             ('Message Chunk Offset', 'uint16', 1, 'out', {}),
+             ('Message Chunk Data', 'char', 60, 'out', {})],
+'high_level': {'stream_out': {'name': 'Message'}},
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Eichrecht Public Key',
+'elements': [('Public Key', 'uint8', 64, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
