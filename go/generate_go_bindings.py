@@ -178,6 +178,8 @@ const (
                 fill_payload.append("{elem_name}_byte_slice, err := StringToByteSlice({elem_name}, {max_len})".format( elem_name=elem.get_go_name(), max_len=elem.get_cardinality()))
                 fill_payload.append("if err != nil { return }")
                 fill_payload.append("{buf}.Write({elem_name}_byte_slice)".format(buf=bufferName, elem_name=elem.get_go_name()))
+            elif "bool" in elem.get_go_type() and elem.get_cardinality() > 1:
+                fill_payload.append("{buf}.Write({type}SliceToByteSlice({name}[:]))".format(buf=bufferName, type=elem.get_go_type(ignore_cardinality=True).title(), name=elem.get_go_name()))
             else:
                 fill_payload.append("binary.Write(&{buf}, binary.LittleEndian, {elem_name});".format(buf=bufferName, elem_name=elem.get_go_name()))
         return fill_payload
