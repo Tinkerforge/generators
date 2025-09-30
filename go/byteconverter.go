@@ -28,12 +28,15 @@ func MinU(left, right uint64) uint64 {
 }
 
 func BoolSliceToByteSlice(b []bool) []byte {
-	result := make([]byte, len(b)/8)
-	for i := range result {
-		for bit := 0; bit < 8; bit++ {
-			if b[i*8+bit] {
-				result[i] |= 1 << uint(bit)
-			}
+	l := len(b)/8
+	if len(b) % 8 != 0 {
+		l++
+	}
+	result := make([]byte, l)
+
+	for i := 0; i < len(b); i++ {
+		if b[i] {
+			result[i/8] |= 1 << uint(i % 8)
 		}
 	}
 	return result
