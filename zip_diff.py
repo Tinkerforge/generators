@@ -63,7 +63,7 @@ def main():
     for path in [os.path.expanduser('~/.zip_diffrc'), './.zip_diffrc']:
         if os.path.exists(path):
             with open(path, 'r') as f:
-                argv += shlex.split(f.read(), comments=True)
+                argv = shlex.split(f.read(), comments=True) + argv
 
     parser = argparse.ArgumentParser()
 
