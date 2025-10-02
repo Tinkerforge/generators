@@ -1482,6 +1482,23 @@ TODO
 })
 
 com['packets'].append({
+'type': 'function',
+'name': 'Get Eichrecht Public Key',
+'elements': [('Public Key', 'uint8', 64, 'out', {})],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': 'Eichrecht Dataset Low Level',
 'elements': [('Message Length', 'uint16', 1, 'out', {}),
@@ -1508,23 +1525,6 @@ com['packets'].append({
              ('Message Chunk Offset', 'uint16', 1, 'out', {}),
              ('Message Chunk Data', 'char', 60, 'out', {})],
 'high_level': {'stream_out': {'name': 'Message'}},
-'since_firmware': [1, 0, 0],
-'doc': ['c', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'callback',
-'name': 'Eichrecht Public Key',
-'elements': [('Public Key', 'uint8', 64, 'out', {})],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
