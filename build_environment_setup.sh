@@ -47,7 +47,12 @@ cat > ${gitgetter} <<- EOF
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import urllib2
+try:
+    # Python2
+    from urllib2.request import urlopen
+except:
+    # Python3
+    from urllib.request import urlopen
 import json
 
 page = 1
@@ -55,7 +60,7 @@ repos = []
 names = []
 
 while True:
-    request = urllib2.urlopen('https://api.github.com/orgs/Tinkerforge/repos?page={0}&per_page=100'.format(page))
+    request = urlopen('https://api.github.com/orgs/Tinkerforge/repos?page={0}&per_page=100'.format(page))
     data = request.read()
     decoded = json.loads(data)
     repos += decoded
@@ -71,7 +76,7 @@ for repo in repos:
     if not name.startswith('red-brick-'):
         names.append(name)
 
-print ' '.join(names)
+print(' '.join(names))
 EOF
 
 chmod +x ${gitgetter}
