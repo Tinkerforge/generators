@@ -100,5 +100,5 @@
   callback to IO-4 Bricklet 2.0 API
 - Fix device identifier check
 
-2025-10-07: 2.0.17 (<unknown>)
+2025-10-07: 2.0.17 (9ad863d)
 - Fix bool arrays in setters
