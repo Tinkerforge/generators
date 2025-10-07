@@ -99,3 +99,6 @@
 - Add Set/GetCaptureInputCallbackConfiguration functions and CaptureInput
   callback to IO-4 Bricklet 2.0 API
 - Fix device identifier check
+
+2025-10-07: 2.0.17 (<unknown>)
+- Fix bool arrays in setters
