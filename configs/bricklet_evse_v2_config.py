@@ -158,7 +158,8 @@ com['constant_groups'].append({
 'constants': [('Deactivated', 0),
               ('Start Charging', 1),
               ('Stop Charging', 2),
-              ('Start And Stop Charging', 3)]
+              ('Start And Stop Charging', 3),
+              ('Enumerate', 4)]
 })
 
 com['constant_groups'].append({
@@ -1527,6 +1528,79 @@ com['packets'].append({
 'high_level': {'stream_out': {'name': 'Message'}},
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Enumerate Configuration',
+'elements': [('Enumerator H', 'uint16', 8, 'in'), # HSV Hue; ignore entries == 0 starting at end
+             ('Enumerator S', 'uint8', 8, 'in'),  # HSV Hue; ignore entries == 0 starting at end
+             ('Enumerator V', 'uint8', 8, 'in')], # HSV Hue; ignore entries == 0 starting at end
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Enumerate Configuration',
+'elements': [('Enumerator H', 'uint16', 8, 'out'), # HSV Hue; ignore entries == 0 starting at end
+             ('Enumerator S', 'uint8', 8, 'out'),  # HSV Hue; ignore entries == 0 starting at end
+             ('Enumerator V', 'uint8', 8, 'out')], # HSV Hue; ignore entries == 0 starting at end
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Enumerate Value',
+'elements': [('Value', 'uint8', 1, 'in')], # Sets enumerate value immediately
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Enumerate Value',
+'elements': [('Value', 'uint8', 1, 'out'), # Returns new value if stable for > 2 seconds
+             ('Value Change Time', 'uint32', 1, 'out')], # EVSE uptime of last value change
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
 'en':
 """
 TODO
