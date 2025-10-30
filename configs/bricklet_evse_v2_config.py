@@ -337,6 +337,12 @@ com['constant_groups'].append({
               ('Last Charge Reading', 'i')]
 })
 
+com['constant_groups'].append({
+'name': 'CP Reconnect Time',
+'type': 'uint8',
+'constants': [('Default', 0)] + [(f'{15 + i * 5} Seconds', i + 1) for i in range(22)] # Default + 15s to 120s in 5s steps
+})
+
 """
 contactor state
 state & 0b0000_0001 = contactor state  N+L1 (0 is not switched, 1 is switched)
@@ -1029,6 +1035,7 @@ com['packets'].append({
              ('Phases Connected', 'uint8', 1, 'out'), # 1 or 3, Ignored in EVSE V2
              ('Enumerate Value', 'uint8', 1, 'out'), # Returns new value if stable for > 2 seconds
              ('Enumerate Value Change Time', 'uint32', 1, 'out'), # EVSE uptime of last value change
+             ('CP Reconnect Time', 'uint8', 1, 'out', {'constant_group': 'CP Reconnect Time'}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1601,6 +1608,40 @@ com['packets'].append({
 'name': 'Get Enumerate Value',
 'elements': [('Value', 'uint8', 1, 'out'), # Returns new value if stable for > 2 seconds
              ('Value Change Time', 'uint32', 1, 'out')], # EVSE uptime of last value change
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set CP Reconnect Time',
+'elements': [('CP Reconnect Time', 'uint8', 1, 'in', {'constant_group': 'CP Reconnect Time'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get CP Reconnect Time',
+'elements': [('CP Reconnect Time', 'uint8', 1, 'out', {'constant_group': 'CP Reconnect Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
