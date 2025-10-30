@@ -1027,6 +1027,8 @@ com['packets'].append({
              ('Phases Info', 'uint8', 1, 'out'),
              ('Phase Auto Switch Enabled', 'bool', 1, 'out'),
              ('Phases Connected', 'uint8', 1, 'out'), # 1 or 3, Ignored in EVSE V2
+             ('Enumerate Value', 'uint8', 1, 'out'), # Returns new value if stable for > 2 seconds
+             ('Enumerate Value Change Time', 'uint32', 1, 'out'), # EVSE uptime of last value change
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
