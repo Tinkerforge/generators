@@ -338,7 +338,7 @@ com['constant_groups'].append({
 })
 
 com['constant_groups'].append({
-'name': 'CP Reconnect Time',
+'name': 'Phase Switch Wait Time',
 'type': 'uint8',
 'constants': [('Default', 0)] + [(f'{15 + i * 5} Seconds', i + 1) for i in range(22)] # Default + 15s to 120s in 5s steps
 })
@@ -1035,7 +1035,7 @@ com['packets'].append({
              ('Phases Connected', 'uint8', 1, 'out'), # 1 or 3, Ignored in EVSE V2
              ('Enumerate Value', 'uint8', 1, 'out'), # Returns new value if stable for > 2 seconds
              ('Enumerate Value Change Time', 'uint32', 1, 'out'), # EVSE uptime of last value change
-             ('CP Reconnect Time', 'uint8', 1, 'out', {'constant_group': 'CP Reconnect Time'}),
+             ('Phase Switch Wait Time', 'uint8', 1, 'out', {'constant_group': 'Phase Switch Wait Time'}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1623,8 +1623,8 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set CP Reconnect Time',
-'elements': [('CP Reconnect Time', 'uint8', 1, 'in', {'constant_group': 'CP Reconnect Time'})],
+'name': 'Set Phase Switch Wait Time',
+'elements': [('Phase Switch Wait Time', 'uint8', 1, 'in', {'constant_group': 'Phase Switch Wait Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1640,8 +1640,8 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get CP Reconnect Time',
-'elements': [('CP Reconnect Time', 'uint8', 1, 'out', {'constant_group': 'CP Reconnect Time'})],
+'name': 'Get Phase Switch Wait Time',
+'elements': [('Phase Switch Wait Time', 'uint8', 1, 'out', {'constant_group': 'Phase Switch Wait Time'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
