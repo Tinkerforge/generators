@@ -36,3 +36,8 @@ tvpl/build_deploy_tvpl.py
 */zip_*/
 .m2/
 ui_diff_view.py
+csharp/netspeed*
+java/.classpath
+java/.settings/
+*/*_released_files.py
+perl/unz/
