@@ -242,20 +242,20 @@ Most functions of the C/C++ bindings for microcontrollers return an error code
 
 Possible error codes are:
 
-* TF\_\ **E**\\ _OK = 0
-* TF\_\ **E**\\ _TIMEOUT = -1
-* TF\_\ **E**\\ _INVALID_PARAMETER = -2
-* TF\_\ **E**\\ _NOT_SUPPORTED = -3
-* TF\_\ **E**\\ _UNKNOWN_ERROR_CODE = -4
-* TF\_\ **E**\\ _STREAM_OUT_OF_SYNC = -5
-* TF\_\ **E**\\ _INVALID_CHAR_IN_UID = -6
-* TF\_\ **E**\\ _UID_TOO_LONG = -7
-* TF\_\ **E**\\ _UID_OVERFLOW = -8
-* TF\_\ **E**\\ _TOO_MANY_DEVICES = -9
-* TF\_\ **E**\\ _DEVICE_NOT_FOUND = -10
-* TF\_\ **E**\\ _WRONG_DEVICE_TYPE = -11
-* TF\_\ **E**\\ _LOCKED = -12
-* TF\_\ **E**\\ _PORT_NOT_FOUND = -13
+* TF\\_\\ **E**\\\\ _OK = 0
+* TF\\_\\ **E**\\\\ _TIMEOUT = -1
+* TF\\_\\ **E**\\\\ _INVALID_PARAMETER = -2
+* TF\\_\\ **E**\\\\ _NOT_SUPPORTED = -3
+* TF\\_\\ **E**\\\\ _UNKNOWN_ERROR_CODE = -4
+* TF\\_\\ **E**\\\\ _STREAM_OUT_OF_SYNC = -5
+* TF\\_\\ **E**\\\\ _INVALID_CHAR_IN_UID = -6
+* TF\\_\\ **E**\\\\ _UID_TOO_LONG = -7
+* TF\\_\\ **E**\\\\ _UID_OVERFLOW = -8
+* TF\\_\\ **E**\\\\ _TOO_MANY_DEVICES = -9
+* TF\\_\\ **E**\\\\ _DEVICE_NOT_FOUND = -10
+* TF\\_\\ **E**\\\\ _WRONG_DEVICE_TYPE = -11
+* TF\\_\\ **E**\\\\ _LOCKED = -12
+* TF\\_\\ **E**\\\\ _PORT_NOT_FOUND = -13
 
 (as defined in :file:`errors.h`) as well as the errors returned from
 the hardware abstraction layer (HAL) that is used.
@@ -286,20 +286,20 @@ Fehlercode (``e_code``) zurück
 
 Mögliche Fehlercodes sind:
 
-* TF\_\ **E**\\ _OK = 0
-* TF\_\ **E**\\ _TIMEOUT = -1
-* TF\_\ **E**\\ _INVALID_PARAMETER = -2
-* TF\_\ **E**\\ _NOT_SUPPORTED = -3
-* TF\_\ **E**\\ _UNKNOWN_ERROR_CODE = -4
-* TF\_\ **E**\\ _STREAM_OUT_OF_SYNC = -5
-* TF\_\ **E**\\ _INVALID_CHAR_IN_UID = -6
-* TF\_\ **E**\\ _UID_TOO_LONG = -7
-* TF\_\ **E**\\ _UID_OVERFLOW = -8
-* TF\_\ **E**\\ _TOO_MANY_DEVICES = -9
-* TF\_\ **E**\\ _DEVICE_NOT_FOUND = -10
-* TF\_\ **E**\\ _WRONG_DEVICE_TYPE = -11
-* TF\_\ **E**\\ _CALLBACK_EXEC = -12
-* TF\_\ **E**\\ _PORT_NOT_FOUND = -13
+* TF\\_\\ **E**\\\\ _OK = 0
+* TF\\_\\ **E**\\\\ _TIMEOUT = -1
+* TF\\_\\ **E**\\\\ _INVALID_PARAMETER = -2
+* TF\\_\\ **E**\\\\ _NOT_SUPPORTED = -3
+* TF\\_\\ **E**\\\\ _UNKNOWN_ERROR_CODE = -4
+* TF\\_\\ **E**\\\\ _STREAM_OUT_OF_SYNC = -5
+* TF\\_\\ **E**\\\\ _INVALID_CHAR_IN_UID = -6
+* TF\\_\\ **E**\\\\ _UID_TOO_LONG = -7
+* TF\\_\\ **E**\\\\ _UID_OVERFLOW = -8
+* TF\\_\\ **E**\\\\ _TOO_MANY_DEVICES = -9
+* TF\\_\\ **E**\\\\ _DEVICE_NOT_FOUND = -10
+* TF\\_\\ **E**\\\\ _WRONG_DEVICE_TYPE = -11
+* TF\\_\\ **E**\\\\ _CALLBACK_EXEC = -12
+* TF\\_\\ **E**\\\\ _PORT_NOT_FOUND = -13
 
 (wie in :file:`errors.h` definiert), sowie die Fehlercodes des verwendeten
 Hardware-Abstraction-Layers (HALs). Mit ``tf_hal_strerror`` (im Header das HALs definiert)
