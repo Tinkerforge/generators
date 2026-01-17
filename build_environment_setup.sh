@@ -7,52 +7,52 @@
 # You will also be able to open, view and edit the schematics and layouts
 # for Bricks and Bricklets as well as the design files of the cases.
 
-# It was tested in a Ubuntu 15.04 VirtualBox image from osboxes.org.
+# It was last tested with a Debian Trixie 13.3
 
 cd ~
-sudo apt-get update
+sudo apt update
 
 # Packages for general use
-sudo apt-get -y install python git
+sudo apt -y install python3 git
 
 # Packages for "generators/generate_all.py"
-sudo apt-get -y install php5 # in older Ubuntu there was a package named php5
-sudo apt-get -y install php # in newer Ubuntu there is a meta package named php that depends on php7.0
-sudo apt-get -y install build-essential mono-complete mono-reference-assemblies-2.0 python3 perl default-jre default-jdk nodejs npm php-pear ruby zip
+sudo apt -y install php
+sudo apt -y install build-essential mono-complete python3 perl default-jre default-jdk maven nodejs npm php-pear ruby zip golang-go rust-all
 sudo npm install -g browserify
-sudo ln -s /usr/bin/nodejs /usr/local/bin/node
+
+# Packages for dotnet (for c# bindings)
+wget https://packages.microsoft.com/config/debian/13/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
+sudo apt-get update
+sudo apt-get install -y dotnet-sdk-10.0
 
 # Packages for "generators/test_all.py"
-sudo apt-get -y install libxml2-utils libgd-dev libgd-perl libterm-readkey-perl libb-lint-perl
+sudo apt -y install libxml2-utils libgd-dev libgd-perl libterm-readkey-perl libb-lint-perl
 
 # Packages for "$:~/doc/ make html"
-sudo apt-get -y install python-sphinx python-sphinxcontrib.spelling
+sudo apt -y install python3-sphinx python3-sphinxcontrib.spelling
 
 # Packages for building and running brickv
-sudo apt-get -y install python-qt4 python-qt4-gl python-opengl python-serial python-setuptools pyqt4-dev-tools
+sudo apt -y install python3-pyqt5 python3-pyqt5.qtopengl python3-opengl python3-serial python3-setuptools pyqt5-dev-tools
 
 # Packages for building and running brickd
-sudo apt-get -y install pkg-config libusb-1.0-0-dev libudev-dev pm-utils
+sudo apt -y install pkg-config libusb-1.0-0-dev libudev-dev pm-utils
 
 # Packages for building Brick firmwares and Bricklet plugins
-sudo apt-get -y install cmake gcc-arm-none-eabi
+sudo apt -y install cmake gcc-arm-none-eabi
 
 # Packages for hardware development (schematic, layout, case design)
-sudo apt-get -y install kicad freecad
+sudo apt -y install kicad freecad
 
 # Clone all necessary gits
 gitgetter=$(mktemp)
 
 cat > ${gitgetter} <<- EOF
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-try:
-    # Python2
-    from urllib2.request import urlopen
-except:
-    # Python3
-    from urllib.request import urlopen
+from urllib.request import urlopen
 import json
 
 page = 1
@@ -95,14 +95,14 @@ done
 
 # Generate Bindings and Copy examples to documentation
 cd ~/tf/generators/
-python generate_all.py
-python copy_all.py
+python3 generate_all.py
+python3 copy_all.py
 
 # Install additional pygments lexers
 cd ~/tf/doc/pygments-mathematica/
-sudo python setup.py install
+sudo python3 setup.py install
 cd ~/tf/doc/pygments-octave-fixed/
-sudo python setup.py install
+sudo python3 setup.py install
 
 # Generate doc
 cd ~/tf/doc/
@@ -110,7 +110,7 @@ make html
 
 # Generate brickv GUI
 cd ~/tf/brickv/src/
-python build_all_ui.py
+python3 build_all_ui.py
 
 # Build brickd
 cd ~/tf/brickd/src/
