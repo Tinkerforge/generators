@@ -40,7 +40,7 @@
         <configuration>
           <toolchains>
             <jdk>
-              <version>1.8</version>
+              <version>21</version>
             </jdk>
           </toolchains>
         </configuration>
@@ -50,10 +50,12 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <release>8</release>
+          <release>11</release>
           <encoding>UTF-8</encoding>
           <compilerArgs>
             <arg>-Xlint:all</arg>
+            <arg>-Xlint:-lossy-conversions</arg>
+            <arg>-Xlint:-this-escape</arg>
           </compilerArgs>
           <failOnWarning>true</failOnWarning>
           <showWarnings>true</showWarnings>

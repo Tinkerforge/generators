@@ -13,7 +13,7 @@ cp -r debian maven-toolchains-plugin-${version}
 
 pushd maven-toolchains-plugin-${version}
 
-JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 dpkg-buildpackage --no-sign
+JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 dpkg-buildpackage --no-sign
 
 popd
 
