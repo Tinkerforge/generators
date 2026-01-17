@@ -11,7 +11,8 @@ fi
 if command -v docker >/dev/null 2>&1 ; then
 	if [ $(/usr/bin/docker images -q tinkerforge/build_environment_full:latest) ]; then
 		echo "Using docker image to build."
-		docker run $DOCKER_FLAGS \
+		# --privileged is necessary because java21 needs io_uring
+		docker run --privileged $DOCKER_FLAGS \
 		-v $ROOT_DIR/../:/$ROOT_DIR/../ -u $(id -u):$(id -g) \
 		tinkerforge/build_environment_full:latest /bin/bash \
 		-c "cd $ROOT_DIR ; python3 -u generate_all.py "$@""
