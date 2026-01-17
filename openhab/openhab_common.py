@@ -54,7 +54,7 @@ class OpenHABUnit:
         self.tf_to_oh_divisor = tf_to_oh_divisor
 
 def fix_desc(s):
-    result = re.sub("`([^<]*)\s+<([^>]*)>`__", "\g<1>: \g<2>", s, flags=re.MULTILINE)
+    result = re.sub(r"`([^<]*)\s+<([^>]*)>`__", r"\g<1>: \g<2>", s, flags=re.MULTILINE)
     result = result.replace("\n", "<br/>")
     return result
 
@@ -1038,7 +1038,7 @@ class OpenHABDevice(java_common.JavaDevice):
         used_packets = []
 
         # Search possible packet usage in init_code etc.
-        used_packet_names = re.findall("this\.([a-zA-Z0-9]+)\(", str(oh))
+        used_packet_names = re.findall(r"this\.([a-zA-Z0-9]+)\(", str(oh))
         for packet in self.get_packets():
             if packet.get_name().headless in used_packet_names:
                 used_packets.append(packet)
