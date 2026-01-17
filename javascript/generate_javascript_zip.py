@@ -121,24 +121,25 @@ class JavaScriptZipGenerator(javascript_common.JavascriptGeneratorTrait, common.
         target['lockfileVersion'] = source['lockfileVersion']
         target['dependencies'] = collections.OrderedDict()
 
-        for package in source['dependencies']:
-            print(package, '...')
+        if 'dependencies' in source:
+            for package in source['dependencies']:
+                print(package, '...')
 
-            meta = json.loads(subprocess.check_output(['npm', 'view', '--json', package]).decode('utf-8'))
-            candidate_version = None
-            candidate_date = None
+                meta = json.loads(subprocess.check_output(['npm', 'view', '--json', package]).decode('utf-8'))
+                candidate_version = None
+                candidate_date = None
 
-            for version in sorted(meta['versions']):
-                date = meta['time'][version]
+                for version in sorted(meta['versions']):
+                    date = meta['time'][version]
 
-                if date < cut_off_date and (candidate_version == None or date > candidate_date):
-                    candidate_version = version
-                    candidate_date = date
+                    if date < cut_off_date and (candidate_version == None or date > candidate_date):
+                        candidate_version = version
+                        candidate_date = date
 
-            print(package, candidate_version, candidate_date)
+                print(package, candidate_version, candidate_date)
 
-            if candidate_version != None:
-                target['dependencies'][package] = {'version': candidate_version}
+                if candidate_version != None:
+                    target['dependencies'][package] = {'version': candidate_version}
 
         with open(path, 'w') as f:
             f.write(json.dumps(target, indent=2))
