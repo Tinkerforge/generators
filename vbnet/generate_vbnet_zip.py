@@ -81,7 +81,7 @@ class VBNETZipGenerator(vbnet_common.VBNETGeneratorTrait, common.ZipGenerator):
         if not os.path.exists(tmp_examples_device_dir):
             os.makedirs(tmp_examples_device_dir)
 
-        for example in common.find_device_examples(device, '^Example.*\.vb$'):
+        for example in common.find_device_examples(device, r'^Example.*\.vb$'):
             shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
@@ -89,7 +89,7 @@ class VBNETZipGenerator(vbnet_common.VBNETGeneratorTrait, common.ZipGenerator):
 
         # Copy IP Connection examples
         if self.get_config_name().space == 'Tinkerforge':
-            for example in common.find_examples(root_dir, '^Example.*\.vb$'):
+            for example in common.find_examples(root_dir, r'^Example.*\.vb$'):
                 shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
