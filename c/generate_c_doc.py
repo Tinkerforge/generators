@@ -101,7 +101,7 @@ class CDocDevice(common.Device):
 
     def get_c_callbacks(self):
         callbacks = []
-        template = '.. c:var:: {0}_CALLBACK_{1}\n{2}\n{3}\n{4}\n'
+        template = '.. c:macro:: {0}_CALLBACK_{1}\n{2}\n{3}\n{4}\n'
         param_template = {
             'en': """
  .. code-block:: c
@@ -373,7 +373,7 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 Constants
 ^^^^^^^^^
 
-.. c:var:: {1}_DEVICE_IDENTIFIER
+.. c:macro:: {1}_DEVICE_IDENTIFIER
 
  This constant is used to identify a {4}.
 
@@ -381,7 +381,7 @@ Constants
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 
-.. c:var:: {1}_DEVICE_DISPLAY_NAME
+.. c:macro:: {1}_DEVICE_DISPLAY_NAME
 
  This constant represents the human readable name of a {4}.
 """,
@@ -391,7 +391,7 @@ Constants
 Konstanten
 ^^^^^^^^^^
 
-.. c:var:: {1}_DEVICE_IDENTIFIER
+.. c:macro:: {1}_DEVICE_IDENTIFIER
 
  Diese Konstante wird verwendet um {3} {4} zu identifizieren.
 
@@ -399,7 +399,7 @@ Konstanten
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
-.. c:var:: {1}_DEVICE_DISPLAY_NAME
+.. c:macro:: {1}_DEVICE_DISPLAY_NAME
 
  Diese Konstante stellt den Anzeigenamen eines {4} dar.
 """

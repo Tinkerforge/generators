@@ -327,7 +327,7 @@ Details finden sich in der :ref:`Beschreibung der API-Bindings <api_bindings_uc>
 Constants
 ^^^^^^^^^
 
-.. c:var:: TF_{device_upper}_DEVICE_IDENTIFIER
+.. c:macro:: TF_{device_upper}_DEVICE_IDENTIFIER
 
  This constant is used to identify a {device_display}.
 
@@ -335,7 +335,7 @@ Constants
  have a ``device_identifier`` output parameter to specify
  the Brick's or Bricklet's type.
 
-.. c:var:: TF_{device_upper}_DEVICE_DISPLAY_NAME
+.. c:macro:: TF_{device_upper}_DEVICE_DISPLAY_NAME
 
  This constant represents the human readable name of a {device_display}.
 """,
@@ -345,7 +345,7 @@ Constants
 Konstanten
 ^^^^^^^^^^
 
-.. c:var:: TF_{device_upper}_DEVICE_IDENTIFIER
+.. c:macro:: TF_{device_upper}_DEVICE_IDENTIFIER
 
  Diese Konstante wird verwendet um {article} {device_display} zu identifizieren.
 
@@ -353,7 +353,7 @@ Konstanten
  haben einen ``device_identifier`` Ausgabe-Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 
-.. c:var:: TF_{device_upper}_DEVICE_DISPLAY_NAME
+.. c:macro:: TF_{device_upper}_DEVICE_DISPLAY_NAME
 
  Diese Konstante stellt den Anzeigenamen eines {device_display} dar.
 """
