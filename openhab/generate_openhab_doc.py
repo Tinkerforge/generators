@@ -397,7 +397,7 @@ Channels
 
             meta_table_entries.insert(0, ('plain', 'Type', item_type))
 
-            desc = c.get_description().replace('|', '\|')
+            desc = c.get_description().replace('|', '\\|')
 
             if '<ul>' in desc:
                 desc = desc.replace('<ul>', '\n\n').replace('<li>', '* ').replace('</li>', '\n').replace('</ul>', '')
