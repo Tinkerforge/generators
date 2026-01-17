@@ -105,14 +105,8 @@ cd ~/tf/doc/pygments-octave-fixed/
 sudo python3 setup.py install
 
 # Generate doc
-python3 -m venv sphinx-virtualenv
-source sphinx-virtualenv/bin/activate
-pip install -r requirements.txt
-pip install ./pygments-mathematica
-pip install ./pygments-octave-fixed
 cd ~/tf/doc/
 make html
-deactivate
 
 # Generate brickv GUI
 cd ~/tf/brickv/src/
