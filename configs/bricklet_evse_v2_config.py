@@ -1335,9 +1335,8 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Eichrecht General Information',
-'elements': [('Gateway Identification', 'char', 32, 'in'), # GI
-             ('Gateway Serial', 'char', 32, 'in'), # GS
+'name': 'Set Eichrecht Gateway Identification',
+'elements': [('Gateway Identification', 'char', 41, 'in'), # GI
              ('Eichrecht State', 'uint8', 1, 'out', {'constant_group': 'Eichrecht State'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1354,9 +1353,43 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Eichrecht General Information',
-'elements': [('Gateway Identification', 'char', 32, 'out'), # GI
-             ('Gateway Serial', 'char', 32, 'out')], # GS
+'name': 'Get Eichrecht Gateway Identification',
+'elements': [('Gateway Identification', 'char', 41, 'out')], # GI
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Eichrecht Gateway Serial',
+'elements': [('Gateway Serial', 'char', 25, 'in'), # GS
+             ('Eichrecht State', 'uint8', 1, 'out', {'constant_group': 'Eichrecht State'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Eichrecht Gateway Serial',
+'elements': [('Gateway Serial', 'char', 25, 'out')], # GS
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
