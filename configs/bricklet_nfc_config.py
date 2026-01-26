@@ -51,7 +51,8 @@ com['constant_groups'].append({
               ('Type2', 2),
               ('Type3', 3),
               ('Type4', 4),
-              ('Type5', 5)]
+              ('Type5', 5),
+              ('Phone', 6)]
 })
 
 STATE_IDLE_MASK = (1 << 7)
