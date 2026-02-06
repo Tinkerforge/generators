@@ -211,8 +211,9 @@ com['constant_groups'].append({
 com['constant_groups'].append({
 'name': 'Charging Protocol',
 'type': 'uint8',
-'constants': [('IEC61851', 0),
-              ('ISO15118', 1)]
+'constants': [('IEC61851 Permanent', 0),
+              ('IEC61851 Temporary', 1),
+              ('ISO15118', 2)]
 })
 
 com['constant_groups'].append({
