@@ -13,7 +13,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2105,
     'name': 'Voltage Current V2',
@@ -228,6 +228,303 @@ Returns the calibration as set by :func:`Set Calibration`.
 'de':
 """
 Gibt die Kalibrierung zurück, wie von :func:`Set Calibration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Current Time',
+'elements': [('Current', 'int32', 1, 'out', {'unit': 'Ampere', 'scale': (1, 1000), 'range': (-20000, 20000)}),
+             ('Time', 'uint32', 1, 'out', {'unit': 'Second', 'scale': (1, 1000)})],
+'since_firmware': [2, 0, 4],
+'doc': ['bf', {
+'en':
+"""
+Returns the current and the bricklet internal timestamp when the value was measured.
+
+If you want to get the value periodically, it is recommended to use the
+:cb:`Current Time` callback. You can enable the callback
+with :func:`Set Current Time Callback Configuration`.
+""",
+'de':
+"""
+Gibt die gemessenen Stromstärke und den Bricklet-internen Zeitstempel der Messung zurück.
+
+Wenn der Wert periodisch benötigt wird, kann auch der :cb:`Current Time` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`Set Current Time Callback Configuration` konfiguriert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Current Time Callback Configuration',
+'elements': [('Enable', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [2, 0, 4],
+'doc': ['ccf', {
+'en':
+"""
+Enables or disables :cb:`Current Time`.
+The callback is trigged whenever a new value is measured. This depends on the configuration.
+The period will be (voltage_conversion_time + current_conversion_time) * averaging.
+If the period is shorter than 1 millisecond, only one value per millisecond will be sent.
+""",
+'de':
+"""
+Aktiviert oder deaktiviert :cb:`Current Time`.
+Der Callback wird immer dann ausgelöst, wenn ein neuer Wert gemessen wird. Dies hängt von der Konfiguration ab.
+Die Periode ist (voltage_conversion_time + current_conversion_time) * averaging.
+Wenn dieser Zeitraum kürzer als 1 Millisekunde ist, wird nur ein Wert pro Millisekunde gesendet.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Current Time Callback Configuration',
+'elements': [('Enable', 'bool', 1, 'out', {'default': False})],
+'since_firmware': [2, 0, 4],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set Current Time Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Current Time Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Current Time',
+'elements': [('Current', 'int32', 1, 'out', {'unit': 'Ampere', 'scale': (1, 1000), 'range': (-20000, 20000)}),
+             ('Time', 'uint32', 1, 'out', {'unit': 'Second', 'scale': (1, 1000)})],
+'since_firmware': [2, 0, 4],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period
+(voltage_conversion_time + current_conversion_time) * averaging based on the configuration set by :func:`Set Configuration`.
+
+The :word:`parameter` is the same as :func:`Get Current Time`.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode (voltage_conversion_time + current_conversion_time) * averaging ausgelöst,
+abhängig von der Konfiguration die mit :func:`Set Configuration` gesetzt wurde.
+
+Der :word:`parameter` ist der gleiche wie :func:`Get Current Time`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Voltage Time',
+'elements': [('Voltage', 'int32', 1, 'out', {'unit': 'Volt', 'scale': (1, 1000), 'range': (0, 36000)}),
+             ('Time', 'uint32', 1, 'out', {'unit': 'Second', 'scale': (1, 1000)})],
+'since_firmware': [2, 0, 4],
+'doc': ['bf', {
+'en':
+"""
+Returns the voltage and the bricklet internal timestamp when the value was measured.
+
+If you want to get the value periodically, it is recommended to use the
+:cb:`Voltage Time` callback. You can enable the callback
+with :func:`Set Voltage Time Callback Configuration`.
+""",
+'de':
+"""
+Gibt die gemessenen Spannung und den Bricklet-internen Zeitstempel der Messung zurück.
+
+Wenn der Wert periodisch benötigt wird, kann auch der :cb:`Voltage Time` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`Set Voltage Time Callback Configuration` konfiguriert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Voltage Time Callback Configuration',
+'elements': [('Enable', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [2, 0, 4],
+'doc': ['ccf', {
+'en':
+"""
+Enables or disables :cb:`Voltage Time`.
+The callback is trigged whenever a new value is measured. This depends on the configuration.
+The period will be (voltage_conversion_time + current_conversion_time) * averaging.
+If the period is shorter than 1 millisecond, only one value per millisecond will be sent.
+""",
+'de':
+"""
+Aktiviert oder deaktiviert :cb:`Voltage Time`.
+Der Callback wird immer dann ausgelöst, wenn ein neuer Wert gemessen wird. Dies hängt von der Konfiguration ab.
+Die Periode ist (voltage_conversion_time + current_conversion_time) * averaging.
+Wenn dieser Zeitraum kürzer als 1 Millisekunde ist, wird nur ein Wert pro Millisekunde gesendet.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Voltage Time Callback Configuration',
+'elements': [('Enable', 'bool', 1, 'out', {'default': False})],
+'since_firmware': [2, 0, 4],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set Voltage Time Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Voltage Time Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Voltage Time',
+'elements': [('Voltage', 'int32', 1, 'out', {'unit': 'Volt', 'scale': (1, 1000), 'range': (0, 36000)}),
+             ('Time', 'uint32', 1, 'out', {'unit': 'Second', 'scale': (1, 1000)})],
+'since_firmware': [2, 0, 4],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period
+(voltage_conversion_time + current_conversion_time) * averaging based on the configuration set by :func:`Set Configuration`.
+
+The :word:`parameter` is the same as :func:`Get Voltage Time`.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode (voltage_conversion_time + current_conversion_time) * averaging ausgelöst,
+abhängig von der Konfiguration die mit :func:`Set Configuration` gesetzt wurde.
+
+Der :word:`parameter` ist der gleiche wie :func:`Get Voltage Time`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Power Time',
+'elements': [('Power', 'int32', 1, 'out', {'unit': 'Watt', 'scale': (1, 1000), 'range': (0, 720000)}),
+             ('Time', 'uint32', 1, 'out', {'unit': 'Second', 'scale': (1, 1000)})],
+'since_firmware': [2, 0, 4],
+'doc': ['bf', {
+'en':
+"""
+Returns the power and the bricklet internal timestamp when the value was measured.
+
+If you want to get the value periodically, it is recommended to use the
+:cb:`Power Time` callback. You can enable the callback
+with :func:`Set Power Time Callback Configuration`.
+""",
+'de':
+"""
+Gibt die gemessenen Leistung und den Bricklet-internen Zeitstempel der Messung zurück.
+
+Wenn der Wert periodisch benötigt wird, kann auch der :cb:`Power Time` Callback
+verwendet werden. Der Callback wird mit der Funktion
+:func:`Set Power Time Callback Configuration` konfiguriert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Power Time Callback Configuration',
+'elements': [('Enable', 'bool', 1, 'in', {'default': False})],
+'since_firmware': [2, 0, 4],
+'doc': ['ccf', {
+'en':
+"""
+Enables or disables :cb:`Power Time`.
+The callback is trigged whenever a new value is measured. This depends on the configuration.
+The period will be (voltage_conversion_time + current_conversion_time) * averaging.
+If the period is shorter than 1 millisecond, only one value per millisecond will be sent.
+""",
+'de':
+"""
+Aktiviert oder deaktiviert :cb:`Power Time`.
+Der Callback wird immer dann ausgelöst, wenn ein neuer Wert gemessen wird. Dies hängt von der Konfiguration ab.
+Die Periode ist (voltage_conversion_time + current_conversion_time) * averaging.
+Wenn dieser Zeitraum kürzer als 1 Millisekunde ist, wird nur ein Wert pro Millisekunde gesendet.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Power Time Callback Configuration',
+'elements': [('Enable', 'bool', 1, 'out', {'default': False})],
+'since_firmware': [2, 0, 4],
+'doc': ['ccf', {
+'en':
+"""
+Returns the callback configuration as set by
+:func:`Set Power Time Callback Configuration`.
+""",
+'de':
+"""
+Gibt die Callback-Konfiguration zurück, wie mittels
+:func:`Set Power Time Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Power Time',
+'elements': [('Power', 'int32', 1, 'out', {'unit': 'Watt', 'scale': (1, 1000), 'range': (0, 720000)}),
+             ('Time', 'uint32', 1, 'out', {'unit': 'Second', 'scale': (1, 1000)})],
+'since_firmware': [2, 0, 4],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period
+(voltage_conversion_time + current_conversion_time) * averaging based on the configuration set by :func:`Set Configuration`.
+
+The :word:`parameter` is the same as :func:`Get Power Time`.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode (voltage_conversion_time + current_conversion_time) * averaging ausgelöst,
+abhängig von der Konfiguration die mit :func:`Set Configuration` gesetzt wurde.
+
+Der :word:`parameter` ist der gleiche wie :func:`Get Power Time`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Time',
+'elements': [('Time', 'uint32', 1, 'out', {'unit': 'Second', 'scale': (1, 1000)})],
+'since_firmware': [2, 0, 4],
+'doc': ['bf', {
+'en':
+"""
+Returns the bricklet internal timestamp in milliseconds since the bricklet is powered.
+Warning: The internal clock may runs slightly faster or slower than a real time clock,
+additional caution is required when using this function to syncronosize time to the target system.
+""",
+'de':
+"""
+Gibt den Bricklet-internen Zeitstempel in Millisekunden zurück seit das Bricklet mit Strom versorgt wird.
+Warnung: Die interne Uhr kann etwas schneller oder langsamer laufen als eine Echtzeituhr,
+daher ist zusätzliche Vorsicht geboten wenn diese Funktion verwendet wird um die Zeit auf dem Zielsystem zu synchronisieren.
 """
 }]
 })
