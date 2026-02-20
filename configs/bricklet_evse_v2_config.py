@@ -1504,7 +1504,7 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Eichrecht Transaction',
+'name': 'Get Eichrecht Transaction State',
 'elements': [('Transaction', 'char', 1, 'out', {'constant_group': 'Eichrecht Transaction Command'}),
              ('Transaction State', 'uint8', 1, 'out'),
              ('Transaction Inner State', 'uint8', 1, 'out'),
