@@ -319,8 +319,7 @@ com['constant_groups'].append({
 'constants': [('Idle', 0),
               ('Active', 1),
               ('Active After Power Failure', 2),
-              ('Active After Reset', 3),
-              ('Invalid Date Time', 128)]
+              ('Active After Reset', 3)]
 })
 
 com['constant_groups'].append({
