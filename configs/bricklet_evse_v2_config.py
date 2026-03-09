@@ -1036,6 +1036,7 @@ com['packets'].append({
              ('Enumerate Value', 'uint8', 1, 'out'), # Returns new value if stable for > 2 seconds
              ('Enumerate Value Change Time', 'uint32', 1, 'out'), # EVSE uptime of last value change
              ('Phase Switch Wait Time', 'uint8', 1, 'out', {'constant_group': 'Phase Switch Wait Time'}),
+             ('PLC Modem Enabled', 'bool', 1, 'out'),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1675,6 +1676,40 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Phase Switch Wait Time',
 'elements': [('Phase Switch Wait Time', 'uint8', 1, 'out', {'constant_group': 'Phase Switch Wait Time'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set PLC Modem',
+'elements': [('PLC Modem Enabled', 'bool', 1, 'in')], # default True
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get PLC Modem',
+'elements': [('PLC Modem Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
