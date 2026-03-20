@@ -153,7 +153,7 @@ class MicroPythonElement(common.Element):
         value = MicroPythonElement.micropython_default_item_values[self.get_type()]
 
         if value == None:
-            common.GeneratorError('Invalid array item type: ' + self.get_type())
+            raise common.GeneratorError('Invalid array item type: ' + self.get_type())
 
         return value
 
