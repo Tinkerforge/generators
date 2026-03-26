@@ -2175,10 +2175,10 @@ namespace Tinkerforge
 
 		public SocketWrapper(String host, int port)
 		{
+#if WINDOWS_PHONE || WINDOWS_UWP || WINDOWS_UAP
 			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			socket.NoDelay = true;
 
-#if WINDOWS_PHONE || WINDOWS_UWP || WINDOWS_UAP
 			SocketAsyncEventArgs args = new SocketAsyncEventArgs();
 			args.RemoteEndPoint = new DnsEndPoint(host, port);
 
@@ -2196,7 +2196,42 @@ namespace Tinkerforge
 				throw new IOException(string.Format("Could not connect: {0}", args.SocketError));
 			}
 #else
-			socket.Connect(host, port);
+			// resolve host to get the address family, then try all addresses in order
+			IPAddress[] addresses = Dns.GetHostAddresses(host);
+
+			if (addresses.Length == 0)
+			{
+				throw new IOException(string.Format("Could not resolve host: {0}", host));
+			}
+
+			Exception lastException = null;
+
+			foreach (IPAddress address in addresses)
+			{
+				try
+				{
+					socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+					socket.NoDelay = true;
+					socket.Connect(address, port);
+					lastException = null;
+					break;
+				}
+				catch (Exception e)
+				{
+					lastException = e;
+
+					if (socket != null)
+					{
+						socket.Close();
+						socket = null;
+					}
+				}
+			}
+
+			if (lastException != null)
+			{
+				throw lastException;
+			}
 #endif
 
 			stream = new NetworkStream(socket);
