@@ -360,7 +360,7 @@
 - Handle forced socket read timeout for System.AppDomain.Unload timeout fix
   correctly when using Microsoft .NET runtime on Linux
 
-2026-03-31: 2.1.34 (<unknown>)
+2026-03-31: 2.1.34 (570e1c5)
 - Add IPv6 support
 - Add support NFC forum tag type 5 and phone with HCE (host card emulation)
   as tag type to NFC Bricklet API
