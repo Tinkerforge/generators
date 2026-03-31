@@ -359,3 +359,14 @@
 2024-04-08: 2.1.33 (0a0cd96)
 - Handle forced socket read timeout for System.AppDomain.Unload timeout fix
   correctly when using Microsoft .NET runtime on Linux
+
+2026-03-31: 2.1.34 (<unknown>)
+- Add IPv6 support
+- Add support NFC forum tag type 5 and phone with HCE (host card emulation)
+  as tag type to NFC Bricklet API
+- Add CardemuSet/GetTagID function to NFC Bricklet API
+- Add WriteLine2 function to OLED 128x64 Bricklet 2.0 API
+- Add Set/GetMotorStalledCallbackConfiguration functions and MotorStalled
+  callback to Silent Stepper Bricklet 2.0 API
+- Add Set/GetCaptureInputCallbackConfiguration functions and CaptureInput
+  callback to IO-4 Bricklet 2.0 API
