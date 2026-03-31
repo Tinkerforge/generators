@@ -1722,3 +1722,38 @@ TODO
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Test Mode',
+'elements': [('Test Mode Enabled', 'bool', 1, 'in'), # default False
+             ('Password', 'uint32', 1, 'in')],      # 0xdeadbeef
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Test Mode',
+'elements': [('Test Mode Enabled', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
