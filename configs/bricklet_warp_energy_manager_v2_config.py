@@ -20,7 +20,7 @@ com = {
         'en': 'TBD',
         'de': 'TBD'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'esp32_firmware': 'energy_manager_v2',
@@ -47,7 +47,8 @@ com['constant_groups'].append({
               ('DEM4A', 7),
               ('DMED341MID7ER', 8),
               ('DSZ16DZE', 9),
-              ('WM3M4C', 10)]
+              ('WM3M4C', 10),
+              ('WM3M4', 11)]
 })
 
 com['constant_groups'].append({
@@ -706,4 +707,3 @@ TODO
 """
 }]
 })
-

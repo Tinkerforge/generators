@@ -47,7 +47,8 @@ com['constant_groups'].append({
               ('DEM4A', 7),
               ('DMED341MID7ER', 8),
               ('DSZ16DZE', 9),
-              ('WM3M4C', 10)]
+              ('WM3M4C', 10),
+              ('WM3M4', 11)]
 })
 
 com['constant_groups'].append({
