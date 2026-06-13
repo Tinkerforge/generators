@@ -1,0 +1,17 @@
+name = "Tinkerforge"
+uuid = "4538fa9c-0d4d-4731-8bd7-3b5bd853821f"
+authors = ["Jonas Schumacher <github735@jonasschumacher.de>"]
+version = "<<VERSION>>"
+
+[deps]
+Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+Sockets = "6462fe0b-24de-5631-8697-dd941f90decc"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
