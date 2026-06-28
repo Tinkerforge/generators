@@ -18,7 +18,7 @@ com = {
     'display_name': 'WARP ESP32 Ethernet 2.0 Co',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
+        'en': 'Real-time clock, temperature sensor and status LED for the WARP ESP32 Ethernet 2.0',
         'de': 'TBD'
     },
     'released': False,
@@ -68,7 +68,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the state of the status LED. *Off* turns the LED off, *On* turns it on and
+*Auto* lets it blink at about 1 Hz.
 """,
 'de':
 """
@@ -85,7 +86,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the state of the status LED as set by :func:`Set LED`.
 """,
 'de':
 """
@@ -103,7 +104,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the temperature measured by the on-board sensor in 1/100 °C.
 """,
 'de':
 """
@@ -126,7 +127,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the date and time of the internal real-time clock. The day of the week is
+0 for Sunday, 1 for Monday and so on.
 """,
 'de':
 """
@@ -149,7 +151,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the date and time of the internal real-time clock as set by
+:func:`Set Date Time`.
 """,
 'de':
 """
@@ -166,7 +169,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the uptime of the Bricklet in milliseconds.
 """,
 'de':
 """
@@ -184,7 +187,7 @@ com['packets'].append({ # unused
 'doc': ['bf', {
 'en':
 """
-TODO
+Not supported by current hardware version.
 """,
 'de':
 """
@@ -208,7 +211,7 @@ com['packets'].append({ # unused
 'doc': ['bf', {
 'en':
 """
-TODO
+Not supported by current hardware version.
 """,
 'de':
 """
@@ -226,7 +229,9 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered when an interrupt is signaled on the RMII interrupt
+line of the Ethernet PHY. The callback is debounced and triggered at most once
+every 250 ms.
 """,
 'de':
 """

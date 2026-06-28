@@ -17,7 +17,7 @@ com = {
     'display_name': 'WARP Front Panel',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
+        'en': 'Display and status LED for the front panel of the WARP Energy Manager 2.0',
         'de': 'TBD'
     },
     'released': False,
@@ -79,7 +79,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the page and sub-page index for the next flash write/read. The flash is
+organized in pages of 256 bytes (4 sub-pages of 64 bytes each) and sectors of
+4096 bytes. The flash holds the sprites and fonts used by the display.
 """,
 'de':
 """
@@ -97,7 +99,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the current flash index as set by :func:`Set Flash Index`.
 """,
 'de':
 """
@@ -117,7 +119,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Writes 64 bytes of data (one sub-page) to the flash at the current index and
+increments the index by one sub-page. The next index is returned together with
+a status. The status is *Busy* if the previous write has not finished yet, in
+which case the data is not written and has to be sent again.
 """,
 'de':
 """
@@ -135,7 +140,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Erases the flash sector (4096 bytes) with the given index. The status is *Busy*
+if an erase is already in progress.
 """,
 'de':
 """
@@ -152,7 +158,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Erases the complete flash. The status is *Busy* if an erase is already in
+progress.
 """,
 'de':
 """
@@ -173,7 +180,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the content of the status bar at the top of the display: the Ethernet and
+WiFi connection status and the current time (hours, minutes, seconds).
 """,
 'de':
 """
@@ -194,7 +202,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the status bar content as set by :func:`Set Status Bar`.
 """,
 'de':
 """
@@ -211,7 +219,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the index of the currently shown display page.
 """,
 'de':
 """
@@ -228,7 +236,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the index of the currently shown display page as set by
+:func:`Set Display Page Index`.
 """,
 'de':
 """
@@ -251,7 +260,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Configures one of the up to 13 icons (icon index 0-12) on the front page. Each
+icon consists of a sprite and two lines of text with a configurable font. Set
+Active to *true* to show the icon or *false* to hide it. The sprite and fonts
+have to be present in the flash, see :func:`Set Flash Data`.
 """,
 'de':
 """
@@ -274,7 +286,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the configuration of the given front page icon as set by
+:func:`Set Display Front Page Icon`.
 """,
 'de':
 """
@@ -292,7 +305,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the IP address and SSID shown on the WiFi setup page. Together with the
+password (see :func:`Set Display Wifi Setup 2`) a QR code for WiFi access is
+generated.
 """,
 'de':
 """
@@ -310,7 +325,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the IP address and SSID as set by :func:`Set Display Wifi Setup 1`.
 """,
 'de':
 """
@@ -327,7 +342,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the WiFi password shown on the WiFi setup page, see
+:func:`Set Display Wifi Setup 1`.
 """,
 'de':
 """
@@ -344,7 +360,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the WiFi password as set by :func:`Set Display Wifi Setup 2`.
 """,
 'de':
 """
@@ -362,6 +378,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the pattern (off, on, blinking or breathing) and the color (green, red or
+yellow) of the status LED.
 """,
 'de':
 """
@@ -378,6 +396,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the LED state as set by :func:`Set LED State`.
 """,
 'de':
 """
@@ -393,6 +412,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the display mode. In *Off* the display is turned off. In *Automatic* the
+display is turned on and switches off again after a countdown (see
+:func:`Get Display`).
 """,
 'de':
 """
@@ -409,6 +431,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the display mode as set by :func:`Set Display` and the remaining
+countdown in ms until the display turns off (0 if the display is off).
 """,
 'de':
 """
@@ -429,6 +453,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the metadata (version, length and checksum) of the data currently in
+the flash together with the values expected by the firmware. This can be used
+to check whether the flash content (sprites and fonts) is up to date.
 """,
 'de':
 """
@@ -444,7 +471,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered when a flash write triggered by
+:func:`Set Flash Data` is done.
 """,
 'de':
 """
@@ -461,7 +489,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Triggers a complete redraw of the display.
 """,
 'de':
 """

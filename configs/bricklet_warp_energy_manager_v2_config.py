@@ -17,7 +17,7 @@ com = {
     'display_name': 'WARP Energy Manager 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
+        'en': 'Manages heat pumps, WARP Chargers and logs energy and charge data to an SD card',
         'de': 'TBD'
     },
     'released': True,
@@ -95,7 +95,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the total power (in W) and the current per phase (L1, L2, L3 in A) of
+the connected energy meter.
 """,
 'de':
 """
@@ -115,7 +116,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns all values measured by the connected energy meter. The meaning of the
+values depends on the energy meter type, see :func:`Get Energy Meter State`.
 """,
 'de':
 """
@@ -133,7 +135,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the type of the connected energy meter and the Modbus communication
+error counters. The error counters are: local timeout, global timeout,
+illegal function, illegal data address, illegal data value and slave device
+failure.
 """,
 'de':
 """
@@ -150,7 +155,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the values of the four inputs.
 """,
 'de':
 """
@@ -168,7 +173,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets one of the two SG Ready outputs (index 0 or 1). The SG Ready (Smart Grid
+Ready) outputs can be used to control e.g. a heat pump.
 """,
 'de':
 """
@@ -185,7 +191,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the state of the two SG Ready outputs as set by
+:func:`Set SG Ready Output`.
 """,
 'de':
 """
@@ -203,7 +210,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets one of the two relay outputs (index 0 or 1). *true* closes the relay,
+*false* opens it.
 """,
 'de':
 """
@@ -220,7 +228,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the state of the two relay outputs as set by :func:`Set Relay Output`.
 """,
 'de':
 """
@@ -237,7 +245,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the supply voltage of the Energy Manager.
 """,
 'de':
 """
@@ -254,7 +262,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the uptime of the Energy Manager in milliseconds.
 """,
 'de':
 """
@@ -280,7 +288,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the values of :func:`Get Energy Meter Values`,
+:func:`Get Energy Meter State`, :func:`Get Input`,
+:func:`Get SG Ready Output`, :func:`Get Relay Output`,
+:func:`Get Input Voltage` and :func:`Get Uptime` combined in one call.
 """,
 'de':
 """
@@ -304,7 +315,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns information about the connected SD card. This includes the status of
+the SD card and the LittleFS file system, the sector size and count as well as
+the card type and product information.
 """,
 'de':
 """
@@ -329,7 +342,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Writes a 5-minute charge data point for the wallbox with the given ID and the
+given date and time to the SD card. The minute has to be a multiple of 5. The
+flags contain the IEC 61851 state in bits 0-2. The power is the charging power
+in W. The returned status indicates whether the data point could be queued for
+writing.
 """,
 'de':
 """
@@ -339,7 +356,7 @@ TODO
 })
 
 # Triggers SD Wallbox Data callback
-# Only access one day at a time! 
+# Only access one day at a time!
 com['packets'].append({
 'type': 'function',
 'name': 'Get SD Wallbox Data Points',
@@ -355,7 +372,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Requests up to *Amount* 5-minute charge data points for the wallbox with the
+given ID starting at the given date and time. The data points are returned
+through the :cb:`SD Wallbox Data Points Low Level` callback. Only one day
+(288 data points) can be requested at a time.
 """,
 'de':
 """
@@ -377,7 +397,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Writes a daily charge data point (the charged energy of the given day) for the
+wallbox with the given ID to the SD card. The returned status indicates whether
+the data point could be queued for writing.
 """,
 'de':
 """
@@ -387,7 +409,7 @@ TODO
 })
 
 # Triggers SD Wallbox Daily Data callback
-# Only access one month at a time! 
+# Only access one month at a time!
 com['packets'].append({
 'type': 'function',
 'name': 'Get SD Wallbox Daily Data Points',
@@ -401,7 +423,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Requests up to *Amount* daily charge data points for the wallbox with the
+given ID starting at the given date. The data points are returned through the
+:cb:`SD Wallbox Daily Data Points Low Level` callback. Only one month can be
+requested at a time.
 """,
 'de':
 """
@@ -427,7 +452,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Writes a 5-minute energy manager data point for the given date and time to the
+SD card. The minute has to be a multiple of 5. Power Grid is the grid power in
+W (positive = import, negative = export) and Power General are six additional
+power values in W. The returned status indicates whether the data point could
+be queued for writing.
 """,
 'de':
 """
@@ -437,7 +466,7 @@ TODO
 })
 
 # Triggers SD Energy Manager Data callback
-# Only access one day at a time! 
+# Only access one day at a time!
 com['packets'].append({
 'type': 'function',
 'name': 'Get SD Energy Manager Data Points',
@@ -452,7 +481,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Requests up to *Amount* 5-minute energy manager data points starting at the
+given date and time. The data points are returned through the
+:cb:`SD Energy Manager Data Points Low Level` callback. Only one day
+(288 data points) can be requested at a time.
 """,
 'de':
 """
@@ -477,7 +509,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Writes a daily energy manager data point (the imported and exported energy of
+the given day) to the SD card. The returned status indicates whether the data
+point could be queued for writing.
 """,
 'de':
 """
@@ -487,7 +521,7 @@ TODO
 })
 
 # Triggers SD Energy Manager Daily Data callback
-# Only access one month at a time! 
+# Only access one month at a time!
 com['packets'].append({
 'type': 'function',
 'name': 'Get SD Energy Manager Daily Data Points',
@@ -500,7 +534,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Requests up to *Amount* daily energy manager data points starting at the given
+date. The data points are returned through the
+:cb:`SD Energy Manager Daily Data Points Low Level` callback. Only one month
+can be requested at a time.
 """,
 'de':
 """
@@ -520,7 +557,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered by :func:`Get SD Wallbox Data Points` and returns
+the requested 5-minute charge data points.
 """,
 'de':
 """
@@ -540,7 +578,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered by :func:`Get SD Wallbox Daily Data Points` and
+returns the requested daily charge data points.
 """,
 'de':
 """
@@ -560,7 +599,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered by :func:`Get SD Energy Manager Data Points` and
+returns the requested 5-minute energy manager data points.
 """,
 'de':
 """
@@ -580,7 +620,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered by :func:`Get SD Energy Manager Daily Data Points`
+and returns the requested daily energy manager data points.
 """,
 'de':
 """
@@ -598,7 +639,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Formats the SD card (LittleFS file system). The password is 0x4223ABCD. All
+data on the card is deleted.
 """,
 'de':
 """
@@ -621,7 +663,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the date and time of the internal real-time clock. The day of the week is
+0 for Sunday, 1 for Monday and so on.
 """,
 'de':
 """
@@ -644,7 +687,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the date and time of the internal real-time clock as set by
+:func:`Set Date Time`.
 """,
 'de':
 """
@@ -663,7 +707,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the content (63 bytes) of the given storage page, see
+:func:`Set Data Storage`. The status is *Not Found* if the page has not been
+written yet and *Busy* while the page is being read back from the SD card.
 """,
 'de':
 """
@@ -681,7 +727,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Stores 63 bytes of data in the given storage page. The data is held in RAM and
+written to the SD card about 10 minutes after the last change.
 """,
 'de':
 """
@@ -699,7 +746,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the relative energy value of the energy meter to zero. This sets the
+point in time from which on the relative energy meter values are counted.
 """,
 'de':
 """

@@ -19,7 +19,7 @@ com = {
     'display_name': 'EVSE 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TBD',
+        'en': 'Controls the charging of electric vehicles according to IEC 61851',
         'de': 'TBD'
     },
     'released': False,
@@ -371,7 +371,18 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the current state of the EVSE.
+
+* IEC61851 State: State according to IEC 61851 (A = not connected,
+  B = connected, C = charging, D = unused, EF = error).
+* Charger State: High level state of the charging process.
+* Contactor State: State of the contactor (relays for N+L1 and L2+L3).
+* Contactor Error: Error code of the contactor check, 0 means OK.
+* Allowed Charging Current: Charging current that is currently allowed in mA
+  (minimum over all active charging slots).
+* Error State: 0 if everything is OK, otherwise the current error.
+* Lock State: State of the type 2 socket lock motor.
+* DC Fault Current State: State of the DC fault current protection.
 """,
 'de':
 """
@@ -391,7 +402,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the hardware configuration of the EVSE.
+
+* Jumper Configuration: Maximum current of the incoming cable as configured
+  through the slide switch.
+* Has Lock Switch: *true* if a type 2 socket lock motor is connected.
+* EVSE Version: Hardware version of the EVSE (e.g. 20 for EVSE 2.0, 30 for
+  3.0 and 40 for 4.0).
+* Energy Meter Type: Type of the connected energy meter (Not Available if no
+  energy meter is connected).
 """,
 'de':
 """
@@ -466,7 +485,19 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the low level state of the EVSE. This is mostly useful for debugging.
+
+* LED State: State of the status LED.
+* CP PWM Duty Cycle: Duty cycle of the CP (control pilot) PWM in 1/10 %.
+* ADC Values: Raw ADC values of the voltage measurements.
+* Voltages: Measured voltages (CP/PE before and after the resistor for high
+  and low PWM, PP/PE and the +12V and -12V rails).
+* Resistances: Calculated resistances (CP/PE and PP/PE).
+* GPIO: State of the GPIO pins.
+* Car Stopped Charging: *true* if the car stopped the charging by itself.
+* Time Since State Change: Time since the last IEC 61851 state change.
+* Time Since DC Fault Check: Time since the last DC fault current check.
+* Uptime: Uptime of the EVSE.
 """,
 'de':
 """
@@ -487,18 +518,29 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-fixed slots:
-0: incoming cable (read-only, configured through slide switch)
-1: outgoing cable (read-only, configured through resistor)
-2: gpio input 0 (shutdown input)
-3: gpio input 1 (input)
-4: button (0A <-> 32A, can be controlled from web interface with start button and physical button if configured)
+Sets the configuration of a charging slot. The EVSE has 20 charging slots
+(0-19). The charging current that is allowed is the minimum of the maximum
+current of all active slots.
 
+* Slot: Index of the slot (0-19).
+* Max Current: Maximum current of the slot in mA. 0 blocks charging.
+* Active: *true* if the slot is taken into account.
+* Clear On Disconnect: *true* if the slot should be deactivated when the
+  cable is disconnected.
+
+The following slots have a fixed meaning:
+
+* 0: Incoming cable (read-only, configured through slide switch).
+* 1: Outgoing cable (read-only, configured through resistor).
+* 2: GPIO input 0 (shutdown input).
+* 3: GPIO input 1 (input).
+* 4: Button (0A <-> 32A, can be controlled from the web interface with the
+  start button and the physical button if configured).
 """,
 'de':
 """
 TODO
-"""
+""",
 }]
 })
 
@@ -512,6 +554,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the maximum current of a charging slot, see :func:`Set Charging Slot`.
 """,
 'de':
 """
@@ -530,6 +573,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Activates/deactivates a charging slot, see :func:`Set Charging Slot`.
 """,
 'de':
 """
@@ -548,6 +592,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the clear-on-disconnect flag of a charging slot, see
+:func:`Set Charging Slot`.
 """,
 'de':
 """
@@ -568,6 +614,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the configuration of a charging slot as set by
+:func:`Set Charging Slot`.
 """,
 'de':
 """
@@ -585,8 +633,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-packed getter
+Returns the configuration of all 20 charging slots, see
+:func:`Set Charging Slot`.
 
+The active and clear-on-disconnect flags are packed: bit 0 is the active flag
+and bit 1 is the clear-on-disconnect flag.
 """,
 'de':
 """
@@ -607,17 +658,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-fixed slots:
-0: incoming cable (read-only, configured through slide switch)
-1: outgoing cable (read-only, configured through resistor)
-2: gpio input 0 (shutdown input)
-3: gpio input 1 (input)
+Sets the default configuration of a charging slot. The default values are
+used to initialize the charging slots on startup. Slots 0 and 1 (the cables)
+have no default and can not be configured here.
 
+See :func:`Set Charging Slot` for the meaning of the parameters.
 """,
 'de':
 """
 TODO
-"""
+""",
 }]
 })
 
@@ -634,6 +684,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the default configuration of a charging slot as set by
+:func:`Set Charging Slot Default`.
 """,
 'de':
 """
@@ -653,12 +705,17 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the measured values of the connected energy meter.
+
+* Power: Total active power in W.
+* Current: Current per phase (L1, L2, L3) in A.
+* Phases Active: For each phase *true* if current is currently flowing.
+* Phases Connected: For each phase *true* if the phase is connected.
 """,
 'de':
 """
 TODO
-"""
+""",
 }]
 })
 
@@ -673,7 +730,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TBD
+Returns all values that the connected energy meter provides. The meaning of
+the values depends on the energy meter type, see
+:func:`Get Hardware Configuration`.
 """,
 'de':
 """
@@ -690,7 +749,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the Modbus communication error counters of the connected energy
+meter. The counters are: local timeout, global timeout, illegal function,
+illegal data address, illegal data value and slave device failure.
 """,
 'de':
 """
@@ -707,7 +768,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the relative energy value of the energy meter to zero. This sets the
+point in time from which on the relative energy meter values are counted.
 """,
 'de':
 """
@@ -726,7 +788,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Resets the DC fault current protection back to normal condition after a DC
+fault was detected. The password is 0xDC42FA23. A new DC fault current
+calibration is started immediately after the reset.
+
+Before resetting the DC fault current protection you should make sure that
+the fault is gone, otherwise the next charging session will trip it again.
 """,
 'de':
 """
@@ -745,7 +812,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the configuration of the GPIOs.
+
+* Shutdown Input Configuration: Defines how the shutdown input (GPIO input 0)
+  reacts (e.g. shut down charging on open/close or limit to 4200 Watt).
+* Input Configuration: Defines the function of GPIO input 1 (e.g. limit the
+  charging current depending on the input level).
+* Output Configuration: Defines the default state of the GP output (connected
+  to ground or high impedance).
 """,
 'de':
 """
@@ -764,7 +838,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the GPIO configuration as set by :func:`Set GPIO Configuration`.
 """,
 'de':
 """
@@ -782,7 +856,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the content of the given storage page (63 bytes), see
+:func:`Set Data Storage`.
 """,
 'de':
 """
@@ -800,7 +875,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Stores 63 bytes of data in the given storage page. This storage can be used
+by the ESP32 to store its own data on the EVSE.
 """,
 'de':
 """
@@ -821,7 +897,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the current state of the indicator LED as set by
+:func:`Set Indicator LED`. The duration is the remaining duration in ms.
 """,
 'de':
 """
@@ -843,7 +920,18 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the indicator LED to signal different states to the user.
+
+* Indication: -1 leaves the control of the LED to the EVSE, 0 turns it off,
+  255 turns it on, 1-254 sets a PWM value and 1001/1002/1003 show an
+  acknowledge/not-acknowledge/nag indication.
+* Duration: Duration of the indication in ms.
+* Color H/S/V: HSV color of the LED. If the value (V) is 0 an automatic color
+  is used. EVSE 2.0 only supports blue.
+
+The returned status is 0 if the indication could be set. Otherwise the LED is
+currently in use by the EVSE (e.g. blinking, flickering or breathing) and the
+status is the current LED state.
 """,
 'de':
 """
@@ -860,7 +948,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the function of the button (key switch). The button can be configured to
+start charging, stop charging, both or to enumerate (see the enumerate
+functions). It can also be deactivated.
 """,
 'de':
 """
@@ -877,7 +967,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the button configuration as set by :func:`Set Button Configuration`.
 """,
 'de':
 """
@@ -896,7 +986,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the state of the button (key switch).
+
+The press and release time are the times (relative to the EVSE uptime) of the
+last press and release. Button Pressed is *true* while the button is held down.
 """,
 'de':
 """
@@ -913,7 +1006,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Enables/disables the EV wakeup. If enabled the EVSE adheres to IEC 61851
+Annex A.5.3 and tries to wake up the electric vehicle after a long period of
+inactivity. This helps with some legacy EVs that do not wake up by themselves.
 """,
 'de':
 """
@@ -930,7 +1025,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the EV wakeup setting as set by :func:`Set EV Wakeup`.
 """,
 'de':
 """
@@ -948,7 +1043,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Disconnects/connects the control pilot (CP) from the electric vehicle. This
+can be used to stop a charging session without opening the contactor.
+
+The CP can only be disconnected in IEC 61851 state A or B and only if the
+contactor is currently not active. The returned value shows whether the CP is
+now disconnected.
 """,
 'de':
 """
@@ -965,7 +1065,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the control pilot disconnect state as set by
+:func:`Set Control Pilot Disconnect`.
 """,
 'de':
 """
@@ -1000,7 +1101,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the values of :func:`Get State`, :func:`Get Hardware Configuration`,
+:func:`Get Energy Meter Values` and :func:`Get Energy Meter Errors` combined
+in one call.
 """,
 'de':
 """
@@ -1043,7 +1146,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the values of :func:`Get GPIO Configuration`,
+:func:`Get Indicator LED`, :func:`Get Button Configuration`,
+:func:`Get Button State`, :func:`Get EV Wakuep`,
+:func:`Get Control Pilot Disconnect`, :func:`Get Boost Mode`,
+:func:`Get Temperature`, :func:`Get Phase Control`,
+:func:`Get Phase Auto Switch`, :func:`Get Phases Connected`,
+:func:`Get Enumerate Value`, :func:`Get Phase Switch Wait Time` and
+:func:`Get PLC Modem` combined in one call.
 """,
 'de':
 """
@@ -1061,7 +1171,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Resets the EVSE to the factory settings. The password is 0x2342FACD.
 """,
 'de':
 """
@@ -1079,7 +1189,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the amount of time the button was continuously pressed during boot in
+ms. This can be used to detect a long button press during startup (e.g. to
+trigger a factory reset). Returns 0xFFFFFFFF if the boot press was already
+reset.
+
+If Reset is set to *true* the value is reset after it has been read.
 """,
 'de':
 """
@@ -1096,7 +1211,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Enables/disables the boost mode. In boost mode the duty cycle of the CP PWM
+signal is increased by about 4µs (which stays within the IEC 61851
+tolerance). This signals a slightly higher current to the car, which allows
+some cars to charge a bit faster. Boost mode is disabled by default.
 """,
 'de':
 """
@@ -1113,7 +1231,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the boost mode setting as set by :func:`Set Boost Mode`.
 """,
 'de':
 """
@@ -1131,7 +1249,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Triggers a test of the DC fault current protection. The password is
+0xDCFAE550. This can only be started in IEC 61851 state A (not connected) and
+if no calibration is currently running. The returned value shows whether the
+test was started.
 """,
 'de':
 """
@@ -1148,7 +1269,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the state of the general purpose output (connected to ground or high
+impedance). The default state after boot is set with
+:func:`Set GPIO Configuration`. Only available for EVSE 2.0.
 """,
 'de':
 """
@@ -1165,7 +1288,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the temperature of the EVSE in 1/100 °C. EVSE 2.0 has no temperature
+sensor and always returns 0.
 """,
 'de':
 """
@@ -1182,7 +1306,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the number of phases that are used for charging (1 or 3). This requires
+the hardware to support phase switching (EVSE 3.0 and newer). On EVSE 2.0 this
+function has no effect.
 """,
 'de':
 """
@@ -1202,7 +1328,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the current phase control state.
+
+* Phases Current: Number of phases currently used for charging (1 or 3).
+* Phases Requested: Number of phases requested by :func:`Set Phase Control`.
+* Phases State: Progress state of an ongoing phase switch.
+* Phases Info: 0 if normal, 1 if forced to one phase by the auto-switch.
 """,
 'de':
 """
@@ -1219,7 +1350,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Enables/disables automatic phase switching. If enabled the EVSE switches
+between one and three phases depending on the available charging current. This
+requires the hardware to support phase switching (EVSE 3.0 and newer) and is
+ignored on EVSE 2.0.
 """,
 'de':
 """
@@ -1236,7 +1370,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the phase auto switch setting as set by :func:`Set Phase Auto Switch`.
 """,
 'de':
 """
@@ -1253,7 +1387,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the number of phases that are physically connected to the EVSE (1 or 3).
+This is used by the phase control to know how many phases are available.
 """,
 'de':
 """
@@ -1270,7 +1405,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the number of connected phases as set by :func:`Set Phases Connected`.
 """,
 'de':
 """
@@ -1290,7 +1425,9 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered with the latest energy meter values, see
+:func:`Get Energy Meter Values`. It is called whenever new values are
+available from the connected energy meter.
 """,
 'de':
 """
@@ -1308,7 +1445,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the charging protocol that is used (IEC 61851 or ISO 15118). The CP duty
+cycle is only used for ISO 15118, where only 50 (5%) and 1000 (100%) are
+accepted. This requires ISO 15118 support (EVSE 4.0) and has no effect
+otherwise.
 """,
 'de':
 """
@@ -1326,7 +1466,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the charging protocol as set by :func:`Set Charging Protocol`.
 """,
 'de':
 """
@@ -1344,7 +1484,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the gateway identification (OCMF field "GI") for the calibration law
+(Eichrecht) signed metering. This requires an Eichrecht-capable energy meter
+(EVSE 4.0). The returned state shows whether the value could be set.
 """,
 'de':
 """
@@ -1361,7 +1503,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the gateway identification as set by
+:func:`Set Eichrecht Gateway Identification`.
 """,
 'de':
 """
@@ -1379,7 +1522,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the gateway serial (OCMF field "GS") for the calibration law
+(Eichrecht) signed metering. This requires an Eichrecht-capable energy meter
+(EVSE 4.0). The returned state shows whether the value could be set.
 """,
 'de':
 """
@@ -1396,7 +1541,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the gateway serial as set by :func:`Set Eichrecht Gateway Serial`.
 """,
 'de':
 """
@@ -1417,12 +1562,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the user assignment (OCMF fields "IS", "IF", "IT" and "ID") for the
+calibration law (Eichrecht) signed metering. It identifies the user of a
+charging transaction.
+
+* Identification Status: *true* if a user is assigned.
+* Identification Flags: Identification flags (up to 4 entries).
+* Identification Type: Type of the identification data.
+* Identification Data: The identification data itself.
+
+This requires an Eichrecht-capable energy meter (EVSE 4.0). The returned state
+shows whether the value could be set.
 """,
 'de':
 """
 TODO
-"""
+""",
 }]
 })
 
@@ -1437,7 +1592,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the user assignment as set by :func:`Set Eichrecht User Assignment`.
 """,
 'de':
 """
@@ -1456,12 +1611,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the charge point identification (OCMF fields "CT" and "CI") for the
+calibration law (Eichrecht) signed metering. This requires an
+Eichrecht-capable energy meter (EVSE 4.0). The returned state shows whether
+the value could be set.
 """,
 'de':
 """
 TODO
-"""
+""",
 }]
 })
 
@@ -1474,7 +1632,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the charge point identification as set by
+:func:`Set Eichrecht Charge Point`.
 """,
 'de':
 """
@@ -1495,7 +1654,19 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Starts or modifies Eichrecht transaction. A transaction
+generates a signed OCMF dataset (e.g. at the begin and end of a charging
+session).
+
+* Transaction: The transaction command (e.g. begin or end).
+* Unix Time: The current time as unix timestamp in seconds.
+* UTC Time Offset: The local time offset to UTC in minutes.
+* Signature Format: The format of the generated signature (ASN.1 or Base64).
+
+The signed dataset and signature are returned through the
+:cb:`Eichrecht Dataset Low Level` and :cb:`Eichrecht Signature Low Level`
+callbacks. This requires an Eichrecht-capable energy meter (EVSE 4.0). The
+returned state shows whether the transaction could be started.
 """,
 'de':
 """
@@ -1517,7 +1688,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the state of the current Eichrecht transaction, see
+:func:`Set Eichrecht Transaction`. It includes the current transaction
+command, the transaction and inner state, and the measurement and signature
+status of the energy meter.
 """,
 'de':
 """
@@ -1534,7 +1708,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+Returns the public key of the energy meter that is used to verify the
+Eichrecht signatures.
 """,
 'de':
 """
@@ -1554,7 +1729,10 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered after a Eichrecht transaction was
+started with :func:`Set Eichrecht Transaction`. It contains the signed OCMF
+dataset. The corresponding signature is delivered through the
+:cb:`Eichrecht Signature Low Level` callback.
 """,
 'de':
 """
@@ -1574,7 +1752,9 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered after the :cb:`Eichrecht Dataset Low Level`
+callback. It contains the signature of the signed OCMF dataset of the
+Eichrecht transaction.
 """,
 'de':
 """
@@ -1593,7 +1773,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the configuration for the enumerate function of the button. The button
+can step through up to 8 values, each one represented by an HSV color of the
+indicator LED. Trailing entries with value (V) 0 are ignored.
+
+The button function must be set to enumerate with
+:func:`Set Button Configuration`.
 """,
 'de':
 """
@@ -1612,7 +1797,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the enumerate configuration as set by
+:func:`Set Enumerate Configuration`.
 """,
 'de':
 """
@@ -1629,7 +1815,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the current enumerate value immediately, see
+:func:`Set Enumerate Configuration`.
 """,
 'de':
 """
@@ -1647,7 +1834,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the current enumerate value and the EVSE uptime (in ms) of the last
+value change. A new value is only reported once it has been stable for more
+than 2 seconds. See :func:`Set Enumerate Configuration`.
 """,
 'de':
 """
@@ -1664,7 +1853,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the minimum wait time between two phase switches (15s to 120s, or
+default). The wait time prevents the phases from being switched too often.
 """,
 'de':
 """
@@ -1681,7 +1871,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the phase switch wait time as set by
+:func:`Set Phase Switch Wait Time`.
 """,
 'de':
 """
@@ -1698,7 +1889,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Enables/disables the PLC (powerline communication) modem that is used for
+ISO 15118 communication. The PLC modem is enabled by default. Only available
+on hardware with a PLC modem (EVSE 4.0).
 """,
 'de':
 """
@@ -1715,7 +1908,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the PLC modem setting as set by :func:`Set PLC Modem`.
 """,
 'de':
 """
@@ -1728,12 +1921,14 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Test Mode',
 'elements': [('Test Mode Enabled', 'bool', 1, 'in'), # default False
-             ('Password', 'uint32', 1, 'in')],      # 0xdeadbeef
+             ('Password', 'uint32', 1, 'in')],       # 0xdeadbeef
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-TODO
+Enables/disables the test mode. The password is 0xDEADBEEF. The test mode is
+used during production and should normally not be needed. It is disabled by
+default.
 """,
 'de':
 """
@@ -1750,7 +1945,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the test mode setting as set by :func:`Set Test Mode`.
 """,
 'de':
 """
