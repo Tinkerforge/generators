@@ -20,7 +20,7 @@ com = {
         'en': 'Manages heat pumps, WARP Chargers and logs energy and charge data to an SD card',
         'de': 'Steuert Heizungen, WARP Charger und protokolliert Energie- und Ladedaten auf eine SD-Karte'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'esp32_firmware': 'energy_manager',

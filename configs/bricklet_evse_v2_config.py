@@ -22,7 +22,7 @@ com = {
         'en': 'Controls the charging of electric vehicles according to IEC 61851',
         'de': 'Steuert das Laden von Elektrofahrzeugen gemäß IEC 61851'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'features': [

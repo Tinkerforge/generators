@@ -20,7 +20,7 @@ com = {
         'en': 'Display and status LED for the front panel of the WARP Energy Manager 2.0',
         'de': 'Display und Status-LED für das Front Panel des WARP Energy Manager 2.0'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'esp32_firmware': 'energy_manager_v2',

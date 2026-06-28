@@ -21,7 +21,7 @@ com = {
         'en': 'Real-time clock, temperature sensor and status LED for the WARP ESP32 Ethernet 2.0',
         'de': 'Echtzeituhr, Temperatursensor und Status-LED für das WARP ESP32 Ethernet 2.0'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'discontinued': False,
     'features': [
