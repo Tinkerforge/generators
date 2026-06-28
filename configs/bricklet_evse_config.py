@@ -116,7 +116,7 @@ com['packets'].append({
              ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
-             ('Allowed Charging Current', 'uint16', 1, 'out'),
+             ('Allowed Charging Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'})],
 'since_firmware': [2, 0, 5],
@@ -186,7 +186,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Low Level State',
 'elements': [('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
-             ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
+             ('CP PWM Duty Cycle', 'uint16', 1, 'out', {'scale': (1, 10), 'unit': 'Percent', 'range': (0, 1000)}),
              ('ADC Values', 'uint16', 2, 'out'),
              ('Voltages', 'int16', 3, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # pe-cp, pe-pp, high voltage pe-cp
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}),
@@ -231,8 +231,8 @@ nützlich.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
+             ('Max Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'range': [(0, 0), (6000, 32000)]}),
              ('Active', 'bool', 1, 'in'),
              ('Clear On Disconnect', 'bool', 1, 'in'),
 ],
@@ -286,8 +286,8 @@ Die folgenden Slots haben eine feste Bedeutung:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot Max Current',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
+             ('Max Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'range': [(0, 0), (6000, 32000)]}),
 ],
 'since_firmware': [2, 1, 0],
 'doc': ['bf', {
@@ -305,7 +305,7 @@ Setzt den Maximalstrom eines Charging Slots, siehe :func:`Set Charging Slot`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot Active',
-'elements': [('Slot', 'uint8', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
              ('Active', 'bool', 1, 'in'),
 ],
 'since_firmware': [2, 1, 0],
@@ -324,7 +324,7 @@ Aktiviert/deaktiviert einen Charging Slot, siehe :func:`Set Charging Slot`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot Clear On Disconnect',
-'elements': [('Slot', 'uint8', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
              ('Clear On Disconnect', 'bool', 1, 'in'),
 ],
 'since_firmware': [2, 1, 0],
@@ -345,8 +345,8 @@ Setzt das Clear-On-Disconnect-Flag eines Charging Slots, siehe
 com['packets'].append({
 'type': 'function',
 'name': 'Get Charging Slot',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'out'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (0, 19)}),
+             ('Max Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Active', 'bool', 1, 'out'),
              ('Clear On Disconnect', 'bool', 1, 'out'),
 ],
@@ -368,7 +368,7 @@ Gibt die Konfiguration eines Charging Slots zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Charging Slots',
-'elements': [('Max Current', 'uint16', 20, 'out'),
+'elements': [('Max Current', 'uint16', 20, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Active And Clear On Disconnect', 'uint8', 20, 'out')], # bit 0 => Active, bit 1 => Clear On Disconnect
 'since_firmware': [2, 1, 0],
 'doc': ['bf', {
@@ -394,8 +394,8 @@ Active-Flag und Bit 1 ist das Clear-On-Disconnect-Flag.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot Default',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
+             ('Max Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'range': [(0, 0), (6000, 32000)]}),
              ('Active', 'bool', 1, 'in'),
              ('Clear On Disconnect', 'bool', 1, 'in'),
 ],
@@ -424,8 +424,8 @@ Siehe :func:`Set Charging Slot` für die Bedeutung der Parameter.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Charging Slot Default',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'out'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
+             ('Max Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Active', 'bool', 1, 'out'),
              ('Clear On Disconnect', 'bool', 1, 'out'),
 ],
@@ -529,7 +529,7 @@ wird, wird wieder die Werkskalibrierung verwendet.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Data Storage',
-'elements': [('Page', 'uint8', 1, 'in'),
+'elements': [('Page', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Data', 'uint8', 63, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -549,7 +549,7 @@ Gibt den Inhalt der angegebenen Storage-Page (63 Byte) zurück, siehe
 com['packets'].append({
 'type': 'function',
 'name': 'Set Data Storage',
-'elements': [('Page', 'uint8', 1, 'in'),
+'elements': [('Page', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Data', 'uint8', 63, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -569,8 +569,8 @@ vom ESP32 genutzt werden, um eigene Daten auf der EVSE abzulegen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Indicator LED',
-'elements': [('Indication', 'int16', 1, 'out'),
-             ('Duration', 'uint16', 1, 'out')],
+'elements': [('Indication', 'int16', 1, 'out', {'range': [(-1, 255), (1001, 1003), (2001, 2010)]}),
+             ('Duration', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -589,8 +589,8 @@ Gibt den aktuellen Zustand der Indicator-LED zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Indicator LED',
-'elements': [('Indication', 'int16', 1, 'in'), #-1 = led controled by EVSE, 0 = Off, 255 = on, 1-254 = pwm, 1001 = ack indication, 1002 = nack indication, 1003 = nag indication
-             ('Duration', 'uint16', 1, 'in'), # max 2^16 ms
+'elements': [('Indication', 'int16', 1, 'in', {'range': [(-1, 255), (1001, 1003), (2001, 2010)]}), #-1 = led controled by EVSE, 0 = Off, 255 = on, 1-254 = pwm, 1001 = ack indication, 1002 = nack indication, 1003 = nag indication
+             ('Duration', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'}), # max 2^16 ms
              ('Status', 'uint8', 1, 'out')], # OK = 0, Sonst nicht OK wegen X (Blinking=2, Flickering=3, Breathing=4)
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -657,7 +657,7 @@ com['packets'].append({
              ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
-             ('Allowed Charging Current', 'uint16', 1, 'out'),
+             ('Allowed Charging Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
              ('Jumper Configuration', 'uint8', 1, 'out', {'constant_group': 'Jumper Configuration'}),
@@ -665,7 +665,7 @@ com['packets'].append({
              ('EVSE Version', 'uint8', 1, 'out'),
 
              ('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
-             ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
+             ('CP PWM Duty Cycle', 'uint16', 1, 'out', {'scale': (1, 10), 'unit': 'Percent', 'range': (0, 1000)}),
              ('ADC Values', 'uint16', 2, 'out'),
              ('Voltages', 'int16', 3, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # pe-cp, pe-pp, high voltage pe-cp
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}),
@@ -674,8 +674,8 @@ com['packets'].append({
              ('Time Since State Change', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
              ('Uptime', 'uint32', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
 
-             ('Indication', 'int16', 1, 'out'),
-             ('Duration', 'uint16', 1, 'out'),
+             ('Indication', 'int16', 1, 'out', {'range': [(-1, 255), (1001, 1003), (2001, 2010)]}),
+             ('Duration', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
 
              ('Button Press Time', 'uint32', 1, 'out'),
              ('Button Release Time', 'uint32', 1, 'out'),
@@ -721,7 +721,7 @@ Setzt die EVSE auf die Werkseinstellungen zurück. Das Passwort ist 0x2342FACD.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Boost Mode',
-'elements': [('Boost Mode Enabled', 'bool', 1, 'in')], # default False
+'elements': [('Boost Mode Enabled', 'bool', 1, 'in', {'default': False})], # default False
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

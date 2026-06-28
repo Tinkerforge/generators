@@ -74,7 +74,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Flash Index',
 'elements': [('Page Index', 'uint32', 1, 'in'),
-             ('Sub Page Index', 'uint8', 1, 'in')],
+             ('Sub Page Index', 'uint8', 1, 'in', {'range': (0, 3)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -97,7 +97,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Flash Index',
 'elements': [('Page Index', 'uint32', 1, 'out'),
-             ('Sub Page Index', 'uint8', 1, 'out')],
+             ('Sub Page Index', 'uint8', 1, 'out', {'range': (0, 3)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -116,7 +116,7 @@ com['packets'].append({
 'name': 'Set Flash Data', # Uses current Index and increments it by 1
 'elements': [('Data', 'uint8', 64, 'in'),
              ('Next Page Index', 'uint32', 1, 'out'),
-             ('Next Sub Page Index', 'uint8', 1, 'out'),
+             ('Next Sub Page Index', 'uint8', 1, 'out', {'range': (0, 3)}),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Flash Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -182,9 +182,9 @@ com['packets'].append({
 'name': 'Set Status Bar',
 'elements': [('Ethernet Status', 'uint32', 1, 'in'),
              ('WIFI Status', 'uint32', 1, 'in'),
-             ('Hours', 'uint8', 1, 'in'),
-             ('Minutes', 'uint8', 1, 'in'),
-             ('Seconds', 'uint8', 1, 'in')],
+             ('Hours', 'uint8', 1, 'in', {'range': (0, 23)}),
+             ('Minutes', 'uint8', 1, 'in', {'range': (0, 59)}),
+             ('Seconds', 'uint8', 1, 'in', {'range': (0, 59)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -205,9 +205,9 @@ com['packets'].append({
 'name': 'Get Status Bar',
 'elements': [('Ethernet Status', 'uint32', 1, 'out'),
              ('WIFI Status', 'uint32', 1, 'out'),
-             ('Hours', 'uint8', 1, 'out'),
-             ('Minutes', 'uint8', 1, 'out'),
-             ('Seconds', 'uint8', 1, 'out')],
+             ('Hours', 'uint8', 1, 'out', {'range': (0, 23)}),
+             ('Minutes', 'uint8', 1, 'out', {'range': (0, 59)}),
+             ('Seconds', 'uint8', 1, 'out', {'range': (0, 59)})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -260,7 +260,7 @@ Gibt den Index der aktuell angezeigten Display-Page zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Display Front Page Icon',
-'elements': [('Icon Index', 'uint32', 1, 'in'),
+'elements': [('Icon Index', 'uint32', 1, 'in', {'range': (0, 12)}),
              ('Active', 'bool', 1, 'in'),
              ('Sprite Index', 'uint32', 1, 'in'),
              ('Text 1', 'char', 6, 'in'),
@@ -290,7 +290,7 @@ auszublenden. Das Sprite und die Fonts müssen im Flash vorhanden sein, siehe
 com['packets'].append({
 'type': 'function',
 'name': 'Get Display Front Page Icon',
-'elements': [('Icon Index', 'uint32', 1, 'in'),
+'elements': [('Icon Index', 'uint32', 1, 'in', {'range': (0, 12)}),
              ('Active', 'bool', 1, 'out'),
              ('Sprite Index', 'uint32', 1, 'out'),
              ('Text 1', 'char', 10, 'out'),

@@ -100,7 +100,7 @@ Gibt den Zustand der Status-LED zurück, wie von :func:`Set LED` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')], # Returns 0 in EVSE V2
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'})], # Returns 0 in EVSE V2
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

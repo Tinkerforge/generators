@@ -172,7 +172,7 @@ Gibt die Werte der vier Inputs zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set SG Ready Output',
-'elements': [('Index', 'uint8', 1, 'in'),
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Output', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -211,7 +211,7 @@ Gibt den Zustand der beiden SG-Ready-Outputs zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Relay Output',
-'elements': [('Index', 'uint8', 1, 'in'),
+'elements': [('Index', 'uint8', 1, 'in', {'range': (0, 1)}),
              ('Output', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -351,7 +351,7 @@ com['packets'].append({
              ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
              ('Minute', 'uint8', 1, 'in', {'range': (0, 55)}), # 5 minute interval (0, 5, .., 50, 55)
              ('Flags', 'uint16', 1, 'in'), # IEC_STATE (bit 0-2) + future use
-             ('Power', 'uint16', 1, 'in'), # W
+             ('Power', 'uint16', 1, 'in', {'unit': 'Watt'}), # W
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -473,8 +473,8 @@ com['packets'].append({
              ('Hour', 'uint8', 1, 'in', {'range': (0, 23)}),
              ('Minute', 'uint8', 1, 'in', {'range': (0, 55)}), # 5 minute interval (0, 5, .., 50, 55)
              ('Flags', 'uint16', 1, 'in'), #
-             ('Power Grid', 'int32', 1, 'in'), # W
-             ('Power General', 'int32', 6, 'in'), # W
+             ('Power Grid', 'int32', 1, 'in', {'unit': 'Watt'}), # W
+             ('Power General', 'int32', 6, 'in', {'unit': 'Watt'}), # W
              ('Price', 'uint32', 1, 'in'),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Status'})],
 'since_firmware': [1, 0, 0],
@@ -749,7 +749,7 @@ Gibt das Datum und die Uhrzeit der internen Echtzeituhr zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Get Data Storage',
-'elements': [('Page', 'uint8', 1, 'in'),
+'elements': [('Page', 'uint8', 1, 'in', {'range': (0, 4)}),
              ('Status', 'uint8', 1, 'out', {'constant_group': 'Data Storage Status'}),
              ('Data', 'uint8', 63, 'out')],
 'since_firmware': [1, 0, 0],
@@ -773,7 +773,7 @@ wird.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Data Storage',
-'elements': [('Page', 'uint8', 1, 'in'),
+'elements': [('Page', 'uint8', 1, 'in', {'range': (0, 4)}),
              ('Data', 'uint8', 63, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

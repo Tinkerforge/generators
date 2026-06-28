@@ -363,7 +363,7 @@ com['packets'].append({
              ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
-             ('Allowed Charging Current', 'uint16', 1, 'out'),
+             ('Allowed Charging Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
              ('DC Fault Current State', 'uint8', 1, 'out', {'constant_group': 'DC Fault Current State'})],
@@ -492,7 +492,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Low Level State',
 'elements': [('LED State', 'uint8', 1, 'out', {'constant_group': 'LED State'}),
-             ('CP PWM Duty Cycle', 'uint16', 1, 'out'),
+             ('CP PWM Duty Cycle', 'uint16', 1, 'out', {'scale': (1, 10), 'unit': 'Percent', 'range': (0, 1000)}),
              ('ADC Values', 'uint16', 7, 'out'), # CP/PE before resistor (PWM high), CP/PE after resistor (PWM high), CP/PE before resistor (PWM low), CP/PE after resistor (PWM low), PP/PE, +12V rail, -12V rail
              ('Voltages', 'int16', 7, 'out', {'scale': (1, 1000), 'unit': 'Volt'}), # CP/PE before resistor (PWM high), CP/PE after resistor (PWM high), CP/PE before resistor (PWM low), CP/PE after resistor (PWM low), PP/PE, +12V rail, -12V rail
              ('Resistances', 'uint32', 2, 'out', {'unit': 'Ohm'}), # CP/PE resistance, PP/PE resistance
@@ -542,8 +542,8 @@ nützlich.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
+             ('Max Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'range': [(0, 0), (6000, 32000)]}),
              ('Active', 'bool', 1, 'in'),
              ('Clear On Disconnect', 'bool', 1, 'in'),
 ],
@@ -597,8 +597,8 @@ Die folgenden Slots haben eine feste Bedeutung:
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot Max Current',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
+             ('Max Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'range': [(0, 0), (6000, 32000)]}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -616,7 +616,7 @@ Setzt den Maximalstrom eines Charging Slots, siehe :func:`Set Charging Slot`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot Active',
-'elements': [('Slot', 'uint8', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
              ('Active', 'bool', 1, 'in'),
 ],
 'since_firmware': [1, 0, 0],
@@ -635,7 +635,7 @@ Aktiviert/deaktiviert einen Charging Slot, siehe :func:`Set Charging Slot`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot Clear On Disconnect',
-'elements': [('Slot', 'uint8', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
              ('Clear On Disconnect', 'bool', 1, 'in'),
 ],
 'since_firmware': [1, 0, 0],
@@ -656,8 +656,8 @@ Setzt das Clear-On-Disconnect-Flag eines Charging Slots, siehe
 com['packets'].append({
 'type': 'function',
 'name': 'Get Charging Slot',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'out'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (0, 19)}),
+             ('Max Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Active', 'bool', 1, 'out'),
              ('Clear On Disconnect', 'bool', 1, 'out'),
 ],
@@ -679,7 +679,7 @@ Gibt die Konfiguration eines Charging Slots zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Get All Charging Slots',
-'elements': [('Max Current', 'uint16', 20, 'out'),
+'elements': [('Max Current', 'uint16', 20, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Active And Clear On Disconnect', 'uint8', 20, 'out')], # bit 0 => Active, bit 1 => Clear On Disconnect
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -705,8 +705,8 @@ Active-Flag und Bit 1 ist das Clear-On-Disconnect-Flag.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Slot Default',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'in'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
+             ('Max Current', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Ampere', 'range': [(0, 0), (6000, 32000)]}),
              ('Active', 'bool', 1, 'in'),
              ('Clear On Disconnect', 'bool', 1, 'in'),
 ],
@@ -735,8 +735,8 @@ Siehe :func:`Set Charging Slot` für die Bedeutung der Parameter.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Charging Slot Default',
-'elements': [('Slot', 'uint8', 1, 'in'),
-             ('Max Current', 'uint16', 1, 'out'),
+'elements': [('Slot', 'uint8', 1, 'in', {'range': (2, 19)}),
+             ('Max Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Active', 'bool', 1, 'out'),
              ('Clear On Disconnect', 'bool', 1, 'out'),
 ],
@@ -936,7 +936,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Data Storage',
-'elements': [('Page', 'uint8', 1, 'in'),
+'elements': [('Page', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Data', 'uint8', 63, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -956,7 +956,7 @@ Gibt den Inhalt der angegebenen Storage-Page (63 Byte) zurück, siehe
 com['packets'].append({
 'type': 'function',
 'name': 'Set Data Storage',
-'elements': [('Page', 'uint8', 1, 'in'),
+'elements': [('Page', 'uint8', 1, 'in', {'range': (0, 15)}),
              ('Data', 'uint8', 63, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -976,9 +976,9 @@ vom ESP32 genutzt werden, um eigene Daten auf der EVSE abzulegen.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Indicator LED',
-'elements': [('Indication', 'int16', 1, 'out'),
-             ('Duration', 'uint16', 1, 'out'),
-             ('Color H', 'uint16', 1, 'out'),
+'elements': [('Indication', 'int16', 1, 'out', {'range': [(-1, 255), (1001, 1003), (2001, 2010)]}),
+             ('Duration', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Color H', 'uint16', 1, 'out', {'range': (0, 359)}),
              ('Color S', 'uint8', 1, 'out'),
              ('Color V', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -999,9 +999,9 @@ Gibt den aktuellen Zustand der Indicator-LED zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Indicator LED',
-'elements': [('Indication', 'int16', 1, 'in'), #-1 = led controled by EVSE, 0 = Off, 255 = on, 1-254 = pwm, 1001 = ack indication, 1002 = nack indication, 1003 = nag indication
-             ('Duration', 'uint16', 1, 'in'), # max 2^16 ms
-             ('Color H', 'uint16', 1, 'in'), # Color V=0 => automatic color. In EVSE V2 always blue
+'elements': [('Indication', 'int16', 1, 'in', {'range': [(-1, 255), (1001, 1003), (2001, 2010)]}), #-1 = led controled by EVSE, 0 = Off, 255 = on, 1-254 = pwm, 1001 = ack indication, 1002 = nack indication, 1003 = nag indication
+             ('Duration', 'uint16', 1, 'in', {'scale': (1, 1000), 'unit': 'Second'}), # max 2^16 ms
+             ('Color H', 'uint16', 1, 'in', {'range': (0, 359)}), # Color V=0 => automatic color. In EVSE V2 always blue
              ('Color S', 'uint8', 1, 'in'),
              ('Color V', 'uint8', 1, 'in'),
              ('Status', 'uint8', 1, 'out')], # OK = 0, Sonst nicht OK wegen X (Blinking=2, Flickering=3, Breathing=4)
@@ -1199,7 +1199,7 @@ com['packets'].append({
              ('Charger State', 'uint8', 1, 'out', {'constant_group': 'Charger State'}),
              ('Contactor State', 'uint8', 1, 'out', {'constant_group': 'Contactor State'}),
              ('Contactor Error', 'uint8', 1, 'out'),
-             ('Allowed Charging Current', 'uint16', 1, 'out'),
+             ('Allowed Charging Current', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Ampere', 'range': (0, 32000)}),
              ('Error State', 'uint8', 1, 'out', {'constant_group': 'Error State'}),
              ('Lock State', 'uint8', 1, 'out', {'constant_group': 'Lock State'}),
              ('DC Fault Current State', 'uint8', 1, 'out', {'constant_group': 'DC Fault Current State'}),
@@ -1236,9 +1236,9 @@ com['packets'].append({
 'elements': [('Shutdown Input Configuration', 'uint8', 1, 'out', {'constant_group': 'Shutdown Input'}),
              ('Input Configuration', 'uint8', 1, 'out'),
              ('Output Configuration', 'uint8', 1, 'out', {'constant_group': 'Output'}),
-             ('Indication', 'int16', 1, 'out'),
-             ('Duration', 'uint16', 1, 'out'),
-             ('Color H', 'uint16', 1, 'out'),
+             ('Indication', 'int16', 1, 'out', {'range': [(-1, 255), (1001, 1003), (2001, 2010)]}),
+             ('Duration', 'uint16', 1, 'out', {'scale': (1, 1000), 'unit': 'Second'}),
+             ('Color H', 'uint16', 1, 'out', {'range': (0, 359)}),
              ('Color S', 'uint8', 1, 'out'),
              ('Color V', 'uint8', 1, 'out'),
              ('Button Configuration', 'uint8', 1, 'out', {'constant_group': 'Button Configuration'}),
@@ -1248,13 +1248,13 @@ com['packets'].append({
              ('EV Wakeup Enabled', 'bool', 1, 'out'),
              ('Control Pilot Disconnect', 'bool', 1, 'out'),
              ('Boost Mode Enabled', 'bool', 1, 'out'),
-             ('Temperature', 'int16', 1, 'out'),
+             ('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'}),
              ('Phases Current', 'uint8', 1, 'out'),  # Always three-phase for EVSE V2
              ('Phases Requested', 'uint8', 1, 'out'),
              ('Phases State', 'uint8', 1, 'out'),
              ('Phases Info', 'uint8', 1, 'out'),
              ('Phase Auto Switch Enabled', 'bool', 1, 'out'),
-             ('Phases Connected', 'uint8', 1, 'out'), # 1 or 3, Ignored in EVSE V2
+             ('Phases Connected', 'uint8', 1, 'out', {'range': [(1, 1), (3, 3)]}), # 1 or 3, Ignored in EVSE V2
              ('Enumerate Value', 'uint8', 1, 'out'), # Returns new value if stable for > 2 seconds
              ('Enumerate Value Change Time', 'uint32', 1, 'out'), # EVSE uptime of last value change
              ('Phase Switch Wait Time', 'uint8', 1, 'out', {'constant_group': 'Phase Switch Wait Time'}),
@@ -1336,7 +1336,7 @@ Wenn Reset auf *true* gesetzt ist, wird der Wert nach dem Auslesen zurückgesetz
 com['packets'].append({
 'type': 'function',
 'name': 'Set Boost Mode',
-'elements': [('Boost Mode Enabled', 'bool', 1, 'in')], # default False
+'elements': [('Boost Mode Enabled', 'bool', 1, 'in', {'default': False})], # default False
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1422,7 +1422,7 @@ hochohmig). Der Standardzustand nach dem Booten wird mit
 com['packets'].append({
 'type': 'function',
 'name': 'Get Temperature',
-'elements': [('Temperature', 'int16', 1, 'out')], # Returns 0 in EVSE V2
+'elements': [('Temperature', 'int16', 1, 'out', {'scale': (1, 100), 'unit': 'Degree Celsius'})], # Returns 0 in EVSE V2
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1441,7 +1441,7 @@ Temperatursensor und gibt immer 0 zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Phase Control',
-'elements': [('Phases', 'uint8', 1, 'in')], # No effect in EVSE V2
+'elements': [('Phases', 'uint8', 1, 'in', {'range': [(1, 1), (3, 3)]})], # No effect in EVSE V2
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1535,7 +1535,7 @@ Gibt die Phase-Auto-Switch-Einstellung zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set Phases Connected',
-'elements': [('Phases Connected', 'uint8', 1, 'in')], # 1 or 3, Ignored in EVSE V2
+'elements': [('Phases Connected', 'uint8', 1, 'in', {'range': [(1, 1), (3, 3)]})], # 1 or 3, Ignored in EVSE V2
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1555,7 +1555,7 @@ verfügbar sind.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Phases Connected',
-'elements': [('Phases Connected', 'uint8', 1, 'out')], # 1 or 3, Ignored in EVSE V2
+'elements': [('Phases Connected', 'uint8', 1, 'out', {'range': [(1, 1), (3, 3)]})], # 1 or 3, Ignored in EVSE V2
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1598,7 +1598,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Charging Protocol',
 'elements': [('Charging Protocol', 'uint8', 1, 'in', {'constant_group': 'Charging Protocol'}),
-             ('CP Duty Cycle', 'uint16', 1, 'in')], # Only used when protocol is ISO15118, only 50 (5%) and 1000 (100%) are accepted
+             ('CP Duty Cycle', 'uint16', 1, 'in', {'scale': (1, 10), 'unit': 'Percent', 'range': (0, 1000)})], # Only used when protocol is ISO15118, only 50 (5%) and 1000 (100%) are accepted
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1622,7 +1622,7 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Charging Protocol',
 'elements': [('Charging Protocol', 'uint8', 1, 'out', {'constant_group': 'Charging Protocol'}),
-             ('CP Duty Cycle', 'uint16', 1, 'out')], # Only used when protocol is ISO15118, only 50 (5%) and 1000 (100%) are accepted
+             ('CP Duty Cycle', 'uint16', 1, 'out', {'scale': (1, 10), 'unit': 'Percent', 'range': (0, 1000)})], # Only used when protocol is ISO15118, only 50 (5%) and 1000 (100%) are accepted
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -1968,7 +1968,7 @@ Eichrecht-Transaktion.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Enumerate Configuration',
-'elements': [('Enumerator H', 'uint16', 8, 'in'), # HSV Hue; ignore entries == 0 starting at end
+'elements': [('Enumerator H', 'uint16', 8, 'in', {'range': (0, 359)}), # HSV Hue; ignore entries == 0 starting at end
              ('Enumerator S', 'uint8', 8, 'in'),  # HSV Hue; ignore entries == 0 starting at end
              ('Enumerator V', 'uint8', 8, 'in')], # HSV Hue; ignore entries == 0 starting at end
 'since_firmware': [1, 0, 0],
@@ -1998,7 +1998,7 @@ gesetzt werden.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Enumerate Configuration',
-'elements': [('Enumerator H', 'uint16', 8, 'out'), # HSV Hue; ignore entries == 0 starting at end
+'elements': [('Enumerator H', 'uint16', 8, 'out', {'range': (0, 359)}), # HSV Hue; ignore entries == 0 starting at end
              ('Enumerator S', 'uint8', 8, 'out'),  # HSV Hue; ignore entries == 0 starting at end
              ('Enumerator V', 'uint8', 8, 'out')], # HSV Hue; ignore entries == 0 starting at end
 'since_firmware': [1, 0, 0],
@@ -2060,7 +2060,7 @@ Sekunden stabil war. Siehe :func:`Set Enumerate Configuration`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Phase Switch Wait Time',
-'elements': [('Phase Switch Wait Time', 'uint8', 1, 'in', {'constant_group': 'Phase Switch Wait Time'})],
+'elements': [('Phase Switch Wait Time', 'uint8', 1, 'in', {'constant_group': 'Phase Switch Wait Time', 'default': 0})],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -2099,7 +2099,7 @@ Gibt die Phase-Switch-Wait-Time zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': 'Set PLC Modem',
-'elements': [('PLC Modem Enabled', 'bool', 1, 'in')], # default True
+'elements': [('PLC Modem Enabled', 'bool', 1, 'in', {'default': True})], # default True
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -2137,7 +2137,7 @@ Gibt die PLC-Modem-Einstellung zurück, wie von :func:`Set PLC Modem` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Test Mode',
-'elements': [('Test Mode Enabled', 'bool', 1, 'in'), # default False
+'elements': [('Test Mode Enabled', 'bool', 1, 'in', {'default': False}), # default False
              ('Password', 'uint32', 1, 'in')],       # 0xdeadbeef
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
