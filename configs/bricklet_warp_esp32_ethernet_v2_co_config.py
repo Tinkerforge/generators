@@ -19,7 +19,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Real-time clock, temperature sensor and status LED for the WARP ESP32 Ethernet 2.0',
-        'de': 'TBD'
+        'de': 'Echtzeituhr, Temperatursensor und Status-LED für das WARP ESP32 Ethernet 2.0'
     },
     'released': False,
     'documented': False,
@@ -73,7 +73,8 @@ Sets the state of the status LED. *Off* turns the LED off, *On* turns it on and
 """,
 'de':
 """
-TODO
+Setzt den Zustand der Status-LED. *Off* schaltet die LED aus, *On* schaltet sie
+ein und *Auto* lässt sie mit etwa 1 Hz blinken.
 """
 }]
 })
@@ -90,7 +91,7 @@ Returns the state of the status LED as set by :func:`Set LED`.
 """,
 'de':
 """
-TODO
+Gibt den Zustand der Status-LED zurück, wie von :func:`Set LED` gesetzt.
 """
 }]
 })
@@ -108,7 +109,7 @@ Returns the temperature measured by the on-board sensor in 1/100 °C.
 """,
 'de':
 """
-TODO
+Gibt die vom On-Board-Sensor gemessene Temperatur in 1/100 °C zurück.
 """
 }]
 })
@@ -132,7 +133,8 @@ Sets the date and time of the internal real-time clock. The day of the week is
 """,
 'de':
 """
-TODO
+Setzt das Datum und die Uhrzeit der internen Echtzeituhr. Der Wochentag ist
+0 für Sonntag, 1 für Montag und so weiter.
 """
 }]
 })
@@ -156,7 +158,8 @@ Returns the date and time of the internal real-time clock as set by
 """,
 'de':
 """
-TODO
+Gibt das Datum und die Uhrzeit der internen Echtzeituhr zurück, wie von
+:func:`Set Date Time` gesetzt.
 """
 }]
 })
@@ -173,7 +176,7 @@ Returns the uptime of the Bricklet in milliseconds.
 """,
 'de':
 """
-TODO
+Gibt die Uptime des Bricklets in Millisekunden zurück.
 """
 }]
 })
@@ -191,7 +194,7 @@ Not supported by current hardware version.
 """,
 'de':
 """
-TODO
+Wird von der aktuellen Hardware-Version nicht unterstützt.
 """
 }]
 })
@@ -215,7 +218,7 @@ Not supported by current hardware version.
 """,
 'de':
 """
-TODO
+Wird von der aktuellen Hardware-Version nicht unterstützt.
 """
 }]
 })
@@ -235,7 +238,9 @@ every 250 ms.
 """,
 'de':
 """
-TODO
+Dieser Callback wird ausgelöst, wenn auf der RMII-Interrupt-Leitung des
+Ethernet-PHY ein Interrupt signalisiert wird. Der Callback ist entprellt und
+wird höchstens einmal alle 250 ms ausgelöst.
 """
 }]
 })

@@ -18,7 +18,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Display and status LED for the front panel of the WARP Energy Manager 2.0',
-        'de': 'TBD'
+        'de': 'Display und Status-LED für das Front Panel des WARP Energy Manager 2.0'
     },
     'released': False,
     'documented': False,
@@ -85,7 +85,10 @@ organized in pages of 256 bytes (4 sub-pages of 64 bytes each) and sectors of
 """,
 'de':
 """
-TODO
+Setzt den Page- und Sub-Page-Index für den nächsten Flash-Schreib-/Lesezugriff.
+Der Flash ist in Pages zu 256 Byte (4 Sub-Pages zu je 64 Byte) und Sektoren zu
+4096 Byte organisiert. Der Flash enthält die vom Display verwendeten Sprites und
+Fonts.
 """
 }]
 })
@@ -103,7 +106,7 @@ Returns the current flash index as set by :func:`Set Flash Index`.
 """,
 'de':
 """
-TODO
+Gibt den aktuellen Flash-Index zurück, wie von :func:`Set Flash Index` gesetzt.
 """
 }]
 })
@@ -126,7 +129,11 @@ which case the data is not written and has to be sent again.
 """,
 'de':
 """
-TODO
+Schreibt 64 Byte Daten (eine Sub-Page) an den aktuellen Index in den Flash und
+erhöht den Index um eine Sub-Page. Der nächste Index wird zusammen mit einem
+Status zurückgegeben. Der Status ist *Busy*, wenn der vorherige Schreibvorgang
+noch nicht abgeschlossen ist; in diesem Fall werden die Daten nicht geschrieben
+und müssen erneut gesendet werden.
 """
 }]
 })
@@ -145,7 +152,8 @@ if an erase is already in progress.
 """,
 'de':
 """
-TODO
+Löscht den Flash-Sektor (4096 Byte) mit dem angegebenen Index. Der Status ist
+*Busy*, wenn bereits ein Löschvorgang läuft.
 """
 }]
 })
@@ -163,7 +171,8 @@ progress.
 """,
 'de':
 """
-TODO
+Löscht den kompletten Flash. Der Status ist *Busy*, wenn bereits ein
+Löschvorgang läuft.
 """
 }]
 })
@@ -185,7 +194,8 @@ WiFi connection status and the current time (hours, minutes, seconds).
 """,
 'de':
 """
-TODO
+Setzt den Inhalt der Statusleiste oben im Display: den Ethernet- und
+WLAN-Verbindungsstatus und die aktuelle Uhrzeit (Stunden, Minuten, Sekunden).
 """
 }]
 })
@@ -206,7 +216,7 @@ Returns the status bar content as set by :func:`Set Status Bar`.
 """,
 'de':
 """
-TODO
+Gibt den Inhalt der Statusleiste zurück, wie von :func:`Set Status Bar` gesetzt.
 """
 }]
 })
@@ -223,7 +233,7 @@ Sets the index of the currently shown display page.
 """,
 'de':
 """
-TODO
+Setzt den Index der aktuell angezeigten Display-Page.
 """
 }]
 })
@@ -241,7 +251,8 @@ Returns the index of the currently shown display page as set by
 """,
 'de':
 """
-TODO
+Gibt den Index der aktuell angezeigten Display-Page zurück, wie von
+:func:`Set Display Page Index` gesetzt.
 """
 }]
 })
@@ -267,7 +278,11 @@ have to be present in the flash, see :func:`Set Flash Data`.
 """,
 'de':
 """
-TODO
+Konfiguriert eines der bis zu 13 Icons (Icon-Index 0-12) auf der Front-Page.
+Jedes Icon besteht aus einem Sprite und zwei Textzeilen mit konfigurierbarem
+Font. Setze Active auf *true*, um das Icon anzuzeigen, oder *false*, um es
+auszublenden. Das Sprite und die Fonts müssen im Flash vorhanden sein, siehe
+:func:`Set Flash Data`.
 """
 }]
 })
@@ -291,7 +306,8 @@ Returns the configuration of the given front page icon as set by
 """,
 'de':
 """
-TODO
+Gibt die Konfiguration des angegebenen Front-Page-Icons zurück, wie von
+:func:`Set Display Front Page Icon` gesetzt.
 """
 }]
 })
@@ -311,7 +327,9 @@ generated.
 """,
 'de':
 """
-TODO
+Setzt die IP-Adresse und SSID, die auf der WLAN-Setup-Page angezeigt werden.
+Zusammen mit dem Passwort (siehe :func:`Set Display Wifi Setup 2`) wird ein
+QR-Code für den WLAN-Zugang generiert.
 """
 }]
 })
@@ -329,7 +347,8 @@ Returns the IP address and SSID as set by :func:`Set Display Wifi Setup 1`.
 """,
 'de':
 """
-TODO
+Gibt die IP-Adresse und SSID zurück, wie von :func:`Set Display Wifi Setup 1`
+gesetzt.
 """
 }]
 })
@@ -347,7 +366,8 @@ Sets the WiFi password shown on the WiFi setup page, see
 """,
 'de':
 """
-TODO
+Setzt das WLAN-Passwort, das auf der WLAN-Setup-Page angezeigt wird, siehe
+:func:`Set Display Wifi Setup 1`.
 """
 }]
 })
@@ -364,7 +384,7 @@ Returns the WiFi password as set by :func:`Set Display Wifi Setup 2`.
 """,
 'de':
 """
-TODO
+Gibt das WLAN-Passwort zurück, wie von :func:`Set Display Wifi Setup 2` gesetzt.
 """
 }]
 })
@@ -383,6 +403,8 @@ yellow) of the status LED.
 """,
 'de':
 """
+Setzt das Pattern (Off, On, Blinking oder Breathing) und die Farbe (Green, Red
+oder Yellow) der Status-LED.
 """
 }]
 })
@@ -400,6 +422,7 @@ Returns the LED state as set by :func:`Set LED State`.
 """,
 'de':
 """
+Gibt den LED-Zustand zurück, wie von :func:`Set LED State` gesetzt.
 """
 }]
 })
@@ -418,6 +441,9 @@ display is turned on and switches off again after a countdown (see
 """,
 'de':
 """
+Setzt den Display-Modus. Bei *Off* ist das Display ausgeschaltet. Bei
+*Automatic* wird das Display eingeschaltet und nach einem Countdown wieder
+ausgeschaltet (siehe :func:`Get Display`).
 """
 }]
 })
@@ -436,6 +462,9 @@ countdown in ms until the display turns off (0 if the display is off).
 """,
 'de':
 """
+Gibt den Display-Modus zurück, wie von :func:`Set Display` gesetzt, sowie den
+verbleibenden Countdown in ms, bis das Display ausschaltet (0, wenn das Display
+aus ist).
 """
 }]
 })
@@ -459,6 +488,9 @@ to check whether the flash content (sprites and fonts) is up to date.
 """,
 'de':
 """
+Gibt die Metadaten (Version, Länge und Checksumme) der aktuell im Flash
+befindlichen Daten zusammen mit den von der Firmware erwarteten Werten zurück.
+Damit kann geprüft werden, ob der Flash-Inhalt (Sprites und Fonts) aktuell ist.
 """
 }]
 })
@@ -476,7 +508,8 @@ This callback is triggered when a flash write triggered by
 """,
 'de':
 """
-TODO
+Dieser Callback wird ausgelöst, wenn ein mit :func:`Set Flash Data` ausgelöster
+Flash-Schreibvorgang abgeschlossen ist.
 """
 }]
 })
@@ -493,7 +526,7 @@ Triggers a complete redraw of the display.
 """,
 'de':
 """
-TODO
+Löst ein vollständiges Neuzeichnen des Displays aus.
 """
 }]
 })

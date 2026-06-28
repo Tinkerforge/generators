@@ -20,7 +20,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Controls the charging of electric vehicles according to IEC 61851',
-        'de': 'TBD'
+        'de': 'Steuert das Laden von Elektrofahrzeugen gemäß IEC 61851'
     },
     'released': False,
     'documented': False,
@@ -137,7 +137,17 @@ Returns the current state of the EVSE.
 """,
 'de':
 """
-TODO
+Gibt den aktuellen Zustand der EVSE zurück.
+
+* IEC61851 State: Zustand gemäß IEC 61851 (A = nicht verbunden,
+  B = verbunden, C = lädt, D = ungenutzt, EF = Fehler).
+* Charger State: High-Level-Zustand des Ladevorgangs.
+* Contactor State: Zustand des Schütz (Relais für AC1 und AC2).
+* Contactor Error: Fehlercode der Schützprüfung, 0 bedeutet OK.
+* Allowed Charging Current: Aktuell erlaubter Ladestrom in mA
+  (Minimum über alle aktiven Charging Slots).
+* Error State: 0 wenn alles in Ordnung ist, sonst der aktuelle Fehler.
+* Lock State: Zustand des Typ-2-Steckdosen-Verriegelungsmotors.
 """
 }]
 })
@@ -161,7 +171,13 @@ Returns the hardware configuration of the EVSE.
 """,
 'de':
 """
-TODO
+Gibt die Hardware-Konfiguration der EVSE zurück.
+
+* Jumper Configuration: Maximalstrom des eingehenden Kabels, wie über den
+  Schiebeschalter konfiguriert.
+* Has Lock Switch: *true* wenn ein Typ-2-Steckdosen-Verriegelungsmotor
+  angeschlossen ist.
+* EVSE Version: Hardware-Version der EVSE (z.B. 14 für Hardware-Version 1.4).
 """
 }]
 })
@@ -196,7 +212,18 @@ Returns the low level state of the EVSE. This is mostly useful for debugging.
 """,
 'de':
 """
-TODO
+Gibt den Low-Level-Zustand der EVSE zurück. Dies ist hauptsächlich zum Debuggen
+nützlich.
+
+* LED State: Zustand der Status-LED.
+* CP PWM Duty Cycle: Duty Cycle der CP-(Control Pilot)-PWM in 1/10 %.
+* ADC Values: Rohe ADC-Werte der CP/PE- und PP/PE-Messung.
+* Voltages: Gemessene Spannungen (CP/PE, PP/PE und High Voltage CP/PE).
+* Resistances: Berechnete Widerstände (CP/PE und PP/PE).
+* GPIO: Zustand der GPIO-Pins.
+* Car Stopped Charging: *true* wenn das Fahrzeug das Laden selbst beendet hat.
+* Time Since State Change: Zeit seit dem letzten IEC-61851-Zustandswechsel.
+* Uptime: Uptime der EVSE.
 """
 }]
 })
@@ -234,7 +261,24 @@ The following slots have a fixed meaning:
 """,
 'de':
 """
-TODO
+Setzt die Konfiguration eines Charging Slots. Die EVSE hat 20 Charging Slots
+(0-19). Der erlaubte Ladestrom ist das Minimum der Maximalströme aller aktiven
+Slots.
+
+* Slot: Index des Slots (0-19).
+* Max Current: Maximalstrom des Slots in mA. 0 blockiert das Laden.
+* Active: *true* wenn der Slot berücksichtigt wird.
+* Clear On Disconnect: *true* wenn der Slot deaktiviert werden soll, sobald das
+  Kabel getrennt wird.
+
+Die folgenden Slots haben eine feste Bedeutung:
+
+* 0: Eingehendes Kabel (nur lesbar, über Schiebeschalter konfiguriert).
+* 1: Ausgehendes Kabel (nur lesbar, über Widerstand konfiguriert).
+* 2: GPIO Input 0 (Shutdown Input).
+* 3: GPIO Input 1 (Input).
+* 4: Button (0A <-> 32A, kann über das Webinterface mit dem Start-Button und dem
+  physischen Button gesteuert werden, falls konfiguriert).
 """,
 }]
 })
@@ -253,7 +297,7 @@ Sets the maximum current of a charging slot, see :func:`Set Charging Slot`.
 """,
 'de':
 """
-TODO
+Setzt den Maximalstrom eines Charging Slots, siehe :func:`Set Charging Slot`.
 """
 }]
 })
@@ -272,7 +316,7 @@ Activates/deactivates a charging slot, see :func:`Set Charging Slot`.
 """,
 'de':
 """
-TODO
+Aktiviert/deaktiviert einen Charging Slot, siehe :func:`Set Charging Slot`.
 """
 }]
 })
@@ -292,7 +336,8 @@ Sets the clear-on-disconnect flag of a charging slot, see
 """,
 'de':
 """
-TODO
+Setzt das Clear-On-Disconnect-Flag eines Charging Slots, siehe
+:func:`Set Charging Slot`.
 """
 }]
 })
@@ -314,7 +359,8 @@ Returns the configuration of a charging slot as set by
 """,
 'de':
 """
-TODO
+Gibt die Konfiguration eines Charging Slots zurück, wie von
+:func:`Set Charging Slot` gesetzt.
 """,
 }]
 })
@@ -336,7 +382,11 @@ and bit 1 is the clear-on-disconnect flag.
 """,
 'de':
 """
-TODO
+Gibt die Konfiguration aller 20 Charging Slots zurück, siehe
+:func:`Set Charging Slot`.
+
+Die Active- und Clear-On-Disconnect-Flags sind gepackt: Bit 0 ist das
+Active-Flag und Bit 1 ist das Clear-On-Disconnect-Flag.
 """
 }]
 })
@@ -361,7 +411,11 @@ See :func:`Set Charging Slot` for the meaning of the parameters.
 """,
 'de':
 """
-TODO
+Setzt die Standard-Konfiguration eines Charging Slots. Die Standardwerte werden
+verwendet, um die Charging Slots beim Start zu initialisieren. Die Slots 0 und 1
+(die Kabel) haben keinen Standardwert und können hier nicht konfiguriert werden.
+
+Siehe :func:`Set Charging Slot` für die Bedeutung der Parameter.
 """,
 }]
 })
@@ -384,7 +438,8 @@ Returns the default configuration of a charging slot as set by
 """,
 'de':
 """
-TODO
+Gibt die Standard-Konfiguration eines Charging Slots zurück, wie von
+:func:`Set Charging Slot Default` gesetzt.
 """
 }]
 })
@@ -406,7 +461,9 @@ Returns *true* if the given state and value could be applied.
 """,
 'de':
 """
-TODO
+Interne Funktion, die zur Kalibrierung der EVSE während der Produktion verwendet
+wird. Gibt *true* zurück, wenn der angegebene State und Wert angewendet werden
+konnten.
 """
 }]
 })
@@ -429,7 +486,8 @@ see :func:`Set User Calibration`.
 """,
 'de':
 """
-TODO
+Gibt die benutzerdefinierte Kalibrierung der CP/PE-Spannungs- und
+Widerstandsmessung zurück, siehe :func:`Set User Calibration`.
 """
 }]
 })
@@ -458,7 +516,12 @@ used again.
 """,
 'de':
 """
-TODO
+Setzt eine benutzerdefinierte Kalibrierung für die CP/PE-Spannungs- und
+Widerstandsmessung. Das Passwort ist 0xCA11B4A0.
+
+Die EVSE ist bereits werkskalibriert, daher sollte diese Funktion normalerweise
+nicht benötigt werden. Wenn die benutzerdefinierte Kalibrierung deaktiviert
+wird, wird wieder die Werkskalibrierung verwendet.
 """
 }]
 })
@@ -477,7 +540,8 @@ Returns the content of the given storage page (63 bytes), see
 """,
 'de':
 """
-TODO
+Gibt den Inhalt der angegebenen Storage-Page (63 Byte) zurück, siehe
+:func:`Set Data Storage`.
 """
 }]
 })
@@ -496,7 +560,8 @@ by the ESP32 to store its own data on the EVSE.
 """,
 'de':
 """
-TODO
+Speichert 63 Byte Daten in der angegebenen Storage-Page. Dieser Speicher kann
+vom ESP32 genutzt werden, um eigene Daten auf der EVSE abzulegen.
 """
 }]
 })
@@ -515,7 +580,8 @@ Returns the current state of the indicator LED as set by
 """,
 'de':
 """
-TODO
+Gibt den aktuellen Zustand der Indicator-LED zurück, wie von
+:func:`Set Indicator LED` gesetzt. Die Duration ist die verbleibende Dauer in ms.
 """
 }]
 })
@@ -543,7 +609,16 @@ status is the current LED state.
 """,
 'de':
 """
-TODO
+Setzt die Indicator-LED, um dem Nutzer verschiedene Zustände zu signalisieren.
+
+* Indication: -1 überlässt die Steuerung der LED der EVSE, 0 schaltet sie aus,
+  255 schaltet sie ein, 1-254 setzt einen PWM-Wert und 1001/1002/1003 zeigen eine
+  Acknowledge-/Not-Acknowledge-/Nag-Indication.
+* Duration: Dauer der Indication in ms.
+
+Der zurückgegebene Status ist 0, wenn die Indication gesetzt werden konnte.
+Andernfalls wird die LED gerade von der EVSE verwendet (z.B. Blinking,
+Flickering oder Breathing) und der Status ist der aktuelle LED-Zustand.
 """
 }]
 })
@@ -565,7 +640,11 @@ last press and release. Button Pressed is *true* while the button is held down.
 """,
 'de':
 """
-TODO
+Gibt den Zustand des Buttons (z.B. Schlüsselschalter) zurück.
+
+Die Press- und Release-Time sind die Zeitpunkte (relativ zur Uptime der EVSE)
+des letzten Drückens und Loslassens. Button Pressed ist *true*, solange der
+Button gedrückt gehalten wird.
 """
 }]
 })
@@ -612,7 +691,10 @@ Returns the values of :func:`Get State`, :func:`Get Hardware Configuration`,
 """,
 'de':
 """
-TODO
+Gibt die Werte von :func:`Get State`, :func:`Get Hardware Configuration`,
+:func:`Get Low Level State`, :func:`Get Indicator LED`,
+:func:`Get Button State` und :func:`Get Boost Mode` in einem Aufruf kombiniert
+zurück.
 """
 }]
 })
@@ -631,7 +713,7 @@ Resets the EVSE to the factory settings. The password is 0x2342FACD.
 """,
 'de':
 """
-TODO
+Setzt die EVSE auf die Werkseinstellungen zurück. Das Passwort ist 0x2342FACD.
 """
 }]
 })
@@ -651,7 +733,11 @@ some cars to charge a bit faster. Boost mode is disabled by default.
 """,
 'de':
 """
-TODO
+Aktiviert/deaktiviert den Boost Mode. Im Boost Mode wird der Duty Cycle des
+CP-PWM-Signals um etwa 4µs erhöht (was innerhalb der IEC-61851-Toleranz bleibt).
+Dadurch wird dem Fahrzeug ein etwas höherer Strom signalisiert, wodurch manche
+Fahrzeuge etwas schneller laden können. Der Boost Mode ist standardmäßig
+deaktiviert.
 """
 }]
 })
@@ -668,7 +754,7 @@ Returns the boost mode setting as set by :func:`Set Boost Mode`.
 """,
 'de':
 """
-TODO
+Gibt die Boost-Mode-Einstellung zurück, wie von :func:`Set Boost Mode` gesetzt.
 """
 }]
 })

@@ -20,7 +20,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Controls the charging of electric vehicles according to IEC 61851',
-        'de': 'TBD'
+        'de': 'Steuert das Laden von Elektrofahrzeugen gemäß IEC 61851'
     },
     'released': False,
     'documented': False,
@@ -386,7 +386,18 @@ Returns the current state of the EVSE.
 """,
 'de':
 """
-TODO
+Gibt den aktuellen Zustand der EVSE zurück.
+
+* IEC61851 State: Zustand gemäß IEC 61851 (A = nicht verbunden,
+  B = verbunden, C = lädt, D = ungenutzt, EF = Fehler).
+* Charger State: High-Level-Zustand des Ladevorgangs.
+* Contactor State: Zustand des Schütz (Relais für N+L1 und L2+L3).
+* Contactor Error: Fehlercode der Schützprüfung, 0 bedeutet OK.
+* Allowed Charging Current: Aktuell erlaubter Ladestrom in mA
+  (Minimum über alle aktiven Charging Slots).
+* Error State: 0 wenn alles in Ordnung ist, sonst der aktuelle Fehler.
+* Lock State: Zustand des Typ-2-Steckdosen-Verriegelungsmotors.
+* DC Fault Current State: Zustand der DC-Fehlerstromüberwachung.
 """
 }]
 })
@@ -414,7 +425,16 @@ Returns the hardware configuration of the EVSE.
 """,
 'de':
 """
-TODO
+Gibt die Hardware-Konfiguration der EVSE zurück.
+
+* Jumper Configuration: Maximalstrom des eingehenden Kabels, wie über den
+  Schiebeschalter konfiguriert.
+* Has Lock Switch: *true* wenn ein Typ-2-Steckdosen-Verriegelungsmotor
+  angeschlossen ist.
+* EVSE Version: Hardware-Version der EVSE (z.B. 20 für EVSE 2.0, 30 für 3.0 und
+  40 für 4.0).
+* Energy Meter Type: Typ des angeschlossenen Stromzählers (Not Available, wenn
+  kein Stromzähler angeschlossen ist).
 """
 }]
 })
@@ -501,7 +521,20 @@ Returns the low level state of the EVSE. This is mostly useful for debugging.
 """,
 'de':
 """
-TODO
+Gibt den Low-Level-Zustand der EVSE zurück. Dies ist hauptsächlich zum Debuggen
+nützlich.
+
+* LED State: Zustand der Status-LED.
+* CP PWM Duty Cycle: Duty Cycle der CP-(Control Pilot)-PWM in 1/10 %.
+* ADC Values: Rohe ADC-Werte der Spannungsmessungen.
+* Voltages: Gemessene Spannungen (CP/PE vor und nach dem Widerstand für High-
+  und Low-PWM, PP/PE sowie die +12V- und -12V-Schiene).
+* Resistances: Berechnete Widerstände (CP/PE und PP/PE).
+* GPIO: Zustand der GPIO-Pins.
+* Car Stopped Charging: *true* wenn das Fahrzeug das Laden selbst beendet hat.
+* Time Since State Change: Zeit seit dem letzten IEC-61851-Zustandswechsel.
+* Time Since DC Fault Check: Zeit seit der letzten DC-Fehlerstromprüfung.
+* Uptime: Uptime der EVSE.
 """
 }]
 })
@@ -539,7 +572,24 @@ The following slots have a fixed meaning:
 """,
 'de':
 """
-TODO
+Setzt die Konfiguration eines Charging Slots. Die EVSE hat 20 Charging Slots
+(0-19). Der erlaubte Ladestrom ist das Minimum der Maximalströme aller aktiven
+Slots.
+
+* Slot: Index des Slots (0-19).
+* Max Current: Maximalstrom des Slots in mA. 0 blockiert das Laden.
+* Active: *true* wenn der Slot berücksichtigt wird.
+* Clear On Disconnect: *true* wenn der Slot deaktiviert werden soll, sobald das
+  Kabel getrennt wird.
+
+Die folgenden Slots haben eine feste Bedeutung:
+
+* 0: Eingehendes Kabel (nur lesbar, über Schiebeschalter konfiguriert).
+* 1: Ausgehendes Kabel (nur lesbar, über Widerstand konfiguriert).
+* 2: GPIO Input 0 (Shutdown Input).
+* 3: GPIO Input 1 (Input).
+* 4: Button (0A <-> 32A, kann über das Webinterface mit dem Start-Button und dem
+  physischen Button gesteuert werden, falls konfiguriert).
 """,
 }]
 })
@@ -558,7 +608,7 @@ Sets the maximum current of a charging slot, see :func:`Set Charging Slot`.
 """,
 'de':
 """
-TODO
+Setzt den Maximalstrom eines Charging Slots, siehe :func:`Set Charging Slot`.
 """
 }]
 })
@@ -577,7 +627,7 @@ Activates/deactivates a charging slot, see :func:`Set Charging Slot`.
 """,
 'de':
 """
-TODO
+Aktiviert/deaktiviert einen Charging Slot, siehe :func:`Set Charging Slot`.
 """
 }]
 })
@@ -597,7 +647,8 @@ Sets the clear-on-disconnect flag of a charging slot, see
 """,
 'de':
 """
-TODO
+Setzt das Clear-On-Disconnect-Flag eines Charging Slots, siehe
+:func:`Set Charging Slot`.
 """
 }]
 })
@@ -619,7 +670,8 @@ Returns the configuration of a charging slot as set by
 """,
 'de':
 """
-TODO
+Gibt die Konfiguration eines Charging Slots zurück, wie von
+:func:`Set Charging Slot` gesetzt.
 """
 }]
 })
@@ -641,7 +693,11 @@ and bit 1 is the clear-on-disconnect flag.
 """,
 'de':
 """
-TODO
+Gibt die Konfiguration aller 20 Charging Slots zurück, siehe
+:func:`Set Charging Slot`.
+
+Die Active- und Clear-On-Disconnect-Flags sind gepackt: Bit 0 ist das
+Active-Flag und Bit 1 ist das Clear-On-Disconnect-Flag.
 """
 }]
 })
@@ -666,7 +722,11 @@ See :func:`Set Charging Slot` for the meaning of the parameters.
 """,
 'de':
 """
-TODO
+Setzt die Standard-Konfiguration eines Charging Slots. Die Standardwerte werden
+verwendet, um die Charging Slots beim Start zu initialisieren. Die Slots 0 und 1
+(die Kabel) haben keinen Standardwert und können hier nicht konfiguriert werden.
+
+Siehe :func:`Set Charging Slot` für die Bedeutung der Parameter.
 """,
 }]
 })
@@ -689,7 +749,8 @@ Returns the default configuration of a charging slot as set by
 """,
 'de':
 """
-TODO
+Gibt die Standard-Konfiguration eines Charging Slots zurück, wie von
+:func:`Set Charging Slot Default` gesetzt.
 """
 }]
 })
@@ -714,7 +775,12 @@ Returns the measured values of the connected energy meter.
 """,
 'de':
 """
-TODO
+Gibt die Messwerte des angeschlossenen Stromzählers zurück.
+
+* Power: Gesamtwirkleistung in W.
+* Current: Strom pro Phase (L1, L2, L3) in A.
+* Phases Active: Für jede Phase *true*, wenn aktuell Strom fließt.
+* Phases Connected: Für jede Phase *true*, wenn die Phase verbunden ist.
 """,
 }]
 })
@@ -736,7 +802,9 @@ the values depends on the energy meter type, see
 """,
 'de':
 """
-TBD
+Gibt alle Werte zurück, die der angeschlossene Stromzähler bereitstellt. Die
+Bedeutung der Werte hängt vom Typ des Stromzählers ab, siehe
+:func:`Get Hardware Configuration`.
 """
 }]
 })
@@ -755,7 +823,9 @@ illegal data address, illegal data value and slave device failure.
 """,
 'de':
 """
-TODO
+Gibt die Modbus-Kommunikationsfehlerzähler des angeschlossenen Stromzählers
+zurück. Die Zähler sind: Local Timeout, Global Timeout, Illegal Function,
+Illegal Data Address, Illegal Data Value und Slave Device Failure.
 """
 }]
 })
@@ -773,7 +843,8 @@ point in time from which on the relative energy meter values are counted.
 """,
 'de':
 """
-TODO
+Setzt den relativen Energiewert des Stromzählers auf null. Damit wird der
+Zeitpunkt festgelegt, ab dem die relativen Energiewerte gezählt werden.
 """
 }]
 })
@@ -797,7 +868,13 @@ the fault is gone, otherwise the next charging session will trip it again.
 """,
 'de':
 """
-TODO
+Setzt die DC-Fehlerstromüberwachung nach einem erkannten DC-Fehler wieder in den
+Normalzustand zurück. Das Passwort ist 0xDC42FA23. Direkt nach dem Zurücksetzen
+wird eine neue DC-Fehlerstromkalibrierung gestartet.
+
+Vor dem Zurücksetzen der DC-Fehlerstromüberwachung sollte sichergestellt werden,
+dass der Fehler behoben ist, da sonst der nächste Ladevorgang sie erneut
+auslöst.
 """
 }]
 })
@@ -823,7 +900,15 @@ Sets the configuration of the GPIOs.
 """,
 'de':
 """
-TODO
+Setzt die Konfiguration der GPIOs.
+
+* Shutdown Input Configuration: Legt fest, wie der Shutdown Input (GPIO Input 0)
+  reagiert (z.B. Laden bei Öffnen/Schließen abschalten oder auf 4200 Watt
+  begrenzen).
+* Input Configuration: Legt die Funktion von GPIO Input 1 fest (z.B. den
+  Ladestrom abhängig vom Eingangspegel begrenzen).
+* Output Configuration: Legt den Standardzustand des GP-Outputs fest (mit Masse
+  verbunden oder hochohmig).
 """
 }]
 })
@@ -842,7 +927,8 @@ Returns the GPIO configuration as set by :func:`Set GPIO Configuration`.
 """,
 'de':
 """
-TODO
+Gibt die GPIO-Konfiguration zurück, wie von :func:`Set GPIO Configuration`
+gesetzt.
 """
 }]
 })
@@ -861,7 +947,8 @@ Returns the content of the given storage page (63 bytes), see
 """,
 'de':
 """
-TODO
+Gibt den Inhalt der angegebenen Storage-Page (63 Byte) zurück, siehe
+:func:`Set Data Storage`.
 """
 }]
 })
@@ -880,7 +967,8 @@ by the ESP32 to store its own data on the EVSE.
 """,
 'de':
 """
-TODO
+Speichert 63 Byte Daten in der angegebenen Storage-Page. Dieser Speicher kann
+vom ESP32 genutzt werden, um eigene Daten auf der EVSE abzulegen.
 """
 }]
 })
@@ -902,7 +990,8 @@ Returns the current state of the indicator LED as set by
 """,
 'de':
 """
-TODO
+Gibt den aktuellen Zustand der Indicator-LED zurück, wie von
+:func:`Set Indicator LED` gesetzt. Die Duration ist die verbleibende Dauer in ms.
 """
 }]
 })
@@ -935,7 +1024,18 @@ status is the current LED state.
 """,
 'de':
 """
-TODO
+Setzt die Indicator-LED, um dem Nutzer verschiedene Zustände zu signalisieren.
+
+* Indication: -1 überlässt die Steuerung der LED der EVSE, 0 schaltet sie aus,
+  255 schaltet sie ein, 1-254 setzt einen PWM-Wert und 1001/1002/1003 zeigen eine
+  Acknowledge-/Not-Acknowledge-/Nag-Indication.
+* Duration: Dauer der Indication in ms.
+* Color H/S/V: HSV-Farbe der LED. Wenn der Value (V) 0 ist, wird eine
+  automatische Farbe verwendet. EVSE 2.0 unterstützt nur Blau.
+
+Der zurückgegebene Status ist 0, wenn die Indication gesetzt werden konnte.
+Andernfalls wird die LED gerade von der EVSE verwendet (z.B. Blinking,
+Flickering oder Breathing) und der Status ist der aktuelle LED-Zustand.
 """
 }]
 })
@@ -954,7 +1054,9 @@ functions). It can also be deactivated.
 """,
 'de':
 """
-TODO
+Setzt die Funktion des Buttons (Schlüsselschalter). Der Button kann so
+konfiguriert werden, dass er das Laden startet, stoppt, beides macht oder
+enumeriert (siehe die Enumerate-Funktionen). Er kann auch deaktiviert werden.
 """
 }]
 })
@@ -971,7 +1073,8 @@ Returns the button configuration as set by :func:`Set Button Configuration`.
 """,
 'de':
 """
-TODO
+Gibt die Button-Konfiguration zurück, wie von :func:`Set Button Configuration`
+gesetzt.
 """
 }]
 })
@@ -993,7 +1096,11 @@ last press and release. Button Pressed is *true* while the button is held down.
 """,
 'de':
 """
-TODO
+Gibt den Zustand des Buttons (Schlüsselschalter) zurück.
+
+Die Press- und Release-Time sind die Zeitpunkte (relativ zur Uptime der EVSE)
+des letzten Drückens und Loslassens. Button Pressed ist *true*, solange der
+Button gedrückt gehalten wird.
 """
 }]
 })
@@ -1012,7 +1119,10 @@ inactivity. This helps with some legacy EVs that do not wake up by themselves.
 """,
 'de':
 """
-TODO
+Aktiviert/deaktiviert den EV Wakeup. Wenn aktiviert, hält sich die EVSE an
+IEC 61851 Annex A.5.3 und versucht, das Elektrofahrzeug nach einer langen
+Inaktivitätsphase aufzuwecken. Dies hilft bei einigen älteren Fahrzeugen, die
+nicht von selbst aufwachen.
 """
 }]
 })
@@ -1029,7 +1139,7 @@ Returns the EV wakeup setting as set by :func:`Set EV Wakeup`.
 """,
 'de':
 """
-TODO
+Gibt die EV-Wakeup-Einstellung zurück, wie von :func:`Set EV Wakeup` gesetzt.
 """
 }]
 })
@@ -1052,7 +1162,12 @@ now disconnected.
 """,
 'de':
 """
-TODO
+Trennt/verbindet den Control Pilot (CP) vom Elektrofahrzeug. Damit kann ein
+Ladevorgang gestoppt werden, ohne das Schütz zu öffnen.
+
+Der CP kann nur im IEC-61851-Zustand A oder B getrennt werden und nur, wenn das
+Schütz aktuell nicht aktiv ist. Der zurückgegebene Wert zeigt an, ob der CP nun
+getrennt ist.
 """
 }]
 })
@@ -1070,7 +1185,8 @@ Returns the control pilot disconnect state as set by
 """,
 'de':
 """
-TODO
+Gibt den Control-Pilot-Disconnect-Zustand zurück, wie von
+:func:`Set Control Pilot Disconnect` gesetzt.
 """
 }]
 })
@@ -1107,7 +1223,9 @@ in one call.
 """,
 'de':
 """
-TODO
+Gibt die Werte von :func:`Get State`, :func:`Get Hardware Configuration`,
+:func:`Get Energy Meter Values` und :func:`Get Energy Meter Errors` in einem
+Aufruf kombiniert zurück.
 """
 }]
 })
@@ -1157,7 +1275,14 @@ Returns the values of :func:`Get GPIO Configuration`,
 """,
 'de':
 """
-TODO
+Gibt die Werte von :func:`Get GPIO Configuration`,
+:func:`Get Indicator LED`, :func:`Get Button Configuration`,
+:func:`Get Button State`, :func:`Get EV Wakuep`,
+:func:`Get Control Pilot Disconnect`, :func:`Get Boost Mode`,
+:func:`Get Temperature`, :func:`Get Phase Control`,
+:func:`Get Phase Auto Switch`, :func:`Get Phases Connected`,
+:func:`Get Enumerate Value`, :func:`Get Phase Switch Wait Time` und
+:func:`Get PLC Modem` in einem Aufruf kombiniert zurück.
 """
 }]
 })
@@ -1175,7 +1300,7 @@ Resets the EVSE to the factory settings. The password is 0x2342FACD.
 """,
 'de':
 """
-TODO
+Setzt die EVSE auf die Werkseinstellungen zurück. Das Passwort ist 0x2342FACD.
 """
 }]
 })
@@ -1198,7 +1323,12 @@ If Reset is set to *true* the value is reset after it has been read.
 """,
 'de':
 """
-TODO
+Gibt zurück, wie lange der Button während des Bootens durchgehend gedrückt wurde,
+in ms. Damit kann ein langer Tastendruck während des Starts erkannt werden (z.B.
+um einen Factory Reset auszulösen). Gibt 0xFFFFFFFF zurück, wenn der Boot-Druck
+bereits zurückgesetzt wurde.
+
+Wenn Reset auf *true* gesetzt ist, wird der Wert nach dem Auslesen zurückgesetzt.
 """
 }]
 })
@@ -1218,7 +1348,11 @@ some cars to charge a bit faster. Boost mode is disabled by default.
 """,
 'de':
 """
-TODO
+Aktiviert/deaktiviert den Boost Mode. Im Boost Mode wird der Duty Cycle des
+CP-PWM-Signals um etwa 4µs erhöht (was innerhalb der IEC-61851-Toleranz bleibt).
+Dadurch wird dem Fahrzeug ein etwas höherer Strom signalisiert, wodurch manche
+Fahrzeuge etwas schneller laden können. Der Boost Mode ist standardmäßig
+deaktiviert.
 """
 }]
 })
@@ -1235,7 +1369,7 @@ Returns the boost mode setting as set by :func:`Set Boost Mode`.
 """,
 'de':
 """
-TODO
+Gibt die Boost-Mode-Einstellung zurück, wie von :func:`Set Boost Mode` gesetzt.
 """
 }]
 })
@@ -1256,7 +1390,10 @@ test was started.
 """,
 'de':
 """
-TODO
+Löst einen Test der DC-Fehlerstromüberwachung aus. Das Passwort ist 0xDCFAE550.
+Dies kann nur im IEC-61851-Zustand A (nicht verbunden) und nur dann gestartet
+werden, wenn aktuell keine Kalibrierung läuft. Der zurückgegebene Wert zeigt an,
+ob der Test gestartet wurde.
 """
 }]
 })
@@ -1275,7 +1412,9 @@ impedance). The default state after boot is set with
 """,
 'de':
 """
-TODO
+Setzt den Zustand des General-Purpose-Outputs (mit Masse verbunden oder
+hochohmig). Der Standardzustand nach dem Booten wird mit
+:func:`Set GPIO Configuration` festgelegt. Nur für EVSE 2.0 verfügbar.
 """
 }]
 })
@@ -1293,7 +1432,8 @@ sensor and always returns 0.
 """,
 'de':
 """
-TODO
+Gibt die Temperatur der EVSE in 1/100 °C zurück. EVSE 2.0 hat keinen
+Temperatursensor und gibt immer 0 zurück.
 """
 }]
 })
@@ -1312,7 +1452,9 @@ function has no effect.
 """,
 'de':
 """
-TODO
+Setzt die Anzahl der Phasen, die zum Laden verwendet werden (1 oder 3). Dies
+setzt voraus, dass die Hardware Phasenumschaltung unterstützt (EVSE 3.0 und
+neuer). Bei EVSE 2.0 hat diese Funktion keine Wirkung.
 """
 }]
 })
@@ -1337,7 +1479,14 @@ Returns the current phase control state.
 """,
 'de':
 """
-TODO
+Gibt den aktuellen Zustand der Phasensteuerung zurück.
+
+* Phases Current: Anzahl der aktuell zum Laden verwendeten Phasen (1 oder 3).
+* Phases Requested: Anzahl der über :func:`Set Phase Control` angeforderten
+  Phasen.
+* Phases State: Fortschrittszustand einer laufenden Phasenumschaltung.
+* Phases Info: 0 wenn normal, 1 wenn durch den Auto-Switch auf eine Phase
+  erzwungen.
 """
 }]
 })
@@ -1357,7 +1506,10 @@ ignored on EVSE 2.0.
 """,
 'de':
 """
-TODO
+Aktiviert/deaktiviert die automatische Phasenumschaltung. Wenn aktiviert,
+schaltet die EVSE abhängig vom verfügbaren Ladestrom zwischen einer und drei
+Phasen um. Dies setzt voraus, dass die Hardware Phasenumschaltung unterstützt
+(EVSE 3.0 und neuer) und wird bei EVSE 2.0 ignoriert.
 """
 }]
 })
@@ -1374,7 +1526,8 @@ Returns the phase auto switch setting as set by :func:`Set Phase Auto Switch`.
 """,
 'de':
 """
-TODO
+Gibt die Phase-Auto-Switch-Einstellung zurück, wie von
+:func:`Set Phase Auto Switch` gesetzt.
 """
 }]
 })
@@ -1392,7 +1545,9 @@ This is used by the phase control to know how many phases are available.
 """,
 'de':
 """
-TODO
+Setzt die Anzahl der Phasen, die physisch mit der EVSE verbunden sind (1 oder
+3). Dies wird von der Phasensteuerung verwendet, um zu wissen, wie viele Phasen
+verfügbar sind.
 """
 }]
 })
@@ -1409,7 +1564,8 @@ Returns the number of connected phases as set by :func:`Set Phases Connected`.
 """,
 'de':
 """
-TODO
+Gibt die Anzahl der verbundenen Phasen zurück, wie von
+:func:`Set Phases Connected` gesetzt.
 """
 }]
 })
@@ -1431,7 +1587,9 @@ available from the connected energy meter.
 """,
 'de':
 """
-TODO
+Dieser Callback wird mit den aktuellsten Stromzählerwerten ausgelöst, siehe
+:func:`Get Energy Meter Values`. Er wird ausgelöst, sobald neue Werte vom
+angeschlossenen Stromzähler verfügbar sind.
 """
 }]
 })
@@ -1452,7 +1610,10 @@ otherwise.
 """,
 'de':
 """
-TODO
+Setzt das verwendete Ladeprotokoll (IEC 61851 oder ISO 15118). Der CP Duty Cycle
+wird nur für ISO 15118 verwendet, wobei nur 50 (5%) und 1000 (100%) akzeptiert
+werden. Dies setzt ISO-15118-Unterstützung voraus (EVSE 4.0) und hat sonst keine
+Wirkung.
 """
 }]
 })
@@ -1470,7 +1631,7 @@ Returns the charging protocol as set by :func:`Set Charging Protocol`.
 """,
 'de':
 """
-TODO
+Gibt das Ladeprotokoll zurück, wie von :func:`Set Charging Protocol` gesetzt.
 """
 }]
 })
@@ -1490,7 +1651,9 @@ Sets the gateway identification (OCMF field "GI") for the calibration law
 """,
 'de':
 """
-TODO
+Setzt die Gateway Identification (OCMF-Feld "GI") für die eichrechtskonforme
+signierte Messung. Dies setzt einen eichrechtsfähigen Stromzähler voraus
+(EVSE 4.0). Der zurückgegebene State zeigt an, ob der Wert gesetzt werden konnte.
 """
 }]
 })
@@ -1508,7 +1671,8 @@ Returns the gateway identification as set by
 """,
 'de':
 """
-TODO
+Gibt die Gateway Identification zurück, wie von
+:func:`Set Eichrecht Gateway Identification` gesetzt.
 """
 }]
 })
@@ -1528,7 +1692,9 @@ Sets the gateway serial (OCMF field "GS") for the calibration law
 """,
 'de':
 """
-TODO
+Setzt die Gateway Serial (OCMF-Feld "GS") für die eichrechtskonforme signierte
+Messung. Dies setzt einen eichrechtsfähigen Stromzähler voraus (EVSE 4.0). Der
+zurückgegebene State zeigt an, ob der Wert gesetzt werden konnte.
 """
 }]
 })
@@ -1545,7 +1711,8 @@ Returns the gateway serial as set by :func:`Set Eichrecht Gateway Serial`.
 """,
 'de':
 """
-TODO
+Gibt die Gateway Serial zurück, wie von :func:`Set Eichrecht Gateway Serial`
+gesetzt.
 """
 }]
 })
@@ -1576,7 +1743,17 @@ shows whether the value could be set.
 """,
 'de':
 """
-TODO
+Setzt die User Assignment (OCMF-Felder "IS", "IF", "IT" und "ID") für die
+eichrechtskonforme signierte Messung. Sie identifiziert den Nutzer einer
+Ladetransaktion.
+
+* Identification Status: *true* wenn ein Nutzer zugewiesen ist.
+* Identification Flags: Identification-Flags (bis zu 4 Einträge).
+* Identification Type: Typ der Identification-Daten.
+* Identification Data: Die Identification-Daten selbst.
+
+Dies setzt einen eichrechtsfähigen Stromzähler voraus (EVSE 4.0). Der
+zurückgegebene State zeigt an, ob der Wert gesetzt werden konnte.
 """,
 }]
 })
@@ -1596,7 +1773,8 @@ Returns the user assignment as set by :func:`Set Eichrecht User Assignment`.
 """,
 'de':
 """
-TODO
+Gibt die User Assignment zurück, wie von :func:`Set Eichrecht User Assignment`
+gesetzt.
 """
 }]
 })
@@ -1618,7 +1796,10 @@ the value could be set.
 """,
 'de':
 """
-TODO
+Setzt die Charge Point Identification (OCMF-Felder "CT" und "CI") für die
+eichrechtskonforme signierte Messung. Dies setzt einen eichrechtsfähigen
+Stromzähler voraus (EVSE 4.0). Der zurückgegebene State zeigt an, ob der Wert
+gesetzt werden konnte.
 """,
 }]
 })
@@ -1637,7 +1818,8 @@ Returns the charge point identification as set by
 """,
 'de':
 """
-TODO
+Gibt die Charge Point Identification zurück, wie von
+:func:`Set Eichrecht Charge Point` gesetzt.
 """
 }]
 })
@@ -1670,7 +1852,18 @@ returned state shows whether the transaction could be started.
 """,
 'de':
 """
-TODO
+Startet oder verändert eine Eichrecht-Transaktion. Eine Transaktion erzeugt
+einen signierten OCMF-Datensatz (z.B. zu Beginn und am Ende eines Ladevorgangs).
+
+* Transaction: Das Transaction-Kommando (z.B. Begin oder End).
+* Unix Time: Die aktuelle Zeit als Unix-Timestamp in Sekunden.
+* UTC Time Offset: Der lokale Zeitversatz zu UTC in Minuten.
+* Signature Format: Das Format der erzeugten Signatur (ASN.1 oder Base64).
+
+Der signierte Datensatz und die Signatur werden über die Callbacks
+:cb:`Eichrecht Dataset Low Level` und :cb:`Eichrecht Signature Low Level`
+zurückgegeben. Dies setzt einen eichrechtsfähigen Stromzähler voraus (EVSE 4.0).
+Der zurückgegebene State zeigt an, ob die Transaktion gestartet werden konnte.
 """
 }]
 })
@@ -1695,7 +1888,10 @@ status of the energy meter.
 """,
 'de':
 """
-TODO
+Gibt den Zustand der aktuellen Eichrecht-Transaktion zurück, siehe
+:func:`Set Eichrecht Transaction`. Er enthält das aktuelle Transaction-Kommando,
+den Transaction- und Inner-State sowie den Measurement- und Signature-Status des
+Stromzählers.
 """
 }]
 })
@@ -1713,7 +1909,8 @@ Eichrecht signatures.
 """,
 'de':
 """
-TODO
+Gibt den Public Key des Stromzählers zurück, der zur Verifizierung der
+Eichrecht-Signaturen verwendet wird.
 """
 }]
 })
@@ -1736,7 +1933,10 @@ dataset. The corresponding signature is delivered through the
 """,
 'de':
 """
-TODO
+Dieser Callback wird ausgelöst, nachdem eine Eichrecht-Transaktion mit
+:func:`Set Eichrecht Transaction` gestartet wurde. Er enthält den signierten
+OCMF-Datensatz. Die zugehörige Signatur wird über den Callback
+:cb:`Eichrecht Signature Low Level` geliefert.
 """
 }]
 })
@@ -1758,7 +1958,9 @@ Eichrecht transaction.
 """,
 'de':
 """
-TODO
+Dieser Callback wird nach dem Callback :cb:`Eichrecht Dataset Low Level`
+ausgelöst. Er enthält die Signatur des signierten OCMF-Datensatzes der
+Eichrecht-Transaktion.
 """
 }]
 })
@@ -1782,7 +1984,13 @@ The button function must be set to enumerate with
 """,
 'de':
 """
-TODO
+Setzt die Konfiguration für die Enumerate-Funktion des Buttons. Der Button kann
+durch bis zu 8 Werte schalten, von denen jeder durch eine HSV-Farbe der
+Indicator-LED dargestellt wird. Nachfolgende Einträge mit Value (V) 0 werden
+ignoriert.
+
+Die Button-Funktion muss mit :func:`Set Button Configuration` auf Enumerate
+gesetzt werden.
 """
 }]
 })
@@ -1802,7 +2010,8 @@ Returns the enumerate configuration as set by
 """,
 'de':
 """
-TODO
+Gibt die Enumerate-Konfiguration zurück, wie von
+:func:`Set Enumerate Configuration` gesetzt.
 """
 }]
 })
@@ -1820,7 +2029,8 @@ Sets the current enumerate value immediately, see
 """,
 'de':
 """
-TODO
+Setzt den aktuellen Enumerate-Wert sofort, siehe
+:func:`Set Enumerate Configuration`.
 """
 }]
 })
@@ -1840,7 +2050,9 @@ than 2 seconds. See :func:`Set Enumerate Configuration`.
 """,
 'de':
 """
-TODO
+Gibt den aktuellen Enumerate-Wert und die Uptime der EVSE (in ms) der letzten
+Wertänderung zurück. Ein neuer Wert wird erst gemeldet, wenn er länger als 2
+Sekunden stabil war. Siehe :func:`Set Enumerate Configuration`.
 """
 }]
 })
@@ -1858,7 +2070,9 @@ default). The wait time prevents the phases from being switched too often.
 """,
 'de':
 """
-TODO
+Setzt die minimale Wartezeit zwischen zwei Phasenumschaltungen (15s bis 120s
+oder Default). Die Wartezeit verhindert, dass die Phasen zu häufig umgeschaltet
+werden.
 """
 }]
 })
@@ -1876,7 +2090,8 @@ Returns the phase switch wait time as set by
 """,
 'de':
 """
-TODO
+Gibt die Phase-Switch-Wait-Time zurück, wie von
+:func:`Set Phase Switch Wait Time` gesetzt.
 """
 }]
 })
@@ -1895,7 +2110,9 @@ on hardware with a PLC modem (EVSE 4.0).
 """,
 'de':
 """
-TODO
+Aktiviert/deaktiviert das PLC-(Powerline-Communication)-Modem, das für die
+ISO-15118-Kommunikation verwendet wird. Das PLC-Modem ist standardmäßig
+aktiviert. Nur auf Hardware mit PLC-Modem verfügbar (EVSE 4.0).
 """
 }]
 })
@@ -1912,7 +2129,7 @@ Returns the PLC modem setting as set by :func:`Set PLC Modem`.
 """,
 'de':
 """
-TODO
+Gibt die PLC-Modem-Einstellung zurück, wie von :func:`Set PLC Modem` gesetzt.
 """
 }]
 })
@@ -1932,7 +2149,9 @@ default.
 """,
 'de':
 """
-TODO
+Aktiviert/deaktiviert den Test Mode. Das Passwort ist 0xDEADBEEF. Der Test Mode
+wird während der Produktion verwendet und sollte normalerweise nicht benötigt
+werden. Er ist standardmäßig deaktiviert.
 """
 }]
 })
@@ -1949,7 +2168,7 @@ Returns the test mode setting as set by :func:`Set Test Mode`.
 """,
 'de':
 """
-TODO
+Gibt die Test-Mode-Einstellung zurück, wie von :func:`Set Test Mode` gesetzt.
 """
 }]
 })

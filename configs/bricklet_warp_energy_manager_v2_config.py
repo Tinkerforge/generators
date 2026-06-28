@@ -18,7 +18,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Manages heat pumps, WARP Chargers and logs energy and charge data to an SD card',
-        'de': 'TBD'
+        'de': 'Steuert Heizungen, WARP Charger und protokolliert Energie- und Ladedaten auf eine SD-Karte'
     },
     'released': True,
     'documented': False,
@@ -100,7 +100,8 @@ the connected energy meter.
 """,
 'de':
 """
-TODO
+Gibt die Gesamtleistung (in W) und den Strom pro Phase (L1, L2, L3 in A) des
+angeschlossenen Stromzählers zurück.
 """
 }]
 })
@@ -121,7 +122,8 @@ values depends on the energy meter type, see :func:`Get Energy Meter State`.
 """,
 'de':
 """
-TBD
+Gibt alle vom angeschlossenen Stromzähler gemessenen Werte zurück. Die Bedeutung
+der Werte hängt vom Typ des Stromzählers ab, siehe :func:`Get Energy Meter State`.
 """
 }]
 })
@@ -142,7 +144,10 @@ failure.
 """,
 'de':
 """
-TODO
+Gibt den Typ des angeschlossenen Stromzählers und die
+Modbus-Kommunikationsfehlerzähler zurück. Die Fehlerzähler sind: Local Timeout,
+Global Timeout, Illegal Function, Illegal Data Address, Illegal Data Value und
+Slave Device Failure.
 """
 }]
 })
@@ -159,7 +164,7 @@ Returns the values of the four inputs.
 """,
 'de':
 """
-TODO
+Gibt die Werte der vier Inputs zurück.
 """
 }]
 })
@@ -178,7 +183,8 @@ Ready) outputs can be used to control e.g. a heat pump.
 """,
 'de':
 """
-TODO
+Setzt einen der beiden SG-Ready-Outputs (Index 0 oder 1). Die SG-Ready-(Smart
+Grid Ready)-Outputs können z.B. zur Steuerung einer Wärmepumpe verwendet werden.
 """
 }]
 })
@@ -196,7 +202,8 @@ Returns the state of the two SG Ready outputs as set by
 """,
 'de':
 """
-TODO
+Gibt den Zustand der beiden SG-Ready-Outputs zurück, wie von
+:func:`Set SG Ready Output` gesetzt.
 """
 }]
 })
@@ -215,7 +222,8 @@ Sets one of the two relay outputs (index 0 or 1). *true* closes the relay,
 """,
 'de':
 """
-TODO
+Setzt einen der beiden Relay-Outputs (Index 0 oder 1). *true* schließt das
+Relais, *false* öffnet es.
 """
 }]
 })
@@ -232,7 +240,8 @@ Returns the state of the two relay outputs as set by :func:`Set Relay Output`.
 """,
 'de':
 """
-TODO
+Gibt den Zustand der beiden Relay-Outputs zurück, wie von
+:func:`Set Relay Output` gesetzt.
 """
 }]
 })
@@ -249,7 +258,7 @@ Returns the supply voltage of the Energy Manager.
 """,
 'de':
 """
-TODO
+Gibt die Versorgungsspannung des Energy Managers zurück.
 """
 }]
 })
@@ -266,7 +275,7 @@ Returns the uptime of the Energy Manager in milliseconds.
 """,
 'de':
 """
-TODO
+Gibt die Uptime des Energy Managers in Millisekunden zurück.
 """
 }]
 })
@@ -295,7 +304,11 @@ Returns the values of :func:`Get Energy Meter Values`,
 """,
 'de':
 """
-TODO
+Gibt die Werte von :func:`Get Energy Meter Values`,
+:func:`Get Energy Meter State`, :func:`Get Input`,
+:func:`Get SG Ready Output`, :func:`Get Relay Output`,
+:func:`Get Input Voltage` und :func:`Get Uptime` in einem Aufruf kombiniert
+zurück.
 """
 }]
 })
@@ -321,7 +334,9 @@ the card type and product information.
 """,
 'de':
 """
-TODO
+Gibt Informationen über die angeschlossene SD-Karte zurück. Dazu gehören der
+Status der SD-Karte und des LittleFS-Dateisystems, die Sektorgröße und -anzahl
+sowie der Kartentyp und Produktinformationen.
 """
 }]
 })
@@ -350,7 +365,11 @@ writing.
 """,
 'de':
 """
-TODO
+Schreibt einen 5-Minuten-Lade-Datenpunkt für die Wallbox mit der angegebenen ID
+und dem angegebenen Datum und der angegebenen Uhrzeit auf die SD-Karte. Die
+Minute muss ein Vielfaches von 5 sein. Die Flags enthalten den IEC-61851-Zustand
+in den Bits 0-2. Die Power ist die Ladeleistung in W. Der zurückgegebene Status
+zeigt an, ob der Datenpunkt zum Schreiben eingereiht werden konnte.
 """
 }]
 })
@@ -379,7 +398,11 @@ through the :cb:`SD Wallbox Data Points Low Level` callback. Only one day
 """,
 'de':
 """
-TODO
+Fordert bis zu *Amount* 5-Minuten-Lade-Datenpunkte für die Wallbox mit der
+angegebenen ID ab dem angegebenen Datum und der angegebenen Uhrzeit an. Die
+Datenpunkte werden über den Callback :cb:`SD Wallbox Data Points Low Level`
+zurückgegeben. Es kann immer nur ein Tag (288 Datenpunkte) auf einmal angefordert
+werden.
 """
 }]
 })
@@ -403,7 +426,10 @@ the data point could be queued for writing.
 """,
 'de':
 """
-TODO
+Schreibt einen täglichen Lade-Datenpunkt (die geladene Energie des angegebenen
+Tages) für die Wallbox mit der angegebenen ID auf die SD-Karte. Der
+zurückgegebene Status zeigt an, ob der Datenpunkt zum Schreiben eingereiht werden
+konnte.
 """
 }]
 })
@@ -430,7 +456,10 @@ requested at a time.
 """,
 'de':
 """
-TODO
+Fordert bis zu *Amount* tägliche Lade-Datenpunkte für die Wallbox mit der
+angegebenen ID ab dem angegebenen Datum an. Die Datenpunkte werden über den
+Callback :cb:`SD Wallbox Daily Data Points Low Level` zurückgegeben. Es kann
+immer nur ein Monat auf einmal angefordert werden.
 """
 }]
 })
@@ -460,7 +489,12 @@ be queued for writing.
 """,
 'de':
 """
-TODO
+Schreibt einen 5-Minuten-Energy-Manager-Datenpunkt für das angegebene Datum und
+die angegebene Uhrzeit auf die SD-Karte. Die Minute muss ein Vielfaches von 5
+sein. Power Grid ist die Netzleistung in W (positiv = Bezug, negativ =
+Einspeisung) und Power General sind sechs zusätzliche Leistungswerte in W. Der
+zurückgegebene Status zeigt an, ob der Datenpunkt zum Schreiben eingereiht werden
+konnte.
 """
 }]
 })
@@ -488,7 +522,10 @@ given date and time. The data points are returned through the
 """,
 'de':
 """
-TODO
+Fordert bis zu *Amount* 5-Minuten-Energy-Manager-Datenpunkte ab dem angegebenen
+Datum und der angegebenen Uhrzeit an. Die Datenpunkte werden über den Callback
+:cb:`SD Energy Manager Data Points Low Level` zurückgegeben. Es kann immer nur
+ein Tag (288 Datenpunkte) auf einmal angefordert werden.
 """
 }]
 })
@@ -515,7 +552,9 @@ point could be queued for writing.
 """,
 'de':
 """
-TODO
+Schreibt einen täglichen Energy-Manager-Datenpunkt (die bezogene und
+eingespeiste Energie des angegebenen Tages) auf die SD-Karte. Der zurückgegebene
+Status zeigt an, ob der Datenpunkt zum Schreiben eingereiht werden konnte.
 """
 }]
 })
@@ -541,7 +580,10 @@ can be requested at a time.
 """,
 'de':
 """
-TODO
+Fordert bis zu *Amount* tägliche Energy-Manager-Datenpunkte ab dem angegebenen
+Datum an. Die Datenpunkte werden über den Callback
+:cb:`SD Energy Manager Daily Data Points Low Level` zurückgegeben. Es kann immer
+nur ein Monat auf einmal angefordert werden.
 """
 }]
 })
@@ -562,7 +604,8 @@ the requested 5-minute charge data points.
 """,
 'de':
 """
-TODO
+Dieser Callback wird durch :func:`Get SD Wallbox Data Points` ausgelöst und gibt
+die angeforderten 5-Minuten-Lade-Datenpunkte zurück.
 """
 }]
 })
@@ -583,7 +626,8 @@ returns the requested daily charge data points.
 """,
 'de':
 """
-TODO
+Dieser Callback wird durch :func:`Get SD Wallbox Daily Data Points` ausgelöst und
+gibt die angeforderten täglichen Lade-Datenpunkte zurück.
 """
 }]
 })
@@ -604,7 +648,8 @@ returns the requested 5-minute energy manager data points.
 """,
 'de':
 """
-TODO
+Dieser Callback wird durch :func:`Get SD Energy Manager Data Points` ausgelöst
+und gibt die angeforderten 5-Minuten-Energy-Manager-Datenpunkte zurück.
 """
 }]
 })
@@ -625,7 +670,8 @@ and returns the requested daily energy manager data points.
 """,
 'de':
 """
-TODO
+Dieser Callback wird durch :func:`Get SD Energy Manager Daily Data Points`
+ausgelöst und gibt die angeforderten täglichen Energy-Manager-Datenpunkte zurück.
 """
 }]
 })
@@ -644,7 +690,8 @@ data on the card is deleted.
 """,
 'de':
 """
-TODO
+Formatiert die SD-Karte (LittleFS-Dateisystem). Das Passwort ist 0x4223ABCD.
+Alle Daten auf der Karte werden gelöscht.
 """
 }]
 })
@@ -668,7 +715,8 @@ Sets the date and time of the internal real-time clock. The day of the week is
 """,
 'de':
 """
-TODO
+Setzt das Datum und die Uhrzeit der internen Echtzeituhr. Der Wochentag ist
+0 für Sonntag, 1 für Montag und so weiter.
 """
 }]
 })
@@ -692,7 +740,8 @@ Returns the date and time of the internal real-time clock as set by
 """,
 'de':
 """
-TODO
+Gibt das Datum und die Uhrzeit der internen Echtzeituhr zurück, wie von
+:func:`Set Date Time` gesetzt.
 """
 }]
 })
@@ -713,7 +762,10 @@ written yet and *Busy* while the page is being read back from the SD card.
 """,
 'de':
 """
-TODO
+Gibt den Inhalt (63 Byte) der angegebenen Storage-Page zurück, siehe
+:func:`Set Data Storage`. Der Status ist *Not Found*, wenn die Page noch nicht
+geschrieben wurde, und *Busy*, während die Page von der SD-Karte zurückgelesen
+wird.
 """
 }]
 })
@@ -732,7 +784,9 @@ written to the SD card about 10 minutes after the last change.
 """,
 'de':
 """
-TODO
+Speichert 63 Byte Daten in der angegebenen Storage-Page. Die Daten werden im RAM
+gehalten und etwa 10 Minuten nach der letzten Änderung auf die SD-Karte
+geschrieben.
 """
 }]
 })
@@ -751,7 +805,8 @@ point in time from which on the relative energy meter values are counted.
 """,
 'de':
 """
-TODO
+Setzt den relativen Energiewert des Stromzählers auf null. Damit wird der
+Zeitpunkt festgelegt, ab dem die relativen Energiewerte gezählt werden.
 """
 }]
 })
