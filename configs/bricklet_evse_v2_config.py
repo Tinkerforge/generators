@@ -344,6 +344,35 @@ com['constant_groups'].append({
 'constants': [('Default', 0)] + [(f'{15 + i * 5} Seconds', i + 1) for i in range(22)] # Default + 15s to 120s in 5s steps
 })
 
+com['constant_groups'].append({
+'name': 'OVE R37 State',
+'type': 'uint8',
+'constants': [('Disabled', 0), # R37 mode not active
+              ('Normal', 1),   # Within all supply limits, charging permitted
+              ('Tripped', 2),  # Undervoltage / out-of-band trip, charging blocked
+              ('Wait', 3),     # Supply within reconnect window, waiting tautom
+              ('Ramp', 4)]     # Reconnected, ramping the current up
+})
+
+com['constant_groups'].append({
+'name': 'OVE R37 Trip Reason',
+'type': 'uint8',
+'constants': [('None', 0),
+              ('Undervoltage', 1),
+              ('Overvoltage', 2),
+              ('Frequency', 4)]
+})
+
+com['constant_groups'].append({
+'name': 'OVE R37 Flags',
+'type': 'uint8',
+'constants': [('Voltage In Range', 1),   # 1 << 0: all connected phases within 0.9..1.1 pu (5.9.9)
+              ('Frequency In Range', 2), # 1 << 1: frequency within 47.6..51.4 Hz (5.1.1)
+              ('Voltage Valid', 4),      # 1 << 2: voltage/phases inputs are fresh and valid
+              ('Current Valid', 8),      # 1 << 3: current inputs are fresh and valid
+              ('Frequency Valid', 16)]   # 1 << 4: frequency input is fresh and valid
+})
+
 """
 contactor state
 state & 0b0000_0001 = contactor state  N+L1 (0 is not switched, 1 is switched)
@@ -1259,6 +1288,9 @@ com['packets'].append({
              ('Enumerate Value Change Time', 'uint32', 1, 'out'), # EVSE uptime of last value change
              ('Phase Switch Wait Time', 'uint8', 1, 'out', {'constant_group': 'Phase Switch Wait Time'}),
              ('PLC Modem Enabled', 'bool', 1, 'out'),
+             ('OVE R37 State', 'uint8', 1, 'out', {'constant_group': 'OVE R37 State'}),
+             ('OVE R37 Trip Reason', 'uint8', 1, 'out', {'constant_group': 'OVE R37 Trip Reason'}),
+             ('OVE R37 Flags', 'uint8', 1, 'out', {'constant_group': 'OVE R37 Flags'}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1270,8 +1302,8 @@ Returns the values of :func:`Get GPIO Configuration`,
 :func:`Get Control Pilot Disconnect`, :func:`Get Boost Mode`,
 :func:`Get Temperature`, :func:`Get Phase Control`,
 :func:`Get Phase Auto Switch`, :func:`Get Phases Connected`,
-:func:`Get Enumerate Value`, :func:`Get Phase Switch Wait Time` and
-:func:`Get PLC Modem` combined in one call.
+:func:`Get Enumerate Value`, :func:`Get Phase Switch Wait Time`,
+:func:`Get PLC Modem` and :func:`Get OVE R37 Status` combined in one call.
 """,
 'de':
 """
@@ -1281,8 +1313,8 @@ Gibt die Werte von :func:`Get GPIO Configuration`,
 :func:`Get Control Pilot Disconnect`, :func:`Get Boost Mode`,
 :func:`Get Temperature`, :func:`Get Phase Control`,
 :func:`Get Phase Auto Switch`, :func:`Get Phases Connected`,
-:func:`Get Enumerate Value`, :func:`Get Phase Switch Wait Time` und
-:func:`Get PLC Modem` in einem Aufruf kombiniert zurück.
+:func:`Get Enumerate Value`, :func:`Get Phase Switch Wait Time`,
+:func:`Get PLC Modem` und :func:`Get OVE R37 Status` in einem Aufruf kombiniert zurück.
 """
 }]
 })
@@ -2172,3 +2204,90 @@ Gibt die Test-Mode-Einstellung zurück, wie von :func:`Set Test Mode` gesetzt.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set OVE R37 Configuration',
+'elements': [('Enabled', 'bool', 1, 'in', {'default': False}),
+             ('Undervoltage Threshold', 'uint16', 1, 'in', {'range': (0, 1000), 'default': 800}),              # 5.9.8
+             ('Undervoltage Observation Time', 'uint16', 1, 'in', {'unit': 'Millisecond', 'default': 3000}),   # 5.9.8
+             ('Reconnect Wait Time', 'uint16', 1, 'in', {'unit': 'Second', 'range': (0, 300), 'default': 60}), # 5.7.4.2
+             ('Start Delay', 'uint16', 1, 'in', {'unit': 'Second', 'range': (0, 300), 'default': 0})],         # 5.9.2 B
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the configuration for the OVE-Richtlinie R 37 grid support functions.
+
+If enabled the undervoltage trip, reconnect conditions and phase symmetry
+checks according to OVE R 37 are active. The undervoltage threshold is given
+in 1/1000 pu of the nominal voltage (800 = 0.80 pu), the observation time in
+ms, the reconnect wait time and start delay in seconds (0 to 300).
+
+This is currently only supported on WARP4 with an Iskra meter.
+""",
+'de':
+"""
+Setzt die Konfiguration für die Netzstützungsfunktionen der OVE-Richtlinie R 37.
+
+Wenn aktiviert sind die Unterspannungsauslösung, die Zuschaltbedingungen und
+die Symmetrieprüfung gemäß OVE R 37 aktiv. Die Unterspannungsschwelle wird in
+1/1000 pu der Nennspannung angegeben (800 = 0,80 pu), die Beobachtungszeit in
+ms, die Wiederzuschalt-Wartezeit und die Ladestart-Verzögerung in Sekunden
+(0 bis 300).
+
+Wird aktuell nur auf WARP4 mit Iskra-Zähler unterstützt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get OVE R37 Configuration',
+'elements': [('Enabled', 'bool', 1, 'out', {'default': False}),
+             ('Undervoltage Threshold', 'uint16', 1, 'out', {'range': (0, 1000), 'default': 800}),
+             ('Undervoltage Observation Time', 'uint16', 1, 'out', {'unit': 'Millisecond', 'default': 3000}),
+             ('Reconnect Wait Time', 'uint16', 1, 'out', {'unit': 'Second', 'range': (0, 300), 'default': 60}),
+             ('Start Delay', 'uint16', 1, 'out', {'unit': 'Second', 'range': (0, 300), 'default': 0})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the configuration as set by :func:`Set OVE R37 Configuration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`Set OVE R37 Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get OVE R37 Status',
+'elements': [('State', 'uint8', 1, 'out', {'constant_group': 'OVE R37 State'}),
+             ('Trip Reason', 'uint8', 1, 'out', {'constant_group': 'OVE R37 Trip Reason'}),
+             ('Flags', 'uint8', 1, 'out', {'constant_group': 'OVE R37 Flags'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the current state of the OVE R 37 grid support functions.
+
+The state indicates the charging state machine (disabled, normal, tripped,
+waiting for reconnect or ramping up), the trip reason is a bitmask of the
+reasons charging was tripped and the flags are a bitmask of the validity and
+in-range status of the voltage and frequency measurements.
+""",
+'de':
+"""
+Gibt den aktuellen Zustand der OVE-R-37-Netzstützungsfunktionen zurück.
+
+Der State gibt den Zustand der Ladezustandsmaschine an (deaktiviert, normal,
+ausgelöst, Warten auf Wiederzuschaltung oder Hochlauf), die Trip Reason ist
+eine Bitmaske der Gründe für eine Auslösung und die Flags sind eine Bitmaske
+der Gültigkeit und des Bereichsstatus der Spannungs- und Frequenzmessung.
+"""
+}]
+})
+
