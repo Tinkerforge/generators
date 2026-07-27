@@ -351,7 +351,8 @@ com['constant_groups'].append({
               ('Normal', 1),   # Within all supply limits, charging permitted
               ('Tripped', 2),  # Undervoltage / out-of-band trip, charging blocked
               ('Wait', 3),     # Supply within reconnect window, waiting tautom
-              ('Ramp', 4)]     # Reconnected, ramping the current up
+              ('Ramp', 4),     # Reconnected, ramping the offered current up
+              ('Boot', 5)]     # After a (re)start: do not auto-resume charging (5.7.4.2)
 })
 
 com['constant_groups'].append({
