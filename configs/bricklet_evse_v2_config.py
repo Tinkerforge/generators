@@ -1300,6 +1300,7 @@ com['packets'].append({
              ('OVE R37 State', 'uint8', 1, 'out', {'constant_group': 'OVE R37 State'}),
              ('OVE R37 Trip Reason', 'uint8', 1, 'out', {'constant_group': 'OVE R37 Trip Reason'}),
              ('OVE R37 Flags', 'uint8', 1, 'out', {'constant_group': 'OVE R37 Flags'}),
+             ('Energy Meter Display Backlight', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Display Backlight'}),
 ],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -1312,7 +1313,8 @@ Returns the values of :func:`Get GPIO Configuration`,
 :func:`Get Temperature`, :func:`Get Phase Control`,
 :func:`Get Phase Auto Switch`, :func:`Get Phases Connected`,
 :func:`Get Enumerate Value`, :func:`Get Phase Switch Wait Time`,
-:func:`Get PLC Modem` and :func:`Get OVE R37 Status` combined in one call.
+:func:`Get PLC Modem`, :func:`Get OVE R37 Status` and
+:func:`Get Energy Meter Display Backlight` combined in one call.
 """,
 'de':
 """
@@ -1323,7 +1325,8 @@ Gibt die Werte von :func:`Get GPIO Configuration`,
 :func:`Get Temperature`, :func:`Get Phase Control`,
 :func:`Get Phase Auto Switch`, :func:`Get Phases Connected`,
 :func:`Get Enumerate Value`, :func:`Get Phase Switch Wait Time`,
-:func:`Get PLC Modem` und :func:`Get OVE R37 Status` in einem Aufruf kombiniert zurück.
+:func:`Get PLC Modem`, :func:`Get OVE R37 Status` und
+:func:`Get Energy Meter Display Backlight` in einem Aufruf kombiniert zurück.
 """
 }]
 })
