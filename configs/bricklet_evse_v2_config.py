@@ -374,6 +374,14 @@ com['constant_groups'].append({
               ('Frequency Valid', 16)]   # 1 << 4: frequency input is fresh and valid
 })
 
+com['constant_groups'].append({
+'name': 'Energy Meter Display Backlight',
+'type': 'uint8',
+'constants': [('Off', 0),
+              ('On', 1),
+              ('Automatic', 2)]
+})
+
 """
 contactor state
 state & 0b0000_0001 = contactor state  N+L1 (0 is not switched, 1 is switched)
@@ -2292,3 +2300,122 @@ der Gültigkeit und des Bereichsstatus der Spannungs- und Frequenzmessung.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Energy Meter Display Text',
+'elements': [('Text', 'string', 8, 'in', {}),
+             ('Label', 'string', 4, 'in', {})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets a custom text (8 characters) and label (4 characters) that is shown on the
+7-segment LCD of the energy meter. Only available with Iskra WM3M4/WM3M4C
+energy meters.
+
+The 7-segment display supports the following characters:
+0, O, 1, I, l, 2, 3, 4, 5, S, 6, G, 7, 8, 9, A, B, b, C, D, d, E, F, H, L, J,
+N, P, R, U, V, c, h, i, r, n, o, v, u, t, -.
+Non-displayable characters are replaced by a blank.
+
+If a non-empty text is set, it replaces the normal display values (the LCD
+shows only the custom text and label). Setting an empty text restores the
+default display of the energy meter (energy consumption of charging).
+
+The text is not stored in the energy meter, after a power cycle of the
+energy meter the default display is restored until a text is set again.
+""",
+'de':
+"""
+Setzt einen benutzerdefinierten Text (8 Zeichen) und ein Label (4 Zeichen),
+die auf dem 7-Segment-LCD des Stromzählers angezeigt werden. Nur mit Iskra
+WM3M4/WM3M4C Stromzählern verfügbar.
+
+Das 7-Segment-Display unterstützt die folgenden Zeichen:
+0, O, 1, I, l, 2, 3, 4, 5, S, 6, G, 7, 8, 9, A, B, b, C, D, d, E, F, H, L, J,
+N, P, R, U, V, c, h, i, r, n, o, v, u, t, -.
+Nicht darstellbare Zeichen werden durch ein Leerzeichen ersetzt.
+
+Wenn ein nicht-leerer Text gesetzt wird, ersetzt er die normalen Anzeigewerte
+(das LCD zeigt nur den benutzerdefinierten Text und das Label). Das Setzen
+eines leeren Texts stellt die Standardanzeige des Stromzählers wieder her
+(Energieverbrauch des Ladevorgangs).
+
+Der Text wird nicht im Stromzähler gespeichert, nach einem Neustart des
+Stromzählers wird die Standardanzeige angezeigt, bis wieder ein Text gesetzt
+wird.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Energy Meter Display Text',
+'elements': [('Text', 'string', 8, 'out', {}),
+             ('Label', 'string', 4, 'out', {})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the text and label as set by :func:`Set Energy Meter Display Text`.
+""",
+'de':
+"""
+Gibt den Text und das Label zurück, wie von
+:func:`Set Energy Meter Display Text` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Energy Meter Display Backlight',
+'elements': [('Backlight', 'uint8', 1, 'in', {'constant_group': 'Energy Meter Display Backlight', 'default': 2})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the backlight mode of the energy meter LCD. Only available with Iskra
+WM3M4/WM3M4C energy meters.
+
+* Off: The backlight is always off.
+* On: The backlight is always on.
+* Automatic: The backlight is turned on when an EV is charging or a button is
+  pressed and turned off 5 minutes after the last event (EV stops charging,
+  button press).
+
+The default is Automatic.
+""",
+'de':
+"""
+Setzt den Hintergrundbeleuchtungs-Modus des Stromzähler-LCDs. Nur mit Iskra
+WM3M4/WM3M4C Stromzählern verfügbar.
+
+* Off: Die Hintergrundbeleuchtung ist immer aus.
+* On: Die Hintergrundbeleuchtung ist immer an.
+* Automatic: Die Hintergrundbeleuchtung wird eingeschaltet, wenn ein
+  Elektrofahrzeug lädt oder ein Taster gedrückt wird und 5 Minuten nach dem
+  letzten Ereignis (Ladeende, Tasterdruck) wieder ausgeschaltet.
+
+Der Standardwert ist Automatic.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Energy Meter Display Backlight',
+'elements': [('Backlight', 'uint8', 1, 'out', {'constant_group': 'Energy Meter Display Backlight'})],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the backlight mode as set by :func:`Set Energy Meter Display Backlight`.
+""",
+'de':
+"""
+Gibt den Hintergrundbeleuchtungs-Modus zurück, wie von
+:func:`Set Energy Meter Display Backlight` gesetzt.
+"""
+}]
+})
