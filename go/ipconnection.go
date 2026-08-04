@@ -160,7 +160,7 @@ func (ipcon *IPConnection) Disconnect() {
 }
 
 func (ipcon *IPConnection) RegisterConnectCallback(fn func(uint8)) uint64 {
-	idChan := make(chan uint64, ChannelSize)
+	idChan := make(chan uint64, 1)
 	ipcon.connectCallbackReg <- ConnectCallbackRegistration{fn, idChan}
 	return <-idChan
 }
@@ -181,13 +181,13 @@ func (ipcon *IPConnection) DeregisterEnumerateCallback(registrationID uint64) {
 }
 
 func (ipcon *IPConnection) RegisterDisconnectCallback(fn func(uint8)) uint64 {
-	idChan := make(chan uint64, ChannelSize)
+	idChan := make(chan uint64, 1)
 	ipcon.disconnectCallbackReg <- DisconnectCallbackRegistration{fn, idChan}
 	return <-idChan
 }
 
 func (ipcon *IPConnection) RegisterEnumerateCallback(fn func([]byte)) uint64 {
-	idChan := make(chan uint64, ChannelSize)
+	idChan := make(chan uint64, 1)
 	ipcon.enumerateCallbackReg <- CallbackRegistration{0, 0, fn, idChan}
 	return <-idChan
 }
@@ -827,8 +827,8 @@ type Request struct {
 }
 
 func ReqWithTimeout(packet []byte, reqTX chan<- Request) ([]byte, error) {
-	responseChan := make(chan []byte, ChannelSize)
-	timeoutChan := make(chan time.Duration, ChannelSize)
+	responseChan := make(chan []byte, 1)
+	timeoutChan := make(chan time.Duration, 1)
 	reqTX <- Request{packet, timeoutChan, responseChan}
 	timeout := <-timeoutChan //blocks until socket thread is processing this request
 

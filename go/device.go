@@ -322,7 +322,7 @@ func (device *Device) RegisterCallback(functionID uint8, fn func([]byte)) uint64
 
 		fn(byteSlice)
 	}
-	idChan := make(chan uint64, ChannelSize)
+	idChan := make(chan uint64, 1)
 	device.callbackRegTX <- CallbackRegistration{device.internalUID, functionID, wrapper, idChan}
 	return <-idChan
 }
