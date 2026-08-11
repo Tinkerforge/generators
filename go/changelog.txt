@@ -102,3 +102,6 @@
 
 2025-10-07: 2.0.17 (9ad863d)
 - Fix bool arrays in setters
+
+2026-04-15: 2.0.18 (7685cab7)
+- Fix mapping of char from rune to byte (Issue: https://github.com/Tinkerforge/generators/issues/65)

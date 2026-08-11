@@ -246,7 +246,7 @@ class GoElement(common.Element):
             return self.get_constant_group(index=self.get_indices()[0]).get_name().camel
 
         if self.get_type() == 'char':
-            element_type = 'rune'
+            element_type = 'byte'
         elif self.get_type() == 'string':
             return 'string'
         elif self.get_type() == 'bool':
@@ -281,7 +281,7 @@ go_types = {
     'uint64': 'uint64',
     'float':  'float32',
     'bool':   'bool',
-    'char':   'rune',
+    'char':   'byte',
     'string': 'string'
 }
 
@@ -296,7 +296,7 @@ go_sizes = {
     'uint64': 64,
     'float32':32,
     'bool':   1,
-    'rune':   8,
+    'byte':   8,
     'string': 'string'
 }
 

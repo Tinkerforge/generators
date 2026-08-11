@@ -161,27 +161,13 @@ func ByteSliceToFloat64Slice(slice []byte) []float64 {
 	return result
 }
 
-func ByteSliceToRuneSlice(slice []byte) []rune {
-	result := make([]rune, len(slice))
-	for idx, b := range slice {
-		result[idx] = rune(b)
-	}
-	return result
-}
-
-func RuneSliceToByteSlice(slice []rune) []byte {
-	result := make([]byte, len(slice))
-	for idx, b := range slice {
-		result[idx] = byte(b)
-	}
-	return result
-}
 
 func ByteSliceToString(slice []byte) string {
 	n := bytes.IndexByte(slice, 0)
 	return string(slice[:n])
 }
 
+// Todo: This would break encoding of UTF-8 chars. Evaluate []byte(str)
 func StringToByteSlice(str string, maxLen uint64) ([]byte, error) {
 	runes := []rune(str)
 	bytes := make([]byte, maxLen, maxLen)

@@ -15,7 +15,7 @@ func main() {
 	defer ipcon.Disconnect()
 	// Don't use device before ipcon is connected.
 
-	ipcon.RegisterEnumerateCallback(func(uid string, connectedUid string, position rune, hardwareVersion [3]uint8,
+	ipcon.RegisterEnumerateCallback(func(uid string, connectedUid string, position byte, hardwareVersion [3]uint8,
 	                                     firmwareVersion [3]uint8, deviceIdentifier uint16, enumerationType ipconnection.EnumerationType) {
 		fmt.Printf("UID:               %s\n", uid)
 		switch enumerationType {
