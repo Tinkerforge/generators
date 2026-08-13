@@ -10,7 +10,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2103,
     'name': 'LED Strip V2',
@@ -198,6 +198,9 @@ set the frame duration to 50ms (50ms * 20 = 1 second).
 
 For an explanation of the general approach see :func:`Set LED Values`.
 
+A frame duration of 0ms will disable automatic frame transfer. In this case,
+:func:`Start Frame` must be called to start a transfer.
+
 Default value: 100ms (10 frames per second).
 """,
 'de':
@@ -208,6 +211,10 @@ Beispiel: Wenn 20 Frames pro Sekunde erreicht werden sollen, muss
 die Länge des Frames auf 50ms gesetzt werden (50ms * 20 = 1 Sekunde).
 
 Für eine Erklärung des generellen Ansatzes siehe :func:`Set LED Values`.
+
+Eine Länge des Frames von 0ms deaktiviert das automatische Übertragen des
+Frames. In dem Fall muss :func:`Start Frame` aufgerufen werden, um eine
+Übertragung zu starten.
 
 Standardwert: 100ms (10 Frames pro Sekunde).
 """
@@ -485,6 +492,33 @@ Returns the configuration as set by
 """
 Gibt die Konfiguration zurück, wie von
 :func:`Set Frame Started Callback Configuration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Start Frame',
+'elements': [],
+'since_firmware': [2, 2, 0],
+'doc': ['bf', {
+'en':
+"""
+Start transferring the current frame, irrespective of the configured frame
+duration.
+
+This function can be used to update the LEDs with a variable frame rate.
+The automatic transfer of frames should be disabled by setting the frame
+duration to zero.
+""",
+'de':
+"""
+Startet die Übertragung des aktuellen Frames, unabhängig von der eingestellten
+*frame duration* (Länge des Frames).
+
+Mit dieser Funktion lassen sich die LEDs mit einer variablen Framerate
+aktualisieren. Das automatische Übertragen des Frames sollte dazu deaktiviert
+werden, indem die *frame duration* auf null gesetzt wird.
 """
 }]
 })
