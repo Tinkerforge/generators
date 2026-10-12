@@ -2285,9 +2285,13 @@ namespace Tinkerforge
 					// more details.
 					if (e.InnerException != null && e.InnerException is SocketException)
 					{
-						int error = ((SocketException)e.InnerException).ErrorCode;
+						SocketException se = (SocketException)e.InnerException;
+						int error = se.ErrorCode;
 
-						if (error == 110 /* linux/dotnet: ETIMEDOUT */ ||
+						if (se.SocketErrorCode == SocketError.TimedOut ||
+						    se.SocketErrorCode == SocketError.WouldBlock ||
+						    error == 60 /* macos/dotnet: ETIMEDOUT */ ||
+						    error == 110 /* linux/dotnet: ETIMEDOUT */ ||
 						    error == 10035 /* linux/mono: WSAEWOULDBLOCK */ ||
 						    error == 10060 /* windows: WSAETIMEDOUT */)
 						{
