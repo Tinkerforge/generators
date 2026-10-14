@@ -13,7 +13,7 @@ from generators.configs.openhab_commonconfig import *
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 2147,
     'name': 'CO2 V2',
@@ -360,6 +360,176 @@ add_callback_value_function(
     unit      = 'Percent Relative Humidity',
     range_    = (0, 10000)
 )
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Automatic Self Calibration',
+'elements': [('Enabled', 'bool', 1, 'in', {'default': True})],
+'since_firmware': [2, 0, 4],
+'doc': ['af', {
+'en':
+"""
+Enables/disables the automatic self-calibration (ASC) of the CO2 sensor.
+
+If ASC is enabled the sensor continuously recalibrates itself. For this to work
+the sensor has to be exposed to fresh air for at least one hour every day. The first
+time ASC is enabled, the sensor needs at least 7 days of uninterrupted operation to
+find its initial calibration parameters.
+
+If the Bricklet is used in an environment where it does not regularly see fresh
+air (for example in a living room or bedroom), ASC can result in wrong
+CO2 concentration measurements over time. In this case we recommend to disable ASC
+and to recalibrate the sensor with :func:`Set Forced Recalibration` instead.
+
+Disabling ASC does not discard the calibration that was found so far. It stays in
+use until it is replaced by :func:`Set Forced Recalibration` or by a new
+calibration found by ASC.
+
+The setting is saved in flash and applied again after a power loss.
+
+By default ASC is enabled. Before firmware version 2.0.4 ASC was always enabled
+and could not be disabled.
+""",
+'de':
+"""
+Aktiviert/deaktiviert die automatische Selbstkalibrierung (ASC) des CO2-Sensors.
+
+Bei aktivierter ASC kalibriert sich der Sensor fortlaufend selbst. Dazu muss der
+Sensor jeden Tag für mindestens eine Stunde Frischluft ausgesetzt sein. Wird ASC
+zum ersten Mal aktiviert, benötigt der Sensor mindestens 7 Tage ununterbrochenen
+Betrieb, um seine initialen Kalibrierungsparameter zu bestimmen.
+
+Wird das Bricklet in einer Umgebung eingesetzt, in der es nicht regelmäßig
+Frischluft ausgesetzt ist (zum Beispiel in einem Wohn- oder Schlafzimmer), kann ASC
+mit der Zeit zu falschen CO2-Messwerten führen. In diesem Fall empfehlen wir ASC
+zu deaktivieren und den Sensor stattdessen mittels :func:`Set Forced Recalibration`
+zu kalibrieren.
+
+Das Deaktivieren von ASC verwirft nicht die bisher bestimmte Kalibrierung. Diese
+bleibt aktiv, bis sie durch :func:`Set Forced Recalibration` oder durch eine neue
+von ASC bestimmte Kalibrierung ersetzt wird.
+
+Die Einstellung wird im Flash gespeichert und nach einem Neustart wieder angewendet.
+
+Standardmäßig ist ASC aktiviert. Vor Firmware-Version 2.0.4 war ASC immer aktiviert
+und konnte nicht deaktiviert werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Automatic Self Calibration',
+'elements': [('Enabled', 'bool', 1, 'out', {'default': True})],
+'since_firmware': [2, 0, 4],
+'doc': ['af', {
+'en':
+"""
+Returns the automatic self-calibration configuration as set by
+:func:`Set Automatic Self Calibration`.
+""",
+'de':
+"""
+Gibt die Konfiguration der automatischen Selbstkalibrierung zurück, wie mittels
+:func:`Set Automatic Self Calibration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Forced Recalibration',
+'elements': [('CO2 Concentration', 'uint16', 1, 'in', {'unit': 'Parts Per Million', 'range': (400, 2000)})],
+'since_firmware': [2, 0, 4],
+'doc': ['af', {
+'en':
+"""
+Recalibrates the CO2 sensor with a known reference CO2 concentration
+(forced recalibration, FRC).
+
+For best results, operate the Bricklet in a stable environment with a known
+CO2 concentration close to the sensor, for example next to a calibrated
+reference instrument.
+
+The sensor has to measure continuously for at least two minutes before the
+recalibration is applied. If this function is called within the first two
+minutes after the Bricklet was started, the recalibration is applied automatically
+as soon as the two minutes have passed.
+
+The recalibration is saved permanently in the sensor and stays in use after a
+power loss.
+
+A forced recalibration replaces the calibration found by the automatic
+self-calibration (ASC) and vice versa. If you want to use forced recalibration,
+we recommend to disable ASC with :func:`Set Automatic Self Calibration` first.
+Otherwise the recalibration may later be overwritten by ASC.
+
+The reference CO2 concentration of the most recent recalibration can be read
+back with :func:`Get Forced Recalibration`.
+""",
+'de':
+"""
+Kalibriert den CO2-Sensor anhand einer bekannten Referenz-CO2-Konzentration neu
+(Forced Recalibration, FRC).
+
+Für beste Ergebnisse sollte das Bricklet in einer stabilen Umgebung mit bekannter
+CO2-Konzentration in der Nähe des Sensors betrieben werden, zum Beispiel neben
+einem kalibrierten Referenzmessgerät.
+
+Der Sensor muss mindestens zwei Minuten kontinuierlich gemessen haben, bevor die
+Neukalibrierung angewendet wird. Wird diese Funktion innerhalb der ersten zwei
+Minuten nach dem Start des Bricklets aufgerufen, so wird die Neukalibrierung
+automatisch angewendet, sobald die zwei Minuten vergangen sind.
+
+Die Neukalibrierung wird dauerhaft im Sensor gespeichert und bleibt auch nach
+einem Neustart aktiv.
+
+Eine Forced Recalibration ersetzt die von der automatischen Selbstkalibrierung
+(ASC) bestimmte Kalibrierung und umgekehrt. Soll Forced Recalibration genutzt
+werden, empfehlen wir ASC vorher mittels :func:`Set Automatic Self Calibration`
+zu deaktivieren. Ansonsten kann die Neukalibrierung später durch ASC
+überschrieben werden.
+
+Die Referenz-CO2-Konzentration der letzten Neukalibrierung kann mittels
+:func:`Get Forced Recalibration` ausgelesen werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Forced Recalibration',
+'elements': [('CO2 Concentration', 'uint16', 1, 'out', {'unit': 'Parts Per Million', 'range': (400, 2000), 'default': 400})],
+'since_firmware': [2, 0, 4],
+'doc': ['af', {
+'en':
+"""
+Returns the reference CO2 concentration of the most recent forced recalibration
+as reported by the CO2 sensor.
+
+The value is updated as soon as the recalibration set by
+:func:`Set Forced Recalibration` has been applied (see the two minute
+waiting period described there).
+
+The sensor only keeps this value in volatile memory. After a power loss
+400 ppm (the default reference value of the sensor) is returned, even though
+the recalibration itself is saved permanently in the sensor and stays in use.
+""",
+'de':
+"""
+Gibt die Referenz-CO2-Konzentration der letzten Forced Recalibration zurück,
+wie vom CO2-Sensor gemeldet.
+
+Der Wert wird aktualisiert, sobald die mittels :func:`Set Forced Recalibration`
+gesetzte Neukalibrierung angewendet wurde (siehe die dort beschriebene
+Wartezeit von zwei Minuten).
+
+Der Sensor hält diesen Wert nur in flüchtigem Speicher. Nach einem Neustart
+werden 400 ppm (der Standard-Referenzwert des Sensors) zurückgegeben, obwohl die
+Neukalibrierung selbst dauerhaft im Sensor gespeichert ist und aktiv bleibt.
+"""
+}]
+})
 
 com['examples'].append({
 'name': 'Simple',
