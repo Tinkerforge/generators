@@ -123,7 +123,7 @@ const (
             enum_values = []
 
             for constant in constant_group.get_constants():
-                value = str(constant.get_value()) if not "rune" in constant_type else "'" + constant.get_value() + "'"
+                value = str(constant.get_value()) if not "byte" in constant_type else "'" + constant.get_value() + "'"
 
                 if constant_type == "bool":
                     value = value.lower()
@@ -187,16 +187,14 @@ const (
     def go_read_results(self, elements, bufferName, low_level_in_bits=True):
         read_results = []
         for elem in elements:
-            size = elem.get_size()
-
             if elem.get_level() == 'low' and elem.get_role() == 'stream_chunk_data':
                 read_results.append("copy({name}[:], ByteSliceTo{type}Slice({buf}.Next({mult} * {chunk_size}/8)))".format(buf=bufferName, name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), chunk_size= elem.get_cardinality(), mult =  go_common.get_go_type_size(elem.get_go_type(ignore_cardinality=True))))
                 continue
 
-            if "rune" in elem.get_go_type() and elem.get_cardinality() == 1:
-                read_results.append("{ret_name} = rune({buf}.Next(1)[0])".format(buf=bufferName, ret_name=elem.get_go_name()))
-            elif "rune" in elem.get_go_type():
-                read_results.append("copy({ret_name}[:], ByteSliceTo{type}Slice({buf}.Next({len})))".format(buf=bufferName, ret_name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), len=elem.get_cardinality()))
+            if "byte" in elem.get_go_type() and elem.get_cardinality() == 1:
+                read_results.append("{ret_name} = {buf}.Next(1)[0]".format(buf=bufferName, ret_name=elem.get_go_name()))
+            elif "byte" in elem.get_go_type():
+                read_results.append("copy({ret_name}[:], {buf}.Next({len}))".format(buf=bufferName, ret_name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), len=elem.get_cardinality()))
             elif "bool" in elem.get_go_type() and elem.get_cardinality() > 1:
                 read_results.append("copy({ret_name}[:], ByteSliceTo{type}Slice({buf}.Next({len})))".format(buf=bufferName, ret_name=elem.get_go_name(), type=elem.get_go_type(ignore_cardinality=True).title(), len=math.ceil(elem.get_cardinality() / 8)))
             elif elem.get_go_type() == "string":

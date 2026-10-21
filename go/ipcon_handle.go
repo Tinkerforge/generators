@@ -75,7 +75,7 @@ func (ipcon *IPConnection) RegisterDisconnectCallback(fn func(DisconnectReason))
 //     For the bottommost Brick in a stack it is "0".
 //     With this information it is possible to reconstruct the complete network topology.
 //
-// * position rune -  For Bricks: '0' - '8' (position in stack). For Bricklets: 'a' - 'd' (position on Brick).
+// * position byte -  For Bricks: '0' - '8' (position in stack). For Bricklets: 'a' - 'd' (position on Brick).
 //
 // * hardwareVersion [3]uint8 - Major, minor and release number for hardware version.
 //
@@ -88,7 +88,7 @@ func (ipcon *IPConnection) RegisterDisconnectCallback(fn func(DisconnectReason))
 //     For example: master_brick.DeviceIdentifier or ambient_light_bricklet.DeviceIdentifier.
 //
 // * enumerationType EnumerationType - Type of enumeration.
-func (ipcon *IPConnection) RegisterEnumerateCallback(fn func(uid string, connectedUID string, position rune, hardwareVersion [3]uint8, firmwareVersion [3]uint8, deviceIdentifier uint16, enumerationType EnumerationType)) uint64 {
+func (ipcon *IPConnection) RegisterEnumerateCallback(fn func(uid string, connectedUID string, position byte, hardwareVersion [3]uint8, firmwareVersion [3]uint8, deviceIdentifier uint16, enumerationType EnumerationType)) uint64 {
 	wrapper := func(bytes []byte) {
 		var header internal.PacketHeader
 
@@ -100,7 +100,7 @@ func (ipcon *IPConnection) RegisterEnumerateCallback(fn func(uid string, connect
 		bytes = bytes[8:]
 		uid := internal.ByteSliceToString(bytes[0:8])
 		connectedUID := internal.ByteSliceToString(bytes[8:16])
-		position := rune(bytes[16])
+		position := bytes[16] // Todo: Evaluate a custom datatype with .String() etc.
 		hardwareVersion := [3]uint8{bytes[17], bytes[18], bytes[19]}
 		firmwareVersion := [3]uint8{bytes[20], bytes[21], bytes[22]}
 		deviceIdentifier := binary.LittleEndian.Uint16(bytes[23:25])
