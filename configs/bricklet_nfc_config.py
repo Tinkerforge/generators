@@ -1348,10 +1348,11 @@ Gibt die Tag ID und Länge zurück, wie von :func:`Cardemu Set Tag ID` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Simple Tag Seen',
+'name': 'Simple Tag Seen Low Level',
 'elements': [('Tag Type', 'uint8', 1, 'out', {'constant_group': 'Tag Type'}),
              ('Tag ID Length', 'uint8', 1, 'out', {'range': (0, 10)}),
              ('Tag ID Data', 'uint8', 10, 'out', {})],
+'high_level': {'stream_out': {'name': 'Tag ID', 'single_chunk': True}},
 'since_firmware': [2, 1, 4],
 'doc': ['c', {
 'en':
